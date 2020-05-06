@@ -5,8 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <ui/tk/helpers/draw.h>
+#include <lsp-plug.in/tk/widgets/LSPAudioSample.h>
 
 namespace lsp
 {

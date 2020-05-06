@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
+#include <lsp-plug.in/tk/widgets/3d/LSPCapture3D.h>
 
 namespace lsp
 {

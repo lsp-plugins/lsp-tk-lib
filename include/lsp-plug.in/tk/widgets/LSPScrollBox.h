@@ -8,6 +8,9 @@
 #ifndef UI_TK_LSPSCROLLBOX_H_
 #define UI_TK_LSPSCROLLBOX_H_
 
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+
 namespace lsp
 {
     namespace tk

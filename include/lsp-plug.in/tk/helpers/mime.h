@@ -8,9 +8,12 @@
 #ifndef UI_TK_HELPERS_MIME_H_
 #define UI_TK_HELPERS_MIME_H_
 
-#include <core/LSPString.h>
-#include <core/io/IInStream.h>
-#include <core/io/IInSequence.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+#include <lsp-plug.in/runtime/LSPString.h>
+#include <lsp-plug.in/common/status.h>
+#include <lsp-plug.in/io/IInStream.h>
+#include <lsp-plug.in/io/IInSequence.h>
 
 namespace lsp
 {

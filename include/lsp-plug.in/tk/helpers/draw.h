@@ -8,7 +8,8 @@
 #ifndef UI_TK_HELPERS_DRAW_H_
 #define UI_TK_HELPERS_DRAW_H_
 
-#include <ui/ws/ws.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
 
 namespace lsp
 {

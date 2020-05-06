@@ -5,8 +5,8 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <core/files/url.h>
+#include <lsp-plug.in/tk/widgets/LSPLoadFile.h>
+#include <lsp-plug.in/fmt/url.h>
 
 namespace lsp
 {

@@ -5,8 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <dsp/dsp.h>
+#include <lsp-plug.in/tk/widgets/graph/LSPMesh.h>
 
 namespace lsp
 {

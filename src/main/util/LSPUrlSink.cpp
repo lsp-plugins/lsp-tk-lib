@@ -5,8 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <ui/tk/helpers/mime.h>
+#include <lsp-plug.in/tk/util/LSPUrlSink.h>
 
 namespace lsp
 {

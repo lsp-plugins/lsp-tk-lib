@@ -5,12 +5,13 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
+#include <lsp-plug.in/tk/widgets/LSPHyperlink.h>
+#include <lsp-plug.in/ipc/Process.h>
+
 #include <unistd.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/wait.h>
-#include <core/ipc/Process.h>
 
 namespace lsp
 {

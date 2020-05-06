@@ -5,8 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <core/calc/format.h>
+#include <lsp-plug.in/tk/sys/LSPLocalString.h>
 
 #define LANG_ATOM_NAME      "language"
 

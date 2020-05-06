@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
+#include <lsp-plug.in/tk/basic/LSPWidget.h>
 
 namespace lsp
 {

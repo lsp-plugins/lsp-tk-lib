@@ -5,16 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/ws/ws.h>
-#include <ui/tk/tk.h>
-
-#include <core/i18n/Dictionary.h>
-
-#if defined(USE_X11_DISPLAY)
-    #include <ui/ws/x11/ws.h>
-#else
-    #error "Unsupported platform"
-#endif
+#include <lsp-plug.in/tk/sys/LSPDisplay.h>
 
 namespace lsp
 {

@@ -5,8 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <core/io/InMemoryStream.h>
+#include <lsp-plug.in/tk/util/LSPTextDataSource.h>
 
 namespace lsp
 {

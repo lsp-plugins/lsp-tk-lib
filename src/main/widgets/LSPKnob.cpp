@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
+#include <lsp-plug.in/tk/widgets/LSPKnob.h>
 
 #define LOG_BASE            1.0f
 #define DB_BASE             0.025f

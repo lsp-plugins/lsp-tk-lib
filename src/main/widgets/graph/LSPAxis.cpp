@@ -5,13 +5,7 @@
  *      Author: sadko
  */
 
-#include <math.h>
-
-#include <ui/tk/tk.h>
-
-#include <ui/graphics.h>
-#include <dsp/dsp.h>
-
+#include <lsp-plug.in/tk/widgets/graph/LSPAxis.h>
 
 namespace lsp
 {

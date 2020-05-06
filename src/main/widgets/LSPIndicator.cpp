@@ -5,7 +5,8 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
+#include <lsp-plug.in/tk/widgets/LSPIndicator.h>
+
 #include <errno.h>
 #include <ctype.h>
 #include <stdlib.h>

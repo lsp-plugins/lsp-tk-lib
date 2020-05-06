@@ -5,9 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <core/sugar.h>
-#include <dsp/dsp.h>
+#include <lsp-plug.in/tk/widgets/graph/LSPFrameBuffer.h>
 
 namespace lsp
 {

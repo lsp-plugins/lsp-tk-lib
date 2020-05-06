@@ -8,8 +8,8 @@
 #ifndef UI_TK_SYS_LSPLOCALSTRING_H_
 #define UI_TK_SYS_LSPLOCALSTRING_H_
 
-#include <core/calc/Parameters.h>
-#include <core/i18n/IDictionary.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
 
 namespace lsp
 {

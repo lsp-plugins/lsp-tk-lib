@@ -5,9 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <core/io/Dir.h>
-#include <core/system.h>
+#include <lsp-plug.in/tk/widgets/dialogs/LSPFileDialog.h>
 #include <unistd.h>
 
 namespace lsp

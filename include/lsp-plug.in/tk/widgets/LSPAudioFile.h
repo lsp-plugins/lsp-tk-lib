@@ -8,7 +8,8 @@
 #ifndef UI_TK_WIDGETS_LSPAUDIOFILE_H_
 #define UI_TK_WIDGETS_LSPAUDIOFILE_H_
 
-#include <core/io/OutMemoryStream.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
 
 namespace lsp
 {

@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
+#include <lsp-plug.in/tk/widgets/LSPMountStud.h>
 
 #define CURVE           12
 #define STUD_H          16

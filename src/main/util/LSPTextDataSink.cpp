@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
+#include <lsp-plug.in/tk/util/LSPTextDataSink.h>
 
 namespace lsp
 {

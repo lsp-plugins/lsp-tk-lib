@@ -5,11 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <ui/tk/helpers/draw.h>
-#include <ui/tk/helpers/mime.h>
-#include <core/files/url.h>
-#include <dsp/dsp.h>
+#include <lsp-plug.in/tk/widgets/LSPAudioFile.h>
 
 namespace lsp
 {

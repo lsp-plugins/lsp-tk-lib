@@ -5,8 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <ui/common.h>
+#include <lsp-plug.in/tk/sys/LSPTheme.h>
 
 namespace lsp
 {

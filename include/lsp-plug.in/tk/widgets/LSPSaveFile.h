@@ -8,6 +8,9 @@
 #ifndef UI_TK_WIDGETS_LSPSAVEFILE_H_
 #define UI_TK_WIDGETS_LSPSAVEFILE_H_
 
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+
 namespace lsp
 {
     namespace tk

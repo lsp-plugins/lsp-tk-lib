@@ -5,9 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
-#include <dsp/endian.h>
-#include <ui/tk/helpers/draw.h>
+#include <lsp-plug.in/tk/widgets/LSPArea3D.h>
 
 namespace lsp
 {

@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/tk.h>
+#include <lsp-plug.in/tk/util/LSPFileMask.h>
 #include <string.h>
 #include <wctype.h>
 #include <locale.h>

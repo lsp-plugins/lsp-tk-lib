@@ -5,11 +5,7 @@
  *      Author: sadko
  */
 
-#include <ui/tk/helpers/mime.h>
-#include <core/files/url.h>
-#include <core/io/InStringSequence.h>
-#include <core/io/InSequence.h>
-#include <core/io/InMemoryStream.h>
+#include <lsp-plug.in/tk/helpers/mime.h>
 
 namespace lsp
 {

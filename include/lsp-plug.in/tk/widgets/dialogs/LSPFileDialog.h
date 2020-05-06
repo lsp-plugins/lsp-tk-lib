@@ -8,7 +8,8 @@
 #ifndef UI_TK_WIDGETS_DIALOGS_LSPFILEDIALOG_H_
 #define UI_TK_WIDGETS_DIALOGS_LSPFILEDIALOG_H_
 
-#include <core/files/bookmarks.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
 
 namespace lsp
 {
