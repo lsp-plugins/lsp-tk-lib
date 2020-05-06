@@ -39,8 +39,7 @@ namespace lsp
         Window::Window(LSPDisplay *dpy, void *handle, ssize_t screen):
             WidgetContainer(dpy),
             sActions(this),
-            sBorder(this),
-            sTitle(this)
+            sBorder(this)
         {
             lsp_trace("native_handle = %p", handle);
 
@@ -88,12 +87,14 @@ namespace lsp
             if (result < 0)
                 return result;
 
+            sTitle.bind(&sProperties, this);
+
             // Init color
             init_color(C_LABEL_TEXT, &sBorder);
 
             // Add slot(s)
             ui_handler_id_t id = 0;
-            id = sSlots.add(LSPSLOT_CLOSE, slot_window_close, self());
+            id = sSlots.add(SLOT_CLOSE, slot_window_close, self());
             if (id < 0)
                 return - id;
 
@@ -367,6 +368,28 @@ namespace lsp
             return pWindow->set_mouse_pointer(mp);
         }
 
+        void Window::property_changed(Property *prop)
+        {
+            if (sTitle.is(prop))
+            {
+                // Make formatted title of the window
+                LSPString text;
+                status_t res = sTitle.format(&text);
+                if (res != STATUS_OK)
+                    return;
+
+                // Perform ASCII formatting
+                char *ascii = text.clone_ascii();
+                const char *caption = text.get_utf8();
+                if (caption == NULL)
+                    caption = "";
+
+                pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
+                if (ascii != NULL)
+                    ::free(ascii);
+            }
+        }
+
         status_t Window::point_child(Widget *focus)
         {
             if (pPointed == focus)
@@ -444,7 +467,7 @@ namespace lsp
 
             if (pWindow == NULL)
             {
-                sSlots.execute(LSPSLOT_SHOW, this);
+                sSlots.execute(SLOT_SHOW, this);
                 return true;
             }
 
@@ -546,11 +569,11 @@ namespace lsp
             switch (e->nType)
             {
                 case ws::UIE_FOCUS_IN:
-                    result = sSlots.execute(LSPSLOT_FOCUS_IN, this, &ev);
+                    result = sSlots.execute(SLOT_FOCUS_IN, this, &ev);
                     break;
 
                 case ws::UIE_FOCUS_OUT:
-                    result = sSlots.execute(LSPSLOT_FOCUS_OUT, this, &ev);
+                    result = sSlots.execute(SLOT_FOCUS_OUT, this, &ev);
                     break;
 
                 case ws::UIE_SHOW:
@@ -559,7 +582,7 @@ namespace lsp
                     if (bMapFlag != bool(nFlags & F_VISIBLE))
                     {
                         lsp_trace("SHOW ptr=%p", this);
-                        result      = sSlots.execute(LSPSLOT_SHOW, this, &ev);
+                        result      = sSlots.execute(SLOT_SHOW, this, &ev);
                         bMapFlag    = nFlags & F_VISIBLE;
                     }
                     break;
@@ -569,7 +592,7 @@ namespace lsp
                     if (bMapFlag != bool(nFlags & F_VISIBLE))
                     {
                         lsp_trace("HIDE ptr=%p", this);
-                        result      = sSlots.execute(LSPSLOT_HIDE, this, &ev);
+                        result      = sSlots.execute(SLOT_HIDE, this, &ev);
                         bMapFlag    = nFlags & F_VISIBLE;
                     }
                     break;
@@ -579,7 +602,7 @@ namespace lsp
                     break;
 
                 case ws::UIE_CLOSE:
-                    result = sSlots.execute(LSPSLOT_CLOSE, this, &ev);
+                    result = sSlots.execute(SLOT_CLOSE, this, &ev);
                     break;
 
                 case ws::UIE_KEY_DOWN:

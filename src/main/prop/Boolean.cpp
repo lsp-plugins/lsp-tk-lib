@@ -13,11 +13,6 @@ namespace lsp
 {
     namespace tk
     {
-        Boolean::Listener::~Listener()
-        {
-            pValue      = NULL;
-        }
-
         void Boolean::Listener::notify(atom_t property)
         {
             if (pValue == NULL)
@@ -25,43 +20,43 @@ namespace lsp
 
             // Handle change: remember new value
             if ((pValue->pStyle != NULL) ||
-                (pValue->aValue != NULL))
+                (pValue->nAtom != NULL))
             {
-                if (pStyle->get_bool(pValue->aValue, &pValue->bValue) != STATUS_OK)
+                if (pStyle->get_bool(pValue->nAtom, &pValue->bValue) != STATUS_OK)
                     return;
             }
 
             // Delegate event
             if (pListener != NULL)
-                pListener->notify(property);
+                pListener->notify(pValue);
         }
 
         status_t Boolean::unbind()
         {
-            if ((pStyle != NULL) && (aValue >= 0))
+            if ((pStyle != NULL) && (nAtom >= 0))
             {
-                status_t res = pStyle->unbind(aValue, &sListener);
+                status_t res = pStyle->unbind(nAtom, &sListener);
                 if (res != STATUS_OK)
                     return res;
             }
 
             pStyle      = NULL;
             pListener   = NULL;
-            aValue      = -1;
+            nAtom       = -1;
 
             return STATUS_NOT_BOUND;
         }
 
-        status_t Boolean::bind(Style *style, IStyleListener *listener, atom_t property)
+        status_t Boolean::bind(prop::Listener *listener, atom_t property, Style *style)
         {
             if ((style == NULL) || (property < 0))
                 return STATUS_BAD_ARGUMENTS;
 
             // Unbind first
             status_t res;
-            if ((pStyle != NULL) && (aValue >= 0))
+            if ((pStyle != NULL) && (nAtom >= 0))
             {
-                res = pStyle->unbind(aValue, &sListener);
+                res = pStyle->unbind(nAtom, &sListener);
                 if (res != STATUS_OK)
                     return res;
             }
@@ -73,7 +68,7 @@ namespace lsp
             {
                 pStyle      = style;
                 pListener   = listener;
-                aValue      = property;
+                nAtom       = property;
             }
             style->end();
 
@@ -84,9 +79,6 @@ namespace lsp
             sListener(this)
         {
             bValue      = 0.0f;
-            pStyle      = NULL;
-            pListener   = NULL;
-            aValue      = -1;
         }
 
         Boolean::~Boolean()
@@ -97,13 +89,24 @@ namespace lsp
 
         bool Boolean::set(bool v)
         {
-            bool prev = (aValue >= 0) ? bValue : v;
-            if (v == prev)
+            bool prev = bValue;
+            if (v == bValue)
                 return prev;
 
             bValue  = v;
-            pStyle->set_bool(aValue, v);
+            if ((pStyle != NULL) && (nAtom >= 0))
+                pStyle->set_bool(nAtom, v);
             return prev;
+        }
+
+        void Boolean::swap(Boolean *dst)
+        {
+            if (dst == this)
+                return;
+
+            bool tmp = dst->bValue;
+            dst->set(bValue);
+            set(tmp);
         }
 
         namespace prop
@@ -113,7 +116,7 @@ namespace lsp
             {
             }
 
-            status_t Boolean::bind(Widget *widget, IStyleListener *listener, const char *property)
+            status_t Boolean::bind(prop::Listener *listener, const char *property, Widget *widget)
             {
                 if ((widget == NULL) || (property == NULL))
                     return STATUS_BAD_ARGUMENTS;
@@ -123,15 +126,15 @@ namespace lsp
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
-                return tk::Boolean::bind(widget->style(), listener, id);
+                return tk::Boolean::bind(listener, id, widget->style());
             }
 
-            status_t Boolean::bind(Widget *widget, IStyleListener *listener, atom_t property)
+            status_t Boolean::bind(prop::Listener *listener, atom_t property, Widget *widget)
             {
-                return tk::Boolean::bind(widget->style(), listener, property);
+                return tk::Boolean::bind(listener, property, widget->style());
             }
 
-            status_t Boolean::bind(Display *dpy, Style *style, IStyleListener *listener, const char *property)
+            status_t Boolean::bind(prop::Listener *listener, const char *property, Display *dpy, Style *style)
             {
                 if ((dpy == NULL) || (style == NULL) || (property < 0))
                     return STATUS_BAD_ARGUMENTS;
@@ -140,12 +143,12 @@ namespace lsp
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
-                return tk::Boolean::bind(style, listener, id);
+                return tk::Boolean::bind(listener, id, style);
             }
 
-            status_t Boolean::bind(Style *style, IStyleListener *listener, atom_t property)
+            status_t Boolean::bind(prop::Listener *listener, atom_t property, Style *style)
             {
-                return tk::Boolean::bind(style, listener, property);
+                return tk::Boolean::bind(listener, property, style);
             }
         }
 

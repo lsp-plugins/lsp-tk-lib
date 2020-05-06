@@ -1,11 +1,14 @@
 /*
- * LSPLocalString.cpp
+ * LocalString.cpp
  *
  *  Created on: 2 мар. 2020 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/sys/LSPLocalString.h>
+#include <lsp-plug.in/tk/prop.h>
+#include <lsp-plug.in/tk/sys/Display.h>
+#include <lsp-plug.in/tk/base.h>
+#include <lsp-plug.in/expr/format.h>
 
 #define LANG_ATOM_NAME      "language"
 
@@ -13,149 +16,83 @@ namespace lsp
 {
     namespace tk
     {
-        void LSPLocalString::Params::modified()
+        void String::Params::modified()
         {
-            if (pString != NULL)
+            pString->sync();
+        }
+
+        void String::Listener::notify(atom_t property)
+        {
+            if (property == pString->nAtom)
                 pString->sync();
         }
 
-        void LSPLocalString::Listener::notify(ui_atom_t property)
-        {
-            if (pString != NULL)
-                pString->notify(property);
-        }
-
-        LSPLocalString::LSPLocalString():
+        String::String():
             sParams(this),
             sListener(this)
         {
-            pWidget     = NULL;
+            pDict       = NULL;
             nFlags      = 0;
-            nAtom       = -1;
         }
         
-        LSPLocalString::LSPLocalString(LSPWidget *widget):
-            sParams(this),
-            sListener(this)
-        {
-            pWidget     = widget;
-            nFlags      = 0;
-            nAtom       = -1;
-        }
-
-        LSPLocalString::~LSPLocalString()
+        String::~String()
         {
             unbind();
-
-            pWidget     = NULL;
-            nFlags      = 0;
-            nAtom       = -1;
         }
 
-        status_t LSPLocalString::bind(ui_atom_t property)
+        status_t String::bind(prop::Listener *listener, atom_t property, Style *style, i18n::IDictionary *dict)
         {
-            if (nAtom >= 0)
-                return STATUS_ALREADY_BOUND;
+            if ((style == NULL) || (property < 0) || (dict == NULL))
+                return STATUS_BAD_ARGUMENTS;
 
-            LSPDisplay *dpy = pWidget->display();
-            LSPStyle *style = pWidget->style();
-            if ((dpy == NULL) || (style == NULL))
-                return STATUS_BAD_STATE;
-
-            status_t res = style->bind_string(property, &sListener);
-            if (res != STATUS_OK)
-                return res;
-
-            nAtom       = property;
-            return STATUS_OK;
-        }
-
-        status_t LSPLocalString::bind()
-        {
-            if (pWidget == NULL)
-                return STATUS_BAD_STATE;
-            else if (nAtom >= 0)
-                return STATUS_ALREADY_BOUND;
-            LSPDisplay *dpy = pWidget->display();
-            if (dpy == NULL)
-                return STATUS_BAD_STATE;
-
-            ui_atom_t atom = dpy->atom_id(LANG_ATOM_NAME);
-            if (atom < 0)
-                return -atom;
-
-            return bind(atom);
-        }
-
-        status_t LSPLocalString::bind(const char *property)
-        {
-            if (pWidget == NULL)
-                return STATUS_BAD_STATE;
-            else if (nAtom >= 0)
-                return STATUS_ALREADY_BOUND;
-            LSPDisplay *dpy = pWidget->display();
-            if (dpy == NULL)
-                return STATUS_BAD_STATE;
-
-            ui_atom_t atom = dpy->atom_id((property != NULL) ? property : LANG_ATOM_NAME);
-            if (atom < 0)
-                return -atom;
-
-            return bind(atom);
-        }
-
-        status_t LSPLocalString::bind(const LSPString *property)
-        {
-            if (pWidget == NULL)
-                return STATUS_BAD_STATE;
-            else if (nAtom >= 0)
-                return STATUS_ALREADY_BOUND;
-            LSPDisplay *dpy = pWidget->display();
-            if (dpy == NULL)
-                return STATUS_BAD_STATE;
-
-            const char *prop = (property != NULL) ? property->get_utf8() : LANG_ATOM_NAME;
-            if (prop == NULL)
-                return STATUS_NO_MEM;
-            ui_atom_t atom = dpy->atom_id(prop);
-            if (atom < 0)
-                return -atom;
-
-            return bind(atom);
-        }
-
-
-        status_t LSPLocalString::unbind()
-        {
-            if (pWidget == NULL)
-                return STATUS_OK;
-
-            // Unbind from previous owner
-            if (nAtom >= 0)
+            // Unbind first
+            status_t res;
+            if ((pStyle != NULL) && (nAtom >= 0))
             {
-                status_t res = pWidget->style()->unbind(nAtom, &sListener);
-                if ((res != STATUS_OK) && (res != STATUS_NOT_BOUND))
+                res = pStyle->unbind(nAtom, &sListener);
+                if (res != STATUS_OK)
                     return res;
-                nAtom = -1;
             }
 
-            return STATUS_OK;
+            // Bind to new handler
+            style->begin();
+            res = style->bind(property, PT_FLOAT, &sListener);
+            if (res == STATUS_OK)
+            {
+                pDict       = dict;
+                pStyle      = style;
+                pListener   = listener;
+                nAtom       = property;
+            }
+            style->end();
+
+            return res;
         }
 
-        void LSPLocalString::notify(ui_atom_t property)
+        status_t String::unbind()
         {
-            if (property == nAtom)
-                sync();
+            if ((pStyle != NULL) && (nAtom >= 0))
+            {
+                status_t res = pStyle->unbind(nAtom, &sListener);
+                if (res != STATUS_OK)
+                    return res;
+            }
+
+            pDict       = NULL;
+            pStyle      = NULL;
+            pListener   = NULL;
+            nAtom       = -1;
+
+            return STATUS_NOT_BOUND;
         }
 
-        void LSPLocalString::sync()
+        void String::sync()
         {
-            // Trigger the widget for resize if property has changed
-            if (pWidget != NULL)
-                pWidget->query_resize();
+            if (pListener != NULL)
+                pListener->notify(this);
         }
-    
-        status_t LSPLocalString::set_raw(const LSPString *value)
+
+        status_t String::set_raw(const LSPString *value)
         {
             if (value == NULL)
                 sText.truncate();
@@ -169,7 +106,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPLocalString::set_raw(const char *value)
+        status_t String::set_raw(const char *value)
         {
             if (value == NULL)
                 sText.truncate();
@@ -183,7 +120,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPLocalString::set_params(const calc::Parameters *params)
+        status_t String::set_params(const expr::Parameters *params)
         {
             if (params != NULL)
                 return sParams.set(params); // will call sync();
@@ -192,7 +129,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPLocalString::set(const LSPString *key, const calc::Parameters *params)
+        status_t String::set(const LSPString *key, const expr::Parameters *params)
         {
             if (key == NULL)
             {
@@ -201,7 +138,7 @@ namespace lsp
             }
 
             LSPString ts;
-            calc::Parameters tp;
+            expr::Parameters tp;
 
             // Create copies
             if (!ts.set(key))
@@ -223,7 +160,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPLocalString::set_key(const char *key)
+        status_t String::set_key(const char *key)
         {
             if (key == NULL)
             {
@@ -240,7 +177,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPLocalString::set_key(const LSPString *key)
+        status_t String::set_key(const LSPString *key)
         {
             if (key == NULL)
             {
@@ -257,7 +194,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPLocalString::set(const char *key, const calc::Parameters *params)
+        status_t String::set(const char *key, const expr::Parameters *params)
         {
             if (key == NULL)
             {
@@ -266,7 +203,7 @@ namespace lsp
             }
 
             LSPString ts;
-            calc::Parameters tp;
+            expr::Parameters tp;
 
             // Create copies
             if (!ts.set_utf8(key))
@@ -288,7 +225,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPLocalString::set(const LSPLocalString *value)
+        status_t String::set(const String *value)
         {
             if (value == NULL)
             {
@@ -297,7 +234,7 @@ namespace lsp
             }
 
             LSPString ts;
-            calc::Parameters tp;
+            expr::Parameters tp;
 
             // Create copies
             if (!ts.set(&value->sText))
@@ -314,7 +251,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void LSPLocalString::clear()
+        void String::clear()
         {
             sText.truncate();
             sParams.clear();
@@ -322,7 +259,7 @@ namespace lsp
             sync();
         }
 
-        status_t LSPLocalString::fmt_internal(LSPString *out, IDictionary *dict, const LSPString *lang) const
+        status_t String::fmt_internal(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const
         {
             LSPString path, templ;
             status_t res = STATUS_NOT_FOUND;
@@ -361,10 +298,10 @@ namespace lsp
                 return res;
 
             // Format the template
-            return calc::format(out, &templ, &sParams);
+            return expr::format(out, &templ, &sParams);
         }
 
-        status_t LSPLocalString::format(LSPString *out, IDictionary *dict, const char *lang) const
+        status_t String::format(LSPString *out, i18n::IDictionary *dict, const char *lang) const
         {
             if (out == NULL)
                 return STATUS_BAD_ARGUMENTS;
@@ -385,7 +322,7 @@ namespace lsp
             return fmt_internal(out, dict, &xlang);
         }
 
-        status_t LSPLocalString::format(LSPString *out, IDictionary *dict, const LSPString *lang) const
+        status_t String::format(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const
         {
             if (out == NULL)
                 return STATUS_BAD_ARGUMENTS;
@@ -402,56 +339,106 @@ namespace lsp
             return fmt_internal(out, dict, lang);
         }
 
-        status_t LSPLocalString::format(LSPString *out, LSPDisplay *dpy, const LSPStyle *style) const
+        status_t String::format(LSPString *out, Display *dpy, const Style *style) const
         {
             if ((dpy == NULL) || (style == NULL))
-                return format(out, (IDictionary *)NULL, (const char *)NULL);
+                return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
 
             // Get identifier of atom that describes language
             ssize_t atom = dpy->atom_id(LANG_ATOM_NAME);
             if (atom < 0)
-                return format(out, (IDictionary *)NULL, (const char *)NULL);
+                return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
 
             // Get language name from style property
             LSPString lang;
             status_t res = style->get_string(atom, &lang);
             if (res != STATUS_OK)
-                return format(out, (IDictionary *)NULL, (const char *)NULL);
+                return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
 
             // Perform formatting
             return format(out, dpy->dictionary(), &lang);
         }
 
-        status_t LSPLocalString::format(LSPString *out, LSPWidget *widget) const
+        status_t String::format(LSPString *out, Widget *widget) const
         {
             if (widget == NULL)
-                return format(out, (IDictionary *)NULL, (const char *)NULL);
+                return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
             return format(out, widget->display(), widget->style());
         }
 
-        status_t LSPLocalString::format(LSPString *out) const
+        status_t String::format(LSPString *out) const
         {
-            if (pWidget == NULL)
-                return (out->set(&sText)) ? STATUS_OK : STATUS_NO_MEM;
-
-            LSPDisplay *dpy = pWidget->display();
-            LSPStyle *style = pWidget->style();
-            if ((dpy == NULL) || (style == NULL))
-                return format(out, (IDictionary *)NULL, (const char *)NULL);
-
-            LSPString lang;
-            status_t res = style->get_string(nAtom, &lang);
-            if (res != STATUS_OK)
-                return format(out, (IDictionary *)NULL, (const char *)NULL);
-
-            return format(out, dpy->dictionary(), &lang);
+            return format(out, pDict, (const char *)NULL);
         }
 
-        void LSPLocalString::swap(LSPLocalString *dst)
+        void String::swap(String *dst)
         {
+            if (this == dst)
+                return;
+
+            lsp::swap(nFlags, dst->nFlags);
             sText.swap(&dst->sText);
-            sParams.swap(&dst->sParams);
-            ::swap(nFlags, dst->nFlags);
+            sParams.swap(&dst->sParams); // will call sync()
+        }
+
+        namespace prop
+        {
+            String::String() :
+                tk::String()
+            {
+            }
+
+            String::~String()
+            {
+            }
+
+            status_t String::bind(prop::Listener *listener, const char *property, Widget *widget)
+            {
+                if ((widget == NULL) || (property == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+
+                Display *dpy    = widget->display();
+                atom_t id       = (dpy != NULL) ? dpy->atom_id(property) : -1;
+                if (id < 0)
+                    return STATUS_UNKNOWN_ERR;
+
+                return tk::String::bind(listener, id, widget->style(), dpy->dictionary());
+            }
+
+            status_t String::bind(prop::Listener *listener, atom_t property, Widget *widget)
+            {
+                Display *dpy = widget->display();
+                if (dpy == NULL)
+                    return STATUS_BAD_ARGUMENTS;
+                return tk::String::bind(listener, property, widget->style(), dpy->dictionary());
+            }
+
+            status_t String::bind(prop::Listener *listener, const char *property, Display *dpy, Style *style)
+            {
+                if ((dpy == NULL) || (style == NULL) || (property < 0))
+                    return STATUS_BAD_ARGUMENTS;
+
+                atom_t id       = dpy->atom_id(property);
+                if (id < 0)
+                    return STATUS_UNKNOWN_ERR;
+
+                return tk::String::bind(listener, id, style, dpy->dictionary());
+            }
+
+            status_t String::bind(prop::Listener *listener, atom_t property, i18n::IDictionary *dict, Style *style)
+            {
+                return tk::String::bind(listener, property, style, dict);
+            }
+
+            status_t String::bind(prop::Listener *listener, Widget *widget)
+            {
+                return bind(listener, LANG_ATOM_NAME, widget);
+            }
+
+            status_t String::bind(prop::Listener *listener, Display *dpy, Style *style)
+            {
+                return bind(listener, LANG_ATOM_NAME, dpy, style);
+            }
         }
 
     } /* namespace tk */

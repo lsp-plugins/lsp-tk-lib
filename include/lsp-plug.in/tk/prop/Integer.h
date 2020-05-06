@@ -12,6 +12,7 @@
 #include <lsp-plug.in/tk/types.h>
 
 #include <lsp-plug.in/tk/style.h>
+#include <lsp-plug.in/tk/prop/Property.h>
 
 namespace lsp
 {
@@ -23,7 +24,7 @@ namespace lsp
         /**
          * Integering-point property interface
          */
-        class Integer
+        class Integer: public Property
         {
             private:
                 Integer & operator = (const Integer *);
@@ -36,7 +37,6 @@ namespace lsp
 
                     public:
                         inline Listener(Integer *ptr)             { pValue = ptr;     }
-                        ~Listener();
 
                     public:
                         virtual void notify(atom_t property);
@@ -44,14 +44,11 @@ namespace lsp
 
             protected:
                 ssize_t             nValue;
-                Style              *pStyle;
-                IStyleListener     *pListener;
-                atom_t              aValue;
                 Listener            sListener;
 
             protected:
                 status_t            unbind();
-                status_t            bind(Style *style, IStyleListener *listener, atom_t property);
+                status_t            bind(prop::Listener *listener, atom_t property, Style *style);
 
             public:
                 Integer();
@@ -70,6 +67,12 @@ namespace lsp
                  * @return
                  */
                 ssize_t             set(ssize_t v);
+
+                /**
+                 * Swap contents
+                 * @param dst destination property to perform swap
+                 */
+                void                swap(Integer *dst);
         };
 
         namespace prop
@@ -91,15 +94,15 @@ namespace lsp
                      * @param property property identifier
                      * @return true if property is bound
                      */
-                    inline bool         is_bound(atom_t property)  { return aValue == property;    }
+                    inline bool         is_bound(atom_t property)  { return nAtom == property;    }
 
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(Widget *widget, IStyleListener *listener, const char *property);
-                    status_t            bind(Widget *widget, IStyleListener *listener, atom_t property);
-                    status_t            bind(Display *dpy, Style *style, IStyleListener *listener, const char *property);
-                    status_t            bind(Style *style, IStyleListener *listener, atom_t property);
+                    status_t            bind(prop::Listener *listener, const char *property, Widget *widget);
+                    status_t            bind(prop::Listener *listener, atom_t property, Widget *widget);
+                    status_t            bind(prop::Listener *listener, const char *property, Display *dpy, Style *style);
+                    status_t            bind(prop::Listener *listener, atom_t property, Style *style);
 
                     /**
                      * Unbind property

@@ -11,9 +11,15 @@ namespace lsp
 {
     namespace tk
     {
+        void Widget::PropListener::notify(Property *prop)
+        {
+            pWidget->property_changed(prop);
+        }
+
         const w_class_t Widget::metadata = { "Widget", NULL };
 
-        Widget::Widget(Display *dpy)
+        Widget::Widget(Display *dpy):
+            sProperties(this)
 // TODO
 //            sPadding(this),
 //            sBgColor(this),
@@ -53,9 +59,14 @@ namespace lsp
 
         status_t Widget::init()
         {
+            status_t res = sStyle.init();
+            if (res == STATUS_OK)
+            {
+                sScaling.bind(&sProperties, "scaling", this);
+                sBrightness.bind(&sProperties, "brightness", this);
+            }
 // TODO
 //            // Initialize style
-//            status_t res = sStyle.init();
 //            if (res == STATUS_OK)
 //                res = sStyle.add_parent(pDisplay->theme()->root());
 //            if (res == STATUS_OK)
@@ -109,6 +120,14 @@ namespace lsp
             if (pUID != NULL)
                 ::free(pUID);
             pUID = NULL;
+        }
+
+        void Widget::property_changed(Property *prop)
+        {
+            if (sScaling.is(prop))
+                query_resize();
+            else if (sBrightness.is(prop))
+                query_draw();
         }
 
         void Widget::unlink_widget(Widget *w)

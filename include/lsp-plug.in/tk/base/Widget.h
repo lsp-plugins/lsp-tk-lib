@@ -16,6 +16,7 @@
 
 #include <lsp-plug.in/tk/slots.h>
 #include <lsp-plug.in/tk/style.h>
+#include <lsp-plug.in/tk/prop.h>
 
 namespace lsp
 {
@@ -45,6 +46,17 @@ namespace lsp
                 };
 
             protected:
+                class PropListener: public prop::Listener
+                {
+                    protected:
+                        Widget     *pWidget;
+
+                    public:
+                        inline PropListener(Widget *w)  { pWidget = w; }
+                        virtual void notify(Property *prop);
+                };
+
+            protected:
                 Display            *pDisplay;
                 ws::ISurface       *pSurface;
 
@@ -58,11 +70,13 @@ namespace lsp
 
                 SlotSet             sSlots;         // Slots
                 Style               sStyle;         // Style
+                PropListener        sProperties;    // Properties listener
 
                 // TODO: Properties
+                prop::Float         sScaling;       // UI scaling factor
+                prop::Float         sBrightness;    // Brightness
 //                LSPPadding          sPadding;
 //                LSPColor            sBgColor;       // Widget color
-//                LSPFloat            sBrightness;    // Brightness
 
 
             //---------------------------------------------------------------------------------
@@ -93,6 +107,8 @@ namespace lsp
                 void            do_destroy();
 
                 void            unlink_widget(Widget *widget);
+
+                virtual void    property_changed(Property *prop);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -362,11 +378,19 @@ namespace lsp
 //                inline LSPColor    *bg_color()              { return &sBgColor;     }
 //
 //
-//                /**
-//                 * Get brightness
-//                 * @return brightness
-//                 */
-//                inline float        brightness() const      { return sBrightness.get(); }
+                /**
+                 * Get brightness property
+                 * @return brightness property
+                 */
+                inline Float       *brightness()            { return &sBrightness; }
+                inline const Float *brightness() const      { return &sBrightness; }
+
+                /**
+                 * Get brightness property
+                 * @return brightness property
+                 */
+                inline Float       *scaling()               { return &sScaling;     }
+                inline const Float *scaling() const         { return &sScaling;     }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -418,13 +442,6 @@ namespace lsp
                  * @param value vertical filling flag value
                  */
                 virtual void        set_vfill(bool value = true);
-
-//                /**
-//                 * Set brightness of the widget
-//                 * @param brightness brightness
-//                 * @return previous value
-//                 */
-//                inline float        set_brightness(float brightness) { return sBrightness.set(brightness); }
 
                 /** Set mouse pointer
                  *

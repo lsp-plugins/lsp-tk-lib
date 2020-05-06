@@ -1,23 +1,29 @@
 /*
- * LSPLocalString.h
+ * String.h
  *
  *  Created on: 2 мар. 2020 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_SYS_LSPLOCALSTRING_H_
-#define UI_TK_SYS_LSPLOCALSTRING_H_
+#ifndef LSP_PLUG_IN_TK_PROP_STRING_H_
+#define LSP_PLUG_IN_TK_PROP_STRING_H_
 
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+
+#include <lsp-plug.in/tk/style.h>
+#include <lsp-plug.in/tk/prop/Property.h>
+#include <lsp-plug.in/expr/Parameters.h>
+#include <lsp-plug.in/i18n/IDictionary.h>
 
 namespace lsp
 {
     namespace tk
     {
-        class LSPWidget;
+        class Display;
+        class Widget;
 
-        class LSPLocalString
+        class String: public Property
         {
             private:
                 enum flags_t
@@ -29,104 +35,88 @@ namespace lsp
                 class Listener: public IStyleListener
                 {
                     private:
-                        LSPLocalString  *pString;
+                        String  *pString;
 
                     public:
-                        inline Listener(LSPLocalString *ps) { pString = ps; }
+                        inline Listener(String *ps) { pString = ps; }
 
                     public:
-                        virtual void notify(ui_atom_t property);
+                        virtual void        notify(atom_t property);
                 };
 
-                class Params: public calc::Parameters
+                class Params: public expr::Parameters
                 {
                     private:
-                        LSPLocalString  *pString;
+                        String  *pString;
+
+                    public:
+                        inline Params(String *ps) { pString = ps; }
 
                     protected:
                         virtual void        modified();
-
-                    public:
-                        inline Params(LSPLocalString *ps) { pString = ps; }
                 };
 
             protected:
-                LSPWidget          *pWidget;    // Owner of this string
-                size_t              nFlags;     // Different flags
-                mutable ui_atom_t   nAtom;      // Atom for "lang" property
                 LSPString           sText;      // Text used for rendering
                 Params              sParams;    // Parameters
+                size_t              nFlags;     // Different flags
+                i18n::IDictionary  *pDict;      // Related dictionary
                 Listener            sListener;  // Style listener
 
             protected:
-                status_t            fmt_internal(LSPString *out, IDictionary *dict, const LSPString *lang) const;
-                virtual void        notify(ui_atom_t property);
-                virtual void        sync();
+                status_t            fmt_internal(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const;
+
+            protected:
+                status_t            bind(prop::Listener *listener, atom_t property, Style *style, i18n::IDictionary *dict);
+                status_t            unbind();
+                inline void         sync();
+
+            protected:
+                explicit String();
+                ~String();
 
             public:
-                explicit LSPLocalString();
-                explicit LSPLocalString(LSPWidget *widget);
-                virtual ~LSPLocalString();
-
-            public:
-                /**
-                 * Bind property to the widget
-                 * @param widget widget to bind
-                 * @return status of operation
-                 */
-                status_t bind(const char *property);
-                status_t bind(const LSPString *property);
-                status_t bind(ui_atom_t property);
-                status_t bind();
-
-                /**
-                 * Unbind property from widget
-                 * @param widget widget to unbind
-                 * @return status of operation
-                 */
-                status_t unbind();
-
                 /**
                  * Check wheter the string is localized
                  * @return true if the string is localized
                  */
-                inline bool localized() const           { return nFlags & F_LOCALIZED;    }
+                inline bool localized() const               { return nFlags & F_LOCALIZED;    }
 
                 /**
                  * Get raw text
                  * @return raw text or NULL if string is localized
                  */
-                inline const LSPString *raw() const { return (nFlags & F_LOCALIZED) ? NULL : &sText;        }
+                inline const LSPString *raw() const         { return (nFlags & F_LOCALIZED) ? NULL : &sText;        }
 
                 /**
                  * Get localization key
                  * @return localization key or NULL if string is not localized
                  */
-                inline const LSPString *key() const { return (nFlags & F_LOCALIZED) ? &sText : NULL;        }
+                inline const LSPString *key() const         { return (nFlags & F_LOCALIZED) ? &sText : NULL;        }
 
                 /**
                  * Get formatting parameters for localized string
                  * @return parameters
                  */
-                inline const calc::Parameters *params() const { return &sParams; }
+                inline const expr::Parameters *params() const { return &sParams; }
 
                 /**
                  * Get formatting parameters for localized string
                  * @return parameters
                  */
-                inline calc::Parameters *params() { return &sParams; }
+                inline expr::Parameters *params()           { return &sParams; }
 
                 /**
                  * Check whether string contains localized data or not
                  * @return true if string contains localized data
                  */
-                inline bool is_localized() const { return nFlags & F_LOCALIZED; }
+                inline bool is_localized() const            { return nFlags & F_LOCALIZED; }
 
                 /**
                  * Check for emptiness
                  * @return true if string is empty
                  */
-                inline bool is_empty() const { return sText.is_empty(); }
+                inline bool is_empty() const                { return sText.is_empty(); }
 
             public:
                 /**
@@ -162,7 +152,7 @@ namespace lsp
                  * @param params parameters to set
                  * @return status of operation
                  */
-                status_t set_params(const calc::Parameters *params);
+                status_t set_params(const expr::Parameters *params);
 
                 /**
                  * Set localized value
@@ -170,8 +160,8 @@ namespace lsp
                  * @param params additional optional parameters for message formatting
                  * @return status of operation
                  */
-                status_t set(const LSPString *key, const calc::Parameters *params);
-                inline status_t set(const LSPString *key) { return set(key, (calc::Parameters *)NULL); };
+                status_t set(const LSPString *key, const expr::Parameters *params);
+                inline status_t set(const LSPString *key)   { return set(key, (expr::Parameters *)NULL); };
 
                 /**
                  * Set localized value
@@ -179,15 +169,15 @@ namespace lsp
                  * @param params additional optional parameters for message formatting
                  * @return status of operation
                  */
-                status_t set(const char *key, const calc::Parameters *params);
-                inline status_t set(const char *key) { return set(key, (calc::Parameters *)NULL); };
+                status_t set(const char *key, const expr::Parameters *params);
+                inline status_t set(const char *key)        { return set(key, (expr::Parameters *)NULL); };
 
                 /**
                  * Make a copy of data from the source local string to this local string
                  * @param value source string value
                  * @return status of operation
                  */
-                status_t set(const LSPLocalString *value);
+                status_t set(const String *value);
 
                 /**
                  * Clear the localized string
@@ -201,7 +191,7 @@ namespace lsp
                  * @param lang the target language to use
                  * @return status of operation
                  */
-                status_t format(LSPString *out, IDictionary *dict, const char *lang) const;
+                status_t format(LSPString *out, i18n::IDictionary *dict, const char *lang) const;
 
                 /**
                  * Output the formatted message to the string
@@ -210,7 +200,7 @@ namespace lsp
                  * @param lang the target language to use (UTF-8 encoded)
                  * @return status of operation
                  */
-                status_t format(LSPString *out, IDictionary *dict, const LSPString *lang) const;
+                status_t format(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const;
 
                 /**
                  * Output the formatted message to the string
@@ -219,7 +209,7 @@ namespace lsp
                  * @param style the style to take language identifier from
                  * @return status of operation
                  */
-                status_t format(LSPString *out, LSPDisplay *dpy, const LSPStyle *style) const;
+                status_t format(LSPString *out, Display *dpy, const Style *style) const;
 
                 /**
                  * Output the formatted message to the string
@@ -227,7 +217,7 @@ namespace lsp
                  * @param widget LSP widget
                  * @return status of operation
                  */
-                status_t format(LSPString *out, LSPWidget *widget) const;
+                status_t format(LSPString *out, Widget *widget) const;
 
                 /**
                  * Format the message using dictionary and style from derived widget
@@ -240,10 +230,39 @@ namespace lsp
                  * Swap contents
                  * @param dst destination string to perform swap
                  */
-                void swap(LSPLocalString *dst);
+                void swap(String *dst);
         };
+
+        namespace prop
+        {
+            class String: public tk::String
+            {
+                private:
+                    String & operator = (const String *);
+
+                public:
+                    explicit String();
+                    ~String();
+
+                public:
+                    /**
+                     * Bind property with specified name to the style of linked widget
+                     */
+                    status_t            bind(prop::Listener *listener, const char *property, Widget *widget);
+                    status_t            bind(prop::Listener *listener, atom_t property, Widget *widget);
+                    status_t            bind(prop::Listener *listener, const char *property, Display *dpy, Style *style);
+                    status_t            bind(prop::Listener *listener, atom_t property, i18n::IDictionary *dict, Style *style);
+                    status_t            bind(prop::Listener *listener, Widget *widget);
+                    status_t            bind(prop::Listener *listener, Display *dpy, Style *style);
+
+                    /**
+                     * Unbind property
+                     */
+                    void                unbind();
+            };
+        }
     
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_SYS_LSPLOCALSTRING_H_ */
+#endif /* LSP_PLUG_IN_TK_PROP_STRING_H_ */

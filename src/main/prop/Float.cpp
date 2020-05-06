@@ -13,55 +13,47 @@ namespace lsp
 {
     namespace tk
     {
-        Float::Listener::~Listener()
-        {
-            pValue      = NULL;
-        }
-
         void Float::Listener::notify(atom_t property)
         {
-            if (pValue == NULL)
-                return;
-
             // Handle change: remember new value
             if ((pValue->pStyle != NULL) ||
-                (pValue->aValue != NULL))
+                (pValue->nAtom != NULL))
             {
-                if (pStyle->get_float(pValue->aValue, &pValue->bValue) != STATUS_OK)
+                if (pStyle->get_float(pValue->nAtom, &pValue->fValue) != STATUS_OK)
                     return;
             }
 
             // Delegate event
             if (pListener != NULL)
-                pListener->notify(property);
+                pListener->notify(pValue);
         }
 
         status_t Float::unbind()
         {
-            if ((pStyle != NULL) && (aValue >= 0))
+            if ((pStyle != NULL) && (nAtom >= 0))
             {
-                status_t res = pStyle->unbind(aValue, &sListener);
+                status_t res = pStyle->unbind(nAtom, &sListener);
                 if (res != STATUS_OK)
                     return res;
             }
 
             pStyle      = NULL;
             pListener   = NULL;
-            aValue      = -1;
+            nAtom       = -1;
 
             return STATUS_NOT_BOUND;
         }
 
-        status_t Float::bind(Style *style, IStyleListener *listener, atom_t property)
+        status_t Float::bind(prop::Listener *listener, atom_t property, Style *style)
         {
             if ((style == NULL) || (property < 0))
                 return STATUS_BAD_ARGUMENTS;
 
             // Unbind first
             status_t res;
-            if ((pStyle != NULL) && (aValue >= 0))
+            if ((pStyle != NULL) && (nAtom >= 0))
             {
-                res = pStyle->unbind(aValue, &sListener);
+                res = pStyle->unbind(nAtom, &sListener);
                 if (res != STATUS_OK)
                     return res;
             }
@@ -73,7 +65,7 @@ namespace lsp
             {
                 pStyle      = style;
                 pListener   = listener;
-                aValue      = property;
+                nAtom       = property;
             }
             style->end();
 
@@ -83,10 +75,7 @@ namespace lsp
         Float::Float():
             sListener(this)
         {
-            bValue      = 0.0f;
-            pStyle      = NULL;
-            pListener   = NULL;
-            aValue      = -1;
+            fValue      = 0.0f;
         }
 
         Float::~Float()
@@ -97,13 +86,24 @@ namespace lsp
 
         float Float::set(float v)
         {
-            float prev = (aValue >= 0) ? bValue : v;
-            if (v == prev)
+            float prev = fValue;
+            if (v == fValue)
                 return prev;
 
-            bValue  = v;
-            pStyle->set_float(aValue, v);
+            fValue  = v;
+            if ((pStyle != NULL) && (nAtom >= 0))
+                pStyle->set_float(nAtom, v);
             return prev;
+        }
+
+        void Float::swap(Float *dst)
+        {
+            if (dst == this)
+                return;
+
+            float tmp = dst->fValue;
+            dst->set(fValue);
+            set(tmp);
         }
 
         namespace prop
@@ -113,7 +113,11 @@ namespace lsp
             {
             }
 
-            status_t Float::bind(Widget *widget, IStyleListener *listener, const char *property)
+            Float::~Float()
+            {
+            }
+
+            status_t Float::bind(prop::Listener *listener, const char *property, Widget *widget)
             {
                 if ((widget == NULL) || (property == NULL))
                     return STATUS_BAD_ARGUMENTS;
@@ -123,15 +127,15 @@ namespace lsp
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
-                return tk::Float::bind(widget->style(), listener, id);
+                return tk::Float::bind(listener, id, widget->style());
             }
 
-            status_t Float::bind(Widget *widget, IStyleListener *listener, atom_t property)
+            status_t Float::bind(prop::Listener *listener, atom_t property, Widget *widget)
             {
-                return tk::Float::bind(widget->style(), listener, property);
+                return tk::Float::bind(listener, property, widget->style());
             }
 
-            status_t Float::bind(Display *dpy, Style *style, IStyleListener *listener, const char *property)
+            status_t Float::bind(prop::Listener *listener, const char *property, Display *dpy, Style *style)
             {
                 if ((dpy == NULL) || (style == NULL) || (property < 0))
                     return STATUS_BAD_ARGUMENTS;
@@ -140,12 +144,12 @@ namespace lsp
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
-                return tk::Float::bind(style, listener, id);
+                return tk::Float::bind(listener, id, style);
             }
 
-            status_t Float::bind(Style *style, IStyleListener *listener, atom_t property)
+            status_t Float::bind(prop::Listener *listener, atom_t property, Style *style)
             {
-                return tk::Float::bind(style, listener, property);
+                return tk::Float::bind(listener, property, style);
             }
         }
     

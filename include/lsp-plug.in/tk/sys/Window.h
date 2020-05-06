@@ -12,6 +12,8 @@
 #include <lsp-plug.in/tk/version.h>
 
 #include <lsp-plug.in/tk/base.h>
+#include <lsp-plug.in/tk/prop.h>
+#include <lsp-plug.in/ws/IWindow.h>
 
 namespace lsp
 {
@@ -25,16 +27,6 @@ namespace lsp
 
             public:
                 static const w_class_t    metadata;
-
-            protected:
-                class Title: public LSPLocalString
-                {
-                    public:
-                        inline Title(Widget *widget): LSPLocalString(widget) {}
-
-                    protected:
-                        virtual void        sync();
-                };
 
             protected:
                 ws::IWindow        *pWindow;
@@ -57,8 +49,9 @@ namespace lsp
                 size_t              nBorder;
                 WindowActions       sActions;
                 LSPColor            sBorder;
-                Title               sTitle;
                 window_poilicy_t    enPolicy;
+
+                prop::String        sTitle;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -66,11 +59,13 @@ namespace lsp
                 static status_t     tmr_redraw_request(timestamp_t ts, void *args);
                 static status_t     slot_window_close(Widget *sender, void *ptr, void *data);
 
-                virtual Widget  *find_widget(ssize_t x, ssize_t y);
+                virtual Widget     *find_widget(ssize_t x, ssize_t y);
                 status_t            do_render();
                 void                do_destroy();
                 status_t            sync_size();
                 status_t            update_pointer();
+
+                virtual void        property_changed(Property *prop);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -129,8 +124,8 @@ namespace lsp
 
                 inline bool size_request_pending() const { return bSizeRequest; }
 
-                inline LSPLocalString *title()                  { return &sTitle; }
-                inline const LSPLocalString *title() const      { return &sTitle; }
+                inline String *title()                          { return &sTitle; }
+                inline const String *title() const              { return &sTitle; }
 
                 inline window_poilicy_t policy() const          { return enPolicy; }
 
