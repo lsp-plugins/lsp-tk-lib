@@ -1,34 +1,33 @@
 /*
- * LSPWidget.h
+ * Widget.h
  *
  *  Created on: 15 июн. 2017 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_LSPWIDGET_H_
-#define UI_TK_LSPWIDGET_H_
+#ifndef LSP_PLUG_IN_TK_BASE_WIDGET_H_
+#define LSP_PLUG_IN_TK_BASE_WIDGET_H_
 
-#include <lsp-plug.in/old-tk/sys/LSPColor.h>
-#include <lsp-plug.in/old-tk/sys/LSPDisplay.h>
-#include <lsp-plug.in/old-tk/sys/LSPFloat.h>
-#include <lsp-plug.in/old-tk/sys/LSPSlotSet.h>
-#include <lsp-plug.in/old-tk/util/LSPPadding.h>
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+
 #include <lsp-plug.in/ws/IEventHandler.h>
 #include <lsp-plug.in/ws/ISurface.h>
+
+#include <lsp-plug.in/tk/slots.h>
+#include <lsp-plug.in/tk/style.h>
 
 namespace lsp
 {
     namespace tk
     {
-        class LSPComplexWidget;
-        class LSPDisplay;
+        class ComplexWidget;
+        class Display;
 
         /** Basic widget class for any widget in the toolkit
          *
          */
-        class LSPWidget: public ws::IEventHandler
+        class Widget: public ws::IEventHandler
         {
             public:
                 static const w_class_t    metadata;
@@ -46,61 +45,60 @@ namespace lsp
                 };
 
             protected:
-                char               *pUID;           // Unique widget identifier
-
-                LSPDisplay         *pDisplay;
+                Display            *pDisplay;
                 ws::ISurface       *pSurface;
 
-                LSPComplexWidget   *pParent;
+                ComplexWidget      *pParent;
                 const w_class_t    *pClass;
 
+                char               *pUID;           // Unique widget identifier
                 realize_t           sSize;          // Geometry
                 size_t              nFlags;         // Flags
                 ws::mouse_pointer_t enCursor;
 
-                SlotSet          sSlots;         // Slots
-                LSPPadding          sPadding;
+                SlotSet             sSlots;         // Slots
+                Style               sStyle;         // Style
 
-                LSPColor            sBgColor;       // Widget color
-                LSPFloat            sBrightness;    // Brightness
-                LSPStyle            sStyle;         // Style
+                // TODO: Properties
+//                LSPPadding          sPadding;
+//                LSPColor            sBgColor;       // Widget color
+//                LSPFloat            sBrightness;    // Brightness
+
 
             //---------------------------------------------------------------------------------
             // Slot handlers
             protected:
-                static status_t slot_mouse_move(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_mouse_down(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_mouse_up(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_mouse_dbl_click(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_mouse_tri_click(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_mouse_scroll(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_mouse_in(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_mouse_out(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_key_down(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_key_up(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_hide(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_show(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_destroy(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_resize(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_resize_parent(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_focus_in(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_focus_out(LSPWidget *sender, void *ptr, void *data);
-                static status_t slot_drag_request(LSPWidget *sender, void *ptr, void *data);
+                static status_t slot_mouse_move(Widget *sender, void *ptr, void *data);
+                static status_t slot_mouse_down(Widget *sender, void *ptr, void *data);
+                static status_t slot_mouse_up(Widget *sender, void *ptr, void *data);
+                static status_t slot_mouse_dbl_click(Widget *sender, void *ptr, void *data);
+                static status_t slot_mouse_tri_click(Widget *sender, void *ptr, void *data);
+                static status_t slot_mouse_scroll(Widget *sender, void *ptr, void *data);
+                static status_t slot_mouse_in(Widget *sender, void *ptr, void *data);
+                static status_t slot_mouse_out(Widget *sender, void *ptr, void *data);
+                static status_t slot_key_down(Widget *sender, void *ptr, void *data);
+                static status_t slot_key_up(Widget *sender, void *ptr, void *data);
+                static status_t slot_hide(Widget *sender, void *ptr, void *data);
+                static status_t slot_show(Widget *sender, void *ptr, void *data);
+                static status_t slot_destroy(Widget *sender, void *ptr, void *data);
+                static status_t slot_resize(Widget *sender, void *ptr, void *data);
+                static status_t slot_resize_parent(Widget *sender, void *ptr, void *data);
+                static status_t slot_focus_in(Widget *sender, void *ptr, void *data);
+                static status_t slot_focus_out(Widget *sender, void *ptr, void *data);
+                static status_t slot_drag_request(Widget *sender, void *ptr, void *data);
 
             //---------------------------------------------------------------------------------
             // Interface for nested classes
             protected:
                 void            do_destroy();
 
-                void            unlink_widget(LSPWidget *widget);
-
-                void            init_color(color_t value, LSPColor *color);
+                void            unlink_widget(Widget *widget);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
             public:
-                explicit LSPWidget(LSPDisplay *dpy);
-                virtual ~LSPWidget();
+                explicit Widget(Display *dpy);
+                virtual ~Widget();
 
                 /** Initialize wiget
                  *
@@ -151,11 +149,11 @@ namespace lsp
                 template <class LSPTarget>
                     inline const LSPTarget *cast() const { return instance_of(&LSPTarget::metadata) ? static_cast<const LSPTarget *>(this) : NULL; }
 
-                /** Get pointer to self as pointer to LSPWidget class
+                /** Get pointer to self as pointer to Widget class
                  *
                  * @return pointer to self
                  */
-                inline LSPWidget *self()              { return this;  }
+                inline Widget *self()              { return this;  }
 
             //---------------------------------------------------------------------------------
             // Properties
@@ -164,7 +162,7 @@ namespace lsp
                  *
                  * @return display
                  */
-                inline LSPDisplay *display()        { return pDisplay; };
+                inline Display *display()        { return pDisplay; };
 
                 /** Get horizontal coordinate of the left top corner
                  *
@@ -261,19 +259,19 @@ namespace lsp
                  *
                  * @return widget focus
                  */
-                inline bool focused() const         { return has_focus(); };
+                inline bool focused() const             { return has_focus(); };
 
                 /** Check that widget is visible
                  *
                  * @return true if widget is visible
                  */
-                inline bool is_visible() const      { return nFlags & F_VISIBLE; };
+                inline bool is_visible() const          { return nFlags & F_VISIBLE; };
 
                 /** Check that widget is realized
                  *
                  * @return true if widget is realized
                  */
-                inline bool is_realized() const     { return nFlags & F_REALIZED; };
+                inline bool is_realized() const         { return nFlags & F_REALIZED; };
 
                 /** Get horizontal coordinate of the left top corner relative to the parent widget
                  *
@@ -303,7 +301,7 @@ namespace lsp
                  * Get unique widget identifier for DOM search
                  * @return unique widget identifier for DOM search
                  */
-                inline const char *unique_id() const {  return pUID;    }
+                inline const char *unique_id() const        {  return pUID;    }
 
                 /** Check that specified window coordinate lies within widget's bounds
                  * Always returns false for invisible widgets
@@ -318,20 +316,20 @@ namespace lsp
                  *
                  * @return parent widget
                  */
-                inline LSPComplexWidget *parent()           { return pParent; }
+                inline ComplexWidget *parent()              { return pParent; }
 
                 /** Get slots
                  *
                  * @return slots
                  */
-                inline SlotSet *slots()                  { return &sSlots; }
+                inline SlotSet *slots()                     { return &sSlots; }
 
                 /** Get slot
                  *
                  * @param id slot identifier
                  * @return pointer to slot or NULL
                  */
-                inline LSPSlot *slot(ui_slot_t id)          { return sSlots.slot(id); }
+                inline Slot *slot(slot_t id)                { return sSlots.slot(id); }
 
                 /** Get mouse pointer
                  *
@@ -345,29 +343,30 @@ namespace lsp
                  */
                 virtual ws::mouse_pointer_t active_cursor() const;
 
-                /** Get widget padding
-                 *
-                 * @return widget padding
-                 */
-                inline LSPPadding  *padding()               { return &sPadding; };
-
-                /**
-                 * Get background color of the widget
-                 * @return background color of the widget
-                 */
-                inline LSPColor    *bg_color()              { return &sBgColor;     }
-
-                /**
-                 * Return widget's style
-                 * @return widget's style
-                 */
-                inline LSPStyle    *style()                 { return &sStyle; }
-
-                /**
-                 * Get brightness
-                 * @return brightness
-                 */
-                inline float        brightness() const      { return sBrightness.get(); }
+// TODO
+//                /** Get widget padding
+//                 *
+//                 * @return widget padding
+//                 */
+//                inline LSPPadding  *padding()               { return &sPadding; };
+//
+//                /**
+//                 * Get background color of the widget
+//                 * @return background color of the widget
+//                 */
+//                inline LSPColor    *bg_color()              { return &sBgColor;     }
+//
+//                /**
+//                 * Return widget's style
+//                 * @return widget's style
+//                 */
+//                inline LSPStyle    *style()                 { return &sStyle; }
+//
+//                /**
+//                 * Get brightness
+//                 * @return brightness
+//                 */
+//                inline float        brightness() const      { return sBrightness.get(); }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -420,12 +419,12 @@ namespace lsp
                  */
                 virtual void        set_vfill(bool value = true);
 
-                /**
-                 * Set brightness of the widget
-                 * @param brightness brightness
-                 * @return previous value
-                 */
-                inline float        set_brightness(float brightness) { return sBrightness.set(brightness); }
+//                /**
+//                 * Set brightness of the widget
+//                 * @param brightness brightness
+//                 * @return previous value
+//                 */
+//                inline float        set_brightness(float brightness) { return sBrightness.set(brightness); }
 
                 /** Set mouse pointer
                  *
@@ -539,7 +538,7 @@ namespace lsp
                  *
                  * @param parent parent widget
                  */
-                void                set_parent(LSPComplexWidget *parent);
+                void                set_parent(ComplexWidget *parent);
 
                 /** Commit widet redraw
                  *
@@ -550,7 +549,7 @@ namespace lsp
                  *
                  * @return most top-level widget
                  */
-                LSPWidget          *toplevel();
+                Widget          *toplevel();
 
             //---------------------------------------------------------------------------------
             // Event handling
@@ -674,34 +673,8 @@ namespace lsp
                  */
                 virtual status_t on_drag_request(const ws::event_t *e, const char * const *ctype);
         };
-
-        template <class LSPTarget>
-            inline LSPTarget *widget_cast(LSPWidget *src)
-            {
-                return ((src != NULL) && (src->instance_of(&LSPTarget::metadata))) ? static_cast<LSPTarget *>(src) : NULL;
-            }
-
-        template <class LSPTarget>
-            inline const LSPTarget *widget_cast(const LSPWidget *src)
-            {
-                return ((src != NULL) && (src->instance_of(&LSPTarget::metadata))) ? static_cast<const LSPTarget *>(src) : NULL;
-            }
-
-        template <class LSPTarget>
-            inline LSPTarget *widget_ptrcast(void *src)
-            {
-                LSPWidget *w = (src != NULL) ? static_cast<LSPWidget *>(src) : NULL;
-                return ((w != NULL) && (w->instance_of(&LSPTarget::metadata))) ? static_cast<LSPTarget *>(w) : NULL;
-            }
-
-        template <class LSPTarget>
-            inline const LSPTarget *widget_ptrcast(const void *src)
-            {
-                const LSPWidget *w = (src != NULL) ? static_cast<const LSPWidget *>(src) : NULL;
-                return ((w != NULL) && (w->instance_of(&LSPTarget::metadata))) ? static_cast<const LSPTarget *>(w) : NULL;
-            }
     }
 
 } /* namespace lsp */
 
-#endif /* UI_TK_LSPWIDGET_H_ */
+#endif /* LSP_PLUG_IN_TK_BASE_WIDGET_H_ */

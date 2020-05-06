@@ -164,7 +164,7 @@ namespace lsp
             }
 
             // Initialize theme
-            sTheme.init(this);
+//            sTheme.init(this); // TODO
             pDictionary     = dict;
 
             return STATUS_OK;
