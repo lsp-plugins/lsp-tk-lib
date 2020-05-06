@@ -15,6 +15,7 @@ DEPENDENCIES = \
   LSP_LLTL_LIB \
   LSP_R3D_BASE_LIB \
   LSP_RUNTIME_LIB \
+  LSP_DSP_LIB \
   LSP_WS_LIB
 
 # For Linux-based systems, use libsndfile and xlib

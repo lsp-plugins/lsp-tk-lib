@@ -1,0 +1,18 @@
+<?xml version="1.0" charset="UTF-8" ?>
+
+<schema>
+	<!-- Alias style -->
+	<alias>
+	</alias>
+	
+	<!-- Root style -->
+	<root>
+		<scale value="1.0" type="float" />
+		<lang  value="default" type="string" />
+	</root>
+	
+	<!-- Nested style of window -->
+	<window parent="root">
+		<bg-color value="" type="string" />
+	</window>
+</schema>
