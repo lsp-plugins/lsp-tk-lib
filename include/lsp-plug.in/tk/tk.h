@@ -11,6 +11,8 @@
 #include <lsp-plug.in/tk/version.h>
 #include <lsp-plug.in/tk/types.h>
 
+#include <lsp-plug.in/tk/slot.h>
+
 
 namespace lsp
 {

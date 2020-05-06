@@ -58,7 +58,7 @@ namespace lsp
                 size_t              nFlags;         // Flags
                 ws::mouse_pointer_t enCursor;
 
-                LSPSlotSet          sSlots;         // Slots
+                SlotSet          sSlots;         // Slots
                 LSPPadding          sPadding;
 
                 LSPColor            sBgColor;       // Widget color
@@ -324,7 +324,7 @@ namespace lsp
                  *
                  * @return slots
                  */
-                inline LSPSlotSet *slots()                  { return &sSlots; }
+                inline SlotSet *slots()                  { return &sSlots; }
 
                 /** Get slot
                  *

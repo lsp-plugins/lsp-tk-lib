@@ -8,6 +8,7 @@
 #include <lsp-plug.in/tk/sys/Display.h>
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/ws/factory.h>
+#include <lsp-plug.in/i18n/Dictionary.h>
 
 namespace lsp
 {
@@ -133,14 +134,14 @@ namespace lsp
             return res;
         }
 
-        status_t Display::init(IDisplay *dpy, int argc, const char **argv)
+        status_t Display::init(ws::IDisplay *dpy, int argc, const char **argv)
         {
             // Should be non-null
             if (dpy == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
             // Initialize dictionary
-            Dictionary *dict = new Dictionary();
+            i18n::Dictionary *dict = new i18n::Dictionary();
             if (dict == NULL)
                 return STATUS_NO_MEM;
 

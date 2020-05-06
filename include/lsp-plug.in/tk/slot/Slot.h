@@ -1,33 +1,26 @@
 /*
- * LSPSlot.h
+ * Slot.h
  *
  *  Created on: 12 июн. 2017 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_LSPSLOT_H_
-#define UI_TK_LSPSLOT_H_
+#ifndef LSP_PLUG_IN_TK_SLOT_SLOT_H_
+#define LSP_PLUG_IN_TK_SLOT_SLOT_H_
 
-#include <lsp-plug.in/common/status.h>
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+#include <lsp-plug.in/tk/slot/types.h>
+#include <lsp-plug.in/lltl/darray.h>
 
 namespace lsp
 {
     namespace tk
     {
-        class LSPWidget;
-
-        /** Event handler type
-         *
-         * @param sender the widget that initiated an event
-         * @param ptr additional pointer passed as an argument to the bind()
-         * @param data data structure to process (handle)
-         * @return status of operation
+        /**
+         * Slot class for event handling in publisher-subscriber mode
          */
-        typedef status_t (* event_handler_t)(LSPWidget *sender, void *ptr, void *data);
-
-        class LSPSlot
+        class Slot
         {
             protected:
                 enum bind_flags_t
@@ -37,28 +30,27 @@ namespace lsp
                     BIND_INTERCEPT      = 1 << 1
                 };
 
-                typedef struct handler_item_t
+                typedef struct item_t
                 {
                     handler_id_t        nID;        // Identifier of handler
                     size_t              nFlags;     // Additional flags
-                    event_handler_t  pHandler;   // Handler
+                    event_handler_t     pHandler;   // Handler
                     void               *pPtr;       // Additional argument to pass
-                    handler_item_t     *pNext;      // Pointer to the next item
-                } handler_item_t;
+                } item_t;
 
             protected:
-                handler_item_t         *pRoot;      // Pointer to the first item
+                lltl::darray<item_t>    vItems;
                 handler_id_t            nID;        // ID generator
 
             protected:
-                inline handler_item_t  *find_item(handler_id_t id);
-                handler_id_t bind(event_handler_t handler, bool intercept, void *arg, bool enabled);
-                size_t disable_all(bool handler, bool interceptor);
-                size_t enable_all(bool handler, bool interceptor);
+                inline item_t          *find_item(handler_id_t id);
+                handler_id_t            bind(event_handler_t handler, bool intercept, void *arg, bool enabled);
+                size_t                  disable_all(bool handler, bool interceptor);
+                size_t                  enable_all(bool handler, bool interceptor);
 
             public:
-                explicit LSPSlot();
-                ~LSPSlot();
+                explicit Slot();
+                ~Slot();
 
             public:
                 /** Bind slot
@@ -156,9 +148,9 @@ namespace lsp
                  * @param data data to process
                  * @return status of operation
                  */
-                status_t            execute(LSPWidget *sender, void *data);
+                status_t            execute(Widget *sender, void *data);
         };
     }
 } /* namespace lsp */
 
-#endif /* UI_TK_LSPSLOT_H_ */
+#endif /* LSP_PLUG_IN_TK_SLOT_SLOT_H_ */

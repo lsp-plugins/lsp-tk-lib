@@ -15,7 +15,7 @@ namespace lsp
         class Schema
         {
             public:
-                Schema();
+                explicit Schema();
                 virtual ~Schema();
         };
     

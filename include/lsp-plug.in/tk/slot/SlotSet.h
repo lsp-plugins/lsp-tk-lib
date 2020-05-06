@@ -1,37 +1,43 @@
 /*
- * LSPSlotSet.h
+ * SlotSet.h
  *
  *  Created on: 12 июн. 2017 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_LSPSLOTSET_H_
-#define UI_TK_LSPSLOTSET_H_
+#ifndef LSP_PLUG_IN_TK_SLOT_SLOTSET_H_
+#define LSP_PLUG_IN_TK_SLOT_SLOTSET_H_
 
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+#include <lsp-plug.in/tk/slot/types.h>
+#include <lsp-plug.in/tk/slot/Slot.h>
 #include <lsp-plug.in/lltl/parray.h>
-#include <lsp-plug.in/old-tk/sys/LSPSlot.h>
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
 
 namespace lsp
 {
     namespace tk
     {
-        class LSPSlotSet
+        class Widget;
+
+        /**
+         * Set of slots identified by unique slot identifier
+         */
+        class SlotSet
         {
             protected:
                 typedef struct item_t
                 {
-                    ui_slot_t       nType;
-                    LSPSlot        *pSlot;
+                    slot_t              nType;
+                    Slot                sSlot;
                 } item_t;
 
             protected:
                 lltl::parray<item_t>    vSlots;
 
             public:
-                explicit LSPSlotSet();
-                ~LSPSlotSet();
+                explicit SlotSet();
+                ~SlotSet();
 
             public:
                 /** Get slot by identifier
@@ -39,14 +45,14 @@ namespace lsp
                  * @param id slot identifier
                  * @return slot or NULL if not present
                  */
-                LSPSlot            *slot(ui_slot_t id);
+                Slot               *slot(slot_t id);
 
                 /** Add slot
                  *
                  * @param id slot identifier
                  * @return added slot or NULL if no memory
                  */
-                LSPSlot            *add(ui_slot_t id);
+                Slot               *add(slot_t id);
 
                 /** Add slot and bind
                  *
@@ -56,7 +62,7 @@ namespace lsp
                  * @param enabled enable flag
                  * @return status of operation
                  */
-                handler_id_t        add(ui_slot_t id, event_handler_t handler, void *arg = NULL, bool enabled = true);
+                handler_id_t        add(slot_t id, event_handler_t handler, void *arg = NULL, bool enabled = true);
 
                 /** Destroy previously allocated structures
                  *
@@ -71,7 +77,7 @@ namespace lsp
                  * @param enabled enable flag
                  * @return status of operation
                  */
-                handler_id_t        bind(ui_slot_t id, event_handler_t handler, void *arg = NULL, bool enabled = true);
+                handler_id_t        bind(slot_t id, event_handler_t handler, void *arg = NULL, bool enabled = true);
 
                 /** Intercept slot
                  *
@@ -81,7 +87,7 @@ namespace lsp
                  * @param enabled enable flag
                  * @return status of operation
                  */
-                handler_id_t        intercept(ui_slot_t id, event_handler_t handler, void *arg = NULL, bool enabled = true);
+                handler_id_t        intercept(slot_t id, event_handler_t handler, void *arg = NULL, bool enabled = true);
 
                 /** Unbind slot handler
                  *
@@ -89,7 +95,7 @@ namespace lsp
                  * @param handler slot handler identifier
                  * @return status of operation
                  */
-                status_t            unbind(ui_slot_t id, handler_id_t handler);
+                status_t            unbind(slot_t id, handler_id_t handler);
 
                 /** Unbind slot handler
                  *
@@ -98,14 +104,14 @@ namespace lsp
                  * @param arg slot argument
                  * @return status of operation
                  */
-                handler_id_t        unbind(ui_slot_t id, event_handler_t handler, void *arg = NULL);
+                handler_id_t        unbind(slot_t id, event_handler_t handler, void *arg = NULL);
 
                 /** Unbind all handlers for the slot
                  *
                  * @param id slot identifier
                  * @return number of handlers removed from bindings
                  */
-                size_t              unbind_all(ui_slot_t id);
+                size_t              unbind_all(slot_t id);
 
                 /** Disable event handler in the slot
                  *
@@ -113,28 +119,28 @@ namespace lsp
                  * @param handler handler identifier
                  * @return status of operation
                  */
-                status_t            disable(ui_slot_t id, handler_id_t handler);
+                status_t            disable(slot_t id, handler_id_t handler);
 
                 /** Disable all event handlers
                  *
                  * @param id slot identifier
                  * @return number of non-disabled handlers that were disabled
                  */
-                ssize_t             disable_all(ui_slot_t id);
+                ssize_t             disable_all(slot_t id);
 
                 /** Enable event handler in the slot
                  *
                  * @param id handler identifier
                  * @return status of operation
                  */
-                status_t            enable(ui_slot_t id, handler_id_t handler);
+                status_t            enable(slot_t id, handler_id_t handler);
 
                 /** Enable all event handlers for slot
                  *
                  * @param id slot identifier
                  * @return number of non-enabled handlers that were disabled
                  */
-                size_t              enable_all(ui_slot_t id);
+                size_t              enable_all(slot_t id);
 
                 /** Execute slot handlers
                  *
@@ -143,11 +149,10 @@ namespace lsp
                  * @param data data to process
                  * @return status of operation
                  */
-                status_t            execute(ui_slot_t id, LSPWidget *sender, void *data = NULL);
-
+                status_t            execute(slot_t id, Widget *sender, void *data = NULL);
         };
 
     }
 } /* namespace lsp */
 
-#endif /* UI_TK_LSPSLOTSET_H_ */
+#endif /* LSP_PLUG_IN_TK_SLOT_SLOTSET_H_ */

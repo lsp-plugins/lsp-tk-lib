@@ -17,6 +17,7 @@
 #include <lsp-plug.in/i18n/IDictionary.h>
 #include <lsp-plug.in/lltl/parray.h>
 #include <lsp-plug.in/tk/style/Style.h>
+#include <lsp-plug.in/tk/slot.h>
 
 namespace lsp
 {
@@ -165,20 +166,24 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Properties
             public:
+                /**
+                 * Get style
+                 * @return style
+                 */
+                inline Style   *style()                     { return &sStyle; }
+
                 /** Get slots
                  *
                  * @return slots
                  */
-                inline SlotSet *slots()                  { return &sSlots; }
-
-                inline Style   *style()                 { return &sStyle; }
+                inline SlotSet *slots()                     { return &sSlots; }
 
                 /** Get slot
                  *
                  * @param id slot identifier
                  * @return pointer to slot or NULL
                  */
-                inline Slot *slot(ui_slot_t id)          { return sSlots.slot(id); }
+                inline Slot *slot(slot_t id)                { return sSlots.slot(id); }
 
                 /** Return native display handle
                  *

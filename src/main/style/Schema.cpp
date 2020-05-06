@@ -14,13 +14,10 @@ namespace lsp
         
         Schema::Schema()
         {
-            // TODO Auto-generated constructor stub
-            
         }
         
         Schema::~Schema()
         {
-            // TODO Auto-generated destructor stub
         }
     
     } /* namespace tk */
