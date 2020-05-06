@@ -16,8 +16,8 @@
 #include <lsp-plug.in/ws/IDataSink.h>
 #include <lsp-plug.in/i18n/IDictionary.h>
 #include <lsp-plug.in/lltl/parray.h>
+#include <lsp-plug.in/tk/slots.h>
 #include <lsp-plug.in/tk/style/Style.h>
-#include <lsp-plug.in/tk/slot.h>
 
 namespace lsp
 {

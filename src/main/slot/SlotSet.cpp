@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/slot/SlotSet.h>
+#include <lsp-plug.in/tk/slots/SlotSet.h>
 
 namespace lsp
 {

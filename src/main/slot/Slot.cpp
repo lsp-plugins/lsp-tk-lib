@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/slot.h>
+#include <lsp-plug.in/tk/slots.h>
 
 #define ID_GEN_MASK         0x7fffff
 

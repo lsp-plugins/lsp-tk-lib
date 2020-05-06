@@ -8,10 +8,10 @@
 #ifndef LSP_PLUG_IN_TK_TK_H_
 #define LSP_PLUG_IN_TK_TK_H_
 
+#include <lsp-plug.in/tk/slots.h>
 #include <lsp-plug.in/tk/version.h>
 #include <lsp-plug.in/tk/types.h>
 
-#include <lsp-plug.in/tk/slot.h>
 
 
 namespace lsp
