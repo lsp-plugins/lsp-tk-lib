@@ -12,8 +12,12 @@
 #include <lsp-plug.in/tk/types.h>
 
 #include <lsp-plug.in/tk/base/Widget.h>
-#include <lsp-plug.in/tk/sys/Display.h>
+#include <lsp-plug.in/tk/base/ComplexWidget.h>
+#include <lsp-plug.in/tk/base/WidgetContainer.h>
 #include <lsp-plug.in/tk/base/cast.h>
+
+#include <lsp-plug.in/tk/sys/Display.h>
+#include <lsp-plug.in/tk/sys/Window.h>
 
 
 #endif /* LSP_PLUG_IN_TK_BASE_H_ */

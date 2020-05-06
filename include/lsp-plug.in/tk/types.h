@@ -32,6 +32,12 @@ namespace lsp
             SCROLL_ALWAYS       //!< SCROLL_ALWAYS scrolling is permitted but in optional state
         };
 
+        enum window_poilicy_t
+        {
+            WP_NORMAL,
+            WP_GREEDY
+        };
+
         typedef struct w_class_t
         {
             const char         *name;

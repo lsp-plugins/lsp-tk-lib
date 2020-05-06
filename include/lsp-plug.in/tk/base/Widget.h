@@ -162,7 +162,7 @@ namespace lsp
                  *
                  * @return display
                  */
-                inline Display *display()        { return pDisplay; };
+                inline Display *display()           { return pDisplay; };
 
                 /** Get horizontal coordinate of the left top corner
                  *
@@ -343,6 +343,11 @@ namespace lsp
                  */
                 virtual ws::mouse_pointer_t active_cursor() const;
 
+                /**
+                 * Return widget's style
+                 * @return widget's style
+                 */
+                inline Style    *style()                    { return &sStyle; }
 // TODO
 //                /** Get widget padding
 //                 *
@@ -356,11 +361,6 @@ namespace lsp
 //                 */
 //                inline LSPColor    *bg_color()              { return &sBgColor;     }
 //
-//                /**
-//                 * Return widget's style
-//                 * @return widget's style
-//                 */
-//                inline LSPStyle    *style()                 { return &sStyle; }
 //
 //                /**
 //                 * Get brightness

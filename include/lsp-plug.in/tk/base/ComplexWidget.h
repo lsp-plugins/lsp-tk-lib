@@ -1,23 +1,23 @@
 /*
- * LSPComplexWidget.h
+ * ComplexWidget.h
  *
  *  Created on: 10 авг. 2017 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_BASIC_LSPCOMPLEXWIDGET_H_
-#define UI_TK_BASIC_LSPCOMPLEXWIDGET_H_
+#ifndef LSP_PLUG_IN_TK_BASE_COMPLEXWIDGET_H_
+#define LSP_PLUG_IN_TK_BASE_COMPLEXWIDGET_H_
 
-#include <lsp-plug.in/old-tk/basic/LSPWidget.h>
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#include <lsp-plug.in/tk/types.h>
+#include <lsp-plug.in/tk/version.h>
+
+#include <lsp-plug.in/tk/base/Widget.h>
 
 namespace lsp
 {
     namespace tk
     {
-        
-        class LSPComplexWidget: public LSPWidget
+        class ComplexWidget: public Widget
         {
             public:
                 static const w_class_t    metadata;
@@ -25,26 +25,26 @@ namespace lsp
             protected:
                 ssize_t             nMouse;
                 ssize_t             nKey;
-                LSPWidget          *pKey;
-                LSPWidget          *pMouse;
+                Widget             *pKey;
+                Widget             *pMouse;
 
             protected:
-                LSPWidget          *acquire_mouse_handler(const ws::event_t *e);
+                Widget             *acquire_mouse_handler(const ws::event_t *e);
                 void                release_mouse_handler(const ws::event_t *e);
 
             //---------------------------------------------------------------------------------
             // Manipulation
             protected:
-                virtual LSPWidget      *find_widget(ssize_t x, ssize_t y);
+                virtual Widget         *find_widget(ssize_t x, ssize_t y);
 
                 virtual status_t        handle_event_internal(const ws::event_t *e);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
             public:
-                explicit LSPComplexWidget(LSPDisplay *dpy);
+                explicit ComplexWidget(Display *dpy);
 
-                virtual ~LSPComplexWidget();
+                virtual ~ComplexWidget();
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -61,4 +61,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_BASIC_LSPCOMPLEXWIDGET_H_ */
+#endif /* LSP_PLUG_IN_TK_BASE_COMPLEXWIDGET_H_ */

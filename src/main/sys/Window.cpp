@@ -1,21 +1,23 @@
 /*
- * LSPWindow.cpp
+ * Window.cpp
  *
  *  Created on: 16 июн. 2017 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/widgets/LSPWindow.h>
+#include <lsp-plug.in/common/debug.h>
+#include <lsp-plug.in/common/status.h>
+#include <lsp-plug.in/tk/sys/Window.h>
 
 namespace lsp
 {
     namespace tk
     {
-        const w_class_t LSPWindow::metadata = { "LSPWindow", &LSPWidgetContainer::metadata };
+        const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };
 
-        void LSPWindow::Title::sync()
+        void Window::Title::sync()
         {
-            LSPWindow *window = widget_cast<LSPWindow>(pWidget);
+            Window *window = widget_cast<Window>(pWidget);
             if ((window == NULL) || (window->pWindow == NULL))
                 return;
 
@@ -34,8 +36,8 @@ namespace lsp
                 ::free(ascii);
         }
 
-        LSPWindow::LSPWindow(LSPDisplay *dpy, void *handle, ssize_t screen):
-            LSPWidgetContainer(dpy),
+        Window::Window(LSPDisplay *dpy, void *handle, ssize_t screen):
+            WidgetContainer(dpy),
             sActions(this),
             sBorder(this),
             sTitle(this)
@@ -74,15 +76,15 @@ namespace lsp
             pClass          = &metadata;
         }
 
-        LSPWindow::~LSPWindow()
+        Window::~Window()
         {
             do_destroy();
         }
 
-        status_t LSPWindow::init()
+        status_t Window::init()
         {
             // Initialize parent class
-            status_t result = LSPWidgetContainer::init();
+            status_t result = WidgetContainer::init();
             if (result < 0)
                 return result;
 
@@ -166,7 +168,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::sync_size()
+        status_t Window::sync_size()
         {
             // Request size
             size_request_t sr;
@@ -206,7 +208,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void LSPWindow::do_destroy()
+        void Window::do_destroy()
         {
             if (pChild != NULL)
             {
@@ -222,35 +224,35 @@ namespace lsp
             }
         }
 
-        void LSPWindow::destroy()
+        void Window::destroy()
         {
             do_destroy();
 
-            LSPWidgetContainer::destroy();
+            WidgetContainer::destroy();
         }
 
-        status_t LSPWindow::tmr_redraw_request(timestamp_t ts, void *args)
+        status_t Window::tmr_redraw_request(timestamp_t ts, void *args)
         {
             if (args == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            LSPWidget *widget = static_cast<LSPWidget *>(args);
+            Widget *widget = static_cast<Widget *>(args);
 
-            LSPWindow *_this   = static_cast<LSPWindow *>(widget);
+            Window *_this   = static_cast<Window *>(widget);
 
             return (_this != NULL) ? _this->do_render() : STATUS_BAD_ARGUMENTS;
         }
 
-        status_t LSPWindow::slot_window_close(LSPWidget *sender, void *ptr, void *data)
+        status_t Window::slot_window_close(Widget *sender, void *ptr, void *data)
         {
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            LSPWindow *_this   = widget_ptrcast<LSPWindow>(ptr);
-            return (_this != NULL) ? _this->on_close(static_cast<ws_event_t *>(data)) : STATUS_BAD_ARGUMENTS;
+            Window *_this   = widget_ptrcast<Window>(ptr);
+            return (_this != NULL) ? _this->on_close(static_cast<ws::event_t *>(data)) : STATUS_BAD_ARGUMENTS;
         }
 
-        status_t LSPWindow::do_render()
+        status_t Window::do_render()
         {
             if (pWindow == NULL)
                 return STATUS_OK;
@@ -283,19 +285,19 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void LSPWindow::query_resize()
+        void Window::query_resize()
         {
             bSizeRequest = true;
         }
 
-        status_t LSPWindow::get_absolute_geometry(realize_t *realize)
+        status_t Window::get_absolute_geometry(realize_t *realize)
         {
             if (pWindow == NULL)
                 return STATUS_BAD_STATE;
             return pWindow->get_absolute_geometry(realize);
         }
 
-        void LSPWindow::render(ISurface *s, bool force)
+        void Window::render(ISurface *s, bool force)
         {
             Color bg_color(sBgColor);
 
@@ -336,13 +338,13 @@ namespace lsp
             }
         }
 
-        status_t LSPWindow::set_cursor(mouse_pointer_t mp)
+        status_t Window::set_cursor(mouse_pointer_t mp)
         {
-            LSPWidgetContainer::set_cursor(mp);
+            WidgetContainer::set_cursor(mp);
             return update_pointer();
         }
 
-        status_t LSPWindow::override_pointer(bool override)
+        status_t Window::override_pointer(bool override)
         {
             if (bOverridePointer == override)
                 return STATUS_OK;
@@ -350,7 +352,7 @@ namespace lsp
             return update_pointer();
         }
 
-        status_t LSPWindow::update_pointer()
+        status_t Window::update_pointer()
         {
             if (pWindow == NULL)
                 return STATUS_OK;
@@ -365,7 +367,7 @@ namespace lsp
             return pWindow->set_mouse_pointer(mp);
         }
 
-        status_t LSPWindow::point_child(LSPWidget *focus)
+        status_t Window::point_child(Widget *focus)
         {
             if (pPointed == focus)
                 return STATUS_OK;
@@ -373,7 +375,7 @@ namespace lsp
             return update_pointer();
         }
 
-        void LSPWindow::set_border(size_t border)
+        void Window::set_border(size_t border)
         {
             if (nBorder == border)
                 return;
@@ -381,17 +383,17 @@ namespace lsp
             query_resize();
         }
 
-        status_t LSPWindow::grab_events(grab_t grab)
+        status_t Window::grab_events(ws::grab_t grab)
         {
             return (pWindow != NULL) ? pWindow->grab_events(grab) : STATUS_BAD_STATE;
         }
 
-        status_t LSPWindow::ungrab_events()
+        status_t Window::ungrab_events()
         {
             return (pWindow != NULL) ? pWindow->ungrab_events() : STATUS_BAD_STATE;
         }
 
-        void LSPWindow::set_policy(window_poilicy_t policy)
+        void Window::set_policy(window_poilicy_t policy)
         {
             window_poilicy_t old = enPolicy;
             enPolicy = policy;
@@ -401,7 +403,7 @@ namespace lsp
             query_resize();
         }
 
-        bool LSPWindow::hide()
+        bool Window::hide()
         {
             sRedraw.cancel();
             if (pWindow != NULL)
@@ -426,12 +428,12 @@ namespace lsp
             return true;
         }
 
-        bool LSPWindow::show()
+        bool Window::show()
         {
             return show(NULL);
         }
 
-        bool LSPWindow::show(LSPWidget *actor)
+        bool Window::show(Widget *actor)
         {
             if (nFlags & F_VISIBLE)
                 return false;
@@ -447,7 +449,7 @@ namespace lsp
             }
 
             // Evaluate layering
-            LSPWindow *wnd = (actor != NULL) ? widget_cast<LSPWindow>(actor->toplevel()) : NULL;
+            Window *wnd = (actor != NULL) ? widget_cast<Window>(actor->toplevel()) : NULL;
 
             // Update window parameters
             sync_size();
@@ -496,7 +498,7 @@ namespace lsp
             return true;
         }
 
-        status_t LSPWindow::add(LSPWidget *widget)
+        status_t Window::add(Widget *widget)
         {
             if (pChild != NULL)
                 return STATUS_ALREADY_EXISTS;
@@ -509,7 +511,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::remove(LSPWidget *widget)
+        status_t Window::remove(Widget *widget)
         {
             if (pChild != widget)
                 return STATUS_NOT_FOUND;
@@ -520,7 +522,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::set_border_style(border_style_t style)
+        status_t Window::set_border_style(border_style_t style)
         {
             if (pWindow != NULL)
             {
@@ -536,22 +538,22 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::handle_event(const ws_event_t *e)
+        status_t Window::handle_event(const ws::event_t *e)
         {
             status_t result = STATUS_OK;
-            ws_event_t ev = *e;
+            ws::event_t ev = *e;
 
             switch (e->nType)
             {
-                case UIE_FOCUS_IN:
+                case ws::UIE_FOCUS_IN:
                     result = sSlots.execute(LSPSLOT_FOCUS_IN, this, &ev);
                     break;
 
-                case UIE_FOCUS_OUT:
+                case ws::UIE_FOCUS_OUT:
                     result = sSlots.execute(LSPSLOT_FOCUS_OUT, this, &ev);
                     break;
 
-                case UIE_SHOW:
+                case ws::UIE_SHOW:
                     sRedraw.launch(-1, 40);
                     query_draw();
                     if (bMapFlag != bool(nFlags & F_VISIBLE))
@@ -562,7 +564,7 @@ namespace lsp
                     }
                     break;
 
-                case UIE_HIDE:
+                case ws::UIE_HIDE:
                     sRedraw.cancel();
                     if (bMapFlag != bool(nFlags & F_VISIBLE))
                     {
@@ -572,23 +574,23 @@ namespace lsp
                     }
                     break;
 
-                case UIE_REDRAW:
+                case ws::UIE_REDRAW:
                     query_draw(REDRAW_SURFACE);
                     break;
 
-                case UIE_CLOSE:
+                case ws::UIE_CLOSE:
                     result = sSlots.execute(LSPSLOT_CLOSE, this, &ev);
                     break;
 
-                case UIE_KEY_DOWN:
-                case UIE_KEY_UP:
+                case ws::UIE_KEY_DOWN:
+                case ws::UIE_KEY_UP:
                     lsp_trace("key event received, focus = %p", pFocus);
                     result = (pFocus != NULL) ?
                         pFocus->handle_event(e) :
-                        LSPWidget::handle_event(e);
+                        Widget::handle_event(e);
                     break;
 
-                case UIE_RESIZE:
+                case ws::UIE_RESIZE:
                 {
                     realize_t r;
 //                    result = pWindow->get_geometry(&r);
@@ -603,7 +605,7 @@ namespace lsp
                 }
 
                 default:
-                    result      = LSPWidgetContainer::handle_event(e);
+                    result      = WidgetContainer::handle_event(e);
                     break;
             }
 
@@ -613,7 +615,7 @@ namespace lsp
             return result;
         }
 
-        LSPWidget *LSPWindow::find_widget(ssize_t x, ssize_t y)
+        Widget *Window::find_widget(ssize_t x, ssize_t y)
         {
             if (pChild == NULL)
                 return NULL;
@@ -627,24 +629,24 @@ namespace lsp
             return pChild;
         }
 
-        status_t LSPWindow::on_close(const ws_event_t *e)
+        status_t Window::on_close(const ws::event_t *e)
         {
             return STATUS_OK;
         }
 
-        status_t LSPWindow::on_focus_in(const ws_event_t *e)
+        status_t Window::on_focus_in(const ws::event_t *e)
         {
             bHasFocus = true;
-            return LSPWidgetContainer::on_focus_in(e);
+            return WidgetContainer::on_focus_in(e);
         }
 
-        status_t LSPWindow::on_focus_out(const ws_event_t *e)
+        status_t Window::on_focus_out(const ws::event_t *e)
         {
             bHasFocus = false;
-            return LSPWidgetContainer::on_focus_out(e);
+            return WidgetContainer::on_focus_out(e);
         }
 
-        status_t LSPWindow::set_width(ssize_t width)
+        status_t Window::set_width(ssize_t width)
         {
             if (pWindow != NULL)
             {
@@ -660,7 +662,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::set_height(ssize_t height)
+        status_t Window::set_height(ssize_t height)
         {
             if (pWindow != NULL)
             {
@@ -676,7 +678,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::resize(ssize_t width, ssize_t height)
+        status_t Window::resize(ssize_t width, ssize_t height)
         {
             lsp_trace("Resize: width=%d, height=%d", int(width), int(height));
 
@@ -694,7 +696,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::set_left(ssize_t left)
+        status_t Window::set_left(ssize_t left)
         {
             if (pWindow != NULL)
             {
@@ -709,7 +711,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::set_top(ssize_t top)
+        status_t Window::set_top(ssize_t top)
         {
             if (pWindow != NULL)
             {
@@ -723,7 +725,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::move(ssize_t left, ssize_t top)
+        status_t Window::move(ssize_t left, ssize_t top)
         {
             if (pWindow != NULL)
             {
@@ -738,7 +740,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::set_geometry(ssize_t left, ssize_t top, ssize_t width, ssize_t height)
+        status_t Window::set_geometry(ssize_t left, ssize_t top, ssize_t width, ssize_t height)
         {
             if (pWindow != NULL)
             {
@@ -755,7 +757,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::set_geometry(const realize_t *geometry)
+        status_t Window::set_geometry(const realize_t *geometry)
         {
             lsp_trace("set_geometry: x=%d, y=%d, w=%d, h=%d",
                 int(geometry->nLeft), int(geometry->nTop), int(geometry->nWidth), int(geometry->nHeight)
@@ -771,7 +773,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::get_geometry(realize_t *geometry)
+        status_t Window::get_geometry(realize_t *geometry)
         {
             if (pWindow != NULL)
             {
@@ -783,17 +785,17 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::set_min_width(ssize_t width)
+        status_t Window::set_min_width(ssize_t width)
         {
             return set_min_size(width, sConstraints.nMinHeight);
         }
 
-        status_t LSPWindow::set_min_height(ssize_t height)
+        status_t Window::set_min_height(ssize_t height)
         {
             return set_min_size(sConstraints.nMinWidth, height);
         }
 
-        status_t LSPWindow::set_min_size(ssize_t width, ssize_t height)
+        status_t Window::set_min_size(ssize_t width, ssize_t height)
         {
             sConstraints.nMinWidth  = ((width >= 0) && (width < ssize_t(sPadding.horizontal()))) ? sPadding.horizontal() : width;
             sConstraints.nMinHeight = ((height >= 0) && (height < ssize_t(sPadding.vertical()))) ? sPadding.vertical() : height;
@@ -812,17 +814,17 @@ namespace lsp
             return pWindow->set_size_constraints(&sr);
         }
 
-        status_t LSPWindow::set_max_width(ssize_t width)
+        status_t Window::set_max_width(ssize_t width)
         {
             return set_max_size(width, sConstraints.nMaxHeight);
         }
 
-        status_t LSPWindow::set_max_height(ssize_t height)
+        status_t Window::set_max_height(ssize_t height)
         {
             return set_max_size(sConstraints.nMaxWidth, height);
         }
 
-        status_t LSPWindow::set_max_size(ssize_t width, ssize_t height)
+        status_t Window::set_max_size(ssize_t width, ssize_t height)
         {
             sConstraints.nMaxWidth  = ((width >= 0) && (width < ssize_t(sPadding.horizontal()))) ? sPadding.horizontal() : width;
             sConstraints.nMaxHeight = ((height >= 0) && (height < ssize_t(sPadding.vertical()))) ? sPadding.vertical() : height;
@@ -841,7 +843,7 @@ namespace lsp
             return pWindow->set_size_constraints(&sr);
         }
 
-        status_t LSPWindow::set_size_constraints(const size_request_t *c)
+        status_t Window::set_size_constraints(const size_request_t *c)
         {
             sConstraints.nMinWidth  = ((c->nMinWidth >= 0) && (c->nMinWidth < ssize_t(sPadding.horizontal()))) ? sPadding.horizontal() : c->nMinWidth;
             sConstraints.nMinHeight = ((c->nMinHeight >= 0) && (c->nMinHeight < ssize_t(sPadding.vertical()))) ? sPadding.vertical() : c->nMinHeight;
@@ -866,7 +868,7 @@ namespace lsp
             return pWindow->set_size_constraints(&sr);
         }
 
-        status_t LSPWindow::get_size_constraints(size_request_t *c)
+        status_t Window::get_size_constraints(size_request_t *c)
         {
             if (pWindow != NULL)
             {
@@ -879,7 +881,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::set_size_constraints(ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
+        status_t Window::set_size_constraints(ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
         {
             sConstraints.nMinWidth      = min_width;
             sConstraints.nMinHeight     = min_height;
@@ -889,14 +891,14 @@ namespace lsp
             return set_size_constraints(&sConstraints);
         }
 
-        status_t LSPWindow::focus_child(LSPWidget *focus)
+        status_t Window::focus_child(Widget *focus)
         {
             if (pFocus == focus)
                 return STATUS_OK;
             else if ((focus != NULL) && (focus->toplevel() != this))
                 return STATUS_BAD_HIERARCHY;
 
-            ws_event_t ev;
+            ws::event_t ev;
             ev.nLeft        = 0;
             ev.nTop         = 0;
             ev.nWidth       = 0;
@@ -907,8 +909,8 @@ namespace lsp
 
             if (pFocus != NULL)
             {
-                ev.nType        = UIE_FOCUS_OUT;
-                LSPWidget *f    = pFocus;
+                ev.nType        = ws::UIE_FOCUS_OUT;
+                Widget *f    = pFocus;
                 pFocus          = NULL;
                 status_t status = f->handle_event(&ev);
                 if (status != STATUS_OK)
@@ -917,7 +919,7 @@ namespace lsp
 
             if (focus != NULL)
             {
-                ev.nType        = UIE_FOCUS_IN;
+                ev.nType        = ws::UIE_FOCUS_IN;
                 pFocus          = focus;
                 status_t status = focus->handle_event(&ev);
                 if (status != STATUS_OK)
@@ -927,15 +929,15 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPWindow::unfocus_child(LSPWidget *focus)
+        status_t Window::unfocus_child(Widget *focus)
         {
             if (pPointed == focus)
                 pPointed = NULL;
             if (focus != pFocus)
                 return STATUS_OK;
 
-            ws_event_t ev;
-            ev.nType        = UIE_FOCUS_OUT;
+            ws::event_t ev;
+            ev.nType        = ws::UIE_FOCUS_OUT;
             ev.nLeft        = 0;
             ev.nTop         = 0;
             ev.nWidth       = 0;
@@ -949,34 +951,34 @@ namespace lsp
             return status;
         }
 
-        status_t LSPWindow::toggle_child_focus(LSPWidget *focus)
+        status_t Window::toggle_child_focus(Widget *focus)
         {
             return (focus == pFocus) ? unfocus_child(focus) : focus_child(focus);
         }
 
-        status_t LSPWindow::set_focus(bool focus)
+        status_t Window::set_focus(bool focus)
         {
             if (!visible())
                 return STATUS_OK;
             return (pWindow != NULL) ? pWindow->set_focus(focus) : STATUS_BAD_STATE;
         }
 
-        status_t LSPWindow::toggle_focus()
+        status_t Window::toggle_focus()
         {
             if (!visible())
                 return STATUS_OK;
             return (pWindow != NULL) ? pWindow->toggle_focus() : STATUS_BAD_STATE;
         }
 
-        bool LSPWindow::has_focus() const
+        bool Window::has_focus() const
         {
             return (visible()) ? bHasFocus : false;
         }
 
-        void LSPWindow::realize(const realize_t *r)
+        void Window::realize(const realize_t *r)
         {
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
-            LSPWidgetContainer::realize(r);
+            WidgetContainer::realize(r);
             bSizeRequest        = false;
 
             if (pChild == NULL)
@@ -1040,7 +1042,7 @@ namespace lsp
             pChild->query_draw();
         }
 
-        void LSPWindow::size_request(size_request_t *r)
+        void Window::size_request(size_request_t *r)
         {
             size_request_t cr;
 
@@ -1091,7 +1093,7 @@ namespace lsp
                 r->nMinHeight       = r->nMaxHeight;
         }
 
-        status_t LSPWindow::set_icon(const void *bgra, size_t width, size_t height)
+        status_t Window::set_icon(const void *bgra, size_t width, size_t height)
         {
             if (pWindow == NULL)
                 return STATUS_BAD_STATE;
@@ -1099,14 +1101,14 @@ namespace lsp
             return pWindow->set_icon(bgra, width, height);
         }
 
-        status_t LSPWindow::set_class(const char *instance, const char *wclass)
+        status_t Window::set_class(const char *instance, const char *wclass)
         {
             if (pWindow == NULL)
                 return STATUS_BAD_STATE;
             return pWindow->set_class(instance, wclass);
         }
 
-        status_t LSPWindow::set_class(const LSPString *instance, const LSPString *wclass)
+        status_t Window::set_class(const LSPString *instance, const LSPString *wclass)
         {
             if ((instance == NULL) || (wclass == NULL))
                 return STATUS_BAD_ARGUMENTS;
@@ -1122,14 +1124,14 @@ namespace lsp
             return res;
         }
 
-        status_t LSPWindow::set_role(const char *role)
+        status_t Window::set_role(const char *role)
         {
             if (pWindow == NULL)
                 return STATUS_BAD_STATE;
             return pWindow->set_role(role);
         }
 
-        status_t LSPWindow::set_role(const LSPString *role)
+        status_t Window::set_role(const LSPString *role)
         {
             return set_role(role->get_utf8());
         }

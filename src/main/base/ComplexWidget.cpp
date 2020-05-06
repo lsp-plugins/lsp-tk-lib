@@ -1,19 +1,20 @@
 /*
- * LSPComplexWidget.cpp
+ * ComplexWidget.cpp
  *
  *  Created on: 10 авг. 2017 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/basic/LSPComplexWidget.h>
+#include <lsp-plug.in/tk/base/ComplexWidget.h>
 
 namespace lsp
 {
     namespace tk
     {
-        const w_class_t LSPComplexWidget::metadata = { "LSPComplexWidget", &LSPWidget::metadata };
+        const w_class_t ComplexWidget::metadata = { "ComplexWidget", &Widget::metadata };
 
-        LSPComplexWidget::LSPComplexWidget(LSPDisplay *dpy): LSPWidget(dpy)
+        ComplexWidget::ComplexWidget(Display *dpy):
+            Widget(dpy)
         {
             nMouse      = 0;
             nKey        = 0;
@@ -22,17 +23,17 @@ namespace lsp
             pClass      = &metadata;
         }
 
-        LSPComplexWidget::~LSPComplexWidget()
+        ComplexWidget::~ComplexWidget()
         {
         }
 
-        LSPWidget *LSPComplexWidget::acquire_mouse_handler(const ws::event_t *e)
+        Widget *ComplexWidget::acquire_mouse_handler(const ws::event_t *e)
         {
             // Check that we work in exclusive mode
             if ((nMouse != 0) && (pMouse != NULL))
                 return pMouse;
 
-            LSPWidget *child  = find_widget(e->nLeft, e->nTop);
+            Widget *child  = find_widget(e->nLeft, e->nTop);
             if (child == pMouse)
                 return pMouse;
 
@@ -40,21 +41,21 @@ namespace lsp
             if (pMouse != NULL)
             {
                 ws::event_t ev = *e;
-                ev.nType    = UIE_MOUSE_OUT;
+                ev.nType    = ws::UIE_MOUSE_OUT;
                 pMouse->handle_event(&ev);
                 mark_pointed();
             }
             if (child != NULL)
             {
                 ws::event_t ev = *e;
-                ev.nType    = UIE_MOUSE_IN;
+                ev.nType    = ws::UIE_MOUSE_IN;
                 child->handle_event(&ev);
             }
 
             return pMouse = child;
         }
 
-        void LSPComplexWidget::release_mouse_handler(const ws::event_t *e)
+        void ComplexWidget::release_mouse_handler(const ws::event_t *e)
         {
             if (pMouse == NULL)
             {
@@ -62,36 +63,36 @@ namespace lsp
                 return;
             }
 
-            if (e->nState & MCF_BTN_MASK)
+            if (e->nState & ws::MCF_BTN_MASK)
                 return;
 
             // Check that cursor is out of the widget
             if (pMouse != find_widget(e->nLeft, e->nTop))
             {
                 ws::event_t ev = *e;
-                ev.nType    = UIE_MOUSE_OUT;
+                ev.nType    = ws::UIE_MOUSE_OUT;
                 pMouse->handle_event(&ev);
                 pMouse      = NULL;
             }
         }
 
-        LSPWidget *LSPComplexWidget::find_widget(ssize_t x, ssize_t y)
+        Widget *ComplexWidget::find_widget(ssize_t x, ssize_t y)
         {
             return NULL;
         }
 
-        status_t LSPComplexWidget::handle_event_internal(const ws::event_t *e)
+        status_t ComplexWidget::handle_event_internal(const ws::event_t *e)
         {
-            return LSPWidget::handle_event(e);
+            return Widget::handle_event(e);
         }
 
-        status_t LSPComplexWidget::handle_event(const ws::event_t *e)
+        status_t ComplexWidget::handle_event(const ws::event_t *e)
         {
             switch (e->nType)
             {
-                case UIE_KEY_UP:
+                case ws::UIE_KEY_UP:
                 {
-                    LSPWidget *child  = (pKey == NULL) ? find_widget(e->nLeft, e->nTop) : pKey;
+                    Widget *child  = (pKey == NULL) ? find_widget(e->nLeft, e->nTop) : pKey;
                     if (child == NULL)
                         return handle_event_internal(e);
 
@@ -103,9 +104,9 @@ namespace lsp
                     break;
                 }
 
-                case UIE_KEY_DOWN:
+                case ws::UIE_KEY_DOWN:
                 {
-                    LSPWidget *child  = (pKey == NULL) ? find_widget(e->nLeft, e->nTop) : pKey;
+                    Widget *child  = (pKey == NULL) ? find_widget(e->nLeft, e->nTop) : pKey;
                     if (child == NULL)
                         return handle_event_internal(e);
 
@@ -117,9 +118,9 @@ namespace lsp
                     break;
                 }
 
-                case UIE_MOUSE_UP:
+                case ws::UIE_MOUSE_UP:
                 {
-                    LSPWidget *child = acquire_mouse_handler(e);
+                    Widget *child = acquire_mouse_handler(e);
                     nMouse     &= ~(1 << e->nCode);
                     if (child == NULL)
                         return handle_event_internal(e);
@@ -130,9 +131,9 @@ namespace lsp
                     break;
                 }
 
-                case UIE_MOUSE_DOWN:
+                case ws::UIE_MOUSE_DOWN:
                 {
-                    LSPWidget *child = acquire_mouse_handler(e);
+                    Widget *child = acquire_mouse_handler(e);
                     nMouse     |= 1 << e->nCode;
                     if (child == NULL)
                         return handle_event_internal(e);
@@ -141,11 +142,11 @@ namespace lsp
                     return child->handle_event(e);
                 }
 
-                case UIE_MOUSE_DBL_CLICK:
-                case UIE_MOUSE_TRI_CLICK:
-                case UIE_MOUSE_SCROLL:
+                case ws::UIE_MOUSE_DBL_CLICK:
+                case ws::UIE_MOUSE_TRI_CLICK:
+                case ws::UIE_MOUSE_SCROLL:
                 {
-                    LSPWidget *child  = acquire_mouse_handler(e);
+                    Widget *child  = acquire_mouse_handler(e);
                     if (child == NULL)
                         handle_event_internal(e);
                     else
@@ -154,10 +155,10 @@ namespace lsp
                     break;
                 }
 
-                case UIE_MOUSE_MOVE:
+                case ws::UIE_MOUSE_MOVE:
                 {
-                    LSPWidget *child  = acquire_mouse_handler(e);
-                    nMouse      = e->nState & MCF_BTN_MASK;
+                    Widget *child  = acquire_mouse_handler(e);
+                    nMouse      = e->nState & ws::MCF_BTN_MASK;
                     if (child == NULL)
                         return handle_event_internal(e);
 
@@ -165,28 +166,28 @@ namespace lsp
                     break;
                 }
 
-                case UIE_MOUSE_OUT:
+                case ws::UIE_MOUSE_OUT:
                 {
                     // Check that cursor is out of the widget
                     if ((nMouse == 0) && (pMouse != NULL))
                     {
                         ws::event_t ev = *e;
-                        ev.nType    = UIE_MOUSE_OUT;
+                        ev.nType    = ws::UIE_MOUSE_OUT;
                         pMouse->handle_event(&ev);
                         pMouse      = NULL;
                     }
                     break;
                 }
 
-                case UIE_DRAG_REQUEST:
+                case ws::UIE_DRAG_REQUEST:
                 {
-                    LSPWidget *child = find_widget(e->nLeft, e->nTop);
+                    Widget *child = find_widget(e->nLeft, e->nTop);
                     if (child != NULL) // Pass event to the child
                         child->handle_event(e);
                     else
                     {
                         ws::event_t tmp = *e;
-                        sSlots.execute(LSPSLOT_DRAG_REQUEST, this, &tmp);
+                        sSlots.execute(SLOT_DRAG_REQUEST, this, &tmp);
                     }
                     break;
                 }

@@ -1,30 +1,26 @@
 /*
- * LSPWindow.h
+ * Window.h
  *
  *  Created on: 16 июн. 2017 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_LSPWINDOW_H_
-#define UI_TK_LSPWINDOW_H_
+#ifndef LSP_PLUG_IN_TK_SYS_WINDOW_H_
+#define LSP_PLUG_IN_TK_SYS_WINDOW_H_
 
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#include <lsp-plug.in/tk/types.h>
+#include <lsp-plug.in/tk/version.h>
+
+#include <lsp-plug.in/tk/base.h>
 
 namespace lsp
 {
     namespace tk
     {
-        enum window_poilicy_t
-        {
-            WP_NORMAL,
-            WP_GREEDY
-        };
-
-        class LSPWindow: public LSPWidgetContainer
+        class Window: public WidgetContainer
         {
             protected:
-                friend class LSPWindowActions;
+                friend class WindowActions;
                 friend class LSPDisplay;
 
             public:
@@ -34,22 +30,22 @@ namespace lsp
                 class Title: public LSPLocalString
                 {
                     public:
-                        inline Title(LSPWidget *widget): LSPLocalString(widget) {}
+                        inline Title(Widget *widget): LSPLocalString(widget) {}
 
                     protected:
                         virtual void        sync();
                 };
 
             protected:
-                INativeWindow      *pWindow;
+                ws::IWindow        *pWindow;
                 void               *pNativeHandle;
-                LSPWidget          *pChild;
-                border_style_t      enStyle;
+                Widget             *pChild;
+                ws::border_style_t  enStyle;
                 ssize_t             nScreen;
                 size_request_t      sConstraints;
                 LSPTimer            sRedraw;
-                LSPWidget          *pFocus;
-                LSPWidget          *pPointed;
+                Widget             *pFocus;
+                Widget             *pPointed;
                 bool                bHasFocus;
                 bool                bOverridePointer;
                 bool                bSizeRequest;
@@ -59,7 +55,7 @@ namespace lsp
                 float               nVertScale;
                 float               nHorScale;
                 size_t              nBorder;
-                LSPWindowActions    sActions;
+                WindowActions       sActions;
                 LSPColor            sBorder;
                 Title               sTitle;
                 window_poilicy_t    enPolicy;
@@ -68,9 +64,9 @@ namespace lsp
             // Slot handlers
             protected:
                 static status_t     tmr_redraw_request(timestamp_t ts, void *args);
-                static status_t     slot_window_close(LSPWidget *sender, void *ptr, void *data);
+                static status_t     slot_window_close(Widget *sender, void *ptr, void *data);
 
-                virtual LSPWidget  *find_widget(ssize_t x, ssize_t y);
+                virtual Widget  *find_widget(ssize_t x, ssize_t y);
                 status_t            do_render();
                 void                do_destroy();
                 status_t            sync_size();
@@ -79,8 +75,8 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Construction and destruction
             public:
-                explicit LSPWindow(LSPDisplay *dpy, void *handle = NULL, ssize_t screen = -1);
-                virtual ~LSPWindow();
+                explicit Window(LSPDisplay *dpy, void *handle = NULL, ssize_t screen = -1);
+                virtual ~Window();
 
                 /** Init window
                  *
@@ -119,15 +115,15 @@ namespace lsp
                  */
                 inline border_style_t border_style() const { return enStyle; }
 
-                inline LSPWindowActions *actions() { return &sActions; }
+                inline WindowActions *actions() { return &sActions; }
 
                 inline ssize_t screen() { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
                 status_t get_absolute_geometry(realize_t *realize);
 
-                inline LSPWidget *focused_child() const  { return const_cast<LSPWindow *>(this)->pFocus; }
+                inline Widget *focused_child() const  { return const_cast<Window *>(this)->pFocus; }
 
-                inline LSPWidget *pointed_child() const  { return const_cast<LSPWindow *>(this)->pPointed; }
+                inline Widget *pointed_child() const  { return const_cast<Window *>(this)->pPointed; }
 
                 inline bool override_pointer() const { return bOverridePointer; }
 
@@ -155,11 +151,11 @@ namespace lsp
                  * @param s surface to perform rendering
                  * @param force force flag
                  */
-                virtual void render(ISurface *s, bool force);
+                virtual void        render(ISurface *s, bool force);
 
-                virtual status_t set_cursor(mouse_pointer_t mp);
+                virtual status_t    set_cursor(mouse_pointer_t mp);
 
-                virtual status_t override_pointer(bool override = true);
+                virtual status_t    override_pointer(bool override = true);
 
                 /** Hide window
                  *
@@ -176,20 +172,20 @@ namespace lsp
                  * @param actor actor
                  * @return status of operation
                  */
-                virtual bool show(LSPWidget *actor);
+                virtual bool show(Widget *actor);
 
                 /** Add child widget
                  *
                  * @param widget widget to add
                  */
-                virtual status_t add(LSPWidget *widget);
+                virtual status_t add(Widget *widget);
 
                 /** Remove child widget
                  *
                  * @param widget child widget
                  * @return status of operation
                  */
-                virtual status_t remove(LSPWidget *widget);
+                virtual status_t remove(Widget *widget);
 
                 /** Set border style of the window
                  *
@@ -201,7 +197,7 @@ namespace lsp
                  *
                  * @param e event from window system
                  */
-                virtual status_t handle_event(const ws_event_t *e);
+                virtual status_t handle_event(const ws::event_t *e);
 
                 virtual status_t set_focus(bool focus = true);
 
@@ -245,15 +241,15 @@ namespace lsp
 
                 status_t set_size_constraints(ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
 
-                status_t focus_child(LSPWidget *focus);
+                status_t focus_child(Widget *focus);
 
-                status_t unfocus_child(LSPWidget *focus);
+                status_t unfocus_child(Widget *focus);
 
-                status_t toggle_child_focus(LSPWidget *focus);
+                status_t toggle_child_focus(Widget *focus);
 
-                status_t point_child(LSPWidget *focus);
+                status_t point_child(Widget *focus);
 
-                status_t                grab_events(grab_t grab);
+                status_t                grab_events(ws::grab_t grab);
 
                 status_t                ungrab_events();
 
@@ -280,33 +276,33 @@ namespace lsp
                  * @param e close event
                  * @return status of operation
                  */
-                virtual status_t on_close(const ws_event_t *e);
+                virtual status_t        on_close(const ws::event_t *e);
 
                 /** Widget has taken focus
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_focus_in(const ws_event_t *e);
+                virtual status_t        on_focus_in(const ws::event_t *e);
 
                 /** Widget has lost focus
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_focus_out(const ws_event_t *e);
+                virtual status_t        on_focus_out(const ws::event_t *e);
 
                 /** Realize window
                  *
                  * @param r realize parameters
                  */
-                virtual void realize(const realize_t *r);
+                virtual void            realize(const realize_t *r);
 
                 /** Request size of the window
                  *
                  * @param r pointer to structure to store data
                  */
-                virtual void size_request(size_request_t *r);
+                virtual void            size_request(size_request_t *r);
 
                 /** Set window icon
                  *
@@ -315,10 +311,10 @@ namespace lsp
                  * @param height height of icon
                  * @return status of operation
                  */
-                virtual status_t set_icon(const void *bgra, size_t width, size_t height);
+                virtual status_t        set_icon(const void *bgra, size_t width, size_t height);
         };
     
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_LSPWINDOW_H_ */
+#endif /* LSP_PLUG_IN_TK_SYS_WINDOW_H_ */

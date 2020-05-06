@@ -1,16 +1,19 @@
 /*
- * IWidgetContainer.h
+ * WidgetContainer.h
  *
  *  Created on: 16 июн. 2017 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_LSPWIDGETCONTAINER_H_
-#define UI_TK_LSPWIDGETCONTAINER_H_
+#ifndef LSP_PLUG_IN_TK_BASE_WIDGETCONTAINER_H_
+#define LSP_PLUG_IN_TK_BASE_WIDGETCONTAINER_H_
 
-#include <lsp-plug.in/old-tk/basic/LSPComplexWidget.h>
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+
+#include <lsp-plug.in/tk/sys/Display.h>
+#include <lsp-plug.in/tk/base/Widget.h>
+#include <lsp-plug.in/tk/base/ComplexWidget.h>
 
 namespace lsp
 {
@@ -19,7 +22,7 @@ namespace lsp
         /** This is a basic widget class for any widget that contains sub-widgets
          *
          */
-        class LSPWidgetContainer: public LSPComplexWidget
+        class WidgetContainer: public ComplexWidget
         {
             public:
                 static const w_class_t    metadata;
@@ -27,9 +30,9 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Construction and destruction
             public:
-                explicit LSPWidgetContainer(LSPDisplay *dpy);
+                explicit WidgetContainer(Display *dpy);
 
-                virtual ~LSPWidgetContainer();
+                virtual ~WidgetContainer();
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -39,14 +42,14 @@ namespace lsp
                  * @param child child widget to add
                  * @return status of operation
                  */
-                virtual status_t    add(LSPWidget *child);
+                virtual status_t    add(Widget *child);
 
                 /** Remove child from widget container
                  *
                  * @param child child widget to remove
                  * @return status of operation
                  */
-                virtual status_t    remove(LSPWidget *child);
+                virtual status_t    remove(Widget *child);
 
                 /** Remove all widgets
                  *
@@ -58,4 +61,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_LSPWIDGETCONTAINER_H_ */
+#endif /* LSP_PLUG_IN_TK_BASE_WIDGETCONTAINER_H_ */
