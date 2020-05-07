@@ -49,6 +49,7 @@ namespace lsp
             protected:
                 status_t            unbind();
                 status_t            bind(prop::Listener *listener, atom_t property, Style *style);
+                void                sync();
 
             public:
                 Boolean();

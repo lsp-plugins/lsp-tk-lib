@@ -15,20 +15,19 @@ namespace lsp
     {
         void Integer::Listener::notify(atom_t property)
         {
-            if (pValue == NULL)
-                return;
+            if (property == pValue->nAtom)
+                pValue->sync();
+        }
 
-            // Handle change: remember new value
-            if ((pValue->pStyle != NULL) ||
-                (pValue->nAtom != NULL))
-            {
-                if (pStyle->get_int(pValue->nAtom, &pValue->nValue) != STATUS_OK)
-                    return;
-            }
+        Integer::Integer():
+            sListener(this)
+        {
+            nValue      = 0.0f;
+        }
 
-            // Delegate event
-            if (pListener != NULL)
-                pListener->notify(pValue);
+        Integer::~Integer()
+        {
+            unbind();
         }
 
         status_t Integer::unbind()
@@ -75,17 +74,19 @@ namespace lsp
             return res;
         }
 
-        Integer::Integer():
-            sListener(this)
+        void Integer::sync()
         {
-            nValue      = 0.0f;
-        }
+            // Handle change: remember new value
+            if (pStyle != NULL)
+            {
+                if (pStyle->get_int(nAtom, &nValue) != STATUS_OK)
+                    return;
+            }
 
-        Integer::~Integer()
-        {
-            unbind();
+            // Delegate event
+            if (pListener != NULL)
+                pListener->notify(this);
         }
-
 
         ssize_t Integer::set(ssize_t v)
         {
@@ -96,6 +97,8 @@ namespace lsp
             nValue  = v;
             if ((pStyle != NULL) && (nAtom >= 0))
                 pStyle->set_int(nAtom, v);
+            else if (pListener != NULL)
+                pListener->notify(this);
             return prev;
         }
 

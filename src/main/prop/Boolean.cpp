@@ -15,20 +15,19 @@ namespace lsp
     {
         void Boolean::Listener::notify(atom_t property)
         {
-            if (pValue == NULL)
-                return;
+            if (pValue->nAtom == property)
+                pValue->sync();
+        }
 
-            // Handle change: remember new value
-            if ((pValue->pStyle != NULL) ||
-                (pValue->nAtom != NULL))
-            {
-                if (pStyle->get_bool(pValue->nAtom, &pValue->bValue) != STATUS_OK)
-                    return;
-            }
+        Boolean::Boolean():
+            sListener(this)
+        {
+            bValue      = 0.0f;
+        }
 
-            // Delegate event
-            if (pListener != NULL)
-                pListener->notify(pValue);
+        Boolean::~Boolean()
+        {
+            unbind();
         }
 
         status_t Boolean::unbind()
@@ -75,17 +74,19 @@ namespace lsp
             return res;
         }
 
-        Boolean::Boolean():
-            sListener(this)
+        void Boolean::sync()
         {
-            bValue      = 0.0f;
-        }
+            // Handle change: remember new value
+            if (pStyle != NULL)
+            {
+                if (pStyle->get_bool(nAtom, &bValue) != STATUS_OK)
+                    return;
+            }
 
-        Boolean::~Boolean()
-        {
-            unbind();
+            // Delegate event
+            if (pListener != NULL)
+                pListener->notify(this);
         }
-
 
         bool Boolean::set(bool v)
         {
@@ -96,6 +97,8 @@ namespace lsp
             bValue  = v;
             if ((pStyle != NULL) && (nAtom >= 0))
                 pStyle->set_bool(nAtom, v);
+            else if (pListener != NULL)
+                pListener->notify(this);
             return prev;
         }
 

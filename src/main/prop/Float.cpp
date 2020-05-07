@@ -15,17 +15,19 @@ namespace lsp
     {
         void Float::Listener::notify(atom_t property)
         {
-            // Handle change: remember new value
-            if ((pValue->pStyle != NULL) ||
-                (pValue->nAtom != NULL))
-            {
-                if (pStyle->get_float(pValue->nAtom, &pValue->fValue) != STATUS_OK)
-                    return;
-            }
+            if (pValue->nAtom == property)
+                pValue->sync();
+        }
 
-            // Delegate event
-            if (pListener != NULL)
-                pListener->notify(pValue);
+        Float::Float():
+            sListener(this)
+        {
+            fValue      = 0.0f;
+        }
+
+        Float::~Float()
+        {
+            unbind();
         }
 
         status_t Float::unbind()
@@ -72,17 +74,19 @@ namespace lsp
             return res;
         }
 
-        Float::Float():
-            sListener(this)
+        void Float::sync()
         {
-            fValue      = 0.0f;
-        }
+            // Handle change: remember new value
+            if (pStyle != NULL)
+            {
+                if (pStyle->get_float(nAtom, &fValue) != STATUS_OK)
+                    return;
+            }
 
-        Float::~Float()
-        {
-            unbind();
+            // Delegate event
+            if (pListener != NULL)
+                pListener->notify(this);
         }
-
 
         float Float::set(float v)
         {
@@ -93,6 +97,8 @@ namespace lsp
             fValue  = v;
             if ((pStyle != NULL) && (nAtom >= 0))
                 pStyle->set_float(nAtom, v);
+            else if (pListener != NULL)
+                pListener->notify(this);
             return prev;
         }
 
