@@ -22,7 +22,7 @@ namespace lsp
         class Widget;
         
         /**
-         * Integering-point property interface
+         * Integering property interface
          */
         class Integer: public Property
         {
@@ -43,6 +43,7 @@ namespace lsp
                 };
 
             protected:
+                atom_t              nAtom;
                 ssize_t             nValue;
                 Listener            sListener;
 
@@ -79,7 +80,7 @@ namespace lsp
         namespace prop
         {
             /**
-             * Integering-point property implementation
+             * Integering property implementation
              */
             class Integer: public tk::Integer
             {

@@ -43,6 +43,7 @@ namespace lsp
                 };
 
             protected:
+                atom_t              nAtom;
                 float               fValue;
                 Listener            sListener;
 

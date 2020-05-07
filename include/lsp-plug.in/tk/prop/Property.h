@@ -12,6 +12,7 @@
 #include <lsp-plug.in/tk/types.h>
 
 #include <lsp-plug.in/tk/style.h>
+#include <lsp-plug.in/tk/prop/types.h>
 #include <lsp-plug.in/tk/prop/Listener.h>
 
 namespace lsp
@@ -34,14 +35,12 @@ namespace lsp
             protected:
                 Style              *pStyle;
                 prop::Listener     *pListener;
-                atom_t              nAtom;
 
             protected:
                 inline Property()
                 {
                     pStyle          = NULL;
                     pListener       = NULL;
-                    nAtom           = -1;
                 }
 
             public:

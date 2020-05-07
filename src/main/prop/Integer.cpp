@@ -22,6 +22,7 @@ namespace lsp
         Integer::Integer():
             sListener(this)
         {
+            nAtom       = -1;
             nValue      = 0.0f;
         }
 

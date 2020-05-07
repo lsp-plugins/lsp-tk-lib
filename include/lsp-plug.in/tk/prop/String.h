@@ -57,6 +57,7 @@ namespace lsp
                 };
 
             protected:
+                atom_t              nAtom;
                 LSPString           sText;      // Text used for rendering
                 Params              sParams;    // Parameters
                 size_t              nFlags;     // Different flags

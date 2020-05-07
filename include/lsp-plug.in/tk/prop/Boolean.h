@@ -43,6 +43,7 @@ namespace lsp
                 };
 
             protected:
+                atom_t              nAtom;
                 bool                bValue;
                 Listener            sListener;
 
@@ -79,7 +80,7 @@ namespace lsp
         namespace prop
         {
             /**
-             * Booleaning-point property implementation
+             * Booleaning property implementation
              */
             class Boolean: public tk::Boolean
             {

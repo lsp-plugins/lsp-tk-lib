@@ -11,6 +11,7 @@
 #include <lsp-plug.in/tk/version.h>
 #include <lsp-plug.in/tk/types.h>
 
+#include <lsp-plug.in/tk/prop/types.h>
 #include <lsp-plug.in/tk/prop/Property.h>
 
 namespace lsp

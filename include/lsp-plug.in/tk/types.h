@@ -44,16 +44,6 @@ namespace lsp
             const w_class_t    *parent;
         } w_class_t;
 
-        enum property_type_t
-        {
-            PT_INT,         // Integer property
-            PT_FLOAT,       // Floating-point property
-            PT_BOOL,        // Boolean property
-            PT_STRING,      // String (text) property
-
-            PT_UNKNOWN  = -1
-        };
-
         typedef struct size_request_t
         {
             ssize_t             nMinWidth;

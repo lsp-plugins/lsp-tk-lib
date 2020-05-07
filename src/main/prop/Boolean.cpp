@@ -22,6 +22,7 @@ namespace lsp
         Boolean::Boolean():
             sListener(this)
         {
+            nAtom       = -1;
             bValue      = 0.0f;
         }
 

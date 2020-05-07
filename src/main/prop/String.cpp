@@ -31,6 +31,7 @@ namespace lsp
             sParams(this),
             sListener(this)
         {
+            nAtom       = -1;
             pDict       = NULL;
             nFlags      = 0;
         }

@@ -22,6 +22,7 @@ namespace lsp
         Float::Float():
             sListener(this)
         {
+            nAtom       = -1;
             fValue      = 0.0f;
         }
 
