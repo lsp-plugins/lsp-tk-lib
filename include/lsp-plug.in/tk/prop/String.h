@@ -259,7 +259,7 @@ namespace lsp
                     /**
                      * Unbind property
                      */
-                    void                unbind();
+                    status_t            unbind();
             };
         }
     

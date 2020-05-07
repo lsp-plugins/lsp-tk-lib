@@ -67,6 +67,9 @@ namespace lsp
         
         status_t Color::bind(prop::Listener *listener, const char *property, Style *style, Display *dpy)
         {
+            if ((style == NULL) || (dpy == NULL) || (property == NULL))
+                return STATUS_BAD_ARGUMENTS;
+
             if (pStyle == style)
                 return STATUS_OK;
 
@@ -200,44 +203,49 @@ namespace lsp
 
         void Color::commit(atom_t property)
         {
-            Style *style = pStyle;
-            if (style == NULL)
+            if ((pStyle == NULL) || (property < 0))
                 return;
 
-            Color *c = (pColor != NULL) ? &pColor->sColor : NULL;
-            if (c == NULL)
-                return;
+            lsp::Color &c = sColor;
 
             float v;
-            style->begin();
+            pStyle->begin();
 
-            if ((property == aR) && (style->get_float(aR, &v) == STATUS_OK))
-                c->red(v);
-            if ((property == aG) && (style->get_float(aG, &v) == STATUS_OK))
-                c->green(v);
-            if ((property == aB) && (style->get_float(aB, &v) == STATUS_OK))
-                c->blue(v);
+            if ((property == vAtoms[P_R]) && (pStyle->get_float(vAtoms[P_R], &v) == STATUS_OK))
+                c.red(v);
+            if ((property == vAtoms[P_G]) && (pStyle->get_float(vAtoms[P_G], &v) == STATUS_OK))
+                c.green(v);
+            if ((property == vAtoms[P_B]) && (pStyle->get_float(vAtoms[P_B], &v) == STATUS_OK))
+                c.blue(v);
 
-            if ((property == aH) && (style->get_float(aH, &v) == STATUS_OK))
-                c->hue(v);
-            if ((property == aS) && (style->get_float(aS, &v) == STATUS_OK))
-                c->saturation(v);
-            if ((property == aL) && (style->get_float(aL, &v) == STATUS_OK))
-                c->lightness(v);
+            if ((property == vAtoms[P_H]) && (pStyle->get_float(vAtoms[P_H], &v) == STATUS_OK))
+                c.hue(v);
+            if ((property == vAtoms[P_S]) && (pStyle->get_float(vAtoms[P_S], &v) == STATUS_OK))
+                c.saturation(v);
+            if ((property == vAtoms[P_L]) && (pStyle->get_float(vAtoms[P_L], &v) == STATUS_OK))
+                c.lightness(v);
 
-            if ((property == aA) && (style->get_float(aA, &v) == STATUS_OK))
-                c->alpha(v);
+            if ((property == vAtoms[P_A]) && (pStyle->get_float(vAtoms[P_A], &v) == STATUS_OK))
+                c.alpha(v);
 
-            // TODO: add textual properties configuration
+            const char *s;
+            if ((property == vAtoms[P_HSL]) && (pStyle->get_string(vAtoms[P_HSL], &s) == STATUS_OK))
+                c.parse_hsl(s);
+            if ((property == vAtoms[P_HSLA]) && (pStyle->get_string(vAtoms[P_HSLA], &s) == STATUS_OK))
+                c.parse_hsla(s);
 
-            style->end();
+            if ((property == vAtoms[P_RGB]) && (pStyle->get_string(vAtoms[P_RGB], &s) == STATUS_OK))
+                c.parse_rgb(s);
+            if ((property == vAtoms[P_RGBA]) && (pStyle->get_string(vAtoms[P_RGBA], &s) == STATUS_OK))
+                c.parse_rgba(s);
 
-            if (pColor != NULL)
-            {
-                pColor->color_changed();
-                if (pColor->pWidget != NULL)
-                    pColor->pWidget->query_draw();
-            }
+            if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
+                c.parse4(s);
+
+            pStyle->end();
+
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         void Color::red(float r)
@@ -341,47 +349,50 @@ namespace lsp
         }
 
 
-        status_t Color::bind(const char *property)
+        namespace prop
         {
-            if (property == NULL)
-                return STATUS_BAD_ARGUMENTS;
-            if (pWidget == NULL)
-                return STATUS_BAD_STATE;
-            return sListener.bind(pWidget->display(), pWidget->style(), property);
-        }
+            Color::Color():
+                tk::Color()
+            {
+            }
 
-        status_t Color::bind(LSPStyle *style, const char *property)
-        {
-            if ((property == NULL) || (style == NULL))
-                return STATUS_BAD_ARGUMENTS;
-            if (pWidget == NULL)
-                return STATUS_BAD_STATE;
+            Color::~Color()
+            {
+            }
 
-            return sListener.bind(pWidget->display(), style, property);
-        }
+            status_t Color::bind(prop::Listener *listener, const char *property, Widget *widget)
+            {
+                if (widget == NULL)
+                    return STATUS_BAD_ARGUMENTS;
+                return tk::Color::bind(listener, property, widget->style(), widget->display());
+            }
 
-        status_t Color::bind(LSPDisplay *dpy, LSPStyle *style, const char *property)
-        {
-            if ((property == NULL) || (style == NULL) || (dpy == NULL))
-                return STATUS_BAD_ARGUMENTS;
+            status_t Color::bind(prop::Listener *listener, atom_t property, Widget *widget)
+            {
+                if (widget == NULL)
+                    return STATUS_BAD_ARGUMENTS;
+                Display *dpy = widget->display();
+                if (dpy == NULL)
+                    return STATUS_BAD_ARGUMENTS;
+                return tk::Color::bind(listener, dpy->atom_name(property), widget->style(), widget->display());
+            }
 
-            return sListener.bind(dpy, style, property);
-        }
+            status_t Color::bind(prop::Listener *listener, const char *property, Style *style, Display *dpy)
+            {
+                return tk::Color::bind(listener, property, style, dpy);
+            }
 
-        Color::~Color()
-        {
-        }
+            status_t Color::bind(prop::Listener *listener, atom_t property, Style *style, Display *dpy)
+            {
+                if (dpy == NULL)
+                    return STATUS_BAD_ARGUMENTS;
+                return tk::Color::bind(listener, dpy->atom_name(property), style, dpy);
+            }
 
-        void Color::color_changed()
-        {
-        }
-
-        void Color::trigger_change()
-        {
-            color_changed();
-            if (pWidget != NULL)
-                pWidget->query_draw();
-            sListener.sync();
+            status_t Color::unbind()
+            {
+                return tk::Color::unbind();
+            }
         }
 
 

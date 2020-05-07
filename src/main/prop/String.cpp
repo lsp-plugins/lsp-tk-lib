@@ -440,6 +440,11 @@ namespace lsp
             {
                 return bind(listener, LANG_ATOM_NAME, dpy, style);
             }
+
+            status_t String::unbind()
+            {
+                return tk::String::unbind();
+            }
         }
 
     } /* namespace tk */

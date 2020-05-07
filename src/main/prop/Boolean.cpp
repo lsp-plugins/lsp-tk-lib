@@ -154,6 +154,8 @@ namespace lsp
             {
                 return tk::Boolean::bind(listener, property, style);
             }
+
+
         }
 
     } /* namespace calc */

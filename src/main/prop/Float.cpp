@@ -158,6 +158,11 @@ namespace lsp
             {
                 return tk::Float::bind(listener, property, style);
             }
+
+            status_t Float::unbind()
+            {
+                return tk::Float::unbind();
+            }
         }
     
     } /* namespace calc */

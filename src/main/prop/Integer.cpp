@@ -154,6 +154,11 @@ namespace lsp
             {
                 return tk::Integer::bind(listener, property, style);
             }
+
+            status_t Integer::unbind()
+            {
+                return tk::Integer::unbind();
+            }
         }
     
     } /* namespace tk */

@@ -107,16 +107,16 @@ namespace lsp
                 void set_hsla(float h, float s, float l, float a);
 
             public:
-                void blend(const Color &c, float alpha)                     { sColor.blend(c, alpha); trigger_change(); }
-                void blend(float r, float g, float b, float alpha)          { sColor.blend(r, g, b, alpha); trigger_change(); }
-                void darken(float amount)                                   { sColor.darken(amount); trigger_change(); }
-                void lighten(float amount)                                  { sColor.lighten(amount); trigger_change(); }
+                void blend(const lsp::Color &c, float alpha)                { sColor.blend(c, alpha); sync(); }
+                void blend(float r, float g, float b, float alpha)          { sColor.blend(r, g, b, alpha); sync(); }
+                void darken(float amount)                                   { sColor.darken(amount); sync(); }
+                void lighten(float amount)                                  { sColor.lighten(amount); sync(); }
 
-                void copy(const Color &c)                                   { sColor.copy(c); trigger_change(); }
-                void copy(const Color *c)                                   { sColor.copy(c); trigger_change(); }
+                void copy(const lsp::Color &c)                              { sColor.copy(c); sync(); }
+                void copy(const lsp::Color *c)                              { sColor.copy(c); sync(); }
 
-                void copy(const lsp::Color &c)                              { sColor.copy(c.sColor); trigger_change(); }
-                void copy(const lsp::Color *c)                              { sColor.copy(c->sColor); trigger_change(); }
+                void copy(const Color &c)                                   { sColor.copy(c.sColor); sync(); }
+                void copy(const Color *c)                                   { sColor.copy(c->sColor); sync(); }
 
                 inline int format_rgb(char *dst, size_t len, size_t tolerance = 2) const
                 {
@@ -141,9 +141,9 @@ namespace lsp
                 inline uint32_t rgb24() const           { return sColor.rgb24(); }
 
             public:
-                inline const Color *color() const       { return &sColor; }
+                inline const lsp::Color *color() const       { return &sColor; }
 
-                operator const Color *() const          { return &sColor; }
+                operator const lsp::Color *() const          { return &sColor; }
         };
 
         namespace prop
@@ -166,13 +166,13 @@ namespace lsp
                      */
                     status_t            bind(prop::Listener *listener, const char *property, Widget *widget);
                     status_t            bind(prop::Listener *listener, atom_t property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, const char *property, Display *dpy, Style *style);
-                    status_t            bind(prop::Listener *listener, atom_t property, Style *style);
+                    status_t            bind(prop::Listener *listener, const char *property, Style *style, Display *dpy);
+                    status_t            bind(prop::Listener *listener, atom_t property, Style *style, Display *dpy);
 
                     /**
                      * Unbind property
                      */
-                    void                unbind();
+                    status_t            unbind();
             };
         }
 
