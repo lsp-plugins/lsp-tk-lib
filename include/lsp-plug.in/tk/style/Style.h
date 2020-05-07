@@ -10,6 +10,7 @@
 
 #include <lsp-plug.in/tk/types.h>
 #include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/prop/types.h>
 #include <lsp-plug.in/tk/style/IStyleListener.h>
 #include <lsp-plug.in/runtime/LSPString.h>
 #include <lsp-plug.in/lltl/parray.h>

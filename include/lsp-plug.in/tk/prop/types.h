@@ -21,6 +21,15 @@ namespace lsp
 
             PT_UNKNOWN  = -1
         };
+
+        namespace prop
+        {
+            typedef struct desc_t
+            {
+                const char         *postfix;
+                property_type_t     type;
+            } desc_t;
+        }
     }
 }
 

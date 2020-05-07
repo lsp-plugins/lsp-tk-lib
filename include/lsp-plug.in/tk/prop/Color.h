@@ -1,12 +1,12 @@
 /*
- * LSPColor.h
+ * Color.h
  *
  *  Created on: 5 нояб. 2017 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_SYS_LSPCOLOR_H_
-#define UI_TK_SYS_LSPCOLOR_H_
+#ifndef LSP_PLUG_IN_TK_PROP_COLOR_H_
+#define LSP_PLUG_IN_TK_PROP_COLOR_H_
 
 #include <lsp-plug.in/tk/version.h>
 #include <lsp-plug.in/tk/types.h>
@@ -19,14 +19,14 @@ namespace lsp
 {
     namespace tk
     {
-        class LSPDisplay;
-        class LSPWidget;
-        class LSPStyle;
+        class Display;
+        class Widget;
+        class Style;
 
         /**
          * Color property interface
          */
-        class Color: public Property
+        class Color: public MultiProperty
         {
             protected:
                 Color & operator = (const Color &);
@@ -57,13 +57,14 @@ namespace lsp
                 };
 
             protected:
+                static const prop::desc_t   DESC[];
+
+            protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 lsp::Color          sColor;             // Color holder
                 Listener            sListener;          // Listener
 
             protected:
-                status_t            unbind();
-                status_t            bind(prop::Listener *listener, const char *property, Style *style, Display *dpy);
                 void                sync();
                 void                commit(atom_t property);
 
@@ -72,7 +73,7 @@ namespace lsp
                 ~Color();
 
             public:
-                void            set_default();
+                inline void         set_default()   { MultiProperty::set_default(vAtoms, DESC); };
 
             public:
                 inline float red() const        { return sColor.red();      }
@@ -179,4 +180,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_SYS_LSPCOLOR_H_ */
+#endif /* LSP_PLUG_IN_TK_PROP_COLOR_H_ */

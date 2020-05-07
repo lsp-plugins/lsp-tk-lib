@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/base/Widget.h>
+#include <lsp-plug.in/tk/base.h>
 
 namespace lsp
 {
@@ -20,10 +20,6 @@ namespace lsp
 
         Widget::Widget(Display *dpy):
             sProperties(this)
-// TODO
-//            sPadding(this),
-//            sBgColor(this),
-//            sBrightness(this)
         {
             pDisplay        = dpy;
             pSurface        = NULL;
@@ -64,15 +60,9 @@ namespace lsp
             {
                 sScaling.bind(&sProperties, "scaling", this);
                 sBrightness.bind(&sProperties, "brightness", this);
+                sPadding.bind(&sProperties, "padding", this);
+                sBgColor.bind(&sProperties, "bg_color", this);
             }
-// TODO
-//            // Initialize style
-//            if (res == STATUS_OK)
-//                res = sStyle.add_parent(pDisplay->theme()->root());
-//            if (res == STATUS_OK)
-//                res = sBgColor.bind("bg_color");
-//            if (res == STATUS_OK)
-//                res = sBrightness.bind("brightness");
 
             // Declare slots
             handler_id_t id = 0;
@@ -126,7 +116,11 @@ namespace lsp
         {
             if (sScaling.is(prop))
                 query_resize();
-            else if (sBrightness.is(prop))
+            if (sBrightness.is(prop))
+                query_draw();
+            if (sPadding.is(prop))
+                query_resize();
+            if (sBgColor.is(prop))
                 query_draw();
         }
 

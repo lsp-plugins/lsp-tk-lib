@@ -72,11 +72,10 @@ namespace lsp
                 Style               sStyle;         // Style
                 PropListener        sProperties;    // Properties listener
 
-                // TODO: Properties
                 prop::Float         sScaling;       // UI scaling factor
                 prop::Float         sBrightness;    // Brightness
-//                LSPPadding          sPadding;
-//                LSPColor            sBgColor;       // Widget color
+                prop::Padding       sPadding;
+                prop::Color         sBgColor;       // Widget color
 
 
             //---------------------------------------------------------------------------------
@@ -363,27 +362,26 @@ namespace lsp
                  * Return widget's style
                  * @return widget's style
                  */
-                inline Style    *style()                    { return &sStyle; }
-// TODO
-//                /** Get widget padding
-//                 *
-//                 * @return widget padding
-//                 */
-//                inline LSPPadding  *padding()               { return &sPadding; };
-//
-//                /**
-//                 * Get background color of the widget
-//                 * @return background color of the widget
-//                 */
-//                inline LSPColor    *bg_color()              { return &sBgColor;     }
-//
-//
+                inline Style       *style()                 { return &sStyle;       }
+
+                /** Get widget padding
+                 *
+                 * @return widget padding
+                 */
+                inline Padding     *padding()               { return &sPadding;     };
+
+                /**
+                 * Get background color of the widget
+                 * @return background color of the widget
+                 */
+                inline Color       *bg_color()              { return &sBgColor;     }
+
                 /**
                  * Get brightness property
                  * @return brightness property
                  */
-                inline Float       *brightness()            { return &sBrightness; }
-                inline const Float *brightness() const      { return &sBrightness; }
+                inline Float       *brightness()            { return &sBrightness;  }
+                inline const Float *brightness() const      { return &sBrightness;  }
 
                 /**
                  * Get brightness property

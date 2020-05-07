@@ -48,15 +48,15 @@ namespace lsp
                 float               nHorScale;
                 size_t              nBorder;
                 WindowActions       sActions;
-                LSPColor            sBorder;
                 window_poilicy_t    enPolicy;
 
+                prop::Color         sBorder;
                 prop::String        sTitle;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
             protected:
-                static status_t     tmr_redraw_request(timestamp_t ts, void *args);
+                static status_t     tmr_redraw_request(ws::timestamp_t ts, void *args);
                 static status_t     slot_window_close(Widget *sender, void *ptr, void *data);
 
                 virtual Widget     *find_widget(ssize_t x, ssize_t y);
@@ -96,7 +96,7 @@ namespace lsp
                  * Get native window
                  * @return native window
                  */
-                inline INativeWindow *native() { return pWindow; };
+                inline ws::IWindow *native() { return pWindow; };
 
                 /**
                  * Return true if window is a sub-window of another window
@@ -108,7 +108,7 @@ namespace lsp
                  *
                  * @return border style of the window
                  */
-                inline border_style_t border_style() const { return enStyle; }
+                inline ws::border_style_t border_style() const { return enStyle; }
 
                 inline WindowActions *actions() { return &sActions; }
 
@@ -134,7 +134,7 @@ namespace lsp
                 inline float            vscale() const          { return nVertScale; }
                 inline float            hscale() const          { return nHorScale; }
                 inline size_t           border() const          { return nBorder; }
-                inline LSPColor        *border_color()          { return &sBorder; }
+                inline Color           *border_color()          { return &sBorder; }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -186,7 +186,7 @@ namespace lsp
                  *
                  * @param style border style of the window
                  */
-                status_t set_border_style(border_style_t style);
+                status_t set_border_style(ws::border_style_t style);
 
                 /** Handle event from window system
                  *
