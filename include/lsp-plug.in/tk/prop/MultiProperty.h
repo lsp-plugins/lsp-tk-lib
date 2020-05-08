@@ -40,9 +40,6 @@ namespace lsp
                 void            set_default(atom_t *atoms, const prop::desc_t *desc);
 
             protected:
-                static size_t   parse_ints(ssize_t *dst, size_t max, const LSPString *s);
-
-            protected:
                 inline MultiProperty(prop::Listener *listener = NULL): Property(listener) {};
         };
 

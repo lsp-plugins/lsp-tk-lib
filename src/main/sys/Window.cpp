@@ -17,7 +17,8 @@ namespace lsp
 
         Window::Window(Display *dpy, void *handle, ssize_t screen):
             WidgetContainer(dpy),
-            sBorder(&sProperties),
+            sBorderColor(&sProperties),
+            sBorderStyle(&sProperties),
             sTitle(&sProperties),
             sActions(this)
         {
@@ -26,7 +27,6 @@ namespace lsp
             pWindow         = NULL;
             pChild          = NULL;
             pNativeHandle   = handle;
-            enStyle         = ws::BS_SIZABLE;
             nScreen         = screen;
             pFocus          = NULL;
             pPointed        = NULL;
@@ -68,10 +68,10 @@ namespace lsp
                 return result;
 
             sTitle.bind(this);
-            sBorder.bind("border", this);
+            sBorderColor.bind("border", this);
 
             // Init color
-            init_color(C_LABEL_TEXT, &sBorder);
+            init_color(C_LABEL_TEXT, &sBorderColor);
 
             // Add slot(s)
             ui_handler_id_t id = 0;
@@ -107,7 +107,7 @@ namespace lsp
             lsp_trace("Initializing window geometry, window id=%p", pWindow->handle());
 
             realize_t r;
-            result = pWindow->set_border_style(enStyle);
+            result = pWindow->set_border_style(sBorderStyle.get());
             if (result != STATUS_SUCCESS)
             {
                 destroy();
@@ -303,7 +303,7 @@ namespace lsp
                     bool aa = s->set_antialiasing(true);
                     ssize_t bw = nBorder >> 1;
 
-                    lsp::Color border(sBorder);
+                    lsp::Color border(sBorderColor);
                     border.scale_lightness(sBrightness.get());
 
                     s->wire_round_rect(
@@ -366,6 +366,11 @@ namespace lsp
                 pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
                 if (ascii != NULL)
                     ::free(ascii);
+            }
+            if (sBorderStyle.is(prop))
+            {
+                if (pWindow != NULL)
+                    pWindow->set_border_style(sBorderStyle.get());
             }
         }
 
@@ -465,7 +470,7 @@ namespace lsp
             if (wnd != NULL)
             {
                 // Correct window location
-                switch (enStyle)
+                switch (sBorderStyle.get())
                 {
                     case ws::BS_DIALOG:
                     {
@@ -520,22 +525,6 @@ namespace lsp
 
             unlink_widget(pChild);
             pChild  = NULL;
-
-            return STATUS_OK;
-        }
-
-        status_t Window::set_border_style(ws::border_style_t style)
-        {
-            if (pWindow != NULL)
-            {
-                status_t result = pWindow->set_border_style(style);
-                if (result != STATUS_OK)
-                    return result;
-
-                return pWindow->get_border_style(&enStyle);
-            }
-            else
-                enStyle = style;
 
             return STATUS_OK;
         }

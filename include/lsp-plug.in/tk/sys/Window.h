@@ -34,7 +34,6 @@ namespace lsp
                 ws::IWindow        *pWindow;
                 void               *pNativeHandle;
                 Widget             *pChild;
-                ws::border_style_t  enStyle;
                 ssize_t             nScreen;
                 size_request_t      sConstraints;
                 Timer               sRedraw;
@@ -52,8 +51,9 @@ namespace lsp
                 WindowActions       sActions;
                 window_poilicy_t    enPolicy;
 
-                prop::Color         sBorder;
+                prop::Color         sBorderColor;
                 prop::String        sTitle;
+                prop::BorderStyle   sBorderStyle;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -106,12 +106,6 @@ namespace lsp
                  */
                 inline bool nested() { return pNativeHandle != NULL; }
 
-                /** Get border style of the window
-                 *
-                 * @return border style of the window
-                 */
-                inline ws::border_style_t border_style() const { return enStyle; }
-
                 inline WindowActions *actions() { return &sActions; }
 
                 inline ssize_t screen() { return (pWindow != NULL) ? pWindow->screen() : -1; };
@@ -136,7 +130,11 @@ namespace lsp
                 inline float            vscale() const          { return nVertScale; }
                 inline float            hscale() const          { return nHorScale; }
                 inline size_t           border() const          { return nBorder; }
-                inline Color           *border_color()          { return &sBorder; }
+
+                inline Color               *border_color()          { return &sBorderColor; }
+                inline const Color         *border_color() const    { return &sBorderColor; }
+                inline BorderStyle         *border_style()          { return &sBorderStyle; }
+                inline const BorderStyle   *border_style() const    { return &sBorderStyle; }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -183,12 +181,6 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t remove(Widget *widget);
-
-                /** Set border style of the window
-                 *
-                 * @param style border style of the window
-                 */
-                status_t set_border_style(ws::border_style_t style);
 
                 /** Handle event from window system
                  *

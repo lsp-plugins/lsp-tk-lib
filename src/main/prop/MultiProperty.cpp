@@ -8,8 +8,6 @@
 #include <lsp-plug.in/tk/prop.h>
 #include <lsp-plug.in/tk/sys/Display.h>
 #include <lsp-plug.in/tk/base.h>
-#include <lsp-plug.in/io/InStringSequence.h>
-#include <lsp-plug.in/expr/Tokenizer.h>
 
 namespace lsp
 {
@@ -100,28 +98,6 @@ namespace lsp
             }
 
             pStyle->end();
-        }
-
-        size_t MultiProperty::parse_ints(ssize_t *dst, size_t max, const LSPString *s)
-        {
-            // Wrap string with sequence
-            io::InStringSequence is;
-            if (is.wrap(s) != STATUS_OK)
-                return 0;
-
-            // Parse values
-            size_t n = 0;
-            expr::Tokenizer tok(&is);
-            status_t res = STATUS_OK;
-
-            while ((res = tok.get_token()) != STATUS_EOF)
-            {
-                if ((tok.current() != expr::TT_IVALUE) || (n >= max))
-                    return 0;
-                dst[n++] = tok.int_value();
-            }
-
-            return n;
         }
     }
 }

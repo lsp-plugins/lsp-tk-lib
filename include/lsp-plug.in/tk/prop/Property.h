@@ -14,6 +14,7 @@
 #include <lsp-plug.in/tk/style.h>
 #include <lsp-plug.in/tk/prop/types.h>
 #include <lsp-plug.in/tk/prop/Listener.h>
+#include <lsp-plug.in/lltl/darray.h>
 
 namespace lsp
 {
@@ -42,6 +43,17 @@ namespace lsp
                     pStyle          = NULL;
                     pListener       = listener;
                 }
+
+            protected:
+                static ssize_t      find_enum(ssize_t *dst, const LSPString *s, const prop::enum_t *xenum);
+
+                static size_t       parse_ints(ssize_t *dst, size_t max, const LSPString *s);
+                static size_t       parse_enums(ssize_t *dst, size_t max, const LSPString *s, const prop::enum_t *xenum);
+                static size_t       parse_unique_enums(ssize_t *dst, size_t max, const LSPString *s, const prop::enum_t *xenum);
+
+                static size_t       parse_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum);
+                static size_t       parse_unique_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum);
+
 
             public:
                 /**

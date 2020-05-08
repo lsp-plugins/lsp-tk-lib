@@ -29,6 +29,12 @@ namespace lsp
                 const char         *postfix;
                 property_type_t     type;
             } desc_t;
+
+            typedef struct enum_t
+            {
+                const char         *name;
+                ssize_t             value;
+            } enum_t;
         }
     }
 }

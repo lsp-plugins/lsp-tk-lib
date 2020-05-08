@@ -68,7 +68,7 @@ namespace lsp
                 void                sync();
                 void                commit(atom_t property);
 
-            public:
+            protected:
                 explicit Color(prop::Listener *listener = NULL);
                 ~Color();
 

@@ -47,7 +47,7 @@ namespace lsp
         void Padding::parse(const LSPString *s)
         {
             ssize_t vv[4];
-            size_t n    = MultiProperty::parse_ints(vv, 4, s);
+            size_t n        = parse_ints(vv, 4, s);
             padding_t &p    = sValue;
 
             for (size_t i=0; i<n; ++i)
@@ -91,7 +91,7 @@ namespace lsp
         void Padding::parse_css(const LSPString *s)
         {
             ssize_t vv[4];
-            size_t n        = MultiProperty::parse_ints(vv, 4, s);
+            size_t n        = parse_ints(vv, 4, s);
             padding_t &p    = sValue;
 
             for (size_t i=0; i<n; ++i)

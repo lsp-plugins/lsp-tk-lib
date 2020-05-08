@@ -52,7 +52,7 @@ namespace lsp
                 status_t            bind(atom_t property, Style *style);
                 void                sync();
 
-            public:
+            protected:
                 explicit Boolean(prop::Listener *listener = NULL);
                 ~Boolean();
 
