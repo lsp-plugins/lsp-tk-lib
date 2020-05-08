@@ -15,6 +15,7 @@
 #include <lsp-plug.in/tk/prop/Property.h>
 #include <lsp-plug.in/tk/prop/MultiProperty.h>
 #include <lsp-plug.in/tk/prop/Enum.h>
+#include <lsp-plug.in/tk/prop/BitEnum.h>
 #include <lsp-plug.in/tk/prop/Integer.h>
 #include <lsp-plug.in/tk/prop/Float.h>
 #include <lsp-plug.in/tk/prop/Boolean.h>
@@ -22,6 +23,7 @@
 #include <lsp-plug.in/tk/prop/Color.h>
 #include <lsp-plug.in/tk/prop/Padding.h>
 #include <lsp-plug.in/tk/prop/BorderStyle.h>
+#include <lsp-plug.in/tk/prop/WindowActions.h>
 
 #include <lsp-plug.in/tk/sys/Display.h>
 #include <lsp-plug.in/tk/base/Widget.h>

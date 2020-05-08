@@ -36,18 +36,14 @@ namespace lsp
             return n;
         }
 
-        ssize_t Property::find_enum(ssize_t *dst, const LSPString *s, const prop::enum_t *xenum)
+        const prop::enum_t *Property::find_enum(const LSPString *s, const prop::enum_t *xenum)
         {
             for (size_t i=0; (xenum != NULL) && (xenum->name != NULL); ++i, ++xenum)
             {
                 if (s->equals_ascii_nocase(xenum->name))
-                {
-                    if (dst != NULL)
-                        *dst = xenum->value;
-                    return i;
-                }
+                    return xenum;
             }
-            return -1;
+            return NULL;
         }
 
         size_t Property::parse_enums(ssize_t *dst, size_t max, const LSPString *s, const prop::enum_t *xenum)
@@ -61,6 +57,7 @@ namespace lsp
             size_t n=0;
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
+            const prop::enum_t *xe;
 
             while ((res = tok.get_token()) != STATUS_EOF)
             {
@@ -75,8 +72,46 @@ namespace lsp
                 if ((tok.current() != expr::TT_BAREWORD) || (n >= max))
                     return 0;
 
-                if (find_enum(&dst[n++], tok.text_value(), xenum) < 0)
+                if ((xe = find_enum(tok.text_value(), xenum)) == NULL)
                     return 0;
+
+                dst[n++] = xe->value;
+            }
+
+            return n;
+        }
+
+        ssize_t Property::parse_bit_enums(size_t *dst, const LSPString *s, const prop::enum_t *xenum)
+        {
+            // Wrap string with sequence
+            io::InStringSequence is;
+            if (is.wrap(s) != STATUS_OK)
+                return 0;
+
+            // Parse values
+            size_t n = 0;
+            expr::Tokenizer tok(&is);
+            status_t res = STATUS_OK;
+            const prop::enum_t *xe;
+
+            while ((res = tok.get_token()) != STATUS_EOF)
+            {
+                if (n > 0)
+                {
+                    if (tok.current() != expr::TT_SEMICOLON)
+                        return -1;
+                    if ((res = tok.get_token()) == STATUS_EOF)
+                        return -1;
+                }
+
+                if (tok.current() != expr::TT_BAREWORD)
+                    return -1;
+
+                if ((xe = find_enum(tok.text_value(), xenum)) == NULL)
+                    return -1;
+
+                *dst    |= xe->value;
+                ++n;
             }
 
             return n;
@@ -91,9 +126,10 @@ namespace lsp
 
             // Parse values
             size_t n=0;
-            bool semicolon = false, matched;
+            bool semicolon = false;
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
+            const prop::enum_t *xe;
 
             while ((res = tok.get_token()) != STATUS_EOF)
             {
@@ -108,19 +144,18 @@ namespace lsp
                 if ((tok.current() != expr::TT_BAREWORD) || (n >= max))
                     return 0;
 
-                if (find_enum(&dst[n], tok.text_value(), xenum) < 0)
+                if ((xe = find_enum(tok.text_value(), xenum)) == NULL)
                     return 0;
 
                 // Add unique value
-                matched = false;
                 for (size_t i=0; i<n; ++i)
-                    if (dst[i] == dst[n])
+                    if (dst[i] == xe->value)
                     {
-                        matched = true;
+                        xe = NULL;
                         break;
                     }
-                if (!matched)
-                    ++n;
+                if (xe)
+                    dst[n++] = xe->value;
 
                 semicolon = true;
             }
@@ -136,9 +171,9 @@ namespace lsp
                 return 0;
 
             // Parse values
-            ssize_t v;
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
+            const prop::enum_t *xe;
 
             while ((res = tok.get_token()) != STATUS_EOF)
             {
@@ -153,10 +188,10 @@ namespace lsp
                 if (tok.current() != expr::TT_BAREWORD)
                     return 0;
 
-                if (find_enum(&v, tok.text_value(), xenum) < 0)
+                if ((xe = find_enum(tok.text_value(), xenum)) == NULL)
                     return 0;
 
-                if (!dst->add(&v))
+                if (!dst->add(&xe->value))
                     return 0;
             }
 
@@ -172,10 +207,10 @@ namespace lsp
 
             // Parse values
             size_t n=0;
-            ssize_t v;
-            bool semicolon = false, matched;
+            bool semicolon = false;
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
+            const prop::enum_t *xe;
 
             while ((res = tok.get_token()) != STATUS_EOF)
             {
@@ -190,21 +225,19 @@ namespace lsp
                 if (tok.current() != expr::TT_BAREWORD)
                     return 0;
 
-                if (find_enum(&v, tok.text_value(), xenum) < 0)
+                if ((xe = find_enum(tok.text_value(), xenum)) == NULL)
                     return 0;
 
                 // Add unique value
-                matched = false;
                 for (size_t i=0; i<n; ++i)
-                    if (*(dst->uget(i)) == v)
+                    if (*(dst->uget(i)) == xe->value)
                     {
-                        matched = true;
+                        xe = NULL;
                         break;
                     }
-
-                if (!matched)
+                if (xe)
                 {
-                    if (!dst->add(&v))
+                    if (!dst->add(&xe->value))
                         return 0;
                 }
 

@@ -17,10 +17,10 @@ namespace lsp
 
         Window::Window(Display *dpy, void *handle, ssize_t screen):
             WidgetContainer(dpy),
+            sTitle(&sProperties),
             sBorderColor(&sProperties),
             sBorderStyle(&sProperties),
-            sTitle(&sProperties),
-            sActions(this)
+            sWindowActions(&sProperties)
         {
             lsp_trace("native_handle = %p", handle);
 
@@ -69,6 +69,8 @@ namespace lsp
 
             sTitle.bind(this);
             sBorderColor.bind("border", this);
+            sBorderStyle.bind("border_style", this);
+            sWindowActions.bind("window_actions", this);
 
             // Init color
             init_color(C_LABEL_TEXT, &sBorderColor);
@@ -114,6 +116,13 @@ namespace lsp
                 return result;
             }
 
+            result = pWindow->set_window_actions(sWindowActions.actions());
+            if (result != STATUS_SUCCESS)
+            {
+                destroy();
+                return result;
+            }
+
             result = pWindow->set_size_constraints(&sConstraints);
             if (result != STATUS_SUCCESS)
             {
@@ -122,13 +131,6 @@ namespace lsp
             }
 
             result = pWindow->get_geometry(&r);
-            if (result != STATUS_SUCCESS)
-            {
-                destroy();
-                return result;
-            }
-
-            result = sActions.init();
             if (result != STATUS_SUCCESS)
             {
                 destroy();
@@ -371,6 +373,11 @@ namespace lsp
             {
                 if (pWindow != NULL)
                     pWindow->set_border_style(sBorderStyle.get());
+            }
+            if (sWindowActions.is(prop))
+            {
+                if (pWindow != NULL)
+                    pWindow->set_window_actions(sWindowActions.actions());
             }
         }
 

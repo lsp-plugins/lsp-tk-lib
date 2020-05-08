@@ -48,12 +48,12 @@ namespace lsp
                 float               nVertScale;
                 float               nHorScale;
                 size_t              nBorder;
-                WindowActions       sActions;
                 window_poilicy_t    enPolicy;
 
-                prop::Color         sBorderColor;
                 prop::String        sTitle;
+                prop::Color         sBorderColor;
                 prop::BorderStyle   sBorderStyle;
+                prop::WindowActions sWindowActions;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -106,8 +106,6 @@ namespace lsp
                  */
                 inline bool nested() { return pNativeHandle != NULL; }
 
-                inline WindowActions *actions() { return &sActions; }
-
                 inline ssize_t screen() { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
                 status_t get_absolute_geometry(realize_t *realize);
@@ -120,9 +118,6 @@ namespace lsp
 
                 inline bool size_request_pending() const { return bSizeRequest; }
 
-                inline String *title()                          { return &sTitle; }
-                inline const String *title() const              { return &sTitle; }
-
                 inline window_poilicy_t policy() const          { return enPolicy; }
 
                 inline float            vpos() const            { return nVertPos; }
@@ -131,10 +126,14 @@ namespace lsp
                 inline float            hscale() const          { return nHorScale; }
                 inline size_t           border() const          { return nBorder; }
 
+                inline String              *title()                 { return &sTitle; }
+                inline const String        *title() const           { return &sTitle; }
                 inline Color               *border_color()          { return &sBorderColor; }
                 inline const Color         *border_color() const    { return &sBorderColor; }
                 inline BorderStyle         *border_style()          { return &sBorderStyle; }
                 inline const BorderStyle   *border_style() const    { return &sBorderStyle; }
+                inline WindowActions       *window_actions()        { return &sWindowActions; }
+                inline const WindowActions *window_actions() const  { return &sWindowActions; }
 
             //---------------------------------------------------------------------------------
             // Manipulation
