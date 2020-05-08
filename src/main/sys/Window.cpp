@@ -15,12 +15,11 @@ namespace lsp
     {
         const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };
 
-        Window::Window(LSPDisplay *dpy, void *handle, ssize_t screen):
+        Window::Window(Display *dpy, void *handle, ssize_t screen):
+            WidgetContainer(dpy),
             sBorder(&sProperties),
             sTitle(&sProperties),
-            WidgetContainer(dpy),
-            sActions(this),
-            sBorder(this)
+            sActions(this)
         {
             lsp_trace("native_handle = %p", handle);
 
@@ -213,15 +212,12 @@ namespace lsp
             WidgetContainer::destroy();
         }
 
-        status_t Window::tmr_redraw_request(timestamp_t ts, void *args)
+        status_t Window::tmr_redraw_request(ws::timestamp_t ts, void *args)
         {
             if (args == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *widget = static_cast<Widget *>(args);
-
-            Window *_this   = static_cast<Window *>(widget);
-
+            Window *_this   = widget_ptrcast<Window>(args);
             return (_this != NULL) ? _this->do_render() : STATUS_BAD_ARGUMENTS;
         }
 
@@ -252,7 +248,7 @@ namespace lsp
                 return STATUS_OK;
 
             // call rendering
-            ISurface *s = pWindow->get_surface();
+            ws::ISurface *s = pWindow->get_surface();
             if (s == NULL)
                 return STATUS_OK;
 
@@ -279,9 +275,9 @@ namespace lsp
             return pWindow->get_absolute_geometry(realize);
         }
 
-        void Window::render(ISurface *s, bool force)
+        void Window::render(ws::ISurface *s, bool force)
         {
-            Color bg_color(sBgColor);
+            lsp::Color bg_color(sBgColor);
 
             if (pChild == NULL)
             {
@@ -307,8 +303,8 @@ namespace lsp
                     bool aa = s->set_antialiasing(true);
                     ssize_t bw = nBorder >> 1;
 
-                    Color border(sBorder);
-                    border.scale_lightness(brightness());
+                    lsp::Color border(sBorder);
+                    border.scale_lightness(sBrightness.get());
 
                     s->wire_round_rect(
                         bw + 0.5, bw + 0.5, sSize.nWidth - nBorder-1, sSize.nHeight - nBorder-1,
@@ -320,7 +316,7 @@ namespace lsp
             }
         }
 
-        status_t Window::set_cursor(mouse_pointer_t mp)
+        status_t Window::set_cursor(ws::mouse_pointer_t mp)
         {
             WidgetContainer::set_cursor(mp);
             return update_pointer();
@@ -339,7 +335,7 @@ namespace lsp
             if (pWindow == NULL)
                 return STATUS_OK;
 
-            mouse_pointer_t mp  = enCursor;
+            ws::mouse_pointer_t mp  = enCursor;
             if ((!bOverridePointer) && (pPointed != NULL))
                 mp      = pPointed->active_cursor();
 
@@ -471,7 +467,7 @@ namespace lsp
                 // Correct window location
                 switch (enStyle)
                 {
-                    case BS_DIALOG:
+                    case ws::BS_DIALOG:
                     {
                         realize_t r, rw;
                         r.nLeft     = 0;
@@ -528,7 +524,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Window::set_border_style(border_style_t style)
+        status_t Window::set_border_style(ws::border_style_t style)
         {
             if (pWindow != NULL)
             {

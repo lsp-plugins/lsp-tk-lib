@@ -13,6 +13,8 @@
 
 #include <lsp-plug.in/tk/base.h>
 #include <lsp-plug.in/tk/prop.h>
+#include <lsp-plug.in/tk/sys/Timer.h>
+#include <lsp-plug.in/tk/sys/Display.h>
 #include <lsp-plug.in/ws/IWindow.h>
 
 namespace lsp
@@ -23,7 +25,7 @@ namespace lsp
         {
             protected:
                 friend class WindowActions;
-                friend class LSPDisplay;
+                friend class Display;
 
             public:
                 static const w_class_t    metadata;
@@ -35,7 +37,7 @@ namespace lsp
                 ws::border_style_t  enStyle;
                 ssize_t             nScreen;
                 size_request_t      sConstraints;
-                LSPTimer            sRedraw;
+                Timer               sRedraw;
                 Widget             *pFocus;
                 Widget             *pPointed;
                 bool                bHasFocus;
@@ -70,7 +72,7 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Construction and destruction
             public:
-                explicit Window(LSPDisplay *dpy, void *handle = NULL, ssize_t screen = -1);
+                explicit Window(Display *dpy, void *handle = NULL, ssize_t screen = -1);
                 virtual ~Window();
 
                 /** Init window
@@ -146,9 +148,9 @@ namespace lsp
                  * @param s surface to perform rendering
                  * @param force force flag
                  */
-                virtual void        render(ISurface *s, bool force);
+                virtual void        render(ws::ISurface *s, bool force);
 
-                virtual status_t    set_cursor(mouse_pointer_t mp);
+                virtual status_t    set_cursor(ws::mouse_pointer_t mp);
 
                 virtual status_t    override_pointer(bool override = true);
 

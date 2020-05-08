@@ -1,18 +1,18 @@
 /*
- * LSPTimer.cpp
+ * Timer.cpp
  *
  *  Created on: 1 июн. 2017 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/sys/LSPTimer.h>
+#include <lsp-plug.in/tk/sys/Timer.h>
 #include <time.h>
 
 namespace lsp
 {
     namespace tk
     {
-        LSPTimer::LSPTimer()
+        Timer::Timer()
         {
             pDisplay        = NULL;
             pHandler        = NULL;
@@ -24,12 +24,12 @@ namespace lsp
             nTaskID         = -1;
         }
 
-        LSPTimer::~LSPTimer()
+        Timer::~Timer()
         {
             cancel();
         }
 
-        status_t LSPTimer::submit_task(timestamp_t ctime)
+        status_t Timer::submit_task(ws::timestamp_t ctime)
         {
             // Check error status
             if ((nFlags & (TF_ERROR | TF_STOP_ON_ERR)) == (TF_ERROR | TF_STOP_ON_ERR))
@@ -51,16 +51,16 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPTimer::execute(timestamp_t time, void *arg)
+        status_t Timer::execute(ws::timestamp_t time, void *arg)
         {
-            LSPTimer *_this      = static_cast<LSPTimer *>(arg);
+            Timer *_this      = static_cast<Timer *>(arg);
             if (_this == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
             return _this->execute_task(time, arg);
         }
 
-        status_t LSPTimer::execute_task(timestamp_t time, void *arg)
+        status_t Timer::execute_task(ws::timestamp_t time, void *arg)
         {
             // Decrement number of repeats
             nTaskID             = -1;
@@ -91,7 +91,7 @@ namespace lsp
             return submit_task(time);
         }
 
-        void LSPTimer::bind(IDisplay *dpy)
+        void Timer::bind(ws::IDisplay *dpy)
         {
             // Cancel previous execution
             cancel();
@@ -100,7 +100,7 @@ namespace lsp
             pDisplay        = dpy;
         }
 
-        void LSPTimer::bind(LSPDisplay *dpy)
+        void Timer::bind(Display *dpy)
         {
             // Cancel previous execution
             cancel();
@@ -109,7 +109,7 @@ namespace lsp
             pDisplay        = dpy->display();
         }
 
-        status_t LSPTimer::launch(ssize_t count, size_t interval, timestamp_t delay)
+        status_t Timer::launch(ssize_t count, size_t interval, ws::timestamp_t delay)
         {
             // Cancel previous execution
             status_t result = cancel();
@@ -129,7 +129,7 @@ namespace lsp
                 // Shift the timestamp by delta
                 struct timespec ts;
                 clock_gettime(CLOCK_REALTIME, &ts);
-                timestamp_t delta = (ts.tv_sec * 1000L) + (ts.tv_nsec / 1000000L); // Get delta in milliseconds
+                ws::timestamp_t delta = (ts.tv_sec * 1000L) + (ts.tv_nsec / 1000000L); // Get delta in milliseconds
                 delay      += delta;
             }
 
@@ -141,23 +141,23 @@ namespace lsp
             return result;
         }
 
-        void LSPTimer::set_handler(task_handler_t handler)
+        void Timer::set_handler(ws::task_handler_t handler)
         {
             pHandler        = handler;
         }
 
-        void LSPTimer::set_handler(task_handler_t handler, void *args)
+        void Timer::set_handler(ws::task_handler_t handler, void *args)
         {
             pHandler        = handler;
             pArguments      = args;
         }
 
-        void LSPTimer::set_argument(void *args)
+        void Timer::set_argument(void *args)
         {
             pArguments      = args;
         }
 
-        status_t LSPTimer::cancel()
+        status_t Timer::cancel()
         {
             if (pDisplay == NULL)
                 return STATUS_NOT_BOUND;
@@ -174,7 +174,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void LSPTimer::set_stop_on_error(bool stop)
+        void Timer::set_stop_on_error(bool stop)
         {
             if (stop)
                 nFlags         |= TF_STOP_ON_ERR;
@@ -182,7 +182,7 @@ namespace lsp
                 nFlags         &= ~TF_STOP_ON_ERR;
         }
 
-        status_t LSPTimer::resume()
+        status_t Timer::resume()
         {
             // Check that timer is bound
             if (pDisplay == NULL)
@@ -196,7 +196,7 @@ namespace lsp
             return submit_task(0);
         }
 
-        status_t LSPTimer::run(timestamp_t time, void *args)
+        status_t Timer::run(ws::timestamp_t time, void *args)
         {
             // Just stub, can be overridden
             return STATUS_OK;

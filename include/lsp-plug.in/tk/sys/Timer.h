@@ -5,22 +5,23 @@
  *      Author: sadko
  */
 
-#ifndef UI_TK_LSPTIMER_H_
-#define UI_TK_LSPTIMER_H_
+#ifndef LSP_PLUG_IN_TK_SYS_TIMER_H_
+#define LSP_PLUG_IN_TK_SYS_TIMER_H_
 
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#include <lsp-plug.in/tk/types.h>
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/ws/IDisplay.h>
 
 namespace lsp
 {
     namespace tk
     {
-        class LSPDisplay;
+        class Display;
 
         /** Simple timer interface to launch scheduled or periodic tasks
          *
          */
-        class LSPTimer
+        class Timer
         {
             protected:
                 enum flags_t
@@ -35,44 +36,44 @@ namespace lsp
                 };
 
             protected:
-                IDisplay           *pDisplay;
-                task_handler_t      pHandler;
+                ws::IDisplay       *pDisplay;
+                ws::task_handler_t  pHandler;
                 void               *pArguments;
                 size_t              nRepeatInterval;
                 ssize_t             nRepeatCount;
                 size_t              nFlags;
                 status_t            nErrorCode;
-                taskid_t            nTaskID;
+                ws::taskid_t        nTaskID;
 
             protected:
-                static  status_t    execute(timestamp_t time, void *arg);
-                status_t            execute_task(timestamp_t time, void *arg);
+                static  status_t    execute(ws::timestamp_t time, void *arg);
+                status_t            execute_task(ws::timestamp_t time, void *arg);
 
-                status_t            submit_task(timestamp_t at);
+                status_t            submit_task(ws::timestamp_t at);
 
             public:
                 /** Constructor
                  *
                  */
-                explicit LSPTimer();
+                explicit Timer();
 
                 /** Destructor
                  *
                  */
-                virtual ~LSPTimer();
+                virtual ~Timer();
 
             public:
                 /** Bind timer to the display
                  *
                  * @param dpy native display
                  */
-                void    bind(IDisplay *dpy);
+                void    bind(ws::IDisplay *dpy);
 
                 /** Bind timer to the display
                  *
                  * @param dpy LSP display
                  */
-                void    bind(LSPDisplay *dpy);
+                void    bind(Display *dpy);
 
                 /** Cancel the previous execution and start the timer
                  *
@@ -81,14 +82,14 @@ namespace lsp
                  * @param delay the relative to the current time delay to trigger first tick, 0 if immediate
                  * @return status of operation
                  */
-                status_t    launch(ssize_t count = 1, size_t interval = 1000, timestamp_t delay = 0);
+                status_t    launch(ssize_t count = 1, size_t interval = 1000, ws::timestamp_t delay = 0);
 
                 /** Set handler, cancels previously used handler,
                  * does not drop argument
                  *
                  * @param handler timer handler
                  */
-                void    set_handler(task_handler_t handler);
+                void    set_handler(ws::task_handler_t handler);
 
                 /** Set handler, cancels previously used handler,
                  * overrides arguments
@@ -96,7 +97,7 @@ namespace lsp
                  * @param handler timer handler
                  * @param args argument passed to the handler
                  */
-                void    set_handler(task_handler_t handler, void *args);
+                void    set_handler(ws::task_handler_t handler, void *args);
 
                 /** Set argument to pass to the handler, do not cancel previously used handler
                  *
@@ -174,9 +175,9 @@ namespace lsp
                  * @param time time at whic the timer was executed
                  * @param args argument passed to the handler
                  */
-                virtual status_t    run(timestamp_t time, void *args);
+                virtual status_t    run(ws::timestamp_t time, void *args);
         };
     }
 } /* namespace lsp */
 
-#endif /* UI_TK_LSPTIMER_H_ */
+#endif /* LSP_PLUG_IN_TK_SYS_TIMER_H_ */
