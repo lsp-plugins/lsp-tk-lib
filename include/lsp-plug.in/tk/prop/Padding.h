@@ -67,7 +67,7 @@ namespace lsp
                 void                parse_css(const LSPString *s);
 
             protected:
-                explicit Padding();
+                explicit Padding(prop::Listener *listener = NULL);
                 ~Padding();
 
             public:
@@ -111,22 +111,21 @@ namespace lsp
                     Padding & operator = (const Padding *);
 
                 public:
-                    explicit Padding();
-                    ~Padding();
+                    explicit Padding(prop::Listener *listener = NULL): tk::Padding(listener) {};
 
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(prop::Listener *listener, const char *property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, atom_t property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, const char *property, Style *style, Display *dpy);
-                    status_t            bind(prop::Listener *listener, atom_t property, Style *style, Display *dpy);
+                    status_t            bind(const char *property, Widget *widget);
+                    status_t            bind(atom_t property, Widget *widget);
+                    status_t            bind(const char *property, Style *style, Display *dpy);
+                    status_t            bind(atom_t property, Style *style, Display *dpy);
 
                     /**
                      * Unbind property
                      */
-                    status_t            unbind();
+                    inline status_t     unbind()            { return MultiProperty::unbind(vAtoms, DESC, &sListener); };
             };
         }
     

@@ -32,19 +32,7 @@ namespace lsp
                 };
 
             protected:
-                class Listener: public IStyleListener
-                {
-                    private:
-                        String  *pString;
-
-                    public:
-                        inline Listener(String *ps) { pString = ps; }
-
-                    public:
-                        virtual void        notify(atom_t property);
-                };
-
-                class Params: public expr::Parameters
+                class Params: public expr::Parameters, public IStyleListener
                 {
                     private:
                         String  *pString;
@@ -54,6 +42,7 @@ namespace lsp
 
                     protected:
                         virtual void        modified();
+                        virtual void        notify(atom_t property);
                 };
 
             protected:
@@ -62,18 +51,17 @@ namespace lsp
                 Params              sParams;    // Parameters
                 size_t              nFlags;     // Different flags
                 i18n::IDictionary  *pDict;      // Related dictionary
-                Listener            sListener;  // Style listener
 
             protected:
                 status_t            fmt_internal(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const;
 
             protected:
-                status_t            bind(prop::Listener *listener, atom_t property, Style *style, i18n::IDictionary *dict);
+                status_t            bind(atom_t property, Style *style, i18n::IDictionary *dict);
                 status_t            unbind();
                 inline void         sync();
 
             protected:
-                explicit String();
+                explicit String(prop::Listener *listener = NULL);
                 ~String();
 
             public:
@@ -242,24 +230,23 @@ namespace lsp
                     String & operator = (const String *);
 
                 public:
-                    explicit String();
-                    ~String();
+                    explicit String(prop::Listener *listener = NULL): tk::String(listener) {};
 
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(prop::Listener *listener, const char *property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, atom_t property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, const char *property, Display *dpy, Style *style);
-                    status_t            bind(prop::Listener *listener, atom_t property, i18n::IDictionary *dict, Style *style);
-                    status_t            bind(prop::Listener *listener, Widget *widget);
-                    status_t            bind(prop::Listener *listener, Display *dpy, Style *style);
+                    status_t            bind(const char *property, Widget *widget);
+                    status_t            bind(atom_t property, Widget *widget);
+                    status_t            bind(const char *property, Display *dpy, Style *style);
+                    status_t            bind(atom_t property, i18n::IDictionary *dict, Style *style);
+                    status_t            bind(Widget *widget);
+                    status_t            bind(Display *dpy, Style *style);
 
                     /**
                      * Unbind property
                      */
-                    status_t            unbind();
+                    inline status_t     unbind()                    { return tk::String::unbind(); };
             };
         }
     

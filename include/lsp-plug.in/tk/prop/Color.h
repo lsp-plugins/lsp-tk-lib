@@ -69,7 +69,7 @@ namespace lsp
                 void                commit(atom_t property);
 
             public:
-                explicit Color();
+                explicit Color(prop::Listener *listener = NULL);
                 ~Color();
 
             public:
@@ -158,22 +158,21 @@ namespace lsp
                     Color & operator = (const Color *);
 
                 public:
-                    explicit Color();
-                    ~Color();
+                    explicit inline Color(prop::Listener *listener = NULL): tk::Color(listener) {};
 
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(prop::Listener *listener, const char *property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, atom_t property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, const char *property, Style *style, Display *dpy);
-                    status_t            bind(prop::Listener *listener, atom_t property, Style *style, Display *dpy);
+                    status_t            bind(const char *property, Widget *widget);
+                    status_t            bind(atom_t property, Widget *widget);
+                    status_t            bind(const char *property, Style *style, Display *dpy);
+                    status_t            bind(atom_t property, Style *style, Display *dpy);
 
                     /**
                      * Unbind property
                      */
-                    status_t            unbind();
+                    inline status_t     unbind()            { return MultiProperty::unbind(vAtoms, DESC, &sListener); };
             };
         }
 

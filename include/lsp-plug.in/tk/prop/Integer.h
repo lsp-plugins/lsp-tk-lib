@@ -49,11 +49,11 @@ namespace lsp
 
             protected:
                 status_t            unbind();
-                status_t            bind(prop::Listener *listener, atom_t property, Style *style);
+                status_t            bind(atom_t property, Style *style);
                 void                sync();
 
             public:
-                Integer();
+                explicit Integer(prop::Listener *listener = NULL);
                 ~Integer();
 
             public:
@@ -88,28 +88,21 @@ namespace lsp
                     Integer & operator = (const Integer *);
 
                 public:
-                    explicit Integer();
+                    explicit Integer(prop::Listener *listener = NULL): tk::Integer(listener) {};
 
                 public:
                     /**
-                     * Check that property is bound to this object
-                     * @param property property identifier
-                     * @return true if property is bound
-                     */
-                    inline bool         is_bound(atom_t property)  { return nAtom == property;    }
-
-                    /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(prop::Listener *listener, const char *property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, atom_t property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, const char *property, Display *dpy, Style *style);
-                    status_t            bind(prop::Listener *listener, atom_t property, Style *style);
+                    status_t            bind(const char *property, Widget *widget);
+                    status_t            bind(atom_t property, Widget *widget);
+                    status_t            bind(const char *property, Display *dpy, Style *style);
+                    status_t            bind(atom_t property, Style *style);
 
                     /**
                      * Unbind property
                      */
-                    status_t            unbind();
+                    inline status_t     unbind()                    { return tk::Integer::unbind(); };
             };
         }
     

@@ -31,10 +31,10 @@ namespace lsp
                 Property & operator = (const Property *);
 
             protected:
-                status_t        unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *slistener);
+                status_t        unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);
                 status_t        bind(
-                        atom_t *atoms, const prop::desc_t *desc, IStyleListener *slistener,
-                        prop::Listener *plistener, const char *property, Style *style, Display *dpy
+                        atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener,
+                        const char *property, Style *style, Display *dpy
                 );
 
                 void            set_default(atom_t *atoms, const prop::desc_t *desc);
@@ -43,7 +43,7 @@ namespace lsp
                 static size_t   parse_ints(ssize_t *dst, size_t max, const LSPString *s);
 
             protected:
-                inline MultiProperty() {};
+                inline MultiProperty(prop::Listener *listener = NULL): Property(listener) {};
         };
 
     }

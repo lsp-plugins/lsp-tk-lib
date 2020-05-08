@@ -21,15 +21,15 @@ namespace lsp
             pString->sync();
         }
 
-        void String::Listener::notify(atom_t property)
+        void String::Params::notify(atom_t property)
         {
             if (property == pString->nAtom)
                 pString->sync();
         }
 
-        String::String():
-            sParams(this),
-            sListener(this)
+        String::String(prop::Listener *listener):
+            Property(listener),
+            sParams(this)
         {
             nAtom       = -1;
             pDict       = NULL;
@@ -41,7 +41,7 @@ namespace lsp
             unbind();
         }
 
-        status_t String::bind(prop::Listener *listener, atom_t property, Style *style, i18n::IDictionary *dict)
+        status_t String::bind(atom_t property, Style *style, i18n::IDictionary *dict)
         {
             if ((style == NULL) || (property < 0) || (dict == NULL))
                 return STATUS_BAD_ARGUMENTS;
@@ -50,19 +50,18 @@ namespace lsp
             status_t res;
             if ((pStyle != NULL) && (nAtom >= 0))
             {
-                res = pStyle->unbind(nAtom, &sListener);
+                res = pStyle->unbind(nAtom, &sParams);
                 if (res != STATUS_OK)
                     return res;
             }
 
             // Bind to new handler
             style->begin();
-            res = style->bind(property, PT_FLOAT, &sListener);
+            res = style->bind(property, PT_FLOAT, &sParams);
             if (res == STATUS_OK)
             {
                 pDict       = dict;
                 pStyle      = style;
-                pListener   = listener;
                 nAtom       = property;
             }
             style->end();
@@ -74,14 +73,13 @@ namespace lsp
         {
             if ((pStyle != NULL) && (nAtom >= 0))
             {
-                status_t res = pStyle->unbind(nAtom, &sListener);
+                status_t res = pStyle->unbind(nAtom, &sParams);
                 if (res != STATUS_OK)
                     return res;
             }
 
             pDict       = NULL;
             pStyle      = NULL;
-            pListener   = NULL;
             nAtom       = -1;
 
             return STATUS_NOT_BOUND;
@@ -190,7 +188,7 @@ namespace lsp
                 return STATUS_NO_MEM;
 
             // Apply
-            nFlags      = /* F_DIRTY | */ F_LOCALIZED;
+            nFlags      = F_LOCALIZED;
             sync();
             return STATUS_OK;
         }
@@ -384,16 +382,7 @@ namespace lsp
 
         namespace prop
         {
-            String::String() :
-                tk::String()
-            {
-            }
-
-            String::~String()
-            {
-            }
-
-            status_t String::bind(prop::Listener *listener, const char *property, Widget *widget)
+            status_t String::bind(const char *property, Widget *widget)
             {
                 if ((widget == NULL) || (property == NULL))
                     return STATUS_BAD_ARGUMENTS;
@@ -403,18 +392,18 @@ namespace lsp
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
-                return tk::String::bind(listener, id, widget->style(), dpy->dictionary());
+                return tk::String::bind(id, widget->style(), dpy->dictionary());
             }
 
-            status_t String::bind(prop::Listener *listener, atom_t property, Widget *widget)
+            status_t String::bind(atom_t property, Widget *widget)
             {
                 Display *dpy = widget->display();
                 if (dpy == NULL)
                     return STATUS_BAD_ARGUMENTS;
-                return tk::String::bind(listener, property, widget->style(), dpy->dictionary());
+                return tk::String::bind(property, widget->style(), dpy->dictionary());
             }
 
-            status_t String::bind(prop::Listener *listener, const char *property, Display *dpy, Style *style)
+            status_t String::bind(const char *property, Display *dpy, Style *style)
             {
                 if ((dpy == NULL) || (style == NULL) || (property < 0))
                     return STATUS_BAD_ARGUMENTS;
@@ -423,27 +412,22 @@ namespace lsp
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
-                return tk::String::bind(listener, id, style, dpy->dictionary());
+                return tk::String::bind(id, style, dpy->dictionary());
             }
 
-            status_t String::bind(prop::Listener *listener, atom_t property, i18n::IDictionary *dict, Style *style)
+            status_t String::bind(atom_t property, i18n::IDictionary *dict, Style *style)
             {
-                return tk::String::bind(listener, property, style, dict);
+                return tk::String::bind(property, style, dict);
             }
 
-            status_t String::bind(prop::Listener *listener, Widget *widget)
+            status_t String::bind(Widget *widget)
             {
-                return bind(listener, LANG_ATOM_NAME, widget);
+                return bind(LANG_ATOM_NAME, widget);
             }
 
-            status_t String::bind(prop::Listener *listener, Display *dpy, Style *style)
+            status_t String::bind(Display *dpy, Style *style)
             {
-                return bind(listener, LANG_ATOM_NAME, dpy, style);
-            }
-
-            status_t String::unbind()
-            {
-                return tk::String::unbind();
+                return bind(LANG_ATOM_NAME, dpy, style);
             }
         }
 

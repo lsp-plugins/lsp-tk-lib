@@ -37,10 +37,10 @@ namespace lsp
                 prop::Listener     *pListener;
 
             protected:
-                inline Property()
+                explicit inline Property(prop::Listener *listener = NULL)
                 {
                     pStyle          = NULL;
-                    pListener       = NULL;
+                    pListener       = listener;
                 }
 
             public:

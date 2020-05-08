@@ -19,7 +19,11 @@ namespace lsp
         const w_class_t Widget::metadata = { "Widget", NULL };
 
         Widget::Widget(Display *dpy):
-            sProperties(this)
+            sProperties(this),
+            sScaling(&sProperties),
+            sBrightness(&sProperties),
+            sPadding(&sProperties),
+            sBgColor(&sProperties)
         {
             pDisplay        = dpy;
             pSurface        = NULL;
@@ -58,10 +62,10 @@ namespace lsp
             status_t res = sStyle.init();
             if (res == STATUS_OK)
             {
-                sScaling.bind(&sProperties, "scaling", this);
-                sBrightness.bind(&sProperties, "brightness", this);
-                sPadding.bind(&sProperties, "padding", this);
-                sBgColor.bind(&sProperties, "bg_color", this);
+                sScaling.bind("scaling", this);
+                sBrightness.bind("brightness", this);
+                sPadding.bind("padding", this);
+                sBgColor.bind("bg_color", this);
             }
 
             // Declare slots

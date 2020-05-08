@@ -15,7 +15,7 @@ namespace lsp
 {
     namespace tk
     {
-        status_t MultiProperty::unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *slistener)
+        status_t MultiProperty::unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener)
         {
             if (pStyle == NULL)
                 return STATUS_NOT_BOUND;
@@ -25,18 +25,17 @@ namespace lsp
             {
                 if (*atoms < 0)
                     continue;
-                pStyle->unbind(*atoms, slistener);
+                pStyle->unbind(*atoms, listener);
                 *atoms      = -1;
             }
 
             pStyle      = NULL;
-            pListener   = NULL;
             return STATUS_OK;
         }
 
         status_t MultiProperty::bind(
-                atom_t *atoms, const prop::desc_t *desc, IStyleListener *slistener,
-                prop::Listener *plistener, const char *property, Style *style, Display *dpy
+                atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener,
+                const char *property, Style *style, Display *dpy
         )
         {
             if ((style == NULL) || (dpy == NULL) || (property == NULL))
@@ -46,7 +45,7 @@ namespace lsp
                 return STATUS_OK;
 
             // Unbind from previously used style
-            unbind(atoms, desc, slistener);
+            unbind(atoms, desc, listener);
 
             LSPString key;
             if (!key.set_utf8(property))
@@ -71,19 +70,16 @@ namespace lsp
                     res = STATUS_NO_MEM;
                     break;
                 }
-                res = style->bind(atom, desc->type, slistener);
+                res = style->bind(atom, desc->type, listener);
                 if (res != STATUS_OK)
                     break;
                 *atoms      = atom;
             }
 
             if (res == STATUS_OK)
-            {
                 pStyle      = style;
-                pListener   = plistener;
-            }
             else
-                unbind(atoms, desc, slistener);
+                unbind(atoms, desc, listener);
 
             style->end();
 

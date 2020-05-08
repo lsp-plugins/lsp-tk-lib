@@ -35,7 +35,8 @@ namespace lsp
             pValue->commit(property);
         }
 
-        Color::Color():
+        Color::Color(prop::Listener *listener):
+            MultiProperty(listener),
             sListener(this)
         {
             for (size_t i=0; i<P_COUNT; ++i)
@@ -264,16 +265,7 @@ namespace lsp
 
         namespace prop
         {
-            Color::Color():
-                tk::Color()
-            {
-            }
-
-            Color::~Color()
-            {
-            }
-
-            status_t Color::bind(prop::Listener *listener, const char *property, Widget *widget)
+            status_t Color::bind(const char *property, Widget *widget)
             {
                 if (widget == NULL)
                     return STATUS_BAD_ARGUMENTS;
@@ -281,11 +273,11 @@ namespace lsp
                 return MultiProperty::bind
                     (
                         vAtoms, DESC, &sListener,
-                        listener, property, widget->style(), widget->display()
+                        property, widget->style(), widget->display()
                     );
             }
 
-            status_t Color::bind(prop::Listener *listener, atom_t property, Widget *widget)
+            status_t Color::bind(atom_t property, Widget *widget)
             {
                 if (widget == NULL)
                     return STATUS_BAD_ARGUMENTS;
@@ -295,33 +287,28 @@ namespace lsp
                 return MultiProperty::bind
                     (
                         vAtoms, DESC, &sListener,
-                        listener, dpy->atom_name(property), widget->style(), widget->display()
+                        dpy->atom_name(property), widget->style(), widget->display()
                     );
             }
 
-            status_t Color::bind(prop::Listener *listener, const char *property, Style *style, Display *dpy)
+            status_t Color::bind(const char *property, Style *style, Display *dpy)
             {
                 return MultiProperty::bind
                     (
                         vAtoms, DESC, &sListener,
-                        listener, property, style, dpy
+                        property, style, dpy
                     );
             }
 
-            status_t Color::bind(prop::Listener *listener, atom_t property, Style *style, Display *dpy)
+            status_t Color::bind(atom_t property, Style *style, Display *dpy)
             {
                 if (dpy == NULL)
                     return STATUS_BAD_ARGUMENTS;
                 return MultiProperty::bind
                     (
                         vAtoms, DESC, &sListener,
-                        listener, dpy->atom_name(property), style, dpy
+                        dpy->atom_name(property), style, dpy
                     );
-            }
-
-            status_t Color::unbind()
-            {
-                return MultiProperty::unbind(vAtoms, DESC, &sListener);
             }
         }
 

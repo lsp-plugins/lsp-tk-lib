@@ -19,7 +19,8 @@ namespace lsp
                 pValue->sync();
         }
 
-        Integer::Integer():
+        Integer::Integer(prop::Listener *listener):
+            Property(listener),
             sListener(this)
         {
             nAtom       = -1;
@@ -41,13 +42,12 @@ namespace lsp
             }
 
             pStyle      = NULL;
-            pListener   = NULL;
             nAtom       = -1;
 
             return STATUS_NOT_BOUND;
         }
 
-        status_t Integer::bind(prop::Listener *listener, atom_t property, Style *style)
+        status_t Integer::bind(atom_t property, Style *style)
         {
             if ((style == NULL) || (property < 0))
                 return STATUS_BAD_ARGUMENTS;
@@ -67,7 +67,6 @@ namespace lsp
             if (res == STATUS_OK)
             {
                 pStyle      = style;
-                pListener   = listener;
                 nAtom       = property;
             }
             style->end();
@@ -115,12 +114,7 @@ namespace lsp
 
         namespace prop
         {
-            Integer::Integer() :
-                tk::Integer()
-            {
-            }
-
-            status_t Integer::bind(prop::Listener *listener, const char *property, Widget *widget)
+            status_t Integer::bind(const char *property, Widget *widget)
             {
                 if ((widget == NULL) || (property == NULL))
                     return STATUS_BAD_ARGUMENTS;
@@ -130,15 +124,15 @@ namespace lsp
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
-                return tk::Integer::bind(listener, id, widget->style());
+                return tk::Integer::bind(id, widget->style());
             }
 
-            status_t Integer::bind(prop::Listener *listener, atom_t property, Widget *widget)
+            status_t Integer::bind(atom_t property, Widget *widget)
             {
-                return tk::Integer::bind(listener, property, widget->style());
+                return tk::Integer::bind(property, widget->style());
             }
 
-            status_t Integer::bind(prop::Listener *listener, const char *property, Display *dpy, Style *style)
+            status_t Integer::bind(const char *property, Display *dpy, Style *style)
             {
                 if ((dpy == NULL) || (style == NULL) || (property < 0))
                     return STATUS_BAD_ARGUMENTS;
@@ -147,17 +141,12 @@ namespace lsp
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
-                return tk::Integer::bind(listener, id, style);
+                return tk::Integer::bind(id, style);
             }
 
-            status_t Integer::bind(prop::Listener *listener, atom_t property, Style *style)
+            status_t Integer::bind(atom_t property, Style *style)
             {
-                return tk::Integer::bind(listener, property, style);
-            }
-
-            status_t Integer::unbind()
-            {
-                return tk::Integer::unbind();
+                return tk::Integer::bind(property, style);
             }
         }
     

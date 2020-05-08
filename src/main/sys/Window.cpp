@@ -15,28 +15,9 @@ namespace lsp
     {
         const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };
 
-        void Window::Title::sync()
-        {
-            Window *window = widget_cast<Window>(pWidget);
-            if ((window == NULL) || (window->pWindow == NULL))
-                return;
-
-            LSPString text;
-            status_t res = window->sTitle.format(&text);
-            if (res != STATUS_OK)
-                return;
-
-            char *ascii = text.clone_ascii();
-            const char *caption = text.get_utf8();
-            if (caption == NULL)
-                caption = "";
-
-            window->pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
-            if (ascii != NULL)
-                ::free(ascii);
-        }
-
         Window::Window(LSPDisplay *dpy, void *handle, ssize_t screen):
+            sBorder(&sProperties),
+            sTitle(&sProperties),
             WidgetContainer(dpy),
             sActions(this),
             sBorder(this)
@@ -46,7 +27,7 @@ namespace lsp
             pWindow         = NULL;
             pChild          = NULL;
             pNativeHandle   = handle;
-            enStyle         = BS_SIZABLE;
+            enStyle         = ws::BS_SIZABLE;
             nScreen         = screen;
             pFocus          = NULL;
             pPointed        = NULL;
@@ -87,7 +68,8 @@ namespace lsp
             if (result < 0)
                 return result;
 
-            sTitle.bind(&sProperties, this);
+            sTitle.bind(this);
+            sBorder.bind("border", this);
 
             // Init color
             init_color(C_LABEL_TEXT, &sBorder);
@@ -103,7 +85,6 @@ namespace lsp
             if (dpy == NULL)
                 return STATUS_BAD_STATE;
 
-            sTitle.bind();
             sRedraw.bind(dpy);
             sRedraw.set_handler(tmr_redraw_request, self());
 
@@ -370,6 +351,8 @@ namespace lsp
 
         void Window::property_changed(Property *prop)
         {
+            WidgetContainer::property_changed(prop);
+
             if (sTitle.is(prop))
             {
                 // Make formatted title of the window

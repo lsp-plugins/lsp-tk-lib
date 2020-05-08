@@ -49,11 +49,11 @@ namespace lsp
 
             protected:
                 status_t            unbind();
-                status_t            bind(prop::Listener *listener, atom_t property, Style *style);
+                status_t            bind(atom_t property, Style *style);
                 void                sync();
 
             protected:
-                Float();
+                explicit Float(prop::Listener *listener = NULL);
                 ~Float();
 
             public:
@@ -88,22 +88,21 @@ namespace lsp
                     Float & operator = (const Float *);
 
                 public:
-                    explicit Float();
-                    ~Float();
+                    explicit inline Float(prop::Listener *listener = NULL): tk::Float(listener) {};
 
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(prop::Listener *listener, const char *property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, atom_t property, Widget *widget);
-                    status_t            bind(prop::Listener *listener, const char *property, Display *dpy, Style *style);
-                    status_t            bind(prop::Listener *listener, atom_t property, Style *style);
+                    status_t            bind(const char *property, Widget *widget);
+                    status_t            bind(atom_t property, Widget *widget);
+                    status_t            bind(const char *property, Display *dpy, Style *style);
+                    status_t            bind(atom_t property, Style *style);
 
                     /**
                      * Unbind property
                      */
-                    status_t            unbind();
+                    inline status_t     unbind()                    { return tk::Float::unbind(); };
             };
         }
 
