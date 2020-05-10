@@ -241,16 +241,6 @@ namespace lsp
                  * @param r parameters of the drag rectangle, can be NULL
                  * @return status of operation
                  */
-                status_t accept_drag(ws::IDataSink *sink, ws::drag_t action, bool internal, const realize_t *r);
-
-                /**
-                 * Accept drag request
-                 * @param sink the sink that will handle data transfer
-                 * @param action drag action
-                 * @param internal true if we want to receive notifications inside of the drag rectangle
-                 * @param r parameters of the drag rectangle, can be NULL
-                 * @return status of operation
-                 */
                 status_t accept_drag(ws::IDataSink *sink, ws::drag_t action, bool internal, const ws::rectangle_t *r);
 
                 /**

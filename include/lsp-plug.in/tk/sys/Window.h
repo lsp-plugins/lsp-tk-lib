@@ -112,7 +112,7 @@ namespace lsp
 
                 inline ssize_t screen()                             { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
-                status_t get_absolute_geometry(realize_t *realize);
+                status_t get_absolute_geometry(ws::rectangle_t *r);
 
                 inline Widget *focused_child() const                { return const_cast<Window *>(this)->pFocus; }
 
@@ -241,7 +241,7 @@ namespace lsp
                  *
                  * @param r realize parameters
                  */
-                virtual void            realize(const realize_t *r);
+                virtual void            realize(const ws::rectangle_t *r);
 
                 /** Request size of the window
                  *

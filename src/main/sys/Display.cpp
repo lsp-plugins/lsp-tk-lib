@@ -372,16 +372,6 @@ namespace lsp
             return pDisplay->reject_drag();
         }
 
-        status_t Display::accept_drag(ws::IDataSink *sink, ws::drag_t action, bool internal, const realize_t *r)
-        {
-            ws::rectangle_t x;
-            x.nLeft     = r->nLeft;
-            x.nTop      = r->nTop;
-            x.nWidth    = r->nWidth;
-            x.nHeight   = r->nHeight;
-            return pDisplay->accept_drag(sink, action, internal, &x);
-        }
-
         status_t Display::accept_drag(ws::IDataSink *sink, ws::drag_t action, bool internal, const ws::rectangle_t *r)
         {
             return pDisplay->accept_drag(sink, action, internal, r);

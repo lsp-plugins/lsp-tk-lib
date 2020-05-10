@@ -25,18 +25,21 @@ namespace lsp
             sPadding(&sProperties),
             sBgColor(&sProperties)
         {
-            pDisplay            = dpy;
-            pSurface            = NULL;
-            pParent             = NULL;
+            nFlags                  = REDRAW_SURFACE | F_VISIBLE | F_HFILL | F_VFILL;
+            pClass                  = &metadata;
+            pDisplay                = dpy;
+            pParent                 = NULL;
 
-            pUID                = NULL;
-            enCursor            = ws::MP_DEFAULT;
-            sRealize.nLeft      = 0;
-            sRealize.nTop       = 0;
-            sRealize.nWidth     = 0;
-            sRealize.nHeight    = 0;
-            nFlags              = REDRAW_SURFACE | F_VISIBLE | F_HFILL | F_VFILL;
-            pClass              = &metadata;
+            sSizeLimit.nMinWidth    = -1;
+            sSizeLimit.nMinHeight   = -1;
+            sSizeLimit.nMaxWidth    = -1;
+            sSizeLimit.nMaxHeight   = -1;
+            sRectangle.nLeft        = 0;
+            sRectangle.nTop         = 0;
+            sRectangle.nWidth       = 0;
+            sRectangle.nHeight      = 0;
+            enCursor                = ws::MP_DEFAULT;
+            pSurface                = NULL;
         }
 
         Widget::~Widget()
@@ -109,11 +112,6 @@ namespace lsp
             // Execute slots and unbind all to prevent duplicate on_destroy calls
             sSlots.execute(SLOT_DESTROY, this);
             sSlots.destroy();
-
-            // Destroy widget identifier
-            if (pUID != NULL)
-                ::free(pUID);
-            pUID = NULL;
         }
 
         void Widget::property_changed(Property *prop)
@@ -141,7 +139,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_move(ev);
         }
@@ -151,7 +149,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_down(ev);
         }
@@ -161,7 +159,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_up(ev);
         }
@@ -171,7 +169,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_dbl_click(ev);
         }
@@ -181,7 +179,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_tri_click(ev);
         }
@@ -191,7 +189,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_scroll(ev);
         }
@@ -201,7 +199,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_in(ev);
         }
@@ -211,7 +209,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_out(ev);
         }
@@ -221,7 +219,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_key_down(ev);
         }
@@ -231,7 +229,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_key_up(ev);
         }
@@ -268,8 +266,8 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
-            realize_t *ev   = static_cast<realize_t *>(data);
+            Widget *_this       = static_cast<Widget *>(ptr);
+            ws::rectangle_t *ev = static_cast<ws::rectangle_t *>(data);
             return _this->on_resize(ev);
         }
 
@@ -278,8 +276,8 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
-            realize_t *ev   = static_cast<realize_t *>(data);
+            Widget *_this       = static_cast<Widget *>(ptr);
+            ws::rectangle_t *ev  = static_cast<ws::rectangle_t *>(data);
             return _this->on_resize_parent(ev);
         }
 
@@ -315,37 +313,17 @@ namespace lsp
             return _this->on_drag_request(ev, ctype);
         }
 
-        ssize_t Widget::relative_left() const
-        {
-            return sRealize.nLeft - ((pParent != NULL) ? pParent->left() : 0);
-        }
-
-        ssize_t Widget::relative_right() const
-        {
-            return sRealize.nLeft - ((pParent != NULL) ? pParent->left() : 0) + sRealize.nWidth;
-        }
-
-        ssize_t Widget::relative_top() const
-        {
-            return sRealize.nTop - ((pParent != NULL) ? pParent->top() : 0);
-        }
-
-        ssize_t Widget::relative_bottom() const
-        {
-            return sRealize.nTop - ((pParent != NULL) ? pParent->top() : 0) + sRealize.nHeight;
-        }
-
         bool Widget::inside(ssize_t x, ssize_t y)
         {
             if (!(nFlags & F_VISIBLE))
                 return false;
-            else if (x < sRealize.nLeft)
+            else if (x < sRectangle.nLeft)
                 return false;
-            else if (x >= (sRealize.nLeft + sRealize.nWidth))
+            else if (x >= (sRectangle.nLeft + sRectangle.nWidth))
                 return false;
-            else if (y < sRealize.nTop)
+            else if (y < sRectangle.nTop)
                 return false;
-            else if (y >= (sRealize.nTop + sRealize.nHeight))
+            else if (y >= (sRectangle.nTop + sRectangle.nHeight))
                 return false;
 
             return true;
@@ -459,9 +437,9 @@ namespace lsp
         {
             size_t flags = nFlags;
             if (value)
-                nFlags  |= F_EXPAND;
+                nFlags  |= F_HEXPAND | F_VEXPAND;
             else
-                nFlags  &= ~F_EXPAND;
+                nFlags  &= ~(F_HEXPAND | F_VEXPAND);
 
             if (flags != nFlags)
                 query_resize();
@@ -530,27 +508,12 @@ namespace lsp
                 return;
 
             // Render to the main surface
-            s->draw(src, sRealize.nLeft, sRealize.nTop);
-        }
-
-        status_t Widget::set_unique_id(const char *uid)
-        {
-            char *rep = NULL;
-            if (uid != NULL)
-            {
-                if ((rep = strdup(uid)) == NULL)
-                    return STATUS_NO_MEM;
-            }
-
-            if (pUID != NULL)
-                free(pUID);
-            pUID = rep;
-            return STATUS_OK;
+            s->draw(src, sRectangle.nLeft, sRectangle.nTop);
         }
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s)
         {
-            return get_surface(s, sRealize.nWidth, sRealize.nHeight);
+            return get_surface(s, sRectangle.nWidth, sRectangle.nHeight);
         }
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s, ssize_t width, ssize_t height)
@@ -596,18 +559,34 @@ namespace lsp
         {
         }
 
-        void Widget::realize(const realize_t *r)
+        void Widget::realize(const ws::rectangle_t *r)
         {
             // Do not report size request on size change
-            if ((sRealize.nLeft == r->nLeft) &&
-                (sRealize.nTop  == r->nTop) &&
-                (sRealize.nWidth == r->nWidth) &&
-                (sRealize.nHeight == r->nHeight))
+            if ((sRectangle.nLeft == r->nLeft) &&
+                (sRectangle.nTop  == r->nTop) &&
+                (sRectangle.nWidth == r->nWidth) &&
+                (sRectangle.nHeight == r->nHeight))
                 return;
 
             // Update size and execute slot
-            sRealize        = *r;
-            sSlots.execute(SLOT_RESIZE, this, &sRealize);
+            sRectangle        = *r;
+            sSlots.execute(SLOT_RESIZE, this, &sRectangle);
+        }
+
+        void Widget::get_size_limit(ws::size_limit_t *l)
+        {
+            if (nFlags & RESIZE_VALID)
+            {
+                *l  = sSizeLimit;
+                return;
+            }
+
+            // Perform size request
+            size_request(l);
+
+            // Store size limit and update flags
+            sSizeLimit  = *l;
+            nFlags |= RESIZE_VALID;
         }
 
         void Widget::size_request(ws::size_limit_t *r)
@@ -746,12 +725,12 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Widget::on_resize(const realize_t *r)
+        status_t Widget::on_resize(const ws::rectangle_t *r)
         {
             return STATUS_OK;
         }
 
-        status_t Widget::on_resize_parent(const realize_t *r)
+        status_t Widget::on_resize_parent(const ws::rectangle_t *r)
         {
             return STATUS_OK;
         }

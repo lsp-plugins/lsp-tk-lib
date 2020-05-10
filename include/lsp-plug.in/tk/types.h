@@ -44,14 +44,6 @@ namespace lsp
             const w_class_t    *parent;
         } w_class_t;
 
-        typedef struct realize_t
-        {
-            ssize_t             nLeft;
-            ssize_t             nTop;
-            ssize_t             nWidth;
-            ssize_t             nHeight;
-        } realize_t;
-
         typedef struct padding_t
         {
             size_t              nLeft;

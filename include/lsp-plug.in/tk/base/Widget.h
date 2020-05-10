@@ -38,11 +38,15 @@ namespace lsp
                 {
                     REDRAW_SURFACE  = 1 << 0,       // Need to redraw surface
                     REDRAW_CHILD    = 1 << 1,       // Need to redraw child only
-                    F_VISIBLE       = 1 << 2,       // Widget is visible
-                    F_REALIZED      = 1 << 3,       // Widget is realized
-                    F_EXPAND        = 1 << 4,       // Area for the widget should be expanded
-                    F_HFILL         = 1 << 5,       // Widget should desirable fill all the provided area horizontally
-                    F_VFILL         = 1 << 6,       // Widget should desirable fill all the provided area vertically
+                    RESIZE_VALID    = 1 << 2,       // Size limit structure is valid
+                    RESIZE_PENDING  = 1 << 3,       // The resize request is pending
+
+                    F_VISIBLE       = 1 << 8,       // Widget is visible
+                    F_REALIZED      = 1 << 9,       // Widget is realized
+                    F_HFILL         = 1 << 10,      // Widget should desirable fill all the provided area horizontally
+                    F_VFILL         = 1 << 11,      // Widget should desirable fill all the provided area vertically
+                    F_HEXPAND       = 1 << 12,      // Horizontal area for the widget should be expanded
+                    F_VEXPAND       = 1 << 13,      // Vertical area for the widget should be expanded
                 };
 
             protected:
@@ -57,16 +61,15 @@ namespace lsp
                 };
 
             protected:
-                Display            *pDisplay;
-                ws::ISurface       *pSurface;
-
-                ComplexWidget      *pParent;
-                const w_class_t    *pClass;
-
-                char               *pUID;           // Unique widget identifier
-                realize_t           sRealize;       // Real geometry
                 size_t              nFlags;         // Flags
+                const w_class_t    *pClass;         // Widget class descriptor
+                Display            *pDisplay;
+                ComplexWidget      *pParent;
+
+                ws::size_limit_t    sSizeLimit;     // Cached size limit
+                ws::rectangle_t     sRectangle;     // Real geometry
                 ws::mouse_pointer_t enCursor;
+                ws::ISurface       *pSurface;
 
                 SlotSet             sSlots;         // Slots
                 Style               sStyle;         // Style
@@ -81,33 +84,39 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Slot handlers
             protected:
-                static status_t slot_mouse_move(Widget *sender, void *ptr, void *data);
-                static status_t slot_mouse_down(Widget *sender, void *ptr, void *data);
-                static status_t slot_mouse_up(Widget *sender, void *ptr, void *data);
-                static status_t slot_mouse_dbl_click(Widget *sender, void *ptr, void *data);
-                static status_t slot_mouse_tri_click(Widget *sender, void *ptr, void *data);
-                static status_t slot_mouse_scroll(Widget *sender, void *ptr, void *data);
-                static status_t slot_mouse_in(Widget *sender, void *ptr, void *data);
-                static status_t slot_mouse_out(Widget *sender, void *ptr, void *data);
-                static status_t slot_key_down(Widget *sender, void *ptr, void *data);
-                static status_t slot_key_up(Widget *sender, void *ptr, void *data);
-                static status_t slot_hide(Widget *sender, void *ptr, void *data);
-                static status_t slot_show(Widget *sender, void *ptr, void *data);
-                static status_t slot_destroy(Widget *sender, void *ptr, void *data);
-                static status_t slot_resize(Widget *sender, void *ptr, void *data);
-                static status_t slot_resize_parent(Widget *sender, void *ptr, void *data);
-                static status_t slot_focus_in(Widget *sender, void *ptr, void *data);
-                static status_t slot_focus_out(Widget *sender, void *ptr, void *data);
-                static status_t slot_drag_request(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_move(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_down(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_up(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_dbl_click(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_tri_click(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_scroll(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_in(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_out(Widget *sender, void *ptr, void *data);
+                static status_t     slot_key_down(Widget *sender, void *ptr, void *data);
+                static status_t     slot_key_up(Widget *sender, void *ptr, void *data);
+                static status_t     slot_hide(Widget *sender, void *ptr, void *data);
+                static status_t     slot_show(Widget *sender, void *ptr, void *data);
+                static status_t     slot_destroy(Widget *sender, void *ptr, void *data);
+                static status_t     slot_resize(Widget *sender, void *ptr, void *data);
+                static status_t     slot_resize_parent(Widget *sender, void *ptr, void *data);
+                static status_t     slot_focus_in(Widget *sender, void *ptr, void *data);
+                static status_t     slot_focus_out(Widget *sender, void *ptr, void *data);
+                static status_t     slot_drag_request(Widget *sender, void *ptr, void *data);
 
             //---------------------------------------------------------------------------------
             // Interface for nested classes
             protected:
-                void            do_destroy();
+                void                do_destroy();
 
-                void            unlink_widget(Widget *widget);
+                void                unlink_widget(Widget *widget);
 
-                virtual void    property_changed(Property *prop);
+                virtual void        property_changed(Property *prop);
+
+                /** Request widget for size
+                 *
+                 * @param limit the widget size constraints to fill
+                 */
+                virtual void        size_request(ws::size_limit_t *r);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -179,47 +188,17 @@ namespace lsp
                  */
                 inline Display *display()           { return pDisplay; };
 
-                /** Get horizontal coordinate of the left top corner
-                 *
-                 * @return coordinate of the left corner
-                 */
-                inline ssize_t left() const         { return sRealize.nLeft;       };
-
-                /** Get horizontal coordinate of the right bottom corner
-                 *
-                 * @return value
-                 */
-                inline ssize_t right() const        { return sRealize.nLeft + sRealize.nWidth;    };
-
-                /** Get vertical coordinate of the left top corner
-                 *
-                 * @return value
-                 */
-                inline ssize_t top() const          { return sRealize.nTop;        };
-
-                /** Get vertical coordinate of the right bottom corner
-                 *
-                 * @return value
-                 */
-                inline ssize_t bottom() const       { return sRealize.nTop + sRealize.nHeight;     };
-
-                /** Get width of the widget
-                 *
-                 * @return width of the widget
-                 */
-                inline ssize_t width() const        { return sRealize.nWidth;      };
-
-                /** Get height of the widget
-                 *
-                 * @return height of the widget
-                 */
-                inline ssize_t height() const       { return sRealize.nHeight;     };
-
                 /** Get widget dimensions
                  *
                  * @param r real widget dimensions
                  */
-                inline void get_dimensions(realize_t *r)    { *r = sRealize; }
+                inline void get_rectangle(ws::rectangle_t *r)   { *r = sRectangle; }
+
+                /**
+                 * Get size limit
+                 * @param l size limit to calculate
+                 */
+                void get_size_limit(ws::size_limit_t *l);
 
                 /** Check if there is redraw request pending
                  *
@@ -244,7 +223,7 @@ namespace lsp
                  *
                  * @return expanding flag
                  */
-                inline bool expand() const          { return nFlags & F_EXPAND; }
+                inline bool expand() const          { return (nFlags & (F_HEXPAND | F_VEXPAND)) == (F_HEXPAND | F_VEXPAND); }
 
                 /** Get fill flag: true if container should desirable fill all provided area with widget
                  *
@@ -311,12 +290,6 @@ namespace lsp
                  * @return the value
                  */
                 ssize_t relative_bottom() const;
-
-                /**
-                 * Get unique widget identifier for DOM search
-                 * @return unique widget identifier for DOM search
-                 */
-                inline const char *unique_id() const        {  return pUID;    }
 
                 /** Check that specified window coordinate lies within widget's bounds
                  * Always returns false for invisible widgets
@@ -393,13 +366,6 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
-                /**
-                 * Set unique widget identifier for DOM search
-                 * @param uid unique widget identifier for DOM search
-                 * @return status of operation
-                 */
-                status_t            set_unique_id(const char *uid);
-
                 /** Query widget for redraw
                  *
                  * @param flags redraw flags
@@ -481,13 +447,7 @@ namespace lsp
                  *
                  * @param r widget realization parameters
                  */
-                virtual void        realize(const realize_t *r);
-
-                /** Request for size
-                 *
-                 * @param r minimum and maximum dimensions of the widget
-                 */
-                virtual void        size_request(ws::size_limit_t *r);
+                virtual void        realize(const ws::rectangle_t *r);
 
                 /** Hide widget
                  *
@@ -564,7 +524,7 @@ namespace lsp
                  *
                  * @return most top-level widget
                  */
-                Widget          *toplevel();
+                Widget             *toplevel();
 
             //---------------------------------------------------------------------------------
             // Event handling
@@ -653,14 +613,14 @@ namespace lsp
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_resize(const realize_t *r);
+                virtual status_t on_resize(const ws::rectangle_t *r);
 
                 /** Geometry of parent widget has changed: size or position
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_resize_parent(const realize_t *r);
+                virtual status_t on_resize_parent(const ws::rectangle_t *r);
 
                 /** The widget becomes hidden
                  *

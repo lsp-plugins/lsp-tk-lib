@@ -75,7 +75,7 @@ namespace lsp
             sSizeConstraints.bind("size.constraints", this);
 
             // Init color
-            init_color(C_LABEL_TEXT, &sBorderColor);
+//            init_color(C_LABEL_TEXT, &sBorderColor);
 
             // Add slot(s)
             handler_id_t id = 0;
@@ -115,13 +115,7 @@ namespace lsp
             property_changed(&sBorderSize);
             property_changed(&sWindowActions);
             property_changed(&sSizeConstraints);
-
-            result = pWindow->get_geometry(&r);
-            if (result != STATUS_SUCCESS)
-            {
-                destroy();
-                return result;
-            }
+            property_changed(&sSize);
 
             lsp_trace("Window has been initialized");
 
@@ -140,7 +134,7 @@ namespace lsp
 
             // Set window's size constraints and update geometry
             pWindow->set_size_constraints(&sr);
-            realize_t r = sSize;
+            ws::rectangle_t r = sRectangle;
             if (enPolicy == WP_GREEDY)
             {
                 if (sr.nMinWidth > 0)
@@ -162,7 +156,7 @@ namespace lsp
                     r.nHeight       = sr.nMinHeight;
             }
 
-            if ((sSize.nWidth != r.nWidth) && (sSize.nHeight != r.nHeight))
+            if ((sRectangle.nWidth != r.nWidth) && (sRectangle.nHeight != r.nHeight))
                 pWindow->resize(r.nWidth, r.nHeight);
 
             return STATUS_OK;
@@ -220,7 +214,7 @@ namespace lsp
                 sync_size();
                 bSizeRequest    = false;
                 query_draw(REDRAW_CHILD | REDRAW_SURFACE);
-                realize(&sSize);
+                realize(&sRectangle);
             }
 
             if (!redraw_pending())
@@ -247,11 +241,11 @@ namespace lsp
             bSizeRequest = true;
         }
 
-        status_t Window::get_absolute_geometry(realize_t *realize)
+        status_t Window::get_absolute_geometry(ws::rectangle_t *r)
         {
             if (pWindow == NULL)
                 return STATUS_BAD_STATE;
-            return pWindow->get_absolute_geometry(realize);
+            return pWindow->get_absolute_geometry(r);
         }
 
         void Window::render(ws::ISurface *s, bool force)
@@ -272,9 +266,12 @@ namespace lsp
 
             if (force)
             {
+                ws::rectangle_t cr;
+                pChild->get_rectangle(&cr);
+
                 s->fill_frame(
-                    0, 0, sRealize.nWidth, sRealize.nHeight,
-                    pChild->left(), pChild->top(), pChild->width(), pChild->height(),
+                    0, 0, sRectangle.nWidth, sRectangle.nHeight,
+                    cr.nLeft, cr.nTop, cr.nWidth, cr.nHeight,
                     bg_color);
 
                 if (nBorder > 0)
@@ -286,7 +283,7 @@ namespace lsp
                     border.scale_lightness(sBrightness.get());
 
                     s->wire_round_rect(
-                        bw + 0.5, bw + 0.5, sRealize.nWidth - nBorder-1, sRealize.nHeight - nBorder-1,
+                        bw + 0.5, bw + 0.5, sRectangle.nWidth - nBorder-1, sRectangle.nHeight - nBorder-1,
                         2, SURFMASK_ALL_CORNER, nBorder,
                         border
                     );
@@ -437,7 +434,7 @@ namespace lsp
 
         bool Window::show()
         {
-            return Window::show(NULL);
+            return show(NULL);
         }
 
         bool Window::show(Widget *actor)
@@ -474,23 +471,24 @@ namespace lsp
                 {
                     case ws::BS_DIALOG:
                     {
-                        realize_t r, rw;
-                        r.nLeft     = 0;
-                        r.nTop      = 0;
-                        r.nWidth    = 0;
-                        r.nHeight   = 0;
+                        ws::rectangle_t r, rw;
+                        r.nLeft         = 0;
+                        r.nTop          = 0;
+                        r.nWidth        = 0;
+                        r.nHeight       = 0;
 
-                        rw.nLeft    = 0;
-                        rw.nTop     = 0;
-                        rw.nWidth   = 0;
-                        rw.nHeight  = 0;
+                        rw.nLeft        = 0;
+                        rw.nTop         = 0;
+                        rw.nWidth       = 0;
+                        rw.nHeight      = 0;
 
-                        wnd->get_geometry(&r);
+                        wnd->get_rectangle(&r);
                         pWindow->get_geometry(&rw);
 
-                        sSize.nLeft = r.nLeft + ((r.nWidth - rw.nWidth) >> 1);
-                        sSize.nTop  = r.nTop  + ((r.nHeight - rw.nHeight) >> 1);
-                        pWindow->move(sSize.nLeft, sSize.nTop);
+                        ssize_t left    = r.nLeft + ((r.nWidth - rw.nWidth) >> 1);
+                        ssize_t top     = r.nTop  + ((r.nHeight - rw.nHeight) >> 1);
+
+                        sPosition.set(left, top);
                         break;
                     }
                     default:
@@ -583,7 +581,7 @@ namespace lsp
 
                 case ws::UIE_RESIZE:
                 {
-                    realize_t r;
+                    ws::rectangle_t r;
 //                    result = pWindow->get_geometry(&r);
                     lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
                     r.nLeft     = e->nLeft;
@@ -611,10 +609,16 @@ namespace lsp
             if (pChild == NULL)
                 return NULL;
 
-            if ((x < pChild->left()) || (x >= pChild->right()))
-                return NULL;
+            ws::rectangle_t r;
+            pChild->get_rectangle(&r);
 
-            if ((y < pChild->top()) || (y >= pChild->bottom()))
+            if (x < r.nLeft)
+                return NULL;
+            if (y < r.nTop)
+                return NULL;
+            if (x >= (r.nLeft + r.nWidth))
+                return NULL;
+            if (y >= (r.nTop + r.nHeight))
                 return NULL;
 
             return pChild;
@@ -721,7 +725,7 @@ namespace lsp
             return (visible()) ? bHasFocus : false;
         }
 
-        void Window::realize(const realize_t *r)
+        void Window::realize(const ws::rectangle_t *r)
         {
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             WidgetContainer::realize(r);
@@ -732,14 +736,10 @@ namespace lsp
 
             // Query for size
             ws::size_limit_t sr;
-            sr.nMinWidth        = -1;
-            sr.nMinHeight       = -1;
-            sr.nMaxWidth        = -1;
-            sr.nMaxHeight       = -1;
-            pChild->size_request(&sr);
+            pChild->get_size_limit(&sr);
 
             // Calculate realize parameters
-            realize_t rc;
+            ws::rectangle_t rc;
 
             // Dimensions
             ssize_t xs          = r->nWidth  - sPadding.horizontal() - nBorder * 2;
@@ -802,7 +802,7 @@ namespace lsp
             if (pChild != NULL)
             {
                 ws::size_limit_t cr;
-                pChild->size_request(&cr);
+                pChild->get_size_limit(&cr);
 
                 r->nMinWidth       += lsp_max(cr.nMinWidth, 0);
                 r->nMinHeight      += lsp_max(cr.nMinHeight, 0);
