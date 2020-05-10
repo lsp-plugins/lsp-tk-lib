@@ -40,11 +40,6 @@ namespace lsp
             nHorScale       = 0.0f;
             nBorder         = 0;
 
-            sSize.nLeft     = -1;
-            sSize.nTop      = -1;
-            sSize.nWidth    = -1;
-            sSize.nHeight   = -1;
-
             sConstraints.nMinWidth  = -1;
             sConstraints.nMinHeight = -1;
             sConstraints.nMaxHeight = -1;
@@ -71,18 +66,19 @@ namespace lsp
             sBorderColor.bind("border", this);
             sBorderStyle.bind("border_style", this);
             sWindowActions.bind("window_actions", this);
+            sSize.bind("size", this);
 
             // Init color
             init_color(C_LABEL_TEXT, &sBorderColor);
 
             // Add slot(s)
-            ui_handler_id_t id = 0;
+            handler_id_t id = 0;
             id = sSlots.add(SLOT_CLOSE, slot_window_close, self());
             if (id < 0)
                 return - id;
 
             // Initialize redraw timer
-            IDisplay *dpy   = pDisplay->display();
+            ws::IDisplay *dpy   = pDisplay->display();
             if (dpy == NULL)
                 return STATUS_BAD_STATE;
 
@@ -136,15 +132,6 @@ namespace lsp
                 destroy();
                 return result;
             }
-
-            if (sSize.nLeft < 0)
-                sSize.nLeft     = r.nLeft;
-            if (sSize.nTop < 0)
-                sSize.nTop      = r.nTop;
-            if (sSize.nWidth < 0)
-                sSize.nWidth    = r.nWidth;
-            if (sSize.nHeight < 0)
-                sSize.nHeight   = r.nHeight;
 
             lsp_trace("Window has been initialized");
 
@@ -379,6 +366,8 @@ namespace lsp
                 if (pWindow != NULL)
                     pWindow->set_window_actions(sWindowActions.actions());
             }
+            if (sSize.is(prop))
+                query_resize();
         }
 
         status_t Window::point_child(Widget *focus)
@@ -644,56 +633,6 @@ namespace lsp
             return WidgetContainer::on_focus_out(e);
         }
 
-        status_t Window::set_width(ssize_t width)
-        {
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->set_width(width);
-                if (r != STATUS_OK)
-                    return r;
-
-                sSize.nWidth    = pWindow->width();
-            }
-            else
-                sSize.nWidth    = width;
-
-            return STATUS_OK;
-        }
-
-        status_t Window::set_height(ssize_t height)
-        {
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->set_height(height);
-                if (r != STATUS_OK)
-                    return r;
-
-                sSize.nHeight   = pWindow->width();
-            }
-            else
-                sSize.nHeight   = height;
-
-            return STATUS_OK;
-        }
-
-        status_t Window::resize(ssize_t width, ssize_t height)
-        {
-            lsp_trace("Resize: width=%d, height=%d", int(width), int(height));
-
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->resize(width, height);
-                if (r != STATUS_OK)
-                    return r;
-
-                return pWindow->get_geometry(&sSize);
-            }
-
-            sSize.nWidth        = width;
-            sSize.nHeight       = height;
-            return STATUS_OK;
-        }
-
         status_t Window::set_left(ssize_t left)
         {
             if (pWindow != NULL)
@@ -735,51 +674,6 @@ namespace lsp
 
             sSize.nLeft     = left;
             sSize.nTop      = top;
-            return STATUS_OK;
-        }
-
-        status_t Window::set_geometry(ssize_t left, ssize_t top, ssize_t width, ssize_t height)
-        {
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->set_geometry(left, top, width, height);
-                if (r != STATUS_OK)
-                    return r;
-            }
-
-            sSize.nLeft     = left;
-            sSize.nTop      = top;
-            sSize.nWidth    = width;
-            sSize.nHeight   = height;
-
-            return STATUS_OK;
-        }
-
-        status_t Window::set_geometry(const realize_t *geometry)
-        {
-            lsp_trace("set_geometry: x=%d, y=%d, w=%d, h=%d",
-                int(geometry->nLeft), int(geometry->nTop), int(geometry->nWidth), int(geometry->nHeight)
-            );
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->set_geometry(geometry);
-                if (r != STATUS_OK)
-                    return r;
-            }
-            sSize = *geometry;
-
-            return STATUS_OK;
-        }
-
-        status_t Window::get_geometry(realize_t *geometry)
-        {
-            if (pWindow != NULL)
-            {
-                status_t r =  pWindow->get_geometry(&sSize);
-                if (r != STATUS_OK)
-                    return r;
-            }
-            *geometry = sSize;
             return STATUS_OK;
         }
 

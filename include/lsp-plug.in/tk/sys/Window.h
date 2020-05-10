@@ -54,6 +54,7 @@ namespace lsp
                 prop::Color         sBorderColor;
                 prop::BorderStyle   sBorderStyle;
                 prop::WindowActions sWindowActions;
+                prop::Size          sSize;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -104,27 +105,27 @@ namespace lsp
                  * Return true if window is a sub-window of another window
                  * @return true if window is a sub-window of another window
                  */
-                inline bool nested() { return pNativeHandle != NULL; }
+                inline bool nested()                                { return pNativeHandle != NULL; }
 
-                inline ssize_t screen() { return (pWindow != NULL) ? pWindow->screen() : -1; };
+                inline ssize_t screen()                             { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
                 status_t get_absolute_geometry(realize_t *realize);
 
-                inline Widget *focused_child() const  { return const_cast<Window *>(this)->pFocus; }
+                inline Widget *focused_child() const                { return const_cast<Window *>(this)->pFocus; }
 
-                inline Widget *pointed_child() const  { return const_cast<Window *>(this)->pPointed; }
+                inline Widget *pointed_child() const                { return const_cast<Window *>(this)->pPointed; }
 
-                inline bool override_pointer() const { return bOverridePointer; }
+                inline bool override_pointer() const                { return bOverridePointer; }
 
-                inline bool size_request_pending() const { return bSizeRequest; }
+                inline bool size_request_pending() const            { return bSizeRequest; }
 
-                inline window_poilicy_t policy() const          { return enPolicy; }
+                inline window_poilicy_t policy() const              { return enPolicy; }
 
-                inline float            vpos() const            { return nVertPos; }
-                inline float            hpos() const            { return nHorPos; }
-                inline float            vscale() const          { return nVertScale; }
-                inline float            hscale() const          { return nHorScale; }
-                inline size_t           border() const          { return nBorder; }
+                inline float            vpos() const                { return nVertPos; }
+                inline float            hpos() const                { return nHorPos; }
+                inline float            vscale() const              { return nVertScale; }
+                inline float            hscale() const              { return nHorScale; }
+                inline size_t           border() const              { return nBorder; }
 
                 inline String              *title()                 { return &sTitle; }
                 inline const String        *title() const           { return &sTitle; }
@@ -134,6 +135,8 @@ namespace lsp
                 inline const BorderStyle   *border_style() const    { return &sBorderStyle; }
                 inline WindowActions       *window_actions()        { return &sWindowActions; }
                 inline const WindowActions *window_actions() const  { return &sWindowActions; }
+                inline Size                *size()                  { return &sSize; }
+                inline const Size          *size() const            { return &sSize; }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -193,23 +196,11 @@ namespace lsp
 
                 virtual bool has_focus() const;
 
-                status_t set_width(ssize_t width);
-
-                status_t set_height(ssize_t height);
-
-                status_t resize(ssize_t width, ssize_t height);
-
                 status_t set_left(ssize_t left);
 
                 status_t set_top(ssize_t top);
 
                 status_t move(ssize_t left, ssize_t top);
-
-                status_t set_geometry(ssize_t left, ssize_t top, ssize_t width, ssize_t height);
-
-                status_t set_geometry(const realize_t *geometry);
-
-                status_t get_geometry(realize_t *geometry);
 
                 status_t set_min_width(ssize_t width);
 
