@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/sys/Timer.h>
+#include <lsp-plug.in/tk/sys/Display.h>
 #include <time.h>
 
 namespace lsp

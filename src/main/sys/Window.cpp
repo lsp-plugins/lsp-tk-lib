@@ -22,6 +22,7 @@ namespace lsp
             sBorderColor(&sProperties),
             sBorderStyle(&sProperties),
             sBorderSize(&sProperties),
+            sBorderRadius(&sProperties),
             sWindowActions(&sProperties),
             sPosition(&sProperties),
             sSize(&sProperties),
@@ -43,7 +44,6 @@ namespace lsp
             nHorPos         = 0.5f;
             nVertScale      = 0.0f;
             nHorScale       = 0.0f;
-            nBorder         = 0;
 
             enPolicy        = WP_NORMAL;
 
@@ -69,6 +69,7 @@ namespace lsp
             sBorderColor.bind("border.color", this);
             sBorderStyle.bind("border.style", this);
             sBorderSize.bind("border.size", this);
+            sBorderRadius.bind("border.radius", this);
             sWindowActions.bind("window_actions", this);
             sPosition.bind("position", this);
             sSize.bind("size", this);
@@ -274,18 +275,22 @@ namespace lsp
                     cr.nLeft, cr.nTop, cr.nWidth, cr.nHeight,
                     bg_color);
 
-                if (nBorder > 0)
-                {
-                    bool aa = s->set_antialiasing(true);
-                    ssize_t bw = nBorder >> 1;
+                float scaling   = sScaling.get();
+                float border    = sBorderSize.get() * scaling;
 
-                    lsp::Color border(sBorderColor);
-                    border.scale_lightness(sBrightness.get());
+                if (border > 0)
+                {
+                    float radius = sBorderRadius.get() * scaling;
+                    bool aa = s->set_antialiasing(true);
+                    float bw = border * 0.5f;
+
+                    lsp::Color bc(sBorderColor);
+                    bc.scale_lightness(sBrightness.get());
 
                     s->wire_round_rect(
-                        bw + 0.5, bw + 0.5, sRectangle.nWidth - nBorder-1, sRectangle.nHeight - nBorder-1,
-                        2, SURFMASK_ALL_CORNER, nBorder,
-                        border
+                        bw + 0.5, bw + 0.5, sRectangle.nWidth - border-1, sRectangle.nHeight - border-1,
+                        radius, SURFMASK_ALL_CORNER, border,
+                        bc
                     );
                     s->set_antialiasing(aa);
                 }
@@ -377,14 +382,6 @@ namespace lsp
                 return STATUS_OK;
             pPointed    = (focus != this) ? focus : this;
             return update_pointer();
-        }
-
-        void Window::set_border(size_t border)
-        {
-            if (nBorder == border)
-                return;
-            nBorder     = border;
-            query_resize();
         }
 
         status_t Window::grab_events(ws::grab_t grab)
@@ -740,19 +737,21 @@ namespace lsp
 
             // Calculate realize parameters
             ws::rectangle_t rc;
+            float scaling       = sScaling.get();
+            size_t border       = sBorderSize.get() * scaling;
 
             // Dimensions
-            ssize_t xs          = r->nWidth  - sPadding.horizontal() - nBorder * 2;
-            ssize_t ys          = r->nHeight - sPadding.vertical() - nBorder * 2;
+            ssize_t xs          = r->nWidth  - sPadding.horizontal() - border * 2;
+            ssize_t ys          = r->nHeight - sPadding.vertical() - border * 2;
 
             if ((sr.nMinWidth >= 0) && (sr.nMinWidth > xs))
             {
-                rc.nLeft            = nBorder + sPadding.left();
+                rc.nLeft            = border + sPadding.left();
                 rc.nWidth           = sr.nMinWidth;
             }
             else if (sr.nMaxWidth < 0)
             {
-                rc.nLeft            = nBorder + sPadding.left();
+                rc.nLeft            = border + sPadding.left();
                 rc.nWidth           = xs;
             }
             else
@@ -761,17 +760,17 @@ namespace lsp
                 if (rc.nWidth > xs)
                     rc.nWidth           = xs;
                 xs                 -= rc.nWidth;
-                rc.nLeft            = nBorder + sPadding.left() + xs * nHorPos;
+                rc.nLeft            = border + sPadding.left() + xs * nHorPos;
             }
 
             if ((sr.nMinHeight >= 0) && (sr.nMinHeight > ys))
             {
-                rc.nTop             = nBorder + sPadding.top();
+                rc.nTop             = border + sPadding.top();
                 rc.nHeight          = sr.nMinHeight;
             }
             else if (sr.nMaxHeight < 0)
             {
-                rc.nTop             = nBorder + sPadding.top();
+                rc.nTop             = border + sPadding.top();
                 rc.nHeight          = ys;
             }
             else
@@ -780,7 +779,7 @@ namespace lsp
                 if (rc.nHeight > ys)
                     rc.nHeight          = ys;
                 ys                 -= rc.nHeight;
-                rc.nTop             = nBorder + sPadding.top() + ys * nVertPos;
+                rc.nTop             = border + sPadding.top() + ys * nVertPos;
             }
 
             // Call for realize
@@ -791,11 +790,12 @@ namespace lsp
         void Window::size_request(ws::size_limit_t *r)
         {
             padding_t pad;
-            float scaling = sScaling.get();
+            float scaling       = sScaling.get();
             sPadding.compute(&pad, scaling);
+            size_t border       = sBorderSize.get();
 
-            r->nMinWidth        = pad.nLeft + pad.nRight + nBorder * 2;
-            r->nMinHeight       = pad.nTop + pad.nBottom + nBorder * 2;
+            r->nMinWidth        = pad.nLeft + pad.nRight + border * 2;
+            r->nMinHeight       = pad.nTop + pad.nBottom + border * 2;
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
 

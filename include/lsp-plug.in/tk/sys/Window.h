@@ -35,7 +35,6 @@ namespace lsp
                 void                   *pNativeHandle;
                 Widget                 *pChild;
                 ssize_t                 nScreen;
-                Timer                   sRedraw;
                 Widget                 *pFocus;
                 Widget                 *pPointed;
                 bool                    bHasFocus;
@@ -46,14 +45,16 @@ namespace lsp
                 float                   nHorPos;
                 float                   nVertScale;
                 float                   nHorScale;
-                size_t                  nBorder;
                 window_poilicy_t        enPolicy;
+
+                Timer                   sRedraw;
 
                 prop::String            sTitle;
                 prop::String            sRole;
                 prop::Color             sBorderColor;
                 prop::BorderStyle       sBorderStyle;
                 prop::Float             sBorderSize;
+                prop::Float             sBorderRadius;
                 prop::WindowActions     sWindowActions;
                 prop::Position          sPosition;
                 prop::Size              sSize;
@@ -96,39 +97,38 @@ namespace lsp
                 /** Get native window handle
                  *
                  */
-                inline void *handle() { return (pWindow != NULL) ? pWindow->handle() : NULL; };
+                inline void                    *handle()                    { return (pWindow != NULL) ? pWindow->handle() : NULL; };
 
                 /**
                  * Get native window
                  * @return native window
                  */
-                inline ws::IWindow *native() { return pWindow; };
+                inline ws::IWindow             *native()                    { return pWindow; };
 
                 /**
                  * Return true if window is a sub-window of another window
                  * @return true if window is a sub-window of another window
                  */
-                inline bool nested()                                { return pNativeHandle != NULL; }
+                inline bool                     nested()                    { return pNativeHandle != NULL; }
 
-                inline ssize_t screen()                             { return (pWindow != NULL) ? pWindow->screen() : -1; };
+                inline ssize_t                  screen()                    { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
-                status_t get_absolute_geometry(ws::rectangle_t *r);
+                status_t                        get_absolute_geometry(ws::rectangle_t *r);
 
-                inline Widget *focused_child() const                { return const_cast<Window *>(this)->pFocus; }
+                inline Widget                  *focused_child() const       { return const_cast<Window *>(this)->pFocus; }
 
-                inline Widget *pointed_child() const                { return const_cast<Window *>(this)->pPointed; }
+                inline Widget                  *pointed_child() const       { return const_cast<Window *>(this)->pPointed; }
 
-                inline bool override_pointer() const                { return bOverridePointer; }
+                inline bool                     override_pointer() const    { return bOverridePointer; }
 
-                inline bool size_request_pending() const            { return bSizeRequest; }
+                inline bool                     size_request_pending() const{ return bSizeRequest; }
 
-                inline window_poilicy_t policy() const              { return enPolicy; }
+                inline window_poilicy_t         policy() const              { return enPolicy; }
 
-                inline float            vpos() const                { return nVertPos; }
-                inline float            hpos() const                { return nHorPos; }
-                inline float            vscale() const              { return nVertScale; }
-                inline float            hscale() const              { return nHorScale; }
-                inline size_t           border() const              { return nBorder; }
+                inline float                    vpos() const                { return nVertPos; }
+                inline float                    hpos() const                { return nHorPos; }
+                inline float                    vscale() const              { return nVertScale; }
+                inline float                    hscale() const              { return nHorScale; }
 
                 inline String                  *title()                     { return &sTitle; }
                 inline const String            *title() const               { return &sTitle; }
@@ -187,7 +187,6 @@ namespace lsp
 
             public:
                 status_t                focus_child(Widget *focus);
-
                 status_t                unfocus_child(Widget *focus);
 
                 status_t                toggle_child_focus(Widget *focus);
@@ -195,10 +194,7 @@ namespace lsp
                 status_t                point_child(Widget *focus);
 
                 status_t                grab_events(ws::grab_t grab);
-
                 status_t                ungrab_events();
-
-                void                    set_border(size_t border);
 
                 void                    set_policy(window_poilicy_t policy);
 

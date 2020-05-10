@@ -138,7 +138,7 @@ namespace lsp
         ssize_t SizeConstraints::set_min_width(ssize_t value)
         {
             value               = lsp_max(value, -1);
-            size_t old          = sValue.nMinWidth;
+            ssize_t old         = sValue.nMinWidth;
             if (old == value)
                 return value;
 
@@ -150,7 +150,7 @@ namespace lsp
         ssize_t SizeConstraints::set_min_height(ssize_t value)
         {
             value               = lsp_max(value, -1);
-            size_t old          = sValue.nMinHeight;
+            ssize_t old         = sValue.nMinHeight;
             if (old == value)
                 return value;
 
@@ -162,7 +162,7 @@ namespace lsp
         ssize_t SizeConstraints::set_max_width(ssize_t value)
         {
             value               = lsp_max(value, -1);
-            size_t old          = sValue.nMaxWidth;
+            ssize_t old         = sValue.nMaxWidth;
             if (old == value)
                 return value;
 
@@ -174,7 +174,7 @@ namespace lsp
         ssize_t SizeConstraints::set_max_height(ssize_t value)
         {
             value               = lsp_max(value, -1);
-            size_t old          = sValue.nMaxHeight;
+            ssize_t old         = sValue.nMaxHeight;
             if (old == value)
                 return value;
 
@@ -257,10 +257,10 @@ namespace lsp
 
         void SizeConstraints::set(const ws::size_limit_t *p)
         {
-            size_t min_width    = lsp_max(p->nMinWidth, -1);
-            size_t min_height   = lsp_max(p->nMinHeight, -1);
-            size_t max_width    = lsp_max(p->nMaxWidth, -1);
-            size_t max_height   = lsp_max(p->nMaxHeight, -1);
+            ssize_t min_width   = lsp_max(p->nMinWidth, -1);
+            ssize_t min_height  = lsp_max(p->nMinHeight, -1);
+            ssize_t max_width   = lsp_max(p->nMaxWidth, -1);
+            ssize_t max_height  = lsp_max(p->nMaxHeight, -1);
 
             if ((sValue.nMinWidth == min_width) &&
                 (sValue.nMinHeight == min_height) &&
