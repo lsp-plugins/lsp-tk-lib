@@ -25,18 +25,18 @@ namespace lsp
             sPadding(&sProperties),
             sBgColor(&sProperties)
         {
-            pDisplay        = dpy;
-            pSurface        = NULL;
-            pParent         = NULL;
+            pDisplay            = dpy;
+            pSurface            = NULL;
+            pParent             = NULL;
 
-            pUID            = NULL;
-            enCursor        = ws::MP_DEFAULT;
-            sSize.nLeft     = 0;
-            sSize.nTop      = 0;
-            sSize.nWidth    = 0;
-            sSize.nHeight   = 0;
-            nFlags          = REDRAW_SURFACE | F_VISIBLE | F_HFILL | F_VFILL;
-            pClass          = &metadata;
+            pUID                = NULL;
+            enCursor            = ws::MP_DEFAULT;
+            sRealize.nLeft      = 0;
+            sRealize.nTop       = 0;
+            sRealize.nWidth     = 0;
+            sRealize.nHeight    = 0;
+            nFlags              = REDRAW_SURFACE | F_VISIBLE | F_HFILL | F_VFILL;
+            pClass              = &metadata;
         }
 
         Widget::~Widget()
@@ -317,35 +317,35 @@ namespace lsp
 
         ssize_t Widget::relative_left() const
         {
-            return sSize.nLeft - ((pParent != NULL) ? pParent->left() : 0);
+            return sRealize.nLeft - ((pParent != NULL) ? pParent->left() : 0);
         }
 
         ssize_t Widget::relative_right() const
         {
-            return sSize.nLeft - ((pParent != NULL) ? pParent->left() : 0) + sSize.nWidth;
+            return sRealize.nLeft - ((pParent != NULL) ? pParent->left() : 0) + sRealize.nWidth;
         }
 
         ssize_t Widget::relative_top() const
         {
-            return sSize.nTop - ((pParent != NULL) ? pParent->top() : 0);
+            return sRealize.nTop - ((pParent != NULL) ? pParent->top() : 0);
         }
 
         ssize_t Widget::relative_bottom() const
         {
-            return sSize.nTop - ((pParent != NULL) ? pParent->top() : 0) + sSize.nHeight;
+            return sRealize.nTop - ((pParent != NULL) ? pParent->top() : 0) + sRealize.nHeight;
         }
 
         bool Widget::inside(ssize_t x, ssize_t y)
         {
             if (!(nFlags & F_VISIBLE))
                 return false;
-            else if (x < sSize.nLeft)
+            else if (x < sRealize.nLeft)
                 return false;
-            else if (x >= (sSize.nLeft + sSize.nWidth))
+            else if (x >= (sRealize.nLeft + sRealize.nWidth))
                 return false;
-            else if (y < sSize.nTop)
+            else if (y < sRealize.nTop)
                 return false;
-            else if (y >= (sSize.nTop + sSize.nHeight))
+            else if (y >= (sRealize.nTop + sRealize.nHeight))
                 return false;
 
             return true;
@@ -530,7 +530,7 @@ namespace lsp
                 return;
 
             // Render to the main surface
-            s->draw(src, sSize.nLeft, sSize.nTop);
+            s->draw(src, sRealize.nLeft, sRealize.nTop);
         }
 
         status_t Widget::set_unique_id(const char *uid)
@@ -550,7 +550,7 @@ namespace lsp
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s)
         {
-            return get_surface(s, sSize.nWidth, sSize.nHeight);
+            return get_surface(s, sRealize.nWidth, sRealize.nHeight);
         }
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s, ssize_t width, ssize_t height)
@@ -599,18 +599,18 @@ namespace lsp
         void Widget::realize(const realize_t *r)
         {
             // Do not report size request on size change
-            if ((sSize.nLeft == r->nLeft) &&
-                (sSize.nTop  == r->nTop) &&
-                (sSize.nWidth == r->nWidth) &&
-                (sSize.nHeight == r->nHeight))
+            if ((sRealize.nLeft == r->nLeft) &&
+                (sRealize.nTop  == r->nTop) &&
+                (sRealize.nWidth == r->nWidth) &&
+                (sRealize.nHeight == r->nHeight))
                 return;
 
             // Update size and execute slot
-            sSize       = *r;
-            sSlots.execute(SLOT_RESIZE, this, &sSize);
+            sRealize        = *r;
+            sSlots.execute(SLOT_RESIZE, this, &sRealize);
         }
 
-        void Widget::size_request(size_request_t *r)
+        void Widget::size_request(ws::size_limit_t *r)
         {
             r->nMinWidth    = -1;
             r->nMinHeight   = -1;

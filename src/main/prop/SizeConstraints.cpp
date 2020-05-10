@@ -48,7 +48,7 @@ namespace lsp
             if ((pStyle == NULL) || (property < 0))
                 return;
 
-            size_request_t &p   = sValue;
+            ws::size_limit_t &p   = sValue;
 
             ssize_t v;
             if ((property == vAtoms[P_MIN_WIDTH]) && (pStyle->get_int(vAtoms[P_MIN_WIDTH], &v) == STATUS_OK))
@@ -96,7 +96,7 @@ namespace lsp
 
             pStyle->begin();
             {
-                size_request_t &p       = sValue;
+                ws::size_limit_t &p       = sValue;
 
                 // Simple components
                 if (vAtoms[P_MIN_WIDTH] >= 0)
@@ -255,7 +255,7 @@ namespace lsp
             sync();
         }
 
-        void SizeConstraints::set(const size_request_t *p)
+        void SizeConstraints::set(const ws::size_limit_t *p)
         {
             size_t min_width    = lsp_max(p->nMinWidth, -1);
             size_t min_height   = lsp_max(p->nMinHeight, -1);
@@ -288,6 +288,53 @@ namespace lsp
             sValue.nMaxWidth    = p->sValue.nMaxWidth;
             sValue.nMaxHeight   = p->sValue.nMaxHeight;
             sync();
+        }
+
+        void SizeConstraints::compute(ws::size_limit_t *limit, float scale)
+        {
+            scale               = lsp_max(scale, 0.0f);
+            limit->nMinWidth    = (sValue.nMinWidth >= 0) ? sValue.nMinWidth * scale : -1;
+            limit->nMinHeight   = (sValue.nMinHeight >= 0) ? sValue.nMinHeight * scale : -1;
+            limit->nMaxWidth    = (sValue.nMaxWidth >= 0) ? sValue.nMaxWidth * scale : -1;
+            limit->nMaxHeight   = (sValue.nMaxHeight >= 0) ? sValue.nMaxHeight * scale : -1;
+        }
+
+        void SizeConstraints::apply(ws::size_limit_t *sc, float scale)
+        {
+            ws::size_limit_t l;
+            compute(&l, scale);
+
+            // Compute maximum width
+            if ((sc->nMaxWidth >= 0) && (l.nMaxWidth >= 0))
+                sc->nMaxWidth   = lsp_min(sc->nMaxWidth, l.nMaxWidth);
+            else
+                sc->nMaxWidth   = l.nMaxWidth;
+
+            // Compute maximum height
+            if ((sc->nMaxHeight) && (l.nMaxHeight >= 0))
+                sc->nMaxHeight  = lsp_min(sc->nMaxHeight, l.nMaxHeight);
+            else
+                sc->nMaxHeight  = l.nMaxHeight;
+
+            // Compute minimum width
+            if ((l.nMinWidth >= 0) && (sc->nMinWidth >= 0))
+                sc->nMinWidth   = lsp_max(sc->nMinWidth, l.nMinWidth);
+            else
+                sc->nMinWidth   = l.nMinWidth;
+
+            // Compute minimum height
+            if ((sc->nMinHeight >= 0) && (l.nMinHeight >= 0))
+                sc->nMinHeight  = lsp_max(sc->nMinHeight, l.nMinHeight);
+            else
+                sc->nMinHeight  = l.nMinHeight;
+
+            // Maximum width should not be less than minimum width
+            if ((sc->nMinWidth >= 0) && (sc->nMaxWidth >= 0))
+                sc->nMinWidth   = lsp_max(sc->nMinWidth, sc->nMaxWidth);
+
+            // Maximum height should not be less than minimum height
+            if ((sc->nMinHeight >= 0) && (sc->nMaxHeight >= 0))
+                sc->nMinHeight  = lsp_max(sc->nMinHeight, sc->nMaxHeight);
         }
 
         namespace prop

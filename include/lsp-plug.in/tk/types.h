@@ -44,14 +44,6 @@ namespace lsp
             const w_class_t    *parent;
         } w_class_t;
 
-        typedef struct size_request_t
-        {
-            ssize_t             nMinWidth;
-            ssize_t             nMinHeight;
-            ssize_t             nMaxWidth;
-            ssize_t             nMaxHeight;
-        } size_request_t;
-
         typedef struct realize_t
         {
             ssize_t             nLeft;

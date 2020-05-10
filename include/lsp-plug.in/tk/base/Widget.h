@@ -64,7 +64,7 @@ namespace lsp
                 const w_class_t    *pClass;
 
                 char               *pUID;           // Unique widget identifier
-                realize_t           sSize;          // Geometry
+                realize_t           sRealize;       // Real geometry
                 size_t              nFlags;         // Flags
                 ws::mouse_pointer_t enCursor;
 
@@ -183,43 +183,43 @@ namespace lsp
                  *
                  * @return coordinate of the left corner
                  */
-                inline ssize_t left() const         { return sSize.nLeft;       };
+                inline ssize_t left() const         { return sRealize.nLeft;       };
 
                 /** Get horizontal coordinate of the right bottom corner
                  *
                  * @return value
                  */
-                inline ssize_t right() const        { return sSize.nLeft + sSize.nWidth;    };
+                inline ssize_t right() const        { return sRealize.nLeft + sRealize.nWidth;    };
 
                 /** Get vertical coordinate of the left top corner
                  *
                  * @return value
                  */
-                inline ssize_t top() const          { return sSize.nTop;        };
+                inline ssize_t top() const          { return sRealize.nTop;        };
 
                 /** Get vertical coordinate of the right bottom corner
                  *
                  * @return value
                  */
-                inline ssize_t bottom() const       { return sSize.nTop + sSize.nHeight;     };
+                inline ssize_t bottom() const       { return sRealize.nTop + sRealize.nHeight;     };
 
                 /** Get width of the widget
                  *
                  * @return width of the widget
                  */
-                inline ssize_t width() const        { return sSize.nWidth;      };
+                inline ssize_t width() const        { return sRealize.nWidth;      };
 
                 /** Get height of the widget
                  *
                  * @return height of the widget
                  */
-                inline ssize_t height() const       { return sSize.nHeight;     };
+                inline ssize_t height() const       { return sRealize.nHeight;     };
 
                 /** Get widget dimensions
                  *
                  * @param r real widget dimensions
                  */
-                inline void get_dimensions(realize_t *r) { *r = sSize; }
+                inline void get_dimensions(realize_t *r)    { *r = sRealize; }
 
                 /** Check if there is redraw request pending
                  *
@@ -487,7 +487,7 @@ namespace lsp
                  *
                  * @param r minimum and maximum dimensions of the widget
                  */
-                virtual void        size_request(size_request_t *r);
+                virtual void        size_request(ws::size_limit_t *r);
 
                 /** Hide widget
                  *

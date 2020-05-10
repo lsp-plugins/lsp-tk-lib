@@ -334,6 +334,15 @@ namespace lsp
             sync();
         }
 
+        void Padding::compute(padding_t *padding, float scale)
+        {
+            scale               = lsp_max(scale, 0.0f);
+            padding->nLeft      = sValue.nLeft * scale;
+            padding->nRight     = sValue.nRight * scale;
+            padding->nTop       = sValue.nTop * scale;
+            padding->nBottom    = sValue.nBottom * scale;
+        }
+
         namespace prop
         {
             status_t Padding::bind(const char *property, Widget *widget)

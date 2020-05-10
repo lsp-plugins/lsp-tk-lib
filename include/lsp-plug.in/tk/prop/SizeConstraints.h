@@ -13,6 +13,7 @@
 
 #include <lsp-plug.in/tk/style.h>
 #include <lsp-plug.in/tk/prop.h>
+#include <lsp-plug.in/ws/types.h>
 
 namespace lsp
 {
@@ -57,7 +58,7 @@ namespace lsp
 
             protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
-                size_request_t      sValue;             // Value
+                ws::size_limit_t    sValue;             // Value
                 Listener            sListener;          // Listener
 
             protected:
@@ -77,8 +78,8 @@ namespace lsp
                 inline ssize_t max_width() const            { return sValue.nMaxWidth;              }
                 inline ssize_t max_height() const           { return sValue.nMaxHeight;             }
 
-                inline void get(size_request_t *p) const    { *p = sValue;                          }
-                inline void get(size_request_t &p) const    { p = sValue;                           }
+                inline void get(ws::size_limit_t *p) const    { *p = sValue;                          }
+                inline void get(ws::size_limit_t &p) const    { p = sValue;                           }
                 void get(ssize_t *min_width, ssize_t *min_height, ssize_t *max_width, ssize_t *max_height) const;
                 void get(ssize_t &min_width, ssize_t &min_height, ssize_t &max_width, ssize_t &max_height) const;
 
@@ -103,8 +104,11 @@ namespace lsp
                 void        set_height(ssize_t min, ssize_t max);
 
                 void        set(ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
-                void        set(const size_request_t *p);
+                void        set(const ws::size_limit_t *p);
                 void        set(const SizeConstraints *p);
+
+                void        compute(ws::size_limit_t *limit, float scale);
+                void        apply(ws::size_limit_t *sc, float scale);
         };
 
         namespace prop

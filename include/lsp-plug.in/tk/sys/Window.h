@@ -31,31 +31,33 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
-                ws::IWindow        *pWindow;
-                void               *pNativeHandle;
-                Widget             *pChild;
-                ssize_t             nScreen;
-                size_request_t      sConstraints;
-                Timer               sRedraw;
-                Widget             *pFocus;
-                Widget             *pPointed;
-                bool                bHasFocus;
-                bool                bOverridePointer;
-                bool                bSizeRequest;
-                bool                bMapFlag;
-                float               nVertPos;
-                float               nHorPos;
-                float               nVertScale;
-                float               nHorScale;
-                size_t              nBorder;
-                window_poilicy_t    enPolicy;
+                ws::IWindow            *pWindow;
+                void                   *pNativeHandle;
+                Widget                 *pChild;
+                ssize_t                 nScreen;
+                Timer                   sRedraw;
+                Widget                 *pFocus;
+                Widget                 *pPointed;
+                bool                    bHasFocus;
+                bool                    bOverridePointer;
+                bool                    bSizeRequest;
+                bool                    bMapFlag;
+                float                   nVertPos;
+                float                   nHorPos;
+                float                   nVertScale;
+                float                   nHorScale;
+                size_t                  nBorder;
+                window_poilicy_t        enPolicy;
 
-                prop::String        sTitle;
-                prop::Color         sBorderColor;
-                prop::BorderStyle   sBorderStyle;
-                prop::WindowActions sWindowActions;
-                prop::Position      sPosition;
-                prop::Size          sSize;
+                prop::String            sTitle;
+                prop::String            sRole;
+                prop::Color             sBorderColor;
+                prop::BorderStyle       sBorderStyle;
+                prop::Float             sBorderSize;
+                prop::WindowActions     sWindowActions;
+                prop::Position          sPosition;
+                prop::Size              sSize;
+                prop::SizeConstraints   sSizeConstraints;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -128,102 +130,69 @@ namespace lsp
                 inline float            hscale() const              { return nHorScale; }
                 inline size_t           border() const              { return nBorder; }
 
-                inline String              *title()                 { return &sTitle; }
-                inline const String        *title() const           { return &sTitle; }
-                inline Color               *border_color()          { return &sBorderColor; }
-                inline const Color         *border_color() const    { return &sBorderColor; }
-                inline BorderStyle         *border_style()          { return &sBorderStyle; }
-                inline const BorderStyle   *border_style() const    { return &sBorderStyle; }
-                inline WindowActions       *window_actions()        { return &sWindowActions; }
-                inline const WindowActions *window_actions() const  { return &sWindowActions; }
-                inline Size                *size()                  { return &sSize; }
-                inline const Size          *size() const            { return &sSize; }
+                inline String                  *title()                     { return &sTitle; }
+                inline const String            *title() const               { return &sTitle; }
+                inline String                  *role()                      { return &sRole; }
+                inline const String            *role() const                { return &sRole; }
+                inline Color                   *border_color()              { return &sBorderColor; }
+                inline const Color             *border_color() const        { return &sBorderColor; }
+                inline BorderStyle             *border_style()              { return &sBorderStyle; }
+                inline const BorderStyle       *border_style() const        { return &sBorderStyle; }
+                inline WindowActions           *window_actions()            { return &sWindowActions; }
+                inline const WindowActions     *window_actions() const      { return &sWindowActions; }
+                inline Size                    *size()                      { return &sSize; }
+                inline const Size              *size() const                { return &sSize; }
+                inline SizeConstraints         *size_constraints()          { return &sSizeConstraints; }
+                inline const SizeConstraints   *size_constraints() const    { return &sSizeConstraints; }
 
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
-                virtual void        query_resize();
+                virtual void            query_resize();
 
-                /** Render window's content to surface
-                 *
-                 * @param s surface to perform rendering
-                 * @param force force flag
-                 */
-                virtual void        render(ws::ISurface *s, bool force);
+                virtual void            render(ws::ISurface *s, bool force);
 
-                virtual status_t    set_cursor(ws::mouse_pointer_t mp);
+                virtual status_t        set_cursor(ws::mouse_pointer_t mp);
 
-                virtual status_t    override_pointer(bool override = true);
+                virtual status_t        override_pointer(bool override = true);
 
                 /** Hide window
                  *
                  */
-                virtual bool hide();
+                virtual bool            hide();
 
                 /** Show window
                  *
                  */
-                virtual bool show();
+                virtual bool            show();
 
                 /** Show window over window of actor
                  *
                  * @param actor actor
                  * @return status of operation
                  */
-                virtual bool show(Widget *actor);
+                virtual bool            show(Widget *actor);
 
-                /** Add child widget
-                 *
-                 * @param widget widget to add
-                 */
-                virtual status_t add(Widget *widget);
+                virtual status_t        add(Widget *widget);
 
-                /** Remove child widget
-                 *
-                 * @param widget child widget
-                 * @return status of operation
-                 */
-                virtual status_t remove(Widget *widget);
+                virtual status_t        remove(Widget *widget);
 
-                /** Handle event from window system
-                 *
-                 * @param e event from window system
-                 */
-                virtual status_t handle_event(const ws::event_t *e);
+                virtual status_t        handle_event(const ws::event_t *e);
 
-                virtual status_t set_focus(bool focus = true);
+                virtual status_t        set_focus(bool focus = true);
 
-                virtual status_t toggle_focus();
+                virtual status_t        toggle_focus();
 
-                virtual bool has_focus() const;
+                virtual bool            has_focus() const;
 
-                status_t move(ssize_t left, ssize_t top);
+            public:
+                status_t                focus_child(Widget *focus);
 
-                status_t set_min_width(ssize_t width);
+                status_t                unfocus_child(Widget *focus);
 
-                status_t set_min_height(ssize_t height);
+                status_t                toggle_child_focus(Widget *focus);
 
-                status_t set_min_size(ssize_t width, ssize_t height);
-
-                status_t set_max_width(ssize_t width);
-
-                status_t set_max_height(ssize_t height);
-
-                status_t set_max_size(ssize_t width, ssize_t height);
-
-                status_t set_size_constraints(const size_request_t *c);
-
-                status_t get_size_constraints(size_request_t *c);
-
-                status_t set_size_constraints(ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
-
-                status_t focus_child(Widget *focus);
-
-                status_t unfocus_child(Widget *focus);
-
-                status_t toggle_child_focus(Widget *focus);
-
-                status_t point_child(Widget *focus);
+                status_t                point_child(Widget *focus);
 
                 status_t                grab_events(ws::grab_t grab);
 
@@ -231,7 +200,7 @@ namespace lsp
 
                 void                    set_border(size_t border);
 
-                void set_policy(window_poilicy_t policy);
+                void                    set_policy(window_poilicy_t policy);
 
                 void                    set_vpos(float value);
                 void                    set_hpos(float value);
@@ -278,7 +247,7 @@ namespace lsp
                  *
                  * @param r pointer to structure to store data
                  */
-                virtual void            size_request(size_request_t *r);
+                virtual void            size_request(ws::size_limit_t *r);
 
                 /** Set window icon
                  *

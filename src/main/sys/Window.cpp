@@ -18,9 +18,14 @@ namespace lsp
         Window::Window(Display *dpy, void *handle, ssize_t screen):
             WidgetContainer(dpy),
             sTitle(&sProperties),
+            sRole(&sProperties),
             sBorderColor(&sProperties),
             sBorderStyle(&sProperties),
-            sWindowActions(&sProperties)
+            sBorderSize(&sProperties),
+            sWindowActions(&sProperties),
+            sPosition(&sProperties),
+            sSize(&sProperties),
+            sSizeConstraints(&sProperties)
         {
             lsp_trace("native_handle = %p", handle);
 
@@ -40,10 +45,6 @@ namespace lsp
             nHorScale       = 0.0f;
             nBorder         = 0;
 
-            sConstraints.nMinWidth  = -1;
-            sConstraints.nMinHeight = -1;
-            sConstraints.nMaxHeight = -1;
-            sConstraints.nMaxWidth  = -1;
             enPolicy        = WP_NORMAL;
 
             nFlags         &= ~F_VISIBLE;
@@ -62,13 +63,16 @@ namespace lsp
             if (result < 0)
                 return result;
 
-            // Bind properties
+            // Bind properties first
             sTitle.bind(this);
-            sBorderColor.bind("border", this);
-            sBorderStyle.bind("border_style", this);
+            sRole.bind(this);
+            sBorderColor.bind("border.color", this);
+            sBorderStyle.bind("border.style", this);
+            sBorderSize.bind("border.size", this);
             sWindowActions.bind("window_actions", this);
             sPosition.bind("position", this);
             sSize.bind("size", this);
+            sSizeConstraints.bind("size.constraints", this);
 
             // Init color
             init_color(C_LABEL_TEXT, &sBorderColor);
@@ -104,29 +108,13 @@ namespace lsp
             }
 
             // Initialize window geometry
-            lsp_trace("Initializing window geometry, window id=%p", pWindow->handle());
+            lsp_trace("Deploying window properties, window id=%p", pWindow->handle());
 
-            realize_t r;
-            result = pWindow->set_border_style(sBorderStyle.get());
-            if (result != STATUS_SUCCESS)
-            {
-                destroy();
-                return result;
-            }
-
-            result = pWindow->set_window_actions(sWindowActions.actions());
-            if (result != STATUS_SUCCESS)
-            {
-                destroy();
-                return result;
-            }
-
-            result = pWindow->set_size_constraints(&sConstraints);
-            if (result != STATUS_SUCCESS)
-            {
-                destroy();
-                return result;
-            }
+            // Deploy set of properties after window has been created
+            property_changed(&sBorderStyle);
+            property_changed(&sBorderSize);
+            property_changed(&sWindowActions);
+            property_changed(&sSizeConstraints);
 
             result = pWindow->get_geometry(&r);
             if (result != STATUS_SUCCESS)
@@ -143,7 +131,7 @@ namespace lsp
         status_t Window::sync_size()
         {
             // Request size
-            size_request_t sr;
+            ws::size_limit_t sr;
             sr.nMinWidth    = -1;
             sr.nMinHeight   = -1;
             sr.nMaxWidth    = -1;
@@ -285,7 +273,7 @@ namespace lsp
             if (force)
             {
                 s->fill_frame(
-                    0, 0, sSize.nWidth, sSize.nHeight,
+                    0, 0, sRealize.nWidth, sRealize.nHeight,
                     pChild->left(), pChild->top(), pChild->width(), pChild->height(),
                     bg_color);
 
@@ -298,7 +286,7 @@ namespace lsp
                     border.scale_lightness(sBrightness.get());
 
                     s->wire_round_rect(
-                        bw + 0.5, bw + 0.5, sSize.nWidth - nBorder-1, sSize.nHeight - nBorder-1,
+                        bw + 0.5, bw + 0.5, sRealize.nWidth - nBorder-1, sRealize.nHeight - nBorder-1,
                         2, SURFMASK_ALL_CORNER, nBorder,
                         border
                     );
@@ -340,35 +328,49 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (sTitle.is(prop))
-            {
-                // Make formatted title of the window
-                LSPString text;
-                status_t res = sTitle.format(&text);
-                if (res != STATUS_OK)
-                    return;
-
-                // Perform ASCII formatting
-                char *ascii = text.clone_ascii();
-                const char *caption = text.get_utf8();
-                if (caption == NULL)
-                    caption = "";
-
-                pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
-                if (ascii != NULL)
-                    ::free(ascii);
-            }
             if (sSize.is(prop))
                 query_resize();
 
             if (pWindow != NULL)
             {
+                if (sTitle.is(prop))
+                {
+                    // Make formatted title of the window
+                    LSPString text;
+                    status_t res = sTitle.format(&text);
+                    if (res != STATUS_OK)
+                        return;
+
+                    // Perform ASCII formatting
+                    char *ascii = text.clone_ascii();
+                    const char *caption = text.get_utf8();
+                    if (caption == NULL)
+                        caption = "";
+
+                    pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
+                    if (ascii != NULL)
+                        ::free(ascii);
+                }
+                if (sRole.is(prop))
+                {
+                    // Make formatted title of the window
+                    LSPString text;
+                    status_t res = sTitle.format(&text);
+                    if (res != STATUS_OK)
+                        return;
+                }
                 if (sBorderStyle.is(prop))
                     pWindow->set_border_style(sBorderStyle.get());
                 if (sWindowActions.is(prop))
                     pWindow->set_window_actions(sWindowActions.actions());
                 if (sPosition.is(prop))
                     pWindow->move(sPosition.left(), sPosition.top());
+                if (sSizeConstraints.is(prop))
+                {
+                    ws::size_limit_t size_limit;
+                    sSizeConstraints.compute(&size_limit, sScaling.get());
+                    pWindow->set_size_constraints(&size_limit);
+                }
             }
         }
 
@@ -435,7 +437,7 @@ namespace lsp
 
         bool Window::show()
         {
-            return show(NULL);
+            return Window::show(NULL);
         }
 
         bool Window::show(Widget *actor)
@@ -635,112 +637,6 @@ namespace lsp
             return WidgetContainer::on_focus_out(e);
         }
 
-        status_t Window::set_min_width(ssize_t width)
-        {
-            return set_min_size(width, sConstraints.nMinHeight);
-        }
-
-        status_t Window::set_min_height(ssize_t height)
-        {
-            return set_min_size(sConstraints.nMinWidth, height);
-        }
-
-        status_t Window::set_min_size(ssize_t width, ssize_t height)
-        {
-            sConstraints.nMinWidth  = ((width >= 0) && (width < ssize_t(sPadding.horizontal()))) ? sPadding.horizontal() : width;
-            sConstraints.nMinHeight = ((height >= 0) && (height < ssize_t(sPadding.vertical()))) ? sPadding.vertical() : height;
-
-            if (pWindow == NULL)
-                return STATUS_OK;
-
-            size_request_t sr;
-
-            pWindow->get_size_constraints(&sr);
-            if (sr.nMinWidth < width)
-                sr.nMinWidth = width;
-            if (sr.nMinHeight < height)
-                sr.nMinHeight = height;
-
-            return pWindow->set_size_constraints(&sr);
-        }
-
-        status_t Window::set_max_width(ssize_t width)
-        {
-            return set_max_size(width, sConstraints.nMaxHeight);
-        }
-
-        status_t Window::set_max_height(ssize_t height)
-        {
-            return set_max_size(sConstraints.nMaxWidth, height);
-        }
-
-        status_t Window::set_max_size(ssize_t width, ssize_t height)
-        {
-            sConstraints.nMaxWidth  = ((width >= 0) && (width < ssize_t(sPadding.horizontal()))) ? sPadding.horizontal() : width;
-            sConstraints.nMaxHeight = ((height >= 0) && (height < ssize_t(sPadding.vertical()))) ? sPadding.vertical() : height;
-
-            if (pWindow == NULL)
-                return STATUS_OK;
-
-            size_request_t sr;
-
-            pWindow->get_size_constraints(&sr);
-            if (sr.nMaxWidth < width)
-                sr.nMaxWidth = width;
-            if (sr.nMaxHeight < height)
-                sr.nMaxHeight = height;
-
-            return pWindow->set_size_constraints(&sr);
-        }
-
-        status_t Window::set_size_constraints(const size_request_t *c)
-        {
-            sConstraints.nMinWidth  = ((c->nMinWidth >= 0) && (c->nMinWidth < ssize_t(sPadding.horizontal()))) ? sPadding.horizontal() : c->nMinWidth;
-            sConstraints.nMinHeight = ((c->nMinHeight >= 0) && (c->nMinHeight < ssize_t(sPadding.vertical()))) ? sPadding.vertical() : c->nMinHeight;
-            sConstraints.nMaxWidth  = ((c->nMaxWidth >= 0) && (c->nMaxWidth < ssize_t(sPadding.horizontal()))) ? sPadding.horizontal() : c->nMaxWidth;
-            sConstraints.nMaxHeight = ((c->nMaxHeight >= 0) && (c->nMaxHeight < ssize_t(sPadding.vertical()))) ? sPadding.vertical() : c->nMaxHeight;
-
-            if (pWindow == NULL)
-                return STATUS_OK;
-
-            size_request_t sr;
-            pWindow->get_size_constraints(&sr);
-
-            if (sr.nMinWidth < c->nMinWidth)
-                sr.nMinWidth = c->nMinWidth;
-            if (sr.nMinHeight < c->nMinHeight)
-                sr.nMinHeight = c->nMinHeight;
-            if (sr.nMaxWidth < c->nMaxWidth)
-                sr.nMaxWidth = c->nMaxWidth;
-            if (sr.nMaxHeight < c->nMaxHeight)
-                sr.nMaxHeight = c->nMaxHeight;
-
-            return pWindow->set_size_constraints(&sr);
-        }
-
-        status_t Window::get_size_constraints(size_request_t *c)
-        {
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->get_size_constraints(&sConstraints);
-                if (r != STATUS_OK)
-                    return r;
-            }
-
-            *c      = sConstraints;
-            return STATUS_OK;
-        }
-
-        status_t Window::set_size_constraints(ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
-        {
-            sConstraints.nMinWidth      = min_width;
-            sConstraints.nMinHeight     = min_height;
-            sConstraints.nMaxWidth      = max_width;
-            sConstraints.nMaxHeight     = max_height;
-
-            return set_size_constraints(&sConstraints);
-        }
-
         status_t Window::focus_child(Widget *focus)
         {
             if (pFocus == focus)
@@ -835,7 +731,7 @@ namespace lsp
                 return;
 
             // Query for size
-            size_request_t sr;
+            ws::size_limit_t sr;
             sr.nMinWidth        = -1;
             sr.nMinHeight       = -1;
             sr.nMaxWidth        = -1;
@@ -892,55 +788,28 @@ namespace lsp
             pChild->query_draw();
         }
 
-        void Window::size_request(size_request_t *r)
+        void Window::size_request(ws::size_limit_t *r)
         {
-            size_request_t cr;
+            padding_t pad;
+            float scaling = sScaling.get();
+            sPadding.compute(&pad, scaling);
 
-            cr.nMinWidth        = -1;
-            cr.nMinHeight       = -1;
-            cr.nMaxWidth        = -1;
-            cr.nMaxHeight       = -1;
-
-            r->nMinWidth        = 0;
-            r->nMinHeight       = 0;
+            r->nMinWidth        = pad.nLeft + pad.nRight + nBorder * 2;
+            r->nMinHeight       = pad.nTop + pad.nBottom + nBorder * 2;
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
 
-            // Estimate minimum possible window dimensions
-            r->nMinWidth        = (sConstraints.nMinWidth >= 0) ? sConstraints.nMinWidth : sPadding.horizontal();
-            r->nMinHeight       = (sConstraints.nMinHeight >= 0) ? sConstraints.nMinHeight : sPadding.vertical();
-
-            r->nMinWidth       += nBorder * 2;
-            r->nMinHeight      += nBorder * 2;
-
             if (pChild != NULL)
             {
+                ws::size_limit_t cr;
                 pChild->size_request(&cr);
 
-                if (cr.nMinWidth >= 0)
-                {
-                    cr.nMinWidth       += sPadding.horizontal();
-                    if (r->nMinWidth < cr.nMinWidth)
-                        r->nMinWidth    = cr.nMinWidth;
-                }
-                if (cr.nMinHeight >= 0)
-                {
-                    cr.nMinHeight      += sPadding.vertical();
-                    if (r->nMinHeight < cr.nMinHeight)
-                        r->nMinHeight   = cr.nMinHeight;
-                }
+                r->nMinWidth       += lsp_max(cr.nMinWidth, 0);
+                r->nMinHeight      += lsp_max(cr.nMinHeight, 0);
             }
 
-            // Estimate maximum possible window dimensions
-            if (sConstraints.nMaxWidth >= 0)
-                r->nMaxWidth        = sPadding.horizontal() + sConstraints.nMaxWidth;
-            if (sConstraints.nMaxHeight >= 0)
-                r->nMaxHeight       = sPadding.vertical()   + sConstraints.nMaxHeight;
-
-            if ((r->nMaxWidth >= 0) && (r->nMinWidth >= 0) && (r->nMaxWidth < r->nMinWidth))
-                r->nMinWidth        = r->nMaxWidth;
-            if ((r->nMaxHeight >= 0) && (r->nMinHeight >= 0) && (r->nMaxHeight < r->nMinHeight))
-                r->nMinHeight       = r->nMaxHeight;
+            // Apply constraints to the window
+            sSizeConstraints.apply(r, scaling);
         }
 
         status_t Window::set_icon(const void *bgra, size_t width, size_t height)
