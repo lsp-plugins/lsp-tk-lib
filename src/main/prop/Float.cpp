@@ -16,7 +16,7 @@ namespace lsp
         void Float::Listener::notify(atom_t property)
         {
             if (pValue->nAtom == property)
-                pValue->sync();
+                pValue->commit();
         }
 
         Float::Float(prop::Listener *listener):
@@ -74,7 +74,7 @@ namespace lsp
             return res;
         }
 
-        void Float::sync()
+        void Float::commit()
         {
             // Handle change: remember new value
             if (pStyle != NULL)

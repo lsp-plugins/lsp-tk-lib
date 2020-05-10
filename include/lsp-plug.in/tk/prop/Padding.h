@@ -84,6 +84,7 @@ namespace lsp
                 inline void get(padding_t *p) const     { *p = sValue;                          }
                 inline void get(padding_t &p) const     { p = sValue;                           }
                 void get(size_t *left, size_t *right, size_t *top, size_t *bottom) const;
+                void get(size_t &left, size_t &right, size_t &top, size_t &bottom) const;
                 inline void get_horizontal(size_t *left, size_t *right)    { *left = sValue.nLeft; *right = sValue.nRight; }
                 inline void get_vertical(size_t *top, size_t *bottom)      { *top = sValue.nTop; *bottom = sValue.nBottom; }
 

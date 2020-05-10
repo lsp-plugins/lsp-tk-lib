@@ -16,7 +16,7 @@ namespace lsp
         void Boolean::Listener::notify(atom_t property)
         {
             if (pValue->nAtom == property)
-                pValue->sync();
+                pValue->commit();
         }
 
         Boolean::Boolean(prop::Listener *listener):
@@ -74,7 +74,7 @@ namespace lsp
             return res;
         }
 
-        void Boolean::sync()
+        void Boolean::commit()
         {
             // Handle change: remember new value
             if (pStyle != NULL)

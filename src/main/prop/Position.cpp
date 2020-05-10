@@ -44,27 +44,23 @@ namespace lsp
             if ((pStyle == NULL) || (property < 0))
                 return;
 
-            pStyle->begin();
-            {
-                ssize_t v;
-                if ((property == vAtoms[P_LEFT]) && (pStyle->get_int(vAtoms[P_LEFT], &v) == STATUS_OK))
-                    nLeft       = v;
-                if ((property == vAtoms[P_TOP]) && (pStyle->get_int(vAtoms[P_TOP], &v) == STATUS_OK))
-                    nTop        = v;
+            ssize_t v;
+            if ((property == vAtoms[P_LEFT]) && (pStyle->get_int(vAtoms[P_LEFT], &v) == STATUS_OK))
+                nLeft       = v;
+            if ((property == vAtoms[P_TOP]) && (pStyle->get_int(vAtoms[P_TOP], &v) == STATUS_OK))
+                nTop        = v;
 
-                LSPString s;
-                if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
+            LSPString s;
+            if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
+            {
+                ssize_t xv[2];
+                size_t n = Property::parse_ints(xv, 2, &s);
+                if (n == 2)
                 {
-                    ssize_t xv[2];
-                    size_t n = Property::parse_ints(xv, 2, &s);
-                    if (n == 2)
-                    {
-                        nLeft       = xv[0];
-                        nTop        = xv[1];
-                    }
+                    nLeft       = xv[0];
+                    nTop        = xv[1];
                 }
             }
-            pStyle->end();
 
             if (pListener != NULL)
                 pListener->notify(this);

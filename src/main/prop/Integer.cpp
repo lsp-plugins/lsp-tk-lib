@@ -16,7 +16,7 @@ namespace lsp
         void Integer::Listener::notify(atom_t property)
         {
             if (property == pValue->nAtom)
-                pValue->sync();
+                pValue->commit();
         }
 
         Integer::Integer(prop::Listener *listener):
@@ -74,7 +74,7 @@ namespace lsp
             return res;
         }
 
-        void Integer::sync()
+        void Integer::commit()
         {
             // Handle change: remember new value
             if (pStyle != NULL)

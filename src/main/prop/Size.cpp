@@ -44,27 +44,23 @@ namespace lsp
             if ((pStyle == NULL) || (property < 0))
                 return;
 
-            pStyle->begin();
-            {
-                ssize_t v;
-                if ((property == vAtoms[P_WIDTH]) && (pStyle->get_int(vAtoms[P_WIDTH], &v) == STATUS_OK))
-                    nWidth      = lsp_max(v, 0);
-                if ((property == vAtoms[P_HEIGHT]) && (pStyle->get_int(vAtoms[P_HEIGHT], &v) == STATUS_OK))
-                    nHeight     = lsp_max(v, 0);
+            ssize_t v;
+            if ((property == vAtoms[P_WIDTH]) && (pStyle->get_int(vAtoms[P_WIDTH], &v) == STATUS_OK))
+                nWidth      = lsp_max(v, 0);
+            if ((property == vAtoms[P_HEIGHT]) && (pStyle->get_int(vAtoms[P_HEIGHT], &v) == STATUS_OK))
+                nHeight     = lsp_max(v, 0);
 
-                LSPString s;
-                if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
+            LSPString s;
+            if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
+            {
+                ssize_t xv[2];
+                size_t n = Property::parse_ints(xv, 2, &s);
+                if (n == 2)
                 {
-                    ssize_t xv[2];
-                    size_t n = Property::parse_ints(xv, 2, &s);
-                    if (n == 2)
-                    {
-                        nWidth      = lsp_max(xv[0], 0);
-                        nHeight     = lsp_max(xv[1], 0);
-                    }
+                    nWidth      = lsp_max(xv[0], 0);
+                    nHeight     = lsp_max(xv[1], 0);
                 }
             }
-            pStyle->end();
 
             if (pListener != NULL)
                 pListener->notify(this);

@@ -54,6 +54,7 @@ namespace lsp
                 prop::Color         sBorderColor;
                 prop::BorderStyle   sBorderStyle;
                 prop::WindowActions sWindowActions;
+                prop::Position      sPosition;
                 prop::Size          sSize;
 
             //---------------------------------------------------------------------------------
@@ -195,10 +196,6 @@ namespace lsp
                 virtual status_t toggle_focus();
 
                 virtual bool has_focus() const;
-
-                status_t set_left(ssize_t left);
-
-                status_t set_top(ssize_t top);
 
                 status_t move(ssize_t left, ssize_t top);
 

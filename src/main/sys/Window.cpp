@@ -62,10 +62,12 @@ namespace lsp
             if (result < 0)
                 return result;
 
+            // Bind properties
             sTitle.bind(this);
             sBorderColor.bind("border", this);
             sBorderStyle.bind("border_style", this);
             sWindowActions.bind("window_actions", this);
+            sPosition.bind("position", this);
             sSize.bind("size", this);
 
             // Init color
@@ -356,18 +358,18 @@ namespace lsp
                 if (ascii != NULL)
                     ::free(ascii);
             }
-            if (sBorderStyle.is(prop))
-            {
-                if (pWindow != NULL)
-                    pWindow->set_border_style(sBorderStyle.get());
-            }
-            if (sWindowActions.is(prop))
-            {
-                if (pWindow != NULL)
-                    pWindow->set_window_actions(sWindowActions.actions());
-            }
             if (sSize.is(prop))
                 query_resize();
+
+            if (pWindow != NULL)
+            {
+                if (sBorderStyle.is(prop))
+                    pWindow->set_border_style(sBorderStyle.get());
+                if (sWindowActions.is(prop))
+                    pWindow->set_window_actions(sWindowActions.actions());
+                if (sPosition.is(prop))
+                    pWindow->move(sPosition.left(), sPosition.top());
+            }
         }
 
         status_t Window::point_child(Widget *focus)
@@ -631,50 +633,6 @@ namespace lsp
         {
             bHasFocus = false;
             return WidgetContainer::on_focus_out(e);
-        }
-
-        status_t Window::set_left(ssize_t left)
-        {
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->set_left(left);
-                if (r != STATUS_OK)
-                    return r;
-
-                sSize.nLeft     = pWindow->left();
-            }
-            else
-                sSize.nLeft     = left;
-            return STATUS_OK;
-        }
-
-        status_t Window::set_top(ssize_t top)
-        {
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->set_top(top);
-                if (r != STATUS_OK)
-                    return r;
-                sSize.nTop      = pWindow->top();
-            }
-            else
-                sSize.nTop      = top;
-            return STATUS_OK;
-        }
-
-        status_t Window::move(ssize_t left, ssize_t top)
-        {
-            if (pWindow != NULL)
-            {
-                status_t r = pWindow->move(left, top);
-                if (r != STATUS_OK)
-                    return r;
-                return pWindow->get_geometry(&sSize);
-            }
-
-            sSize.nLeft     = left;
-            sSize.nTop      = top;
-            return STATUS_OK;
         }
 
         status_t Window::set_min_width(ssize_t width)

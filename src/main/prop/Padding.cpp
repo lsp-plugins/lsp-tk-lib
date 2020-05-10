@@ -139,25 +139,21 @@ namespace lsp
 
             padding_t &p    = sValue;
 
-            pStyle->begin();
-            {
-                ssize_t v;
-                if ((property == vAtoms[P_LEFT]) && (pStyle->get_int(vAtoms[P_LEFT], &v) == STATUS_OK))
-                    p.nLeft     = lsp_max(v, 0);
-                if ((property == vAtoms[P_RIGHT]) && (pStyle->get_int(vAtoms[P_RIGHT], &v) == STATUS_OK))
-                    p.nRight    = lsp_max(v, 0);
-                if ((property == vAtoms[P_TOP]) && (pStyle->get_int(vAtoms[P_TOP], &v) == STATUS_OK))
-                    p.nTop      = lsp_max(v, 0);
-                if ((property == vAtoms[P_BOTTOM]) && (pStyle->get_int(vAtoms[P_BOTTOM], &v) == STATUS_OK))
-                    p.nTop      = lsp_max(v, 0);
+            ssize_t v;
+            if ((property == vAtoms[P_LEFT]) && (pStyle->get_int(vAtoms[P_LEFT], &v) == STATUS_OK))
+                p.nLeft     = lsp_max(v, 0);
+            if ((property == vAtoms[P_RIGHT]) && (pStyle->get_int(vAtoms[P_RIGHT], &v) == STATUS_OK))
+                p.nRight    = lsp_max(v, 0);
+            if ((property == vAtoms[P_TOP]) && (pStyle->get_int(vAtoms[P_TOP], &v) == STATUS_OK))
+                p.nTop      = lsp_max(v, 0);
+            if ((property == vAtoms[P_BOTTOM]) && (pStyle->get_int(vAtoms[P_BOTTOM], &v) == STATUS_OK))
+                p.nTop      = lsp_max(v, 0);
 
-                LSPString s;
-                if ((property == vAtoms[P_CSS]) && (pStyle->get_string(vAtoms[P_CSS], &s) == STATUS_OK))
-                    parse_css(&s);
-                if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
-                    parse(&s);
-            }
-            pStyle->end();
+            LSPString s;
+            if ((property == vAtoms[P_CSS]) && (pStyle->get_string(vAtoms[P_CSS], &s) == STATUS_OK))
+                parse_css(&s);
+            if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
+                parse(&s);
 
             if (pListener != NULL)
                 pListener->notify(this);
@@ -205,9 +201,17 @@ namespace lsp
         void Padding::get(size_t *left, size_t *right, size_t *top, size_t *bottom) const
         {
             *left       = sValue.nLeft;
-            *right      = sValue.nLeft;
-            *top        = sValue.nLeft;
-            *bottom     = sValue.nLeft;
+            *right      = sValue.nRight;
+            *top        = sValue.nTop;
+            *bottom     = sValue.nBottom;
+        }
+
+        void Padding::get(size_t &left, size_t &right, size_t &top, size_t &bottom) const
+        {
+            left        = sValue.nLeft;
+            right       = sValue.nRight;
+            top         = sValue.nTop;
+            bottom      = sValue.nBottom;
         }
 
         size_t Padding::set_left(size_t value)

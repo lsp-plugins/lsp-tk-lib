@@ -24,6 +24,7 @@
 #include <lsp-plug.in/tk/prop/Size.h>
 #include <lsp-plug.in/tk/prop/Position.h>
 #include <lsp-plug.in/tk/prop/Padding.h>
+#include <lsp-plug.in/tk/prop/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/BorderStyle.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
 

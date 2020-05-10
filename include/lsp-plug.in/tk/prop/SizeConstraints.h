@@ -1,0 +1,142 @@
+/*
+ * SizeConstraints.h
+ *
+ *  Created on: 10 мая 2020 г.
+ *      Author: sadko
+ */
+
+#ifndef LSP_PLUG_IN_TK_PROP_SIZECONSTRAINTS_H_
+#define LSP_PLUG_IN_TK_PROP_SIZECONSTRAINTS_H_
+
+#include <lsp-plug.in/tk/version.h>
+#include <lsp-plug.in/tk/types.h>
+
+#include <lsp-plug.in/tk/style.h>
+#include <lsp-plug.in/tk/prop.h>
+
+namespace lsp
+{
+    namespace tk
+    {
+        class Widget;
+        class Display;
+        class Style;
+
+        class SizeConstraints: public MultiProperty
+        {
+            protected:
+                SizeConstraints & operator = (const SizeConstraints &);
+
+            protected:
+                enum property_t
+                {
+                    P_VALUE,
+                    P_MIN_WIDTH,
+                    P_MIN_HEIGHT,
+                    P_MAX_WIDTH,
+                    P_MAX_HEIGHT,
+                    P_CSS,
+
+                    P_COUNT
+                };
+
+                class Listener: public IStyleListener
+                {
+                    private:
+                        SizeConstraints        *pValue;
+
+                    public:
+                        inline Listener(SizeConstraints *color)   { pValue = color; };
+
+                    public:
+                        virtual void    notify(atom_t property);
+                };
+
+            protected:
+                static const prop::desc_t   DESC[];
+
+            protected:
+                atom_t              vAtoms[P_COUNT];    // Atom bindings
+                size_request_t      sValue;             // Value
+                Listener            sListener;          // Listener
+
+            protected:
+                void                sync();
+                void                commit(atom_t property);
+
+            protected:
+                explicit SizeConstraints(prop::Listener *listener = NULL);
+                ~SizeConstraints();
+
+            public:
+                inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); };
+
+            public:
+                inline ssize_t min_width() const            { return sValue.nMinWidth;              }
+                inline ssize_t min_height() const           { return sValue.nMinHeight;             }
+                inline ssize_t max_width() const            { return sValue.nMaxWidth;              }
+                inline ssize_t max_height() const           { return sValue.nMaxHeight;             }
+
+                inline void get(size_request_t *p) const    { *p = sValue;                          }
+                inline void get(size_request_t &p) const    { p = sValue;                           }
+                void get(ssize_t *min_width, ssize_t *min_height, ssize_t *max_width, ssize_t *max_height) const;
+                void get(ssize_t &min_width, ssize_t &min_height, ssize_t &max_width, ssize_t &max_height) const;
+
+                inline void get_min(ssize_t *width, ssize_t *height) const  { *width = sValue.nMinWidth; *height = sValue.nMinHeight;   }
+                inline void get_min(ssize_t &width, ssize_t &height) const  { width = sValue.nMinWidth; height = sValue.nMinHeight;     }
+                inline void get_max(ssize_t *width, ssize_t *height) const  { *width = sValue.nMaxWidth; *height = sValue.nMaxHeight;   }
+                inline void get_max(ssize_t &width, ssize_t &height) const  { width = sValue.nMaxWidth; height = sValue.nMaxHeight;     }
+
+                inline void get_width(ssize_t *min, ssize_t *max) const     { *min = sValue.nMinWidth; *max = sValue.nMaxWidth;         }
+                inline void get_width(ssize_t &min, ssize_t &max) const     { min = sValue.nMinWidth; max = sValue.nMaxWidth;           }
+                inline void get_height(ssize_t *min, ssize_t *max) const    { *min = sValue.nMinHeight; *max = sValue.nMaxHeight;       }
+                inline void get_height(ssize_t &min, ssize_t &max) const    { min = sValue.nMinHeight; max = sValue.nMaxHeight;         }
+
+                ssize_t     set_min_width(ssize_t value);
+                ssize_t     set_min_height(ssize_t value);
+                ssize_t     set_max_width(ssize_t value);
+                ssize_t     set_max_height(ssize_t value);
+
+                void        set_min(ssize_t width, ssize_t height);
+                void        set_max(ssize_t width, ssize_t height);
+                void        set_width(ssize_t min, ssize_t max);
+                void        set_height(ssize_t min, ssize_t max);
+
+                void        set(ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
+                void        set(const size_request_t *p);
+                void        set(const SizeConstraints *p);
+        };
+
+        namespace prop
+        {
+            /**
+             * SizeConstraints property implementation
+             */
+            class SizeConstraints: public tk::SizeConstraints
+            {
+                private:
+                    SizeConstraints & operator = (const SizeConstraints *);
+
+                public:
+                    explicit SizeConstraints(prop::Listener *listener = NULL): tk::SizeConstraints(listener) {};
+
+                public:
+                    /**
+                     * Bind property with specified name to the style of linked widget
+                     */
+                    status_t            bind(const char *property, Widget *widget);
+                    status_t            bind(atom_t property, Widget *widget);
+                    status_t            bind(const char *property, Style *style, Display *dpy);
+                    status_t            bind(atom_t property, Style *style, Display *dpy);
+
+                    /**
+                     * Unbind property
+                     */
+                    inline status_t     unbind()            { return MultiProperty::unbind(vAtoms, DESC, &sListener); };
+            };
+        }
+
+    } /* namespace tk */
+} /* namespace lsp */
+
+#endif /* LSP_PLUG_IN_TK_PROP_SIZECONSTRAINTS_H_ */

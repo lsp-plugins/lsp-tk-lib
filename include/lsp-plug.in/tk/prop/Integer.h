@@ -50,7 +50,7 @@ namespace lsp
             protected:
                 status_t            unbind();
                 status_t            bind(atom_t property, Style *style);
-                void                sync();
+                void                commit();
 
             protected:
                 explicit Integer(prop::Listener *listener = NULL);
