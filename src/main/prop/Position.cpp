@@ -1,5 +1,5 @@
 /*
- * Size.cpp
+ * Position.cpp
  *
  *  Created on: 10 мая 2020 г.
  *      Author: sadko
@@ -13,33 +13,33 @@ namespace lsp
 {
     namespace tk
     {
-        const prop::desc_t Size::DESC[] =
+        const prop::desc_t Position::DESC[] =
         {
             { "",           PT_STRING   },
-            { ".width",     PT_INT      },
-            { ".height",    PT_INT      },
+            { ".left",      PT_INT      },
+            { ".top",       PT_INT      },
             { NULL,         PT_UNKNOWN  }
         };
 
-        void Size::Listener::notify(atom_t property)
+        void Position::Listener::notify(atom_t property)
         {
             pValue->commit(property);
         }
 
-        Size::Size(prop::Listener *listener):
+        Position::Position(prop::Listener *listener):
             MultiProperty(listener),
             sListener(this)
         {
-            nWidth              = 0;
-            nHeight             = 0;
+            nLeft              = 0;
+            nTop             = 0;
         }
 
-        Size::~Size()
+        Position::~Position()
         {
             MultiProperty::unbind(vAtoms, DESC, &sListener);
         }
 
-        void Size::commit(atom_t property)
+        void Position::commit(atom_t property)
         {
             if ((pStyle == NULL) || (property < 0))
                 return;
@@ -47,10 +47,10 @@ namespace lsp
             pStyle->begin();
             {
                 ssize_t v;
-                if ((property == vAtoms[P_WIDTH]) && (pStyle->get_int(vAtoms[P_WIDTH], &v) == STATUS_OK))
-                    nWidth      = lsp_max(v, 0);
-                if ((property == vAtoms[P_HEIGHT]) && (pStyle->get_int(vAtoms[P_HEIGHT], &v) == STATUS_OK))
-                    nHeight     = lsp_max(v, 0);
+                if ((property == vAtoms[P_LEFT]) && (pStyle->get_int(vAtoms[P_LEFT], &v) == STATUS_OK))
+                    nLeft       = v;
+                if ((property == vAtoms[P_TOP]) && (pStyle->get_int(vAtoms[P_TOP], &v) == STATUS_OK))
+                    nTop        = v;
 
                 LSPString s;
                 if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
@@ -59,8 +59,8 @@ namespace lsp
                     size_t n = Property::parse_ints(xv, 2, &s);
                     if (n == 2)
                     {
-                        nWidth      = lsp_max(xv[0], 0);
-                        nHeight     = lsp_max(xv[1], 0);
+                        nLeft       = xv[0];
+                        nTop        = xv[1];
                     }
                 }
             }
@@ -70,7 +70,7 @@ namespace lsp
                 pListener->notify(this);
         }
 
-        void Size::sync()
+        void Position::sync()
         {
             if (pStyle == NULL)
             {
@@ -82,69 +82,69 @@ namespace lsp
             pStyle->begin();
             {
                 // Simple components
-                if (vAtoms[P_WIDTH] >= 0)
-                    pStyle->set_int(vAtoms[P_WIDTH], nWidth);
-                if (vAtoms[P_HEIGHT] >= 0)
-                    pStyle->set_int(vAtoms[P_HEIGHT], nHeight);
+                if (vAtoms[P_LEFT] >= 0)
+                    pStyle->set_int(vAtoms[P_LEFT], nLeft);
+                if (vAtoms[P_TOP] >= 0)
+                    pStyle->set_int(vAtoms[P_TOP], nTop);
 
                 // Compound objects
                 LSPString s;
                 if (vAtoms[P_VALUE] >= 0)
                 {
-                    if (s.fmt_ascii("%ld %ld", long(nWidth), long(nHeight)))
+                    if (s.fmt_ascii("%ld %ld", long(nLeft), long(nTop)))
                         pStyle->set_string(vAtoms[P_VALUE], &s);
                 }
             }
             pStyle->end();
         }
 
-        size_t Size::set_width(size_t value)
+        ssize_t Position::set_left(ssize_t value)
         {
-            size_t old      = nWidth;
+            ssize_t old     = nLeft;
             if (old == value)
                 return value;
 
-            nWidth          = value;
+            nLeft          = value;
             sync();
             return old;
         }
 
-        size_t Size::set_height(size_t value)
+        ssize_t Position::set_top(ssize_t value)
         {
-            size_t old      = nHeight;
+            ssize_t old     = nTop;
             if (old == value)
                 return value;
 
-            nHeight         = value;
+            nTop            = value;
             sync();
             return old;
         }
 
-        void Size::set(size_t width, size_t height)
+        void Position::set(ssize_t left, ssize_t top)
         {
-            if ((nWidth == width) &&
-                (nHeight == height))
+            if ((nLeft == left) &&
+                (nTop == top))
                 return;
 
-            nWidth      = width;
-            nHeight     = height;
+            nLeft       = left;
+            nTop        = top;
             sync();
         }
 
-        void Size::set(const Size *p)
+        void Position::set(const Position *p)
         {
-            if ((nWidth == p->nWidth) &&
-                (nHeight == p->nHeight))
+            if ((nLeft == p->nLeft) &&
+                (nTop == p->nTop))
                 return;
 
-            nWidth      = p->nWidth;
-            nHeight     = p->nHeight;
+            nLeft       = p->nLeft;
+            nTop        = p->nTop;
             sync();
         }
 
         namespace prop
         {
-            status_t Size::bind(const char *property, Widget *widget)
+            status_t Position::bind(const char *property, Widget *widget)
             {
                 if (widget == NULL)
                     return STATUS_BAD_ARGUMENTS;
@@ -156,7 +156,7 @@ namespace lsp
                     );
             }
 
-            status_t Size::bind(atom_t property, Widget *widget)
+            status_t Position::bind(atom_t property, Widget *widget)
             {
                 if (widget == NULL)
                     return STATUS_BAD_ARGUMENTS;
@@ -170,7 +170,7 @@ namespace lsp
                     );
             }
 
-            status_t Size::bind(const char *property, Style *style, Display *dpy)
+            status_t Position::bind(const char *property, Style *style, Display *dpy)
             {
                 return MultiProperty::bind
                     (
@@ -179,7 +179,7 @@ namespace lsp
                     );
             }
 
-            status_t Size::bind(atom_t property, Style *style, Display *dpy)
+            status_t Position::bind(atom_t property, Style *style, Display *dpy)
             {
                 if (dpy == NULL)
                     return STATUS_BAD_ARGUMENTS;
@@ -192,6 +192,5 @@ namespace lsp
         }
     } /* namespace tk */
 } /* namespace lsp */
-
 
 

@@ -51,36 +51,36 @@ namespace lsp
             padding_t &p    = sValue;
 
             for (size_t i=0; i<n; ++i)
-                vv[i] = lsp_min(vv[i], 0);
+                vv[i] = lsp_max(vv[i], 0);
 
             switch (n)
             {
                 case 1:
-                    p.nLeft     = vv[0];
-                    p.nRight    = vv[0];
-                    p.nTop      = vv[0];
-                    p.nBottom   = vv[0];
+                    p.nLeft     = lsp_max(vv[0], 0);
+                    p.nRight    = lsp_max(vv[0], 0);
+                    p.nTop      = lsp_max(vv[0], 0);
+                    p.nBottom   = lsp_max(vv[0], 0);
                     break;
 
                 case 2:
-                    p.nLeft     = vv[0];
-                    p.nRight    = vv[0];
-                    p.nTop      = vv[1];
-                    p.nBottom   = vv[1];
+                    p.nLeft     = lsp_max(vv[0], 0);
+                    p.nRight    = lsp_max(vv[0], 0);
+                    p.nTop      = lsp_max(vv[1], 0);
+                    p.nBottom   = lsp_max(vv[1], 0);
                     break;
 
                 case 3:
-                    p.nLeft     = vv[0];
-                    p.nRight    = vv[1];
-                    p.nTop      = vv[2];
-                    p.nBottom   = vv[2];
+                    p.nLeft     = lsp_max(vv[0], 0);
+                    p.nRight    = lsp_max(vv[1], 0);
+                    p.nTop      = lsp_max(vv[2], 0);
+                    p.nBottom   = lsp_max(vv[2], 0);
                     break;
 
                 case 4:
-                    p.nLeft     = vv[0];
-                    p.nRight    = vv[1];
-                    p.nTop      = vv[2];
-                    p.nBottom   = vv[3];
+                    p.nLeft     = lsp_max(vv[0], 0);
+                    p.nRight    = lsp_max(vv[1], 0);
+                    p.nTop      = lsp_max(vv[2], 0);
+                    p.nBottom   = lsp_max(vv[3], 0);
                     break;
 
                 default:
@@ -95,36 +95,36 @@ namespace lsp
             padding_t &p    = sValue;
 
             for (size_t i=0; i<n; ++i)
-                vv[i] = lsp_min(vv[i], 0);
+                vv[i] = lsp_max(vv[i], 0);
 
             switch (n)
             {
                 case 1:
-                    p.nLeft     = vv[0];
-                    p.nRight    = vv[0];
-                    p.nTop      = vv[0];
-                    p.nBottom   = vv[0];
+                    p.nLeft     = lsp_max(vv[0], 0);
+                    p.nRight    = lsp_max(vv[0], 0);
+                    p.nTop      = lsp_max(vv[0], 0);
+                    p.nBottom   = lsp_max(vv[0], 0);
                     break;
 
                 case 2:
-                    p.nTop      = vv[0];
-                    p.nBottom   = vv[0];
-                    p.nLeft     = vv[1];
-                    p.nRight    = vv[1];
+                    p.nTop      = lsp_max(vv[0], 0);
+                    p.nBottom   = lsp_max(vv[0], 0);
+                    p.nLeft     = lsp_max(vv[1], 0);
+                    p.nRight    = lsp_max(vv[1], 0);
                     break;
 
                 case 3:
-                    p.nTop      = vv[0];
-                    p.nLeft     = vv[1];
-                    p.nRight    = vv[1];
-                    p.nBottom   = vv[2];
+                    p.nTop      = lsp_max(vv[0], 0);
+                    p.nLeft     = lsp_max(vv[1], 0);
+                    p.nRight    = lsp_max(vv[1], 0);
+                    p.nBottom   = lsp_max(vv[2], 0);
                     break;
 
                 case 4:
-                    p.nTop      = vv[0];
-                    p.nRight    = vv[1];
-                    p.nBottom   = vv[2];
-                    p.nLeft     = vv[3];
+                    p.nTop      = lsp_max(vv[0], 0);
+                    p.nRight    = lsp_max(vv[1], 0);
+                    p.nBottom   = lsp_max(vv[2], 0);
+                    p.nLeft     = lsp_max(vv[3], 0);
                     break;
 
                 default:
@@ -143,13 +143,13 @@ namespace lsp
             {
                 ssize_t v;
                 if ((property == vAtoms[P_LEFT]) && (pStyle->get_int(vAtoms[P_LEFT], &v) == STATUS_OK))
-                    p.nLeft     = lsp_min(v, 0);
+                    p.nLeft     = lsp_max(v, 0);
                 if ((property == vAtoms[P_RIGHT]) && (pStyle->get_int(vAtoms[P_RIGHT], &v) == STATUS_OK))
-                    p.nRight    = lsp_min(v, 0);
+                    p.nRight    = lsp_max(v, 0);
                 if ((property == vAtoms[P_TOP]) && (pStyle->get_int(vAtoms[P_TOP], &v) == STATUS_OK))
-                    p.nTop      = lsp_min(v, 0);
+                    p.nTop      = lsp_max(v, 0);
                 if ((property == vAtoms[P_BOTTOM]) && (pStyle->get_int(vAtoms[P_BOTTOM], &v) == STATUS_OK))
-                    p.nTop      = lsp_min(v, 0);
+                    p.nTop      = lsp_max(v, 0);
 
                 LSPString s;
                 if ((property == vAtoms[P_CSS]) && (pStyle->get_string(vAtoms[P_CSS], &s) == STATUS_OK))

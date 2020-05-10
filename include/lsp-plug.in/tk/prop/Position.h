@@ -1,12 +1,12 @@
 /*
- * Size.h
+ * Position.h
  *
  *  Created on: 10 мая 2020 г.
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_PROP_SIZE_H_
-#define LSP_PLUG_IN_TK_PROP_SIZE_H_
+#ifndef LSP_PLUG_IN_TK_PROP_POSITION_H_
+#define LSP_PLUG_IN_TK_PROP_POSITION_H_
 
 #include <lsp-plug.in/tk/version.h>
 #include <lsp-plug.in/tk/types.h>
@@ -23,17 +23,17 @@ namespace lsp
         class Widget;
         class Style;
 
-        class Size: public MultiProperty
+        class Position: public MultiProperty
         {
             protected:
-                Size & operator = (const Size &);
+                Position & operator = (const Position &);
 
             protected:
                 enum property_t
                 {
                     P_VALUE,
-                    P_WIDTH,
-                    P_HEIGHT,
+                    P_LEFT,
+                    P_TOP,
 
                     P_COUNT
                 };
@@ -41,10 +41,10 @@ namespace lsp
                 class Listener: public IStyleListener
                 {
                     private:
-                        Size        *pValue;
+                        Position        *pValue;
 
                     public:
-                        inline Listener(Size *color)   { pValue = color; };
+                        inline Listener(Position *color)   { pValue = color; };
 
                     public:
                         virtual void    notify(atom_t property);
@@ -55,46 +55,47 @@ namespace lsp
 
             protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
-                size_t              nWidth;             // Width
-                size_t              nHeight;            // Height
+                ssize_t             nLeft;              // Left
+                ssize_t             nTop;               // Top
                 Listener            sListener;          // Listener
 
             protected:
                 void                sync();
                 void                commit(atom_t property);
+                void                parse(const LSPString *s);
 
             protected:
-                explicit Size(prop::Listener *listener = NULL);
-                ~Size();
+                explicit Position(prop::Listener *listener = NULL);
+                ~Position();
 
             public:
                 inline void         set_default()       { MultiProperty::set_default(vAtoms, DESC); };
 
             public:
-                inline size_t width() const             { return nWidth;                        }
-                inline size_t height() const            { return nHeight;                       }
+                inline ssize_t left() const             { return nLeft;                        }
+                inline ssize_t top() const              { return nTop;                       }
 
-                inline void get(size_t *width, size_t *height) const        { *width = nWidth; *height = nHeight;           }
-                inline void get(size_t &width, size_t &height) const        { width = nWidth; height = nHeight;             }
+                inline void get(ssize_t *left, ssize_t *top) const  { *left = nLeft; *top = nTop;           }
+                inline void get(ssize_t &left, ssize_t &top) const  { left = nLeft; top = nTop;             }
 
-                size_t  set_width(size_t value);
-                size_t  set_height(size_t value);
-                void    set(size_t width, size_t height);
-                void    set(const Size *p);
+                ssize_t set_left(ssize_t value);
+                ssize_t set_top(ssize_t value);
+                void    set(ssize_t left, ssize_t top);
+                void    set(const Position *p);
         };
 
         namespace prop
         {
             /**
-             * Size property implementation
+             * Position property implementation
              */
-            class Size: public tk::Size
+            class Position: public tk::Position
             {
                 private:
-                    Size & operator = (const Size *);
+                    Position & operator = (const Position *);
 
                 public:
-                    explicit Size(prop::Listener *listener = NULL): tk::Size(listener) {};
+                    explicit Position(prop::Listener *listener = NULL): tk::Position(listener) {};
 
                 public:
                     /**
@@ -114,6 +115,4 @@ namespace lsp
     }
 }
 
-
-
-#endif /* LSP_PLUG_IN_TK_PROP_SIZE_H_ */
+#endif /* LSP_PLUG_IN_TK_PROP_POSITION_H_ */
