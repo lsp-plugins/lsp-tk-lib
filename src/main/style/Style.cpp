@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/style/Style.h>
+#include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/string.h>
 
 namespace lsp

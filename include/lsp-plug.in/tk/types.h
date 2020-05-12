@@ -8,9 +8,9 @@
 #ifndef LSP_PLUG_IN_TK_TYPES_H_
 #define LSP_PLUG_IN_TK_TYPES_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/common/types.h>
-#include <lsp-plug.in/common/status.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {

@@ -8,8 +8,10 @@
 #ifndef LSP_PLUG_IN_TK_STYLE_SCHEMA_H_
 #define LSP_PLUG_IN_TK_STYLE_SCHEMA_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 #include <lsp-plug.in/lltl/parray.h>
 #include <lsp-plug.in/lltl/pphash.h>
 #include <lsp-plug.in/runtime/LSPString.h>
@@ -23,19 +25,45 @@ namespace lsp
 {
     namespace tk
     {
-        class Style;
+        class Display;
 
         class Schema
         {
-            protected:
-                lltl::pphash<LSPString, Color>  vAlias;     // Color aliases
-                lltl::pphash<LSPString, Style>  vStyles;    // Styles
+            private:
+                Schema & operator = (const Schema &);
 
             protected:
+                typedef struct style_t
+                {
+                    Style                       sStyle;
+                    lltl::parray<LSPString>     vParents;
+                    bool                        bInitialized;
+                } style_t;
+
+                typedef struct context_t
+                {
+                    lltl::pphash<LSPString, lsp::Color> vColors;    // Color aliases
+                    lltl::pphash<LSPString, style_t>    vStyles;    // Styles
+                    style_t                            *pRoot;      // Root style
+                } context_t;
+
+            protected:
+                context_t           sCtx;
+                Display            *pDisplay;
+
+            protected:
+                status_t            apply_context(context_t *ctx);
+                static void         init_context(context_t *ctx);
+                static void         destroy_context(context_t *ctx);
+                static void         destroy_style(style_t *style);
+
                 status_t            parse_document(xml::PullParser *p);
+                status_t            parse_schema(xml::PullParser *p);
+                status_t            parse_colors(xml::PullParser *p);
+                status_t            parse_style(xml::PullParser *p, bool root);
 
             public:
-                explicit Schema();
+                explicit Schema(Display *dpy);
                 virtual ~Schema();
 
             public:

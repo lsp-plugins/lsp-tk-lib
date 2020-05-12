@@ -8,19 +8,14 @@
 #ifndef LSP_PLUG_IN_TK_PROP_BOOLEAN_H_
 #define LSP_PLUG_IN_TK_PROP_BOOLEAN_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
-
-#include <lsp-plug.in/tk/style.h>
-#include <lsp-plug.in/tk/prop/Property.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {
     namespace tk
     {
-        class Display;
-        class Widget;
-
         /**
          * Booleaning-point property interface
          */

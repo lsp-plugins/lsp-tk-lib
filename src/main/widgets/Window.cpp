@@ -5,9 +5,9 @@
  *      Author: sadko
  */
 
+#include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/common/status.h>
-#include <lsp-plug.in/tk/sys/Window.h>
 
 namespace lsp
 {

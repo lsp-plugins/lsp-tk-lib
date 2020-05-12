@@ -8,8 +8,10 @@
 #ifndef LSP_PLUG_IN_TK_SYS_TIMER_H_
 #define LSP_PLUG_IN_TK_SYS_TIMER_H_
 
-#include <lsp-plug.in/tk/types.h>
-#include <lsp-plug.in/tk/version.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 #include <lsp-plug.in/ws/IDisplay.h>
 
 namespace lsp

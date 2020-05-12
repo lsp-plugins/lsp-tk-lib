@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/sys/Display.h>
+#include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/ws/factory.h>
 #include <lsp-plug.in/i18n/Dictionary.h>

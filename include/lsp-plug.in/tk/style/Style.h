@@ -8,10 +8,10 @@
 #ifndef LSP_PLUG_IN_TK_STYLE_STYLE_H_
 #define LSP_PLUG_IN_TK_STYLE_STYLE_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
-#include <lsp-plug.in/tk/prop/types.h>
-#include <lsp-plug.in/tk/style/IStyleListener.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 #include <lsp-plug.in/runtime/LSPString.h>
 #include <lsp-plug.in/lltl/parray.h>
 #include <lsp-plug.in/lltl/darray.h>

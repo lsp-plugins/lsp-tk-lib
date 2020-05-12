@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/slots/SlotSet.h>
+#include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {
@@ -88,7 +88,7 @@ namespace lsp
         {
             // Check data
             if (handler == NULL)
-                return - STATUS_BAD_ARGUMENTS;
+                return -STATUS_BAD_ARGUMENTS;
 
             // Find position to insert slot
             item_t *ptr;
@@ -108,7 +108,7 @@ namespace lsp
 
             // Now allocate new slot
             if ((ptr = new item_t) == NULL)
-                return NULL;
+                return -STATUS_NO_MEM;
             ptr->nType          = id;
 
             // Bind data to slot

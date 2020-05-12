@@ -5,16 +5,13 @@
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_SYS_WINDOW_H_
-#define LSP_PLUG_IN_TK_SYS_WINDOW_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_WINDOW_H_
+#define LSP_PLUG_IN_TK_WIDGETS_WINDOW_H_
 
-#include <lsp-plug.in/tk/types.h>
-#include <lsp-plug.in/tk/version.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
-#include <lsp-plug.in/tk/base.h>
-#include <lsp-plug.in/tk/prop.h>
-#include <lsp-plug.in/tk/sys/Timer.h>
-#include <lsp-plug.in/tk/sys/Display.h>
 #include <lsp-plug.in/ws/IWindow.h>
 
 namespace lsp
@@ -258,4 +255,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* LSP_PLUG_IN_TK_SYS_WINDOW_H_ */
+#endif /* LSP_PLUG_IN_TK_WIDGETS_WINDOW_H_ */

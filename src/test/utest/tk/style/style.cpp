@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/style.h>
+#include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/test-fw/utest.h>
 #include <lsp-plug.in/test-fw/helpers.h>
 #include <lsp-plug.in/stdlib/math.h>

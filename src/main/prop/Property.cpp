@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/prop.h>
+#include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/io/InStringSequence.h>
 #include <lsp-plug.in/expr/Tokenizer.h>
 

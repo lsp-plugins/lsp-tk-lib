@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/base/WidgetContainer.h>
+#include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {

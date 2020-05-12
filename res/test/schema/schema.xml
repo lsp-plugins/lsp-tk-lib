@@ -1,18 +1,40 @@
 <?xml version="1.0" charset="UTF-8" ?>
 
 <schema>
-	<!-- Alias style -->
-	<alias>
-	</alias>
+	<!-- Color aliases -->
+	<colors>
+		<!-- Background colors -->
+		<bg value="#1b1c22" />
+		<bg2 value="#2f3037" />
+		<bg3 value="#45464d" />
+		<hole value="#000000" />
+		<glass value="#101010" />
+		
+		<!-- Label colors -->
+		<label_text value="#dae0ff" />
+		<invalid_input value="#880000" />
+		
+		<!-- Button colors -->
+		<button_face value="#ffffff" />
+		<button_text value="#000000" />
+		
+		<!-- Knob colors -->
+		<knob_cap value="#474843" />
+		<knob_scale value="#00c0ff" />
+		
+		<!-- Hyperlink -->
+		<hlink_text value="#80ffff" />
+		<hlink_hover value="#ff8080" />
+	</colors>
 	
 	<!-- Root style -->
 	<root>
-		<scale value="1.0" type="float" />
-		<lang  value="default" type="string" />
+		<scaling value="1.0" type="float" />
+		<lang value="default" type="string" />
 	</root>
 	
 	<!-- Nested style of window -->
-	<window parent="root">
+	<style class="window" parents="root">
 		<bg-color value="" type="string" />
 	</window>
 </schema>

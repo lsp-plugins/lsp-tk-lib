@@ -8,11 +8,10 @@
 #ifndef LSP_PLUG_IN_TK_PROP_STRING_H_
 #define LSP_PLUG_IN_TK_PROP_STRING_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
-#include <lsp-plug.in/tk/style.h>
-#include <lsp-plug.in/tk/prop/Property.h>
 #include <lsp-plug.in/expr/Parameters.h>
 #include <lsp-plug.in/i18n/IDictionary.h>
 
@@ -20,9 +19,6 @@ namespace lsp
 {
     namespace tk
     {
-        class Display;
-        class Widget;
-
         class String: public Property
         {
             private:

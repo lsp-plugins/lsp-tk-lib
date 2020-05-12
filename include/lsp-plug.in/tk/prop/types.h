@@ -8,6 +8,10 @@
 #ifndef LSP_PLUG_IN_TK_PROP_TYPES_H_
 #define LSP_PLUG_IN_TK_PROP_TYPES_H_
 
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 namespace lsp
 {
     namespace tk
@@ -36,6 +40,12 @@ namespace lsp
                 ssize_t             value;
             } enum_t;
         }
+
+        // Forward class declaration
+        class Display;
+        class Widget;
+        class Style;
+        class IStyleListener;
     }
 }
 

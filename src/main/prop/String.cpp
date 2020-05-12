@@ -5,9 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/prop.h>
-#include <lsp-plug.in/tk/sys/Display.h>
-#include <lsp-plug.in/tk/base.h>
+#include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/expr/format.h>
 
 #define LANG_ATOM_NAME      "language"

@@ -8,18 +8,16 @@
 #ifndef LSP_PLUG_IN_TK_PROP_PROPERTY_H_
 #define LSP_PLUG_IN_TK_PROP_PROPERTY_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
-
-#include <lsp-plug.in/tk/style.h>
-#include <lsp-plug.in/tk/prop/types.h>
-#include <lsp-plug.in/tk/prop/Listener.h>
-#include <lsp-plug.in/lltl/darray.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {
     namespace tk
     {
+        class Style;
+
         namespace prop
         {
             class Listener;

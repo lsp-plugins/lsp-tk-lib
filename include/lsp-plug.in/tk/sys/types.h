@@ -8,8 +8,9 @@
 #ifndef LSP_PLUG_IN_TK_SLOTS_TYPES_H_
 #define LSP_PLUG_IN_TK_SLOTS_TYPES_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {

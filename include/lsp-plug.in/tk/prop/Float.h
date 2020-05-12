@@ -8,19 +8,14 @@
 #ifndef UI_TK_SYS_LSPFLOAT_H_
 #define UI_TK_SYS_LSPFLOAT_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
-
-#include <lsp-plug.in/tk/style.h>
-#include <lsp-plug.in/tk/prop.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {
     namespace tk
     {
-        class Display;
-        class Widget;
-        
         /**
          * Floating-point property interface
          */

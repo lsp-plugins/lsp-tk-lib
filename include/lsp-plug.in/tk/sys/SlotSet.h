@@ -5,14 +5,14 @@
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_SLOTS_SLOTSET_H_
-#define LSP_PLUG_IN_TK_SLOTS_SLOTSET_H_
+#ifndef LSP_PLUG_IN_TK_SYS_SLOTSET_H_
+#define LSP_PLUG_IN_TK_SYS_SLOTSET_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 #include <lsp-plug.in/lltl/parray.h>
-#include <lsp-plug.in/tk/slots/Slot.h>
-#include <lsp-plug.in/tk/slots/types.h>
 
 namespace lsp
 {
@@ -155,4 +155,4 @@ namespace lsp
     }
 } /* namespace lsp */
 
-#endif /* LSP_PLUG_IN_TK_SLOTS_SLOTSET_H_ */
+#endif /* LSP_PLUG_IN_TK_SYS_SLOTSET_H_ */

@@ -5,7 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/base/ComplexWidget.h>
+#include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {

@@ -5,8 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk/sys/Timer.h>
-#include <lsp-plug.in/tk/sys/Display.h>
+#include <lsp-plug.in/tk/tk.h>
 #include <time.h>
 
 namespace lsp

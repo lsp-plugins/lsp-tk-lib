@@ -8,21 +8,14 @@
 #ifndef LSP_PLUG_IN_TK_PROP_SIZECONSTRAINTS_H_
 #define LSP_PLUG_IN_TK_PROP_SIZECONSTRAINTS_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
-
-#include <lsp-plug.in/tk/style.h>
-#include <lsp-plug.in/tk/prop.h>
-#include <lsp-plug.in/ws/types.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {
     namespace tk
     {
-        class Widget;
-        class Display;
-        class Style;
-
         class SizeConstraints: public MultiProperty
         {
             protected:

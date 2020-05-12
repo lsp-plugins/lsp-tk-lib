@@ -8,12 +8,9 @@
 #ifndef LSP_PLUG_IN_TK_BASE_WIDGETCONTAINER_H_
 #define LSP_PLUG_IN_TK_BASE_WIDGETCONTAINER_H_
 
-#include <lsp-plug.in/tk/version.h>
-#include <lsp-plug.in/tk/types.h>
-
-#include <lsp-plug.in/tk/sys/Display.h>
-#include <lsp-plug.in/tk/base/Widget.h>
-#include <lsp-plug.in/tk/base/ComplexWidget.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {
