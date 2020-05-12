@@ -64,11 +64,13 @@ namespace lsp
 
             // Bind to new handler
             style->begin();
-            res = style->bind(property, PT_STRING, &sListener);
-            if (res == STATUS_OK)
             {
-                pStyle      = style;
-                nAtom       = property;
+                res = style->bind(property, PT_STRING, &sListener);
+                if (res == STATUS_OK)
+                {
+                    pStyle      = style;
+                    nAtom       = property;
+                }
             }
             style->end();
 
@@ -104,7 +106,7 @@ namespace lsp
                 return;
             }
 
-            pStyle->begin();
+            pStyle->begin(&sListener);
             {
                 LSPString s;
                 bool success = true;

@@ -57,12 +57,14 @@ namespace lsp
 
             // Bind to new handler
             style->begin();
-            res = style->bind(property, PT_FLOAT, &sParams);
-            if (res == STATUS_OK)
             {
-                pDict       = dict;
-                pStyle      = style;
-                nAtom       = property;
+                res = style->bind(property, PT_FLOAT, &sParams);
+                if (res == STATUS_OK)
+                {
+                    pDict       = dict;
+                    pStyle      = style;
+                    nAtom       = property;
+                }
             }
             style->end();
 

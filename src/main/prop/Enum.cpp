@@ -64,11 +64,13 @@ namespace lsp
 
             // Bind to new handler
             style->begin();
-            res = style->bind(property, PT_STRING, &sListener);
-            if (res == STATUS_OK)
             {
-                pStyle      = style;
-                nAtom       = property;
+                res = style->bind(property, PT_STRING, &sListener);
+                if (res == STATUS_OK)
+                {
+                    pStyle      = style;
+                    nAtom       = property;
+                }
             }
             style->end();
 
@@ -110,8 +112,12 @@ namespace lsp
                 if (v == e->value)
                 {
                     nValue  = v;
-                    if ((pStyle != NULL) && (nAtom >= 0))
+                    if (pStyle != NULL)
+                    {
+                        pStyle->begin(&sListener);
                         pStyle->set_string(nAtom, e->name);
+                        pStyle->end();
+                    }
                     else if (pListener != NULL)
                         pListener->notify(this);
                     return prev;

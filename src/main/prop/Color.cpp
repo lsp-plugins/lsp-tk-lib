@@ -57,7 +57,7 @@ namespace lsp
                 return;
             }
 
-            pStyle->begin();
+            pStyle->begin(&sListener);
             {
                 lsp::Color &c = sColor;
                 char buf[32];

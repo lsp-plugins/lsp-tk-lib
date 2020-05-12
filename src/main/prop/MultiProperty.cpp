@@ -51,34 +51,35 @@ namespace lsp
             size_t len = key.length();
 
             // Bind all ports
-            style->begin();
-
             status_t res = STATUS_OK;
-            for ( ; desc->postfix != NULL; ++atoms, ++desc)
+
+            style->begin();
             {
-                key.set_length(len);
-                if (!key.append_ascii(desc->postfix))
+                for ( ; desc->postfix != NULL; ++atoms, ++desc)
                 {
-                    res = STATUS_NO_MEM;
-                    break;
+                    key.set_length(len);
+                    if (!key.append_ascii(desc->postfix))
+                    {
+                        res = STATUS_NO_MEM;
+                        break;
+                    }
+                    atom_t atom = dpy->atom_id(key.get_utf8());
+                    if (atom < 0)
+                    {
+                        res = STATUS_NO_MEM;
+                        break;
+                    }
+                    res = style->bind(atom, desc->type, listener);
+                    if (res != STATUS_OK)
+                        break;
+                    *atoms      = atom;
                 }
-                atom_t atom = dpy->atom_id(key.get_utf8());
-                if (atom < 0)
-                {
-                    res = STATUS_NO_MEM;
-                    break;
-                }
-                res = style->bind(atom, desc->type, listener);
-                if (res != STATUS_OK)
-                    break;
-                *atoms      = atom;
+
+                if (res == STATUS_OK)
+                    pStyle      = style;
+                else
+                    unbind(atoms, desc, listener);
             }
-
-            if (res == STATUS_OK)
-                pStyle      = style;
-            else
-                unbind(atoms, desc, listener);
-
             style->end();
 
             return res;

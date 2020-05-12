@@ -94,7 +94,7 @@ namespace lsp
                 return;
             }
 
-            pStyle->begin();
+            pStyle->begin(&sListener);
             {
                 ws::size_limit_t &p       = sValue;
 

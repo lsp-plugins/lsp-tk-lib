@@ -168,7 +168,7 @@ namespace lsp
                 return;
             }
 
-            pStyle->begin();
+            pStyle->begin(&sListener);
             {
                 padding_t &p    = sValue;
 

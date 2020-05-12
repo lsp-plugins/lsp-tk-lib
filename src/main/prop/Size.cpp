@@ -75,7 +75,7 @@ namespace lsp
                 return;
             }
 
-            pStyle->begin();
+            pStyle->begin(&sListener);
             {
                 // Simple components
                 if (vAtoms[P_WIDTH] >= 0)
