@@ -239,7 +239,7 @@ namespace lsp
         status_t Style::sync_property(property_t *p)
         {
             // Local-overridden properties can not be changed by parent ones
-            if ((p->flags & F_OVERRIDDEN) || (p->refs <= 0))
+            if (p->flags & F_OVERRIDDEN)
                 return STATUS_OK;
 
             status_t res;
@@ -717,7 +717,7 @@ namespace lsp
             for (size_t i=0, n=vProperties.size(); i<n; ++i)
             {
                 property_t *p   = vProperties.uget(i);
-                if ((p != NULL) && (p->id == id) && (p->refs > 0))
+                if ((p != NULL) && (p->id == id))
                     return p;
             }
             return NULL;
@@ -921,6 +921,7 @@ namespace lsp
             property_t tmp;
             tmp.type        = PT_INT;
             tmp.v.iValue    = value;
+            tmp.dv.iValue   = 0;
             return set_property(id, &tmp);
         }
 
@@ -929,6 +930,7 @@ namespace lsp
             property_t tmp;
             tmp.type        = PT_FLOAT;
             tmp.v.fValue    = value;
+            tmp.dv.fValue   = 0.0f;
             return set_property(id, &tmp);
         }
 
@@ -937,6 +939,7 @@ namespace lsp
             property_t tmp;
             tmp.type        = PT_BOOL;
             tmp.v.bValue    = value;
+            tmp.dv.bValue   = false;
             return set_property(id, &tmp);
         }
 
@@ -945,9 +948,12 @@ namespace lsp
             if (value == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
+            char empty[]    = "";
+
             property_t tmp;
             tmp.type        = PT_STRING;
             tmp.v.sValue    = const_cast<char *>(value->get_utf8());
+            tmp.dv.sValue   = empty;
             return set_property(id, &tmp);
         }
 
@@ -956,9 +962,12 @@ namespace lsp
             if (value == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
+            char empty[]    = "";
+
             property_t tmp;
             tmp.type        = PT_STRING;
             tmp.v.sValue    = const_cast<char *>(value);
+            tmp.dv.sValue   = empty;
             return set_property(id, &tmp);
         }
 
