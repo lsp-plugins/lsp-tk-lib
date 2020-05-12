@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/style/Style.h>
+#include <lsp-plug.in/stdlib/string.h>
 
 namespace lsp
 {
@@ -130,7 +131,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        Style::property_t *Style::create_property(atom_t id, const property_t *src)
+        Style::property_t *Style::create_property(atom_t id, const property_t *src, size_t flags)
         {
             // Allocate property
             property_t *dst = vProperties.add();
@@ -140,14 +141,31 @@ namespace lsp
             // Init contents
             switch (src->type)
             {
-                case PT_INT:    dst->v.iValue   = src->v.iValue;    break;
-                case PT_FLOAT:  dst->v.fValue   = src->v.fValue;    break;
-                case PT_BOOL:   dst->v.bValue   = src->v.bValue;    break;
+                case PT_INT:
+                    dst->v.iValue   = src->v.iValue;
+                    dst->dv.iValue  = src->dv.iValue;
+                    break;
+                case PT_FLOAT:
+                    dst->v.fValue   = src->v.fValue;
+                    dst->dv.fValue  = src->dv.fValue;
+                    break;
+                case PT_BOOL:
+                    dst->v.bValue   = src->v.bValue;
+                    dst->dv.bValue  = src->dv.bValue;
+                    break;
                 case PT_STRING:
                 {
                     // Update value
                     if ((dst->v.sValue = ::strdup(src->v.sValue)) == NULL)
                     {
+                        vProperties.premove(dst);
+                        return NULL;
+                    }
+                    // Update default value
+                    if ((dst->dv.sValue = ::strdup(src->dv.sValue)) == NULL)
+                    {
+                        ::free(dst->v.sValue);
+                        dst->v.sValue   = NULL;
                         vProperties.premove(dst);
                         return NULL;
                     }
@@ -158,16 +176,16 @@ namespace lsp
             }
 
             dst->id         = id;
-            dst->refs       = 0;
+            dst->refs       = (flags & F_CREATED) ? 1 : 0;
             dst->type       = src->type;
             dst->changes    = 0;
-            dst->flags      = F_DEFAULT;
+            dst->flags      = flags;
             dst->owner      = this;
 
             return dst;
         }
 
-        Style::property_t *Style::create_property(atom_t id, property_type_t type)
+        Style::property_t *Style::create_property(atom_t id, property_type_t type, size_t flags)
         {
             // Allocate property
             property_t *dst = vProperties.add();
@@ -177,12 +195,28 @@ namespace lsp
             // Init contents
             switch (type)
             {
-                case PT_INT:    dst->v.iValue = 0;      break;
-                case PT_FLOAT:  dst->v.fValue = 0.0;    break;
-                case PT_BOOL:   dst->v.bValue = 0;      break;
+                case PT_INT:
+                    dst->v.iValue   = 0;
+                    dst->dv.iValue  = 0;
+                    break;
+                case PT_FLOAT:
+                    dst->v.fValue   = 0.0;
+                    dst->dv.fValue  = 0.0;
+                    break;
+                case PT_BOOL:
+                    dst->v.bValue   = false;
+                    dst->dv.bValue  = false;
+                    break;
                 case PT_STRING:
                     if ((dst->v.sValue = ::strdup("")) == NULL)
                     {
+                        vProperties.premove(dst);
+                        return NULL;
+                    }
+                    if ((dst->dv.sValue = ::strdup("")) == NULL)
+                    {
+                        ::free(dst->v.sValue);
+                        dst->v.sValue   = NULL;
                         vProperties.premove(dst);
                         return NULL;
                     }
@@ -195,7 +229,7 @@ namespace lsp
             dst->refs       = 0;
             dst->type       = type;
             dst->changes    = 0;
-            dst->flags      = F_DEFAULT;
+            dst->flags      = flags;
             dst->owner      = this;
 
             return dst;
@@ -203,12 +237,18 @@ namespace lsp
 
         status_t Style::sync_property(property_t *p)
         {
-            if (!(p->flags & F_DEFAULT))
+            // Local-overridden properties can not be changed by parent ones
+            if ((p->flags & F_OVERRIDDEN) || (p->refs <= 0))
                 return STATUS_OK;
 
-            property_t *parent  = get_parent_property(p->id);
+            status_t res;
             size_t changes      = p->changes;
-            status_t res        = (parent != NULL) ? copy_property(p, parent) : set_property_default(p);
+
+            // Lookup for a parent property, copy default value
+            property_t *parent  = get_parent_property(p->id);
+            res = (parent != NULL) ? copy_property(p, parent) : set_property_default(p);
+
+            // Deploy changes if there are any
             if ((res == STATUS_OK) && (changes != p->changes))
             {
                 notify_listeners(p);
@@ -222,23 +262,25 @@ namespace lsp
             switch (p->type)
             {
                 case PT_INT:
-                    if (p->v.iValue == 0)
+                    if (p->v.iValue == p->dv.iValue)
                         return STATUS_OK;
-                    p->v.iValue = 0;
+                    p->v.iValue = p->dv.iValue;
                     break;
                 case PT_FLOAT:
-                    if (p->v.fValue == 0)
+                    if (p->v.fValue == p->dv.fValue)
                         return STATUS_OK;
-                    p->v.fValue = 0;
+                    p->v.fValue = p->dv.fValue;
                     break;
                 case PT_BOOL:
-                    if (p->v.bValue == false)
+                    if (p->v.bValue == p->dv.bValue)
                         return STATUS_OK;
-                    p->v.bValue = false;
+                    p->v.bValue = p->dv.bValue;
                     break;
                 case PT_STRING:
                 {
-                    char *tmp = ::strdup("");
+                    if (::strcmp(p->v.sValue, p->dv.sValue) == 0)
+                        return STATUS_OK;
+                    char *tmp = ::strdup(p->dv.sValue);
                     if (tmp == NULL)
                         return STATUS_NO_MEM;
                     ::free(p->v.sValue);
@@ -249,7 +291,6 @@ namespace lsp
                     return STATUS_BAD_TYPE;
             }
 
-            p->flags   |= F_DEFAULT;
             ++p->changes;
             return STATUS_OK;
         }
@@ -314,7 +355,7 @@ namespace lsp
                 notify_children(prop); // Just bypass event to children
                 return;
             }
-            else if (!(p->flags & F_DEFAULT)) // Not default property? Ignore the event
+            else if (p->flags & F_OVERRIDDEN) // Locally overridden property? Ignore the event
                 return;
 
             // Get parent Property
@@ -526,6 +567,10 @@ namespace lsp
 
         status_t Style::bind(atom_t id, property_type_t type, IStyleListener *listener)
         {
+            // Listener can not be NULL
+            if (listener == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
             property_t *p = get_property(id);
             listener_t *lst = NULL;
 
@@ -536,13 +581,13 @@ namespace lsp
                 property_t *parent = get_parent_property(id);
 
                 // Create property
-                p = (parent != NULL) ? create_property(id, parent) : create_property(id, type);
+                p = (parent != NULL) ? create_property(id, parent, 0) : create_property(id, type, 0);
                 if (p == NULL)
                     return STATUS_NO_MEM;
 
                 // Allocate listener binding
                 lst = vListeners.add();
-                if (listener == NULL)
+                if (lst == NULL)
                 {
                     undef_property(p);
                     vProperties.premove(p);
@@ -557,7 +602,7 @@ namespace lsp
 
                 // Just allocate listener binding
                 lst = vListeners.add();
-                if (listener == NULL)
+                if (lst == NULL)
                     return STATUS_NO_MEM;
             }
 
@@ -595,19 +640,26 @@ namespace lsp
             if (p == NULL)
                 return STATUS_CORRUPTED; // This actually should not ever happen
 
-            // Decrement number of references
-            if ((--p->refs) <= 0)
-            {
-                undef_property(p);
-                property_t *parent = get_parent_property(p->id);
-                notify_children((parent != NULL) ? parent : p);
-                vProperties.premove(p);
-            }
-
-            // Remove listener binding
+            // Remove listener binding and dereference property
             vListeners.premove(lst);
+            deref_property(p);
 
             return STATUS_OK;
+        }
+
+        void Style::deref_property(property_t *p)
+        {
+            // Decrement number of references
+            if ((--p->refs) > 0)
+                return;
+
+            // Destroy property if there are no more references
+            // Since number of references is 0, property is not visible to children
+            p->flags &= ~F_OVERRIDDEN;
+            undef_property(p);
+            property_t *parent = get_parent_property(p->id);
+            notify_children((parent != NULL) ? parent : p);
+            vProperties.premove(p);
         }
 
         Style::property_t *Style::get_property(atom_t id)
@@ -615,7 +667,7 @@ namespace lsp
             for (size_t i=0, n=vProperties.size(); i<n; ++i)
             {
                 property_t *p   = vProperties.uget(i);
-                if ((p != NULL) && (p->id == id))
+                if ((p != NULL) && (p->id == id) && (p->refs > 0))
                     return p;
             }
             return NULL;
@@ -641,12 +693,6 @@ namespace lsp
             return NULL;
         }
 
-        Style::property_t *Style::get_property_recursive(atom_t id)
-        {
-            property_t *p = get_property(id);
-            return (p != NULL) ? p : get_parent_property(id);
-        }
-
         void Style::begin()
         {
             ++nLock;
@@ -658,6 +704,12 @@ namespace lsp
                 return;
             if (!(--nLock)) // last end() ?
                 delayed_notify();
+        }
+
+        Style::property_t *Style::get_property_recursive(atom_t id)
+        {
+            property_t *p = get_property(id);
+            return (p != NULL) ? p : get_parent_property(id);
         }
 
         status_t Style::get_int(atom_t id, ssize_t *dst) const
@@ -741,8 +793,14 @@ namespace lsp
 
         bool Style::is_default(atom_t id) const
         {
-            const property_t *prop = get_property_recursive(id);
-            return (prop != NULL) ? (prop->flags & F_DEFAULT) : false;
+            const property_t *prop = get_property(id);
+            return (prop != NULL) ? !(prop->flags & F_OVERRIDDEN) : true;
+        }
+
+        bool Style::is_overridden(atom_t id) const
+        {
+            const property_t *prop = get_property(id);
+            return (prop != NULL) ? (prop->flags & F_OVERRIDDEN) : false;
         }
 
         bool Style::exists(atom_t id) const
@@ -751,7 +809,13 @@ namespace lsp
             return (prop != NULL);
         }
 
-        ssize_t Style::get_type(atom_t id) const
+        bool Style::is_local(atom_t id) const
+        {
+            const property_t *prop = get_property(id);
+            return (prop != NULL) && (prop->flags & F_CREATED);
+        }
+
+        property_type_t Style::get_type(atom_t id) const
         {
             const property_t *prop = get_property_recursive(id);
             return (prop != NULL) ? prop->type : PT_UNKNOWN;
@@ -764,22 +828,24 @@ namespace lsp
             if (p == NULL)
             {
                 // Allocate new property
-                p = create_property(id, src);
-                if (p == NULL)
-                    return STATUS_NO_MEM;
-                p->flags   &= ~F_DEFAULT;
-                notify_listeners(p);
-                notify_children(p);
+                p = create_property(id, src, F_OVERRIDDEN);
+                if (p != NULL)
+                {
+                    notify_listeners(p);
+                    notify_children(p);
+                }
+                else
+                    res         = STATUS_NO_MEM;
             }
             else
             {
                 // Notify only if value has changed
                 size_t change = p->changes;
-                res         = copy_property(p, src);
+                res           = copy_property(p, src);
 
                 if (res == STATUS_OK)
                 {
-                    p->flags   &= ~F_DEFAULT;
+                    p->flags   |= F_OVERRIDDEN;
                     if (change != p->changes)
                     {
                         notify_listeners(p);
@@ -842,13 +908,185 @@ namespace lsp
             property_t *p = get_property(id);
             if (p == NULL)
                 return STATUS_NOT_FOUND;
-            else if (p->flags & F_DEFAULT)
+            else if (!(p->flags & F_OVERRIDDEN))
                 return STATUS_OK;
 
             // Initialize property with default value
-            p->flags   |= F_DEFAULT;
+            p->flags   &= ~F_OVERRIDDEN;
             return sync_property(p);
         }
-    
+
+        status_t Style::create_local_property(atom_t id, const property_t *src)
+        {
+            // Lookup for property first
+            property_t *p = get_property(id);
+            if (p == NULL)
+            {
+                // Just create property and mark as explicitly created
+                p = create_property(id, src, F_CREATED);
+                if (p == NULL)
+                    return STATUS_NO_MEM;
+
+                notify_listeners(p);
+                notify_children(p);
+
+                return STATUS_OK;
+            }
+
+            // Check that property has already been explicitly created previously
+            if (p->flags & F_CREATED)
+                return STATUS_ALREADY_EXISTS;
+            else if (p->type != src->type)
+                return STATUS_BAD_TYPE;
+
+            // Override values
+            size_t changes  = p->changes;
+            switch (p->type)
+            {
+                case PT_INT:
+                    if ((!(p->flags & F_OVERRIDDEN)) &&
+                        (p->v.iValue != src->v.iValue))
+                    {
+
+                        p->v.iValue     = src->v.iValue;
+                        ++p->changes;
+                    }
+                    p->dv.iValue    = src->dv.iValue;
+                    break;
+                case PT_FLOAT:
+                    if ((!(p->flags & F_OVERRIDDEN)) &&
+                        (p->v.fValue != src->v.fValue))
+                    {
+
+                        p->v.fValue     = src->v.fValue;
+                        ++p->changes;
+                    }
+                    p->dv.fValue    = src->dv.fValue;
+                    break;
+                case PT_BOOL:
+                    if ((!(p->flags & F_OVERRIDDEN)) &&
+                        (p->v.bValue != src->v.bValue))
+                    {
+
+                        p->v.bValue     = src->v.bValue;
+                        ++p->changes;
+                    }
+                    p->dv.bValue    = src->dv.bValue;
+                    break;
+                case PT_STRING:
+                {
+                    // Allocate strings
+                    char *ds = ::strdup(src->dv.sValue);
+                    if (ds == NULL)
+                        return STATUS_NO_MEM;
+
+                    // Need to override values?
+                    if ((!(p->flags & F_OVERRIDDEN)) &&
+                        (::strcmp(p->v.sValue, src->v.sValue) != 0))
+                    {
+                        char *s         = ::strdup(src->v.sValue);
+                        if (s == NULL)
+                        {
+                            ::free(ds);
+                            return STATUS_NO_MEM;
+                        }
+
+                        ::free(p->v.sValue);
+                        p->v.sValue     = s;
+                        ++p->changes;
+                    }
+
+                    ::free(p->dv.sValue);
+                    p->dv.sValue    = ds;
+                    break;
+                }
+                default:
+                    return STATUS_UNKNOWN_ERR;
+            }
+            p->flags       |= F_CREATED;    // Mark as explicitly created
+            ++p->refs;                      // Increment number of references
+
+            if (changes != p->changes)
+            {
+                notify_listeners(p);
+                notify_children(p);
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Style::create_int(atom_t id, ssize_t value)
+        {
+            property_t tmp;
+            tmp.type        = PT_INT;
+            tmp.v.iValue    = value;
+            tmp.dv.iValue   = value;
+            return create_local_property(id, &tmp);
+        }
+
+        status_t Style::create_float(atom_t id, float value)
+        {
+            property_t tmp;
+            tmp.type        = PT_FLOAT;
+            tmp.v.fValue    = value;
+            tmp.dv.fValue   = value;
+            return create_local_property(id, &tmp);
+        }
+
+        status_t Style::create_bool(atom_t id, bool value)
+        {
+            property_t tmp;
+            tmp.type        = PT_BOOL;
+            tmp.v.bValue    = value;
+            tmp.dv.bValue   = value;
+            return create_local_property(id, &tmp);
+        }
+
+        status_t Style::create_string(atom_t id, const LSPString *value)
+        {
+            if (value == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            property_t tmp;
+            tmp.type        = PT_STRING;
+            tmp.v.sValue    = const_cast<char *>(value->get_utf8());
+            tmp.dv.sValue   = const_cast<char *>(value->get_utf8());
+            return create_local_property(id, &tmp);
+        }
+
+        status_t Style::create_string(atom_t id, const char *value)
+        {
+            if (value == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            property_t tmp;
+            tmp.type        = PT_STRING;
+            tmp.v.sValue    = const_cast<char *>(value);
+            tmp.dv.sValue   = const_cast<char *>(value);
+            return create_local_property(id, &tmp);
+        }
+
+        status_t Style::remove(atom_t id)
+        {
+            property_t *p   = get_property(id);
+            if (p == NULL)
+                return STATUS_NOT_FOUND;
+            else if (!(p->flags & F_CREATED))
+                return STATUS_PERMISSION_DENIED;
+
+            p->flags &= ~F_CREATED;
+            deref_property(p);
+            // Decrement number of references
+            if ((--p->refs) <= 0)
+            {
+                // Destroy property if there are no references and it has not been explicitly created
+                undef_property(p);
+                property_t *parent = get_parent_property(p->id);
+                notify_children((parent != NULL) ? parent : p);
+                vProperties.premove(p);
+            }
+
+            return STATUS_OK;
+        }
     } /* namespace tk */
 } /* namespace lsp */
