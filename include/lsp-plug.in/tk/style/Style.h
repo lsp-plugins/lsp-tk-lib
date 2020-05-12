@@ -62,17 +62,18 @@ namespace lsp
 
                 typedef struct listener_t
                 {
-                    atom_t           nId;        // Property identifier
+                    atom_t              nId;        // Property identifier
+                    bool                bNotify;    // Delayed notify flag
                     IStyleListener     *pListener;  // Listener
                 } listener_t;
 
             private:
-                lltl::parray<Style>         vParents;
-                lltl::parray<Style>         vChildren;
-                lltl::darray<property_t>    vProperties;
-                lltl::darray<listener_t>    vListeners;
-                ssize_t                     nLock;
-                bool                        bDelayed;
+                lltl::parray<Style>             vParents;
+                lltl::parray<Style>             vChildren;
+                lltl::darray<property_t>        vProperties;
+                lltl::darray<listener_t>        vListeners;
+                lltl::parray<IStyleListener>    vLocks;
+                bool                            bDelayed;
 
             public:
                 explicit Style();
@@ -102,7 +103,9 @@ namespace lsp
                 void                sync();
                 void                notify_change(property_t *prop);
                 void                notify_children(property_t *prop);
+                size_t              notify_children_delayed(property_t *prop);
                 void                notify_listeners(property_t *prop);
+                size_t              notify_listeners_delayed(property_t *prop);
                 void                deref_property(property_t *prop);
 
             public:
@@ -248,14 +251,25 @@ namespace lsp
                  * Start transactional update of properties.
                  * All listeners and children will be notified
                  * only after transaction becomes completed
+                 * @return status of operation
                  */
-                void                begin();
+                status_t            begin();
+
+                /**
+                 * Start transactional update of properties.
+                 * All listeners and children will be notified
+                 * only after transaction becomes completed
+                 * @param listener the listener excluded from notification
+                 * @return status of operation
+                 */
+                status_t            begin(IStyleListener *listener);
 
                 /**
                  * End transactional update of properties.
                  * All listeners and children will be notified
+                 * @return status of operation
                  */
-                void                end();
+                status_t            end();
 
                 /**
                  * Get integer property

@@ -14,7 +14,6 @@ namespace lsp
     {
         Style::Style()
         {
-            nLock       = 0;
             bDelayed    = false;
         }
         
@@ -36,7 +35,7 @@ namespace lsp
         void Style::do_destroy()
         {
             // Unlock all pending transactions
-            nLock   = 0;
+            vLocks.flush();
             delayed_notify();
 
             // Unlink from parents and remove all children
@@ -326,20 +325,12 @@ namespace lsp
                 notified = 0;
                 for (size_t i=0, n=vProperties.size(); i < n; ++i)
                 {
-                    property_t *prop = vProperties.uget(i);
-
                     // Notify if notification is pending
-                    if (prop->flags & F_NTF_LISTENERS)
+                    property_t *prop = vProperties.uget(i);
+                    if (prop != NULL)
                     {
-                        prop->flags &= ~F_NTF_LISTENERS;
-                        notify_listeners(prop);
-                        ++notified;
-                    }
-                    if (prop->flags & F_NTF_CHILDREN)
-                    {
-                        prop->flags &= ~F_NTF_CHILDREN;
-                        notify_children(prop);
-                        ++notified;
+                        notified       += notify_listeners_delayed(prop);
+                        notified       += notify_children_delayed(prop);
                     }
                 }
             } while (notified > 0);
@@ -360,34 +351,23 @@ namespace lsp
             else if (p->flags & F_OVERRIDDEN) // Locally overridden property? Ignore the event
                 return;
 
-            // Get parent Property
-            property_t *parent = get_parent_property(prop->id);
-            if (parent != NULL)
-            {
-                // Parent property has been changed?
-                size_t change = p->changes;
-                status_t res = copy_property(p, parent);
-                if ((res == STATUS_OK) && (change == p->changes))
-                    return;
-            }
-            else
-            {
-                // Copy property value and notify listener and children only if property has changed
-                size_t change = p->changes;
-                status_t res = copy_property(p, prop);
-                if ((res == STATUS_OK) && (change == p->changes))
-                    return;
-            }
+            // Try to copy value from parent property first
+            property_t *parent  = get_parent_property(prop->id);
+            size_t change       = p->changes;
+            status_t res        = copy_property(p, (parent != NULL) ? parent : prop);
 
-            // Notify children and listeners about property change
-            notify_listeners(p);
-            notify_children(p);
+            // Notify children and listeners about property change if all is successful
+            if ((res == STATUS_OK) && (change != p->changes))
+            {
+                notify_listeners(p);
+                notify_children(p);
+            }
         }
 
         void Style::notify_children(property_t *prop)
         {
             // In transaction, just set notification flag instead of issuing notification procedure
-            if ((nLock > 0) && (prop->owner == this))
+            if ((vLocks.size() > 0) && (prop->owner == this))
             {
                 prop->flags    |= F_NTF_CHILDREN;
                 return;
@@ -402,23 +382,90 @@ namespace lsp
             }
         }
 
-        void Style::notify_listeners(property_t *prop)
+        size_t Style::notify_children_delayed(property_t *prop)
         {
-            // In transaction, just set notification flag instead of issuing notification procedure
-            if ((nLock > 0) && (prop->owner == this))
+            size_t count = 0;
+
+            if (prop->flags & F_NTF_CHILDREN)
             {
-                prop->flags    |= F_NTF_LISTENERS;
-                return;
+                prop->flags &= ~F_NTF_CHILDREN;
+
+                // Notify all children about property change
+                for (size_t i=0, n=vChildren.size(); i<n; ++i)
+                {
+                    Style *child = vChildren.uget(i);
+                    if (child != NULL)
+                    {
+                        child->notify_change(prop);
+                        ++count;
+                    }
+                }
             }
 
-            // Notify all listeners about property change
+            return count;
+        }
+
+        void Style::notify_listeners(property_t *prop)
+        {
             atom_t id = prop->id;
-            for (size_t i=0, n=vListeners.size(); i<n; ++i)
+
+            // Check whether we are in transactional state
+            if ((vLocks.size() > 0) && (prop->owner == this))
             {
-                listener_t *lst = vListeners.uget(i);
-                if ((lst != NULL) && (lst->nId == id))
-                    lst->pListener->notify(id);
+                size_t count = 0;
+
+                // Mark all listeners for pending property change event except listeners in transaction
+                for (size_t i=0, n=vListeners.size(); i<n; ++i)
+                {
+                    listener_t *lst = vListeners.uget(i);
+                    if ((lst != NULL) && (lst->nId == id))
+                    {
+                        // Check that listener is not excluded from notifications
+                        if (vLocks.index_of(lst->pListener) < 0)
+                        {
+                            lst->bNotify    = true;
+                            ++count;
+                        }
+                    }
+                }
+
+                // Are there any listeners pending?
+                if (count > 0)
+                    prop->flags    |= F_NTF_LISTENERS;
             }
+            else
+            {
+                // Notify all listeners about property change
+                for (size_t i=0, n=vListeners.size(); i<n; ++i)
+                {
+                    listener_t *lst = vListeners.uget(i);
+                    if ((lst != NULL) && (lst->nId == id))
+                        lst->pListener->notify(id);
+                }
+            }
+        }
+
+        size_t Style::notify_listeners_delayed(property_t *prop)
+        {
+            size_t count = 0;
+            if (prop->flags & F_NTF_LISTENERS)
+            {
+                // Reset notification flag
+                prop->flags &= ~F_NTF_LISTENERS;
+
+                // Notify all allowed listeners about property change
+                for (size_t i=0, n=vListeners.size(); i<n; ++i)
+                {
+                    listener_t *lst = vListeners.uget(i);
+                    if ((lst != NULL) && (lst->nId == prop->id) && (lst->bNotify))
+                    {
+                        lst->bNotify    = false;
+                        lst->pListener->notify(prop->id);
+                        ++count;
+                    }
+                }
+            }
+            return count;
         }
 
         status_t Style::add_child(Style *child, ssize_t idx)
@@ -610,6 +657,7 @@ namespace lsp
 
             // Save listener to allocated binding
             lst->nId        = p->id;
+            lst->bNotify    = false;
             lst->pListener  = listener;
             ++p->refs;
 
@@ -695,17 +743,26 @@ namespace lsp
             return NULL;
         }
 
-        void Style::begin()
+        status_t Style::begin()
         {
-            ++nLock;
+            return (vLocks.push(static_cast<IStyleListener *>(NULL))) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        void Style::end()
+        status_t Style::begin(IStyleListener *listener)
         {
-            if (nLock == 0)
-                return;
-            if (!(--nLock)) // last end() ?
+            return (vLocks.push(listener)) ? STATUS_OK : STATUS_NO_MEM;
+        }
+
+        status_t Style::end()
+        {
+            ssize_t n = vLocks.size();
+            if ((n--) <= 0)
+                return STATUS_BAD_STATE;
+
+            vLocks.pop();
+            if (n <= 0)
                 delayed_notify();
+            return STATUS_OK;
         }
 
         Style::property_t *Style::get_property_recursive(atom_t id)
