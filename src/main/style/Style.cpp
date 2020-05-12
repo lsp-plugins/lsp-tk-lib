@@ -126,6 +126,8 @@ namespace lsp
                     ++dst->changes;
                     break;
                 }
+                default:
+                    return STATUS_BAD_TYPE;
             }
 
             return STATUS_OK;
@@ -226,7 +228,7 @@ namespace lsp
             }
 
             dst->id         = id;
-            dst->refs       = 0;
+            dst->refs       = (flags & F_CREATED) ? 1 : 0;
             dst->type       = type;
             dst->changes    = 0;
             dst->flags      = flags;
@@ -350,7 +352,7 @@ namespace lsp
             property_t *p = get_property(prop->id);
 
             // Property not found?
-            if (p == NULL)
+            if ((p == NULL) || (p->refs <= 0))
             {
                 notify_children(prop); // Just bypass event to children
                 return;
@@ -1076,15 +1078,6 @@ namespace lsp
 
             p->flags &= ~F_CREATED;
             deref_property(p);
-            // Decrement number of references
-            if ((--p->refs) <= 0)
-            {
-                // Destroy property if there are no references and it has not been explicitly created
-                undef_property(p);
-                property_t *parent = get_parent_property(p->id);
-                notify_children((parent != NULL) ? parent : p);
-                vProperties.premove(p);
-            }
 
             return STATUS_OK;
         }

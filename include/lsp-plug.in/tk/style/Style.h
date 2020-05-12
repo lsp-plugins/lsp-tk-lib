@@ -37,7 +37,7 @@ namespace lsp
                 typedef struct property_t
                 {
                     atom_t              id;         // Unique identifier of property
-                    ssize_t             type;       // Type of property
+                    property_type_t     type;       // Type of property
                     ssize_t             refs;       // Number of references
                     size_t              changes;    // Number of changes
                     size_t              flags;      // Flags
