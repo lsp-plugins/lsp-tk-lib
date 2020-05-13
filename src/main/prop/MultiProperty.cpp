@@ -31,10 +31,10 @@ namespace lsp
 
         status_t MultiProperty::bind(
                 atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener,
-                const char *property, Style *style, Display *dpy
+                const char *property, Style *style, Atoms *xatoms
         )
         {
-            if ((style == NULL) || (dpy == NULL) || (property == NULL))
+            if ((style == NULL) || (xatoms == NULL) || (property == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
             if (pStyle == style)
@@ -61,7 +61,7 @@ namespace lsp
                         res = STATUS_NO_MEM;
                         break;
                     }
-                    atom_t atom = dpy->atom_id(key.get_utf8());
+                    atom_t atom = xatoms->atom_id(key.get_utf8());
                     if (atom < 0)
                     {
                         res = STATUS_NO_MEM;

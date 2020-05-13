@@ -14,9 +14,9 @@ namespace lsp
     namespace tk
     {
         
-        Schema::Schema(Display *dpy)
+        Schema::Schema(Atoms *atoms)
         {
-            pDisplay    = dpy;
+            pAtoms      = atoms;
         }
         
         Schema::~Schema()
@@ -486,7 +486,7 @@ namespace lsp
                         property_value_t v;
                         if ((res = parse_property_value(&v, &value, pt)) != STATUS_OK)
                             return res;
-                        atom_t id = pDisplay->atom_id(name);
+                        atom_t id = pAtoms->atom_id(name);
                         if (id < 0)
                             return STATUS_UNKNOWN_ERR;
 

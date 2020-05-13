@@ -16,9 +16,6 @@ namespace lsp
 {
     namespace tk
     {
-        class Display;
-        class Widget;
-
         /**
          * Integering property interface
          */

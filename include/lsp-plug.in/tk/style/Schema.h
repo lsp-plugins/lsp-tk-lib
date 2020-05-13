@@ -25,7 +25,7 @@ namespace lsp
 {
     namespace tk
     {
-        class Display;
+        class Atoms;
 
         class Schema
         {
@@ -61,7 +61,7 @@ namespace lsp
 
             protected:
                 context_t           sCtx;
-                Display            *pDisplay;
+                Atoms              *pAtoms;
 
             protected:
                 status_t            apply_context(context_t *ctx);
@@ -70,11 +70,11 @@ namespace lsp
                 static void         destroy_style(style_t *style);
 
                 status_t            parse_document(xml::PullParser *p);
-                static status_t     parse_schema(xml::PullParser *p, context_t *ctx);
-                static status_t     parse_colors(xml::PullParser *p, context_t *ctx);
-                static status_t     parse_style(xml::PullParser *p, context_t *ctx, bool root);
-                static status_t     parse_color(xml::PullParser *p, lsp::Color *color);
-                static status_t     parse_property(xml::PullParser *p, style_t *style, const LSPString *name);
+                status_t            parse_schema(xml::PullParser *p, context_t *ctx);
+                status_t            parse_colors(xml::PullParser *p, context_t *ctx);
+                status_t            parse_style(xml::PullParser *p, context_t *ctx, bool root);
+                status_t            parse_color(xml::PullParser *p, lsp::Color *color);
+                status_t            parse_property(xml::PullParser *p, style_t *style, const LSPString *name);
 
                 static status_t     parse_style_class(LSPString *cname, const LSPString *text);
                 static status_t     parse_style_parents(style_t *style, const LSPString *text);
@@ -82,7 +82,7 @@ namespace lsp
                 static status_t     parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt);
 
             public:
-                explicit Schema(Display *dpy);
+                explicit Schema(Atoms *atoms);
                 virtual ~Schema();
 
             public:

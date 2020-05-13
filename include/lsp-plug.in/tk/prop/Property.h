@@ -16,8 +16,6 @@ namespace lsp
 {
     namespace tk
     {
-        class Style;
-
         namespace prop
         {
             class Listener;

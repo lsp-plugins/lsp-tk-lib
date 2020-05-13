@@ -281,27 +281,27 @@ namespace lsp
                 return MultiProperty::bind
                     (
                         vAtoms, DESC, &sListener,
-                        dpy->atom_name(property), widget->style(), widget->display()
+                        dpy->atom_name(property), widget->style(), dpy
                     );
             }
 
-            status_t Color::bind(const char *property, Style *style, Display *dpy)
+            status_t Color::bind(const char *property, Style *style, Atoms *atoms)
             {
                 return MultiProperty::bind
                     (
                         vAtoms, DESC, &sListener,
-                        property, style, dpy
+                        property, style, atoms
                     );
             }
 
-            status_t Color::bind(atom_t property, Style *style, Display *dpy)
+            status_t Color::bind(atom_t property, Style *style, Atoms *atoms)
             {
-                if (dpy == NULL)
+                if (atoms == NULL)
                     return STATUS_BAD_ARGUMENTS;
                 return MultiProperty::bind
                     (
                         vAtoms, DESC, &sListener,
-                        dpy->atom_name(property), style, dpy
+                        atoms->atom_name(property), style, atoms
                     );
             }
         }

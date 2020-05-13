@@ -17,16 +17,12 @@ namespace lsp
         size_t Property::parse_ints(ssize_t *dst, size_t max, const LSPString *s)
         {
             // Wrap string with sequence
-            io::InStringSequence is;
-            if (is.wrap(s) != STATUS_OK)
-                return 0;
-
-            // Parse values
             size_t n = 0;
+            io::InStringSequence is(s);
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
 
-            while ((res = tok.get_token()) != STATUS_EOF)
+            while ((res = tok.get_token(expr::TF_GET)) != expr::TT_EOF)
             {
                 if ((tok.current() != expr::TT_IVALUE) || (n >= max))
                     return 0;
@@ -48,13 +44,9 @@ namespace lsp
 
         size_t Property::parse_enums(ssize_t *dst, size_t max, const LSPString *s, const prop::enum_t *xenum)
         {
-            // Wrap string with sequence
-            io::InStringSequence is;
-            if (is.wrap(s) != STATUS_OK)
-                return 0;
-
             // Parse values
-            size_t n=0;
+            size_t n = 0;
+            io::InStringSequence is(s);
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
@@ -83,13 +75,9 @@ namespace lsp
 
         ssize_t Property::parse_bit_enums(size_t *dst, const LSPString *s, const prop::enum_t *xenum)
         {
-            // Wrap string with sequence
-            io::InStringSequence is;
-            if (is.wrap(s) != STATUS_OK)
-                return 0;
-
             // Parse values
             size_t n = 0;
+            io::InStringSequence is(s);
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
@@ -119,14 +107,10 @@ namespace lsp
 
         size_t Property::parse_unique_enums(ssize_t *dst, size_t max, const LSPString *s, const prop::enum_t *xenum)
         {
-            // Wrap string with sequence
-            io::InStringSequence is;
-            if (is.wrap(s) != STATUS_OK)
-                return 0;
-
             // Parse values
-            size_t n=0;
+            size_t n = 0;
             bool semicolon = false;
+            io::InStringSequence is(s);
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
@@ -165,12 +149,8 @@ namespace lsp
 
         size_t Property::parse_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum)
         {
-            // Wrap string with sequence
-            io::InStringSequence is;
-            if (is.wrap(s) != STATUS_OK)
-                return 0;
-
             // Parse values
+            io::InStringSequence is(s);
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
@@ -200,14 +180,10 @@ namespace lsp
 
         size_t Property::parse_unique_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum)
         {
-            // Wrap string with sequence
-            io::InStringSequence is;
-            if (is.wrap(s) != STATUS_OK)
-                return 0;
-
             // Parse values
-            size_t n=0;
+            size_t n = 0;
             bool semicolon = false;
+            io::InStringSequence is(s);
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
             const prop::enum_t *xe;

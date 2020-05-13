@@ -42,7 +42,7 @@ namespace lsp
         }
 
         // Forward class declaration
-        class Display;
+        class Atoms;
         class Widget;
         class Style;
         class IStyleListener;

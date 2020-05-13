@@ -50,7 +50,7 @@ namespace lsp
                      */
                     status_t            bind(const char *property, Widget *widget);
                     status_t            bind(atom_t property, Widget *widget);
-                    status_t            bind(const char *property, Display *dpy, Style *style);
+                    status_t            bind(const char *property, Atoms *atoms, Style *style);
                     status_t            bind(atom_t property, Style *style);
 
                     /**

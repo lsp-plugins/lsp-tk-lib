@@ -31,7 +31,7 @@ namespace lsp
                 status_t        unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);
                 status_t        bind(
                         atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener,
-                        const char *property, Style *style, Display *dpy
+                        const char *property, Style *style, Atoms *xatoms
                 );
 
                 void            set_default(atom_t *atoms, const prop::desc_t *desc);

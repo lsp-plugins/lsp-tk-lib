@@ -24,8 +24,8 @@
 #include <lsp-plug.in/ws/ws.h>
 
 // Interfaces
-#include <lsp-plug.in/tk/style/IStyleListener.h>
 #include <lsp-plug.in/tk/prop/Listener.h>
+#include <lsp-plug.in/tk/style/IStyleListener.h>
 
 // Properties
 #include <lsp-plug.in/tk/prop/Property.h>
@@ -49,6 +49,7 @@
 #include <lsp-plug.in/tk/style/Schema.h>
 
 // System objects
+#include <lsp-plug.in/tk/sys/Atoms.h>
 #include <lsp-plug.in/tk/sys/Slot.h>
 #include <lsp-plug.in/tk/sys/SlotSet.h>
 #include <lsp-plug.in/tk/sys/Timer.h>

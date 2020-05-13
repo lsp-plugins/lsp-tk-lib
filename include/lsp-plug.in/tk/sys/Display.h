@@ -29,21 +29,22 @@ namespace lsp
         /** Main display
          *
          */
-        class Display
+        class Display: public Atoms
         {
             protected:
                 typedef struct item_t
                 {
-                    Widget      *widget;
+                    Widget         *widget;
                     char           *id;
                 } item_t;
 
             protected:
                 lltl::parray<item_t>    sWidgets;
                 lltl::parray<Widget>    vGarbage;
-                lltl::parray<char>      vAtoms;
+
                 SlotSet                 sSlots;
                 Style                   sStyle;
+
                 i18n::IDictionary      *pDictionary;
                 ws::IDisplay           *pDisplay;
 
@@ -195,28 +196,7 @@ namespace lsp
                  * Get the dictionary that contains localization data
                  * @return dictionary object
                  */
-                inline i18n::IDictionary *dictionary()      { return pDictionary; }
-
-                /**
-                 * Get atom identifier by name
-                 * @param name atom name
-                 * @return atom identifier or negative error code
-                 */
-                atom_t atom_id(const char *name);
-
-                /**
-                 * Get atom identifier by name
-                 * @param name atom name
-                 * @return atom identifier or negative error code
-                 */
-                inline atom_t atom_id(const LSPString *name){ return atom_id(name->get_utf8()); };
-
-                /**
-                 * Get atom name by identifier
-                 * @param name atom name or NULL
-                 * @return atom identifier
-                 */
-                const char *atom_name(atom_t id);
+                inline i18n::IDictionary *dictionary()      { return pDictionary;               }
 
                 /**
                  * Get clipboard data

@@ -1,5 +1,5 @@
 /*
- * LocalString.cpp
+ * String.cpp
  *
  *  Created on: 2 мар. 2020 г.
  *      Author: sadko

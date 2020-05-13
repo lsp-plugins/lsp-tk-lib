@@ -136,12 +136,12 @@ namespace lsp
                 return tk::Integer::bind(property, widget->style());
             }
 
-            status_t Integer::bind(const char *property, Display *dpy, Style *style)
+            status_t Integer::bind(const char *property, Atoms *atoms, Style *style)
             {
-                if ((dpy == NULL) || (style == NULL) || (property < 0))
+                if ((atoms == NULL) || (style == NULL) || (property < 0))
                     return STATUS_BAD_ARGUMENTS;
 
-                atom_t id       = dpy->atom_id(property);
+                atom_t id       = atoms->atom_id(property);
                 if (id < 0)
                     return STATUS_UNKNOWN_ERR;
 
