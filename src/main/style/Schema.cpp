@@ -176,7 +176,7 @@ namespace lsp
                             return STATUS_CORRUPTED;
                         }
 
-                        if ((res = parse_schema(p)) != STATUS_OK)
+                        if ((res = parse_schema(p, &ctx)) != STATUS_OK)
                         {
                             destroy_context(&ctx);
                             return res;
@@ -201,12 +201,15 @@ namespace lsp
             return res;
         }
 
-        status_t Schema::parse_schema(xml::PullParser *p)
+        status_t Schema::parse_schema(xml::PullParser *p, context_t *ctx)
         {
-            status_t res;
+            status_t item, res = STATUS_OK;
 
-            while ((res = p->read_next()) > 0)
+            while (true)
             {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
                 switch (res)
                 {
                     case xml::XT_CHARACTERS:
@@ -214,11 +217,11 @@ namespace lsp
                         break;
 
                     case xml::XT_START_ELEMENT:
-                        if (!p->name()->equals_ascii("colors"))
-                            res = parse_colors(p);
-                        else if (!p->name()->equals_ascii("style"))
+                        if (p->name()->equals_ascii("colors"))
+                            res = parse_colors(p, ctx);
+                        else if (p->name()->equals_ascii("style"))
                             res = parse_style(p, false);
-                        else if (!p->name()->equals_ascii("root"))
+                        else if (p->name()->equals_ascii("root"))
                             res = parse_style(p, true);
                         else
                             return STATUS_CORRUPTED;
@@ -232,20 +235,21 @@ namespace lsp
                     default:
                         return STATUS_CORRUPTED;
                 }
+
+                if (res != STATUS_OK)
+                    return res;
             }
-
-            if ((res < 0) && (res != -STATUS_EOF))
-                return -res;
-
-            return STATUS_OK;
         }
 
-        status_t Schema::parse_colors(xml::PullParser *p)
+        status_t Schema::parse_colors(xml::PullParser *p, context_t *ctx)
         {
-            status_t res;
+            status_t item, res = STATUS_OK;
 
-            while ((res = p->read_next()) > 0)
+            while (true)
             {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
                 switch (res)
                 {
                     case xml::XT_CHARACTERS:
@@ -253,30 +257,50 @@ namespace lsp
                         break;
 
                     case xml::XT_START_ELEMENT:
+                    {
+                        // Check that color has not been previously defined
+                        if (ctx->vColors.exists(p->name()))
+                            return STATUS_DUPLICATED;
+
+                        // Create color object
+                        lsp::Color *c = new lsp::Color();
+                        if (c == NULL)
+                            return STATUS_NO_MEM;
+
+                        // Try to parse color
+                        if ((res = parse_color(p, c)) == STATUS_OK)
+                        {
+                            if (!ctx->vColors.put(p->name(), NULL))
+                                res = STATUS_NO_MEM;
+                        }
+
+                        // Drop color on error
+                        if (res != STATUS_OK)
+                            delete c;
                         break;
+                    }
 
                     case xml::XT_END_ELEMENT:
-                        if (!p->name()->equals_ascii("colors"))
-                            return STATUS_CORRUPTED;
                         return STATUS_OK;
 
                     default:
                         return STATUS_CORRUPTED;
                 }
+
+                if (res != STATUS_OK)
+                    return res;
             }
-
-            if ((res < 0) && (res != -STATUS_EOF))
-                return -res;
-
-            return STATUS_OK;
         }
 
         status_t Schema::parse_style(xml::PullParser *p, bool root)
         {
-            status_t res;
+            status_t item, res = STATUS_OK;
 
-            while ((res = p->read_next()) > 0)
+            while (true)
             {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
                 switch (res)
                 {
                     case xml::XT_CHARACTERS:
@@ -284,30 +308,72 @@ namespace lsp
                         break;
 
                     case xml::XT_START_ELEMENT:
-                        if (!p->name()->equals_ascii("colors"))
-                            res = parse_colors(p);
-                        else if (!p->name()->equals_ascii("style"))
-                            res = parse_style(p, false);
-                        else if (!p->name()->equals_ascii("root"))
-                            res = parse_style(p, true);
-                        else
-                            return STATUS_CORRUPTED;
+                        // TODO
                         break;
 
                     case xml::XT_END_ELEMENT:
-                        if (!p->name()->equals_ascii("schema"))
-                            return STATUS_CORRUPTED;
                         return STATUS_OK;
 
                     default:
                         return STATUS_CORRUPTED;
                 }
+
+                if (res != STATUS_OK)
+                    return res;
             }
+        }
 
-            if ((res < 0) && (res != -STATUS_EOF))
-                return -res;
+        status_t Schema::parse_color(xml::PullParser *p, lsp::Color *color)
+        {
+            status_t item, res = STATUS_OK;
+            bool value = false;
 
-            return STATUS_OK;
+            while (true)
+            {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                switch (item)
+                {
+                    case xml::XT_CHARACTERS:
+                    case xml::XT_COMMENT:
+                        break;
+
+                    case xml::XT_ATTRIBUTE:
+                        // Value already has been set?
+                        if (value)
+                            return STATUS_BAD_FORMAT;
+                        value   = true;
+
+                        // Parse value
+                        if (p->name()->equals_ascii("value"))
+                            res = color->parse3(p->value());
+                        if (p->name()->equals_ascii("avalue"))
+                            res = color->parse4(p->value());
+                        else if (p->name()->equals_ascii("rgb"))
+                            res = color->parse_rgb(p->value());
+                        else if (p->name()->equals_ascii("rgba"))
+                            res = color->parse_rgba(p->value());
+                        else if (p->name()->equals_ascii("hsl"))
+                            res = color->parse_hsl(p->value());
+                        else if (p->name()->equals_ascii("hsla"))
+                            res = color->parse_hsla(p->value());
+                        else
+                            return STATUS_CORRUPTED;
+                        break;
+
+                    case xml::XT_END_ELEMENT:
+                        if (!value)
+                            return STATUS_BAD_FORMAT;
+                        return STATUS_OK;
+
+                    default:
+                        return STATUS_CORRUPTED;
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
         }
 
         status_t Schema::apply_context(context_t *ctx)

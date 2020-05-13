@@ -58,9 +58,10 @@ namespace lsp
                 static void         destroy_style(style_t *style);
 
                 status_t            parse_document(xml::PullParser *p);
-                status_t            parse_schema(xml::PullParser *p);
-                status_t            parse_colors(xml::PullParser *p);
+                status_t            parse_schema(xml::PullParser *p, context_t *ctx);
+                status_t            parse_colors(xml::PullParser *p, context_t *ctx);
                 status_t            parse_style(xml::PullParser *p, bool root);
+                status_t            parse_color(xml::PullParser *p, lsp::Color *color);
 
             public:
                 explicit Schema(Display *dpy);
