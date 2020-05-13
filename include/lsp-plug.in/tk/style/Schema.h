@@ -99,6 +99,20 @@ namespace lsp
 
             public:
                 /**
+                 * Get color by identifier
+                 * @param id color identifier
+                 * @return color or NULL if not present
+                 */
+                lsp::Color         *color(const char *id);
+
+                /**
+                 * Get color by identifier
+                 * @param id color identifier
+                 * @return color or NULL if not present
+                 */
+                lsp::Color         *color(const LSPString *id);
+
+                /**
                  * Get root style
                  * @return root style or NULL on error
                  */

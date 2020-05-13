@@ -1,4 +1,4 @@
-<?xml version="1.0" charset="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <schema>
 	<!-- Color aliases -->
@@ -30,20 +30,27 @@
 	<!-- Nested style of window -->
 	<style class="style1" parents="root">
 		<i.value value="456" />
-	</window>
+		<i.c.value value="456" />
+	</style>
 	
 	<style class="style2" parents="root">
 		<f.value value="234.56" />
-	</window>
+		<f.c.value value="234.56" />
+	</style>
 	
 	<style class="style3" parents="root">
 		<s.value value="overridden text" />
-	</window>
+		<s.c.value value="overridden text" />
+	</style>
 	
 	<style class="compound" parents="style1, style2, style3">
+	</style>
+	
+	<style class="overrides" parents="compound">
 		<i.value value="567" />
 		<f.value value="345.67" />
 		<s.value value="nested text" />
-	</window>
-	
+	</style>
+
 </schema>
+

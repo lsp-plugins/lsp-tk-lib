@@ -51,13 +51,13 @@ namespace lsp
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
 
-            while ((res = tok.get_token()) != STATUS_EOF)
+            while ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) != expr::TT_EOF)
             {
                 if (n > 0)
                 {
                     if (tok.current() != expr::TT_SEMICOLON)
                         return 0;
-                    if ((res = tok.get_token()) == STATUS_EOF)
+                    if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return 0;
                 }
 
@@ -82,13 +82,13 @@ namespace lsp
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
 
-            while ((res = tok.get_token()) != STATUS_EOF)
+            while ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) != expr::TT_EOF)
             {
                 if (n > 0)
                 {
                     if (tok.current() != expr::TT_SEMICOLON)
                         return -1;
-                    if ((res = tok.get_token()) == STATUS_EOF)
+                    if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return -1;
                 }
 
@@ -115,13 +115,13 @@ namespace lsp
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
 
-            while ((res = tok.get_token()) != STATUS_EOF)
+            while ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) != expr::TT_EOF)
             {
                 if (semicolon)
                 {
                     if (tok.current() != expr::TT_SEMICOLON)
                         return 0;
-                    if ((res = tok.get_token()) == STATUS_EOF)
+                    if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return 0;
                 }
 
@@ -155,13 +155,13 @@ namespace lsp
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
 
-            while ((res = tok.get_token()) != STATUS_EOF)
+            while ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) != expr::TT_EOF)
             {
                 if (dst->size() > 0)
                 {
                     if (tok.current() != expr::TT_SEMICOLON)
                         return 0;
-                    if ((res = tok.get_token()) == STATUS_EOF)
+                    if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return 0;
                 }
 
@@ -188,13 +188,13 @@ namespace lsp
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
 
-            while ((res = tok.get_token()) != STATUS_EOF)
+            while ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) != expr::TT_EOF)
             {
                 if (semicolon)
                 {
                     if (tok.current() != expr::TT_SEMICOLON)
                         return 0;
-                    if ((res = tok.get_token()) == STATUS_EOF)
+                    if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return 0;
                 }
 

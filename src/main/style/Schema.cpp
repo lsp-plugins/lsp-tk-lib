@@ -180,7 +180,10 @@ namespace lsp
             while (true)
             {
                 if ((item = p->read_next()) < 0)
+                {
+                    destroy_context(&ctx);
                     return -item;
+                }
 
                 if (item == xml::XT_END_DOCUMENT)
                     break;
@@ -210,12 +213,11 @@ namespace lsp
                         break;
 
                     default:
+                        destroy_context(&ctx);
                         return STATUS_CORRUPTED;
                 }
             }
 
-            if ((res < 0) && (res != -STATUS_EOF))
-                return -res;
             if (!read)
                 return STATUS_CORRUPTED;
 
@@ -294,7 +296,7 @@ namespace lsp
                         // Try to parse color
                         if ((res = parse_color(p, c)) == STATUS_OK)
                         {
-                            if (!ctx->vColors.put(p->name(), NULL))
+                            if (!ctx->vColors.put(p->name(), c, NULL))
                                 res = STATUS_NO_MEM;
                         }
 
@@ -326,6 +328,7 @@ namespace lsp
                 return STATUS_DUPLICATED;
 
             LSPString sClass;
+            LSPString name;
             style_t *style = create_style();
             if (style == NULL)
                 return STATUS_NO_MEM;
@@ -343,7 +346,6 @@ namespace lsp
 
                     case xml::XT_START_ELEMENT:
                     {
-                        LSPString name;
                         if (!name.set(p->name()))
                             res = STATUS_NO_MEM;
                         else
@@ -357,14 +359,14 @@ namespace lsp
                             if ((root) || (bClass))
                                 res = STATUS_BAD_FORMAT;
                             bClass = true;
-                            res = parse_style_class(&sClass, p->name());
+                            res = parse_style_class(&sClass, p->value());
                         }
                         else if (p->name()->equals_ascii("parents"))
                         {
                             if ((root) || (bParents))
                                 res = STATUS_BAD_FORMAT;
                             bParents = true;
-                            res = parse_style_parents(style, p->name());
+                            res = parse_style_parents(style, p->value());
                         }
                         else
                             res = STATUS_BAD_FORMAT;
@@ -378,7 +380,7 @@ namespace lsp
                                 res = STATUS_BAD_FORMAT;
                             else if (ctx->vStyles.exists(&sClass))
                                 res = STATUS_DUPLICATED;
-                            else if (!ctx->vStyles.put(&sClass, NULL))
+                            else if (!ctx->vStyles.put(&sClass, style, NULL))
                                 res = STATUS_NO_MEM;
                         }
 
@@ -428,7 +430,7 @@ namespace lsp
                         // Parse value
                         if (p->name()->equals_ascii("value"))
                             res = color->parse3(p->value());
-                        if (p->name()->equals_ascii("avalue"))
+                        else if (p->name()->equals_ascii("avalue"))
                             res = color->parse4(p->value());
                         else if (p->name()->equals_ascii("rgb"))
                             res = color->parse_rgb(p->value());
@@ -481,14 +483,14 @@ namespace lsp
                             if (bValue)
                                 return STATUS_BAD_FORMAT;
                             bValue = true;
-                            if (!value.set(p->name()))
+                            if (!value.set(p->value()))
                                 return STATUS_NO_MEM;
                         }
                         else if (p->name()->equals_ascii("type"))
                         {
                             if (pt != PT_UNKNOWN)
                                 return STATUS_BAD_FORMAT;
-                            res = parse_property_type(&pt, p->name());
+                            res = parse_property_type(&pt, p->value());
                         }
                         else
                             res = STATUS_BAD_FORMAT;
@@ -582,7 +584,7 @@ namespace lsp
             io::InStringSequence is(text);
             expr::Tokenizer tok(&is);
 
-            if (tok.get_token(expr::TF_GET) != expr::TT_BAREWORD)
+            if (tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS) != expr::TT_BAREWORD)
                 return STATUS_BAD_FORMAT;
             else if (!cname->set(tok.text_value()))
                 return STATUS_NO_MEM;
@@ -596,14 +598,14 @@ namespace lsp
             expr::Tokenizer tok(&is);
             expr::token_t t;
 
-            while ((t = tok.get_token(expr::TF_GET)) != expr::TT_EOF)
+            while ((t = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) != expr::TT_EOF)
             {
                 // Require comma if there is more than one parent
                 if (style->vParents.size() > 0)
                 {
                     if (t != expr::TT_COMMA)
                         return STATUS_BAD_FORMAT;
-                    t = tok.get_token(expr::TF_GET);
+                    t = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS);
                 }
                 if (t != expr::TT_BAREWORD)
                     return STATUS_BAD_FORMAT;
@@ -625,7 +627,7 @@ namespace lsp
                     return STATUS_NO_MEM;
             }
 
-            return (style->vParents.is_empty()) ? STATUS_OK : STATUS_NO_DATA;
+            return (style->vParents.is_empty()) ? STATUS_NO_DATA : STATUS_OK;
         }
 
         status_t Schema::parse_property_type(property_type_t *pt, const LSPString *text)
@@ -633,7 +635,7 @@ namespace lsp
             io::InStringSequence is(text);
             expr::Tokenizer tok(&is);
 
-            if (tok.get_token(expr::TF_GET) != expr::TT_BAREWORD)
+            if (tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS) != expr::TT_BAREWORD)
                 return STATUS_BAD_FORMAT;
             else
                 text = tok.text_value();
@@ -682,7 +684,7 @@ namespace lsp
 
                 case PT_INT:
                     t = tok.get_token(expr::TF_GET);
-                    if (t != expr::TT_INT)
+                    if (t != expr::TT_IVALUE)
                         return STATUS_BAD_FORMAT;
                     v->type         = PT_INT;
                     v->ivalue       = tok.int_value();
@@ -690,9 +692,9 @@ namespace lsp
 
                 case PT_FLOAT:
                     t = tok.get_token(expr::TF_GET);
-                    if (t == expr::TT_FLOAT)
+                    if (t == expr::TT_FVALUE)
                         v->fvalue       = tok.float_value();
-                    else if (t == expr::TT_INT)
+                    else if (t == expr::TT_IVALUE)
                         v->fvalue       = tok.int_value();
                     else
                         return STATUS_BAD_FORMAT;
@@ -712,12 +714,12 @@ namespace lsp
                         v->bvalue       = (t == expr::TT_TRUE);
                         v->type         = PT_BOOL;
                     }
-                    else if (t == expr::TT_INT)
+                    else if (t == expr::TT_IVALUE)
                     {
                         v->ivalue       = tok.int_value();
                         v->type         = PT_INT;
                     }
-                    else if (t == expr::TT_FLOAT)
+                    else if (t == expr::TT_FVALUE)
                     {
                         v->fvalue       = tok.float_value();
                         v->type         = PT_FLOAT;
@@ -791,6 +793,19 @@ namespace lsp
             }
 
             return &s->sStyle;
+        }
+
+        lsp::Color *Schema::color(const char *id)
+        {
+            LSPString tmp;
+            if (!tmp.set_utf8(id))
+                return NULL;
+            return color(&tmp);
+        }
+
+        lsp::Color *Schema::color(const LSPString *id)
+        {
+            return sCtx.vColors.get(id);
         }
     } /* namespace tk */
 } /* namespace lsp */
