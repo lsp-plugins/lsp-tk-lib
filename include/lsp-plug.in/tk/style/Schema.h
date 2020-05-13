@@ -66,8 +66,10 @@ namespace lsp
             protected:
                 status_t            apply_context(context_t *ctx);
                 static void         init_context(context_t *ctx);
+                static void         swap_context(context_t *a, context_t *b);
                 static void         destroy_context(context_t *ctx);
                 static void         destroy_style(style_t *style);
+                static style_t     *create_style();
 
                 status_t            parse_document(xml::PullParser *p);
                 status_t            parse_schema(xml::PullParser *p, context_t *ctx);
@@ -94,6 +96,27 @@ namespace lsp
                 status_t            parse_data(const char *str, const char *charset = NULL);
                 status_t            parse_data(const LSPString *str);
                 status_t            parse_data(io::IInSequence *seq, size_t flags = WRAP_NONE);
+
+            public:
+                /**
+                 * Get root style
+                 * @return root style or NULL on error
+                 */
+                Style              *root();
+
+                /**
+                 * Get style by class identifier.
+                 * If style does not exists, it will be automatically created and bound to the root style
+                 * @return style or NULL on error
+                 */
+                Style              *get(const char *id, style_init_t init = NULL);
+
+                /**
+                 * Get style by class identifier.
+                 * If style does not exists, it will be automatically created and bound to the root style
+                 * @return style or NULL on error
+                 */
+                Style              *get(const LSPString *id, style_init_t init = NULL);
         };
     
     } /* namespace tk */

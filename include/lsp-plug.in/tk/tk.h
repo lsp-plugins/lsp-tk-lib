@@ -18,6 +18,7 @@
 #include <lsp-plug.in/common/status.h>
 #include <lsp-plug.in/tk/types.h>
 #include <lsp-plug.in/tk/sys/types.h>
+#include <lsp-plug.in/tk/style/types.h>
 #include <lsp-plug.in/tk/prop/types.h>
 
 // Basic dependencies

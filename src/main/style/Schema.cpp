@@ -46,6 +46,17 @@ namespace lsp
             }
         }
 
+        Schema::style_t *Schema::create_style()
+        {
+            style_t *s = new style_t();
+            if (s == NULL)
+                return NULL;
+
+            s->bInitialized     = false;
+
+            return s;
+        }
+
         void Schema::destroy_style(style_t *s)
         {
             s->sStyle.destroy();
@@ -58,6 +69,13 @@ namespace lsp
         void Schema::init_context(context_t *s)
         {
             s->pRoot        = NULL;
+        }
+
+        void Schema::swap_context(context_t *a, context_t *b)
+        {
+            swap(a->pRoot, b->pRoot);
+            a->vColors.swap(b->vColors);
+            a->vStyles.swap(b->vStyles);
         }
 
         status_t Schema::parse_file(const char *path, const char *charset)
@@ -308,7 +326,7 @@ namespace lsp
                 return STATUS_DUPLICATED;
 
             LSPString sClass;
-            style_t *style = new style_t();
+            style_t *style = create_style();
             if (style == NULL)
                 return STATUS_NO_MEM;
 
@@ -516,6 +534,46 @@ namespace lsp
 
         status_t Schema::apply_context(context_t *ctx)
         {
+            status_t res;
+
+            // Check that there is root style
+            if (ctx->pRoot == NULL)
+                return STATUS_BAD_FORMAT;
+
+            // Fetch the overall list of styles
+            lltl::parray<LSPString> keys;
+            if (!ctx->vStyles.keys(&keys))
+                return STATUS_NO_MEM;
+
+            // Perform style binding
+            for (size_t i=0, n=keys.size(); i<n; ++i)
+            {
+                LSPString *id   = keys.uget(i);
+                style_t *child  = ctx->vStyles.get(id);
+                if (child == NULL)
+                    return STATUS_CORRUPTED;
+
+                // Lookup for each parent style in list and perform binding
+                for (size_t j=0, m=child->vParents.size(); j<m; ++j)
+                {
+                    LSPString *pid = child->vParents.uget(j);
+                    if (pid == NULL)
+                        return STATUS_CORRUPTED;
+
+                    // Fetch parent style
+                    style_t *parent = (pid->equals_ascii("root")) ? ctx->pRoot : ctx->vStyles.get(pid);
+                    if (parent == NULL)
+                        return STATUS_CORRUPTED;
+
+                    // Add parent style to the child style
+                    if ((res = child->sStyle.add_parent(&parent->sStyle)) != STATUS_OK)
+                        return res;
+                }
+            }
+
+            // Swap the state
+            swap_context(&sCtx, ctx);
+
             return STATUS_OK;
         }
 
@@ -677,5 +735,62 @@ namespace lsp
             return (tok.get_token(expr::TF_GET) == expr::TT_EOF) ? STATUS_OK : STATUS_BAD_FORMAT;
         }
     
+        Style *Schema::root()
+        {
+            style_t *s = sCtx.pRoot;
+            if (s == NULL)
+            {
+                s = create_style();
+                if (s == NULL)
+                    return NULL;
+                sCtx.pRoot  = s;
+            }
+
+            return &s->sStyle;
+        }
+
+        Style *Schema::get(const char *id, style_init_t init)
+        {
+            LSPString tmp;
+            if (!tmp.set_utf8(id))
+                return NULL;
+            return get(&tmp, init);
+        }
+
+        Style *Schema::get(const LSPString *id, style_init_t init)
+        {
+            style_t *s  = sCtx.vStyles.get(id);
+            if (s == NULL)
+            {
+                // Get root style
+                Style *r = root();
+                if (r == NULL)
+                    return NULL;
+
+                // Create child style
+                s = create_style();
+                if (s == NULL)
+                    return NULL;
+
+                // Add to style map
+                if (!sCtx.vStyles.put(id, &s))
+                {
+                    destroy_style(s);
+                    return NULL;
+                }
+
+                // Bind to root
+                s->sStyle.add_parent(r);
+            }
+
+            // Check that style is initialized
+            if ((init) && (!s->bInitialized))
+            {
+                init(&s->sStyle, this);
+                s->bInitialized = true;
+            }
+
+            return &s->sStyle;
+        }
     } /* namespace tk */
 } /* namespace lsp */
