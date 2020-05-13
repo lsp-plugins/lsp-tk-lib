@@ -14,7 +14,7 @@ namespace lsp
     {
         void init(int argc, const char **argv)
         {
-            // Initialize DSP
+            // Initialize DSP library used by some components
             dsp::init();
         }
     }
