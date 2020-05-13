@@ -6,6 +6,8 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/io/InStringSequence.h>
+#include <lsp-plug.in/expr/Tokenizer.h>
 
 namespace lsp
 {
@@ -50,6 +52,7 @@ namespace lsp
             for (size_t i=0, n=s->vParents.size(); i<n; ++i)
                 delete s->vParents.uget(i);
             s->vParents.flush();
+            delete s;
         }
 
         void Schema::init_context(context_t *s)
@@ -150,18 +153,21 @@ namespace lsp
 
         status_t Schema::parse_document(xml::PullParser *p)
         {
-            status_t res;
+            status_t item, res = STATUS_OK;
             bool read = false;
 
             context_t ctx;
             init_context(&ctx);
 
-            while ((res = p->read_next()) > 0)
+            while (true)
             {
-                if (res == xml::XT_END_DOCUMENT)
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                if (item == xml::XT_END_DOCUMENT)
                     break;
 
-                switch (res)
+                switch (item)
                 {
                     case xml::XT_CHARACTERS:
                     case xml::XT_COMMENT:
@@ -210,7 +216,7 @@ namespace lsp
                 if ((item = p->read_next()) < 0)
                     return -item;
 
-                switch (res)
+                switch (item)
                 {
                     case xml::XT_CHARACTERS:
                     case xml::XT_COMMENT:
@@ -220,9 +226,9 @@ namespace lsp
                         if (p->name()->equals_ascii("colors"))
                             res = parse_colors(p, ctx);
                         else if (p->name()->equals_ascii("style"))
-                            res = parse_style(p, false);
+                            res = parse_style(p, ctx, false);
                         else if (p->name()->equals_ascii("root"))
-                            res = parse_style(p, true);
+                            res = parse_style(p, ctx, true);
                         else
                             return STATUS_CORRUPTED;
                         break;
@@ -250,7 +256,7 @@ namespace lsp
                 if ((item = p->read_next()) < 0)
                     return -item;
 
-                switch (res)
+                switch (item)
                 {
                     case xml::XT_CHARACTERS:
                     case xml::XT_COMMENT:
@@ -292,34 +298,90 @@ namespace lsp
             }
         }
 
-        status_t Schema::parse_style(xml::PullParser *p, bool root)
+        status_t Schema::parse_style(xml::PullParser *p, context_t *ctx, bool root)
         {
             status_t item, res = STATUS_OK;
+            bool bParents = false;
+            bool bClass = false;
+
+            if ((root) && (ctx->pRoot != NULL))
+                return STATUS_DUPLICATED;
+
+            LSPString sClass;
+            style_t *style = new style_t();
+            if (style == NULL)
+                return STATUS_NO_MEM;
 
             while (true)
             {
                 if ((item = p->read_next()) < 0)
                     return -item;
 
-                switch (res)
+                switch (item)
                 {
                     case xml::XT_CHARACTERS:
                     case xml::XT_COMMENT:
                         break;
 
                     case xml::XT_START_ELEMENT:
-                        // TODO
+                    {
+                        LSPString name;
+                        if (!name.set(p->name()))
+                            res = STATUS_NO_MEM;
+                        else
+                            res = parse_property(p, style, &name);
+                        break;
+                    }
+
+                    case xml::XT_ATTRIBUTE:
+                        if (p->name()->equals_ascii("class"))
+                        {
+                            if ((root) || (bClass))
+                                res = STATUS_BAD_FORMAT;
+                            bClass = true;
+                            res = parse_style_class(&sClass, p->name());
+                        }
+                        else if (p->name()->equals_ascii("parents"))
+                        {
+                            if ((root) || (bParents))
+                                res = STATUS_BAD_FORMAT;
+                            bParents = true;
+                            res = parse_style_parents(style, p->name());
+                        }
+                        else
+                            res = STATUS_BAD_FORMAT;
                         break;
 
                     case xml::XT_END_ELEMENT:
-                        return STATUS_OK;
+                        // Post-conditions
+                        if (!root)
+                        {
+                            if (sClass.is_empty())
+                                res = STATUS_BAD_FORMAT;
+                            else if (ctx->vStyles.exists(&sClass))
+                                res = STATUS_DUPLICATED;
+                            else if (!ctx->vStyles.put(&sClass, NULL))
+                                res = STATUS_NO_MEM;
+                        }
+
+                        if (res == STATUS_OK)
+                        {
+                            if (root)
+                                ctx->pRoot = style;
+                            return STATUS_OK;
+                        }
+                        break;
 
                     default:
-                        return STATUS_CORRUPTED;
+                        res = STATUS_CORRUPTED;
+                        break;
                 }
 
                 if (res != STATUS_OK)
+                {
+                    destroy_style(style);
                     return res;
+                }
             }
         }
 
@@ -376,11 +438,244 @@ namespace lsp
             }
         }
 
+        status_t Schema::parse_property(xml::PullParser *p, style_t *style, const LSPString *name)
+        {
+            status_t item, res = STATUS_OK;
+
+            bool bValue = false;
+            property_type_t pt = PT_UNKNOWN;
+            LSPString value;
+
+            while (true)
+            {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                switch (item)
+                {
+                    case xml::XT_CHARACTERS:
+                    case xml::XT_COMMENT:
+                        break;
+
+                    case xml::XT_ATTRIBUTE:
+                        if (p->name()->equals_ascii("value"))
+                        {
+                            if (bValue)
+                                return STATUS_BAD_FORMAT;
+                            bValue = true;
+                            if (!value.set(p->name()))
+                                return STATUS_NO_MEM;
+                        }
+                        else if (p->name()->equals_ascii("type"))
+                        {
+                            if (pt != PT_UNKNOWN)
+                                return STATUS_BAD_FORMAT;
+                            res = parse_property_type(&pt, p->name());
+                        }
+                        else
+                            res = STATUS_BAD_FORMAT;
+                        break;
+
+                    case xml::XT_END_ELEMENT:
+                    {
+                        // Ensure that value has been set
+                        if (!bValue)
+                            return STATUS_BAD_FORMAT;
+
+                        // Parse value according to the specified type
+                        property_value_t v;
+                        if ((res = parse_property_value(&v, &value, pt)) != STATUS_OK)
+                            return res;
+                        atom_t id = pDisplay->atom_id(name);
+                        if (id < 0)
+                            return STATUS_UNKNOWN_ERR;
+
+                        // Deploy value to the style
+                        if (v.type == PT_BOOL)
+                            res = style->sStyle.set_bool(id, v.bvalue);
+                        else if (v.type == PT_INT)
+                            res = style->sStyle.set_int(id, v.ivalue);
+                        else if (v.type == PT_FLOAT)
+                            res = style->sStyle.set_float(id, v.fvalue);
+                        else if (v.type == PT_STRING)
+                            res = style->sStyle.set_string(id, &v.svalue);
+                        else
+                            res = STATUS_UNKNOWN_ERR;
+
+                        return res;
+                    }
+
+                    default:
+                        return STATUS_CORRUPTED;
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
+        }
+
         status_t Schema::apply_context(context_t *ctx)
         {
             return STATUS_OK;
         }
 
+        status_t Schema::parse_style_class(LSPString *cname, const LSPString *text)
+        {
+            io::InStringSequence is(text);
+            expr::Tokenizer tok(&is);
+
+            if (tok.get_token(expr::TF_GET) != expr::TT_BAREWORD)
+                return STATUS_BAD_FORMAT;
+            else if (!cname->set(tok.text_value()))
+                return STATUS_NO_MEM;
+
+            return (tok.get_token(expr::TF_GET) == expr::TT_EOF) ? STATUS_OK : STATUS_BAD_FORMAT;
+        }
+
+        status_t Schema::parse_style_parents(style_t *style, const LSPString *text)
+        {
+            io::InStringSequence is(text);
+            expr::Tokenizer tok(&is);
+            expr::token_t t;
+
+            while ((t = tok.get_token(expr::TF_GET)) != expr::TT_EOF)
+            {
+                // Require comma if there is more than one parent
+                if (style->vParents.size() > 0)
+                {
+                    if (t != expr::TT_COMMA)
+                        return STATUS_BAD_FORMAT;
+                    t = tok.get_token(expr::TF_GET);
+                }
+                if (t != expr::TT_BAREWORD)
+                    return STATUS_BAD_FORMAT;
+
+                // Check for duplicates
+                LSPString *parent = tok.text_value()->clone();
+                if (parent == NULL)
+                    return STATUS_NO_MEM;
+
+                for (size_t i=0, n=style->vParents.size(); i<n; ++i)
+                    if (tok.text_value()->equals(style->vParents.uget(i)))
+                    {
+                        delete parent;
+                        return STATUS_DUPLICATED;
+                    }
+
+                // Add to list
+                if (!style->vParents.add(parent))
+                    return STATUS_NO_MEM;
+            }
+
+            return (style->vParents.is_empty()) ? STATUS_OK : STATUS_NO_DATA;
+        }
+
+        status_t Schema::parse_property_type(property_type_t *pt, const LSPString *text)
+        {
+            io::InStringSequence is(text);
+            expr::Tokenizer tok(&is);
+
+            if (tok.get_token(expr::TF_GET) != expr::TT_BAREWORD)
+                return STATUS_BAD_FORMAT;
+            else
+                text = tok.text_value();
+
+            if ((text->equals_ascii_nocase("b")) ||
+                (text->equals_ascii_nocase("bool")) ||
+                (text->equals_ascii_nocase("boolean")))
+                *pt = PT_BOOL;
+            else if ((text->equals_ascii_nocase("i")) ||
+                (text->equals_ascii_nocase("int")) ||
+                (text->equals_ascii_nocase("integer")))
+                *pt = PT_INT;
+            else if ((text->equals_ascii_nocase("f")) ||
+                (text->equals_ascii_nocase("float")))
+                *pt = PT_FLOAT;
+            else if ((text->equals_ascii_nocase("s")) ||
+                (text->equals_ascii_nocase("t")) ||
+                (text->equals_ascii_nocase("str")) ||
+                (text->equals_ascii_nocase("text")) ||
+                (text->equals_ascii_nocase("string")))
+                *pt = PT_STRING;
+            else
+                return STATUS_BAD_FORMAT;
+
+            return (tok.get_token(expr::TF_GET) == expr::TT_EOF) ? STATUS_OK : STATUS_BAD_FORMAT;
+        }
+
+        status_t Schema::parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt)
+        {
+            io::InStringSequence is(text);
+            expr::Tokenizer tok(&is);
+            expr::token_t t;
+
+            switch (pt)
+            {
+                case PT_BOOL:
+                    t = tok.get_token(expr::TF_GET);
+                    if (t == expr::TT_TRUE)
+                        v->bvalue       = true;
+                    else if (t == expr::TT_FALSE)
+                        v->bvalue       = false;
+                    else
+                        return STATUS_BAD_FORMAT;
+                    v->type         = PT_BOOL;
+                    break;
+
+                case PT_INT:
+                    t = tok.get_token(expr::TF_GET);
+                    if (t != expr::TT_INT)
+                        return STATUS_BAD_FORMAT;
+                    v->type         = PT_INT;
+                    v->ivalue       = tok.int_value();
+                    break;
+
+                case PT_FLOAT:
+                    t = tok.get_token(expr::TF_GET);
+                    if (t == expr::TT_FLOAT)
+                        v->fvalue       = tok.float_value();
+                    else if (t == expr::TT_INT)
+                        v->fvalue       = tok.int_value();
+                    else
+                        return STATUS_BAD_FORMAT;
+                    v->type         = PT_FLOAT;
+                    break;
+
+                case PT_STRING:
+                    if (!v->svalue.set(text))
+                        return STATUS_NO_MEM;
+                    v->type     = PT_STRING;
+                    return STATUS_OK;
+
+                default:
+                    t = tok.get_token(expr::TF_GET);
+                    if ((t == expr::TT_TRUE) || (t == expr::TT_FALSE))
+                    {
+                        v->bvalue       = (t == expr::TT_TRUE);
+                        v->type         = PT_BOOL;
+                    }
+                    else if (t == expr::TT_INT)
+                    {
+                        v->ivalue       = tok.int_value();
+                        v->type         = PT_INT;
+                    }
+                    else if (t == expr::TT_FLOAT)
+                    {
+                        v->fvalue       = tok.float_value();
+                        v->type         = PT_FLOAT;
+                    }
+                    else
+                    {
+                        if (!v->svalue.set(text))
+                            return STATUS_NO_MEM;
+                        v->type         = PT_STRING;
+                        return STATUS_OK;
+                    }
+                    break;
+            }
+
+            return (tok.get_token(expr::TF_GET) == expr::TT_EOF) ? STATUS_OK : STATUS_BAD_FORMAT;
+        }
     
     } /* namespace tk */
 } /* namespace lsp */

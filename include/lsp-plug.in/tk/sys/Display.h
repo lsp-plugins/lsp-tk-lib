@@ -205,6 +205,13 @@ namespace lsp
                 atom_t atom_id(const char *name);
 
                 /**
+                 * Get atom identifier by name
+                 * @param name atom name
+                 * @return atom identifier or negative error code
+                 */
+                inline atom_t atom_id(const LSPString *name){ return atom_id(name->get_utf8()); };
+
+                /**
                  * Get atom name by identifier
                  * @param name atom name or NULL
                  * @return atom identifier
