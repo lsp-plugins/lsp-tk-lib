@@ -19,7 +19,7 @@ namespace lsp
 {
     namespace tk
     {
-        class String: public Property
+        class String: public SimpleProperty
         {
             private:
                 enum flags_t
@@ -42,7 +42,6 @@ namespace lsp
                 };
 
             protected:
-                atom_t              nAtom;
                 LSPString           sText;      // Text used for rendering
                 Params              sParams;    // Parameters
                 size_t              nFlags;     // Different flags
@@ -53,6 +52,8 @@ namespace lsp
 
             protected:
                 status_t            bind(atom_t property, Style *style, i18n::IDictionary *dict);
+                status_t            bind(const char *property, Style *style, i18n::IDictionary *dict);
+                status_t            bind(const LSPString *property, Style *style, i18n::IDictionary *dict);
                 status_t            unbind();
                 inline void         sync();
 
@@ -232,12 +233,10 @@ namespace lsp
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(const char *property, Widget *widget);
-                    status_t            bind(atom_t property, Widget *widget);
-                    status_t            bind(const char *property, Display *dpy, Style *style);
-                    status_t            bind(atom_t property, i18n::IDictionary *dict, Style *style);
-                    status_t            bind(Widget *widget);
-                    status_t            bind(Display *dpy, Style *style);
+                    inline status_t     bind(atom_t id, Style *style, i18n::IDictionary *dict)              { return tk::String::bind(id, style, dict); }
+                    inline status_t     bind(const LSPString *id, Style *style, i18n::IDictionary *dict)    { return tk::String::bind(id, style, dict); }
+                    inline status_t     bind(const char *id, Style *style, i18n::IDictionary *dict)         { return tk::String::bind(id, style, dict); }
+                    inline status_t     bind(Style *style, i18n::IDictionary *dict)                         { return tk::String::bind(LSP_TK_PROP_LANGUAGE, style, dict); }
 
                     /**
                      * Unbind property

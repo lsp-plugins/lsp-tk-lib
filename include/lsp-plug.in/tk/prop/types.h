@@ -12,6 +12,9 @@
     #error "use <lsp-plug.in/tk/tk.h>"
 #endif
 
+// Property definitions
+#define LSP_TK_PROP_LANGUAGE        "language"
+
 namespace lsp
 {
     namespace tk

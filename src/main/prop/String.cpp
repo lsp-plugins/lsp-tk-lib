@@ -8,8 +8,6 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/expr/format.h>
 
-#define LANG_ATOM_NAME      "language"
-
 namespace lsp
 {
     namespace tk
@@ -26,17 +24,16 @@ namespace lsp
         }
 
         String::String(prop::Listener *listener):
-            Property(listener),
+            SimpleProperty(listener),
             sParams(this)
         {
-            nAtom       = -1;
             pDict       = NULL;
             nFlags      = 0;
         }
         
         String::~String()
         {
-            unbind();
+            SimpleProperty::unbind(&sParams);
         }
 
         status_t String::bind(atom_t property, Style *style, i18n::IDictionary *dict)
@@ -51,12 +48,14 @@ namespace lsp
                 res = pStyle->unbind(nAtom, &sParams);
                 if (res != STATUS_OK)
                     return res;
+                pStyle      = NULL;
+                nAtom       = -1;
             }
 
             // Bind to new handler
             style->begin();
             {
-                res = style->bind(property, PT_FLOAT, &sParams);
+                res = style->bind(property, PT_STRING, &sParams);
                 if (res == STATUS_OK)
                 {
                     pDict       = dict;
@@ -69,20 +68,29 @@ namespace lsp
             return res;
         }
 
+        status_t String::bind(const char *property, Style *style, i18n::IDictionary *dict)
+        {
+            if ((style == NULL) || (property == NULL))
+                return STATUS_BAD_ARGUMENTS;
+            atom_t atom = style->atom_id(property);
+            return (atom >= 0) ? bind(property, style, dict) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t String::bind(const LSPString *property, Style *style, i18n::IDictionary *dict)
+        {
+            if ((style == NULL) || (property == NULL))
+                return STATUS_BAD_ARGUMENTS;
+            atom_t atom = style->atom_id(property);
+            return (atom >= 0) ? bind(property, style, dict) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t String::unbind()
         {
-            if ((pStyle != NULL) && (nAtom >= 0))
-            {
-                status_t res = pStyle->unbind(nAtom, &sParams);
-                if (res != STATUS_OK)
-                    return res;
-            }
+            status_t res = SimpleProperty::unbind(&sParams);
+            if (res == STATUS_OK)
+                pDict       = NULL;
 
-            pDict       = NULL;
-            pStyle      = NULL;
-            nAtom       = -1;
-
-            return STATUS_NOT_BOUND;
+            return res;
         }
 
         void String::sync()
@@ -344,7 +352,7 @@ namespace lsp
                 return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
 
             // Get identifier of atom that describes language
-            ssize_t atom = dpy->atom_id(LANG_ATOM_NAME);
+            ssize_t atom = dpy->atom_id(LSP_TK_PROP_LANGUAGE);
             if (atom < 0)
                 return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
 
@@ -382,53 +390,6 @@ namespace lsp
 
         namespace prop
         {
-            status_t String::bind(const char *property, Widget *widget)
-            {
-                if ((widget == NULL) || (property == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-
-                Display *dpy    = widget->display();
-                atom_t id       = (dpy != NULL) ? dpy->atom_id(property) : -1;
-                if (id < 0)
-                    return STATUS_UNKNOWN_ERR;
-
-                return tk::String::bind(id, widget->style(), dpy->dictionary());
-            }
-
-            status_t String::bind(atom_t property, Widget *widget)
-            {
-                Display *dpy = widget->display();
-                if (dpy == NULL)
-                    return STATUS_BAD_ARGUMENTS;
-                return tk::String::bind(property, widget->style(), dpy->dictionary());
-            }
-
-            status_t String::bind(const char *property, Display *dpy, Style *style)
-            {
-                if ((dpy == NULL) || (style == NULL) || (property < 0))
-                    return STATUS_BAD_ARGUMENTS;
-
-                atom_t id       = dpy->atom_id(property);
-                if (id < 0)
-                    return STATUS_UNKNOWN_ERR;
-
-                return tk::String::bind(id, style, dpy->dictionary());
-            }
-
-            status_t String::bind(atom_t property, i18n::IDictionary *dict, Style *style)
-            {
-                return tk::String::bind(property, style, dict);
-            }
-
-            status_t String::bind(Widget *widget)
-            {
-                return bind(LANG_ATOM_NAME, widget);
-            }
-
-            status_t String::bind(Display *dpy, Style *style)
-            {
-                return bind(LANG_ATOM_NAME, dpy, style);
-            }
         }
 
     } /* namespace tk */

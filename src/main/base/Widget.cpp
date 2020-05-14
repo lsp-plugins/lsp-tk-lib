@@ -66,8 +66,8 @@ namespace lsp
             status_t res = sStyle.init();
             if (res == STATUS_OK)
             {
-                sScaling.bind("scaling", this);
-                sBrightness.bind("brightness", this);
+                sScaling.bind("scaling", &sStyle);
+                sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", this);
                 sBgColor.bind("bg_color", this);
             }

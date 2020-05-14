@@ -19,7 +19,7 @@ namespace lsp
         /**
          * Booleaning-point property interface
          */
-        class Boolean: public Property
+        class Boolean: public SimpleProperty
         {
             private:
                 Boolean & operator = (const Boolean *);
@@ -38,13 +38,10 @@ namespace lsp
                 };
 
             protected:
-                atom_t              nAtom;
                 bool                bValue;
                 Listener            sListener;
 
             protected:
-                status_t            unbind();
-                status_t            bind(atom_t property, Style *style);
                 void                commit();
 
             protected:
@@ -89,15 +86,14 @@ namespace lsp
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(const char *property, Widget *widget);
-                    status_t            bind(atom_t property, Widget *widget);
-                    status_t            bind(const char *property, Atoms *atoms, Style *style);
-                    status_t            bind(atom_t property, Style *style);
+                    inline status_t     bind(atom_t property, Style *style)             { return SimpleProperty::bind(property, style, PT_BOOL, &sListener); }
+                    inline status_t     bind(const char *property, Style *style)        { return SimpleProperty::bind(property, style, PT_BOOL, &sListener); }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return SimpleProperty::bind(property, style, PT_BOOL, &sListener); }
 
                     /**
                      * Unbind property
                      */
-                    inline status_t     unbind()                    { return tk::Boolean::unbind(); };
+                    inline status_t     unbind()                                        { return SimpleProperty::unbind(&sListener); };
             };
         }
 

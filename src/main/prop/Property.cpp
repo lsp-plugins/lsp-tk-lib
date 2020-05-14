@@ -13,7 +13,6 @@ namespace lsp
 {
     namespace tk
     {
-
         size_t Property::parse_ints(ssize_t *dst, size_t max, const LSPString *s)
         {
             // Wrap string with sequence

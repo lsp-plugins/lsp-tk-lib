@@ -1442,5 +1442,21 @@ namespace lsp
             atom_t atom = pSchema->atom_id(id);
             return (atom >= 0) ? remove(atom) : STATUS_UNKNOWN_ERR;
         }
+
+        atom_t Style::atom_id(const char *name) const
+        {
+            return pSchema->atom_id(name);
+        }
+
+        atom_t Style::atom_id(const LSPString *name) const
+        {
+            return pSchema->atom_id(name);
+        }
+
+        const char *Style::atom_name(atom_t id) const
+        {
+            return pSchema->atom_name(id);
+        }
+
     } /* namespace tk */
 } /* namespace lsp */

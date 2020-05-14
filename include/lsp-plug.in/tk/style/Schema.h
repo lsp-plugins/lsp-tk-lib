@@ -161,7 +161,7 @@ namespace lsp
                  * @param name atom name
                  * @return atom identifier or negative error code
                  */
-                atom_t             atom_id(const LSPString *name) const;
+                atom_t              atom_id(const LSPString *name) const;
 
                 /**
                  * Get atom name by identifier

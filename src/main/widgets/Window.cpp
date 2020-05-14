@@ -64,12 +64,12 @@ namespace lsp
                 return result;
 
             // Bind properties first
-            sTitle.bind(this);
-            sRole.bind(this);
+            sTitle.bind(&sStyle, pDisplay->dictionary());
+            sRole.bind(&sStyle, pDisplay->dictionary());
             sBorderColor.bind("border.color", this);
             sBorderStyle.bind("border.style", this);
-            sBorderSize.bind("border.size", this);
-            sBorderRadius.bind("border.radius", this);
+            sBorderSize.bind("border.size", &sStyle);
+            sBorderRadius.bind("border.radius", &sStyle);
             sWindowActions.bind("window_actions", this);
             sPosition.bind("position", this);
             sSize.bind("size", this);

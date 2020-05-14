@@ -517,6 +517,27 @@ namespace lsp
                 status_t                remove(atom_t id);
                 status_t                remove(const char *id);
                 status_t                remove(const LSPString *id);
+
+                /**
+                 * Get atom identifier by name
+                 * @param name atom name
+                 * @return atom identifier or negative error code
+                 */
+                atom_t              atom_id(const char *name) const;
+
+                /**
+                 * Get atom identifier by name
+                 * @param name atom name
+                 * @return atom identifier or negative error code
+                 */
+                atom_t              atom_id(const LSPString *name) const;
+
+                /**
+                 * Get atom name by identifier
+                 * @param name atom name or NULL
+                 * @return atom identifier
+                 */
+                const char         *atom_name(atom_t id) const;
         };
     
     } /* namespace tk */

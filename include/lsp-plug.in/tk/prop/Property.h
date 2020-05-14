@@ -51,7 +51,6 @@ namespace lsp
                 static size_t       parse_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum);
                 static size_t       parse_unique_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum);
 
-
             public:
                 /**
                  * Check that property matches another property
