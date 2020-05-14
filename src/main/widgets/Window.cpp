@@ -23,7 +23,7 @@ namespace lsp
             sBorderStyle(&sProperties),
             sBorderSize(&sProperties),
             sBorderRadius(&sProperties),
-            sWindowActions(&sProperties),
+            sActions(&sProperties),
             sPosition(&sProperties),
             sSize(&sProperties),
             sSizeConstraints(&sProperties)
@@ -70,7 +70,7 @@ namespace lsp
             sBorderStyle.bind("border.style", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
-            sWindowActions.bind("window_actions", &sStyle);
+            sActions.bind("actions", &sStyle);
             sPosition.bind("position", &sStyle);
             sSize.bind("size", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -114,7 +114,7 @@ namespace lsp
             // Deploy set of properties after window has been created
             property_changed(&sBorderStyle);
             property_changed(&sBorderSize);
-            property_changed(&sWindowActions);
+            property_changed(&sActions);
             property_changed(&sSizeConstraints);
             property_changed(&sSize);
 
@@ -363,8 +363,8 @@ namespace lsp
                 }
                 if (sBorderStyle.is(prop))
                     pWindow->set_border_style(sBorderStyle.get());
-                if (sWindowActions.is(prop))
-                    pWindow->set_window_actions(sWindowActions.actions());
+                if (sActions.is(prop))
+                    pWindow->set_window_actions(sActions.actions());
                 if (sPosition.is(prop))
                     pWindow->move(sPosition.left(), sPosition.top());
                 if (sSizeConstraints.is(prop))

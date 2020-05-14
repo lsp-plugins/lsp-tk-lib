@@ -52,7 +52,7 @@ MTEST_BEGIN("tk", display)
         MTEST_ASSERT(wnd->init() == STATUS_OK);
         MTEST_ASSERT(wnd->title()->set("Test window") == STATUS_OK);
         MTEST_ASSERT(wnd->role()->set("test") == STATUS_OK);
-        wnd->window_actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
+        wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
         wnd->size_constraints()->set(160, 100, 640, 400);
         wnd->size()->set(320, 200);

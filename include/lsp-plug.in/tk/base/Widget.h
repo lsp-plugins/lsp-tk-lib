@@ -185,7 +185,7 @@ namespace lsp
                  *
                  * @return pointer to self
                  */
-                inline Widget *self()              { return this;  }
+                inline Widget *self()                           { return this;  }
 
             //---------------------------------------------------------------------------------
             // Properties
@@ -194,7 +194,7 @@ namespace lsp
                  *
                  * @return display
                  */
-                inline Display *display()           { return pDisplay; };
+                inline Display *display()                       { return pDisplay; };
 
                 /** Get widget dimensions
                  *
@@ -212,44 +212,44 @@ namespace lsp
                  *
                  * @return true if there is redraw request pending
                  */
-                inline bool redraw_pending() const  { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); };
+                inline bool redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); };
 
                 /** Check that widget is visible
                  *
                  * @return true if widget is visible
                  */
-                inline bool visible() const         { return nFlags & F_VISIBLE; };
+                inline bool visible() const                     { return nFlags & F_VISIBLE; };
 
                 /** Check that widget is hidden
                  *
                  * @return true if widget is visible
                  */
-                inline bool hidden() const          { return !(nFlags & F_VISIBLE); };
-                inline bool invisible() const       { return !(nFlags & F_VISIBLE); };
+                inline bool hidden() const                      { return !(nFlags & F_VISIBLE); };
+                inline bool invisible() const                   { return !(nFlags & F_VISIBLE); };
 
                 /** Get expanding flag: true if container should desirable expand area provided for the widget
                  *
                  * @return expanding flag
                  */
-                inline bool expand() const          { return (nFlags & (F_HEXPAND | F_VEXPAND)) == (F_HEXPAND | F_VEXPAND); }
+                inline bool expand() const                      { return (nFlags & (F_HEXPAND | F_VEXPAND)) == (F_HEXPAND | F_VEXPAND); }
 
                 /** Get fill flag: true if container should desirable fill all provided area with widget
                  *
                  * @return fill flag
                  */
-                inline bool fill() const            { return (nFlags & (F_HFILL | F_VFILL)) == (F_HFILL | F_VFILL); }
+                inline bool fill() const                        { return (nFlags & (F_HFILL | F_VFILL)) == (F_HFILL | F_VFILL); }
 
                 /** Get horizontal fill flag: true if container should horizontally fill all provided area with widget
                  *
                  * @return horizontal fill flag
                  */
-                inline bool hfill() const           { return nFlags & F_HFILL; }
+                inline bool hfill() const                       { return nFlags & F_HFILL; }
 
                 /** Get vertical fill flag: true if container should vertically fill all provided area with widget
                  *
                  * @return vertical fill flag
                  */
-                inline bool vfill() const           { return nFlags & F_VFILL; }
+                inline bool vfill() const                       { return nFlags & F_VFILL; }
 
                 /** Check that widget has focus
                  *
@@ -261,43 +261,19 @@ namespace lsp
                  *
                  * @return widget focus
                  */
-                inline bool focused() const             { return has_focus(); };
+                inline bool focused() const                     { return has_focus(); };
 
                 /** Check that widget is visible
                  *
                  * @return true if widget is visible
                  */
-                inline bool is_visible() const          { return nFlags & F_VISIBLE; };
+                inline bool is_visible() const                  { return nFlags & F_VISIBLE; };
 
                 /** Check that widget is realized
                  *
                  * @return true if widget is realized
                  */
-                inline bool is_realized() const         { return nFlags & F_REALIZED; };
-
-                /** Get horizontal coordinate of the left top corner relative to the parent widget
-                 *
-                 * @return the value
-                 */
-                ssize_t relative_left() const;
-
-                /** Get horizontal coordinate of the right bottom corner relative to the parent widget
-                 *
-                 * @return the value
-                 */
-                ssize_t relative_right() const;
-
-                /** Get vertical coordinate of the left top corner relative to the parent widget
-                 *
-                 * @return the value
-                 */
-                ssize_t relative_top() const;
-
-                /** Get vertical coordinate of the right bottom corner relative to the parent widget
-                 *
-                 * @return the value
-                 */
-                ssize_t relative_bottom() const;
+                inline bool is_realized() const                 { return nFlags & F_REALIZED; };
 
                 /** Check that specified window coordinate lies within widget's bounds
                  * Always returns false for invisible widgets
@@ -312,20 +288,20 @@ namespace lsp
                  *
                  * @return parent widget
                  */
-                inline ComplexWidget *parent()              { return pParent; }
+                inline ComplexWidget   *parent()                { return pParent; }
 
                 /** Get slots
                  *
                  * @return slots
                  */
-                inline SlotSet *slots()                     { return &sSlots; }
+                inline SlotSet         *slots()                 { return &sSlots; }
 
                 /** Get slot
                  *
                  * @param id slot identifier
                  * @return pointer to slot or NULL
                  */
-                inline Slot *slot(slot_t id)                { return sSlots.slot(id); }
+                inline Slot            *slot(slot_t id)         { return sSlots.slot(id); }
 
                 /** Get mouse pointer
                  *
@@ -343,33 +319,36 @@ namespace lsp
                  * Return widget's style
                  * @return widget's style
                  */
-                inline Style       *style()                 { return &sStyle;       }
+                inline Style           *style()                 { return &sStyle;       }
+                inline const Style     *style() const           { return &sStyle;       }
 
                 /** Get widget padding
                  *
                  * @return widget padding
                  */
-                inline Padding     *padding()               { return &sPadding;     };
+                inline Padding         *padding()               { return &sPadding;     }
+                inline const Padding   *padding() const         { return &sPadding;     }
 
                 /**
                  * Get background color of the widget
                  * @return background color of the widget
                  */
-                inline Color       *bg_color()              { return &sBgColor;     }
+                inline Color           *bg_color()              { return &sBgColor;     }
+                inline const Color     *bg_color() const        { return &sBgColor;     }
 
                 /**
                  * Get brightness property
                  * @return brightness property
                  */
-                inline Float       *brightness()            { return &sBrightness;  }
-                inline const Float *brightness() const      { return &sBrightness;  }
+                inline Float           *brightness()            { return &sBrightness;  }
+                inline const Float     *brightness() const      { return &sBrightness;  }
 
                 /**
                  * Get brightness property
                  * @return brightness property
                  */
-                inline Float       *scaling()               { return &sScaling;     }
-                inline const Float *scaling() const         { return &sScaling;     }
+                inline Float           *scaling()               { return &sScaling;     }
+                inline const Float     *scaling() const         { return &sScaling;     }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -378,56 +357,56 @@ namespace lsp
                  *
                  * @param flags redraw flags
                  */
-                virtual void        query_draw(size_t flags = REDRAW_SURFACE);
+                virtual void            query_draw(size_t flags = REDRAW_SURFACE);
 
                 /**
                  * Put the widget to the destroy queue of the main loop
                  * @return status of operation
                  */
-                virtual status_t    queue_destroy();
+                virtual status_t        queue_destroy();
 
                 /** Query widget for resize
                  *
                  */
-                virtual void        query_resize();
+                virtual void            query_resize();
 
                 /** Set expanding flag
                  *
                  * @param value expanding flag value
                  */
-                virtual void        set_expand(bool value = true);
+                virtual void            set_expand(bool value = true);
 
                 /** Set fill flag
                  *
                  * @param value filling flag value
                  */
-                virtual void        set_fill(bool value = true);
+                virtual void            set_fill(bool value = true);
 
                 /** Set horizontal fill flag
                  *
                  * @param value horizontal filling flag value
                  */
-                virtual void        set_hfill(bool value = true);
+                virtual void            set_hfill(bool value = true);
 
                 /** Set vertical fill flag
                  *
                  * @param value vertical filling flag value
                  */
-                virtual void        set_vfill(bool value = true);
+                virtual void            set_vfill(bool value = true);
 
                 /** Set mouse pointer
                  *
                  * @param mp mouse pointer
                  * @return mouse pointer
                  */
-                virtual status_t    set_cursor(ws::mouse_pointer_t mp);
+                virtual status_t        set_cursor(ws::mouse_pointer_t mp);
 
                 /** Get widget surface
                  *
                  * @param s base surface
                  * @return widget surface or NULL
                  */
-                ws::ISurface       *get_surface(ws::ISurface *s);
+                ws::ISurface           *get_surface(ws::ISurface *s);
 
                 /** Get widget surface
                  *
@@ -436,103 +415,103 @@ namespace lsp
                  * @param height requested height
                  * @return widget surface or NULL
                  */
-                ws::ISurface       *get_surface(ws::ISurface *s, ssize_t width, ssize_t height);
+                ws::ISurface           *get_surface(ws::ISurface *s, ssize_t width, ssize_t height);
 
                 /** Render widget to the external surface
                  *
                  * @param surface surface to perform rendering
                  * @param force force child rendering
                  */
-                virtual void        render(ws::ISurface *s, bool force);
+                virtual void            render(ws::ISurface *s, bool force);
 
                 /** Draw widget on the internal surface
                  *
                  * @param surface surface to perform drawing
                  */
-                virtual void        draw(ws::ISurface *s);
+                virtual void            draw(ws::ISurface *s);
 
                 /** Realize widget
                  *
                  * @param r widget realization parameters
                  */
-                virtual void        realize(const ws::rectangle_t *r);
+                virtual void            realize(const ws::rectangle_t *r);
 
                 /** Hide widget
                  *
                  */
-                virtual bool        hide();
+                virtual bool            hide();
 
                 /** Show widget
                  *
                  */
-                virtual bool        show();
+                virtual bool            show();
 
                 /** Set widget visibility
                  *
                  * @param visible widget visibility
                  */
-                virtual void        set_visible(bool visible=true);
+                virtual void            set_visible(bool visible=true);
 
                 /** Set focus on widget
                  *
                  * @param focus focusing parameter
                  * @return status of operation
                  */
-                virtual status_t    set_focus(bool focus = true);
+                virtual status_t        set_focus(bool focus = true);
 
                 /** Kill focus on widget
                  *
                  * @return status of operation
                  */
-                inline status_t     kill_focus() { return set_focus(false); };
+                inline status_t         kill_focus() { return set_focus(false); };
 
                 /** Kill focus on widget
                  *
                  * @return status of operation
                  */
-                inline status_t     take_focus() { return set_focus(true); };
+                inline status_t         take_focus() { return set_focus(true); };
 
                 /** Mark this widget to be currently pointed by mouse
                  *
                  * @return status of operation
                  */
-                status_t            mark_pointed();
+                status_t                mark_pointed();
 
                 /** Invert focus
                  *
                  * @return status of operation
                  */
-                virtual status_t    toggle_focus();
+                virtual status_t        toggle_focus();
 
                 /** Set widget invisibility
                  *
                  * @param invisible widget invisibility
                  */
-                inline void         set_invisible(bool invisible=true) { set_visible(!invisible); }
+                inline void             set_invisible(bool invisible=true) { set_visible(!invisible); }
 
                 /** Handle UI event from the display
                  *
                  * @param e UI event
                  * @return status of operation
                  */
-                virtual status_t    handle_event(const ws::event_t *e);
+                virtual status_t        handle_event(const ws::event_t *e);
 
                 /** Set parent widget of this widget
                  *
                  * @param parent parent widget
                  */
-                void                set_parent(ComplexWidget *parent);
+                void                    set_parent(ComplexWidget *parent);
 
                 /** Commit widet redraw
                  *
                  */
-                virtual void        commit_redraw();
+                virtual void            commit_redraw();
 
                 /** Get most top-level widget
                  *
                  * @return most top-level widget
                  */
-                Widget             *toplevel();
+                Widget                 *toplevel();
 
             //---------------------------------------------------------------------------------
             // Event handling
@@ -542,111 +521,111 @@ namespace lsp
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_focus_in(const ws::event_t *e);
+                virtual status_t        on_focus_in(const ws::event_t *e);
 
                 /** Widget has lost focus
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_focus_out(const ws::event_t *e);
+                virtual status_t        on_focus_out(const ws::event_t *e);
 
                 /** Handle key press event
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_key_down(const ws::event_t *e);
+                virtual status_t        on_key_down(const ws::event_t *e);
 
                 /** Handle key release event
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_key_up(const ws::event_t *e);
+                virtual status_t        on_key_up(const ws::event_t *e);
 
                 /** Handle mouse button press event
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_mouse_down(const ws::event_t *e);
+                virtual status_t        on_mouse_down(const ws::event_t *e);
 
                 /** Handle mouse button release event
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_mouse_up(const ws::event_t *e);
+                virtual status_t        on_mouse_up(const ws::event_t *e);
 
                 /** Handle mouse motion event
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_mouse_move(const ws::event_t *e);
+                virtual status_t        on_mouse_move(const ws::event_t *e);
 
                 /** Handle mouse cursor moved into the zone of widget
                  *
                  * @param e mouse event that triggered MouseIn
                  * @return status of operation
                  */
-                virtual status_t on_mouse_in(const ws::event_t *e);
+                virtual status_t        on_mouse_in(const ws::event_t *e);
 
                 /** Handle mouse cursor moved outside the zone of widget
                  *
                  * @param e mouse event that triggered MouseIn
                  * @return status of operation
                  */
-                virtual status_t on_mouse_out(const ws::event_t *e);
+                virtual status_t        on_mouse_out(const ws::event_t *e);
 
                 /** Handle mouse scroll event
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_mouse_scroll(const ws::event_t *e);
+                virtual status_t        on_mouse_scroll(const ws::event_t *e);
 
                 /** Handle mouse double click event
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_mouse_dbl_click(const ws::event_t *e);
+                virtual status_t        on_mouse_dbl_click(const ws::event_t *e);
 
                 /** Handle mouse triple click
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_mouse_tri_click(const ws::event_t *e);
+                virtual status_t        on_mouse_tri_click(const ws::event_t *e);
 
                 /** Geometry has changed: size or position
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_resize(const ws::rectangle_t *r);
+                virtual status_t        on_resize(const ws::rectangle_t *r);
 
                 /** Geometry of parent widget has changed: size or position
                  *
                  * @param e event
                  * @return status of operation
                  */
-                virtual status_t on_resize_parent(const ws::rectangle_t *r);
+                virtual status_t        on_resize_parent(const ws::rectangle_t *r);
 
                 /** The widget becomes hidden
                  *
                  * @return status of operation
                  */
-                virtual status_t on_hide();
+                virtual status_t        on_hide();
 
                 /** The widget becomes visible
                  *
                  * @return status of operation
                  */
-                virtual status_t on_show();
+                virtual status_t        on_show();
 
                 /** The widget becomes destroyed
                  *
                  * @return status of operation
                  */
-                virtual status_t on_destroy();
+                virtual status_t        on_destroy();
 
                 /**
                  * Process the drag request event
@@ -654,7 +633,7 @@ namespace lsp
                  * @param ctype NULL-terminated list of provided content types
                  * @return status of operation
                  */
-                virtual status_t on_drag_request(const ws::event_t *e, const char * const *ctype);
+                virtual status_t        on_drag_request(const ws::event_t *e, const char * const *ctype);
         };
     }
 
