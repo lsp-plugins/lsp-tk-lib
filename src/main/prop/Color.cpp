@@ -150,7 +150,17 @@ namespace lsp
                 c.parse_rgba(s);
 
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
-                c.parse4(s);
+            {
+                status_t res = c.parse4(s);
+                if (res != STATUS_OK)
+                    res = c.parse3(s);
+                if (res != STATUS_OK)
+                {
+                    const lsp::Color *col = pStyle->schema()->color(s);
+                    if (col != NULL)
+                        c.copy(col);
+                }
+            }
 
             if (pListener != NULL)
                 pListener->notify(this);
