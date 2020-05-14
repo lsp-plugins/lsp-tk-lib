@@ -30,6 +30,7 @@ namespace lsp
         Schema::Schema(Atoms *atoms)
         {
             pAtoms      = atoms;
+            init_context(&sCtx);
         }
         
         Schema::~Schema()
@@ -56,6 +57,13 @@ namespace lsp
                 for (size_t i=0, n=styles.size(); i<n; ++i)
                     delete styles.uget(i);
                 styles.flush();
+            }
+
+            // Destroy root style
+            if (ctx->pRoot != NULL)
+            {
+                delete ctx->pRoot;
+                ctx->pRoot  = NULL;
             }
         }
 

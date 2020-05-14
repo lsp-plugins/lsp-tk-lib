@@ -78,7 +78,15 @@ namespace lsp
             {
                 case PT_STRING:
                     if (property->v.sValue != NULL)
+                    {
                         ::free(property->v.sValue);
+                        property->v.sValue      = NULL;
+                    }
+                    if (property->dv.sValue != NULL)
+                    {
+                        ::free(property->dv.sValue);
+                        property->dv.sValue     = NULL;
+                    }
                     break;
                 default:
                     break;

@@ -32,7 +32,7 @@ else
 endif
 
 define pkgconfig =
-  $(eval name = $(1))
+  $(eval name=$(1))
   $(if $($(name)_NAME), \
     $(if $($(name)_CFLAGS),,  $(eval $(name)_CFLAGS  := $(shell pkg-config --cflags "$($(name)_NAME)"))) \
   )
@@ -43,7 +43,7 @@ define pkgconfig =
 endef
 
 define libconfig =
-  $(eval name = $(1))
+  $(eval name=$(1))
   $(if $($(name)_NAME), \
     $(if $($(name)_LDLAGS),,  $(eval $(name)_LDFLAGS := -l$($(name)_NAME))) \
   )
@@ -51,37 +51,33 @@ define libconfig =
 endef
 
 define optconfig =
-  $(eval name = $(1))
+  $(eval name=$(1))
   $(if $($(name)_OBJ),,     $(eval $(name)_OBJ     :=))
 endef
 
 define srcconfig =
-  $(eval name = $(1))
+  $(eval name=$(1))
+  $(eval builtin=$(patsubst $(ARTIFACT_NAME),,$($(name)_NAME)))
   $(if $($(name)_PATH),,    $(eval $(name)_PATH    := $(MODULES)/$($(name)_NAME)))
   $(if $($(name)_INC),,     $(eval $(name)_INC     := $($(name)_PATH)/include))
   $(if $($(name)_SRC),,     $(eval $(name)_SRC     := $($(name)_PATH)/src))
   $(if $($(name)_TEST),,    $(eval $(name)_TEST    := $($(name)_PATH)/test))
   $(if $($(name)_TESTING),, $(eval $(name)_TESTING := 0))
   $(if $($(name)_BIN),,     $(eval $(name)_BIN     := $(BUILDDIR)/$($(name)_NAME)))
-  $(if $($(name)_CFLAGS),,  $(eval $(name)_CFLAGS  := "-I\"$($(name)_INC)\""$(xflags)))
+  $(if $($(name)_CFLAGS),,  $(eval $(name)_CFLAGS  := "-I\"$($(name)_INC)\"" $(if $(builtin),"-D$(name)_BUILTIN")))
   $(if $($(name)_LDLAGS),,  $(eval $(name)_LDFLAGS :=))
   $(if $($(name)_OBJ),,     $(eval $(name)_OBJ     := "$($(name)_BIN)/$($(name)_NAME).o"))
-  $(if $($(name)_MFLAGS),, \
-    $(eval $(name)_MFLAGS := \
-      $(if $(patsubst $(ARTIFACT_NAME),,$($(name)_NAME)),"-DLSP_BUILTIN_MODULE -fvisibility=hidden",)) \
-  )
+  $(if $($(name)_MFLAGS),,  $(eval $(name)_MFLAGS  := $(if $(builtin),"-D$(name)_BUILTIN -fvisibility=hidden")))
 endef
 
 define hdrconfig =
-  $(eval name = $(1))
+  $(eval name=$(1))
+  $(eval builtin=$(patsubst $(ARTIFACT_NAME),,$($(name)_NAME)))
   $(if $($(name)_PATH),,    $(eval $(name)_PATH    := $(MODULES)/$($(name)_NAME)))
   $(if $($(name)_INC),,     $(eval $(name)_INC     := $($(name)_PATH)/include))
   $(if $($(name)_TESTING),, $(eval $(name)_TESTING := 0))
-  $(if $($(name)_CFLAGS),,  $(eval $(name)_CFLAGS  := "-I\"$($(name)_INC)\""$(xflags)))
-  $(if $($(name)_MFLAGS),, \
-    $(eval $(name)_MFLAGS := \
-      $(if $(patsubst $(ARTIFACT_NAME),,$($(name)_NAME)),"-DLSP_BUILTIN_MODULE -fvisibility=hidden",)) \
-  )
+  $(if $($(name)_CFLAGS),,  $(eval $(name)_CFLAGS  := "-I\"$($(name)_INC)\"" $(if $(builtin),"-D$(name)_BUILTIN")))
+  $(if $($(name)_MFLAGS),,  $(eval $(name)_MFLAGS  := $(if $(builtin),"-D$(name)_BUILTIN -fvisibility=hidden")))
 endef
 
 define vardef =
