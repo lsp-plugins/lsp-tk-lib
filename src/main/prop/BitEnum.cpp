@@ -90,20 +90,18 @@ namespace lsp
 
         void BitEnum::sync()
         {
-            if (pStyle == NULL)
+            if (pStyle != NULL)
             {
-                if (pListener != NULL)
-                    pListener->notify(this);
-                return;
+                pStyle->begin(&sListener);
+                {
+                    LSPString s;
+                    if (format(&s, nValue))
+                        pStyle->set_string(nAtom, &s);
+                }
+                pStyle->end();
             }
-
-            pStyle->begin(&sListener);
-            {
-                LSPString s;
-                if (format(&s, nValue))
-                    pStyle->set_string(nAtom, &s);
-            }
-            pStyle->end();
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         status_t BitEnum::init(Style *style, size_t v)
@@ -122,7 +120,7 @@ namespace lsp
         size_t BitEnum::xset_all(size_t v)
         {
             size_t prev = nValue;
-            if (prev == nValue)
+            if (prev == v)
                 return prev;
 
             nValue      = v;
@@ -134,7 +132,7 @@ namespace lsp
         {
             size_t prev = nValue;
             nValue     |= v;
-            if (prev == nValue)
+            if (prev == v)
                 return prev;
 
             sync();
@@ -145,7 +143,7 @@ namespace lsp
         {
             size_t prev = nValue;
             nValue     &= ~v;
-            if (prev == nValue)
+            if (prev == v)
                 return prev;
 
             sync();
@@ -156,7 +154,7 @@ namespace lsp
         {
             size_t prev = nValue;
             nValue     ^= v;
-            if (prev == nValue)
+            if (prev == v)
                 return prev;
 
             sync();
@@ -167,7 +165,7 @@ namespace lsp
         {
             size_t prev = nValue;
             nValue = (flag) ? (nValue | v) : (nValue & (~v));
-            if (prev == nValue)
+            if (prev == v)
                 return prev;
 
             sync();

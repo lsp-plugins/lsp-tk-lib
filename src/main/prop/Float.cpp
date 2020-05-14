@@ -56,7 +56,7 @@ namespace lsp
                 pStyle->set_float(nAtom, v);
                 pStyle->end();
             }
-            else if (pListener != NULL)
+            if (pListener != NULL)
                 pListener->notify(this);
             return prev;
         }

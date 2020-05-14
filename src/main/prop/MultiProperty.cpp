@@ -48,7 +48,7 @@ namespace lsp
             // Bind all ports
             status_t res = STATUS_OK;
 
-            style->begin();
+            style->begin(listener);
             {
                 for ( ; desc->postfix != NULL; ++atoms, ++desc)
                 {
@@ -76,6 +76,9 @@ namespace lsp
                     unbind(atoms, desc, listener);
             }
             style->end();
+
+            if (pListener != NULL)
+                pListener->notify(this);
 
             return res;
         }

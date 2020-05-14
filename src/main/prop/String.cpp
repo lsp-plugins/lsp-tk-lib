@@ -20,7 +20,7 @@ namespace lsp
         void String::Params::notify(atom_t property)
         {
             if (property == pString->nAtom)
-                pString->sync();
+                pString->commit();
         }
 
         String::String(prop::Listener *listener):
@@ -53,7 +53,7 @@ namespace lsp
             }
 
             // Bind to new handler
-            style->begin();
+            style->begin(&sParams);
             {
                 res = style->bind(property, PT_STRING, &sParams);
                 if (res == STATUS_OK)
@@ -65,6 +65,9 @@ namespace lsp
             }
             style->end();
 
+            if (pListener != NULL)
+                pListener->notify(this);
+
             return res;
         }
 
@@ -73,7 +76,7 @@ namespace lsp
             if ((style == NULL) || (property == NULL))
                 return STATUS_BAD_ARGUMENTS;
             atom_t atom = style->atom_id(property);
-            return (atom >= 0) ? bind(property, style, dict) : STATUS_UNKNOWN_ERR;
+            return (atom >= 0) ? bind(atom, style, dict) : STATUS_UNKNOWN_ERR;
         }
 
         status_t String::bind(const LSPString *property, Style *style, i18n::IDictionary *dict)
@@ -81,7 +84,7 @@ namespace lsp
             if ((style == NULL) || (property == NULL))
                 return STATUS_BAD_ARGUMENTS;
             atom_t atom = style->atom_id(property);
-            return (atom >= 0) ? bind(property, style, dict) : STATUS_UNKNOWN_ERR;
+            return (atom >= 0) ? bind(atom, style, dict) : STATUS_UNKNOWN_ERR;
         }
 
         status_t String::unbind()
@@ -91,6 +94,12 @@ namespace lsp
                 pDict       = NULL;
 
             return res;
+        }
+
+        void String::commit()
+        {
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         void String::sync()
@@ -323,6 +332,8 @@ namespace lsp
             }
 
             LSPString xlang;
+            if (lang == NULL)
+                lang = "default";
             if (!xlang.set_utf8(lang))
                 return STATUS_NO_MEM;
 

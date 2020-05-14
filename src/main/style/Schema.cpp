@@ -17,6 +17,7 @@ namespace lsp
             sStyle(schema)
         {
             bInitialized        = false;
+            sStyle.init();
         }
         
         Schema::style_t::~style_t()
@@ -754,7 +755,7 @@ namespace lsp
                     return NULL;
 
                 // Add to style map
-                if (!sCtx.vStyles.put(id, &s))
+                if (!sCtx.vStyles.put(id, s, NULL))
                 {
                     delete s;
                     return NULL;

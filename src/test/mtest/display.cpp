@@ -50,8 +50,8 @@ MTEST_BEGIN("tk", display)
 
         tk::Window *wnd = new tk::Window(dpy);
         MTEST_ASSERT(wnd->init() == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set("Test window") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set("test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test window") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("test") == STATUS_OK);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
         wnd->size_constraints()->set(160, 100, 640, 400);

@@ -66,30 +66,29 @@ namespace lsp
 
         void Position::sync()
         {
-            if (pStyle == NULL)
+            if (pStyle != NULL)
             {
-                if (pListener != NULL)
-                    pListener->notify(this);
-                return;
-            }
-
-            pStyle->begin(&sListener);
-            {
-                // Simple components
-                if (vAtoms[P_LEFT] >= 0)
-                    pStyle->set_int(vAtoms[P_LEFT], nLeft);
-                if (vAtoms[P_TOP] >= 0)
-                    pStyle->set_int(vAtoms[P_TOP], nTop);
-
-                // Compound objects
-                LSPString s;
-                if (vAtoms[P_VALUE] >= 0)
+                pStyle->begin(&sListener);
                 {
-                    if (s.fmt_ascii("%ld %ld", long(nLeft), long(nTop)))
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
+                    // Simple components
+                    if (vAtoms[P_LEFT] >= 0)
+                        pStyle->set_int(vAtoms[P_LEFT], nLeft);
+                    if (vAtoms[P_TOP] >= 0)
+                        pStyle->set_int(vAtoms[P_TOP], nTop);
+
+                    // Compound objects
+                    LSPString s;
+                    if (vAtoms[P_VALUE] >= 0)
+                    {
+                        if (s.fmt_ascii("%ld %ld", long(nLeft), long(nTop)))
+                            pStyle->set_string(vAtoms[P_VALUE], &s);
+                    }
                 }
+                pStyle->end();
             }
-            pStyle->end();
+
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         ssize_t Position::set_left(ssize_t value)

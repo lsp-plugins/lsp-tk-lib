@@ -92,7 +92,7 @@ namespace lsp
                         pStyle->set_string(nAtom, e->name);
                         pStyle->end();
                     }
-                    else if (pListener != NULL)
+                    if (pListener != NULL)
                         pListener->notify(this);
                     return prev;
                 }

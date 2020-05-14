@@ -60,7 +60,7 @@ namespace lsp
         {
             // Initialize parent class
             status_t result = WidgetContainer::init();
-            if (result < 0)
+            if (result != STATUS_OK)
                 return result;
 
             // Bind properties first
@@ -367,9 +367,10 @@ namespace lsp
                 {
                     // Make formatted title of the window
                     LSPString text;
-                    status_t res = sTitle.format(&text);
+                    status_t res = sRole.format(&text);
                     if (res != STATUS_OK)
                         return;
+                    pWindow->set_role(text.get_utf8());
                 }
                 if (sBorderStyle.is(prop))
                     pWindow->set_border_style(sBorderStyle.get());

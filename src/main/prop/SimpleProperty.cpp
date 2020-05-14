@@ -26,7 +26,7 @@ namespace lsp
             }
 
             // Bind to new handler
-            style->begin();
+            style->begin(listener);
             {
                 res = style->bind(property, type, listener);
                 if (res == STATUS_OK)
@@ -36,6 +36,8 @@ namespace lsp
                 }
             }
             style->end();
+            if (pListener != NULL)
+                pListener->notify(this);
 
             return res;
         }
@@ -45,7 +47,7 @@ namespace lsp
             if ((style == NULL) || (property == NULL))
                 return STATUS_BAD_ARGUMENTS;
             atom_t atom = style->atom_id(property);
-            return (atom >= 0) ? bind(property, style, type, listener) : STATUS_UNKNOWN_ERR;
+            return (atom >= 0) ? bind(atom, style, type, listener) : STATUS_UNKNOWN_ERR;
         }
 
         status_t SimpleProperty::bind(const LSPString *property, Style *style, property_type_t type, IStyleListener *listener)
@@ -53,7 +55,7 @@ namespace lsp
             if ((style == NULL) || (property == NULL))
                 return STATUS_BAD_ARGUMENTS;
             atom_t atom = style->atom_id(property);
-            return (atom >= 0) ? bind(property, style, type, listener) : STATUS_UNKNOWN_ERR;
+            return (atom >= 0) ? bind(atom, style, type, listener) : STATUS_UNKNOWN_ERR;
         }
 
         status_t SimpleProperty::unbind(IStyleListener *listener)

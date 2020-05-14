@@ -85,36 +85,34 @@ namespace lsp
 
         void SizeConstraints::sync()
         {
-            if (pStyle == NULL)
+            if (pStyle != NULL)
             {
-                if (pListener != NULL)
-                    pListener->notify(this);
-                return;
-            }
-
-            pStyle->begin(&sListener);
-            {
-                ws::size_limit_t &p       = sValue;
-
-                // Simple components
-                if (vAtoms[P_MIN_WIDTH] >= 0)
-                    pStyle->set_int(vAtoms[P_MIN_WIDTH], p.nMinWidth);
-                if (vAtoms[P_MIN_HEIGHT] >= 0)
-                    pStyle->set_int(vAtoms[P_MIN_HEIGHT], p.nMinHeight);
-                if (vAtoms[P_MAX_WIDTH] >= 0)
-                    pStyle->set_int(vAtoms[P_MAX_WIDTH], p.nMaxWidth);
-                if (vAtoms[P_MAX_HEIGHT] >= 0)
-                    pStyle->set_int(vAtoms[P_MAX_HEIGHT], p.nMaxHeight);
-
-                // Compound objects
-                LSPString s;
-                if (vAtoms[P_VALUE] >= 0)
+                pStyle->begin(&sListener);
                 {
-                    if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nMinWidth), long(p.nMinHeight), long(p.nMaxWidth), long(p.nMaxHeight)))
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
+                    ws::size_limit_t &p       = sValue;
+
+                    // Simple components
+                    if (vAtoms[P_MIN_WIDTH] >= 0)
+                        pStyle->set_int(vAtoms[P_MIN_WIDTH], p.nMinWidth);
+                    if (vAtoms[P_MIN_HEIGHT] >= 0)
+                        pStyle->set_int(vAtoms[P_MIN_HEIGHT], p.nMinHeight);
+                    if (vAtoms[P_MAX_WIDTH] >= 0)
+                        pStyle->set_int(vAtoms[P_MAX_WIDTH], p.nMaxWidth);
+                    if (vAtoms[P_MAX_HEIGHT] >= 0)
+                        pStyle->set_int(vAtoms[P_MAX_HEIGHT], p.nMaxHeight);
+
+                    // Compound objects
+                    LSPString s;
+                    if (vAtoms[P_VALUE] >= 0)
+                    {
+                        if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nMinWidth), long(p.nMinHeight), long(p.nMaxWidth), long(p.nMaxHeight)))
+                            pStyle->set_string(vAtoms[P_VALUE], &s);
+                    }
                 }
+                pStyle->end();
             }
-            pStyle->end();
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         void SizeConstraints::get(ssize_t *min_width, ssize_t *min_height, ssize_t *max_width, ssize_t *max_height) const

@@ -55,7 +55,8 @@ namespace lsp
                 status_t            bind(const char *property, Style *style, i18n::IDictionary *dict);
                 status_t            bind(const LSPString *property, Style *style, i18n::IDictionary *dict);
                 status_t            unbind();
-                inline void         sync();
+                void                sync();
+                void                commit();
 
             protected:
                 explicit String(prop::Listener *listener = NULL);

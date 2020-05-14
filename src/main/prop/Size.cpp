@@ -66,30 +66,28 @@ namespace lsp
 
         void Size::sync()
         {
-            if (pStyle == NULL)
+            if (pStyle != NULL)
             {
-                if (pListener != NULL)
-                    pListener->notify(this);
-                return;
-            }
-
-            pStyle->begin(&sListener);
-            {
-                // Simple components
-                if (vAtoms[P_WIDTH] >= 0)
-                    pStyle->set_int(vAtoms[P_WIDTH], nWidth);
-                if (vAtoms[P_HEIGHT] >= 0)
-                    pStyle->set_int(vAtoms[P_HEIGHT], nHeight);
-
-                // Compound objects
-                LSPString s;
-                if (vAtoms[P_VALUE] >= 0)
+                pStyle->begin(&sListener);
                 {
-                    if (s.fmt_ascii("%ld %ld", long(nWidth), long(nHeight)))
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
+                    // Simple components
+                    if (vAtoms[P_WIDTH] >= 0)
+                        pStyle->set_int(vAtoms[P_WIDTH], nWidth);
+                    if (vAtoms[P_HEIGHT] >= 0)
+                        pStyle->set_int(vAtoms[P_HEIGHT], nHeight);
+
+                    // Compound objects
+                    LSPString s;
+                    if (vAtoms[P_VALUE] >= 0)
+                    {
+                        if (s.fmt_ascii("%ld %ld", long(nWidth), long(nHeight)))
+                            pStyle->set_string(vAtoms[P_VALUE], &s);
+                    }
                 }
+                pStyle->end();
             }
-            pStyle->end();
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         size_t Size::set_width(size_t value)

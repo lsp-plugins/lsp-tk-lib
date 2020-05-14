@@ -49,27 +49,26 @@ namespace lsp
         {
             // Check data
             if (handler == NULL)
-                return - STATUS_BAD_ARGUMENTS;
+                return -STATUS_BAD_ARGUMENTS;
 
             // Now try to allocate new data
-            item_t *item            = vItems.add();
-            if (item == NULL)
-                return STATUS_NO_MEM;
+            item_t item;
 
             // Generate handler identifier
             do
             {
-                item->nID   = nID;
+                item.nID    = nID;
                 nID         = (nID + 1) & ID_GEN_MASK;
-            } while (find_item(item->nID) != NULL);
+            } while (find_item(item.nID) != NULL);
 
             // Initialize item and bind it
-            size_t mask         = (intercept) ? BIND_DFL : BIND_DFL | BIND_INTERCEPT;
-            item->nFlags        = (enabled) ? mask | BIND_ENABLED : mask;
-            item->pHandler      = handler;
-            item->pPtr          = arg;
+            size_t mask        = (intercept) ? BIND_DFL : BIND_DFL | BIND_INTERCEPT;
+            item.nFlags        = (enabled) ? mask | BIND_ENABLED : mask;
+            item.pHandler      = handler;
+            item.pPtr          = arg;
 
-            return item->nID;
+            // Now try to allocate new data
+            return (vItems.add(&item)) ? item.nID : -STATUS_NO_MEM;
         }
 
         status_t Slot::unbind(handler_id_t id)

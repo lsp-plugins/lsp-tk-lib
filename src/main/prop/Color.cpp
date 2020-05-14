@@ -48,69 +48,68 @@ namespace lsp
 
         void Color::sync()
         {
-            if (pStyle == NULL)
+            if (pStyle != NULL)
             {
-                if (pListener != NULL)
-                    pListener->notify(this);
-                return;
-            }
-
-            pStyle->begin(&sListener);
-            {
-                lsp::Color &c = sColor;
-                char buf[32];
-
-                // R, G, B components
-                if (vAtoms[P_R] >= 0)
-                    pStyle->set_float(vAtoms[P_R], c.red());
-                if (vAtoms[P_G] >= 0)
-                    pStyle->set_float(vAtoms[P_G], c.green());
-                if (vAtoms[P_B] >= 0)
-                    pStyle->set_float(vAtoms[P_B], c.blue());
-
-                // H, S, L components
-                if (vAtoms[P_H] >= 0)
-                    pStyle->set_float(vAtoms[P_H], c.hue());
-                if (vAtoms[P_S] >= 0)
-                    pStyle->set_float(vAtoms[P_S], c.saturation());
-                if (vAtoms[P_L] >= 0)
-                    pStyle->set_float(vAtoms[P_L], c.lightness());
-
-                // Alpha component
-                if (vAtoms[P_A] >= 0)
-                    pStyle->set_float(vAtoms[P_A], c.alpha());
-
-                // Mixed components
-                if (vAtoms[P_RGB] >= 0)
+                pStyle->begin(&sListener);
                 {
-                    c.format_rgb(buf, sizeof(buf)/sizeof(char));
-                    pStyle->set_string(vAtoms[P_RGB], buf);
-                }
-                if (vAtoms[P_RGBA] >= 0)
-                {
-                    c.format_rgba(buf, sizeof(buf)/sizeof(char));
-                    pStyle->set_string(vAtoms[P_RGBA], buf);
-                }
-                if (vAtoms[P_HSL] >= 0)
-                {
-                    c.format_hsl(buf, sizeof(buf)/sizeof(char));
-                    pStyle->set_string(vAtoms[P_HSL], buf);
-                }
-                if (vAtoms[P_HSLA] >= 0)
-                {
-                    c.format_hsla(buf, sizeof(buf)/sizeof(char));
-                    pStyle->set_string(vAtoms[P_HSLA], buf);
-                }
-                if (vAtoms[P_VALUE] >= 0)
-                {
-                    if (c.is_hsl())
-                        c.format_hsla(buf, sizeof(buf)/sizeof(char));
-                    else
+                    lsp::Color &c = sColor;
+                    char buf[32];
+
+                    // R, G, B components
+                    if (vAtoms[P_R] >= 0)
+                        pStyle->set_float(vAtoms[P_R], c.red());
+                    if (vAtoms[P_G] >= 0)
+                        pStyle->set_float(vAtoms[P_G], c.green());
+                    if (vAtoms[P_B] >= 0)
+                        pStyle->set_float(vAtoms[P_B], c.blue());
+
+                    // H, S, L components
+                    if (vAtoms[P_H] >= 0)
+                        pStyle->set_float(vAtoms[P_H], c.hue());
+                    if (vAtoms[P_S] >= 0)
+                        pStyle->set_float(vAtoms[P_S], c.saturation());
+                    if (vAtoms[P_L] >= 0)
+                        pStyle->set_float(vAtoms[P_L], c.lightness());
+
+                    // Alpha component
+                    if (vAtoms[P_A] >= 0)
+                        pStyle->set_float(vAtoms[P_A], c.alpha());
+
+                    // Mixed components
+                    if (vAtoms[P_RGB] >= 0)
+                    {
+                        c.format_rgb(buf, sizeof(buf)/sizeof(char));
+                        pStyle->set_string(vAtoms[P_RGB], buf);
+                    }
+                    if (vAtoms[P_RGBA] >= 0)
+                    {
                         c.format_rgba(buf, sizeof(buf)/sizeof(char));
-                    pStyle->set_string(vAtoms[P_VALUE], buf);
+                        pStyle->set_string(vAtoms[P_RGBA], buf);
+                    }
+                    if (vAtoms[P_HSL] >= 0)
+                    {
+                        c.format_hsl(buf, sizeof(buf)/sizeof(char));
+                        pStyle->set_string(vAtoms[P_HSL], buf);
+                    }
+                    if (vAtoms[P_HSLA] >= 0)
+                    {
+                        c.format_hsla(buf, sizeof(buf)/sizeof(char));
+                        pStyle->set_string(vAtoms[P_HSLA], buf);
+                    }
+                    if (vAtoms[P_VALUE] >= 0)
+                    {
+                        if (c.is_hsl())
+                            c.format_hsla(buf, sizeof(buf)/sizeof(char));
+                        else
+                            c.format_rgba(buf, sizeof(buf)/sizeof(char));
+                        pStyle->set_string(vAtoms[P_VALUE], buf);
+                    }
                 }
+                pStyle->end();
             }
-            pStyle->end();
+
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         void Color::commit(atom_t property)

@@ -159,41 +159,40 @@ namespace lsp
 
         void Padding::sync()
         {
-            if (pStyle == NULL)
+            if (pStyle != NULL)
             {
-                if (pListener != NULL)
-                    pListener->notify(this);
-                return;
+                pStyle->begin(&sListener);
+                {
+                    padding_t &p    = sValue;
+
+                    // Simple components
+                    if (vAtoms[P_LEFT] >= 0)
+                        pStyle->set_int(vAtoms[P_LEFT], p.nLeft);
+                    if (vAtoms[P_RIGHT] >= 0)
+                        pStyle->set_int(vAtoms[P_RIGHT], p.nRight);
+                    if (vAtoms[P_TOP] >= 0)
+                        pStyle->set_int(vAtoms[P_TOP], p.nTop);
+                    if (vAtoms[P_BOTTOM] >= 0)
+                        pStyle->set_int(vAtoms[P_BOTTOM], p.nBottom);
+
+                    // Compound objects
+                    LSPString s;
+                    if (vAtoms[P_CSS] >= 0)
+                    {
+                        if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nTop), long(p.nRight), long(p.nBottom), long(p.nLeft)))
+                            pStyle->set_string(vAtoms[P_CSS], &s);
+                    }
+                    if (vAtoms[P_VALUE] >= 0)
+                    {
+                        if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nLeft), long(p.nRight), long(p.nTop), long(p.nBottom)))
+                            pStyle->set_string(vAtoms[P_VALUE], &s);
+                    }
+                }
+                pStyle->end();
             }
 
-            pStyle->begin(&sListener);
-            {
-                padding_t &p    = sValue;
-
-                // Simple components
-                if (vAtoms[P_LEFT] >= 0)
-                    pStyle->set_int(vAtoms[P_LEFT], p.nLeft);
-                if (vAtoms[P_RIGHT] >= 0)
-                    pStyle->set_int(vAtoms[P_RIGHT], p.nRight);
-                if (vAtoms[P_TOP] >= 0)
-                    pStyle->set_int(vAtoms[P_TOP], p.nTop);
-                if (vAtoms[P_BOTTOM] >= 0)
-                    pStyle->set_int(vAtoms[P_BOTTOM], p.nBottom);
-
-                // Compound objects
-                LSPString s;
-                if (vAtoms[P_CSS] >= 0)
-                {
-                    if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nTop), long(p.nRight), long(p.nBottom), long(p.nLeft)))
-                        pStyle->set_string(vAtoms[P_CSS], &s);
-                }
-                if (vAtoms[P_VALUE] >= 0)
-                {
-                    if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nLeft), long(p.nRight), long(p.nTop), long(p.nBottom)))
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
-                }
-            }
-            pStyle->end();
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         void Padding::get(size_t *left, size_t *right, size_t *top, size_t *bottom) const

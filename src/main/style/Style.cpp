@@ -678,11 +678,16 @@ namespace lsp
 
             // Save listener to allocated binding
             lst->nId        = p->id;
-            lst->bNotify    = false;
+            lst->bNotify    = vLocks.index_of(listener) < 0;
             lst->pListener  = listener;
             ++p->refs;
 
-            notify_listeners(p);
+            if (lst->bNotify)
+            {
+                p->flags       |= F_NTF_LISTENERS;
+                if ((vLocks.is_empty()) || (p->owner != this))
+                    notify_listeners_delayed(p);
+            }
             notify_children(p);
 
             return STATUS_OK;
