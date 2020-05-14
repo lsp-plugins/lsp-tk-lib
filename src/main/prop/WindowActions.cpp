@@ -25,45 +25,6 @@ namespace lsp
 
             { NULL,             -1                  }
         };
-
-        namespace prop
-        {
-            status_t WindowActions::bind(const char *property, Widget *widget)
-            {
-                if ((widget == NULL) || (property == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-
-                Display *dpy    = widget->display();
-                atom_t id       = (dpy != NULL) ? dpy->atom_id(property) : -1;
-                if (id < 0)
-                    return STATUS_UNKNOWN_ERR;
-
-                return tk::WindowActions::bind(id, widget->style());
-            }
-
-            status_t WindowActions::bind(atom_t property, Widget *widget)
-            {
-                return tk::WindowActions::bind(property, widget->style());
-            }
-
-            status_t WindowActions::bind(const char *property, Display *dpy, Style *style)
-            {
-                if ((dpy == NULL) || (style == NULL) || (property < 0))
-                    return STATUS_BAD_ARGUMENTS;
-
-                atom_t id       = dpy->atom_id(property);
-                if (id < 0)
-                    return STATUS_UNKNOWN_ERR;
-
-                return tk::WindowActions::bind(id, style);
-            }
-
-            status_t WindowActions::bind(atom_t property, Style *style)
-            {
-                return tk::WindowActions::bind(property, style);
-            }
-        }
-
     } /* namespace tk */
 } /* namespace lsp */
 

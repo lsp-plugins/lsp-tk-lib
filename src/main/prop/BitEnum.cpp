@@ -18,61 +18,36 @@ namespace lsp
         }
 
         BitEnum::BitEnum(const prop::enum_t *xenum, prop::Listener *listener):
-            Property(listener),
+            SimpleProperty(listener),
             sListener(this)
         {
-            nAtom       = -1;
             nValue      = 0.0f;
             pEnum       = xenum;
         }
 
         BitEnum::~BitEnum()
         {
-            unbind();
+            SimpleProperty::unbind(&sListener);
         }
 
         status_t BitEnum::unbind()
         {
-            if ((pStyle != NULL) && (nAtom >= 0))
-            {
-                status_t res = pStyle->unbind(nAtom, &sListener);
-                if (res != STATUS_OK)
-                    return res;
-            }
-
-            pStyle      = NULL;
-            nAtom       = -1;
-
-            return STATUS_NOT_BOUND;
+            return SimpleProperty::unbind(&sListener);
         }
 
         status_t BitEnum::bind(atom_t property, Style *style)
         {
-            if ((style == NULL) || (property < 0))
-                return STATUS_BAD_ARGUMENTS;
+            return SimpleProperty::bind(property, style, PT_STRING, &sListener);
+        }
 
-            // Unbind first
-            status_t res;
-            if ((pStyle != NULL) && (nAtom >= 0))
-            {
-                res = pStyle->unbind(nAtom, &sListener);
-                if (res != STATUS_OK)
-                    return res;
-            }
+        status_t BitEnum::bind(const char *property, Style *style)
+        {
+            return SimpleProperty::bind(property, style, PT_STRING, &sListener);
+        }
 
-            // Bind to new handler
-            style->begin();
-            {
-                res = style->bind(property, PT_STRING, &sListener);
-                if (res == STATUS_OK)
-                {
-                    pStyle      = style;
-                    nAtom       = property;
-                }
-            }
-            style->end();
-
-            return res;
+        status_t BitEnum::bind(const LSPString *property, Style *style)
+        {
+            return SimpleProperty::bind(property, style, PT_STRING, &sListener);
         }
 
         void BitEnum::commit()

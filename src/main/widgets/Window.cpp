@@ -70,7 +70,7 @@ namespace lsp
             sBorderStyle.bind("border.style", this);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
-            sWindowActions.bind("window_actions", this);
+            sWindowActions.bind("window_actions", &sStyle);
             sPosition.bind("position", this);
             sSize.bind("size", this);
             sSizeConstraints.bind("size.constraints", this);

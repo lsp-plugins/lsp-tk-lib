@@ -19,7 +19,7 @@ namespace lsp
         /**
          * Integering property interface
          */
-        class BitEnum: public Property
+        class BitEnum: public SimpleProperty
         {
             private:
                 BitEnum & operator = (const BitEnum *);
@@ -38,7 +38,6 @@ namespace lsp
                 };
 
             protected:
-                atom_t              nAtom;
                 size_t              nValue;
                 Listener            sListener;
                 const prop::enum_t *pEnum;
@@ -46,6 +45,8 @@ namespace lsp
             protected:
                 status_t            unbind();
                 status_t            bind(atom_t property, Style *style);
+                status_t            bind(const char *property, Style *style);
+                status_t            bind(const LSPString *property, Style *style);
                 void                commit();
                 void                sync();
                 size_t              xset(size_t v);

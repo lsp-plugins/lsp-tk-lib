@@ -99,10 +99,9 @@ namespace lsp
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(const char *property, Widget *widget);
-                    status_t            bind(atom_t property, Widget *widget);
-                    status_t            bind(const char *property, Display *dpy, Style *style);
-                    status_t            bind(atom_t property, Style *style);
+                    inline status_t     bind(atom_t property, Style *style)             { return BitEnum::bind(property, style); }
+                    inline status_t     bind(const char *property, Style *style)        { return BitEnum::bind(property, style); }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return BitEnum::bind(property, style); }
 
                     /**
                      * Unbind property
