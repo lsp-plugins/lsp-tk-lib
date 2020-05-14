@@ -210,25 +210,11 @@ UTEST_BEGIN("tk.style", style)
             }
     };
 
-    lltl::parray<char> atoms;
+    tk::Atoms atoms;
 
     tk::atom_t atom(const char *name)
     {
-        // Find the atom
-        for (size_t i=0, n=atoms.size(); i<n; ++i)
-        {
-            char *aname = atoms.uget(i);
-            if ((aname != NULL) && (!::strcmp(aname, name)))
-                return i;
-        }
-
-        // Create new atom
-        int idx = atoms.size();
-        char *aname = ::strdup(name);
-        UTEST_ASSERT(aname != NULL);
-        UTEST_ASSERT(atoms.add(aname));
-
-        return idx;
+        return atoms.atom_id(name);
     }
 
     void init_style(tk::Style &s)
@@ -320,7 +306,10 @@ UTEST_BEGIN("tk.style", style)
     void test_binding(tk::Style &s)
     {
         ChangeListener l1(this, "s1"), l2(this, "s2"), l3(this, "s3"), l4(this, "s4");
-        tk::Style s1, s2, s3, s4;
+        tk::Style s1(s.schema());
+        tk::Style s2(s.schema());
+        tk::Style s3(s.schema());
+        tk::Style s4(s.schema());
         ssize_t iv = -1;
 
         tk::atom_t var1 = atom("count");
@@ -576,10 +565,13 @@ UTEST_BEGIN("tk.style", style)
         UTEST_ASSERT(float_equals_relative(v, M_SQRT2));
     }
 
-    void test_multiple_parents()
+    void test_multiple_parents(tk::Schema *schema)
     {
-        tk::Style p1, p2;
-        tk::Style c1, c2;
+        tk::Style p1(schema);
+        tk::Style p2(schema);
+        tk::Style c1(schema);
+        tk::Style c2(schema);
+
         ChangeListener l1(this, "c1"), l2(this, "c2");
 
         tk::atom_t v1 = atom("value1");
@@ -642,7 +634,9 @@ UTEST_BEGIN("tk.style", style)
 
     void test_default_values()
     {
-        tk::Style root, child;
+        tk::Schema schema(&atoms);
+        tk::Style root(&schema);
+        tk::Style child(&schema);
         union
         {
             ssize_t     iValue;
@@ -768,7 +762,8 @@ UTEST_BEGIN("tk.style", style)
 
     void test_notifications()
     {
-        tk::Style root;
+        tk::Schema schema(&atoms);
+        tk::Style root(&schema);
 
         ChangeListener l1(this, "c1"), l2(this, "c2"), l3(this, "c3");
         tk::IStyleListener *vl[3] = { &l1, &l2, &l3 };
@@ -900,25 +895,16 @@ UTEST_BEGIN("tk.style", style)
 
     UTEST_MAIN
     {
-        tk::Style root;
+        tk::Schema schema(&atoms);
+        tk::Style root(&schema);
+
         init_style(root);
         test_binding(root);
         test_function(root);
-        test_multiple_parents();
+        test_multiple_parents(&schema);
 
         test_default_values();
         test_notifications();
-    }
-
-    UTEST_DESTROY
-    {
-        for (size_t i=0, n=atoms.size(); i<n; ++i)
-        {
-            char *aname = atoms.uget(i);
-            if (aname != NULL)
-                ::free(aname);
-        }
-        atoms.flush();
     }
 
 UTEST_END

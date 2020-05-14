@@ -19,6 +19,7 @@ namespace lsp
         const w_class_t Widget::metadata = { "Widget", NULL };
 
         Widget::Widget(Display *dpy):
+            sStyle(dpy->schema()),
             sProperties(this),
             sScaling(&sProperties),
             sBrightness(&sProperties),
@@ -94,6 +95,11 @@ namespace lsp
             if (id >= 0) id = sSlots.add(SLOT_DRAG_REQUEST, slot_drag_request, self());
 
             return (id >= 0) ? STATUS_OK : -id;
+        }
+
+        status_t Widget::init_style(Style *style, Schema *schema)
+        {
+            return STATUS_OK;
         }
 
         void Widget::do_destroy()
@@ -239,7 +245,7 @@ namespace lsp
             if (ptr == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this  = static_cast<Widget *>(ptr);
+            Widget *_this  = widget_ptrcast<Widget>(ptr);
             return _this->on_hide();
         }
 
@@ -248,7 +254,7 @@ namespace lsp
             if (ptr == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this  = static_cast<Widget *>(ptr);
+            Widget *_this  = widget_ptrcast<Widget>(ptr);
             return _this->on_show();
         }
 
@@ -257,7 +263,7 @@ namespace lsp
             if (ptr == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             return _this->on_destroy();
         }
 
@@ -266,7 +272,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this       = static_cast<Widget *>(ptr);
+            Widget *_this       = widget_ptrcast<Widget>(ptr);
             ws::rectangle_t *ev = static_cast<ws::rectangle_t *>(data);
             return _this->on_resize(ev);
         }
@@ -276,8 +282,8 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this       = static_cast<Widget *>(ptr);
-            ws::rectangle_t *ev  = static_cast<ws::rectangle_t *>(data);
+            Widget *_this       = widget_ptrcast<Widget>(ptr);
+            ws::rectangle_t *ev = static_cast<ws::rectangle_t *>(data);
             return _this->on_resize_parent(ev);
         }
 
@@ -286,7 +292,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_focus_in(ev);
         }
@@ -296,7 +302,7 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_focus_out(ev);
         }
@@ -306,11 +312,23 @@ namespace lsp
             if ((ptr == NULL) || (data == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            Widget *_this   = static_cast<Widget *>(ptr);
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             const char * const *ctype = _this->pDisplay->get_drag_mime_types();
 
             return _this->on_drag_request(ev, ctype);
+        }
+
+        status_t Widget::style_initializer(Style *style, Schema *schema, void *data)
+        {
+            if ((style == NULL) || (schema == NULL) || (data == NULL))
+                return STATUS_BAD_ARGUMENTS;
+
+            Widget *_this   = widget_ptrcast<Widget>(data);
+            if (_this == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            return _this->init_style(style, schema);
         }
 
         bool Widget::inside(ssize_t x, ssize_t y)

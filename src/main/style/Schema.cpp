@@ -13,7 +13,20 @@ namespace lsp
 {
     namespace tk
     {
+        Schema::style_t::style_t(Schema *schema):
+            sStyle(schema)
+        {
+            bInitialized        = false;
+        }
         
+        Schema::style_t::~style_t()
+        {
+            sStyle.destroy();
+            for (size_t i=0, n=vParents.size(); i<n; ++i)
+                delete vParents.uget(i);
+            vParents.flush();
+        }
+
         Schema::Schema(Atoms *atoms)
         {
             pAtoms      = atoms;
@@ -41,29 +54,9 @@ namespace lsp
             if (ctx->vStyles.values(&styles))
             {
                 for (size_t i=0, n=styles.size(); i<n; ++i)
-                    destroy_style(styles.uget(i));
+                    delete styles.uget(i);
                 styles.flush();
             }
-        }
-
-        Schema::style_t *Schema::create_style()
-        {
-            style_t *s = new style_t();
-            if (s == NULL)
-                return NULL;
-
-            s->bInitialized     = false;
-
-            return s;
-        }
-
-        void Schema::destroy_style(style_t *s)
-        {
-            s->sStyle.destroy();
-            for (size_t i=0, n=s->vParents.size(); i<n; ++i)
-                delete s->vParents.uget(i);
-            s->vParents.flush();
-            delete s;
         }
 
         void Schema::init_context(context_t *s)
@@ -329,7 +322,7 @@ namespace lsp
 
             LSPString sClass;
             LSPString name;
-            style_t *style = create_style();
+            style_t *style = new style_t(this);
             if (style == NULL)
                 return STATUS_NO_MEM;
 
@@ -399,7 +392,7 @@ namespace lsp
 
                 if (res != STATUS_OK)
                 {
-                    destroy_style(style);
+                    delete style;
                     return res;
                 }
             }
@@ -748,14 +741,14 @@ namespace lsp
                     return NULL;
 
                 // Create child style
-                s = create_style();
+                s = new style_t(this);
                 if (s == NULL)
                     return NULL;
 
                 // Add to style map
                 if (!sCtx.vStyles.put(id, &s))
                 {
-                    destroy_style(s);
+                    delete s;
                     return NULL;
                 }
 
@@ -770,7 +763,7 @@ namespace lsp
             style_t *s = sCtx.pRoot;
             if (s == NULL)
             {
-                s = create_style();
+                s = new style_t(this);
                 if (s == NULL)
                     return NULL;
                 sCtx.pRoot  = s;
@@ -834,6 +827,21 @@ namespace lsp
         lsp::Color *Schema::color(const LSPString *id)
         {
             return sCtx.vColors.get(id);
+        }
+
+        atom_t Schema::atom_id(const char *name) const
+        {
+            return pAtoms->atom_id(name);
+        }
+
+        atom_t Schema::atom_id(const LSPString *name) const
+        {
+            return pAtoms->atom_id(name);
+        }
+
+        const char *Schema::atom_name(atom_t id) const
+        {
+            return pAtoms->atom_name(id);
         }
     } /* namespace tk */
 } /* namespace lsp */

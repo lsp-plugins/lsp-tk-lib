@@ -12,8 +12,9 @@ namespace lsp
 {
     namespace tk
     {
-        Style::Style()
+        Style::Style(Schema *schema)
         {
+            pSchema     = schema;
             bDelayed    = false;
         }
         
@@ -614,6 +615,18 @@ namespace lsp
             return false;
         }
 
+        bool Style::is_bound(const char *id, IStyleListener *listener) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? is_bound(atom, listener) : false;
+        }
+
+        bool Style::is_bound(const LSPString *id, IStyleListener *listener) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? is_bound(atom, listener) : false;
+        }
+
         status_t Style::bind(atom_t id, property_type_t type, IStyleListener *listener)
         {
             // Listener can not be NULL
@@ -667,6 +680,18 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Style::bind(const char *id, property_type_t type, IStyleListener *listener)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? bind(atom, type, listener) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::bind(const LSPString *id, property_type_t type, IStyleListener *listener)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? bind(atom, type, listener) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::unbind(atom_t id, IStyleListener *listener)
         {
             // Find listener binding
@@ -695,6 +720,18 @@ namespace lsp
             deref_property(p);
 
             return STATUS_OK;
+        }
+
+        status_t Style::unbind(const char *id, IStyleListener *listener)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? unbind(atom, listener) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::unbind(const LSPString *id, IStyleListener *listener)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? unbind(atom, listener) : STATUS_UNKNOWN_ERR;
         }
 
         void Style::deref_property(property_t *p)
@@ -786,6 +823,18 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Style::get_int(const char *id, ssize_t *dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_int(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::get_int(const LSPString *id, ssize_t *dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_int(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::get_float(atom_t id, float *dst) const
         {
             const property_t *prop = get_property_recursive(id);
@@ -801,6 +850,18 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Style::get_float(const char *id, float *dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_float(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::get_float(const LSPString *id, float *dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_float(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::get_bool(atom_t id, bool *dst) const
         {
             const property_t *prop = get_property_recursive(id);
@@ -814,6 +875,18 @@ namespace lsp
             if (dst != NULL)
                 *dst = prop->v.bValue;
             return STATUS_OK;
+        }
+
+        status_t Style::get_bool(const char *id, bool *dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_bool(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::get_bool(const LSPString *id, bool *dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_bool(atom, dst) : STATUS_UNKNOWN_ERR;
         }
 
         status_t Style::get_string(atom_t id, LSPString *dst) const
@@ -833,6 +906,18 @@ namespace lsp
             return (dst->set_utf8(prop->v.sValue)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
+        status_t Style::get_string(const char *id, LSPString *dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_string(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::get_string(const LSPString *id, LSPString *dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_string(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::get_string(atom_t id, const char **dst) const
         {
             const property_t *prop = get_property_recursive(id);
@@ -850,10 +935,34 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Style::get_string(const char *id, const char **dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_string(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::get_string(const LSPString *id, const char **dst) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_string(atom, dst) : STATUS_UNKNOWN_ERR;
+        }
+
         bool Style::is_default(atom_t id) const
         {
             const property_t *prop = get_property(id);
             return (prop != NULL) ? !(prop->flags & F_OVERRIDDEN) : true;
+        }
+
+        bool Style::is_default(const char *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? is_default(atom) : false;
+        }
+
+        bool Style::is_default(const LSPString *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? is_default(atom) : false;
         }
 
         bool Style::is_overridden(atom_t id) const
@@ -862,10 +971,34 @@ namespace lsp
             return (prop != NULL) ? (prop->flags & F_OVERRIDDEN) : false;
         }
 
+        bool Style::is_overridden(const char *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? is_overridden(atom) : false;
+        }
+
+        bool Style::is_overridden(const LSPString *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? is_overridden(atom) : false;
+        }
+
         bool Style::exists(atom_t id) const
         {
             const property_t *prop = get_property_recursive(id);
             return (prop != NULL);
+        }
+
+        bool Style::exists(const char *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? exists(atom) : false;
+        }
+
+        bool Style::exists(const LSPString *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? exists(atom) : false;
         }
 
         bool Style::is_local(atom_t id) const
@@ -874,10 +1007,34 @@ namespace lsp
             return (prop != NULL) && (prop->flags & F_CREATED);
         }
 
+        bool Style::is_local(const char *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? is_local(atom) : false;
+        }
+
+        bool Style::is_local(const LSPString *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? is_local(atom) : false;
+        }
+
         property_type_t Style::get_type(atom_t id) const
         {
             const property_t *prop = get_property_recursive(id);
             return (prop != NULL) ? prop->type : PT_UNKNOWN;
+        }
+
+        property_type_t Style::get_type(const char *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_type(atom) : PT_UNKNOWN;
+        }
+
+        property_type_t Style::get_type(const LSPString *id) const
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? get_type(atom) : PT_UNKNOWN;
         }
 
         status_t Style::set_property(atom_t id, property_t *src)
@@ -925,6 +1082,18 @@ namespace lsp
             return set_property(id, &tmp);
         }
 
+        status_t Style::set_int(const char *id, ssize_t value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_int(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::set_int(const LSPString *id, ssize_t value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_int(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::set_float(atom_t id, float value)
         {
             property_t tmp;
@@ -934,6 +1103,18 @@ namespace lsp
             return set_property(id, &tmp);
         }
 
+        status_t Style::set_float(const char *id, float value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_float(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::set_float(const LSPString *id, float value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_float(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::set_bool(atom_t id, bool value)
         {
             property_t tmp;
@@ -941,6 +1122,18 @@ namespace lsp
             tmp.v.bValue    = value;
             tmp.dv.bValue   = false;
             return set_property(id, &tmp);
+        }
+
+        status_t Style::set_bool(const char *id, bool value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_bool(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::set_bool(const LSPString *id, bool value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_bool(atom, value) : STATUS_UNKNOWN_ERR;
         }
 
         status_t Style::set_string(atom_t id, const LSPString *value)
@@ -957,6 +1150,18 @@ namespace lsp
             return set_property(id, &tmp);
         }
 
+        status_t Style::set_string(const char *id, const LSPString *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::set_string(const LSPString *id, const LSPString *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::set_string(atom_t id, const char *value)
         {
             if (value == NULL)
@@ -971,6 +1176,18 @@ namespace lsp
             return set_property(id, &tmp);
         }
 
+        status_t Style::set_string(const char *id, const char *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::set_string(const LSPString *id, const char *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::set_default(atom_t id)
         {
             property_t *p = get_property(id);
@@ -982,6 +1199,12 @@ namespace lsp
             // Initialize property with default value
             p->flags   &= ~F_OVERRIDDEN;
             return sync_property(p);
+        }
+
+        status_t Style::set_default(const char *id)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? set_default(atom) : STATUS_UNKNOWN_ERR;
         }
 
         status_t Style::create_local_property(atom_t id, const property_t *src)
@@ -1092,6 +1315,18 @@ namespace lsp
             return create_local_property(id, &tmp);
         }
 
+        status_t Style::create_int(const char *id, ssize_t value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_int(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::create_int(const LSPString *id, ssize_t value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_int(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::create_float(atom_t id, float value)
         {
             property_t tmp;
@@ -1101,6 +1336,18 @@ namespace lsp
             return create_local_property(id, &tmp);
         }
 
+        status_t Style::create_float(const char *id, float value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_float(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::create_float(const LSPString *id, float value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_float(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::create_bool(atom_t id, bool value)
         {
             property_t tmp;
@@ -1108,6 +1355,18 @@ namespace lsp
             tmp.v.bValue    = value;
             tmp.dv.bValue   = value;
             return create_local_property(id, &tmp);
+        }
+
+        status_t Style::create_bool(const char *id, bool value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_bool(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::create_bool(const LSPString *id, bool value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_bool(atom, value) : STATUS_UNKNOWN_ERR;
         }
 
         status_t Style::create_string(atom_t id, const LSPString *value)
@@ -1122,6 +1381,18 @@ namespace lsp
             return create_local_property(id, &tmp);
         }
 
+        status_t Style::create_string(const char *id, const LSPString *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::create_string(const LSPString *id, const LSPString *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
         status_t Style::create_string(atom_t id, const char *value)
         {
             if (value == NULL)
@@ -1132,6 +1403,18 @@ namespace lsp
             tmp.v.sValue    = const_cast<char *>(value);
             tmp.dv.sValue   = const_cast<char *>(value);
             return create_local_property(id, &tmp);
+        }
+
+        status_t Style::create_string(const char *id, const char *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::create_string(const LSPString *id, const char *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
         }
 
         status_t Style::remove(atom_t id)
@@ -1146,6 +1429,18 @@ namespace lsp
             deref_property(p);
 
             return STATUS_OK;
+        }
+
+        status_t Style::remove(const char *id)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? remove(atom) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::remove(const LSPString *id)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? remove(atom) : STATUS_UNKNOWN_ERR;
         }
     } /* namespace tk */
 } /* namespace lsp */

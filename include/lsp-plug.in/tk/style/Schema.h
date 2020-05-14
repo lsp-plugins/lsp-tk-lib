@@ -38,6 +38,9 @@ namespace lsp
                     Style                       sStyle;
                     lltl::parray<LSPString>     vParents;
                     bool                        bInitialized;
+
+                    style_t(Schema *schema);
+                    ~style_t();
                 } style_t;
 
                 typedef struct context_t
@@ -61,15 +64,13 @@ namespace lsp
 
             protected:
                 context_t           sCtx;
-                Atoms              *pAtoms;
+                mutable Atoms      *pAtoms;
 
             protected:
                 status_t            apply_context(context_t *ctx);
                 static void         init_context(context_t *ctx);
                 static void         swap_context(context_t *a, context_t *b);
                 static void         destroy_context(context_t *ctx);
-                static void         destroy_style(style_t *style);
-                static style_t     *create_style();
 
                 status_t            parse_document(xml::PullParser *p);
                 status_t            parse_schema(xml::PullParser *p, context_t *ctx);
@@ -147,6 +148,27 @@ namespace lsp
                  * @return style or NULL on error
                  */
                 Style              *get(const LSPString *id, IStyleInitializer *init = NULL);
+
+                /**
+                 * Get atom identifier by name
+                 * @param name atom name
+                 * @return atom identifier or negative error code
+                 */
+                atom_t              atom_id(const char *name) const;
+
+                /**
+                 * Get atom identifier by name
+                 * @param name atom name
+                 * @return atom identifier or negative error code
+                 */
+                atom_t             atom_id(const LSPString *name) const;
+
+                /**
+                 * Get atom name by identifier
+                 * @param name atom name or NULL
+                 * @return atom identifier
+                 */
+                const char         *atom_name(atom_t id) const;
         };
     
     } /* namespace tk */

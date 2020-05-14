@@ -20,6 +20,8 @@ namespace lsp
 {
     namespace tk
     {
+        class Schema;
+
         /**
          * Some widget style. Allows nesting
          */
@@ -73,10 +75,11 @@ namespace lsp
                 lltl::darray<property_t>        vProperties;
                 lltl::darray<listener_t>        vListeners;
                 lltl::parray<IStyleListener>    vLocks;
+                mutable Schema                 *pSchema;
                 bool                            bDelayed;
 
             public:
-                explicit Style();
+                explicit Style(Schema *schema);
                 virtual ~Style();
 
                 status_t            init();
@@ -110,17 +113,29 @@ namespace lsp
 
             public:
                 /**
+                 * Get associated schema
+                 * @return schema
+                 */
+                inline Schema          *schema()            { return pSchema;           }
+
+                /**
+                 * Get associated schema
+                 * @return schema
+                 */
+                inline Schema          *schema() const      { return pSchema;           }
+
+                /**
                  * Get number of parent styles
                  * @return number of parent styles
                  */
-                inline size_t       parents() const     { return vParents.size();   }
+                inline size_t           parents() const     { return vParents.size();   }
 
                 /**
                  * Get parent style
                  * @param idx sequential number of parent style starting with 0
                  * @return parent style or NULL if does not exist
                  */
-                inline Style       *parent(size_t idx)  { return vParents.get(idx); };
+                inline Style           *parent(size_t idx)  { return vParents.get(idx); };
 
                 /**
                  * Set parent style
@@ -128,14 +143,14 @@ namespace lsp
                  * @param idx parent index, negative value means last
                  * @return status of operation
                  */
-                status_t            add_parent(Style *parent, ssize_t idx = -1);
+                status_t                add_parent(Style *parent, ssize_t idx = -1);
 
                 /**
                  * Remove the parent style
                  * @param parent parent style to remove
                  * @return status of operation
                  */
-                status_t            remove_parent(Style *parent);
+                status_t                remove_parent(Style *parent);
 
                 /**
                  * Check whether style has a parent
@@ -143,20 +158,20 @@ namespace lsp
                  * @param recursive flag that indicates that a recursive search should be performed
                  * @return true if style has a parent
                  */
-                bool                has_parent(Style *parent, bool recursive = false);
+                bool                    has_parent(Style *parent, bool recursive = false);
 
                 /**
                  * Get number of child styles
                  * @return number of child styles
                  */
-                inline size_t       children() const    { return vChildren.size();   }
+                inline size_t           children() const    { return vChildren.size();   }
 
                 /**
                  * Get child style
                  * @param idx sequential number of child style starting with 0
                  * @return child style or NULL if does not exist
                  */
-                inline Style       *child(size_t idx)  { return vChildren.get(idx); };
+                inline Style           *child(size_t idx)  { return vChildren.get(idx); };
 
                 /**
                  * Add child style
@@ -164,14 +179,14 @@ namespace lsp
                  * @param idx child index, negative value means last
                  * @return status of operation
                  */
-                status_t            add_child(Style *child, ssize_t idx = -1);
+                status_t                add_child(Style *child, ssize_t idx = -1);
 
                 /** Remove child style
                  *
                  * @param child child style to remove
                  * @return status of operation
                  */
-                status_t            remove_child(Style *child);
+                status_t                remove_child(Style *child);
 
                 /**
                  * Check whether style has a child
@@ -179,7 +194,7 @@ namespace lsp
                  * @param recursive flag that indicates that a recursive search should be performed
                  * @return true if style has a child
                  */
-                bool                has_child(Style *child, bool recursive = false);
+                bool                    has_child(Style *child, bool recursive = false);
 
             public:
                 /**
@@ -187,35 +202,45 @@ namespace lsp
                  * @param id property identifier
                  * @return status of operation
                  */
-                status_t            bind(atom_t id, property_type_t type, IStyleListener *listener);
+                status_t                bind(atom_t id, property_type_t type, IStyleListener *listener);
+                status_t                bind(const char *id, property_type_t type, IStyleListener *listener);
+                status_t                bind(const LSPString *id, property_type_t type, IStyleListener *listener);
 
                 /**
                  * Bind listener to integer property
                  * @param id property identifier
                  * @return status of operation
                  */
-                inline status_t     bind_int(atom_t id, IStyleListener *listener)        { return bind(id, PT_INT, listener); };
+                inline status_t         bind_int(atom_t id, IStyleListener *listener)               { return bind(id, PT_INT, listener);    }
+                inline status_t         bind_int(const char *id, IStyleListener *listener)          { return bind(id, PT_INT, listener);    }
+                inline status_t         bind_int(const LSPString *id, IStyleListener *listener)     { return bind(id, PT_INT, listener);    }
 
                 /**
                  * Bind listener to floating-point property
                  * @param id property identifier
                  * @return status of operation
                  */
-                inline status_t     bind_float(atom_t id, IStyleListener *listener)      { return bind(id, PT_FLOAT, listener); };
+                inline status_t         bind_float(atom_t id, IStyleListener *listener)             { return bind(id, PT_FLOAT, listener);  }
+                inline status_t         bind_float(const char *id, IStyleListener *listener)        { return bind(id, PT_FLOAT, listener);  }
+                inline status_t         bind_float(const LSPString *id, IStyleListener *listener)   { return bind(id, PT_FLOAT, listener);  }
 
                 /**
                  * Bind listener to boolean property
                  * @param id property identifier
                  * @return status of operation
                  */
-                inline status_t     bind_bool(atom_t id, IStyleListener *listener)       { return bind(id, PT_BOOL, listener); };
+                inline status_t         bind_bool(atom_t id, IStyleListener *listener)              { return bind(id, PT_BOOL, listener);   }
+                inline status_t         bind_bool(const char *id, IStyleListener *listener)         { return bind(id, PT_BOOL, listener);   }
+                inline status_t         bind_bool(const LSPString *id, IStyleListener *listener)    { return bind(id, PT_BOOL, listener);   }
 
                 /**
                  * Bind listener to string property
                  * @param id property identifier
                  * @return status of operation
                  */
-                inline status_t     bind_string(atom_t id, IStyleListener *listener)     { return bind(id, PT_STRING, listener); };
+                inline status_t         bind_string(atom_t id, IStyleListener *listener)            { return bind(id, PT_STRING, listener); }
+                inline status_t         bind_string(const char *id, IStyleListener *listener)       { return bind(id, PT_STRING, listener); }
+                inline status_t         bind_string(const LSPString *id, IStyleListener *listener)  { return bind(id, PT_STRING, listener); }
 
                 /**
                  * Check that listener is already bound to the property
@@ -223,7 +248,9 @@ namespace lsp
                  * @param listener listener
                  * @return true if listener is bound
                  */
-                bool                is_bound(atom_t id, IStyleListener *listener) const;
+                bool                    is_bound(atom_t id, IStyleListener *listener) const;
+                bool                    is_bound(const char *id, IStyleListener *listener) const;
+                bool                    is_bound(const LSPString *id, IStyleListener *listener) const;
 
                 /**
                  * Unbind listener from a property
@@ -231,20 +258,22 @@ namespace lsp
                  * @param listener property listener
                  * @return status of operation
                  */
-                status_t            unbind(atom_t id, IStyleListener *listener);
+                status_t                unbind(atom_t id, IStyleListener *listener);
+                status_t                unbind(const char *id, IStyleListener *listener);
+                status_t                unbind(const LSPString *id, IStyleListener *listener);
 
             public:
                 /**
-                 * Return overall number of properties
-                 * @return overall number of properties
+                 * Return overall number of local properties
+                 * @return overall number of local properties
                  */
-                inline size_t       properties() const  { return vProperties.size(); }
+                inline size_t           properties() const  { return vProperties.size(); }
 
                 /**
-                 * Return overall number of listeners
-                 * @return overall number of listeners
+                 * Return overall number of property listener bindings
+                 * @return overall number of listener bindings
                  */
-                inline size_t       listeners() const   { return vListeners.size(); }
+                inline size_t           listeners() const   { return vListeners.size(); }
 
             public:
                 /**
@@ -253,7 +282,7 @@ namespace lsp
                  * only after transaction becomes completed
                  * @return status of operation
                  */
-                status_t            begin();
+                status_t                begin();
 
                 /**
                  * Start transactional update of properties.
@@ -262,14 +291,14 @@ namespace lsp
                  * @param listener the listener excluded from notification
                  * @return status of operation
                  */
-                status_t            begin(IStyleListener *listener);
+                status_t                begin(IStyleListener *listener);
 
                 /**
                  * End transactional update of properties.
                  * All listeners and children will be notified
                  * @return status of operation
                  */
-                status_t            end();
+                status_t                end();
 
                 /**
                  * Get integer property
@@ -277,7 +306,9 @@ namespace lsp
                  * @param dst pointer to store result
                  * @return status of operation
                  */
-                status_t            get_int(atom_t id, ssize_t *dst) const;
+                status_t                get_int(atom_t id, ssize_t *dst) const;
+                status_t                get_int(const char *id, ssize_t *dst) const;
+                status_t                get_int(const LSPString *id, ssize_t *dst) const;
 
                 /**
                  * Get floating-point property
@@ -285,7 +316,9 @@ namespace lsp
                  * @param dst pointer to store result
                  * @return status of operation
                  */
-                status_t            get_float(atom_t id, float *dst) const;
+                status_t                get_float(atom_t id, float *dst) const;
+                status_t                get_float(const char *id, float *dst) const;
+                status_t                get_float(const LSPString *id, float *dst) const;
 
                 /**
                  * Get boolean property
@@ -293,7 +326,9 @@ namespace lsp
                  * @param dst pointer to store result
                  * @return status of operation
                  */
-                status_t            get_bool(atom_t id, bool *dst) const;
+                status_t                get_bool(atom_t id, bool *dst) const;
+                status_t                get_bool(const char *id, bool *dst) const;
+                status_t                get_bool(const LSPString *id, bool *dst) const;
 
                 /**
                  * Get string property
@@ -301,7 +336,9 @@ namespace lsp
                  * @param dst pointer to store result
                  * @return status of operation
                  */
-                status_t            get_string(atom_t id, LSPString *dst) const;
+                status_t                get_string(atom_t id, LSPString *dst) const;
+                status_t                get_string(const char *id, LSPString *dst) const;
+                status_t                get_string(const LSPString *id, LSPString *dst) const;
 
                 /**
                  * Get string property
@@ -309,21 +346,27 @@ namespace lsp
                  * @param dst pointer to store UTF-8 encoded result
                  * @return status of operation
                  */
-                status_t            get_string(atom_t id, const char **dst) const;
+                status_t                get_string(atom_t id, const char **dst) const;
+                status_t                get_string(const char *id, const char **dst) const;
+                status_t                get_string(const LSPString *id, const char **dst) const;
 
                 /**
                  * Check whether property exists in the whole style tree
                  * @param id property identifier
                  * @return true if this style or parent styles contain such property
                  */
-                bool                exists(atom_t id) const;
+                bool                    exists(atom_t id) const;
+                bool                    exists(const char *id) const;
+                bool                    exists(const LSPString *id) const;
 
                 /**
                  * Check whether property is local for this style (explicitly created)
                  * @param id property identifier
                  * @return true if property has been explicitly created
                  */
-                bool                is_local(atom_t id) const;
+                bool                    is_local(atom_t id) const;
+                bool                    is_local(const char *id) const;
+                bool                    is_local(const LSPString *id) const;
 
                 /**
                  * Check whether property has default value or derives actual value
@@ -331,21 +374,27 @@ namespace lsp
                  * @param id property identifier
                  * @return true if property has default value
                  */
-                bool                is_default(atom_t id) const;
+                bool                    is_default(atom_t id) const;
+                bool                    is_default(const char *id) const;
+                bool                    is_default(const LSPString *id) const;
 
                 /**
                  * Check whether property has been locally overridden
                  * @param id property identifier
                  * @return true if property has been locally overridden
                  */
-                bool                is_overridden(atom_t id) const;
+                bool                    is_overridden(atom_t id) const;
+                bool                    is_overridden(const char *id) const;
+                bool                    is_overridden(const LSPString *id) const;
 
                 /**
                  * Get property type for the whole style tree
                  * @param id property identifier
                  * @return actual property type or PT_UNKNOWN if property has not been found
                  */
-                property_type_t     get_type(atom_t id) const;
+                property_type_t         get_type(atom_t id) const;
+                property_type_t         get_type(const char *id) const;
+                property_type_t         get_type(const LSPString *id) const;
 
                 /**
                  * Assign value to integer property
@@ -353,7 +402,9 @@ namespace lsp
                  * @param value the value to assign
                  * @return status of operation
                  */
-                status_t            set_int(atom_t id, ssize_t value);
+                status_t                set_int(atom_t id, ssize_t value);
+                status_t                set_int(const char *id, ssize_t value);
+                status_t                set_int(const LSPString *id, ssize_t value);
 
                 /**
                  * Assign value to floating-point property
@@ -361,7 +412,9 @@ namespace lsp
                  * @param value the value to assign
                  * @return status of operation
                  */
-                status_t            set_float(atom_t id, float value);
+                status_t                set_float(atom_t id, float value);
+                status_t                set_float(const char *id, float value);
+                status_t                set_float(const LSPString *id, float value);
 
                 /**
                  * Assign value to boolean property
@@ -369,7 +422,9 @@ namespace lsp
                  * @param value the value to assign
                  * @return status of operation
                  */
-                status_t            set_bool(atom_t id, bool value);
+                status_t                set_bool(atom_t id, bool value);
+                status_t                set_bool(const char *id, bool value);
+                status_t                set_bool(const LSPString *id, bool value);
 
                 /**
                  * Assign value to string property
@@ -377,7 +432,9 @@ namespace lsp
                  * @param value the value to assign
                  * @return status of operation
                  */
-                status_t            set_string(atom_t id, const LSPString *value);
+                status_t                set_string(atom_t id, const LSPString *value);
+                status_t                set_string(const char *id, const LSPString *value);
+                status_t                set_string(const LSPString *id, const LSPString *value);
 
                 /**
                  * Assign value to string property
@@ -385,7 +442,9 @@ namespace lsp
                  * @param value the UTF-8 encoded value to assign
                  * @return status of operation
                  */
-                status_t            set_string(atom_t id, const char *value);
+                status_t                set_string(atom_t id, const char *value);
+                status_t                set_string(const char *id, const char *value);
+                status_t                set_string(const LSPString *id, const char *value);
 
                 /**
                  * Reset property to it's default value.
@@ -396,7 +455,9 @@ namespace lsp
                  * @param id property identifier
                  * @return status of operation
                  */
-                status_t            set_default(atom_t id);
+                status_t                set_default(atom_t id);
+                status_t                set_default(const char *id);
+                status_t                set_default(const LSPString *id);
 
                 /**
                  * Create local integer property
@@ -404,7 +465,9 @@ namespace lsp
                  * @param value default value
                  * @return status of operation
                  */
-                status_t            create_int(atom_t id, ssize_t value);
+                status_t                create_int(atom_t id, ssize_t value);
+                status_t                create_int(const char *id, ssize_t value);
+                status_t                create_int(const LSPString *id, ssize_t value);
 
                 /**
                  * Create local floating-point property
@@ -412,7 +475,9 @@ namespace lsp
                  * @param value default value
                  * @return status of operation
                  */
-                status_t            create_float(atom_t id, float value);
+                status_t                create_float(atom_t id, float value);
+                status_t                create_float(const char *id, float value);
+                status_t                create_float(const LSPString *id, float value);
 
                 /**
                  * Create local boolean property
@@ -420,7 +485,9 @@ namespace lsp
                  * @param value default value
                  * @return status of operation
                  */
-                status_t            create_bool(atom_t id, bool value);
+                status_t                create_bool(atom_t id, bool value);
+                status_t                create_bool(const char *id, bool value);
+                status_t                create_bool(const LSPString *id, bool value);
 
                 /**
                  * Create local string property
@@ -428,7 +495,9 @@ namespace lsp
                  * @param value default value
                  * @return status of operation
                  */
-                status_t            create_string(atom_t id, const LSPString *value);
+                status_t                create_string(atom_t id, const LSPString *value);
+                status_t                create_string(const char *id, const LSPString *value);
+                status_t                create_string(const LSPString *id, const LSPString *value);
 
                 /**
                  * Create local string property
@@ -436,14 +505,18 @@ namespace lsp
                  * @param value default value (UTF-8 encoded)
                  * @return status of operation
                  */
-                status_t            create_string(atom_t id, const char *value);
+                status_t                create_string(atom_t id, const char *value);
+                status_t                create_string(const char *id, const char *value);
+                status_t                create_string(const LSPString *id, const char *value);
 
                 /**
                  * Remove locally-created property
                  * @param id property identifier
                  * @return status of operation
                  */
-                status_t            remove(atom_t id);
+                status_t                remove(atom_t id);
+                status_t                remove(const char *id);
+                status_t                remove(const LSPString *id);
         };
     
     } /* namespace tk */
