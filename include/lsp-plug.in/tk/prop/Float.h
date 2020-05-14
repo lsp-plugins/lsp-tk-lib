@@ -94,6 +94,14 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return SimpleProperty::unbind(&sListener); };
+
+                    /**
+                     * Init default value
+                     * @param style style
+                     * @param value default value
+                     * @return status of operation
+                     */
+                    status_t            init(Style *style, float value);
             };
         }
 

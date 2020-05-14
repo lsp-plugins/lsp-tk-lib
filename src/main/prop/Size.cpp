@@ -135,6 +135,23 @@ namespace lsp
             nHeight     = p->nHeight;
             sync();
         }
+
+        namespace prop
+        {
+            status_t Size::init(Style *style, size_t width, size_t height)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->create_int(vAtoms[P_WIDTH], width);
+                    style->create_int(vAtoms[P_HEIGHT], height);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */
 

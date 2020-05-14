@@ -126,6 +126,13 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Padding::unbind(vAtoms, DESC, &sListener); };
+
+                    /**
+                     * Initialize default values
+                     * @return status of operation
+                     */
+                    status_t            init(Style *style, size_t left, size_t right, size_t top, size_t bottom);
+                    status_t            init(Style *style, const padding_t *p);
             };
         }
     

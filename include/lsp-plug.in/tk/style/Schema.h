@@ -133,7 +133,7 @@ namespace lsp
                  * If style does not exists, it will be automatically created and bound to the root style
                  * @return style or NULL on error
                  */
-                Style              *get(const LSPString *id, style_init_t init, void *args = NULL);\
+                Style              *get(const LSPString *id, style_init_t init, void *args = NULL);
 
                 /**
                  * Get style by class identifier.

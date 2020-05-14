@@ -70,6 +70,17 @@ namespace lsp
             dst->set(fValue);
             set(tmp);
         }
+
+        namespace prop
+        {
+            status_t Float::init(Style *style, float value)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+                style->create_float(nAtom, value);
+                return STATUS_OK;
+            }
+        }
     
     } /* namespace calc */
 } /* namespace lsp */

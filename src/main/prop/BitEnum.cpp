@@ -70,6 +70,24 @@ namespace lsp
                 pListener->notify(this);
         }
 
+        bool BitEnum::format(LSPString *dst, size_t v)
+        {
+            bool success = true;
+            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
+            {
+                if (!(v & e->value))
+                    continue;
+                if (dst->length() > 0)
+                {
+                    if (!(success = dst->append(',')))
+                        break;
+                }
+                if (!(success = dst->append_ascii(e->name)))
+                    break;
+            }
+            return success;
+        }
+
         void BitEnum::sync()
         {
             if (pStyle == NULL)
@@ -82,24 +100,23 @@ namespace lsp
             pStyle->begin(&sListener);
             {
                 LSPString s;
-                bool success = true;
-                for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
-                {
-                    if (!(nValue & e->value))
-                        continue;
-                    if (s.length() > 0)
-                    {
-                        if (!(success = s.append(',')))
-                            break;
-                    }
-                    if (!(success = s.append_ascii(e->name)))
-                        break;
-                }
-
-                if (success)
+                if (format(&s, nValue))
                     pStyle->set_string(nAtom, &s);
             }
             pStyle->end();
+        }
+
+        status_t BitEnum::init(Style *style, size_t v)
+        {
+            if (pStyle == NULL)
+                return STATUS_BAD_STATE;
+
+            LSPString s;
+            if (!format(&s, nValue))
+                return STATUS_NO_MEM;
+
+            style->create_string(nAtom, &s);
+            return STATUS_OK;
         }
 
         size_t BitEnum::xset_all(size_t v)

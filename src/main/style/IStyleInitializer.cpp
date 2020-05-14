@@ -20,7 +20,7 @@ namespace lsp
         {
         }
 
-        status_t IStyleInitializer::init(Style *style, Schema *schema)
+        status_t IStyleInitializer::init(Style *style)
         {
             return STATUS_OK;
         }

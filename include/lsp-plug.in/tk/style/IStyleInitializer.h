@@ -31,10 +31,9 @@ namespace lsp
                 /**
                  * Initialize style of the chema
                  * @param style style to initialize
-                 * @param schema schema used for initialization
                  * @return status of operation
                  */
-                virtual status_t init(Style *style, Schema *schema);
+                virtual status_t init(Style *style);
         };
     
     } /* namespace tk */

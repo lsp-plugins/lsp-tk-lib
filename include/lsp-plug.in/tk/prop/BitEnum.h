@@ -47,10 +47,12 @@ namespace lsp
                 status_t            bind(atom_t property, Style *style);
                 status_t            bind(const char *property, Style *style);
                 status_t            bind(const LSPString *property, Style *style);
+                bool                format(LSPString *dst, size_t v);
                 void                commit();
                 void                sync();
                 size_t              xset(size_t v);
                 size_t              xset(size_t v, bool flag);
+                status_t            init(Style *style, size_t v);
                 size_t              xunset(size_t v);
                 size_t              xtoggle(size_t v);
                 size_t              xset_all(size_t v);

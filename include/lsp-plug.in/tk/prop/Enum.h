@@ -50,6 +50,7 @@ namespace lsp
                 status_t            bind(const LSPString *property, Style *style);
                 void                commit();
                 ssize_t             set(ssize_t v);
+                ssize_t             init(Style *style, ssize_t v);
 
             protected:
                 explicit Enum(const prop::enum_t *xenum, prop::Listener *listener = NULL);

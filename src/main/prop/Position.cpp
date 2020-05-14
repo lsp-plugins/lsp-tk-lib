@@ -136,6 +136,22 @@ namespace lsp
             sync();
         }
 
+        namespace prop
+        {
+            status_t Position::init(Style *style, ssize_t left, ssize_t top)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->create_int(vAtoms[P_LEFT], left);
+                    style->create_int(vAtoms[P_TOP], top);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */
 

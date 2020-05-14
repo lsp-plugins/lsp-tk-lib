@@ -70,6 +70,16 @@ namespace lsp
                 sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
                 sBgColor.bind("bg_color", &sStyle);
+
+                Style *sclass = style_class();
+                if (sclass != NULL)
+                {
+                    sStyle.add_parent(sclass);
+                    sPadding.init(sclass, 0, 0, 0, 0);
+                    sScaling.init(sclass, 1.0f);
+                    sBrightness.init(sclass, 1.0f);
+                    sBgColor.init(sclass, "#cccccc");
+                }
             }
 
             // Declare slots
@@ -95,11 +105,6 @@ namespace lsp
             if (id >= 0) id = sSlots.add(SLOT_DRAG_REQUEST, slot_drag_request, self());
 
             return (id >= 0) ? STATUS_OK : -id;
-        }
-
-        status_t Widget::init_style(Style *style, Schema *schema)
-        {
-            return STATUS_OK;
         }
 
         void Widget::do_destroy()
@@ -130,6 +135,14 @@ namespace lsp
                 query_resize();
             if (sBgColor.is(prop))
                 query_draw();
+        }
+
+        Style *Widget::style_class() const
+        {
+            Schema *s = const_cast<Widget *>(this)->pDisplay->schema();
+            if (s == NULL)
+                return NULL;
+            return s->get(pClass->name);
         }
 
         void Widget::unlink_widget(Widget *w)
@@ -317,18 +330,6 @@ namespace lsp
             const char * const *ctype = _this->pDisplay->get_drag_mime_types();
 
             return _this->on_drag_request(ev, ctype);
-        }
-
-        status_t Widget::style_initializer(Style *style, Schema *schema, void *data)
-        {
-            if ((style == NULL) || (schema == NULL) || (data == NULL))
-                return STATUS_BAD_ARGUMENTS;
-
-            Widget *_this   = widget_ptrcast<Widget>(data);
-            if (_this == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
-            return _this->init_style(style, schema);
         }
 
         bool Widget::inside(ssize_t x, ssize_t y)

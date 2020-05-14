@@ -22,11 +22,10 @@ namespace lsp
         /**
          * Style initialization function
          * @param style style to initialize
-         * @param schema schema associated with style
          * @param additional args passed from the initialization call
          * @return status of operation
          */
-        typedef status_t (* style_init_t)(Style *style, Schema *schema, void *args);
+        typedef status_t (* style_init_t)(Style *style, void *args);
     }
 }
 

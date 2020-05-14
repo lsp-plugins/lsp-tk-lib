@@ -70,6 +70,17 @@ namespace lsp
             dst->set(bValue);
             set(tmp);
         }
+
+        namespace prop
+        {
+            status_t Boolean::init(Style *style, bool value)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+                style->create_bool(nAtom, value);
+                return STATUS_OK;
+            }
+        }
     } /* namespace calc */
 } /* namespace lsp */
 

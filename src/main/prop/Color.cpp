@@ -266,5 +266,42 @@ namespace lsp
             sync();
         }
 
+        namespace prop
+        {
+            status_t Color::init(Style *style, const char *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                else if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+                style->create_string(vAtoms[P_VALUE], value);
+                return STATUS_OK;
+            }
+
+            status_t Color::init(Style *style, const LSPString *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                else if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+                style->create_string(vAtoms[P_VALUE], value);
+                return STATUS_OK;
+            }
+
+            status_t Color::init(Style *style, const lsp::Color *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                else if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                char buf[32];
+                if (value->format_rgba(buf, sizeof(buf), 2) <= 0)
+                    return STATUS_UNKNOWN_ERR;
+
+                style->create_string(vAtoms[P_VALUE], buf);
+                return STATUS_OK;
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */

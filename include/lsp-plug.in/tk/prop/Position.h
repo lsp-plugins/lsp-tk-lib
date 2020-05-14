@@ -106,6 +106,15 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Position::unbind(vAtoms, DESC, &sListener); };
+
+                    /**
+                     * Init default position
+                     * @param style style
+                     * @param left left
+                     * @param top top
+                     * @return status of operation
+                     */
+                    status_t            init(Style *style, ssize_t left, ssize_t top);
             };
         }
     }

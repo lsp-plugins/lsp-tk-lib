@@ -101,6 +101,19 @@ namespace lsp
             return prev;
         }
 
+        ssize_t Enum::init(Style *style, ssize_t v)
+        {
+            if (pStyle == NULL)
+                return STATUS_BAD_STATE;
+
+            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
+            {
+                if (v == e->value)
+                    style->create_string(nAtom, e->name);
+            }
+            return STATUS_OK;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

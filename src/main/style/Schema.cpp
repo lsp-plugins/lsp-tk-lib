@@ -795,7 +795,7 @@ namespace lsp
             // Check that style is initialized
             if ((s != NULL) && (!s->bInitialized) && (init != NULL))
             {
-                init(&s->sStyle, this, args);
+                init(&s->sStyle, args);
                 s->bInitialized = true;
             }
 
@@ -809,7 +809,7 @@ namespace lsp
             // Check that style is initialized
             if ((s != NULL) && (!s->bInitialized) && (init != NULL))
             {
-                init->init(&s->sStyle, this);
+                init->init(&s->sStyle);
                 s->bInitialized = true;
             }
 

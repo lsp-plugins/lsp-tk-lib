@@ -165,6 +165,16 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Color::unbind(vAtoms, DESC, &sListener); };
+
+                    /**
+                     * Initialize style with default values
+                     * @param style style to initialize
+                     * @param value default value
+                     * @return status of operation
+                     */
+                    status_t            init(Style *style, const char *value);
+                    status_t            init(Style *style, const LSPString *value);
+                    status_t            init(Style *style, const lsp::Color *value);
             };
         }
 

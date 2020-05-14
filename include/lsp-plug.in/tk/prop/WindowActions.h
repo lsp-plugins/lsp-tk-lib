@@ -107,6 +107,14 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::WindowActions::unbind(); };
+
+                    /**
+                     * Initialize default value
+                     * @param style style
+                     * @param actions set of actions
+                     * @return status of operation
+                     */
+                    inline status_t     init(Style *style, size_t actions)              { return tk::WindowActions::init(style, actions); }
             };
         }
     }

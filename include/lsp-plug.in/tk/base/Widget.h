@@ -97,8 +97,6 @@ namespace lsp
                 static status_t     slot_focus_out(Widget *sender, void *ptr, void *data);
                 static status_t     slot_drag_request(Widget *sender, void *ptr, void *data);
 
-                static status_t     style_initializer(Style *style, Schema *schema, void *data);
-
             //---------------------------------------------------------------------------------
             // Interface for nested classes
             protected:
@@ -117,14 +115,6 @@ namespace lsp
                  * @param limit the widget size constraints to fill
                  */
                 virtual void        size_request(ws::size_limit_t *r);
-
-                /**
-                 * Initialize default widget style
-                 * @param style widget style to initialize
-                 * @param schema style schema
-                 * @return status of operation
-                 */
-                virtual status_t    init_style(Style *style, Schema *schema);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -321,6 +311,12 @@ namespace lsp
                  */
                 inline Style           *style()                 { return &sStyle;       }
                 inline const Style     *style() const           { return &sStyle;       }
+
+                /**
+                 * Get style class of this widget
+                 * @return style clas of this widget
+                 */
+                Style                  *style_class() const;
 
                 /** Get widget padding
                  *

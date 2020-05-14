@@ -75,8 +75,18 @@ namespace lsp
             sSize.bind("size", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
 
-            // Init color
-//            init_color(C_LABEL_TEXT, &sBorderColor);
+            Style *sclass = style_class();
+            if (sclass != NULL)
+            {
+                sBorderColor.init(sclass, "#000000");
+                sBorderStyle.init(sclass, ws::BS_SIZEABLE);
+                sBorderSize.init(sclass, 0);
+                sBorderRadius.init(sclass, 2);
+                sActions.init(sclass, ws::WA_ALL);
+                sPosition.init(sclass, 0, 0);
+                sSize.init(sclass, 160, 100);
+                sSizeConstraints.init(sclass, -1, -1, -1, -1);
+            }
 
             // Add slot(s)
             handler_id_t id = 0;

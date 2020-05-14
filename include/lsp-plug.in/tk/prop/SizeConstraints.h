@@ -129,6 +129,14 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::SizeConstraints::unbind(vAtoms, DESC, &sListener); };
+
+                    /**
+                     * Initialize
+                     * @param style style
+                     * @return status of operation
+                     */
+                    status_t            init(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
+                    status_t            init(Style *style, const ws::size_limit_t *p);
             };
         }
 

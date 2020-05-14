@@ -101,6 +101,15 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Size::unbind(vAtoms, DESC, &sListener); };
+
+                    /**
+                     * Initialize default size
+                     * @param style style
+                     * @param width width
+                     * @param height height
+                     * @return status of operation
+                     */
+                    status_t            init(Style *style, size_t width, size_t height);
             };
         }
     }

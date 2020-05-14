@@ -56,6 +56,14 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::BorderStyle::unbind(); };
+
+                    /**
+                     * Initialize default value
+                     * @param style style
+                     * @param bs default value
+                     * @return status of operation
+                     */
+                    inline status_t     init(Style *style, ws::border_style_t bs)       { return tk::BorderStyle::init(style, bs);      };
             };
         }
     }

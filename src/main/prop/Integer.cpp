@@ -72,5 +72,15 @@ namespace lsp
             set(tmp);
         }
     
+        namespace prop
+        {
+            status_t Integer::init(Style *style, ssize_t value)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+                style->create_int(nAtom, value);
+                return STATUS_OK;
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */

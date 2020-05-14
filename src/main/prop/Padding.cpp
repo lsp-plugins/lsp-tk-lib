@@ -340,5 +340,40 @@ namespace lsp
             padding->nTop       = sValue.nTop * scale;
             padding->nBottom    = sValue.nBottom * scale;
         }
+
+        namespace prop
+        {
+            status_t Padding::init(Style *style, size_t left, size_t right, size_t top, size_t bottom)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->create_int(vAtoms[P_LEFT], left);
+                    style->create_int(vAtoms[P_RIGHT], right);
+                    style->create_int(vAtoms[P_TOP], top);
+                    style->create_int(vAtoms[P_BOTTOM], bottom);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+
+            status_t Padding::init(Style *style, const padding_t *p)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->create_int(vAtoms[P_LEFT], p->nLeft);
+                    style->create_int(vAtoms[P_RIGHT], p->nRight);
+                    style->create_int(vAtoms[P_TOP], p->nTop);
+                    style->create_int(vAtoms[P_BOTTOM], p->nBottom);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */

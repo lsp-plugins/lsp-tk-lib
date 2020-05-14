@@ -335,6 +335,40 @@ namespace lsp
                 sc->nMinHeight  = lsp_max(sc->nMinHeight, sc->nMaxHeight);
         }
 
+        namespace prop
+        {
+            status_t SizeConstraints::init(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->create_int(vAtoms[P_MIN_WIDTH], min_width);
+                    style->create_int(vAtoms[P_MIN_HEIGHT], min_height);
+                    style->create_int(vAtoms[P_MAX_WIDTH], max_width);
+                    style->create_int(vAtoms[P_MAX_HEIGHT], max_height);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+
+            status_t SizeConstraints::init(Style *style, const ws::size_limit_t *p)
+            {
+                if ((pStyle == NULL) || (p == NULL))
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->create_int(vAtoms[P_MIN_WIDTH], p->nMinWidth);
+                    style->create_int(vAtoms[P_MIN_HEIGHT], p->nMinHeight);
+                    style->create_int(vAtoms[P_MAX_WIDTH], p->nMaxWidth);
+                    style->create_int(vAtoms[P_MAX_HEIGHT], p->nMaxHeight);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */
 
