@@ -83,6 +83,8 @@ namespace lsp
                 static status_t     parse_property_type(property_type_t *pt, const LSPString *text);
                 static status_t     parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt);
 
+                style_t            *get_style(const LSPString *id);
+
             public:
                 explicit Schema(Atoms *atoms);
                 virtual ~Schema();
@@ -123,14 +125,28 @@ namespace lsp
                  * If style does not exists, it will be automatically created and bound to the root style
                  * @return style or NULL on error
                  */
-                Style              *get(const char *id, style_init_t init = NULL);
+                Style              *get(const char *id, style_init_t init, void *args = NULL);
 
                 /**
                  * Get style by class identifier.
                  * If style does not exists, it will be automatically created and bound to the root style
                  * @return style or NULL on error
                  */
-                Style              *get(const LSPString *id, style_init_t init = NULL);
+                Style              *get(const LSPString *id, style_init_t init, void *args = NULL);\
+
+                /**
+                 * Get style by class identifier.
+                 * If style does not exists, it will be automatically created and bound to the root style
+                 * @return style or NULL on error
+                 */
+                Style              *get(const char *id, IStyleInitializer *init = NULL);
+
+                /**
+                 * Get style by class identifier.
+                 * If style does not exists, it will be automatically created and bound to the root style
+                 * @return style or NULL on error
+                 */
+                Style              *get(const LSPString *id, IStyleInitializer *init = NULL);
         };
     
     } /* namespace tk */

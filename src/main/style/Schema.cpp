@@ -736,30 +736,8 @@ namespace lsp
 
             return (tok.get_token(expr::TF_GET) == expr::TT_EOF) ? STATUS_OK : STATUS_BAD_FORMAT;
         }
-    
-        Style *Schema::root()
-        {
-            style_t *s = sCtx.pRoot;
-            if (s == NULL)
-            {
-                s = create_style();
-                if (s == NULL)
-                    return NULL;
-                sCtx.pRoot  = s;
-            }
 
-            return &s->sStyle;
-        }
-
-        Style *Schema::get(const char *id, style_init_t init)
-        {
-            LSPString tmp;
-            if (!tmp.set_utf8(id))
-                return NULL;
-            return get(&tmp, init);
-        }
-
-        Style *Schema::get(const LSPString *id, style_init_t init)
+        Schema::style_t *Schema::get_style(const LSPString *id)
         {
             style_t *s  = sCtx.vStyles.get(id);
             if (s == NULL)
@@ -784,11 +762,61 @@ namespace lsp
                 // Bind to root
                 s->sStyle.add_parent(r);
             }
+            return s;
+        }
+    
+        Style *Schema::root()
+        {
+            style_t *s = sCtx.pRoot;
+            if (s == NULL)
+            {
+                s = create_style();
+                if (s == NULL)
+                    return NULL;
+                sCtx.pRoot  = s;
+            }
+
+            return &s->sStyle;
+        }
+
+        Style *Schema::get(const char *id, style_init_t init, void *args)
+        {
+            LSPString tmp;
+            if (!tmp.set_utf8(id))
+                return NULL;
+            return get(&tmp, init, args);
+        }
+
+        Style *Schema::get(const char *id, IStyleInitializer *init)
+        {
+            LSPString tmp;
+            if (!tmp.set_utf8(id))
+                return NULL;
+            return get(&tmp, init);
+        }
+
+        Style *Schema::get(const LSPString *id, style_init_t init, void *args)
+        {
+            style_t *s = get_style(id);
 
             // Check that style is initialized
-            if ((init) && (!s->bInitialized))
+            if ((s != NULL) && (!s->bInitialized) && (init != NULL))
             {
-                init(&s->sStyle, this);
+                init(&s->sStyle, this, args);
+                s->bInitialized = true;
+            }
+
+            return &s->sStyle;
+        }
+
+        Style *Schema::get(const LSPString *id, IStyleInitializer *init)
+        {
+            style_t *s = get_style(id);
+
+            // Check that style is initialized
+            if ((s != NULL) && (!s->bInitialized) && (init != NULL))
+            {
+                init->init(&s->sStyle, this);
                 s->bInitialized = true;
             }
 

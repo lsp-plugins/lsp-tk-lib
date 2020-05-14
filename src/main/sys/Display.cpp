@@ -14,7 +14,8 @@ namespace lsp
 {
     namespace tk
     {
-        Display::Display()
+        Display::Display():
+            sSchema(this)
         {
             pDictionary     = NULL;
             pDisplay        = NULL;

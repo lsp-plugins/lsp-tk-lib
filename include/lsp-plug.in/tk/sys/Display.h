@@ -43,7 +43,7 @@ namespace lsp
                 lltl::parray<Widget>    vGarbage;
 
                 SlotSet                 sSlots;
-                Style                   sStyle;
+                Schema                  sSchema;
 
                 i18n::IDictionary      *pDictionary;
                 ws::IDisplay           *pDisplay;
@@ -171,7 +171,7 @@ namespace lsp
                  * Get style
                  * @return style
                  */
-                inline Style   *style()                     { return &sStyle; }
+                inline Schema  *schema()                    { return &sSchema; }
 
                 /** Get slots
                  *

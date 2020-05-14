@@ -27,6 +27,7 @@
 // Interfaces
 #include <lsp-plug.in/tk/prop/Listener.h>
 #include <lsp-plug.in/tk/style/IStyleListener.h>
+#include <lsp-plug.in/tk/style/IStyleInitializer.h>
 
 // Properties
 #include <lsp-plug.in/tk/prop/Property.h>
