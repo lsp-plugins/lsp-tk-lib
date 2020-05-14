@@ -29,12 +29,9 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t MultiProperty::bind(
-                atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener,
-                const char *property, Style *style, Atoms *xatoms
-        )
+        status_t MultiProperty::bind(const char *id, Style *style, atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener)
         {
-            if ((style == NULL) || (xatoms == NULL) || (property == NULL))
+            if ((style == NULL) || (id == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
             if (pStyle == style)
@@ -44,7 +41,7 @@ namespace lsp
             unbind(atoms, desc, listener);
 
             LSPString key;
-            if (!key.set_utf8(property))
+            if (!key.set_utf8(id))
                 return STATUS_NO_MEM;
             size_t len = key.length();
 
@@ -61,7 +58,7 @@ namespace lsp
                         res = STATUS_NO_MEM;
                         break;
                     }
-                    atom_t atom = xatoms->atom_id(key.get_utf8());
+                    atom_t atom = style->atom_id(key.get_utf8());
                     if (atom < 0)
                     {
                         res = STATUS_NO_MEM;
@@ -81,6 +78,20 @@ namespace lsp
             style->end();
 
             return res;
+        }
+
+        status_t MultiProperty::bind(atom_t id, Style *style, atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener)
+        {
+            if (style == NULL)
+                return STATUS_BAD_ARGUMENTS;
+            return bind(style->atom_name(id), style, atoms, desc, listener);
+        }
+
+        status_t MultiProperty::bind(const LSPString *id, Style *style, atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener)
+        {
+            if (id == NULL)
+                return STATUS_BAD_ARGUMENTS;
+            return bind(id->get_utf8(), style, atoms, desc, listener);
         }
 
         void MultiProperty::set_default(atom_t *atoms, const prop::desc_t *desc)

@@ -29,10 +29,9 @@ namespace lsp
 
             protected:
                 status_t        unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);
-                status_t        bind(
-                        atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener,
-                        const char *property, Style *style, Atoms *xatoms
-                );
+                status_t        bind(atom_t id, Style *style, atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);
+                status_t        bind(const char *id, Style *style, atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);
+                status_t        bind(const LSPString *id, Style *style, atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);
 
                 void            set_default(atom_t *atoms, const prop::desc_t *desc);
 

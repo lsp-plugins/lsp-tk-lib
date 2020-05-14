@@ -68,8 +68,8 @@ namespace lsp
             {
                 sScaling.bind("scaling", &sStyle);
                 sBrightness.bind("brightness", &sStyle);
-                sPadding.bind("padding", this);
-                sBgColor.bind("bg_color", this);
+                sPadding.bind("padding", &sStyle);
+                sBgColor.bind("bg_color", &sStyle);
             }
 
             // Declare slots

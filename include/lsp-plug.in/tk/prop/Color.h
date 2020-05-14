@@ -157,15 +157,14 @@ namespace lsp
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    status_t            bind(const char *property, Widget *widget);
-                    status_t            bind(atom_t property, Widget *widget);
-                    status_t            bind(const char *property, Style *style, Atoms *atoms);
-                    status_t            bind(atom_t property, Style *style, Atoms *atoms);
+                    inline status_t     bind(atom_t property, Style *style)             { return tk::Color::bind(property, style, vAtoms, DESC, &sListener); }
+                    inline status_t     bind(const char *property, Style *style)        { return tk::Color::bind(property, style, vAtoms, DESC, &sListener); }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return tk::Color::bind(property, style, vAtoms, DESC, &sListener); }
 
                     /**
                      * Unbind property
                      */
-                    inline status_t     unbind()            { return MultiProperty::unbind(vAtoms, DESC, &sListener); };
+                    inline status_t     unbind()                                        { return tk::Color::unbind(vAtoms, DESC, &sListener); };
             };
         }
 

@@ -66,14 +66,14 @@ namespace lsp
             // Bind properties first
             sTitle.bind(&sStyle, pDisplay->dictionary());
             sRole.bind(&sStyle, pDisplay->dictionary());
-            sBorderColor.bind("border.color", this);
+            sBorderColor.bind("border.color", &sStyle);
             sBorderStyle.bind("border.style", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sWindowActions.bind("window_actions", &sStyle);
-            sPosition.bind("position", this);
-            sSize.bind("size", this);
-            sSizeConstraints.bind("size.constraints", this);
+            sPosition.bind("position", &sStyle);
+            sSize.bind("size", &sStyle);
+            sSizeConstraints.bind("size.constraints", &sStyle);
 
             // Init color
 //            init_color(C_LABEL_TEXT, &sBorderColor);

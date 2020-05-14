@@ -335,54 +335,6 @@ namespace lsp
                 sc->nMinHeight  = lsp_max(sc->nMinHeight, sc->nMaxHeight);
         }
 
-        namespace prop
-        {
-            status_t SizeConstraints::bind(const char *property, Widget *widget)
-            {
-                if (widget == NULL)
-                    return STATUS_BAD_ARGUMENTS;
-
-                return MultiProperty::bind
-                    (
-                        vAtoms, DESC, &sListener,
-                        property, widget->style(), widget->display()
-                    );
-            }
-
-            status_t SizeConstraints::bind(atom_t property, Widget *widget)
-            {
-                if (widget == NULL)
-                    return STATUS_BAD_ARGUMENTS;
-                Display *dpy = widget->display();
-                if (dpy == NULL)
-                    return STATUS_BAD_ARGUMENTS;
-                return MultiProperty::bind
-                    (
-                        vAtoms, DESC, &sListener,
-                        dpy->atom_name(property), widget->style(), dpy
-                    );
-            }
-
-            status_t SizeConstraints::bind(const char *property, Style *style, Atoms *atoms)
-            {
-                return MultiProperty::bind
-                    (
-                        vAtoms, DESC, &sListener,
-                        property, style, atoms
-                    );
-            }
-
-            status_t SizeConstraints::bind(atom_t property, Style *style, Atoms *atoms)
-            {
-                if (atoms == NULL)
-                    return STATUS_BAD_ARGUMENTS;
-                return MultiProperty::bind
-                    (
-                        vAtoms, DESC, &sListener,
-                        atoms->atom_name(property), style, atoms
-                    );
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 
