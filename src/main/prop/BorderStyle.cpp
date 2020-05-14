@@ -22,44 +22,6 @@ namespace lsp
             { NULL,             -1                  }
         };
 
-        namespace prop
-        {
-            status_t BorderStyle::bind(const char *property, Widget *widget)
-            {
-                if ((widget == NULL) || (property == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-
-                Display *dpy    = widget->display();
-                atom_t id       = (dpy != NULL) ? dpy->atom_id(property) : -1;
-                if (id < 0)
-                    return STATUS_UNKNOWN_ERR;
-
-                return tk::BorderStyle::bind(id, widget->style());
-            }
-
-            status_t BorderStyle::bind(atom_t property, Widget *widget)
-            {
-                return tk::BorderStyle::bind(property, widget->style());
-            }
-
-            status_t BorderStyle::bind(const char *property, Atoms *atoms, Style *style)
-            {
-                if ((atoms == NULL) || (style == NULL) || (property < 0))
-                    return STATUS_BAD_ARGUMENTS;
-
-                atom_t id       = atoms->atom_id(property);
-                if (id < 0)
-                    return STATUS_UNKNOWN_ERR;
-
-                return tk::BorderStyle::bind(id, style);
-            }
-
-            status_t BorderStyle::bind(atom_t property, Style *style)
-            {
-                return tk::BorderStyle::bind(property, style);
-            }
-        }
-
     } /* namespace tk */
 } /* namespace lsp */
 

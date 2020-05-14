@@ -67,7 +67,7 @@ namespace lsp
             sTitle.bind(&sStyle, pDisplay->dictionary());
             sRole.bind(&sStyle, pDisplay->dictionary());
             sBorderColor.bind("border.color", this);
-            sBorderStyle.bind("border.style", this);
+            sBorderStyle.bind("border.style", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sWindowActions.bind("window_actions", &sStyle);

@@ -19,7 +19,7 @@ namespace lsp
         /**
          * Integering property interface
          */
-        class Enum: public Property
+        class Enum: public SimpleProperty
         {
             private:
                 Enum & operator = (const Enum *);
@@ -46,6 +46,8 @@ namespace lsp
             protected:
                 status_t            unbind();
                 status_t            bind(atom_t property, Style *style);
+                status_t            bind(const char *property, Style *style);
+                status_t            bind(const LSPString *property, Style *style);
                 void                commit();
                 ssize_t             set(ssize_t v);
 

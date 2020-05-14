@@ -99,14 +99,14 @@ namespace lsp
                     /**
                      * Bind property with specified name to the style of linked widget
                      */
-                    inline status_t     bind(atom_t property, Style *style)             { return BitEnum::bind(property, style); }
-                    inline status_t     bind(const char *property, Style *style)        { return BitEnum::bind(property, style); }
-                    inline status_t     bind(const LSPString *property, Style *style)   { return BitEnum::bind(property, style); }
+                    inline status_t     bind(atom_t property, Style *style)             { return tk::WindowActions::bind(property, style); }
+                    inline status_t     bind(const char *property, Style *style)        { return tk::WindowActions::bind(property, style); }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return tk::WindowActions::bind(property, style); }
 
                     /**
                      * Unbind property
                      */
-                    inline status_t     unbind()                    { return tk::WindowActions::unbind(); };
+                    inline status_t     unbind()                                        { return tk::WindowActions::unbind(); };
             };
         }
     }
