@@ -64,7 +64,7 @@ namespace lsp
                 pListener->notify(this);
         }
 
-        void Size::sync()
+        void Size::sync(bool notify)
         {
             if (pStyle != NULL)
             {
@@ -86,7 +86,7 @@ namespace lsp
                 }
                 pStyle->end();
             }
-            if (pListener != NULL)
+            if ((pListener != NULL) && (notify))
                 pListener->notify(this);
         }
 
@@ -97,7 +97,7 @@ namespace lsp
                 return value;
 
             nWidth          = value;
-            sync();
+            sync(true);
             return old;
         }
 
@@ -108,7 +108,7 @@ namespace lsp
                 return value;
 
             nHeight         = value;
-            sync();
+            sync(true);
             return old;
         }
 
@@ -120,7 +120,7 @@ namespace lsp
 
             nWidth      = width;
             nHeight     = height;
-            sync();
+            sync(true);
         }
 
         void Size::set(const Size *p)
@@ -131,7 +131,7 @@ namespace lsp
 
             nWidth      = p->nWidth;
             nHeight     = p->nHeight;
-            sync();
+            sync(true);
         }
 
         namespace prop
@@ -148,6 +148,21 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            void Size::commit(size_t width, size_t height, float scale)
+            {
+                if (scale > 0.0f)
+                {
+                    nWidth  = size_t(float(width) / scale);
+                    nHeight = size_t(float(height) / scale);
+                }
+                else
+                {
+                    nWidth  = width;
+                    nHeight = height;
+                }
+                sync(false);
             }
         }
     } /* namespace tk */

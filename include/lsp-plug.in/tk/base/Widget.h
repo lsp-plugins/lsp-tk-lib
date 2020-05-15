@@ -32,7 +32,7 @@ namespace lsp
                 {
                     REDRAW_SURFACE  = 1 << 0,       // Need to redraw surface
                     REDRAW_CHILD    = 1 << 1,       // Need to redraw child only
-                    RESIZE_VALID    = 1 << 2,       // Size limit structure is valid
+                    SIZE_INVALID    = 1 << 2,       // Size limit structure is valid
                     RESIZE_PENDING  = 1 << 3,       // The resize request is pending
 
                     F_VISIBLE       = 1 << 8,       // Widget is visible
@@ -204,6 +204,12 @@ namespace lsp
                  */
                 inline bool redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); };
 
+                /** Check if there is resize request pending
+                 *
+                 * @return true if there is resize request pending
+                 */
+                inline bool resize_pending() const              { return nFlags & (SIZE_INVALID | RESIZE_PENDING); };
+
                 /** Check that widget is visible
                  *
                  * @return true if widget is visible
@@ -364,7 +370,7 @@ namespace lsp
                 /** Query widget for resize
                  *
                  */
-                virtual void            query_resize();
+                virtual void            query_resize(size_t flags = RESIZE_PENDING);
 
                 /** Set expanding flag
                  *
@@ -502,6 +508,11 @@ namespace lsp
                  *
                  */
                 virtual void            commit_redraw();
+
+                /** Commit widet resize
+                 *
+                 */
+                virtual void            commit_resize();
 
                 /** Get most top-level widget
                  *

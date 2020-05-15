@@ -428,7 +428,11 @@ namespace lsp
         {
             if (!(nFlags & F_VISIBLE))
                 return;
-            nFlags     |= (flags & (REDRAW_CHILD | REDRAW_SURFACE));
+            flags      &= (REDRAW_CHILD | REDRAW_SURFACE);
+            if (!flags)
+                return;
+
+            nFlags     |= flags;
             if (pParent != NULL)
                 pParent->query_draw(REDRAW_CHILD);
         }
@@ -438,6 +442,11 @@ namespace lsp
             nFlags &= ~(REDRAW_SURFACE | REDRAW_CHILD);
         }
 
+        void Widget::commit_resize()
+        {
+            nFlags &= ~(SIZE_INVALID | RESIZE_PENDING);
+        }
+
         status_t Widget::queue_destroy()
         {
             if (pDisplay == NULL)
@@ -445,11 +454,17 @@ namespace lsp
             return pDisplay->queue_destroy(this);
         }
 
-        void Widget::query_resize()
+        void Widget::query_resize(size_t flags)
         {
-            Widget *w = toplevel();
-            if ((w != NULL) && (w != this))
-                w->query_resize();
+            if (!(nFlags & F_VISIBLE))
+                return;
+            flags      &= (SIZE_INVALID | RESIZE_PENDING);
+            if (!flags)
+                return;
+
+            nFlags     |= flags;
+            if (pParent != NULL)
+                pParent->query_resize(RESIZE_PENDING);
         }
 
         void Widget::set_expand(bool value)
@@ -594,7 +609,7 @@ namespace lsp
 
         void Widget::get_size_limit(ws::size_limit_t *l)
         {
-            if (nFlags & RESIZE_VALID)
+            if (!(nFlags & SIZE_INVALID))
             {
                 *l  = sSizeLimit;
                 return;
@@ -605,7 +620,7 @@ namespace lsp
 
             // Store size limit and update flags
             sSizeLimit  = *l;
-            nFlags |= RESIZE_VALID;
+            nFlags &= ~SIZE_INVALID;
         }
 
         void Widget::size_request(ws::size_limit_t *r)

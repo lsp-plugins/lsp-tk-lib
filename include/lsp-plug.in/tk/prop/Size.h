@@ -53,7 +53,7 @@ namespace lsp
                 Listener            sListener;          // Listener
 
             protected:
-                void                sync();
+                void                sync(bool notify);
                 void                commit(atom_t property);
 
             protected:
@@ -110,6 +110,14 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, size_t width, size_t height);
+
+                    /**
+                     * Commit new size
+                     * @param width new width
+                     * @param height new height
+                     * @param scale scaling factor
+                     */
+                    void                commit(size_t width, size_t height, float scale);
             };
         }
     }

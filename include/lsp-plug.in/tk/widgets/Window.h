@@ -36,7 +36,6 @@ namespace lsp
                 Widget                 *pPointed;
                 bool                    bHasFocus;
                 bool                    bOverridePointer;
-                bool                    bSizeRequest;
                 bool                    bMapFlag;
                 float                   nVertPos;
                 float                   nHorPos;
@@ -118,8 +117,6 @@ namespace lsp
 
                 inline bool                     override_pointer() const    { return bOverridePointer; }
 
-                inline bool                     size_request_pending() const{ return bSizeRequest; }
-
                 inline window_poilicy_t         policy() const              { return enPolicy; }
 
                 inline float                    vpos() const                { return nVertPos; }
@@ -145,8 +142,6 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
-                virtual void            query_resize();
-
                 virtual void            render(ws::ISurface *s, bool force);
 
                 virtual status_t        set_cursor(ws::mouse_pointer_t mp);

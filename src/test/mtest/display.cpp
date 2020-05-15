@@ -41,6 +41,30 @@ MTEST_BEGIN("tk", display)
 //            }
 //    };
 
+    static status_t slot_close(tk::Widget *sender, void *ptr, void *data)
+    {
+        sender->display()->quit_main();
+        return STATUS_OK;
+    }
+
+    static status_t slot_key_up(tk::Widget *sender, void *ptr, void *data)
+    {
+        tk::Window *wnd = tk::widget_cast<tk::Window>(sender);
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+        test_type_t *_this = static_cast<test_type_t *>(ptr);
+
+        if ((wnd != NULL) && (ev != NULL) && (ev->nType == ws::UIE_KEY_UP))
+        {
+            _this->printf("Key up: %c (0x%x)\n", (char)ev->nCode, int(ev->nCode));
+
+            if ((ev->nCode == '+') || (ev->nCode == ws::WSK_KEYPAD_ADD))
+                wnd->scaling()->set(wnd->scaling()->get() + 0.25f);
+            else if ((ev->nCode == '-') || (ev->nCode == ws::WSK_KEYPAD_SUBTRACT))
+                wnd->scaling()->set(wnd->scaling()->get() - 0.25f);
+        }
+        return STATUS_OK;
+    }
+
     MTEST_MAIN
     {
         tk::Display *dpy = new tk::Display();
@@ -57,6 +81,8 @@ MTEST_BEGIN("tk", display)
         wnd->size_constraints()->set(160, 100, 640, 400);
         wnd->size()->set(320, 200);
         wnd->show();
+        wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
+        wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
 
         MTEST_ASSERT(dpy->main() == STATUS_OK);
 

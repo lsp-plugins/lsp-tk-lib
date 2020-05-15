@@ -64,7 +64,7 @@ namespace lsp
                 pListener->notify(this);
         }
 
-        void Position::sync()
+        void Position::sync(bool notify)
         {
             if (pStyle != NULL)
             {
@@ -87,7 +87,7 @@ namespace lsp
                 pStyle->end();
             }
 
-            if (pListener != NULL)
+            if ((pListener != NULL) && (notify))
                 pListener->notify(this);
         }
 
@@ -98,7 +98,7 @@ namespace lsp
                 return value;
 
             nLeft          = value;
-            sync();
+            sync(true);
             return old;
         }
 
@@ -109,7 +109,7 @@ namespace lsp
                 return value;
 
             nTop            = value;
-            sync();
+            sync(true);
             return old;
         }
 
@@ -121,7 +121,7 @@ namespace lsp
 
             nLeft       = left;
             nTop        = top;
-            sync();
+            sync(true);
         }
 
         void Position::set(const Position *p)
@@ -132,7 +132,7 @@ namespace lsp
 
             nLeft       = p->nLeft;
             nTop        = p->nTop;
-            sync();
+            sync(true);
         }
 
         namespace prop
@@ -149,6 +149,13 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            void Position::commit(ssize_t left, ssize_t top)
+            {
+                nLeft   = left;
+                nTop    = top;
+                sync(false);
             }
         }
     } /* namespace tk */

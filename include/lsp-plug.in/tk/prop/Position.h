@@ -57,7 +57,7 @@ namespace lsp
                 Listener            sListener;          // Listener
 
             protected:
-                void                sync();
+                void                sync(bool notify);
                 void                commit(atom_t property);
                 void                parse(const LSPString *s);
 
@@ -115,6 +115,14 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, ssize_t left, ssize_t top);
+
+                    /**
+                     * Commit new position
+                     * @param left left
+                     * @param top top
+                     * @param scale
+                     */
+                    void                commit(ssize_t left, ssize_t top);
             };
         }
     }

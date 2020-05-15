@@ -39,7 +39,6 @@ namespace lsp
             bHasFocus       = false;
             bOverridePointer= false;
             bMapFlag        = false;
-            bSizeRequest    = true;
             nVertPos        = 0.5f;
             nHorPos         = 0.5f;
             nVertScale      = 0.0f;
@@ -210,13 +209,13 @@ namespace lsp
             if (pWindow == NULL)
                 return STATUS_OK;
 
-            if (bSizeRequest)
+            if (resize_pending())
             {
                 lsp_trace("Synchronizing size");
                 sync_size();
-                bSizeRequest    = false;
-                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
                 realize(&sRectangle);
+                commit_resize();
+                query_draw();
             }
 
             if (!redraw_pending())
@@ -236,11 +235,6 @@ namespace lsp
             update_pointer();
 
             return STATUS_OK;
-        }
-
-        void Window::query_resize()
-        {
-            bSizeRequest = true;
         }
 
         status_t Window::get_absolute_geometry(ws::rectangle_t *r)
@@ -331,62 +325,74 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (sSize.is(prop))
-                query_resize();
+            if (pWindow == NULL)
+                return;
 
-            if (pWindow != NULL)
+            if (sTitle.is(prop))
             {
-                if (sTitle.is(prop))
-                {
-                    // Make formatted title of the window
-                    LSPString text;
-                    status_t res = sTitle.format(&text);
-                    if (res != STATUS_OK)
-                        return;
+                // Make formatted title of the window
+                LSPString text;
+                status_t res = sTitle.format(&text);
+                if (res != STATUS_OK)
+                    return;
 
-                    // Perform ASCII formatting
-                    char *ascii = text.clone_ascii();
-                    const char *caption = text.get_utf8();
-                    if (caption == NULL)
-                        caption = "";
+                // Perform ASCII formatting
+                char *ascii = text.clone_ascii();
+                const char *caption = text.get_utf8();
+                if (caption == NULL)
+                    caption = "";
 
-                    pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
-                    if (ascii != NULL)
-                        ::free(ascii);
-                }
-                if (sRole.is(prop))
+                pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
+                if (ascii != NULL)
+                    ::free(ascii);
+            }
+            if (sRole.is(prop))
+            {
+                // Make formatted title of the window
+                LSPString text;
+                status_t res = sRole.format(&text);
+                if (res != STATUS_OK)
+                    return;
+                pWindow->set_role(text.get_utf8());
+            }
+            if (sBorderColor.is(prop))
+                query_draw();
+            if (sBorderSize.is(prop) || sScaling.is(prop))
+                query_resize();
+            if (sBorderRadius.is(prop) || sScaling.is(prop))
+                query_resize();
+            if (sBorderStyle.is(prop))
+                pWindow->set_border_style(sBorderStyle.get());
+            if (sActions.is(prop))
+                pWindow->set_window_actions(sActions.actions());
+            if (sPosition.is(prop))
+                pWindow->move(sPosition.left(), sPosition.top());
+            if (sSizeConstraints.is(prop) || sScaling.is(prop) || (sActions.is(prop)))
+            {
+                ws::size_limit_t l;
+                sSizeConstraints.compute(&l, sScaling.get());
+                lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
+                        int(l.nMinWidth), int(l.nMaxWidth),
+                        int(l.nMinHeight), int(l.nMaxHeight)
+                    );
+                pWindow->set_size_constraints(&l);
+            }
+            if (sSize.is(prop) || sScaling.is(prop))
+            {
+                float scale = sScaling.get();
+                size_t width = sSize.width(), height = sSize.height();
+                if (scale > 0.0f)
                 {
-                    // Make formatted title of the window
-                    LSPString text;
-                    status_t res = sRole.format(&text);
-                    if (res != STATUS_OK)
-                        return;
-                    pWindow->set_role(text.get_utf8());
+                    width  *= scale;
+                    height *= scale;
                 }
-                if (sBorderColor.is(prop))
-                    query_draw();
-                if (sBorderSize.is(prop) || sScaling.is(prop))
-                    query_resize();
-                if (sBorderRadius.is(prop) || sScaling.is(prop))
-                    query_resize();
-                if (sBorderStyle.is(prop))
-                    pWindow->set_border_style(sBorderStyle.get());
-                if (sActions.is(prop))
-                    pWindow->set_window_actions(sActions.actions());
-                if (sPosition.is(prop))
-                    pWindow->move(sPosition.left(), sPosition.top());
-                if (sSize.is(prop))
-                    query_resize();
-                if (sSizeConstraints.is(prop) || sScaling.is(prop) || (sActions.is(prop)))
-                {
-                    ws::size_limit_t l;
-                    sSizeConstraints.compute(&l, sScaling.get());
-                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
-                            int(l.nMinWidth), int(l.nMaxWidth),
-                            int(l.nMinHeight), int(l.nMaxHeight)
-                        );
-                    pWindow->set_size_constraints(&l);
-                }
+                if (width < 1)
+                    width = 1;
+                if (height < 1)
+                    height = 1;
+
+                pWindow->resize(width, height);
+                query_resize();
             }
         }
 
@@ -740,7 +746,9 @@ namespace lsp
         {
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             WidgetContainer::realize(r);
-            bSizeRequest        = false;
+
+            sPosition.commit(r->nLeft, r->nTop);
+            sSize.commit(r->nWidth, r->nHeight, sScaling.get());
 
             if (pChild == NULL)
                 return;
@@ -812,6 +820,10 @@ namespace lsp
             r->nMinHeight       = pad.nTop + pad.nBottom + border * 2;
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
+            if (r->nMinWidth < 1)
+                r->nMinWidth        = 1;
+            if (r->nMinHeight < 1)
+                r->nMinHeight       = 1;
 
             if (pChild != NULL)
             {
