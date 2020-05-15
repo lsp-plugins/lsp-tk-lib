@@ -379,9 +379,13 @@ namespace lsp
                     query_resize();
                 if (sSizeConstraints.is(prop) || sScaling.is(prop) || (sActions.is(prop)))
                 {
-                    ws::size_limit_t size_limit;
-                    sSizeConstraints.compute(&size_limit, sScaling.get());
-                    pWindow->set_size_constraints(&size_limit);
+                    ws::size_limit_t l;
+                    sSizeConstraints.compute(&l, sScaling.get());
+                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
+                            int(l.nMinWidth), int(l.nMaxWidth),
+                            int(l.nMinHeight), int(l.nMaxHeight)
+                        );
+                    pWindow->set_size_constraints(&l);
                 }
             }
         }

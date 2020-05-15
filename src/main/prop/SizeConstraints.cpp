@@ -300,37 +300,35 @@ namespace lsp
             ws::size_limit_t l;
             compute(&l, scale);
 
-            // Compute maximum width
-            if ((sc->nMaxWidth >= 0) && (l.nMaxWidth >= 0))
-                sc->nMaxWidth   = lsp_min(sc->nMaxWidth, l.nMaxWidth);
+            // Compute maximum width & height
+            if (sc->nMaxWidth >= 0)
+                sc->nMaxWidth   = (l.nMaxWidth >= 0) ? lsp_min(sc->nMaxWidth, l.nMaxWidth) : sc->nMaxWidth;
             else
                 sc->nMaxWidth   = l.nMaxWidth;
 
-            // Compute maximum height
-            if ((sc->nMaxHeight) && (l.nMaxHeight >= 0))
-                sc->nMaxHeight  = lsp_min(sc->nMaxHeight, l.nMaxHeight);
+            if (sc->nMaxHeight >= 0)
+                sc->nMaxHeight  = (l.nMaxHeight >= 0) ? lsp_min(sc->nMaxHeight, l.nMaxHeight) : sc->nMaxHeight;
             else
                 sc->nMaxHeight  = l.nMaxHeight;
 
-            // Compute minimum width
-            if ((l.nMinWidth >= 0) && (sc->nMinWidth >= 0))
-                sc->nMinWidth   = lsp_max(sc->nMinWidth, l.nMinWidth);
+            // Compute minimum width & height
+            if (sc->nMinWidth >= 0)
+                sc->nMinWidth   = (l.nMinWidth >= 0) ? lsp_max(sc->nMinWidth, l.nMinWidth) : sc->nMinWidth;
             else
                 sc->nMinWidth   = l.nMinWidth;
 
-            // Compute minimum height
-            if ((sc->nMinHeight >= 0) && (l.nMinHeight >= 0))
-                sc->nMinHeight  = lsp_max(sc->nMinHeight, l.nMinHeight);
+            if (sc->nMinHeight >= 0)
+                sc->nMinHeight  = (l.nMinHeight >= 0) ? lsp_max(sc->nMinHeight, l.nMinHeight) : sc->nMinHeight;
             else
                 sc->nMinHeight  = l.nMinHeight;
 
             // Maximum width should not be less than minimum width
             if ((sc->nMinWidth >= 0) && (sc->nMaxWidth >= 0))
-                sc->nMinWidth   = lsp_max(sc->nMinWidth, sc->nMaxWidth);
+                sc->nMaxWidth   = lsp_max(sc->nMinWidth, sc->nMaxWidth);
 
             // Maximum height should not be less than minimum height
             if ((sc->nMinHeight >= 0) && (sc->nMaxHeight >= 0))
-                sc->nMinHeight  = lsp_max(sc->nMinHeight, sc->nMaxHeight);
+                sc->nMaxHeight  = lsp_max(sc->nMinHeight, sc->nMaxHeight);
         }
 
         namespace prop
