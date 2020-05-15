@@ -54,7 +54,7 @@ namespace lsp
             {
                 if (n > 0)
                 {
-                    if (tok.current() != expr::TT_SEMICOLON)
+                    if (tok.current() != expr::TT_COMMA)
                         return 0;
                     if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return 0;
@@ -85,7 +85,7 @@ namespace lsp
             {
                 if (n > 0)
                 {
-                    if (tok.current() != expr::TT_SEMICOLON)
+                    if (tok.current() != expr::TT_COMMA)
                         return -1;
                     if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return -1;
@@ -118,7 +118,7 @@ namespace lsp
             {
                 if (semicolon)
                 {
-                    if (tok.current() != expr::TT_SEMICOLON)
+                    if (tok.current() != expr::TT_COMMA)
                         return 0;
                     if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return 0;
@@ -158,7 +158,7 @@ namespace lsp
             {
                 if (dst->size() > 0)
                 {
-                    if (tok.current() != expr::TT_SEMICOLON)
+                    if (tok.current() != expr::TT_COMMA)
                         return 0;
                     if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return 0;
@@ -191,7 +191,7 @@ namespace lsp
             {
                 if (semicolon)
                 {
-                    if (tok.current() != expr::TT_SEMICOLON)
+                    if (tok.current() != expr::TT_COMMA)
                         return 0;
                     if ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) == expr::TT_EOF)
                         return 0;

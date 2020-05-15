@@ -110,7 +110,7 @@ namespace lsp
                 return STATUS_BAD_STATE;
 
             LSPString s;
-            if (!format(&s, nValue))
+            if (!format(&s, v))
                 return STATUS_NO_MEM;
 
             style->create_string(nAtom, &s);

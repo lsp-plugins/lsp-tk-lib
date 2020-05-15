@@ -58,12 +58,33 @@ namespace lsp
 
         status_t Window::init()
         {
+            // Initialize redraw timer
+            ws::IDisplay *dpy   = pDisplay->display();
+            if (dpy == NULL)
+                return STATUS_BAD_STATE;
+
+            // Create and initialize window
+            pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) :
+                          (nScreen >= 0) ? dpy->create_window(nScreen) :
+                          dpy->create_window();
+
+            if (pWindow == NULL)
+                return STATUS_UNKNOWN_ERR;
+
+            // Initialize
+            status_t result = pWindow->init();
+            if (result != STATUS_SUCCESS)
+            {
+                destroy();
+                return result;
+            }
+            pWindow->set_handler(this);
+
             // Initialize parent class
-            status_t result = WidgetContainer::init();
-            if (result != STATUS_OK)
+            if ((result = WidgetContainer::init()) != STATUS_OK)
                 return result;
 
-            // Bind properties first
+            // Bind properties
             sTitle.bind(&sStyle, pDisplay->dictionary());
             sRole.bind(&sStyle, pDisplay->dictionary());
             sBorderColor.bind("border.color", &sStyle);
@@ -94,39 +115,9 @@ namespace lsp
             if (id < 0)
                 return - id;
 
-            // Initialize redraw timer
-            ws::IDisplay *dpy   = pDisplay->display();
-            if (dpy == NULL)
-                return STATUS_BAD_STATE;
-
+            // Bind redraw handler
             sRedraw.bind(dpy);
             sRedraw.set_handler(tmr_redraw_request, self());
-
-            // Create and initialize window
-            pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) :
-                          (nScreen >= 0) ? dpy->create_window(nScreen) :
-                          dpy->create_window();
-            if (pWindow == NULL)
-                return STATUS_UNKNOWN_ERR;
-            pWindow->set_handler(this);
-
-            // Initialize
-            result = pWindow->init();
-            if (result != STATUS_SUCCESS)
-            {
-                destroy();
-                return result;
-            }
-
-            // Initialize window geometry
-            lsp_trace("Deploying window properties, window id=%p", pWindow->handle());
-
-            // Deploy set of properties after window has been created
-            property_changed(&sBorderStyle);
-            property_changed(&sBorderSize);
-            property_changed(&sActions);
-            property_changed(&sSizeConstraints);
-            property_changed(&sSize);
 
             lsp_trace("Window has been initialized");
 
@@ -372,13 +363,21 @@ namespace lsp
                         return;
                     pWindow->set_role(text.get_utf8());
                 }
+                if (sBorderColor.is(prop))
+                    query_draw();
+                if (sBorderSize.is(prop) || sScaling.is(prop))
+                    query_resize();
+                if (sBorderRadius.is(prop) || sScaling.is(prop))
+                    query_resize();
                 if (sBorderStyle.is(prop))
                     pWindow->set_border_style(sBorderStyle.get());
                 if (sActions.is(prop))
                     pWindow->set_window_actions(sActions.actions());
                 if (sPosition.is(prop))
                     pWindow->move(sPosition.left(), sPosition.top());
-                if (sSizeConstraints.is(prop))
+                if (sSize.is(prop))
+                    query_resize();
+                if (sSizeConstraints.is(prop) || sScaling.is(prop) || (sActions.is(prop)))
                 {
                     ws::size_limit_t size_limit;
                     sSizeConstraints.compute(&size_limit, sScaling.get());
