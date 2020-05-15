@@ -54,31 +54,31 @@ namespace lsp
             switch (n)
             {
                 case 1:
-                    p.nLeft     = lsp_max(vv[0], 0);
-                    p.nRight    = lsp_max(vv[0], 0);
-                    p.nTop      = lsp_max(vv[0], 0);
-                    p.nBottom   = lsp_max(vv[0], 0);
+                    p.nLeft     = vv[0];
+                    p.nRight    = vv[0];
+                    p.nTop      = vv[0];
+                    p.nBottom   = vv[0];
                     break;
 
                 case 2:
-                    p.nLeft     = lsp_max(vv[0], 0);
-                    p.nRight    = lsp_max(vv[0], 0);
-                    p.nTop      = lsp_max(vv[1], 0);
-                    p.nBottom   = lsp_max(vv[1], 0);
+                    p.nLeft     = vv[0];
+                    p.nRight    = vv[0];
+                    p.nTop      = vv[1];
+                    p.nBottom   = vv[1];
                     break;
 
                 case 3:
-                    p.nLeft     = lsp_max(vv[0], 0);
-                    p.nRight    = lsp_max(vv[1], 0);
-                    p.nTop      = lsp_max(vv[2], 0);
-                    p.nBottom   = lsp_max(vv[2], 0);
+                    p.nLeft     = vv[0];
+                    p.nRight    = vv[1];
+                    p.nTop      = vv[2];
+                    p.nBottom   = vv[2];
                     break;
 
                 case 4:
-                    p.nLeft     = lsp_max(vv[0], 0);
-                    p.nRight    = lsp_max(vv[1], 0);
-                    p.nTop      = lsp_max(vv[2], 0);
-                    p.nBottom   = lsp_max(vv[3], 0);
+                    p.nLeft     = vv[0];
+                    p.nRight    = vv[1];
+                    p.nTop      = vv[2];
+                    p.nBottom   = vv[3];
                     break;
 
                 default:
@@ -98,31 +98,31 @@ namespace lsp
             switch (n)
             {
                 case 1:
-                    p.nLeft     = lsp_max(vv[0], 0);
-                    p.nRight    = lsp_max(vv[0], 0);
-                    p.nTop      = lsp_max(vv[0], 0);
-                    p.nBottom   = lsp_max(vv[0], 0);
+                    p.nLeft     = vv[0];
+                    p.nRight    = vv[0];
+                    p.nTop      = vv[0];
+                    p.nBottom   = vv[0];
                     break;
 
                 case 2:
-                    p.nTop      = lsp_max(vv[0], 0);
-                    p.nBottom   = lsp_max(vv[0], 0);
-                    p.nLeft     = lsp_max(vv[1], 0);
-                    p.nRight    = lsp_max(vv[1], 0);
+                    p.nTop      = vv[0];
+                    p.nBottom   = vv[0];
+                    p.nLeft     = vv[1];
+                    p.nRight    = vv[1];
                     break;
 
                 case 3:
-                    p.nTop      = lsp_max(vv[0], 0);
-                    p.nLeft     = lsp_max(vv[1], 0);
-                    p.nRight    = lsp_max(vv[1], 0);
-                    p.nBottom   = lsp_max(vv[2], 0);
+                    p.nTop      = vv[0];
+                    p.nLeft     = vv[1];
+                    p.nRight    = vv[1];
+                    p.nBottom   = vv[2];
                     break;
 
                 case 4:
-                    p.nTop      = lsp_max(vv[0], 0);
-                    p.nRight    = lsp_max(vv[1], 0);
-                    p.nBottom   = lsp_max(vv[2], 0);
-                    p.nLeft     = lsp_max(vv[3], 0);
+                    p.nTop      = vv[0];
+                    p.nRight    = vv[1];
+                    p.nBottom   = vv[2];
+                    p.nLeft     = vv[3];
                     break;
 
                 default:
@@ -338,6 +338,29 @@ namespace lsp
             padding->nRight     = sValue.nRight * scale;
             padding->nTop       = sValue.nTop * scale;
             padding->nBottom    = sValue.nBottom * scale;
+        }
+
+        void Padding::add(ws::size_limit_t *dst, float scale)
+        {
+            scale               = lsp_max(scale, 0.0f);
+            size_t hor          = (sValue.nLeft + sValue.nRight) * scale;
+            size_t vert         = (sValue.nTop + sValue.nBottom) * scale;
+
+            dst->nMinWidth      = (dst->nMinWidth < 0)  ? hor  : dst->nMinWidth  + hor;
+            dst->nMinHeight     = (dst->nMinHeight < 0) ? vert : dst->nMinHeight + vert;
+            if (dst->nMaxWidth >= 0)
+                dst->nMaxWidth     += hor;
+            if (dst->nMaxHeight >= 0)
+                dst->nMaxHeight    += vert;
+        }
+
+        void Padding::sub(ws::rectangle_t *dst, float scale)
+        {
+            scale               = lsp_max(scale, 0.0f);
+            ssize_t hor         = (sValue.nLeft + sValue.nRight) * scale;
+            ssize_t vert        = (sValue.nTop + sValue.nBottom) * scale;
+            dst->nWidth         = lsp_max(0, ssize_t(dst->nWidth)  - hor );
+            dst->nHeight        = lsp_max(0, ssize_t(dst->nHeight) - vert);
         }
 
         namespace prop

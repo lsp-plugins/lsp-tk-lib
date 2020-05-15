@@ -26,7 +26,8 @@ namespace lsp
             sActions(&sProperties),
             sPosition(&sProperties),
             sSize(&sProperties),
-            sSizeConstraints(&sProperties)
+            sSizeConstraints(&sProperties),
+            sLayout(&sProperties)
         {
             lsp_trace("native_handle = %p", handle);
 
@@ -39,10 +40,6 @@ namespace lsp
             bHasFocus       = false;
             bOverridePointer= false;
             bMapFlag        = false;
-            nVertPos        = 0.5f;
-            nHorPos         = 0.5f;
-            nVertScale      = 0.0f;
-            nHorScale       = 0.0f;
 
             enPolicy        = WP_NORMAL;
 
@@ -94,6 +91,7 @@ namespace lsp
             sPosition.bind("position", &sStyle);
             sSize.bind("size", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
+            sLayout.bind("layout", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -106,6 +104,7 @@ namespace lsp
                 sPosition.init(sclass, 0, 0);
                 sSize.init(sclass, 160, 100);
                 sSizeConstraints.init(sclass, -1, -1, -1, -1);
+                sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
             }
 
             // Add slot(s)
@@ -393,6 +392,11 @@ namespace lsp
 
                 pWindow->resize(width, height);
                 query_resize();
+            }
+            if (sLayout.is(prop))
+            {
+                if (pChild != NULL)
+                    pChild->query_resize();
             }
         }
 
@@ -759,50 +763,15 @@ namespace lsp
 
             // Calculate realize parameters
             ws::rectangle_t rc;
-            float scaling       = sScaling.get();
-            size_t border       = sBorderSize.get() * scaling;
+            float scaling       = lsp_max(sScaling.get(), 0.0f);
+            float border        = sBorderSize.get() * scaling;
 
-            // Dimensions
-            ssize_t xs          = r->nWidth  - sPadding.horizontal() - border * 2;
-            ssize_t ys          = r->nHeight - sPadding.vertical() - border * 2;
-
-            if ((sr.nMinWidth >= 0) && (sr.nMinWidth > xs))
-            {
-                rc.nLeft            = border + sPadding.left();
-                rc.nWidth           = sr.nMinWidth;
-            }
-            else if (sr.nMaxWidth < 0)
-            {
-                rc.nLeft            = border + sPadding.left();
-                rc.nWidth           = xs;
-            }
-            else
-            {
-                rc.nWidth           = (sr.nMinWidth >= 0)   ? sr.nMinWidth  + (xs - sr.nMinWidth)   * nHorScale     : xs * nHorScale;
-                if (rc.nWidth > xs)
-                    rc.nWidth           = xs;
-                xs                 -= rc.nWidth;
-                rc.nLeft            = border + sPadding.left() + xs * nHorPos;
-            }
-
-            if ((sr.nMinHeight >= 0) && (sr.nMinHeight > ys))
-            {
-                rc.nTop             = border + sPadding.top();
-                rc.nHeight          = sr.nMinHeight;
-            }
-            else if (sr.nMaxHeight < 0)
-            {
-                rc.nTop             = border + sPadding.top();
-                rc.nHeight          = ys;
-            }
-            else
-            {
-                rc.nHeight          = (sr.nMinHeight >= 0)  ? sr.nMinHeight + (ys - sr.nMinHeight)  * nVertScale    : ys * nVertScale;
-                if (rc.nHeight > ys)
-                    rc.nHeight          = ys;
-                ys                 -= rc.nHeight;
-                rc.nTop             = border + sPadding.top() + ys * nVertPos;
-            }
+            rc.nLeft            = r->nLeft + border;
+            rc.nTop             = r->nTop  + border;
+            rc.nWidth           = r->nWidth - border * 2;
+            rc.nHeight          = r->nHeight - border * 2;
+            sPadding.sub(&rc, scaling);
+            sLayout.apply(&rc, &sr);
 
             // Call for realize
             pChild->realize(&rc);
@@ -811,15 +780,16 @@ namespace lsp
 
         void Window::size_request(ws::size_limit_t *r)
         {
-            padding_t pad;
             float scaling       = sScaling.get();
-            sPadding.compute(&pad, scaling);
-            size_t border       = sBorderSize.get();
+            float border        = sBorderSize.get() * scaling;
 
-            r->nMinWidth        = pad.nLeft + pad.nRight + border * 2;
-            r->nMinHeight       = pad.nTop + pad.nBottom + border * 2;
+            r->nMinWidth        = border * 2;
+            r->nMinHeight       = border * 2;
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
+
+            sPadding.add(r, scaling);
+
             if (r->nMinWidth < 1)
                 r->nMinWidth        = 1;
             if (r->nMinHeight < 1)
@@ -867,18 +837,6 @@ namespace lsp
             status_t res = (c != NULL) ? set_class(i, c) : STATUS_NO_MEM;
             ::free(i);
             return res;
-        }
-
-        status_t Window::set_role(const char *role)
-        {
-            if (pWindow == NULL)
-                return STATUS_BAD_STATE;
-            return pWindow->set_role(role);
-        }
-
-        status_t Window::set_role(const LSPString *role)
-        {
-            return set_role(role->get_utf8());
         }
 
     } /* namespace tk */

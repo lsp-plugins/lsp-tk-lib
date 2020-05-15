@@ -16,10 +16,6 @@ namespace lsp
 {
     namespace tk
     {
-        class Widget;
-        class Display;
-        class Style;
-        
         class Padding: public MultiProperty
         {
             protected:
@@ -99,6 +95,8 @@ namespace lsp
                 void    set(const Padding *p);
 
                 void    compute(padding_t *padding, float scale);
+                void    add(ws::size_limit_t *dst, float scale);
+                void    sub(ws::rectangle_t *dst, float scale);
         };
 
         namespace prop

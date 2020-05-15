@@ -37,10 +37,6 @@ namespace lsp
                 bool                    bHasFocus;
                 bool                    bOverridePointer;
                 bool                    bMapFlag;
-                float                   nVertPos;
-                float                   nHorPos;
-                float                   nVertScale;
-                float                   nHorScale;
                 window_poilicy_t        enPolicy;
 
                 Timer                   sRedraw;
@@ -55,6 +51,7 @@ namespace lsp
                 prop::Position          sPosition;
                 prop::Size              sSize;
                 prop::SizeConstraints   sSizeConstraints;
+                prop::Layout            sLayout;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -119,11 +116,6 @@ namespace lsp
 
                 inline window_poilicy_t         policy() const              { return enPolicy; }
 
-                inline float                    vpos() const                { return nVertPos; }
-                inline float                    hpos() const                { return nHorPos; }
-                inline float                    vscale() const              { return nVertScale; }
-                inline float                    hscale() const              { return nHorScale; }
-
                 inline String                  *title()                     { return &sTitle; }
                 inline const String            *title() const               { return &sTitle; }
                 inline String                  *role()                      { return &sRole; }
@@ -138,6 +130,8 @@ namespace lsp
                 inline const Size              *size() const                { return &sSize; }
                 inline SizeConstraints         *size_constraints()          { return &sSizeConstraints; }
                 inline const SizeConstraints   *size_constraints() const    { return &sSizeConstraints; }
+                inline Layout                  *layout()                    { return &sLayout; }
+                inline const Layout            *layout() const              { return &sLayout; }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -190,16 +184,8 @@ namespace lsp
 
                 void                    set_policy(window_poilicy_t policy);
 
-                void                    set_vpos(float value);
-                void                    set_hpos(float value);
-                void                    set_vscale(float value);
-                void                    set_hscale(float value);
-
                 status_t                set_class(const char *instance, const char *wclass);
                 status_t                set_class(const LSPString *instance, const LSPString *wclass);
-
-                status_t                set_role(const char *role);
-                status_t                set_role(const LSPString *role);
 
             //---------------------------------------------------------------------------------
             // Event handling

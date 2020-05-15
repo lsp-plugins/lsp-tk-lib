@@ -31,6 +31,30 @@ namespace lsp
             return n;
         }
 
+        size_t Property::parse_floats(float *dst, size_t max, const LSPString *s)
+        {
+            // Wrap string with sequence
+            size_t n = 0;
+            io::InStringSequence is(s);
+            expr::Tokenizer tok(&is);
+            status_t res = STATUS_OK;
+
+            while ((res = tok.get_token(expr::TF_GET)) != expr::TT_EOF)
+            {
+                expr::token_t t = tok.current();
+                if (n >= max)
+                    return 0;
+                if (t == expr::TT_IVALUE)
+                    dst[n++] = tok.int_value();
+                else if (t == expr::TT_FVALUE)
+                    dst[n++] = tok.float_value();
+                else
+                    return 0;
+            }
+
+            return n;
+        }
+
         const prop::enum_t *Property::find_enum(const LSPString *s, const prop::enum_t *xenum)
         {
             for (size_t i=0; (xenum != NULL) && (xenum->name != NULL); ++i, ++xenum)
