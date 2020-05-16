@@ -31,13 +31,11 @@ namespace lsp
                 ws::IWindow            *pWindow;
                 void                   *pNativeHandle;
                 Widget                 *pChild;
-                ssize_t                 nScreen;
                 Widget                 *pFocus;
                 Widget                 *pPointed;
                 bool                    bHasFocus;
                 bool                    bOverridePointer;
                 bool                    bMapFlag;
-                window_poilicy_t        enPolicy;
 
                 Timer                   sRedraw;
 
@@ -52,6 +50,7 @@ namespace lsp
                 prop::Size              sSize;
                 prop::SizeConstraints   sSizeConstraints;
                 prop::Layout            sLayout;
+                prop::WindowPolicy      sPolicy;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -114,8 +113,6 @@ namespace lsp
 
                 inline bool                     override_pointer() const    { return bOverridePointer; }
 
-                inline window_poilicy_t         policy() const              { return enPolicy; }
-
                 inline String                  *title()                     { return &sTitle; }
                 inline const String            *title() const               { return &sTitle; }
                 inline String                  *role()                      { return &sRole; }
@@ -132,6 +129,8 @@ namespace lsp
                 inline const SizeConstraints   *size_constraints() const    { return &sSizeConstraints; }
                 inline Layout                  *layout()                    { return &sLayout; }
                 inline const Layout            *layout() const              { return &sLayout; }
+                inline WindowPolicy            *policy()                    { return &sPolicy; }
+                inline const WindowPolicy      *policy() const              { return &sPolicy; }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -174,15 +173,11 @@ namespace lsp
             public:
                 status_t                focus_child(Widget *focus);
                 status_t                unfocus_child(Widget *focus);
-
                 status_t                toggle_child_focus(Widget *focus);
-
                 status_t                point_child(Widget *focus);
 
                 status_t                grab_events(ws::grab_t grab);
                 status_t                ungrab_events();
-
-                void                    set_policy(window_poilicy_t policy);
 
                 status_t                set_class(const char *instance, const char *wclass);
                 status_t                set_class(const LSPString *instance, const LSPString *wclass);

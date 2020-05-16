@@ -47,6 +47,7 @@
 #include <lsp-plug.in/tk/prop/Size.h>
 #include <lsp-plug.in/tk/prop/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
+#include <lsp-plug.in/tk/prop/WindowPolicy.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>

@@ -10,37 +10,6 @@
 
 MTEST_BEGIN("tk", display)
 
-//    class Handler: public ws::IEventHandler
-//    {
-//        private:
-//            ws::IWindow    *pWnd;
-//
-//        public:
-//            inline Handler(ws::IWindow *wnd)
-//            {
-//                pWnd        = wnd;
-//            }
-//
-//            virtual status_t handle_event(const ws::event_t *ev)
-//            {
-//                if (ev->nType == ws::UIE_REDRAW)
-//                {
-//                    Color c(0.0f, 0.5f, 0.75f);
-//                    ws::ISurface *s = pWnd->get_surface();
-//                    if (s != NULL)
-//                        s->clear(&c);
-//
-//                    return STATUS_OK;
-//                }
-//                if (ev->nType == ws::UIE_CLOSE)
-//                {
-//                    pWnd->hide();
-//                    pWnd->display()->quit_main();
-//                }
-//                return IEventHandler::handle_event(ev);
-//            }
-//    };
-
     static status_t slot_close(tk::Widget *sender, void *ptr, void *data)
     {
         sender->display()->quit_main();

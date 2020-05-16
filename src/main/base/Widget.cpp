@@ -428,11 +428,14 @@ namespace lsp
         {
             if (!(nFlags & F_VISIBLE))
                 return;
-            flags      &= (REDRAW_CHILD | REDRAW_SURFACE);
-            if (!flags)
+
+            // Check that flags have been changed
+            flags       = nFlags | (flags & (REDRAW_CHILD | REDRAW_SURFACE));
+            if (flags == nFlags)
                 return;
 
-            nFlags     |= flags;
+            // Update flags and call parent
+            nFlags      = flags;
             if (pParent != NULL)
                 pParent->query_draw(REDRAW_CHILD);
         }
@@ -458,11 +461,14 @@ namespace lsp
         {
             if (!(nFlags & F_VISIBLE))
                 return;
-            flags      &= (SIZE_INVALID | RESIZE_PENDING);
-            if (!flags)
+
+            // Check that flags have been changed
+            flags       = nFlags | (flags & (SIZE_INVALID | RESIZE_PENDING));
+            if (flags == nFlags)
                 return;
 
-            nFlags     |= flags;
+            // Update flags
+            nFlags      = flags;
             if (pParent != NULL)
                 pParent->query_resize(RESIZE_PENDING);
         }

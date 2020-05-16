@@ -32,7 +32,7 @@ namespace lsp
             SCROLL_ALWAYS       //!< SCROLL_ALWAYS scrolling is permitted but in optional state
         };
 
-        enum window_poilicy_t
+        enum window_policy_t
         {
             WP_NORMAL,
             WP_GREEDY

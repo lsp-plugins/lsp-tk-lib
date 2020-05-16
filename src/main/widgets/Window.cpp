@@ -27,21 +27,19 @@ namespace lsp
             sPosition(&sProperties),
             sSize(&sProperties),
             sSizeConstraints(&sProperties),
-            sLayout(&sProperties)
+            sLayout(&sProperties),
+            sPolicy(&sProperties)
         {
             lsp_trace("native_handle = %p", handle);
 
             pWindow         = NULL;
             pChild          = NULL;
             pNativeHandle   = handle;
-            nScreen         = screen;
             pFocus          = NULL;
             pPointed        = NULL;
             bHasFocus       = false;
             bOverridePointer= false;
             bMapFlag        = false;
-
-            enPolicy        = WP_NORMAL;
 
             nFlags         &= ~F_VISIBLE;
             pClass          = &metadata;
@@ -60,9 +58,7 @@ namespace lsp
                 return STATUS_BAD_STATE;
 
             // Create and initialize window
-            pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) :
-                          (nScreen >= 0) ? dpy->create_window(nScreen) :
-                          dpy->create_window();
+            pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
 
             if (pWindow == NULL)
                 return STATUS_UNKNOWN_ERR;
@@ -92,6 +88,7 @@ namespace lsp
             sSize.bind("size", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
             sLayout.bind("layout", &sStyle);
+            sPolicy.bind("policy", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -105,6 +102,7 @@ namespace lsp
                 sSize.init(sclass, 160, 100);
                 sSizeConstraints.init(sclass, -1, -1, -1, -1);
                 sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
+                sPolicy.init(sclass, WP_NORMAL);
             }
 
             // Add slot(s)
@@ -135,7 +133,7 @@ namespace lsp
             // Set window's size constraints and update geometry
             pWindow->set_size_constraints(&sr);
             ws::rectangle_t r = sRectangle;
-            if (enPolicy == WP_GREEDY)
+            if (sPolicy.get() == WP_GREEDY)
             {
                 if (sr.nMinWidth > 0)
                     r.nWidth        = sr.nMinWidth;
@@ -398,6 +396,8 @@ namespace lsp
                 if (pChild != NULL)
                     pChild->query_resize();
             }
+            if (sPolicy.is(prop) || sScaling.is(prop))
+                query_resize();
         }
 
         status_t Window::point_child(Widget *focus)
@@ -416,16 +416,6 @@ namespace lsp
         status_t Window::ungrab_events()
         {
             return (pWindow != NULL) ? pWindow->ungrab_events() : STATUS_BAD_STATE;
-        }
-
-        void Window::set_policy(window_poilicy_t policy)
-        {
-            window_poilicy_t old = enPolicy;
-            enPolicy = policy;
-            if ((old == policy) || (!(nFlags & F_VISIBLE)))
-                return;
-
-            query_resize();
         }
 
         bool Window::hide()
