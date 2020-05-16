@@ -36,11 +36,6 @@ namespace lsp
                     RESIZE_PENDING  = 1 << 3,       // The resize request is pending
 
                     F_VISIBLE       = 1 << 8,       // Widget is visible
-                    F_REALIZED      = 1 << 9,       // Widget is realized
-                    F_HFILL         = 1 << 10,      // Widget should desirable fill all the provided area horizontally
-                    F_VFILL         = 1 << 11,      // Widget should desirable fill all the provided area vertically
-                    F_HEXPAND       = 1 << 12,      // Horizontal area for the widget should be expanded
-                    F_VEXPAND       = 1 << 13,      // Vertical area for the widget should be expanded
                 };
 
             protected:
@@ -57,18 +52,19 @@ namespace lsp
             protected:
                 size_t              nFlags;         // Flags
                 const w_class_t    *pClass;         // Widget class descriptor
-                Display            *pDisplay;
-                ComplexWidget      *pParent;
+                Display            *pDisplay;       // Pointer to display
+                ComplexWidget      *pParent;        // Parent widget
+                ws::ISurface       *pSurface;       // Drawing surface
 
                 ws::size_limit_t    sSizeLimit;     // Cached size limit
                 ws::rectangle_t     sRectangle;     // Real geometry
-                ws::mouse_pointer_t enCursor;
-                ws::ISurface       *pSurface;
+                ws::mouse_pointer_t enCursor;       // Mouse cursor
 
                 SlotSet             sSlots;         // Slots
                 Style               sStyle;         // Style
                 PropListener        sProperties;    // Properties listener
 
+                prop::Allocation    sAllocation;    // Widget allocation
                 prop::Float         sScaling;       // UI scaling factor
                 prop::Float         sBrightness;    // Brightness
                 prop::Padding       sPadding;
@@ -223,30 +219,6 @@ namespace lsp
                 inline bool hidden() const                      { return !(nFlags & F_VISIBLE); };
                 inline bool invisible() const                   { return !(nFlags & F_VISIBLE); };
 
-                /** Get expanding flag: true if container should desirable expand area provided for the widget
-                 *
-                 * @return expanding flag
-                 */
-                inline bool expand() const                      { return (nFlags & (F_HEXPAND | F_VEXPAND)) == (F_HEXPAND | F_VEXPAND); }
-
-                /** Get fill flag: true if container should desirable fill all provided area with widget
-                 *
-                 * @return fill flag
-                 */
-                inline bool fill() const                        { return (nFlags & (F_HFILL | F_VFILL)) == (F_HFILL | F_VFILL); }
-
-                /** Get horizontal fill flag: true if container should horizontally fill all provided area with widget
-                 *
-                 * @return horizontal fill flag
-                 */
-                inline bool hfill() const                       { return nFlags & F_HFILL; }
-
-                /** Get vertical fill flag: true if container should vertically fill all provided area with widget
-                 *
-                 * @return vertical fill flag
-                 */
-                inline bool vfill() const                       { return nFlags & F_VFILL; }
-
                 /** Check that widget has focus
                  *
                  * @return widget focus
@@ -264,12 +236,6 @@ namespace lsp
                  * @return true if widget is visible
                  */
                 inline bool is_visible() const                  { return nFlags & F_VISIBLE; };
-
-                /** Check that widget is realized
-                 *
-                 * @return true if widget is realized
-                 */
-                inline bool is_realized() const                 { return nFlags & F_REALIZED; };
 
                 /** Check that specified window coordinate lies within widget's bounds
                  * Always returns false for invisible widgets
@@ -352,6 +318,9 @@ namespace lsp
                 inline Float           *scaling()               { return &sScaling;     }
                 inline const Float     *scaling() const         { return &sScaling;     }
 
+                inline Allocation      *allocation()            { return &sAllocation;  }
+                inline const Allocation*allocation() const      { return &sAllocation;  }
+
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
@@ -371,30 +340,6 @@ namespace lsp
                  *
                  */
                 virtual void            query_resize(size_t flags = RESIZE_PENDING);
-
-                /** Set expanding flag
-                 *
-                 * @param value expanding flag value
-                 */
-                virtual void            set_expand(bool value = true);
-
-                /** Set fill flag
-                 *
-                 * @param value filling flag value
-                 */
-                virtual void            set_fill(bool value = true);
-
-                /** Set horizontal fill flag
-                 *
-                 * @param value horizontal filling flag value
-                 */
-                virtual void            set_hfill(bool value = true);
-
-                /** Set vertical fill flag
-                 *
-                 * @param value vertical filling flag value
-                 */
-                virtual void            set_vfill(bool value = true);
 
                 /** Set mouse pointer
                  *

@@ -33,11 +33,11 @@ namespace lsp
         void Integer::commit()
         {
             // Handle change: remember new value
-            if (pStyle != NULL)
-            {
-                if (pStyle->get_int(nAtom, &nValue) != STATUS_OK)
-                    return;
-            }
+            if (pStyle == NULL)
+                return;
+
+            if (pStyle->get_int(nAtom, &nValue) != STATUS_OK)
+                return;
 
             // Delegate event
             if (pListener != NULL)
@@ -54,7 +54,7 @@ namespace lsp
             if (pStyle != NULL)
             {
                 pStyle->begin(&sListener);
-                pStyle->set_int(nAtom, v);
+                    pStyle->set_int(nAtom, v);
                 pStyle->end();
             }
             if (pListener != NULL)

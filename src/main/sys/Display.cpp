@@ -113,9 +113,7 @@ namespace lsp
             if (dpy == NULL)
                 return STATUS_NO_MEM;
 
-            status_t res = dpy->init(argc, argv);
-            if (res == STATUS_OK)
-                res = init(dpy, argc, argv);
+            status_t res = init(dpy, argc, argv);
 
             if (res != STATUS_OK)
             {

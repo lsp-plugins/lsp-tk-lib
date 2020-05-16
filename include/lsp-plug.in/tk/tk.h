@@ -29,12 +29,15 @@
 #include <lsp-plug.in/tk/style/IStyleListener.h>
 #include <lsp-plug.in/tk/style/IStyleInitializer.h>
 
-// Properties
+// Generic properties
 #include <lsp-plug.in/tk/prop/Property.h>
 #include <lsp-plug.in/tk/prop/SimpleProperty.h>
 #include <lsp-plug.in/tk/prop/MultiProperty.h>
 #include <lsp-plug.in/tk/prop/Enum.h>
 #include <lsp-plug.in/tk/prop/BitEnum.h>
+#include <lsp-plug.in/tk/prop/Flags.h>
+
+// Properties
 #include <lsp-plug.in/tk/prop/Boolean.h>
 #include <lsp-plug.in/tk/prop/Integer.h>
 #include <lsp-plug.in/tk/prop/Float.h>
@@ -48,6 +51,7 @@
 #include <lsp-plug.in/tk/prop/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
 #include <lsp-plug.in/tk/prop/WindowPolicy.h>
+#include <lsp-plug.in/tk/prop/Allocation.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>

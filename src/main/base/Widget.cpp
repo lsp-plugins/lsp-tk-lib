@@ -21,12 +21,13 @@ namespace lsp
         Widget::Widget(Display *dpy):
             sStyle(dpy->schema()),
             sProperties(this),
+            sAllocation(&sProperties),
             sScaling(&sProperties),
             sBrightness(&sProperties),
             sPadding(&sProperties),
             sBgColor(&sProperties)
         {
-            nFlags                  = REDRAW_SURFACE | F_VISIBLE | F_HFILL | F_VFILL;
+            nFlags                  = REDRAW_SURFACE | F_VISIBLE;
             pClass                  = &metadata;
             pDisplay                = dpy;
             pParent                 = NULL;
@@ -66,6 +67,7 @@ namespace lsp
             status_t res = sStyle.init();
             if (res == STATUS_OK)
             {
+                sAllocation.bind("allocation", &sStyle);
                 sScaling.bind("scaling", &sStyle);
                 sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
@@ -75,11 +77,15 @@ namespace lsp
                 if (sclass != NULL)
                 {
                     sStyle.add_parent(sclass);
+                    sAllocation.init(sclass, true, true, false, false);
                     sPadding.init(sclass, 0, 0, 0, 0);
                     sScaling.init(sclass, 1.0f);
                     sBrightness.init(sclass, 1.0f);
                     sBgColor.init(sclass, "#cccccc");
                 }
+
+                // Override settings for hfill and vfill
+                sAllocation.set(true, false);
             }
 
             // Declare slots
@@ -135,6 +141,8 @@ namespace lsp
                 query_resize();
             if (sBgColor.is(prop))
                 query_draw();
+            if (sAllocation.is(prop))
+                query_resize();
         }
 
         Style *Widget::style_class() const
@@ -471,54 +479,6 @@ namespace lsp
             nFlags      = flags;
             if (pParent != NULL)
                 pParent->query_resize(RESIZE_PENDING);
-        }
-
-        void Widget::set_expand(bool value)
-        {
-            size_t flags = nFlags;
-            if (value)
-                nFlags  |= F_HEXPAND | F_VEXPAND;
-            else
-                nFlags  &= ~(F_HEXPAND | F_VEXPAND);
-
-            if (flags != nFlags)
-                query_resize();
-        }
-
-        void Widget::set_fill(bool value)
-        {
-            size_t flags = nFlags;
-            if (value)
-                nFlags  |= F_HFILL | F_VFILL;
-            else
-                nFlags  &= ~(F_HFILL | F_VFILL);
-
-            if (flags != nFlags)
-                query_resize();
-        }
-
-        void Widget::set_hfill(bool value)
-        {
-            size_t flags = nFlags;
-            if (value)
-                nFlags  |= F_HFILL;
-            else
-                nFlags  &= ~F_HFILL;
-
-            if (flags != nFlags)
-                query_resize();
-        }
-
-        void Widget::set_vfill(bool value)
-        {
-            size_t flags = nFlags;
-            if (value)
-                nFlags  |= F_VFILL;
-            else
-                nFlags  &= ~F_VFILL;
-
-            if (flags != nFlags)
-                query_resize();
         }
 
         void Widget::set_visible(bool visible)

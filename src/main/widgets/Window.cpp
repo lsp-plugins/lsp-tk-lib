@@ -52,10 +52,19 @@ namespace lsp
 
         status_t Window::init()
         {
+            status_t result;
+
             // Initialize redraw timer
             ws::IDisplay *dpy   = pDisplay->display();
             if (dpy == NULL)
                 return STATUS_BAD_STATE;
+
+            // Initialize parent class
+            if ((result = WidgetContainer::init()) != STATUS_OK)
+                return result;
+
+            // Override some properties
+            // TODO: visibility
 
             // Create and initialize window
             pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
@@ -64,17 +73,9 @@ namespace lsp
                 return STATUS_UNKNOWN_ERR;
 
             // Initialize
-            status_t result = pWindow->init();
-            if (result != STATUS_SUCCESS)
-            {
-                destroy();
+            if ((result = pWindow->init()) != STATUS_SUCCESS)
                 return result;
-            }
             pWindow->set_handler(this);
-
-            // Initialize parent class
-            if ((result = WidgetContainer::init()) != STATUS_OK)
-                return result;
 
             // Bind properties
             sTitle.bind(&sStyle, pDisplay->dictionary());

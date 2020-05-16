@@ -32,11 +32,11 @@ namespace lsp
         void Float::commit()
         {
             // Handle change: remember new value
-            if (pStyle != NULL)
-            {
-                if (pStyle->get_float(nAtom, &fValue) != STATUS_OK)
-                    return;
-            }
+            if (pStyle == NULL)
+                return;
+
+            if (pStyle->get_float(nAtom, &fValue) != STATUS_OK)
+                return;
 
             // Delegate event
             if (pListener != NULL)
@@ -53,7 +53,7 @@ namespace lsp
             if (pStyle != NULL)
             {
                 pStyle->begin(&sListener);
-                pStyle->set_float(nAtom, v);
+                    pStyle->set_float(nAtom, v);
                 pStyle->end();
             }
             if (pListener != NULL)

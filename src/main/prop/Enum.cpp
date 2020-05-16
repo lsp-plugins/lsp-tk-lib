@@ -64,15 +64,15 @@ namespace lsp
             // Decode enum value
             ssize_t v;
             size_t n = Property::parse_enums(&v, 1, &s, pEnum);
-            if (n > 0)
-            {
-                // Apply successfully parsed value
-                nValue = v;
+            if (n <= 0)
+                return;
 
-                // Delegate event
-                if (pListener != NULL)
-                    pListener->notify(this);
-            }
+            // Apply successfully parsed value
+            nValue = v;
+
+            // Delegate event
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         ssize_t Enum::set(ssize_t v)
