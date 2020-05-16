@@ -25,9 +25,10 @@ namespace lsp
             sScaling(&sProperties),
             sBrightness(&sProperties),
             sPadding(&sProperties),
-            sBgColor(&sProperties)
+            sBgColor(&sProperties),
+            sVisibility(&sProperties)
         {
-            nFlags                  = REDRAW_SURFACE | F_VISIBLE;
+            nFlags                  = REDRAW_SURFACE | SIZE_INVALID;
             pClass                  = &metadata;
             pDisplay                = dpy;
             pParent                 = NULL;
@@ -143,6 +144,13 @@ namespace lsp
                 query_draw();
             if (sAllocation.is(prop))
                 query_resize();
+            if (sVisibility.is(prop))
+            {
+                if (sVisibility.get())
+                    show_widget();
+                else
+                    hide_widget();
+            }
         }
 
         Style *Widget::style_class() const
@@ -342,7 +350,7 @@ namespace lsp
 
         bool Widget::inside(ssize_t x, ssize_t y)
         {
-            if (!(nFlags & F_VISIBLE))
+            if (!sVisibility.get())
                 return false;
             else if (x < sRectangle.nLeft)
                 return false;
@@ -361,13 +369,8 @@ namespace lsp
             return enCursor;
         }
 
-        bool Widget::hide()
+        void Widget::hide_widget()
         {
-            if (!(nFlags & F_VISIBLE))
-                return false;
-            nFlags &= ~F_VISIBLE;
-//            lsp_trace("class = %s, this=%p", get_class()->name, this);
-
             // Drop surface to not to eat memory
             if (pSurface != NULL)
             {
@@ -382,23 +385,13 @@ namespace lsp
             // Query draw for parent widget
             if (pParent != NULL)
                 pParent->query_resize();
-
-            return true;
         }
 
-        bool Widget::show()
+        void Widget::show_widget()
         {
-            if (nFlags & F_VISIBLE)
-                return false;
-//            lsp_trace("class = %s, this=%p", get_class()->name, this);
-
-            nFlags |= F_VISIBLE;
-            if (pParent != NULL)
-                pParent->query_resize();
+            query_resize();
             query_draw(REDRAW_CHILD | REDRAW_SURFACE);
             sSlots.execute(SLOT_SHOW, this);
-
-            return true;
         }
 
         void Widget::set_parent(ComplexWidget *parent)
@@ -434,7 +427,7 @@ namespace lsp
 
         void Widget::query_draw(size_t flags)
         {
-            if (!(nFlags & F_VISIBLE))
+            if (!sVisibility.get())
                 return;
 
             // Check that flags have been changed
@@ -458,6 +451,16 @@ namespace lsp
             nFlags &= ~(SIZE_INVALID | RESIZE_PENDING);
         }
 
+        void Widget::show()
+        {
+            sVisibility.set(true);
+        }
+
+        void Widget::hide()
+        {
+            sVisibility.set(false);
+        }
+
         status_t Widget::queue_destroy()
         {
             if (pDisplay == NULL)
@@ -467,7 +470,7 @@ namespace lsp
 
         void Widget::query_resize(size_t flags)
         {
-            if (!(nFlags & F_VISIBLE))
+            if (!sVisibility.get())
                 return;
 
             // Check that flags have been changed
@@ -479,14 +482,6 @@ namespace lsp
             nFlags      = flags;
             if (pParent != NULL)
                 pParent->query_resize(RESIZE_PENDING);
-        }
-
-        void Widget::set_visible(bool visible)
-        {
-            if (visible)
-                show();
-            else
-                hide();
         }
 
         /** Set mouse pointer
@@ -599,7 +594,7 @@ namespace lsp
 
         bool Widget::has_focus() const
         {
-            if (!(nFlags & F_VISIBLE))
+            if (!sVisibility.get())
                 return false;
 
             Widget *_this   = const_cast<Widget *>(this);
@@ -609,7 +604,7 @@ namespace lsp
 
         status_t Widget::set_focus(bool focus)
         {
-            if (!(nFlags & F_VISIBLE))
+            if (!sVisibility.get())
                 return STATUS_OK;
 
             Window *wnd     = widget_cast<Window>(toplevel());
@@ -620,7 +615,7 @@ namespace lsp
 
         status_t Widget::toggle_focus()
         {
-            if (!(nFlags & F_VISIBLE))
+            if (!sVisibility.get())
                 return STATUS_OK;
 
             Window *wnd     = widget_cast<Window>(toplevel());

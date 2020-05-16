@@ -34,9 +34,10 @@ namespace lsp
                 Widget                 *pFocus;
                 Widget                 *pPointed;
                 bool                    bHasFocus;
+                bool                    bMapped;
                 bool                    bOverridePointer;
-                bool                    bMapFlag;
 
+                Window                 *pActor;
                 Timer                   sRedraw;
 
                 prop::String            sTitle;
@@ -65,6 +66,8 @@ namespace lsp
                 status_t            update_pointer();
 
                 virtual void        property_changed(Property *prop);
+                virtual void        hide_widget();
+                virtual void        show_widget();
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -141,22 +144,17 @@ namespace lsp
 
                 virtual status_t        override_pointer(bool override = true);
 
-                /** Hide window
-                 *
-                 */
-                virtual bool            hide();
-
                 /** Show window
                  *
                  */
-                virtual bool            show();
+                virtual void            show();
 
                 /** Show window over window of actor
                  *
                  * @param actor actor
                  * @return status of operation
                  */
-                virtual bool            show(Widget *actor);
+                virtual void            show(Widget *actor);
 
                 virtual status_t        add(Widget *widget);
 

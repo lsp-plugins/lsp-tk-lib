@@ -34,8 +34,6 @@ namespace lsp
                     REDRAW_CHILD    = 1 << 1,       // Need to redraw child only
                     SIZE_INVALID    = 1 << 2,       // Size limit structure is valid
                     RESIZE_PENDING  = 1 << 3,       // The resize request is pending
-
-                    F_VISIBLE       = 1 << 8,       // Widget is visible
                 };
 
             protected:
@@ -69,6 +67,7 @@ namespace lsp
                 prop::Float         sBrightness;    // Brightness
                 prop::Padding       sPadding;
                 prop::Color         sBgColor;       // Widget color
+                prop::Boolean       sVisibility;    // Visibility
 
 
             //---------------------------------------------------------------------------------
@@ -96,21 +95,31 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Interface for nested classes
             protected:
-                void                do_destroy();
+                void                    do_destroy();
 
-                void                unlink_widget(Widget *widget);
+                void                    unlink_widget(Widget *widget);
 
                 /**
                  * Callback on call when property has been change
                  * @param prop property that has been changed
                  */
-                virtual void        property_changed(Property *prop);
+                virtual void            property_changed(Property *prop);
 
                 /** Request widget for size
                  *
                  * @param limit the widget size constraints to fill
                  */
-                virtual void        size_request(ws::size_limit_t *r);
+                virtual void            size_request(ws::size_limit_t *r);
+
+                /** Hide widget
+                 *
+                 */
+                virtual void            hide_widget();
+
+                /** Show widget
+                 *
+                 */
+                virtual void            show_widget();
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -206,19 +215,6 @@ namespace lsp
                  */
                 inline bool resize_pending() const              { return nFlags & (SIZE_INVALID | RESIZE_PENDING); };
 
-                /** Check that widget is visible
-                 *
-                 * @return true if widget is visible
-                 */
-                inline bool visible() const                     { return nFlags & F_VISIBLE; };
-
-                /** Check that widget is hidden
-                 *
-                 * @return true if widget is visible
-                 */
-                inline bool hidden() const                      { return !(nFlags & F_VISIBLE); };
-                inline bool invisible() const                   { return !(nFlags & F_VISIBLE); };
-
                 /** Check that widget has focus
                  *
                  * @return widget focus
@@ -230,12 +226,6 @@ namespace lsp
                  * @return widget focus
                  */
                 inline bool focused() const                     { return has_focus(); };
-
-                /** Check that widget is visible
-                 *
-                 * @return true if widget is visible
-                 */
-                inline bool is_visible() const                  { return nFlags & F_VISIBLE; };
 
                 /** Check that specified window coordinate lies within widget's bounds
                  * Always returns false for invisible widgets
@@ -318,8 +308,19 @@ namespace lsp
                 inline Float           *scaling()               { return &sScaling;     }
                 inline const Float     *scaling() const         { return &sScaling;     }
 
+                /**
+                 * Widget allocation flags
+                 * @return widget allocation flags
+                 */
                 inline Allocation      *allocation()            { return &sAllocation;  }
                 inline const Allocation*allocation() const      { return &sAllocation;  }
+
+                /**
+                 * Visibility of the widget
+                 * @return visibility of the widget
+                 */
+                inline Boolean         *visibility()            { return &sVisibility;  }
+                inline const Boolean   *visibility() const      { return &sVisibility;  }
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -383,22 +384,6 @@ namespace lsp
                  */
                 virtual void            realize(const ws::rectangle_t *r);
 
-                /** Hide widget
-                 *
-                 */
-                virtual bool            hide();
-
-                /** Show widget
-                 *
-                 */
-                virtual bool            show();
-
-                /** Set widget visibility
-                 *
-                 * @param visible widget visibility
-                 */
-                virtual void            set_visible(bool visible=true);
-
                 /** Set focus on widget
                  *
                  * @param focus focusing parameter
@@ -430,12 +415,6 @@ namespace lsp
                  */
                 virtual status_t        toggle_focus();
 
-                /** Set widget invisibility
-                 *
-                 * @param invisible widget invisibility
-                 */
-                inline void             set_invisible(bool invisible=true) { set_visible(!invisible); }
-
                 /** Handle UI event from the display
                  *
                  * @param e UI event
@@ -458,6 +437,16 @@ namespace lsp
                  *
                  */
                 virtual void            commit_resize();
+
+                /**
+                 * Show widget
+                 */
+                virtual void            show();
+
+                /**
+                 * Hide widget
+                 */
+                virtual void            hide();
 
                 /** Get most top-level widget
                  *

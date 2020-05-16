@@ -80,6 +80,23 @@ namespace lsp
                 style->create_bool(nAtom, value);
                 return STATUS_OK;
             }
+
+            bool Boolean::commit(bool v)
+            {
+                bool prev = bValue;
+                if (v == bValue)
+                    return prev;
+
+                bValue  = v;
+                if (pStyle != NULL)
+                {
+                    pStyle->begin(&sListener);
+                        pStyle->set_bool(nAtom, v);
+                    pStyle->end();
+                }
+
+                return prev;
+            }
         }
     } /* namespace calc */
 } /* namespace lsp */

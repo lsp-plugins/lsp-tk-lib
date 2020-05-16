@@ -49,9 +49,9 @@ MTEST_BEGIN("tk", display)
         wnd->border_style()->set(ws::BS_DIALOG);
         wnd->size_constraints()->set(160, 100, 640, 400);
         wnd->size()->set(320, 200);
-        wnd->show();
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
+        wnd->visibility()->set(true);
 
         MTEST_ASSERT(dpy->main() == STATUS_OK);
 

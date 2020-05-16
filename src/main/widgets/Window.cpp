@@ -38,10 +38,10 @@ namespace lsp
             pFocus          = NULL;
             pPointed        = NULL;
             bHasFocus       = false;
+            bMapped         = false;
             bOverridePointer= false;
-            bMapFlag        = false;
+            pActor          = NULL;
 
-            nFlags         &= ~F_VISIBLE;
             pClass          = &metadata;
         }
 
@@ -64,7 +64,7 @@ namespace lsp
                 return result;
 
             // Override some properties
-            // TODO: visibility
+            sVisibility.set(false);
 
             // Create and initialize window
             pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
@@ -117,6 +117,9 @@ namespace lsp
             sRedraw.set_handler(tmr_redraw_request, self());
 
             lsp_trace("Window has been initialized");
+
+            if (sVisibility.get())
+                show_widget();
 
             return STATUS_OK;
         }
@@ -244,6 +247,9 @@ namespace lsp
 
         void Window::render(ws::ISurface *s, bool force)
         {
+            if (!bMapped)
+                return;
+
             lsp::Color bg_color(sBgColor);
 
             if (pChild == NULL)
@@ -419,100 +425,83 @@ namespace lsp
             return (pWindow != NULL) ? pWindow->ungrab_events() : STATUS_BAD_STATE;
         }
 
-        bool Window::hide()
+        void Window::hide_widget()
         {
-            sRedraw.cancel();
             if (pWindow != NULL)
                 pWindow->hide();
 
-            if (!(nFlags & F_VISIBLE))
-                return false;
-            nFlags &= ~F_VISIBLE;
-
-            // Drop surface to not to eat memory
-            if (pSurface != NULL)
-            {
-                pSurface->destroy();
-                delete pSurface;
-                pSurface = NULL;
-            }
-
-            // Query draw for parent widget
-            if (pParent != NULL)
-                pParent->query_resize();
-
-            return true;
+            WidgetContainer::hide_widget();
         }
 
-        bool Window::show()
+        void Window::show_widget()
         {
-            return show(NULL);
-        }
+            // Remember last actor and reset
+            Window *wnd = pActor;
+            pActor      = NULL;
 
-        bool Window::show(Widget *actor)
-        {
-            if (nFlags & F_VISIBLE)
-                return false;
-
-            nFlags |= F_VISIBLE;
-            if (pParent != NULL)
-                pParent->query_resize();
-
+            // Call parent widget to show
+            WidgetContainer::show_widget();
             if (pWindow == NULL)
-            {
-                sSlots.execute(SLOT_SHOW, this);
-                return true;
-            }
-
-            // Evaluate layering
-            Window *wnd = (actor != NULL) ? widget_cast<Window>(actor->toplevel()) : NULL;
+                return;
 
             // Update window parameters
             sync_size();
             update_pointer();
 
-            // Launch redraw timer
-            sRedraw.launch(-1, 40);
-            query_draw();
-
-            // Show window
-            if (wnd != NULL)
+            // There is no actor - simple show
+            if (wnd == NULL)
             {
-                // Correct window location
-                switch (sBorderStyle.get())
-                {
-                    case ws::BS_DIALOG:
-                    {
-                        ws::rectangle_t r, rw;
-                        r.nLeft         = 0;
-                        r.nTop          = 0;
-                        r.nWidth        = 0;
-                        r.nHeight       = 0;
-
-                        rw.nLeft        = 0;
-                        rw.nTop         = 0;
-                        rw.nWidth       = 0;
-                        rw.nHeight      = 0;
-
-                        wnd->get_rectangle(&r);
-                        pWindow->get_geometry(&rw);
-
-                        ssize_t left    = r.nLeft + ((r.nWidth - rw.nWidth) >> 1);
-                        ssize_t top     = r.nTop  + ((r.nHeight - rw.nHeight) >> 1);
-
-                        sPosition.set(left, top);
-                        break;
-                    }
-                    default:
-                        break;
-                }
-
-                pWindow->show(wnd->pWindow);
-            }
-            else
                 pWindow->show();
+                return;
+            }
 
-            return true;
+            // Correct window location
+            switch (sBorderStyle.get())
+            {
+                case ws::BS_DIALOG:
+                {
+                    ws::rectangle_t r, rw;
+                    r.nLeft         = 0;
+                    r.nTop          = 0;
+                    r.nWidth        = 0;
+                    r.nHeight       = 0;
+
+                    rw.nLeft        = 0;
+                    rw.nTop         = 0;
+                    rw.nWidth       = 0;
+                    rw.nHeight      = 0;
+
+                    wnd->get_rectangle(&r);
+                    pWindow->get_geometry(&rw);
+
+                    ssize_t left    = r.nLeft + ((r.nWidth - rw.nWidth) >> 1);
+                    ssize_t top     = r.nTop  + ((r.nHeight - rw.nHeight) >> 1);
+
+                    sPosition.set(left, top);
+                    break;
+                }
+                default:
+                    break;
+            }
+
+            // Show over the actor window
+            pWindow->show(wnd->pWindow);
+        }
+
+        void Window::show()
+        {
+            pActor      = NULL;
+            return WidgetContainer::show();
+        }
+
+        void Window::show(Widget *actor)
+        {
+            // Already visibile?
+            if (sVisibility.get())
+                return;
+
+            pActor = (actor != NULL) ? widget_cast<Window>(actor->toplevel()) : NULL;
+            return WidgetContainer::show();
         }
 
         status_t Window::add(Widget *widget)
@@ -555,23 +544,24 @@ namespace lsp
                     break;
 
                 case ws::UIE_SHOW:
-                    sRedraw.launch(-1, 40);
-                    query_draw();
-                    if (bMapFlag != bool(nFlags & F_VISIBLE))
+                    if (!bMapped)
                     {
-                        lsp_trace("SHOW ptr=%p", this);
-                        result      = sSlots.execute(SLOT_SHOW, this, &ev);
-                        bMapFlag    = nFlags & F_VISIBLE;
+                        bMapped     = true;
+                        sRedraw.launch(-1, 40);
+                        query_draw();
                     }
                     break;
 
                 case ws::UIE_HIDE:
-                    sRedraw.cancel();
-                    if (bMapFlag != bool(nFlags & F_VISIBLE))
+                    if (bMapped)
                     {
-                        lsp_trace("HIDE ptr=%p", this);
-                        result      = sSlots.execute(SLOT_HIDE, this, &ev);
-                        bMapFlag    = nFlags & F_VISIBLE;
+                        bMapped     = false;
+                        if (pSurface != NULL)
+                        {
+                            pSurface->destroy();
+                            delete pSurface;
+                        }
+                        sRedraw.cancel();
                     }
                     break;
 
@@ -720,21 +710,21 @@ namespace lsp
 
         status_t Window::set_focus(bool focus)
         {
-            if (!visible())
+            if (!sVisibility.get())
                 return STATUS_OK;
             return (pWindow != NULL) ? pWindow->set_focus(focus) : STATUS_BAD_STATE;
         }
 
         status_t Window::toggle_focus()
         {
-            if (!visible())
+            if (!sVisibility.get())
                 return STATUS_OK;
             return (pWindow != NULL) ? pWindow->toggle_focus() : STATUS_BAD_STATE;
         }
 
         bool Window::has_focus() const
         {
-            return (visible()) ? bHasFocus : false;
+            return (sVisibility.get()) ? bHasFocus : false;
         }
 
         void Window::realize(const ws::rectangle_t *r)

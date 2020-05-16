@@ -58,9 +58,9 @@ namespace lsp
                 /**
                  * Set value of the float property
                  * @param v value of the float property
-                 * @return
+                 * @return previous value
                  */
-                bool                set(bool v);
+                bool                set(bool v = true);
 
                 /**
                  * Swap contents
@@ -102,6 +102,13 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, bool value);
+
+                    /**
+                     * Commit value
+                     * @param value value to commit
+                     * @return previous value
+                     */
+                    bool                 commit(bool value);
             };
         }
 
