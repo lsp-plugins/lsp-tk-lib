@@ -51,6 +51,7 @@ MTEST_BEGIN("tk", display)
         wnd->size()->set(320, 200);
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
+        wnd->pointer()->set(ws::MP_TABLE_CELL);
         wnd->visibility()->set(true);
 
         MTEST_ASSERT(dpy->main() == STATUS_OK);

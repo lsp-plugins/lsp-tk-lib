@@ -48,6 +48,7 @@
 #include <lsp-plug.in/tk/prop/Layout.h>
 #include <lsp-plug.in/tk/prop/Position.h>
 #include <lsp-plug.in/tk/prop/Size.h>
+#include <lsp-plug.in/tk/prop/Pointer.h>
 #include <lsp-plug.in/tk/prop/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
 #include <lsp-plug.in/tk/prop/WindowPolicy.h>

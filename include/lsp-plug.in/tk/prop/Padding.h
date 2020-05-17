@@ -96,6 +96,7 @@ namespace lsp
 
                 void    compute(padding_t *padding, float scale);
                 void    add(ws::size_limit_t *dst, float scale);
+                void    add(ws::rectangle_t *dst, float scale);
                 void    sub(ws::rectangle_t *dst, float scale);
         };
 

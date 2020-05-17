@@ -331,6 +331,31 @@ namespace lsp
                 sc->nMaxHeight  = lsp_max(sc->nMinHeight, sc->nMaxHeight);
         }
 
+        void SizeConstraints::apply(ws::rectangle_t *rect, float scale)
+        {
+            scale   = lsp_max(0.0f, scale);
+
+            ws::size_limit_t l;
+            l.nMinWidth     = (sValue.nMinWidth >= 0)  ? sValue.nMinWidth  * scale : -1;
+            l.nMinHeight    = (sValue.nMinHeight >= 0) ? sValue.nMinHeight * scale : -1;
+            l.nMaxWidth     = (sValue.nMaxWidth >= 0)  ? sValue.nMaxWidth  * scale : -1;
+            l.nMaxHeight    = (sValue.nMaxHeight >= 0) ? sValue.nMaxHeight * scale : -1;
+
+            apply(rect, &l);
+        }
+
+        void SizeConstraints::apply(ws::rectangle_t *rect, ws::size_limit_t *sc)
+        {
+            if ((sc->nMaxWidth >= 0) && (rect->nWidth > sc->nMaxWidth))
+                rect->nWidth    = sc->nMaxWidth;
+            if ((sc->nMaxHeight >= 0) && (rect->nHeight > sc->nMaxHeight))
+                rect->nHeight   = sc->nMaxHeight;
+            if ((sc->nMinWidth >= 0) && (rect->nWidth > sc->nMinWidth))
+                rect->nWidth    = sc->nMinWidth;
+            if ((sc->nMinHeight >= 0) && (rect->nHeight > sc->nMinHeight))
+                rect->nHeight   = sc->nMinHeight;
+        }
+
         namespace prop
         {
             status_t SizeConstraints::init(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)

@@ -35,7 +35,16 @@ namespace lsp
         enum window_policy_t
         {
             WP_NORMAL,
-            WP_GREEDY
+            WP_GREEDY,
+            WP_CHILD
+        };
+
+        enum allocation_t
+        {
+            WA_HFILL    = 1 << 0,
+            WA_VFILL    = 1 << 1,
+            WA_HALIGN   = 1 << 2,
+            WA_VALIGN   = 1 << 3
         };
 
         typedef struct w_class_t

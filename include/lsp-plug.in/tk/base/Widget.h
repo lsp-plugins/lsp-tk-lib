@@ -54,9 +54,8 @@ namespace lsp
                 ComplexWidget      *pParent;        // Parent widget
                 ws::ISurface       *pSurface;       // Drawing surface
 
-                ws::size_limit_t    sSizeLimit;     // Cached size limit
-                ws::rectangle_t     sRectangle;     // Real geometry
-                ws::mouse_pointer_t enCursor;       // Mouse cursor
+                ws::size_limit_t    sSizeLimit;     // Cached pre-computed size limit
+                ws::rectangle_t     sRectangle;     // Real allocated geometry of widget
 
                 SlotSet             sSlots;         // Slots
                 Style               sStyle;         // Style
@@ -68,7 +67,7 @@ namespace lsp
                 prop::Padding       sPadding;
                 prop::Color         sBgColor;       // Widget color
                 prop::Boolean       sVisibility;    // Visibility
-
+                prop::Pointer       sPointer;       // Mouse pointer
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -201,7 +200,7 @@ namespace lsp
                  * Get size limit
                  * @param l size limit to calculate
                  */
-                void get_size_limit(ws::size_limit_t *l);
+                void get_size_limits(ws::size_limit_t *l);
 
                 /** Check if there is redraw request pending
                  *
@@ -255,18 +254,12 @@ namespace lsp
                  */
                 inline Slot            *slot(slot_t id)         { return sSlots.slot(id); }
 
-                /** Get mouse pointer
+                /** Get actual mouse pointer to the corresponding mouse position
                  *
-                 * @return mouse pointer
+                 * @return actual mouse pointer
                  */
-                inline ws::mouse_pointer_t cursor() const   { return enCursor; }
-
-                /** Get active curstor
-                 *
-                 * @return active cursor
-                 */
-                virtual ws::mouse_pointer_t active_cursor() const;
-
+                virtual ws::mouse_pointer_t actual_pointer() const;
+                
                 /**
                  * Return widget's style
                  * @return widget's style
@@ -340,14 +333,7 @@ namespace lsp
                 /** Query widget for resize
                  *
                  */
-                virtual void            query_resize(size_t flags = RESIZE_PENDING);
-
-                /** Set mouse pointer
-                 *
-                 * @param mp mouse pointer
-                 * @return mouse pointer
-                 */
-                virtual status_t        set_cursor(ws::mouse_pointer_t mp);
+                virtual void            query_resize(size_t flags = RESIZE_PENDING | SIZE_INVALID);
 
                 /** Get widget surface
                  *

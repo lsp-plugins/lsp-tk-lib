@@ -126,40 +126,64 @@ namespace lsp
 
         status_t Window::sync_size()
         {
-            // Request size
+            lsp_trace("Synchronizing size");
+
+            // Request size limits
             ws::size_limit_t sr;
-            sr.nMinWidth    = -1;
-            sr.nMinHeight   = -1;
-            sr.nMaxWidth    = -1;
-            sr.nMaxHeight   = -1;
-            size_request(&sr);
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float border        = sBorderSize.get() * scaling;
+            get_size_limits(&sr);
 
             // Set window's size constraints and update geometry
             pWindow->set_size_constraints(&sr);
-            ws::rectangle_t r = sRectangle;
+            ws::rectangle_t r   = sRectangle;
             if (sPolicy.get() == WP_GREEDY)
             {
-                if (sr.nMinWidth > 0)
-                    r.nWidth        = sr.nMinWidth;
-                if (sr.nMinHeight > 0)
-                    r.nHeight       = sr.nMinHeight;
+                // Minimize size of window as possible
+                r.nWidth            = lsp_max(0, sr.nMinWidth + border*2);
+                r.nHeight           = lsp_max(0, sr.nMinHeight + border*2);
+                sPadding.add(&r, scaling);
+            }
+            else if (sPolicy.get() == WP_CHILD)
+            {
+                // Apply size constraints of the child to the window
+                sPadding.sub(&r, scaling);
+                r.nWidth            = lsp_max(1, ssize_t(r.nWidth) - border*2);
+                r.nHeight           = lsp_max(1, ssize_t(r.nHeight) - border*2);
+
+                // Apply size constraints of the widget
+                SizeConstraints::apply(&r, &sr);
+
+                // Add border and padding
+                r.nWidth           += border*2;
+                r.nHeight          += border*2;
+                sPadding.add(&r, scaling);
             }
             else
             {
-                // Check whether window matches constraints
-                if ((sr.nMaxWidth > 0) && (r.nWidth > sr.nMaxWidth))
-                    r.nWidth        = sr.nMaxWidth;
-                if ((sr.nMaxHeight > 0) && (r.nHeight > sr.nMaxHeight))
-                    r.nHeight       = sr.nMaxHeight;
+                // Add border and padding
+                ws::rectangle_t     xr;
+                xr.nWidth           = lsp_max(0, sr.nMinWidth  + border*2);
+                xr.nHeight          = lsp_max(0, sr.nMinHeight + border*2);
+                sPadding.add(&r, scaling);
 
-                if ((sr.nMinWidth > 0) && (r.nWidth < sr.nMinWidth))
-                    r.nWidth        = sr.nMinWidth;
-                if ((sr.nMinHeight > 0) && (r.nHeight < sr.nMinHeight))
-                    r.nHeight       = sr.nMinHeight;
+                // Maximize the width
+                r.nWidth            = lsp_max(xr.nWidth,  r.nWidth);
+                r.nHeight           = lsp_max(xr.nHeight, r.nHeight);
             }
 
+            // Window size should be at least 1x1 pixel
+            r.nWidth            = lsp_max(r.nWidth,  1);
+            r.nHeight           = lsp_max(r.nHeight, 1);
+
+            // Check if we need to resize window
             if ((sRectangle.nWidth != r.nWidth) && (sRectangle.nHeight != r.nHeight))
                 pWindow->resize(r.nWidth, r.nHeight);
+
+            // Copy actual rectangle to output
+            realize(&r);
+            commit_resize();
+            query_draw();
 
             return STATUS_OK;
         }
@@ -207,17 +231,11 @@ namespace lsp
 
         status_t Window::do_render()
         {
-            if (pWindow == NULL)
+            if ((pWindow == NULL) || (!bMapped))
                 return STATUS_OK;
 
             if (resize_pending())
-            {
-                lsp_trace("Synchronizing size");
                 sync_size();
-                realize(&sRectangle);
-                commit_resize();
-                query_draw();
-            }
 
             if (!redraw_pending())
                 return STATUS_OK;
@@ -296,12 +314,6 @@ namespace lsp
             }
         }
 
-        status_t Window::set_cursor(ws::mouse_pointer_t mp)
-        {
-            WidgetContainer::set_cursor(mp);
-            return update_pointer();
-        }
-
         status_t Window::override_pointer(bool override)
         {
             if (bOverridePointer == override)
@@ -315,14 +327,11 @@ namespace lsp
             if (pWindow == NULL)
                 return STATUS_OK;
 
-            ws::mouse_pointer_t mp  = enCursor;
+            ws::mouse_pointer_t mp  = sPointer.get();
             if ((!bOverridePointer) && (pPointed != NULL))
-                mp      = pPointed->active_cursor();
+                mp      = pPointed->actual_pointer();
 
-            if (mp == pWindow->get_mouse_pointer())
-                return STATUS_OK;
-
-            return pWindow->set_mouse_pointer(mp);
+            return (mp == pWindow->get_mouse_pointer()) ? STATUS_OK : pWindow->set_mouse_pointer(mp);
         }
 
         void Window::property_changed(Property *prop)
@@ -332,6 +341,8 @@ namespace lsp
             if (pWindow == NULL)
                 return;
 
+            if (sPointer.is(prop))
+                update_pointer();
             if (sTitle.is(prop))
             {
                 // Make formatted title of the window
@@ -611,19 +622,7 @@ namespace lsp
             if (pChild == NULL)
                 return NULL;
 
-            ws::rectangle_t r;
-            pChild->get_rectangle(&r);
-
-            if (x < r.nLeft)
-                return NULL;
-            if (y < r.nTop)
-                return NULL;
-            if (x >= (r.nLeft + r.nWidth))
-                return NULL;
-            if (y >= (r.nTop + r.nHeight))
-                return NULL;
-
-            return pChild;
+            return (pChild->inside(x, y)) ? pChild : NULL;
         }
 
         status_t Window::on_close(const ws::event_t *e)
@@ -730,17 +729,16 @@ namespace lsp
         void Window::realize(const ws::rectangle_t *r)
         {
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
-            WidgetContainer::realize(r);
-
             sPosition.commit(r->nLeft, r->nTop);
             sSize.commit(r->nWidth, r->nHeight, sScaling.get());
 
+            WidgetContainer::realize(r);
             if (pChild == NULL)
                 return;
 
             // Query for size
             ws::size_limit_t sr;
-            pChild->get_size_limit(&sr);
+            pChild->get_size_limits(&sr);
 
             // Calculate realize parameters
             ws::rectangle_t rc;
@@ -779,7 +777,7 @@ namespace lsp
             if (pChild != NULL)
             {
                 ws::size_limit_t cr;
-                pChild->get_size_limit(&cr);
+                pChild->get_size_limits(&cr);
 
                 r->nMinWidth       += lsp_max(cr.nMinWidth, 0);
                 r->nMinHeight      += lsp_max(cr.nMinHeight, 0);

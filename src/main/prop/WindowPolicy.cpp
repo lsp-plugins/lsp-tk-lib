@@ -15,6 +15,7 @@ namespace lsp
         {
             { "normal",         WP_NORMAL           },
             { "greedy",         WP_GREEDY           },
+            { "child",          WP_CHILD            },
             { NULL,             -1                  }
         };
     

@@ -28,7 +28,7 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
-                ws::IWindow            *pWindow;
+                ws::IWindow            *pWindow;            // Underlying
                 void                   *pNativeHandle;
                 Widget                 *pChild;
                 Widget                 *pFocus;
@@ -68,6 +68,7 @@ namespace lsp
                 virtual void        property_changed(Property *prop);
                 virtual void        hide_widget();
                 virtual void        show_widget();
+                virtual void        size_request(ws::size_limit_t *r);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -134,13 +135,13 @@ namespace lsp
                 inline const Layout            *layout() const              { return &sLayout; }
                 inline WindowPolicy            *policy()                    { return &sPolicy; }
                 inline const WindowPolicy      *policy() const              { return &sPolicy; }
+                inline Pointer                 *pointer()                   { return &sPointer; }
+                inline const Pointer           *pointer() const             { return &sPointer; }
 
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
                 virtual void            render(ws::ISurface *s, bool force);
-
-                virtual status_t        set_cursor(ws::mouse_pointer_t mp);
 
                 virtual status_t        override_pointer(bool override = true);
 
@@ -209,12 +210,6 @@ namespace lsp
                  * @param r realize parameters
                  */
                 virtual void            realize(const ws::rectangle_t *r);
-
-                /** Request size of the window
-                 *
-                 * @param r pointer to structure to store data
-                 */
-                virtual void            size_request(ws::size_limit_t *r);
 
                 /** Set window icon
                  *

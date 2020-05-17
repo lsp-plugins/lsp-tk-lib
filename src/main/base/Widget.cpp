@@ -26,7 +26,8 @@ namespace lsp
             sBrightness(&sProperties),
             sPadding(&sProperties),
             sBgColor(&sProperties),
-            sVisibility(&sProperties)
+            sVisibility(&sProperties),
+            sPointer(&sProperties)
         {
             nFlags                  = REDRAW_SURFACE | SIZE_INVALID;
             pClass                  = &metadata;
@@ -41,7 +42,6 @@ namespace lsp
             sRectangle.nTop         = 0;
             sRectangle.nWidth       = 0;
             sRectangle.nHeight      = 0;
-            enCursor                = ws::MP_DEFAULT;
             pSurface                = NULL;
         }
 
@@ -73,6 +73,7 @@ namespace lsp
                 sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
                 sBgColor.bind("bg_color", &sStyle);
+                sPointer.bind("pointer", &sStyle);
 
                 Style *sclass = style_class();
                 if (sclass != NULL)
@@ -83,6 +84,7 @@ namespace lsp
                     sScaling.init(sclass, 1.0f);
                     sBrightness.init(sclass, 1.0f);
                     sBgColor.init(sclass, "#cccccc");
+                    sPointer.init(sclass, ws::MP_DEFAULT);
                 }
 
                 // Override settings for hfill and vfill
@@ -151,6 +153,11 @@ namespace lsp
                 else
                     hide_widget();
             }
+        }
+
+        ws::mouse_pointer_t Widget::actual_pointer() const
+        {
+            return sPointer.get();
         }
 
         Style *Widget::style_class() const
@@ -352,21 +359,17 @@ namespace lsp
         {
             if (!sVisibility.get())
                 return false;
-            else if (x < sRectangle.nLeft)
+
+            if (x < sRectangle.nLeft)
                 return false;
-            else if (x >= (sRectangle.nLeft + sRectangle.nWidth))
+            if (x >= (sRectangle.nLeft + sRectangle.nWidth))
                 return false;
-            else if (y < sRectangle.nTop)
+            if (y < sRectangle.nTop)
                 return false;
-            else if (y >= (sRectangle.nTop + sRectangle.nHeight))
+            if (y >= (sRectangle.nTop + sRectangle.nHeight))
                 return false;
 
             return true;
-        }
-
-        ws::mouse_pointer_t Widget::active_cursor() const
-        {
-            return enCursor;
         }
 
         void Widget::hide_widget()
@@ -484,17 +487,6 @@ namespace lsp
                 pParent->query_resize(RESIZE_PENDING);
         }
 
-        /** Set mouse pointer
-         *
-         * @param mp mouse pointer
-         * @return mouse pointer
-         */
-        status_t Widget::set_cursor(ws::mouse_pointer_t mp)
-        {
-            enCursor       = mp;
-            return STATUS_OK;
-        }
-
         void Widget::render(ws::ISurface *s, bool force)
         {
             // Get surface of widget
@@ -568,7 +560,7 @@ namespace lsp
             sSlots.execute(SLOT_RESIZE, this, &sRectangle);
         }
 
-        void Widget::get_size_limit(ws::size_limit_t *l)
+        void Widget::get_size_limits(ws::size_limit_t *l)
         {
             if (!(nFlags & SIZE_INVALID))
             {

@@ -354,6 +354,15 @@ namespace lsp
                 dst->nMaxHeight    += vert;
         }
 
+        void Padding::add(ws::rectangle_t *dst, float scale)
+        {
+            scale               = lsp_max(scale, 0.0f);
+            ssize_t hor         = (sValue.nLeft + sValue.nRight) * scale;
+            ssize_t vert        = (sValue.nTop + sValue.nBottom) * scale;
+            dst->nWidth         = lsp_max(0, ssize_t(dst->nWidth)  + hor );
+            dst->nHeight        = lsp_max(0, ssize_t(dst->nHeight) + vert);
+        }
+
         void Padding::sub(ws::rectangle_t *dst, float scale)
         {
             scale               = lsp_max(scale, 0.0f);
