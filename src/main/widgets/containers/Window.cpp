@@ -547,6 +547,11 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Window::remove_all()
+        {
+            return (pChild != NULL) ? remove(pChild) : STATUS_OK;
+        }
+
         status_t Window::handle_event(const ws::event_t *e)
         {
             status_t result = STATUS_OK;

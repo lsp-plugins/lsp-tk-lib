@@ -24,6 +24,9 @@ namespace lsp
          */
         class Widget: public ws::IEventHandler
         {
+            private:
+                Widget & operator = (const Widget &);
+
             public:
                 static const w_class_t    metadata;
 
@@ -188,52 +191,58 @@ namespace lsp
                  *
                  * @return display
                  */
-                inline Display *display()                       { return pDisplay; };
+                inline Display         *display()                           { return pDisplay; };
 
                 /** Get widget dimensions
                  *
                  * @param r real widget dimensions
                  */
-                inline void get_rectangle(ws::rectangle_t *r)   { *r = sSize; }
+                inline void             get_rectangle(ws::rectangle_t *r)   { *r = sSize; }
 
                 /**
                  * Get size limit
                  * @param l size limit to calculate
                  */
-                void get_size_limits(ws::size_limit_t *l);
+                void                    get_size_limits(ws::size_limit_t *l);
+
+                /**
+                 * Get actual padding in pixels
+                 * @param p pointer to store computed padding
+                 */
+                void                    get_padding(padding_t *p);
 
                 /** Check if there is redraw request pending
                  *
                  * @return true if there is redraw request pending
                  */
-                inline bool redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); };
+                inline bool             redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); };
 
                 /** Check if there is resize request pending
                  *
                  * @return true if there is resize request pending
                  */
-                inline bool resize_pending() const              { return nFlags & (SIZE_INVALID | RESIZE_PENDING); };
+                inline bool             resize_pending() const              { return nFlags & (SIZE_INVALID | RESIZE_PENDING); };
 
                 /** Check that widget has focus
                  *
                  * @return widget focus
                  */
-                virtual bool has_focus() const;
+                virtual bool            has_focus() const;
 
                 /** Check that widget has focus
                  *
                  * @return widget focus
                  */
-                inline bool focused() const                     { return has_focus(); };
+                inline bool             focused() const                     { return has_focus(); };
 
                 /** Check that specified window coordinate lies within widget's bounds
                  * Always returns false for invisible widgets
                  *
-                 * @param x x coordinate
-                 * @param y y coordinate
+                 * @param left x coordinate
+                 * @param top y coordinate
                  * @return true on success
                  */
-                virtual bool inside(ssize_t x, ssize_t y);
+                virtual bool            inside(ssize_t left, ssize_t top);
 
                 /** Get parent widget
                  *
@@ -273,7 +282,9 @@ namespace lsp
                  */
                 Style                  *style_class() const;
 
-                /** Get widget padding
+                /** Get widget padding. Most widgets (except special ones) should only provide
+                 * this option and not consider to use it in size_request() call. The widget
+                 * container is responsible for proper handling of this option.
                  *
                  * @return widget padding
                  */

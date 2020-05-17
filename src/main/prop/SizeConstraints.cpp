@@ -344,16 +344,29 @@ namespace lsp
             apply(rect, &l);
         }
 
-        void SizeConstraints::apply(ws::rectangle_t *rect, ws::size_limit_t *sc)
+        void SizeConstraints::apply(ws::rectangle_t *dst, const ws::size_limit_t *sc)
         {
-            if ((sc->nMaxWidth >= 0) && (rect->nWidth > sc->nMaxWidth))
-                rect->nWidth    = sc->nMaxWidth;
-            if ((sc->nMaxHeight >= 0) && (rect->nHeight > sc->nMaxHeight))
-                rect->nHeight   = sc->nMaxHeight;
-            if ((sc->nMinWidth >= 0) && (rect->nWidth > sc->nMinWidth))
-                rect->nWidth    = sc->nMinWidth;
-            if ((sc->nMinHeight >= 0) && (rect->nHeight > sc->nMinHeight))
-                rect->nHeight   = sc->nMinHeight;
+            if ((sc->nMaxWidth >= 0) && (dst->nWidth > sc->nMaxWidth))
+                dst->nWidth     = sc->nMaxWidth;
+            if ((sc->nMaxHeight >= 0) && (dst->nHeight > sc->nMaxHeight))
+                dst->nHeight    = sc->nMaxHeight;
+            if ((sc->nMinWidth >= 0) && (dst->nWidth < sc->nMinWidth))
+                dst->nWidth     = sc->nMinWidth;
+            if ((sc->nMinHeight >= 0) && (dst->nHeight < sc->nMinHeight))
+                dst->nHeight    = sc->nMinHeight;
+        }
+
+        void SizeConstraints::apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc)
+        {
+            dst->nLeft      = src->nLeft;
+            dst->nTop       = src->nTop;
+            dst->nWidth     = ((sc->nMaxWidth >= 0) && (src->nWidth > sc->nMaxWidth))    ? sc->nMaxWidth  : src->nWidth;
+            dst->nHeight    = ((sc->nMaxHeight >= 0) && (dst->nHeight > sc->nMaxHeight)) ? sc->nMaxHeight : src->nHeight;
+
+            if ((sc->nMinWidth >= 0) && (dst->nWidth < sc->nMinWidth))
+                dst->nWidth     = sc->nMinWidth;
+            if ((sc->nMinHeight >= 0) && (dst->nHeight < sc->nMinHeight))
+                dst->nHeight    = sc->nMinHeight;
         }
 
         namespace prop

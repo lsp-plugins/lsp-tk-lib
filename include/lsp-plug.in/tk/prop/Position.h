@@ -76,10 +76,13 @@ namespace lsp
                 inline void get(ssize_t &left, ssize_t &top) const  { left = nLeft; top = nTop;                 }
                 inline void get(ws::rectangle_t *rect) const        { rect->nLeft = nLeft; rect->nTop = nTop;   }
 
-                ssize_t set_left(ssize_t value);
-                ssize_t set_top(ssize_t value);
-                void    set(ssize_t left, ssize_t top);
-                void    set(const Position *p);
+                ssize_t         set_left(ssize_t value);
+                ssize_t         set_top(ssize_t value);
+                void            set(ssize_t left, ssize_t top);
+                void            set(const Position *p);
+
+                static bool     inside(const ws::rectangle_t *rect, ssize_t left, ssize_t top);
+                inline bool     inside(const ws::rectangle_t *rect) { return inside(rect, nLeft, nTop);         }
         };
 
         namespace prop

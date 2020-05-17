@@ -104,7 +104,8 @@ namespace lsp
                 void        apply(ws::size_limit_t *sc, float scale);
                 void        apply(ws::rectangle_t *sc, float scale);
 
-                static void apply(ws::rectangle_t *rect, ws::size_limit_t *sc);
+                static void apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc);
+                static void apply(ws::rectangle_t *dst, const ws::size_limit_t *sc);
         };
 
         namespace prop

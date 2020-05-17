@@ -135,6 +135,20 @@ namespace lsp
             sync(true);
         }
 
+        bool Position::inside(const ws::rectangle_t *rect, ssize_t left, ssize_t top)
+        {
+            if (left < rect->nLeft)
+                return false;
+            if (top < rect->nTop)
+                return false;
+            if (left >= (rect->nLeft + rect->nWidth))
+                return false;
+            if (top >= (rect->nTop + rect->nHeight))
+                return false;
+
+            return true;
+        }
+
         namespace prop
         {
             status_t Position::init(Style *style, ssize_t left, ssize_t top)

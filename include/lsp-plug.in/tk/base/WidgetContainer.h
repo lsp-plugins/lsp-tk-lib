@@ -21,6 +21,9 @@ namespace lsp
          */
         class WidgetContainer: public ComplexWidget
         {
+            private:
+                WidgetContainer & operator = (const WidgetContainer &);
+
             public:
                 static const w_class_t    metadata;
 

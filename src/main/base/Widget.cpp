@@ -359,21 +359,12 @@ namespace lsp
             return _this->on_drag_request(ev, ctype);
         }
 
-        bool Widget::inside(ssize_t x, ssize_t y)
+        bool Widget::inside(ssize_t left, ssize_t top)
         {
             if (!sVisibility.get())
                 return false;
 
-            if (x < sSize.nLeft)
-                return false;
-            if (x >= (sSize.nLeft + sSize.nWidth))
-                return false;
-            if (y < sSize.nTop)
-                return false;
-            if (y >= (sSize.nTop + sSize.nHeight))
-                return false;
-
-            return true;
+            return Position::inside(&sSize, left, top);
         }
 
         void Widget::hide_widget()
@@ -578,6 +569,12 @@ namespace lsp
             // Store size limit and update flags
             sLimit  = *l;
             nFlags &= ~SIZE_INVALID;
+        }
+
+        void Widget::get_padding(padding_t *p)
+        {
+            float scale     = lsp_max(0.0f, sScaling.get());
+            sPadding.compute(p, scale);
         }
 
         void Widget::size_request(ws::size_limit_t *r)

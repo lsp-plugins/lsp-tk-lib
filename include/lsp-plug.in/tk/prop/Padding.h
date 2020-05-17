@@ -68,36 +68,50 @@ namespace lsp
                 inline void         set_default()       { MultiProperty::set_default(vAtoms, DESC); };
 
             public:
-                inline size_t left() const              { return sValue.nLeft;                  }
-                inline size_t right() const             { return sValue.nRight;                 }
-                inline size_t top() const               { return sValue.nTop;                   }
-                inline size_t bottom() const            { return sValue.nBottom;                }
-                inline size_t horizontal() const        { return sValue.nLeft + sValue.nRight;  }
-                inline size_t vertical() const          { return sValue.nTop + sValue.nBottom;  }
+                inline size_t   left() const                { return sValue.nLeft;                  }
+                inline size_t   right() const               { return sValue.nRight;                 }
+                inline size_t   top() const                 { return sValue.nTop;                   }
+                inline size_t   bottom() const              { return sValue.nBottom;                }
+                inline size_t   horizontal() const          { return sValue.nLeft + sValue.nRight;  }
+                inline size_t   vertical() const            { return sValue.nTop + sValue.nBottom;  }
 
-                inline void get(padding_t *p) const     { *p = sValue;                          }
-                inline void get(padding_t &p) const     { p = sValue;                           }
-                void get(size_t *left, size_t *right, size_t *top, size_t *bottom) const;
-                void get(size_t &left, size_t &right, size_t &top, size_t &bottom) const;
-                inline void get_horizontal(size_t *left, size_t *right)    { *left = sValue.nLeft; *right = sValue.nRight; }
-                inline void get_vertical(size_t *top, size_t *bottom)      { *top = sValue.nTop; *bottom = sValue.nBottom; }
+                inline void     get(padding_t *p) const     { *p = sValue;                          }
+                inline void     get(padding_t &p) const     { p = sValue;                           }
+                void            get(size_t *left, size_t *right, size_t *top, size_t *bottom) const;
+                void            get(size_t &left, size_t &right, size_t &top, size_t &bottom) const;
+                inline void     get_horizontal(size_t *left, size_t *right)    { *left = sValue.nLeft; *right = sValue.nRight; }
+                inline void     get_vertical(size_t *top, size_t *bottom)      { *top = sValue.nTop; *bottom = sValue.nBottom; }
 
-                size_t  set_left(size_t value);
-                size_t  set_right(size_t value);
-                size_t  set_top(size_t value);
-                size_t  set_bottom(size_t value);
-                void    set_all(size_t value);
-                void    set_horizontal(size_t left, size_t right);
-                void    set_vertical(size_t top, size_t bottom);
+                size_t          set_left(size_t value);
+                size_t          set_right(size_t value);
+                size_t          set_top(size_t value);
+                size_t          set_bottom(size_t value);
+                void            set_all(size_t value);
+                void            set_horizontal(size_t left, size_t right);
+                void            set_vertical(size_t top, size_t bottom);
 
-                void    set(size_t left, size_t right, size_t top, size_t bottom);
-                void    set(const padding_t *p);
-                void    set(const Padding *p);
+                void            set(size_t left, size_t right, size_t top, size_t bottom);
+                void            set(const padding_t *p);
+                void            set(const Padding *p);
 
-                void    compute(padding_t *padding, float scale);
-                void    add(ws::size_limit_t *dst, float scale);
-                void    add(ws::rectangle_t *dst, float scale);
-                void    sub(ws::rectangle_t *dst, float scale);
+                void            compute(padding_t *padding, float scale);
+                void            add(ws::size_limit_t *dst, float scale);
+                void            add(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
+                void            sub(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
+                void            enter(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
+
+                inline void     add(ws::rectangle_t *dst, float scale)              { add(dst, dst, scale);     }
+                inline void     sub(ws::rectangle_t *dst, float scale)              { sub(dst, dst, scale);     }
+                inline void     enter(ws::rectangle_t *dst, float scale)            { enter(dst, dst, scale);   }
+
+                static void             add(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
+                static void             sub(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
+                static void             enter(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
+
+                static inline void      add(ws::rectangle_t *dst, const padding_t *pad)         { add(dst, dst, pad);       }
+                static inline void      sub(ws::rectangle_t *dst, const padding_t *pad)         { sub(dst, dst, pad);       }
+                static inline void      enter(ws::rectangle_t *dst, const padding_t *pad)       { enter(dst, dst, pad);     }
+
         };
 
         namespace prop

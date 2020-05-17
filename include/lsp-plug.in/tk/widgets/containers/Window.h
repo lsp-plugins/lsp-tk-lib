@@ -20,6 +20,9 @@ namespace lsp
     {
         class Window: public WidgetContainer
         {
+            private:
+                Window & operator = (const Window &);
+
             protected:
                 friend class WindowActions;
                 friend class Display;
@@ -159,6 +162,8 @@ namespace lsp
                 virtual status_t        add(Widget *widget);
 
                 virtual status_t        remove(Widget *widget);
+
+                virtual status_t        remove_all();
 
                 virtual status_t        handle_event(const ws::event_t *e);
 

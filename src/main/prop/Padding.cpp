@@ -355,24 +355,61 @@ namespace lsp
                 dst->nMaxHeight    += vert;
         }
 
-        void Padding::add(ws::rectangle_t *dst, float scale)
+        void Padding::add(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale)
         {
             scale               = lsp_max(scale, 0.0f);
             ssize_t hor         = (sValue.nLeft + sValue.nRight) * scale;
             ssize_t vert        = (sValue.nTop + sValue.nBottom) * scale;
-            dst->nWidth         = lsp_max(0, ssize_t(dst->nWidth)  + hor );
-            dst->nHeight        = lsp_max(0, ssize_t(dst->nHeight) + vert);
+            dst->nLeft          = src->nLeft;
+            dst->nHeight        = src->nHeight;
+            dst->nWidth         = lsp_max(0, ssize_t(src->nWidth)  + hor );
+            dst->nHeight        = lsp_max(0, ssize_t(src->nHeight) + vert);
         }
 
-        void Padding::sub(ws::rectangle_t *dst, float scale)
+        void Padding::sub(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale)
         {
-            lsp_trace("before: w=%d, h=%d", int(dst->nWidth), int(dst->nHeight));
             scale               = lsp_max(scale, 0.0f);
             ssize_t hor         = (sValue.nLeft + sValue.nRight) * scale;
             ssize_t vert        = (sValue.nTop + sValue.nBottom) * scale;
-            dst->nWidth         = lsp_max(0, ssize_t(dst->nWidth)  - hor );
-            dst->nHeight        = lsp_max(0, ssize_t(dst->nHeight) - vert);
-            lsp_trace("after: w=%d, h=%d", int(dst->nWidth), int(dst->nHeight));
+            dst->nLeft          = src->nLeft;
+            dst->nHeight        = src->nHeight;
+            dst->nWidth         = lsp_max(0, ssize_t(src->nWidth)  - hor );
+            dst->nHeight        = lsp_max(0, ssize_t(src->nHeight) - vert);
+        }
+
+        void Padding::enter(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale)
+        {
+            scale               = lsp_max(scale, 0.0f);
+            ssize_t hor         = (sValue.nLeft + sValue.nRight) * scale;
+            ssize_t vert        = (sValue.nTop + sValue.nBottom) * scale;
+            dst->nLeft          = src->nLeft + sValue.nLeft;
+            dst->nTop           = src->nTop  + sValue.nTop;
+            dst->nWidth         = lsp_max(0, ssize_t(src->nWidth)  - hor );
+            dst->nHeight        = lsp_max(0, ssize_t(src->nHeight) - vert);
+        }
+
+        void Padding::add(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad)
+        {
+            dst->nLeft          = src->nLeft;
+            dst->nHeight        = src->nHeight;
+            dst->nWidth         = lsp_max(0, ssize_t(src->nWidth)  + pad->nLeft + pad->nRight   );
+            dst->nHeight        = lsp_max(0, ssize_t(src->nHeight) + pad->nTop  + pad->nBottom  );
+        }
+
+        void Padding::sub(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad)
+        {
+            dst->nLeft          = src->nLeft;
+            dst->nHeight        = src->nHeight;
+            dst->nWidth         = lsp_max(0, ssize_t(src->nWidth)  - pad->nLeft - pad->nRight   );
+            dst->nHeight        = lsp_max(0, ssize_t(src->nHeight) - pad->nTop  - pad->nBottom  );
+        }
+
+        void Padding::enter(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad)
+        {
+            dst->nLeft          = src->nLeft + pad->nLeft;
+            dst->nTop           = src->nTop  + pad->nTop;
+            dst->nWidth         = lsp_max(0, ssize_t(src->nWidth)  - pad->nLeft - pad->nRight   );
+            dst->nHeight        = lsp_max(0, ssize_t(src->nHeight) - pad->nTop  - pad->nBottom  );
         }
 
         namespace prop

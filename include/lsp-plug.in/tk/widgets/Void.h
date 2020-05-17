@@ -5,8 +5,8 @@
  *      Author: sadko
  */
 
-#ifndef UI_TK_WIDGETS_LSPVOID_H_
-#define UI_TK_WIDGETS_LSPVOID_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_VOID_H_
+#define LSP_PLUG_IN_TK_WIDGETS_VOID_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
@@ -17,10 +17,13 @@ namespace lsp
     namespace tk
     {
         /**
-         * Void space
+         * Void widget that holds some allocated space and fills it with specified color
          */
         class Void: public Widget
         {
+            private:
+                Void & operator = (const Void &);
+
             public:
                 static const w_class_t    metadata;
 
@@ -37,16 +40,15 @@ namespace lsp
 
             protected:
                 virtual void        size_request(ws::size_limit_t *r);
+                virtual void        property_changed(Property *prop);
 
             public:
                 virtual status_t    init();
 
                 virtual void        render(ws::ISurface *s, bool force);
-
-                virtual void        realize(const ws::rectangle_t *r);
         };
     
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_WIDGETS_LSPVOID_H_ */
+#endif /* LSP_PLUG_IN_TK_WIDGETS_VOID_H_ */

@@ -57,10 +57,12 @@ namespace lsp
             lsp_trace("w={%d, %d}, h={%d, %d}", int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
-        void Void::realize(const ws::rectangle_t *r)
+        void Void::property_changed(Property *prop)
         {
-            lsp_trace("x=%d, y=%d, w=%d, h=%d", int(r->nLeft), int(r->nTop), int(r->nWidth), int(r->nHeight));
-            Widget::realize(r);
+            Widget::property_changed(prop);
+
+            if (sConstraints.is(prop))
+                query_resize();
         }
 
     } /* namespace tk */

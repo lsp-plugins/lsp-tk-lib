@@ -37,21 +37,24 @@
 #include <lsp-plug.in/tk/prop/BitEnum.h>
 #include <lsp-plug.in/tk/prop/Flags.h>
 
-// Properties
+// Single-value properties
 #include <lsp-plug.in/tk/prop/Boolean.h>
 #include <lsp-plug.in/tk/prop/Integer.h>
 #include <lsp-plug.in/tk/prop/Float.h>
 #include <lsp-plug.in/tk/prop/String.h>
 #include <lsp-plug.in/tk/prop/BorderStyle.h>
+#include <lsp-plug.in/tk/prop/WindowPolicy.h>
+#include <lsp-plug.in/tk/prop/Pointer.h>
+#include <lsp-plug.in/tk/prop/Orientation.h>
+
+// Compound properties
 #include <lsp-plug.in/tk/prop/Color.h>
 #include <lsp-plug.in/tk/prop/Padding.h>
 #include <lsp-plug.in/tk/prop/Layout.h>
 #include <lsp-plug.in/tk/prop/Position.h>
 #include <lsp-plug.in/tk/prop/Size.h>
-#include <lsp-plug.in/tk/prop/Pointer.h>
 #include <lsp-plug.in/tk/prop/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
-#include <lsp-plug.in/tk/prop/WindowPolicy.h>
 #include <lsp-plug.in/tk/prop/Allocation.h>
 
 // Styles and schemas
@@ -72,7 +75,8 @@
 #include <lsp-plug.in/tk/base/cast.h>
 
 // Container widgets
-#include <lsp-plug.in/tk/widgets/Window.h>
+#include <lsp-plug.in/tk/widgets/containers/Window.h>
+#include <lsp-plug.in/tk/widgets/containers/Box.h>
 
 // Simple widgets
 #include <lsp-plug.in/tk/widgets/Void.h>
