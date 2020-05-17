@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -365,11 +366,13 @@ namespace lsp
 
         void Padding::sub(ws::rectangle_t *dst, float scale)
         {
+            lsp_trace("before: w=%d, h=%d", int(dst->nWidth), int(dst->nHeight));
             scale               = lsp_max(scale, 0.0f);
             ssize_t hor         = (sValue.nLeft + sValue.nRight) * scale;
             ssize_t vert        = (sValue.nTop + sValue.nBottom) * scale;
             dst->nWidth         = lsp_max(0, ssize_t(dst->nWidth)  - hor );
             dst->nHeight        = lsp_max(0, ssize_t(dst->nHeight) - vert);
+            lsp_trace("after: w=%d, h=%d", int(dst->nWidth), int(dst->nHeight));
         }
 
         namespace prop

@@ -71,8 +71,11 @@
 #include <lsp-plug.in/tk/base/WidgetContainer.h>
 #include <lsp-plug.in/tk/base/cast.h>
 
-// Widgets
+// Container widgets
 #include <lsp-plug.in/tk/widgets/Window.h>
+
+// Simple widgets
+#include <lsp-plug.in/tk/widgets/Void.h>
 
 
 namespace lsp

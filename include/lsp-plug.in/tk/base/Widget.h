@@ -54,8 +54,8 @@ namespace lsp
                 ComplexWidget      *pParent;        // Parent widget
                 ws::ISurface       *pSurface;       // Drawing surface
 
-                ws::size_limit_t    sSizeLimit;     // Cached pre-computed size limit
-                ws::rectangle_t     sRectangle;     // Real allocated geometry of widget
+                ws::size_limit_t    sLimit;         // Cached pre-computed size limit
+                ws::rectangle_t     sSize;          // Real allocated geometry of widget
 
                 SlotSet             sSlots;         // Slots
                 Style               sStyle;         // Style
@@ -194,7 +194,7 @@ namespace lsp
                  *
                  * @param r real widget dimensions
                  */
-                inline void get_rectangle(ws::rectangle_t *r)   { *r = sRectangle; }
+                inline void get_rectangle(ws::rectangle_t *r)   { *r = sSize; }
 
                 /**
                  * Get size limit

@@ -48,7 +48,7 @@ namespace lsp
                 prop::Float             sBorderRadius;
                 prop::WindowActions     sActions;
                 prop::Position          sPosition;
-                prop::Size              sSize;
+                prop::Size              sWindowSize;
                 prop::SizeConstraints   sSizeConstraints;
                 prop::Layout            sLayout;
                 prop::WindowPolicy      sPolicy;
@@ -127,8 +127,8 @@ namespace lsp
                 inline const BorderStyle       *border_style() const        { return &sBorderStyle; }
                 inline WindowActions           *actions()                   { return &sActions; }
                 inline const WindowActions     *actions() const             { return &sActions; }
-                inline Size                    *size()                      { return &sSize; }
-                inline const Size              *size() const                { return &sSize; }
+                inline Size                    *size()                      { return &sWindowSize; }
+                inline const Size              *size() const                { return &sWindowSize; }
                 inline SizeConstraints         *size_constraints()          { return &sSizeConstraints; }
                 inline const SizeConstraints   *size_constraints() const    { return &sSizeConstraints; }
                 inline Layout                  *layout()                    { return &sLayout; }

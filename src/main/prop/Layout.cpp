@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -134,8 +135,103 @@ namespace lsp
                 pListener->notify(this);
         }
 
+        float Layout::set_halign(float v)
+        {
+            float prev  = hAlign;
+            v           = lsp_limit(v, -1.0f, 1.0f);
+            if (prev == v)
+                return prev;
+
+            hAlign      = v;
+            sync();
+
+            return prev;
+        }
+
+        float Layout::set_valign(float v)
+        {
+            float prev  = vAlign;
+            v           = lsp_limit(v, -1.0f, 1.0f);
+            if (prev == v)
+                return prev;
+
+            vAlign      = v;
+            sync();
+
+            return prev;
+        }
+
+        float Layout::set_hscale(float v)
+        {
+            float prev  = hScale;
+            v           = lsp_limit(v, 0.0f, 1.0f);
+            if (prev == v)
+                return prev;
+
+            hScale      = v;
+            sync();
+
+            return prev;
+        }
+
+        float Layout::set_vscale(float v)
+        {
+            float prev  = vScale;
+            v           = lsp_limit(v, 0.0f, 1.0f);
+            if (prev == v)
+                return prev;
+
+            vScale      = v;
+            sync();
+
+            return prev;
+        }
+
+        void Layout::set_align(float h, float v)
+        {
+            h           = lsp_limit(v, -1.0f, 1.0f);
+            v           = lsp_limit(v, -1.0f, 1.0f);
+            if ((hAlign == h) && (vAlign == v))
+                return;
+
+            hAlign      = h;
+            vAlign      = v;
+            sync();
+        }
+
+        void Layout::set_scale(float h, float v)
+        {
+            h           = lsp_limit(v, 0.0f, 1.0f);
+            v           = lsp_limit(v, 0.0f, 1.0f);
+            if ((hScale == h) && (vScale == v))
+                return;
+
+            hScale      = h;
+            vScale      = v;
+            sync();
+        }
+
+        void Layout::set(float halign, float valign, float hscale, float vscale)
+        {
+            halign      = lsp_limit(halign, -1.0f, 1.0f);
+            valign      = lsp_limit(valign, -1.0f, 1.0f);
+            hscale      = lsp_limit(hscale, 0.0f, 1.0f);
+            vscale      = lsp_limit(vscale, 0.0f, 1.0f);
+
+            if ((hAlign == halign) && (vAlign == valign) &&
+                (hScale == hscale) && (vScale == vscale))
+                return;
+
+            hAlign      = halign;
+            vAlign      = valign;
+            hScale      = hscale;
+            vScale      = vscale;
+            sync();
+        }
+
         void Layout::apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *req)
         {
+            lsp_trace("before: x=%d, y=%d, w=%d, h=%d", int(src->nLeft), int(src->nTop), int(src->nWidth), int(src->nHeight));
             // Estimate the minimum area size and the amount of free space
             ssize_t w       = lsp_max(0, req->nMinWidth);
             ssize_t h       = lsp_max(0, req->nMinHeight);
@@ -143,8 +239,8 @@ namespace lsp
             ssize_t ygap    = lsp_max(0, src->nHeight - h);
 
             // Scale the area size (if possible)
-            w              += lsp_min(xgap * hScale, 0.0f);
-            h              += lsp_min(ygap * hScale, 0.0f);
+            w              += lsp_max(xgap * hScale, 0.0f);
+            h              += lsp_max(ygap * hScale, 0.0f);
             if (req->nMaxWidth > 0)
                 w              = lsp_min(w, req->nMaxWidth);
             if (req->nMaxHeight > 0)
@@ -156,9 +252,10 @@ namespace lsp
 
             // Scale position (if possible) and store results
             dst->nLeft     += xgap * (hAlign + 1.0f) * 0.5f;
-            dst->nTop      += ygap * (hAlign + 1.0f) * 0.5f;
+            dst->nTop      += ygap * (vAlign + 1.0f) * 0.5f;
             dst->nWidth     = w;
             dst->nHeight    = h;
+            lsp_trace("after: x=%d, y=%d, w=%d, h=%d", int(dst->nLeft), int(dst->nTop), int(dst->nWidth), int(dst->nHeight));
         }
 
         namespace prop

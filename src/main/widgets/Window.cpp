@@ -25,7 +25,7 @@ namespace lsp
             sBorderRadius(&sProperties),
             sActions(&sProperties),
             sPosition(&sProperties),
-            sSize(&sProperties),
+            sWindowSize(&sProperties),
             sSizeConstraints(&sProperties),
             sLayout(&sProperties),
             sPolicy(&sProperties)
@@ -66,17 +66,6 @@ namespace lsp
             // Override some properties
             sVisibility.set(false);
 
-            // Create and initialize window
-            pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
-
-            if (pWindow == NULL)
-                return STATUS_UNKNOWN_ERR;
-
-            // Initialize
-            if ((result = pWindow->init()) != STATUS_SUCCESS)
-                return result;
-            pWindow->set_handler(this);
-
             // Bind properties
             sTitle.bind(&sStyle, pDisplay->dictionary());
             sRole.bind(&sStyle, pDisplay->dictionary());
@@ -86,7 +75,7 @@ namespace lsp
             sBorderRadius.bind("border.radius", &sStyle);
             sActions.bind("actions", &sStyle);
             sPosition.bind("position", &sStyle);
-            sSize.bind("size", &sStyle);
+            sWindowSize.bind("size", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
             sLayout.bind("layout", &sStyle);
             sPolicy.bind("policy", &sStyle);
@@ -100,11 +89,22 @@ namespace lsp
                 sBorderRadius.init(sclass, 2);
                 sActions.init(sclass, ws::WA_ALL);
                 sPosition.init(sclass, 0, 0);
-                sSize.init(sclass, 160, 100);
+                sWindowSize.init(sclass, 160, 100);
                 sSizeConstraints.init(sclass, -1, -1, -1, -1);
                 sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
                 sPolicy.init(sclass, WP_NORMAL);
             }
+
+            // Create and initialize window
+            pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
+
+            if (pWindow == NULL)
+                return STATUS_UNKNOWN_ERR;
+
+            // Initialize
+            if ((result = pWindow->init()) != STATUS_SUCCESS)
+                return result;
+            pWindow->set_handler(this);
 
             // Add slot(s)
             handler_id_t id = 0;
@@ -128,15 +128,17 @@ namespace lsp
         {
             lsp_trace("Synchronizing size");
 
-            // Request size limits
+            // Request size limits of the window
             ws::size_limit_t sr;
+            ws::rectangle_t r;
+
+            get_size_limits(&sr);
             float scaling       = lsp_max(0.0f, sScaling.get());
             float border        = sBorderSize.get() * scaling;
-            get_size_limits(&sr);
+            sPosition.get(&r);
+            sWindowSize.compute(&r, scaling);
 
             // Set window's size constraints and update geometry
-            pWindow->set_size_constraints(&sr);
-            ws::rectangle_t r   = sRectangle;
             if (sPolicy.get() == WP_GREEDY)
             {
                 // Minimize size of window as possible
@@ -177,7 +179,8 @@ namespace lsp
             r.nHeight           = lsp_max(r.nHeight, 1);
 
             // Check if we need to resize window
-            if ((sRectangle.nWidth != r.nWidth) && (sRectangle.nHeight != r.nHeight))
+            pWindow->set_size_constraints(&sr);
+            if ((sSize.nWidth != r.nWidth) && (sSize.nHeight != r.nHeight))
                 pWindow->resize(r.nWidth, r.nHeight);
 
             // Copy actual rectangle to output
@@ -288,7 +291,7 @@ namespace lsp
                 pChild->get_rectangle(&cr);
 
                 s->fill_frame(
-                    0, 0, sRectangle.nWidth, sRectangle.nHeight,
+                    0, 0, sSize.nWidth, sSize.nHeight,
                     cr.nLeft, cr.nTop, cr.nWidth, cr.nHeight,
                     bg_color);
 
@@ -305,7 +308,7 @@ namespace lsp
                     bc.scale_lightness(sBrightness.get());
 
                     s->wire_round_rect(
-                        bw + 0.5, bw + 0.5, sRectangle.nWidth - border-1, sRectangle.nHeight - border-1,
+                        bw + 0.5, bw + 0.5, sSize.nWidth - border-1, sSize.nHeight - border-1,
                         radius, SURFMASK_ALL_CORNER, border,
                         bc
                     );
@@ -392,23 +395,8 @@ namespace lsp
                     );
                 pWindow->set_size_constraints(&l);
             }
-            if (sSize.is(prop) || sScaling.is(prop))
-            {
-                float scale = sScaling.get();
-                size_t width = sSize.width(), height = sSize.height();
-                if (scale > 0.0f)
-                {
-                    width  *= scale;
-                    height *= scale;
-                }
-                if (width < 1)
-                    width = 1;
-                if (height < 1)
-                    height = 1;
-
-                pWindow->resize(width, height);
+            if (sWindowSize.is(prop) || sScaling.is(prop))
                 query_resize();
-            }
             if (sLayout.is(prop))
             {
                 if (pChild != NULL)
@@ -555,6 +543,7 @@ namespace lsp
                     break;
 
                 case ws::UIE_SHOW:
+                    lsp_trace("show event received");
                     if (!bMapped)
                     {
                         bMapped     = true;
@@ -564,6 +553,7 @@ namespace lsp
                     break;
 
                 case ws::UIE_HIDE:
+                    lsp_trace("hide event received");
                     if (bMapped)
                     {
                         bMapped     = false;
@@ -593,17 +583,23 @@ namespace lsp
                     break;
 
                 case ws::UIE_RESIZE:
-                {
-                    ws::rectangle_t r;
-                    lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
-                    r.nLeft     = e->nLeft;
-                    r.nTop      = e->nTop;
-                    r.nWidth    = e->nWidth;
-                    r.nHeight   = e->nHeight;
-                    if (result == STATUS_OK)
-                        this->realize(&r);
+                    if (bMapped)
+                    {
+                        ws::rectangle_t r;
+
+                        lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+
+                        sPosition.commit(e->nLeft, e->nTop);
+                        sWindowSize.commit(e->nWidth, e->nHeight, sScaling.get());
+
+                        r.nLeft     = e->nLeft;
+                        r.nTop      = e->nTop;
+                        r.nWidth    = e->nWidth;
+                        r.nHeight   = e->nHeight;
+
+                        realize(&r);
+                    }
                     break;
-                }
 
                 default:
                     result      = WidgetContainer::handle_event(e);
@@ -729,7 +725,7 @@ namespace lsp
         {
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             sPosition.commit(r->nLeft, r->nTop);
-            sSize.commit(r->nWidth, r->nHeight, sScaling.get());
+            sWindowSize.commit(r->nWidth, r->nHeight, sScaling.get());
 
             WidgetContainer::realize(r);
             if (pChild == NULL)
@@ -744,10 +740,10 @@ namespace lsp
             float scaling       = lsp_max(sScaling.get(), 0.0f);
             float border        = sBorderSize.get() * scaling;
 
-            rc.nLeft            = r->nLeft + border;
-            rc.nTop             = r->nTop  + border;
-            rc.nWidth           = r->nWidth - border * 2;
-            rc.nHeight          = r->nHeight - border * 2;
+            rc.nLeft            = border;
+            rc.nTop             = border;
+            rc.nWidth           = lsp_max(0, r->nWidth  - border * 2);
+            rc.nHeight          = lsp_max(0, r->nHeight - border * 2);
             sPadding.sub(&rc, scaling);
             sLayout.apply(&rc, &sr);
 
@@ -768,11 +764,6 @@ namespace lsp
 
             sPadding.add(r, scaling);
 
-            if (r->nMinWidth < 1)
-                r->nMinWidth        = 1;
-            if (r->nMinHeight < 1)
-                r->nMinHeight       = 1;
-
             if (pChild != NULL)
             {
                 ws::size_limit_t cr;
@@ -781,6 +772,10 @@ namespace lsp
                 r->nMinWidth       += lsp_max(cr.nMinWidth, 0);
                 r->nMinHeight      += lsp_max(cr.nMinHeight, 0);
             }
+
+            // Window should be at least of 1x1 pixel size
+            r->nMinWidth        = lsp_max(r->nMinWidth, 1);
+            r->nMinHeight       = lsp_max(r->nMinHeight, 1);
 
             // Apply constraints to the window
             sSizeConstraints.apply(r, scaling);

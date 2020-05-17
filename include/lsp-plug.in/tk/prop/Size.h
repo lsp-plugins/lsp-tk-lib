@@ -73,7 +73,10 @@ namespace lsp
                 size_t  set_width(size_t value);
                 size_t  set_height(size_t value);
                 void    set(size_t width, size_t height);
+                void    set(size_t width, size_t height, float scale);
                 void    set(const Size *p);
+
+                void    compute(ws::rectangle_t *dst, float scale);
         };
 
         namespace prop

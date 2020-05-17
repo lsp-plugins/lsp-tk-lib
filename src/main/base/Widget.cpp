@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -34,14 +35,14 @@ namespace lsp
             pDisplay                = dpy;
             pParent                 = NULL;
 
-            sSizeLimit.nMinWidth    = -1;
-            sSizeLimit.nMinHeight   = -1;
-            sSizeLimit.nMaxWidth    = -1;
-            sSizeLimit.nMaxHeight   = -1;
-            sRectangle.nLeft        = 0;
-            sRectangle.nTop         = 0;
-            sRectangle.nWidth       = 0;
-            sRectangle.nHeight      = 0;
+            sLimit.nMinWidth        = -1;
+            sLimit.nMinHeight       = -1;
+            sLimit.nMaxWidth        = -1;
+            sLimit.nMaxHeight       = -1;
+            sSize.nLeft             = 0;
+            sSize.nTop              = 0;
+            sSize.nWidth            = 0;
+            sSize.nHeight           = 0;
             pSurface                = NULL;
         }
 
@@ -360,13 +361,13 @@ namespace lsp
             if (!sVisibility.get())
                 return false;
 
-            if (x < sRectangle.nLeft)
+            if (x < sSize.nLeft)
                 return false;
-            if (x >= (sRectangle.nLeft + sRectangle.nWidth))
+            if (x >= (sSize.nLeft + sSize.nWidth))
                 return false;
-            if (y < sRectangle.nTop)
+            if (y < sSize.nTop)
                 return false;
-            if (y >= (sRectangle.nTop + sRectangle.nHeight))
+            if (y >= (sSize.nTop + sSize.nHeight))
                 return false;
 
             return true;
@@ -495,12 +496,12 @@ namespace lsp
                 return;
 
             // Render to the main surface
-            s->draw(src, sRectangle.nLeft, sRectangle.nTop);
+            s->draw(src, sSize.nLeft, sSize.nTop);
         }
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s)
         {
-            return get_surface(s, sRectangle.nWidth, sRectangle.nHeight);
+            return get_surface(s, sSize.nWidth, sSize.nHeight);
         }
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s, ssize_t width, ssize_t height)
@@ -549,22 +550,22 @@ namespace lsp
         void Widget::realize(const ws::rectangle_t *r)
         {
             // Do not report size request on size change
-            if ((sRectangle.nLeft == r->nLeft) &&
-                (sRectangle.nTop  == r->nTop) &&
-                (sRectangle.nWidth == r->nWidth) &&
-                (sRectangle.nHeight == r->nHeight))
+            if ((sSize.nLeft == r->nLeft) &&
+                (sSize.nTop  == r->nTop) &&
+                (sSize.nWidth == r->nWidth) &&
+                (sSize.nHeight == r->nHeight))
                 return;
 
             // Update size and execute slot
-            sRectangle        = *r;
-            sSlots.execute(SLOT_RESIZE, this, &sRectangle);
+            sSize        = *r;
+            sSlots.execute(SLOT_RESIZE, this, &sSize);
         }
 
         void Widget::get_size_limits(ws::size_limit_t *l)
         {
             if (!(nFlags & SIZE_INVALID))
             {
-                *l  = sSizeLimit;
+                *l  = sLimit;
                 return;
             }
 
@@ -572,7 +573,7 @@ namespace lsp
             size_request(l);
 
             // Store size limit and update flags
-            sSizeLimit  = *l;
+            sLimit  = *l;
             nFlags &= ~SIZE_INVALID;
         }
 

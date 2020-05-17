@@ -123,6 +123,24 @@ namespace lsp
             sync(true);
         }
 
+        void Size::set(size_t width, size_t height, float scale)
+        {
+            if (scale > 0.0f)
+            {
+                width   = size_t(float(width) / scale);
+                height  = size_t(float(height) / scale);
+            }
+
+            set(width, height);
+        }
+
+        void Size::compute(ws::rectangle_t *dst, float scale)
+        {
+            scale           = lsp_max(0.0f, scale);
+            dst->nWidth     = lsp_max(0, float(nWidth)  * scale);
+            dst->nHeight    = lsp_max(0, float(nHeight) * scale);
+        }
+
         void Size::set(const Size *p)
         {
             if ((nWidth == p->nWidth) &&

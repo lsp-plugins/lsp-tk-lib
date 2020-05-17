@@ -71,8 +71,8 @@ namespace lsp
                 inline ssize_t max_width() const            { return sValue.nMaxWidth;              }
                 inline ssize_t max_height() const           { return sValue.nMaxHeight;             }
 
-                inline void get(ws::size_limit_t *p) const    { *p = sValue;                          }
-                inline void get(ws::size_limit_t &p) const    { p = sValue;                           }
+                inline void get(ws::size_limit_t *p) const  { *p = sValue;                          }
+                inline void get(ws::size_limit_t &p) const  { p = sValue;                           }
                 void get(ssize_t *min_width, ssize_t *min_height, ssize_t *max_width, ssize_t *max_height) const;
                 void get(ssize_t &min_width, ssize_t &min_height, ssize_t &max_width, ssize_t &max_height) const;
 

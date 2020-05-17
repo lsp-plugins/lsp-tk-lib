@@ -42,9 +42,13 @@ MTEST_BEGIN("tk", display)
         MTEST_ASSERT(dpy->init(0, NULL) == STATUS_OK);
 
         tk::Window *wnd = new tk::Window(dpy);
+        tk::Void *wVoid = new tk::Void(dpy);
+
+        // Initialize window
         MTEST_ASSERT(wnd->init() == STATUS_OK);
         MTEST_ASSERT(wnd->title()->set_raw("Test window") == STATUS_OK);
         MTEST_ASSERT(wnd->role()->set_raw("test") == STATUS_OK);
+        wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
         wnd->size_constraints()->set(160, 100, 640, 400);
@@ -52,6 +56,15 @@ MTEST_BEGIN("tk", display)
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
         wnd->pointer()->set(ws::MP_TABLE_CELL);
+        wnd->layout()->set(-0.5, 0.5, 0.5, 0.5);
+
+        // Initialize void widget
+        MTEST_ASSERT(wVoid->init() == STATUS_OK);
+        wVoid->bg_color()->set_rgb(0, 1.0, 0.0);
+        wVoid->constraints()->set(160, 100, 320, 200);
+        MTEST_ASSERT(wnd->add(wVoid) == STATUS_OK);
+
+        // Show window
         wnd->visibility()->set(true);
 
         MTEST_ASSERT(dpy->main() == STATUS_OK);
