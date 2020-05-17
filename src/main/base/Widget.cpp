@@ -92,6 +92,9 @@ namespace lsp
                 sAllocation.set(true, false);
             }
 
+            // Override some properties
+            sVisibility.set(true);
+
             // Declare slots
             handler_id_t id = 0;
 

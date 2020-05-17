@@ -54,6 +54,7 @@ namespace lsp
             // Add external size constraints
             float scaling = lsp_max(0.0f, sScaling.get());
             sConstraints.compute(r, scaling);
+            lsp_trace("w={%d, %d}, h={%d, %d}", int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
         void Void::realize(const ws::rectangle_t *r)

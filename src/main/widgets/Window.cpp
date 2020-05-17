@@ -273,7 +273,7 @@ namespace lsp
 
             lsp::Color bg_color(sBgColor);
 
-            if (pChild == NULL)
+            if ((pChild == NULL) || (!pChild->visibility()->get()))
             {
                 s->clear(bg_color);
                 return;
@@ -728,7 +728,7 @@ namespace lsp
             sWindowSize.commit(r->nWidth, r->nHeight, sScaling.get());
 
             WidgetContainer::realize(r);
-            if (pChild == NULL)
+            if ((pChild == NULL) || (!pChild->visibility()->get()))
                 return;
 
             // Query for size
@@ -779,6 +779,8 @@ namespace lsp
 
             // Apply constraints to the window
             sSizeConstraints.apply(r, scaling);
+
+            lsp_trace("w={%d, %d}, h={%d, %d}", int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
         status_t Window::set_icon(const void *bgra, size_t width, size_t height)
