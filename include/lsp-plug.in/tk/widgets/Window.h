@@ -136,8 +136,6 @@ namespace lsp
                 inline const Layout            *layout() const              { return &sLayout; }
                 inline WindowPolicy            *policy()                    { return &sPolicy; }
                 inline const WindowPolicy      *policy() const              { return &sPolicy; }
-                inline Pointer                 *pointer()                   { return &sPointer; }
-                inline const Pointer           *pointer() const             { return &sPointer; }
 
             //---------------------------------------------------------------------------------
             // Manipulation

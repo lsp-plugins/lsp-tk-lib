@@ -315,6 +315,13 @@ namespace lsp
                 inline Boolean         *visibility()            { return &sVisibility;  }
                 inline const Boolean   *visibility() const      { return &sVisibility;  }
 
+                /**
+                 * Style of mouse pointer
+                 * @return mouse pointer style
+                 */
+                inline Pointer                 *pointer()                   { return &sPointer; }
+                inline const Pointer           *pointer() const             { return &sPointer; }
+
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
