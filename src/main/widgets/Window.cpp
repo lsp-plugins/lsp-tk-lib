@@ -507,7 +507,7 @@ namespace lsp
 
         void Window::show(Widget *actor)
         {
-            // Already visibile?
+            // Already visible?
             if (sVisibility.get())
                 return;
 
@@ -595,7 +595,6 @@ namespace lsp
                 case ws::UIE_RESIZE:
                 {
                     ws::rectangle_t r;
-//                    result = pWindow->get_geometry(&r);
                     lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
                     r.nLeft     = e->nLeft;
                     r.nTop      = e->nTop;
