@@ -182,6 +182,11 @@ namespace lsp
                 }
                 sync(false);
             }
+
+            void Size::commit(const ws::rectangle_t *rect, float scale)
+            {
+                commit(rect->nWidth, rect->nHeight, scale);
+            }
         }
     } /* namespace tk */
 } /* namespace lsp */

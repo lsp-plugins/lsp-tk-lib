@@ -36,6 +36,7 @@ namespace lsp
                 bool                    bHasFocus;
                 bool                    bMapped;
                 bool                    bOverridePointer;
+                float                   fScaling;           // Cached scaling factor
 
                 Window                 *pActor;
                 Timer                   sRedraw;

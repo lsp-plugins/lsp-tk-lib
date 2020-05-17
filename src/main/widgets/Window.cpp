@@ -40,6 +40,7 @@ namespace lsp
             bHasFocus       = false;
             bMapped         = false;
             bOverridePointer= false;
+            fScaling        = 1.0f;
             pActor          = NULL;
 
             pClass          = &metadata;
@@ -94,6 +95,9 @@ namespace lsp
                 sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
                 sPolicy.init(sclass, WP_NORMAL);
             }
+
+            // Cache the actual scaling factor
+            fScaling    = sScaling.get();
 
             // Create and initialize window
             pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
@@ -396,7 +400,23 @@ namespace lsp
                 pWindow->set_size_constraints(&l);
             }
             if (sWindowSize.is(prop) || sScaling.is(prop))
-                query_resize();
+            {
+                float scaling = lsp_max(0.0f, sScaling.get());
+                if ((scaling != fScaling) && (bMapped))
+                {
+                    ws::rectangle_t rect;
+                    ws::size_limit_t limit;
+                    sWindowSize.compute(&rect, scaling);
+                    sSizeConstraints.compute(&limit, scaling);
+
+                    fScaling    = scaling;
+                    pWindow->set_size_constraints(-1, -1, -1, -1);
+                    pWindow->resize(rect.nWidth, rect.nHeight);
+                    pWindow->set_size_constraints(&limit);
+                }
+                else
+                    query_resize();
+            }
             if (sLayout.is(prop))
             {
                 if (pChild != NULL)

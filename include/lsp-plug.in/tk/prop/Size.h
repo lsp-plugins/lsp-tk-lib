@@ -121,6 +121,7 @@ namespace lsp
                      * @param scale scaling factor
                      */
                     void                commit(size_t width, size_t height, float scale);
+                    void                commit(const ws::rectangle_t *rect, float scale);
             };
         }
     }
