@@ -73,6 +73,7 @@ namespace lsp
                 virtual void        hide_widget();
                 virtual void        show_widget();
                 virtual void        size_request(ws::size_limit_t *r);
+                virtual void        realize_widget(const ws::rectangle_t *r);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -208,12 +209,6 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t        on_focus_out(const ws::event_t *e);
-
-                /** Realize window
-                 *
-                 * @param r realize parameters
-                 */
-                virtual void            realize(const ws::rectangle_t *r);
 
                 /** Set window icon
                  *

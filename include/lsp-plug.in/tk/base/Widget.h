@@ -113,6 +113,12 @@ namespace lsp
                  */
                 virtual void            size_request(ws::size_limit_t *r);
 
+                /**
+                 * Realize widget internally
+                 * @param r real area allocated to the widget
+                 */
+                virtual void            realize_widget(const ws::rectangle_t *r);
+
                 /** Hide widget
                  *
                  */
@@ -382,11 +388,11 @@ namespace lsp
                  */
                 virtual void            draw(ws::ISurface *s);
 
-                /** Realize widget
-                 *
-                 * @param r widget realization parameters
+                /**
+                 * Realize widget internally
+                 * @param r real area allocated to the widget
                  */
-                virtual void            realize(const ws::rectangle_t *r);
+                void                    realize(const ws::rectangle_t *r);
 
                 /** Set focus on widget
                  *
@@ -436,11 +442,6 @@ namespace lsp
                  *
                  */
                 virtual void            commit_redraw();
-
-                /** Commit widet resize
-                 *
-                 */
-                virtual void            commit_resize();
 
                 /**
                  * Show widget

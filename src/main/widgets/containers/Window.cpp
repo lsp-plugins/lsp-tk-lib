@@ -189,8 +189,6 @@ namespace lsp
 
             // Copy actual rectangle to output
             realize(&r);
-            commit_resize();
-            query_draw();
 
             return STATUS_OK;
         }
@@ -746,13 +744,13 @@ namespace lsp
             return (sVisibility.get()) ? bHasFocus : false;
         }
 
-        void Window::realize(const ws::rectangle_t *r)
+        void Window::realize_widget(const ws::rectangle_t *r)
         {
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             sPosition.commit(r->nLeft, r->nTop);
             sWindowSize.commit(r->nWidth, r->nHeight, sScaling.get());
 
-            WidgetContainer::realize(r);
+            WidgetContainer::realize_widget(r);
             if ((pChild == NULL) || (!pChild->visibility()->get()))
                 return;
 
@@ -774,7 +772,6 @@ namespace lsp
 
             // Call for realize
             pChild->realize(&rc);
-            pChild->query_draw();
         }
 
         void Window::size_request(ws::size_limit_t *r)

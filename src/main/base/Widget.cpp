@@ -444,11 +444,6 @@ namespace lsp
             nFlags &= ~(REDRAW_SURFACE | REDRAW_CHILD);
         }
 
-        void Widget::commit_resize()
-        {
-            nFlags &= ~(SIZE_INVALID | RESIZE_PENDING);
-        }
-
         void Widget::show()
         {
             sVisibility.set(true);
@@ -541,7 +536,7 @@ namespace lsp
         {
         }
 
-        void Widget::realize(const ws::rectangle_t *r)
+        void Widget::realize_widget(const ws::rectangle_t *r)
         {
             // Do not report size request on size change
             if ((sSize.nLeft == r->nLeft) &&
@@ -553,6 +548,16 @@ namespace lsp
             // Update size and execute slot
             sSize        = *r;
             sSlots.execute(SLOT_RESIZE, this, &sSize);
+        }
+
+        void Widget::realize(const ws::rectangle_t *r)
+        {
+            // Call for realize
+            realize_widget(r);
+
+            // Reset size pending flags
+            nFlags     &= ~(SIZE_INVALID | RESIZE_PENDING);
+            query_draw();   // Always query redraw after realize()
         }
 
         void Widget::get_size_limits(ws::size_limit_t *l)

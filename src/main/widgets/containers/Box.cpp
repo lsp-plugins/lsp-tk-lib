@@ -231,6 +231,58 @@ namespace lsp
 
         status_t Box::allocate_homogeneous(const ws::rectangle_t *r, lltl::parray<cell_t> &visible)
         {
+            // Get the final area to perform allocation
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t spacing     = scaling * sSpacing.get();
+            bool horizontal     = sOrientation.horizontal();
+
+            ssize_t n_left      = (horizontal) ? r->nWidth : r->nHeight;
+            n_left             -= spacing * (visible.size() - 1);
+            size_t m_size       = n_left / visible.size();
+
+            // FIRST PASS: Initialize widgets allocations same width/size
+            for (size_t i=0, n=visible.size(); i<n; ++i)
+            {
+                // Get widget
+                cell_t *w =          visible.uget(i);
+
+                // Request size limit and padding of the widget
+                w->pWidget->get_size_limits(&w->r);
+                w->pWidget->get_padding(&w->p);
+
+                if (horizontal)
+                {
+                    w->a.nWidth     = m_size;
+                    w->a.nHeight    = r->nHeight;
+                }
+                else // vertical
+                {
+                    w->a.nWidth     = r->nWidth;
+                    w->a.nHeight    = m_size;
+                }
+                n_left         -= m_size;
+            }
+
+            // SECOND PASS: Split unused space between widgets
+            while (n_left > 0)
+            {
+                for (size_t i=0, n=visible.size(); i<n; ++i)
+                {
+                    // Get widget
+                    cell_t *w = visible.uget(i);
+                    if (horizontal)
+                        w->a.nWidth     ++;
+                    else // vertical
+                        w->a.nHeight    ++;
+
+                    if ((n_left--) <= 0)
+                        break;
+                }
+            }
+
+            // Now we have n_left=0, now need to generate proper Left and Top coordinates of widget
+            allocate_widget_space(r, visible, spacing);
+
             return STATUS_OK;
         }
 
@@ -384,6 +436,14 @@ namespace lsp
             }
 
             // Now we have n_left=0, now need to generate proper Left and Top coordinates of widget
+            allocate_widget_space(r, visible, spacing);
+
+            return STATUS_OK;
+        }
+
+        void Box::allocate_widget_space(const ws::rectangle_t *r, lltl::parray<cell_t> &visible, ssize_t spacing)
+        {
+            bool horizontal     = sOrientation.horizontal();
             ssize_t l = r->nLeft, t = r->nTop; // Left-Top corner
 
             // Now completely apply geometry to each allocation
@@ -411,8 +471,6 @@ namespace lsp
                     t              += w->a.nHeight;
                 }
             }
-
-            return STATUS_OK;
         }
 
         void Box::realize_widgets(lltl::parray<cell_t> &visible)
@@ -440,11 +498,10 @@ namespace lsp
                 // Realize the widget
 //                lsp_trace("realize id=%d, parameters = {%d, %d, %d, %d}", int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
                 w->pWidget->realize(&w->s);
-                w->pWidget->query_draw();
             }
         }
 
-        void Box::realize(const ws::rectangle_t *r)
+        void Box::realize_widget(const ws::rectangle_t *r)
         {
             // Make a copy of current widget list
             lltl::darray<cell_t>    items;
@@ -470,71 +527,72 @@ namespace lsp
             }
 
             // Call parent method to realize
-            WidgetContainer::realize(r);
+            WidgetContainer::realize_widget(r);
         }
 
         void Box::size_request(ws::size_limit_t *r)
         {
+            // Default size request
             r->nMinWidth    = -1;
             r->nMinHeight   = -1;
             r->nMaxWidth    = -1;
             r->nMaxHeight   = -1;
 
-            size_t n_items  = vItems.size();
-            if (n_items <= 0)
+            // Create copy of current state
+            lltl::darray<cell_t>    items;
+            if (!items.add(&vItems))
                 return;
 
-            ssize_t e_width = 0, e_height = 0; // Estimated width and height
+            // Obtain list of visible items
+            lltl::parray<cell_t>    visible;
+            status_t res    = visible_items(&visible, &items);
+            if ((res != STATUS_OK) || (visible.is_empty()))
+                return;
+
+            // Estimate parameters
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t spacing     = scaling * sSpacing.get();
+
+            // Estimated width and height, maximum width and height
+            ssize_t e_width = 0, e_height = 0;
+            ssize_t m_width = 0, m_height = 0;
 
             // Estimate self size
-            for (size_t i=0; i<n_items; ++i)
+            for (size_t i=0, n=visible.size(); i<n; ++i)
             {
                 // Get widget
-                cell_t *w = vItems.at(i);
-                if (hidden_widget(w))
-                    continue;
+                cell_t *w = visible.uget(i);
 
-                // Perform size request
-                w->r.nMinWidth      = -1;
-                w->r.nMinHeight     = -1;
-                w->r.nMaxWidth      = -1;
-                w->r.nMaxHeight     = -1;
-                if (w->pWidget == NULL)
-                    continue;
-
-                w->pWidget->size_request(&w->r);
-                w->pWidget->padding()->get(&w->p);
+                w->pWidget->get_size_limits(&w->r);
+                w->pWidget->get_padding(&w->p);
 //                lsp_trace("size_request id=%d, parameters = {%d, %d, %d, %d}",
 //                    int(i), int(w->r.nMinWidth), int(w->r.nMinHeight), int(w->r.nMaxWidth), int(w->r.nMaxHeight));
 
                 // Analyze widget class
-                ssize_t x_width     = w->p.nLeft + w->p.nRight;
-                ssize_t x_height    = w->p.nTop  + w->p.nBottom;
-                if (w->r.nMinWidth >= 0)
-                    x_width            += w->r.nMinWidth;
-                if (w->r.nMinHeight >= 0)
-                    x_height           += w->r.nMinHeight;
-
-                if (enOrientation == O_HORIZONTAL)
-                {
-                    if (x_height > e_height)
-                        e_height        = x_height;
-                    e_width            += x_width;
-                    if (i > 0)
-                        e_width        += nSpacing;
-                }
-                else // VBOX
-                {
-                    if (x_width > e_width)
-                        e_width         = x_width;
-                    e_height           += x_height;
-                    if (i > 0)
-                        e_height       += nSpacing;
-                }
+                ssize_t x_width     = lsp_max(0, w->r.nMinWidth)  + w->p.nLeft + w->p.nRight;
+                ssize_t x_height    = lsp_max(0, w->r.nMinHeight) + w->p.nTop  + w->p.nBottom;
+                m_width             = lsp_max(m_width,  x_width );
+                m_height            = lsp_max(m_height, x_height);
+                e_width            += x_width;
+                e_height           += x_height;
             }
 
-            r->nMinWidth        = e_width;
-            r->nMinHeight       = e_height;
+            if (sOrientation.horizontal())
+            {
+                if (sHomogeneous.get())
+                    r->nMinWidth        = (m_width + spacing) * visible.size() - spacing;
+                else
+                    r->nMinWidth        = e_width + spacing * (visible.size() - 1);
+                r->nMinHeight       = m_height;
+            }
+            else // vertical
+            {
+                r->nMinWidth        = m_width;
+                if (sHomogeneous.get())
+                    r->nMinHeight       = (m_height + spacing) * visible.size() - spacing;
+                else
+                    r->nMinHeight       = e_height + spacing * (visible.size() - 1);
+            }
         }
     
     } /* namespace tk */
