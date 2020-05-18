@@ -63,22 +63,26 @@ MTEST_BEGIN("tk", box)
         wnd->layout()->set(-0.5, 0.5, 0.5, 0.5);
         MTEST_ASSERT(widgets.push(wnd));
 
-        // Create vertical box
-        MTEST_ASSERT(box = new tk::Box(dpy));
-        MTEST_ASSERT(box->init() == STATUS_OK);
-        MTEST_ASSERT(widgets.push(box));
-        MTEST_ASSERT(wnd->add(box) == STATUS_OK);
-        box->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
-        box->orientation()->set_vertical();
-        box->spacing()->set(16);
-        parent = box;
+//        // Create vertical box
+//        MTEST_ASSERT(box = new tk::Box(dpy));
+//        MTEST_ASSERT(box->init() == STATUS_OK);
+//        MTEST_ASSERT(widgets.push(box));
+//        MTEST_ASSERT(wnd->add(box) == STATUS_OK);
+//        box->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
+//        box->orientation()->set_vertical();
+//        box->spacing()->set(16);
+//        parent = box;
+        parent = wnd;
 
         // Create horizontal box (1)
         MTEST_ASSERT(box = new tk::Box(dpy));
         MTEST_ASSERT(box->init() == STATUS_OK);
         MTEST_ASSERT(widgets.push(box));
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
-        box->bg_color()->set_rgb(0, 0.75, 1.0);
+        box->padding()->set_all(8);
+//        box->bg_color()->set_rgb(0, 0.75, 1.0);
+        box->bg_color()->set_rgb(1.0, 1.0, 1.0);
+        box->spacing()->set(8);
         box->orientation()->set_horizontal();
         {
             // Create widget (1)
@@ -105,10 +109,10 @@ MTEST_BEGIN("tk", box)
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, 64, 64);
-            wv->bg_color()->set_rgb(1.0f, 1.0f, 0.0f);
+            wv->bg_color()->set_rgb(0.0f, 1.0f, 0.0f);
             wv->allocation()->set_expand();
         }
-
+/*
         // Create horizontal box (2)
         MTEST_ASSERT(box = new tk::Box(dpy));
         MTEST_ASSERT(box->init() == STATUS_OK);
@@ -116,6 +120,7 @@ MTEST_BEGIN("tk", box)
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
         box->bg_color()->set_rgb(0, 0.75, 1.0);
         box->orientation()->set_horizontal();
+        box->homogeneous()->set(true);
         box->spacing()->set(8);
         {
             // Create widget (1)
@@ -183,7 +188,7 @@ MTEST_BEGIN("tk", box)
             wv->bg_color()->set_rgb(0.0f, 1.0f, 1.0f);
             wv->allocation()->set_fill(false);
         }
-
+*/
         // Show window
         wnd->visibility()->set(true);
 

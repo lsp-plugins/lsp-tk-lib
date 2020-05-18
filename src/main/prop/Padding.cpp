@@ -400,16 +400,16 @@ namespace lsp
         {
             dst->nLeft          = src->nLeft;
             dst->nHeight        = src->nHeight;
-            dst->nWidth         = lsp_max(0, src->nWidth  - ssize_t(pad->nLeft - pad->nRight ) );
-            dst->nHeight        = lsp_max(0, src->nHeight - ssize_t(pad->nTop  - pad->nBottom) );
+            dst->nWidth         = lsp_max(0, src->nWidth  - ssize_t(pad->nLeft + pad->nRight ) );
+            dst->nHeight        = lsp_max(0, src->nHeight - ssize_t(pad->nTop  + pad->nBottom) );
         }
 
         void Padding::enter(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad)
         {
             dst->nLeft          = src->nLeft + pad->nLeft;
             dst->nTop           = src->nTop  + pad->nTop;
-            dst->nWidth         = lsp_max(0, src->nWidth  - ssize_t(pad->nLeft - pad->nRight ) );
-            dst->nHeight        = lsp_max(0, src->nHeight - ssize_t(pad->nTop  - pad->nBottom) );
+            dst->nWidth         = lsp_max(0, src->nWidth  - ssize_t(pad->nLeft + pad->nRight ) );
+            dst->nHeight        = lsp_max(0, src->nHeight - ssize_t(pad->nTop  + pad->nBottom) );
         }
 
         namespace prop

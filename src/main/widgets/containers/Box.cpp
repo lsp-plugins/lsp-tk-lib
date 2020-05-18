@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -154,6 +155,10 @@ namespace lsp
             }
 
             // Draw items
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t spacing     = scaling * sSpacing.get();
+            bool horizontal     = sOrientation.horizontal();
+
             for (size_t i=0, n=visible.size(); i<n; ++i)
             {
                 cell_t *wc = visible.uget(i);
@@ -170,6 +175,16 @@ namespace lsp
                             wc->s.nLeft, wc->s.nTop, wc->s.nWidth, wc->s.nHeight,
                             bg_color
                         );
+
+                        // Draw spacing
+                        if (((i + 1) < n) && (spacing > 0))
+                        {
+                            bg_color.copy(sBgColor);
+                            if (horizontal)
+                                s->fill_rect(wc->a.nLeft + wc->a.nWidth, wc->a.nTop, spacing, wc->a.nHeight, bg_color);
+                            else
+                                s->fill_rect(wc->a.nLeft, wc->a.nTop + wc->a.nHeight, wc->a.nWidth, spacing, bg_color);
+                        }
                     }
                     w->render(s, force);
                     w->commit_redraw();
@@ -473,17 +488,9 @@ namespace lsp
 
                 // Compute coordinates of next cell
                 if (horizontal)
-                {
-                    if ((i + 1) < n)
-                        w->a.nWidth    += spacing; // Add spacing to fill gaps between cells on rendering
-                    l              += w->a.nWidth;
-                }
+                    l   += ((i + 1) < n) ? (spacing + w->a.nWidth)  : w->a.nWidth ;
                 else // vertical
-                {
-                    if ((i + 1) < n)
-                        w->a.nHeight   += spacing; // Add spacing to fill gaps between cells on rendering
-                    t              += w->a.nHeight;
-                }
+                    t   += ((i + 1) < n) ? (spacing + w->a.nHeight) : w->a.nHeight;
             }
         }
 
@@ -510,7 +517,8 @@ namespace lsp
                 w->s.nHeight    = xh;
 
                 // Realize the widget
-//                lsp_trace("realize id=%d, parameters = {%d, %d, %d, %d}", int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
+                lsp_trace("realize id=%d, parameters = {%d, %d, %d, %d}",
+                        int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
                 w->pWidget->realize(&w->s);
             }
         }
