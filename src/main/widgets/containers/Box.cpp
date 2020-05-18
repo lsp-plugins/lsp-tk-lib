@@ -154,9 +154,19 @@ namespace lsp
                 return;
             }
 
-            // Draw items
+            // Draw padding
+            ws::rectangle_t xr;
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = scaling * sSpacing.get();
+            sPadding.enter(&xr, &sSize, scaling);
+
+            s->fill_frame(
+                sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
+                xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
+                bg_color
+            );
+
+            // Draw items
             bool horizontal     = sOrientation.horizontal();
 
             for (size_t i=0, n=visible.size(); i<n; ++i)
@@ -535,9 +545,12 @@ namespace lsp
                 // Realize child widgets
                 if ((res == STATUS_OK) && (visible.size() > 0))
                 {
+                    ws::rectangle_t xr;
+                    sPadding.enter(&xr, r, sScaling.get());
+
                     res = (sHomogeneous.get()) ?
-                        allocate_homogeneous(r, visible) :
-                        allocate_proportional(r, visible);
+                        allocate_homogeneous(&xr, visible) :
+                        allocate_proportional(&xr, visible);
                 }
 
                 // Update state of all widgets
@@ -599,6 +612,7 @@ namespace lsp
                 e_height           += x_height;
             }
 
+            // Compute the final size
             if (sOrientation.horizontal())
             {
                 if (sHomogeneous.get())

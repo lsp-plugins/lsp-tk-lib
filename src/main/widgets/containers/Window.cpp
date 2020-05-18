@@ -183,6 +183,9 @@ namespace lsp
             r.nHeight           = lsp_max(r.nHeight, 1);
 
             // Check if we need to resize window
+            lsp_trace("size constraints: w={%d, %d}, h={%d, %d}",
+                    int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
+            );
             pWindow->set_size_constraints(&sr);
             if ((sSize.nWidth != r.nWidth) && (sSize.nHeight != r.nHeight))
                 pWindow->resize(r.nWidth, r.nHeight);
@@ -403,17 +406,21 @@ namespace lsp
                 if ((scaling != fScaling) && (bMapped))
                 {
                     ws::rectangle_t rect;
-                    ws::size_limit_t limit;
+                    ws::size_limit_t l;
                     sWindowSize.compute(&rect, scaling);
-                    sSizeConstraints.compute(&limit, scaling);
+                    sSizeConstraints.compute(&l, scaling);
 
                     fScaling    = scaling;
                     pWindow->set_size_constraints(-1, -1, -1, -1);
                     pWindow->resize(rect.nWidth, rect.nHeight);
-                    pWindow->set_size_constraints(&limit);
+                    pWindow->set_size_constraints(&l);
+                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
+                            int(l.nMinWidth), int(l.nMaxWidth),
+                            int(l.nMinHeight), int(l.nMaxHeight)
+                        );
                 }
-                else
-                    query_resize();
+
+                query_resize();
             }
             if (sLayout.is(prop))
             {
@@ -620,7 +627,7 @@ namespace lsp
                         r.nWidth    = e->nWidth;
                         r.nHeight   = e->nHeight;
 
-                        realize(&r);
+                        realize_widget(&r);
                     }
                     break;
 
@@ -784,20 +791,19 @@ namespace lsp
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
 
-            sPadding.add(r, scaling);
-
             if (pChild != NULL)
             {
                 ws::size_limit_t cr;
                 pChild->get_size_limits(&cr);
+                pChild->padding()->add(&cr, pChild->scaling()->get()); // Apply padding
 
                 r->nMinWidth       += lsp_max(cr.nMinWidth, 0);
                 r->nMinHeight      += lsp_max(cr.nMinHeight, 0);
             }
 
             // Window should be at least of 1x1 pixel size
-            r->nMinWidth        = lsp_max(r->nMinWidth, 1);
-            r->nMinHeight       = lsp_max(r->nMinHeight, 1);
+            r->nMinWidth        = lsp_max(r->nMinWidth, 0);
+            r->nMinHeight       = lsp_max(r->nMinHeight, 0);
 
             // Apply constraints to the window
             sSizeConstraints.apply(r, scaling);

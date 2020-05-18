@@ -382,8 +382,8 @@ namespace lsp
             scale               = lsp_max(scale, 0.0f);
             ssize_t hor         = (sValue.nLeft + sValue.nRight) * scale;
             ssize_t vert        = (sValue.nTop + sValue.nBottom) * scale;
-            dst->nLeft          = src->nLeft + sValue.nLeft;
-            dst->nTop           = src->nTop  + sValue.nTop;
+            dst->nLeft          = src->nLeft + sValue.nLeft * scale;
+            dst->nTop           = src->nTop  + sValue.nTop  * scale;
             dst->nWidth         = lsp_max(0, src->nWidth  - hor );
             dst->nHeight        = lsp_max(0, src->nHeight - vert);
         }

@@ -107,7 +107,8 @@ namespace lsp
                  */
                 virtual void            property_changed(Property *prop);
 
-                /** Request widget for size
+                /** Request widget for size. Widget should return it's maximum
+                 * size without applying padding parameter
                  *
                  * @param limit the widget size constraints to fill
                  */
@@ -288,9 +289,7 @@ namespace lsp
                  */
                 Style                  *style_class() const;
 
-                /** Get widget padding. Most widgets (except special ones) should only provide
-                 * this option and not consider to use it in size_request() call. The widget
-                 * container is responsible for proper handling of this option.
+                /** Get widget padding. All widgets should properly handle this parameter
                  *
                  * @return widget padding
                  */
