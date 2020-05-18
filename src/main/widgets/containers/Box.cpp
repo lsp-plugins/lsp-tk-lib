@@ -29,13 +29,27 @@ namespace lsp
 
         status_t Box::init()
         {
-            status_t result = WidgetContainer::init();
-            if (result != STATUS_OK)
-                return result;
+            status_t res = WidgetContainer::init();
+            if (res == STATUS_OK)
+            {
+                sSpacing.bind("spacing", &sStyle);
+                sHomogeneous.bind("homogeneous", &sStyle);
+                sOrientation.bind("orientation", &sStyle);
 
+                Style *sclass = style_class();
+                if (sclass != NULL)
+                {
+                    sStyle.add_parent(sclass);
+                    sSpacing.init(sclass, 0);
+                    sHomogeneous.init(sclass, false);
+                    sOrientation.init(sclass, O_HORIZONTAL);
+                }
 
+                // Override settings for hfill and vfill
+                sAllocation.set(true, false);
+            }
 
-            return STATUS_OK;
+            return res;
         }
 
         void Box::destroy()

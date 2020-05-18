@@ -70,6 +70,8 @@ MTEST_BEGIN("tk", display)
 
         MTEST_ASSERT(dpy->main() == STATUS_OK);
 
+        wVoid->destroy();
+        delete wVoid;
         wnd->destroy();
         delete wnd;
         dpy->destroy();
