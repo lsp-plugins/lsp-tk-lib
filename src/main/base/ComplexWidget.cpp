@@ -83,6 +83,7 @@ namespace lsp
 
         status_t ComplexWidget::handle_event_internal(const ws::event_t *e)
         {
+            mark_pointed();
             return Widget::handle_event(e);
         }
 

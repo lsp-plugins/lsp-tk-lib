@@ -287,7 +287,6 @@ namespace lsp
 
                 // Request size limit and padding of the widget
                 w->pWidget->get_size_limits(&w->r);
-                w->pWidget->get_padding(&w->p);
 
                 if (horizontal)
                 {
@@ -348,12 +347,10 @@ namespace lsp
 
                 // Request size limit and padding of the widget
                 w->pWidget->get_size_limits(&w->r);
-                w->pWidget->get_padding(&w->p);
 
                 if (horizontal)
                 {
-                    w->a.nWidth         = w->p.nLeft + w->p.nRight;     // Add padding to allocation
-                    w->a.nWidth        += lsp_max(0, w->r.nMinWidth);   // Add minimum width to allocation
+                    w->a.nWidth         = lsp_max(0, w->r.nMinWidth);   // Add minimum width to allocation
                     w->a.nHeight        = r->nHeight;                   // All allocations have same height for horizontal box
                     n_left             -= w->a.nWidth;
 
@@ -367,8 +364,7 @@ namespace lsp
                 }
                 else // vertical
                 {
-                    w->a.nHeight        = w->p.nTop + w->p.nBottom;     // Add padding to allocation
-                    w->a.nHeight       += lsp_max(0, w->r.nMinHeight);  // Add minimum height to allocation
+                    w->a.nHeight        = lsp_max(0, w->r.nMinHeight);  // Add minimum height to allocation
                     w->a.nWidth         = r->nWidth;                    // All allocation have same width for vertical box
                     n_left             -= w->a.nHeight;
 
@@ -494,7 +490,7 @@ namespace lsp
                 // Initial coordinates
                 w->a.nLeft      = l;
                 w->a.nTop       = t;
-                Padding::enter(&w->s, &w->a, &w->p); // Estimate real space used by widget
+                w->s            = w->a;
 
                 // Compute coordinates of next cell
                 if (horizontal)
@@ -599,13 +595,12 @@ namespace lsp
                 cell_t *w = visible.uget(i);
 
                 w->pWidget->get_size_limits(&w->r);
-                w->pWidget->get_padding(&w->p);
 //                lsp_trace("size_request id=%d, parameters = {%d, %d, %d, %d}",
 //                    int(i), int(w->r.nMinWidth), int(w->r.nMinHeight), int(w->r.nMaxWidth), int(w->r.nMaxHeight));
 
                 // Analyze widget class
-                ssize_t x_width     = lsp_max(0, w->r.nMinWidth)  + w->p.nLeft + w->p.nRight;
-                ssize_t x_height    = lsp_max(0, w->r.nMinHeight) + w->p.nTop  + w->p.nBottom;
+                ssize_t x_width     = lsp_max(0, w->r.nMinWidth);
+                ssize_t x_height    = lsp_max(0, w->r.nMinHeight);
                 m_width             = lsp_max(m_width,  x_width );
                 m_height            = lsp_max(m_height, x_height);
                 e_width            += x_width;

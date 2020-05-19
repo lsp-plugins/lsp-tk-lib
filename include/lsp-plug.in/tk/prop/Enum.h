@@ -38,7 +38,6 @@ namespace lsp
                 };
 
             protected:
-                atom_t              nAtom;
                 ssize_t             nValue;
                 Listener            sListener;
                 const prop::enum_t *pEnum;
