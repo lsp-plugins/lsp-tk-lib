@@ -110,7 +110,7 @@ namespace lsp
                 cell_t *w = vItems.uget(i);
                 if (hidden_widget(w))
                     continue;
-                if (Position::inside(&w->s, x, y))
+                if (w->pWidget->inside(x, y))
                     return w->pWidget;
             }
 

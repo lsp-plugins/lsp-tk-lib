@@ -55,11 +55,9 @@ namespace lsp
                 void                        realize_widgets(lltl::parray<cell_t> &visible);
 
             protected:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
                 virtual void                size_request(ws::size_limit_t *r);
                 virtual void                property_changed(Property *prop);
                 virtual void                realize_widget(const ws::rectangle_t *r);
-
 
             public:
                 explicit Box(Display *dpy);
@@ -95,6 +93,8 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
+                virtual Widget             *find_widget(ssize_t x, ssize_t y);
+
                 virtual void                render(ws::ISurface *s, bool force);
 
                 virtual status_t            add(Widget *widget);

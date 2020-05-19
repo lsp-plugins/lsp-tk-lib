@@ -78,6 +78,7 @@ namespace lsp
                 static status_t     slot_mouse_move(Widget *sender, void *ptr, void *data);
                 static status_t     slot_mouse_down(Widget *sender, void *ptr, void *data);
                 static status_t     slot_mouse_up(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_click(Widget *sender, void *ptr, void *data);
                 static status_t     slot_mouse_dbl_click(Widget *sender, void *ptr, void *data);
                 static status_t     slot_mouse_tri_click(Widget *sender, void *ptr, void *data);
                 static status_t     slot_mouse_scroll(Widget *sender, void *ptr, void *data);
@@ -230,18 +231,6 @@ namespace lsp
                  */
                 inline bool             resize_pending() const              { return nFlags & (SIZE_INVALID | RESIZE_PENDING); };
 
-                /** Check that widget has focus
-                 *
-                 * @return widget focus
-                 */
-                virtual bool            has_focus() const;
-
-                /** Check that widget has focus
-                 *
-                 * @return widget focus
-                 */
-                inline bool             focused() const                     { return has_focus(); };
-
                 /** Check that specified window coordinate lies within widget's bounds
                  * Always returns false for invisible widgets
                  *
@@ -269,12 +258,6 @@ namespace lsp
                  * @return pointer to slot or NULL
                  */
                 inline Slot            *slot(slot_t id)         { return sSlots.slot(id); }
-
-                /** Get actual mouse pointer to the corresponding mouse position
-                 *
-                 * @return actual mouse pointer
-                 */
-                virtual ws::mouse_pointer_t actual_pointer() const;
                 
                 /**
                  * Return widget's style
@@ -341,6 +324,14 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
+                /**
+                 * Return mouse handler
+                 * @param x left coordinate of the mouse pointer relative to the top-level widget
+                 * @param y top coordinate of the mouse pointer relative to the top-level widget
+                 * @return pointer to widget that will handle mouse events
+                 */
+                virtual Widget         *find_widget(ssize_t x, ssize_t y);
+
                 /** Query widget for redraw
                  *
                  * @param flags redraw flags
@@ -392,37 +383,6 @@ namespace lsp
                  * @param r real area allocated to the widget
                  */
                 void                    realize(const ws::rectangle_t *r);
-
-                /** Set focus on widget
-                 *
-                 * @param focus focusing parameter
-                 * @return status of operation
-                 */
-                virtual status_t        set_focus(bool focus = true);
-
-                /** Kill focus on widget
-                 *
-                 * @return status of operation
-                 */
-                inline status_t         kill_focus() { return set_focus(false); };
-
-                /** Kill focus on widget
-                 *
-                 * @return status of operation
-                 */
-                inline status_t         take_focus() { return set_focus(true); };
-
-                /** Mark this widget to be currently pointed by mouse
-                 *
-                 * @return status of operation
-                 */
-                status_t                mark_pointed();
-
-                /** Invert focus
-                 *
-                 * @return status of operation
-                 */
-                virtual status_t        toggle_focus();
 
                 /** Handle UI event from the display
                  *
@@ -525,6 +485,13 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t        on_mouse_scroll(const ws::event_t *e);
+
+                /** Handle single mouse click
+                 *
+                 * @param e event
+                 * @return status of operation
+                 */
+                virtual status_t        on_mouse_click(const ws::event_t *e);
 
                 /** Handle mouse double click event
                  *

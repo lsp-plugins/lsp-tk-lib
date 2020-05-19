@@ -9,6 +9,11 @@
 #include <lsp-plug.in/tk/tk.h>
 
 MTEST_BEGIN("tk", box)
+    typedef struct handler_t
+    {
+        test_type_t    *test;
+        const char     *label;
+    } handler_t;
 
     static status_t slot_close(tk::Widget *sender, void *ptr, void *data)
     {
@@ -34,8 +39,102 @@ MTEST_BEGIN("tk", box)
         return STATUS_OK;
     }
 
+    static status_t slot_mouse_in(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_IN: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_mouse_out(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_OUT: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_mouse_move(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_MOVE: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_mouse_down(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_DOWN: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_mouse_up(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_UP: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_mouse_click(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_CLICK: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_mouse_dbl_click(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_DBL_CLICK: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_mouse_tri_click(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_TRI_CLICK: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    status_t init_widget(tk::Widget *w, lltl::darray<handler_t> &vh, const char *label)
+    {
+        status_t res = w->init();
+        if (res != STATUS_OK)
+            return res;
+
+        handler_t *h = vh.add();
+        if (h == NULL)
+            return STATUS_NO_MEM;
+        h->test     = this;
+        h->label    = label;
+
+        tk::handler_id_t hid;
+        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
+
+        if (hid < 0)
+            res = -hid;
+
+        return res;
+    }
+
     MTEST_MAIN
     {
+        lltl::darray<handler_t> vh;
+
         tk::Display *dpy = new tk::Display();
         MTEST_ASSERT(dpy != NULL);
 
@@ -49,7 +148,7 @@ MTEST_BEGIN("tk", box)
         tk::WidgetContainer *parent = NULL;
 
         // Initialize window
-        MTEST_ASSERT(wnd->init() == STATUS_OK);
+        MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
         MTEST_ASSERT(wnd->title()->set_raw("Test box") == STATUS_OK);
         MTEST_ASSERT(wnd->role()->set_raw("box_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
@@ -65,7 +164,7 @@ MTEST_BEGIN("tk", box)
 
         // Create vertical box
         MTEST_ASSERT(box = new tk::Box(dpy));
-        MTEST_ASSERT(box->init() == STATUS_OK);
+        MTEST_ASSERT(init_widget(box, vh, "vbox") == STATUS_OK);
         MTEST_ASSERT(widgets.push(box));
         MTEST_ASSERT(wnd->add(box) == STATUS_OK);
         box->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
@@ -77,7 +176,7 @@ MTEST_BEGIN("tk", box)
 
         // Create horizontal box (1)
         MTEST_ASSERT(box = new tk::Box(dpy));
-        MTEST_ASSERT(box->init() == STATUS_OK);
+        MTEST_ASSERT(init_widget(box, vh, "hbox1") == STATUS_OK);
         MTEST_ASSERT(widgets.push(box));
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
         box->padding()->set_all(1);
@@ -89,7 +188,7 @@ MTEST_BEGIN("tk", box)
         {
             // Create widget (1)
             MTEST_ASSERT(wv = new tk::Void(dpy));
-            MTEST_ASSERT(wv->init() == STATUS_OK);
+            MTEST_ASSERT(init_widget(wv, vh, "void1-1") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, -1, -1);

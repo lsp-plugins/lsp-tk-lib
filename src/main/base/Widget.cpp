@@ -106,6 +106,7 @@ namespace lsp
             if (id >= 0) id = sSlots.add(SLOT_MOUSE_UP, slot_mouse_up, self());
             if (id >= 0) id = sSlots.add(SLOT_MOUSE_MOVE, slot_mouse_move, self());
             if (id >= 0) id = sSlots.add(SLOT_MOUSE_SCROLL, slot_mouse_scroll, self());
+            if (id >= 0) id = sSlots.add(SLOT_MOUSE_CLICK, slot_mouse_click, self());
             if (id >= 0) id = sSlots.add(SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, self());
             if (id >= 0) id = sSlots.add(SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, self());
             if (id >= 0) id = sSlots.add(SLOT_MOUSE_IN, slot_mouse_in, self());
@@ -159,11 +160,6 @@ namespace lsp
             }
         }
 
-        ws::mouse_pointer_t Widget::actual_pointer() const
-        {
-            return sPointer.get();
-        }
-
         Style *Widget::style_class() const
         {
             Schema *s = const_cast<Widget *>(this)->pDisplay->schema();
@@ -208,6 +204,16 @@ namespace lsp
             Widget *_this   = widget_ptrcast<Widget>(ptr);
             ws::event_t *ev = static_cast<ws::event_t *>(data);
             return _this->on_mouse_up(ev);
+        }
+
+        status_t Widget::slot_mouse_click(Widget *sender, void *ptr, void *data)
+        {
+            if ((ptr == NULL) || (data == NULL))
+                return STATUS_BAD_ARGUMENTS;
+
+            Widget *_this   = widget_ptrcast<Widget>(ptr);
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            return _this->on_mouse_click(ev);
         }
 
         status_t Widget::slot_mouse_dbl_click(Widget *sender, void *ptr, void *data)
@@ -392,6 +398,11 @@ namespace lsp
             sSlots.execute(SLOT_SHOW, this);
         }
 
+        Widget *Widget::find_widget(ssize_t x, ssize_t y)
+        {
+            return NULL;
+        }
+
         void Widget::set_parent(ComplexWidget *parent)
         {
             if (pParent == parent)
@@ -400,13 +411,12 @@ namespace lsp
             if (pParent != NULL)
             {
                 Window *wnd = widget_cast<Window>(toplevel());
-                if (wnd != NULL)
-                    wnd->unfocus_child(this);
                 sStyle.remove_parent(pParent->style()); // Unlink style
 
                 WidgetContainer *wc = widget_cast<WidgetContainer>(pParent);
                 if (wc != NULL)
                     wc->remove(this);
+                wnd->discard_widget(wc);
             }
 
             pParent = parent;
@@ -601,44 +611,6 @@ namespace lsp
             r->nMaxHeight   = -1;
         }
 
-        bool Widget::has_focus() const
-        {
-            if (!sVisibility.get())
-                return false;
-
-            Widget *_this   = const_cast<Widget *>(this);
-            Window *wnd     = widget_cast<Window>(_this->toplevel());
-            return (wnd != NULL) ? (wnd->focused_child() == this) : false;
-        }
-
-        status_t Widget::set_focus(bool focus)
-        {
-            if (!sVisibility.get())
-                return STATUS_OK;
-
-            Window *wnd     = widget_cast<Window>(toplevel());
-            if (wnd == NULL)
-                return STATUS_BAD_HIERARCHY;
-            return (focus) ? wnd->focus_child(this) : wnd->unfocus_child(this);
-        }
-
-        status_t Widget::toggle_focus()
-        {
-            if (!sVisibility.get())
-                return STATUS_OK;
-
-            Window *wnd     = widget_cast<Window>(toplevel());
-            return (wnd != NULL) ? wnd->toggle_child_focus(this) : STATUS_BAD_HIERARCHY;
-        }
-
-        status_t Widget::mark_pointed()
-        {
-            Window *wnd     = widget_cast<Window>(toplevel());
-            if (wnd == NULL)
-                return STATUS_SUCCESS;
-            return wnd->point_child(this);
-        }
-
         status_t Widget::handle_event(const ws::event_t *e)
         {
             #define FWD_EVENT(ev, slot_id) \
@@ -705,8 +677,7 @@ namespace lsp
 
         status_t Widget::on_mouse_in(const ws::event_t *e)
         {
-            // Always mark widget pointed
-            return mark_pointed();
+            return STATUS_OK;
         }
 
         status_t Widget::on_mouse_out(const ws::event_t *e)
@@ -715,6 +686,11 @@ namespace lsp
         }
 
         status_t Widget::on_mouse_scroll(const ws::event_t *e)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Widget::on_mouse_click(const ws::event_t *e)
         {
             return STATUS_OK;
         }

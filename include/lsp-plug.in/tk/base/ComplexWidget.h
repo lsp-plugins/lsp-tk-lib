@@ -25,21 +25,8 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
-                ssize_t             nMouse;
                 ssize_t             nKey;
                 Widget             *pKey;
-                Widget             *pMouse;
-
-            protected:
-                Widget             *acquire_mouse_handler(const ws::event_t *e);
-                void                release_mouse_handler(const ws::event_t *e);
-
-            //---------------------------------------------------------------------------------
-            // Manipulation
-            protected:
-                virtual Widget         *find_widget(ssize_t x, ssize_t y);
-
-                virtual status_t        handle_event_internal(const ws::event_t *e);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction

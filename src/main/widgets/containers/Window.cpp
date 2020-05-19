@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/string.h>
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/common/status.h>
 
@@ -35,13 +36,13 @@ namespace lsp
             pWindow         = NULL;
             pChild          = NULL;
             pNativeHandle   = handle;
-            pFocus          = NULL;
-            pPointed        = NULL;
-            bHasFocus       = false;
             bMapped         = false;
             bOverridePointer= false;
             fScaling        = 1.0f;
             pActor          = NULL;
+
+            hMouse.nState   = 0;
+            hMouse.pWidget  = NULL;
 
             pClass          = &metadata;
         }
@@ -336,8 +337,8 @@ namespace lsp
                 return STATUS_OK;
 
             ws::mouse_pointer_t mp  = sPointer.get();
-            if ((!bOverridePointer) && (pPointed != NULL))
-                mp      = pPointed->actual_pointer();
+            if ((!bOverridePointer) && (hMouse.pWidget != NULL))
+                mp      = hMouse.pWidget->pointer()->get();
 
             return (mp == pWindow->get_mouse_pointer()) ? STATUS_OK : pWindow->set_mouse_pointer(mp);
         }
@@ -429,14 +430,6 @@ namespace lsp
             }
             if (sPolicy.is(prop) || sScaling.is(prop))
                 query_resize();
-        }
-
-        status_t Window::point_child(Widget *focus)
-        {
-            if (pPointed == focus)
-                return STATUS_OK;
-            pPointed    = (focus != this) ? focus : this;
-            return update_pointer();
         }
 
         status_t Window::grab_events(ws::grab_t grab)
@@ -564,14 +557,8 @@ namespace lsp
 
             switch (e->nType)
             {
-                case ws::UIE_FOCUS_IN:
-                    result = sSlots.execute(SLOT_FOCUS_IN, this, &ev);
-                    break;
-
-                case ws::UIE_FOCUS_OUT:
-                    result = sSlots.execute(SLOT_FOCUS_OUT, this, &ev);
-                    break;
-
+                //-------------------------------------------------------------
+                // Window state and geometry handling
                 case ws::UIE_SHOW:
                     lsp_trace("show event received");
                     if (!bMapped)
@@ -604,13 +591,13 @@ namespace lsp
                     result = sSlots.execute(SLOT_CLOSE, this, &ev);
                     break;
 
-                case ws::UIE_KEY_DOWN:
-                case ws::UIE_KEY_UP:
-                    lsp_trace("key event received, focus = %p", pFocus);
-                    result = (pFocus != NULL) ?
-                        pFocus->handle_event(e) :
-                        Widget::handle_event(e);
-                    break;
+//                case ws::UIE_KEY_DOWN:
+//                case ws::UIE_KEY_UP:
+//                    lsp_trace("key event received, focus = %p", pFocus);
+//                    result = (pFocus != NULL) ?
+//                        pFocus->handle_event(e) :
+//                        Widget::handle_event(e);
+//                    break;
 
                 case ws::UIE_RESIZE:
                     if (bMapped)
@@ -631,6 +618,73 @@ namespace lsp
                     }
                     break;
 
+                //-------------------------------------------------------------
+                // Mouse handling
+                case ws::UIE_MOUSE_UP:
+                {
+//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
+//                            int(e->nCode), int(e->nState), int(hMouse.nState));
+                    Widget *h       = acquire_mouse_handler(e);
+                    hMouse.nState  &= ~(1 << e->nCode);
+                    hMouse.nLeft    = e->nLeft;
+                    hMouse.nTop     = e->nTop;
+
+                    if (h == this)
+                        result          = WidgetContainer::handle_event(e);
+                    else if (h != NULL)
+                        result          = h->handle_event(e);
+
+                    release_mouse_handler(e);
+                    break;
+                }
+
+                case ws::UIE_MOUSE_DOWN:
+                {
+//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
+//                            int(e->nCode), int(e->nState), int(hMouse.nState));
+                    Widget *h       = acquire_mouse_handler(e);
+                    hMouse.nState  |= (1 << e->nCode);
+                    hMouse.nLeft    = e->nLeft;
+                    hMouse.nTop     = e->nTop;
+
+                    if (h == this)
+                        result          = WidgetContainer::handle_event(e);
+                    else if (h != NULL)
+                        result          = h->handle_event(e);
+
+                    break;
+                }
+
+                case ws::UIE_MOUSE_MOVE:
+                {
+//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
+//                            int(e->nCode), int(e->nState), int(hMouse.nState));
+                    Widget *h       = acquire_mouse_handler(e);
+                    hMouse.nState   = e->nState;
+                    hMouse.nLeft    = e->nLeft;
+                    hMouse.nTop     = e->nTop;
+
+                    if (h == this)
+                        result          = WidgetContainer::handle_event(e);
+                    else if (h != NULL)
+                        result          = h->handle_event(e);
+                    break;
+                };
+
+                case ws::UIE_MOUSE_DBL_CLICK:
+                case ws::UIE_MOUSE_TRI_CLICK:
+                case ws::UIE_MOUSE_SCROLL:
+                {
+                    Widget *h = acquire_mouse_handler(e);
+                    if (h == this)
+                        result          = WidgetContainer::handle_event(e);
+                    else if (h != NULL)
+                        result          = h->handle_event(e);
+
+                    release_mouse_handler(e);
+                    break;
+                }
+
                 default:
                     result      = WidgetContainer::handle_event(e);
                     break;
@@ -642,113 +696,93 @@ namespace lsp
             return result;
         }
 
+        Widget *Window::sync_mouse_handler(const ws::event_t *e)
+        {
+            // Update current widget
+            Widget *old     = hMouse.pWidget;
+            Widget *child   = find_widget(e->nLeft, e->nTop);
+            if (child == old)
+                return old;
+
+            hMouse.pWidget  = child;
+
+            // Send UIE_MOUSE_OUT to previous handler
+            if (old != NULL)
+            {
+                ws::event_t ev;
+                init_event(&ev);
+                ev.nType    = ws::UIE_MOUSE_OUT;
+                ev.nLeft    = e->nLeft;
+                ev.nTop     = e->nTop;
+
+                if (old != this)
+                    old->handle_event(&ev);
+                else
+                    WidgetContainer::handle_event(&ev);
+            }
+
+            // Send UIE_MOUSE_IN to current handler
+            if (child != NULL)
+            {
+                ws::event_t ev;
+                init_event(&ev);
+                ev.nType    = ws::UIE_MOUSE_IN;
+                ev.nLeft    = e->nLeft;
+                ev.nTop     = e->nTop;
+
+                if (child != this)
+                    child->handle_event(&ev);
+                else
+                    WidgetContainer::handle_event(&ev);
+            }
+
+            return child;
+        }
+
+        Widget *Window::acquire_mouse_handler(const ws::event_t *e)
+        {
+            // Check that we work in exclusive mode
+            Widget *old = hMouse.pWidget;
+            if ((hMouse.nState & ws::MCF_BTN_MASK) && (old))
+                return old;
+
+            return sync_mouse_handler(e);
+        }
+
+        Widget *Window::release_mouse_handler(const ws::event_t *e)
+        {
+            Widget *old = hMouse.pWidget;
+
+            if (old == NULL)
+            {
+                hMouse.nState   = 0;
+                return old;
+            }
+
+            if (hMouse.nState & ws::MCF_BTN_MASK)
+                return old;
+
+            return sync_mouse_handler(e);
+        }
+
         Widget *Window::find_widget(ssize_t x, ssize_t y)
         {
-            if (pChild == NULL)
-                return NULL;
+            if ((pChild == NULL) || (!pChild->inside(x, y)))
+                return this;
 
-            return (pChild->inside(x, y)) ? pChild : NULL;
+            Widget *curr = pChild;
+            while (true)
+            {
+                Widget *next = curr->find_widget(x, y);
+                if (next == NULL)
+                    return curr;
+                curr    = next;
+            }
         }
 
         status_t Window::on_close(const ws::event_t *e)
         {
             return STATUS_OK;
-        }
-
-        status_t Window::on_focus_in(const ws::event_t *e)
-        {
-            bHasFocus = true;
-            return WidgetContainer::on_focus_in(e);
-        }
-
-        status_t Window::on_focus_out(const ws::event_t *e)
-        {
-            bHasFocus = false;
-            return WidgetContainer::on_focus_out(e);
-        }
-
-        status_t Window::focus_child(Widget *focus)
-        {
-            if (pFocus == focus)
-                return STATUS_OK;
-            else if ((focus != NULL) && (focus->toplevel() != this))
-                return STATUS_BAD_HIERARCHY;
-
-            ws::event_t ev;
-            ev.nLeft        = 0;
-            ev.nTop         = 0;
-            ev.nWidth       = 0;
-            ev.nHeight      = 0;
-            ev.nCode        = 0;
-            ev.nState       = 0;
-            ev.nTime        = 0;
-
-            if (pFocus != NULL)
-            {
-                ev.nType        = ws::UIE_FOCUS_OUT;
-                Widget *f    = pFocus;
-                pFocus          = NULL;
-                status_t status = f->handle_event(&ev);
-                if (status != STATUS_OK)
-                    return status;
-            }
-
-            if (focus != NULL)
-            {
-                ev.nType        = ws::UIE_FOCUS_IN;
-                pFocus          = focus;
-                status_t status = focus->handle_event(&ev);
-                if (status != STATUS_OK)
-                    return status;
-            }
-
-            return STATUS_OK;
-        }
-
-        status_t Window::unfocus_child(Widget *focus)
-        {
-            if (pPointed == focus)
-                pPointed = NULL;
-            if (focus != pFocus)
-                return STATUS_OK;
-
-            ws::event_t ev;
-            ev.nType        = ws::UIE_FOCUS_OUT;
-            ev.nLeft        = 0;
-            ev.nTop         = 0;
-            ev.nWidth       = 0;
-            ev.nHeight      = 0;
-            ev.nCode        = 0;
-            ev.nState       = 0;
-            ev.nTime        = 0;
-
-            status_t status = pFocus->handle_event(&ev);
-            pFocus          = NULL;
-            return status;
-        }
-
-        status_t Window::toggle_child_focus(Widget *focus)
-        {
-            return (focus == pFocus) ? unfocus_child(focus) : focus_child(focus);
-        }
-
-        status_t Window::set_focus(bool focus)
-        {
-            if (!sVisibility.get())
-                return STATUS_OK;
-            return (pWindow != NULL) ? pWindow->set_focus(focus) : STATUS_BAD_STATE;
-        }
-
-        status_t Window::toggle_focus()
-        {
-            if (!sVisibility.get())
-                return STATUS_OK;
-            return (pWindow != NULL) ? pWindow->toggle_focus() : STATUS_BAD_STATE;
-        }
-
-        bool Window::has_focus() const
-        {
-            return (sVisibility.get()) ? bHasFocus : false;
         }
 
         void Window::realize_widget(const ws::rectangle_t *r)
@@ -779,6 +813,28 @@ namespace lsp
 
             // Call for realize
             pChild->realize(&rc);
+        }
+
+        void Window::discard_widget(Widget *w)
+        {
+            if (w == NULL)
+                return;
+            lsp_trace("discard widget: w=%p, class=%s", w, w->get_class()->name);
+
+            // Send UIE_MOUSE_OUT and discard mouse handler
+            Widget *old = hMouse.pWidget;
+            if (old == w)
+            {
+                ws::event_t ev;
+                ws::init_event(&ev);
+                ev.nType            = ws::UIE_MOUSE_OUT;
+                ev.nLeft            = hMouse.nLeft;
+                ev.nTop             = hMouse.nTop;
+                hMouse.pWidget      = NULL;
+
+                old->handle_event(&ev);
+                sync_mouse_handler(&ev);
+            }
         }
 
         void Window::size_request(ws::size_limit_t *r)

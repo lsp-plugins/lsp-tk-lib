@@ -24,8 +24,16 @@ namespace lsp
                 Window & operator = (const Window &);
 
             protected:
-                friend class WindowActions;
                 friend class Display;
+                friend class Widget;
+
+                typedef struct mouse_handler_t
+                {
+                    size_t              nState;             // State of mouse buttons
+                    ssize_t             nLeft;              // Last X coordinate
+                    ssize_t             nTop;               // Last Y coordinate
+                    Widget             *pWidget;            // Current widget that handles events
+                } mouse_handler_t;
 
             public:
                 static const w_class_t    metadata;
@@ -34,12 +42,11 @@ namespace lsp
                 ws::IWindow            *pWindow;            // Underlying
                 void                   *pNativeHandle;
                 Widget                 *pChild;
-                Widget                 *pFocus;
-                Widget                 *pPointed;
-                bool                    bHasFocus;
                 bool                    bMapped;
                 bool                    bOverridePointer;
                 float                   fScaling;           // Cached scaling factor
+
+                mouse_handler_t         hMouse;             // Mouse handler
 
                 Window                 *pActor;
                 Timer                   sRedraw;
@@ -69,11 +76,22 @@ namespace lsp
                 status_t            sync_size();
                 status_t            update_pointer();
 
+                Widget             *sync_mouse_handler(const ws::event_t *e);
+                Widget             *acquire_mouse_handler(const ws::event_t *e);
+                Widget             *release_mouse_handler(const ws::event_t *e);
+
+            protected:
                 virtual void        property_changed(Property *prop);
                 virtual void        hide_widget();
                 virtual void        show_widget();
                 virtual void        size_request(ws::size_limit_t *r);
                 virtual void        realize_widget(const ws::rectangle_t *r);
+
+                /**
+                 * Discard widget: notify window that widget has been removed from the widget tree
+                 * @param w widget
+                 */
+                void                discard_widget(Widget *w);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction
@@ -115,10 +133,6 @@ namespace lsp
                 inline ssize_t                  screen()                    { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
                 status_t                        get_absolute_geometry(ws::rectangle_t *r);
-
-                inline Widget                  *focused_child() const       { return const_cast<Window *>(this)->pFocus; }
-
-                inline Widget                  *pointed_child() const       { return const_cast<Window *>(this)->pPointed; }
 
                 inline bool                     override_pointer() const    { return bOverridePointer; }
 
@@ -168,18 +182,7 @@ namespace lsp
 
                 virtual status_t        handle_event(const ws::event_t *e);
 
-                virtual status_t        set_focus(bool focus = true);
-
-                virtual status_t        toggle_focus();
-
-                virtual bool            has_focus() const;
-
             public:
-                status_t                focus_child(Widget *focus);
-                status_t                unfocus_child(Widget *focus);
-                status_t                toggle_child_focus(Widget *focus);
-                status_t                point_child(Widget *focus);
-
                 status_t                grab_events(ws::grab_t grab);
                 status_t                ungrab_events();
 
@@ -195,20 +198,6 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t        on_close(const ws::event_t *e);
-
-                /** Widget has taken focus
-                 *
-                 * @param e event
-                 * @return status of operation
-                 */
-                virtual status_t        on_focus_in(const ws::event_t *e);
-
-                /** Widget has lost focus
-                 *
-                 * @param e event
-                 * @return status of operation
-                 */
-                virtual status_t        on_focus_out(const ws::event_t *e);
 
                 /** Set window icon
                  *
