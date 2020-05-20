@@ -11,10 +11,10 @@ namespace lsp
 {
     namespace tk
     {
-        const w_class_t WidgetContainer::metadata = { "WidgetContainer", &ComplexWidget::metadata };
+        const w_class_t WidgetContainer::metadata = { "WidgetContainer", &Widget::metadata };
 
         WidgetContainer::WidgetContainer(Display *dpy):
-            ComplexWidget(dpy)
+            Widget(dpy)
         {
             pClass          = &metadata;
         }

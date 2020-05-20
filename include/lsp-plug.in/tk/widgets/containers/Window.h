@@ -35,18 +35,26 @@ namespace lsp
                     Widget             *pWidget;            // Current widget that handles events
                 } mouse_handler_t;
 
+                typedef struct key_handler_t
+                {
+                    size_t              nKeys;              // Number of keys pressed
+                    Widget             *pWidget;            // Keyboard handler
+                } key_handler_t;
+
             public:
                 static const w_class_t    metadata;
 
             protected:
-                ws::IWindow            *pWindow;            // Underlying
-                void                   *pNativeHandle;
-                Widget                 *pChild;
+                ws::IWindow            *pWindow;            // Underlying window
+                void                   *pNativeHandle;      // Native handle of the window
+                Widget                 *pChild;             // Child widget
+                Widget                 *pFocused;           // Focused widget
                 bool                    bMapped;
                 bool                    bOverridePointer;
                 float                   fScaling;           // Cached scaling factor
 
                 mouse_handler_t         hMouse;             // Mouse handler
+                key_handler_t           hKeys;              // Key handler
 
                 Window                 *pActor;
                 Timer                   sRedraw;
@@ -76,9 +84,15 @@ namespace lsp
                 status_t            sync_size();
                 status_t            update_pointer();
 
+                // Mouse operations
                 Widget             *sync_mouse_handler(const ws::event_t *e);
                 Widget             *acquire_mouse_handler(const ws::event_t *e);
                 Widget             *release_mouse_handler(const ws::event_t *e);
+
+                // Focus operations
+                inline bool         check_focus(Widget *w) const    { return pFocused == w; }
+                bool                take_focus(Widget *w);
+                bool                kill_focus(Widget *w);
 
             protected:
                 virtual void        property_changed(Property *prop);

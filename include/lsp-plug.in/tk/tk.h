@@ -70,7 +70,6 @@
 
 // Base widgets
 #include <lsp-plug.in/tk/base/Widget.h>
-#include <lsp-plug.in/tk/base/ComplexWidget.h>
 #include <lsp-plug.in/tk/base/WidgetContainer.h>
 #include <lsp-plug.in/tk/base/cast.h>
 

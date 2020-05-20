@@ -19,7 +19,7 @@ namespace lsp
         /** This is a basic widget class for any widget that contains sub-widgets
          *
          */
-        class WidgetContainer: public ComplexWidget
+        class WidgetContainer: public Widget
         {
             private:
                 WidgetContainer & operator = (const WidgetContainer &);

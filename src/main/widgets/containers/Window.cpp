@@ -35,6 +35,7 @@ namespace lsp
 
             pWindow         = NULL;
             pChild          = NULL;
+            pFocused        = NULL;
             pNativeHandle   = handle;
             bMapped         = false;
             bOverridePointer= false;
@@ -42,6 +43,8 @@ namespace lsp
             pActor          = NULL;
 
             hMouse.nState   = 0;
+            hMouse.nLeft    = 0;
+            hMouse.nTop     = 0;
             hMouse.pWidget  = NULL;
 
             pClass          = &metadata;
@@ -647,6 +650,10 @@ namespace lsp
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
 
+                    // Take focus first
+                    take_focus(h);
+
+                    // Bypass event to handler
                     if (h == this)
                         result          = WidgetContainer::handle_event(e);
                     else if (h != NULL)
@@ -685,6 +692,61 @@ namespace lsp
                     break;
                 }
 
+                //-------------------------------------------------------------
+                // Keyboard handling
+                case ws::UIE_KEY_DOWN:
+                {
+                    // Find the keyboard event handler
+                    Widget *h       = (hKeys.pWidget != NULL) ? hKeys.pWidget : pFocused;
+                    if (h == NULL)
+                        h               = find_widget(e->nLeft, e->nTop);
+
+                    // Take focus first and acquire keyboard lock
+                    take_focus(h);
+                    ++hKeys.nKeys;
+                    hKeys.pWidget       = h;
+
+                    // Handle key press event
+                    if (h == this)
+                        result          = WidgetContainer::handle_event(e);
+                    else if (h != NULL)
+                        result          = h->handle_event(e);
+
+                    break;
+                }
+
+                case ws::UIE_KEY_UP:
+                {
+                    // Find the keyboard event handler
+                    Widget *h       = hKeys.pWidget;
+
+                    // Release key lock state
+                    if ((--hKeys.nKeys) <= 0)
+                        hKeys.pWidget       = NULL;
+
+                    // Handle key press event
+                    if (h == this)
+                        result          = WidgetContainer::handle_event(e);
+                    else if (h != NULL)
+                        result          = h->handle_event(e);
+
+                    break;
+                }
+
+                //-------------------------------------------------------------
+                // Drag & Drop
+                case ws::UIE_DRAG_REQUEST:
+                {
+                    Widget *h   = find_widget(e->nLeft, e->nTop);
+                    if (h == this)
+                        WidgetContainer::handle_event(e);
+                    else if (h != NULL)
+                        h->handle_event(e);
+                    break;
+                }
+
+                //-------------------------------------------------------------
+                // Other events
                 default:
                     result      = WidgetContainer::handle_event(e);
                     break;
@@ -763,6 +825,52 @@ namespace lsp
                 return old;
 
             return sync_mouse_handler(e);
+        }
+
+        bool Window::take_focus(Widget *w)
+        {
+            // Change focus
+            Widget *old = pFocused;
+            if (w == old)
+                return false;
+            pFocused    = w;
+
+            // Notify previous focus holder about focus change
+            if (old != NULL)
+            {
+                ws::event_t ev;
+                ws::init_event(&ev);
+                ev.nType        = ws::UIE_FOCUS_OUT;
+                old->handle_event(&ev);
+            }
+
+            // Notify new focus holder about focus change
+            if (w != NULL)
+            {
+                ws::event_t ev;
+                ws::init_event(&ev);
+                ev.nType        = ws::UIE_FOCUS_IN;
+                w->handle_event(&ev);
+            }
+            return true;
+        }
+
+        bool Window::kill_focus(Widget *w)
+        {
+            // Check that widget owns focus
+            if (w != pFocused)
+                return false;
+            pFocused    = NULL;
+
+            // Notify previous focus holder about focus change
+            if (w != NULL)
+            {
+                ws::event_t ev;
+                ws::init_event(&ev);
+                ev.nType        = ws::UIE_FOCUS_OUT;
+                w->handle_event(&ev);
+            }
+            return true;
         }
 
         Widget *Window::find_widget(ssize_t x, ssize_t y)

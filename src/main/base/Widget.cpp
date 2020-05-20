@@ -403,7 +403,7 @@ namespace lsp
             return NULL;
         }
 
-        void Widget::set_parent(ComplexWidget *parent)
+        void Widget::set_parent(Widget *parent)
         {
             if (pParent == parent)
                 return;
@@ -609,6 +609,25 @@ namespace lsp
             r->nMinHeight   = -1;
             r->nMaxWidth    = -1;
             r->nMaxHeight   = -1;
+        }
+
+        bool Widget::has_focus() const
+        {
+            Widget *_this = const_cast<Widget *>(this);
+            Window *wnd = widget_cast<Window>(_this->toplevel());
+            return (wnd != NULL) ? wnd->check_focus(_this) : false;
+        }
+
+        bool Widget::take_focus()
+        {
+            Window *wnd = widget_cast<Window>(toplevel());
+            return (wnd != NULL) ? wnd->take_focus(this) : false;
+        }
+
+        bool Widget::kill_focus()
+        {
+            Window *wnd = widget_cast<Window>(toplevel());
+            return (wnd != NULL) ? wnd->kill_focus(this) : false;
         }
 
         status_t Widget::handle_event(const ws::event_t *e)

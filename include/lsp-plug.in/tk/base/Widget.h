@@ -16,7 +16,6 @@ namespace lsp
 {
     namespace tk
     {
-        class ComplexWidget;
         class Display;
 
         /** Basic widget class for any widget in the toolkit
@@ -54,7 +53,7 @@ namespace lsp
                 size_t              nFlags;         // Flags
                 const w_class_t    *pClass;         // Widget class descriptor
                 Display            *pDisplay;       // Pointer to display
-                ComplexWidget      *pParent;        // Parent widget
+                Widget             *pParent;        // Parent widget
                 ws::ISurface       *pSurface;       // Drawing surface
 
                 ws::size_limit_t    sLimit;         // Cached pre-computed size limit
@@ -219,6 +218,25 @@ namespace lsp
                  */
                 void                    get_padding(padding_t *p);
 
+                /**
+                 * Check whether widget is focused
+                 * @return true if widget is focsed
+                 */
+                bool                    has_focus() const;
+
+                /**
+                 * Make widget being focused
+                 * @return true if widget has been focused, false if widget already had focus or it is impossible
+                 * to take the focus
+                 */
+                bool                    take_focus();
+
+                /**
+                 * Release focus previously acquired by widget
+                 * @return true if focus has been released, false if widget had no focus
+                 */
+                bool                    kill_focus();
+
                 /** Check if there is redraw request pending
                  *
                  * @return true if there is redraw request pending
@@ -244,7 +262,7 @@ namespace lsp
                  *
                  * @return parent widget
                  */
-                inline ComplexWidget   *parent()                { return pParent; }
+                inline Widget          *parent()                { return pParent; }
 
                 /** Get slots
                  *
@@ -395,7 +413,7 @@ namespace lsp
                  *
                  * @param parent parent widget
                  */
-                void                    set_parent(ComplexWidget *parent);
+                void                    set_parent(Widget *parent);
 
                 /** Commit widet redraw
                  *
