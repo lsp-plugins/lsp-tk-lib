@@ -673,6 +673,7 @@ namespace lsp
                     break;
                 };
 
+                case ws::UIE_MOUSE_CLICK:
                 case ws::UIE_MOUSE_DBL_CLICK:
                 case ws::UIE_MOUSE_TRI_CLICK:
                 case ws::UIE_MOUSE_SCROLL:
