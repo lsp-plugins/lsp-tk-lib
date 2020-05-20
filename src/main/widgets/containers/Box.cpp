@@ -61,8 +61,7 @@ namespace lsp
 
         void Box::do_destroy()
         {
-            size_t n_items  = vItems.size();
-            for (size_t i=0; i<n_items; ++i)
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Get widget
                 cell_t *w = vItems.uget(i);
@@ -204,6 +203,17 @@ namespace lsp
 
         status_t Box::add(Widget *widget)
         {
+            if (widget == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            // Check that widget already exists
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                cell_t *cell        = vItems.uget(i);
+                if (cell->pWidget == widget)
+                    return STATUS_ALREADY_EXISTS;
+            }
+
             cell_t *cell = vItems.append();
             if (cell == NULL)
                 return STATUS_NO_MEM;
@@ -218,10 +228,10 @@ namespace lsp
             cell->s.nHeight     = 0;
             cell->pWidget       = widget;
 
-            if (widget != NULL)
-                widget->set_parent(this);
+            widget->set_parent(this);
 
-            query_resize();
+            if (widget->visibility()->get())
+                query_resize();
             return STATUS_SUCCESS;
         }
 

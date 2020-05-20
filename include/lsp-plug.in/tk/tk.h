@@ -76,6 +76,7 @@
 // Container widgets
 #include <lsp-plug.in/tk/widgets/containers/Window.h>
 #include <lsp-plug.in/tk/widgets/containers/Box.h>
+#include <lsp-plug.in/tk/widgets/containers/Grid.h>
 
 // Simple widgets
 #include <lsp-plug.in/tk/widgets/Void.h>
