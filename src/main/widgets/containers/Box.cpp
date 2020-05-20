@@ -208,10 +208,6 @@ namespace lsp
             if (cell == NULL)
                 return STATUS_NO_MEM;
 
-            cell->r.nMinWidth   = -1;
-            cell->r.nMinHeight  = -1;
-            cell->r.nMaxWidth   = -1;
-            cell->r.nMaxHeight  = -1;
             cell->a.nLeft       = 0;
             cell->a.nTop        = 0;
             cell->a.nWidth      = 0;
@@ -285,9 +281,7 @@ namespace lsp
                 // Get widget
                 cell_t *w =          visible.uget(i);
 
-                // Request size limit and padding of the widget
-                w->pWidget->get_size_limits(&w->r);
-
+                // Allocate space
                 if (horizontal)
                 {
                     w->a.nWidth     = m_size;
@@ -337,6 +331,7 @@ namespace lsp
 
             // FIRST PASS: Initialize widgets with their minimum widths
             // Estimate number of expanded widgets and space used by them
+            ws::size_limit_t sr;
             lltl::parray<cell_t>    expand;
             size_t n_expand     = 0;
 
@@ -346,11 +341,11 @@ namespace lsp
                 cell_t *w =          visible.uget(i);
 
                 // Request size limit and padding of the widget
-                w->pWidget->get_size_limits(&w->r);
+                w->pWidget->get_size_limits(&sr);
 
                 if (horizontal)
                 {
-                    w->a.nWidth         = lsp_max(0, w->r.nMinWidth);   // Add minimum width to allocation
+                    w->a.nWidth         = lsp_max(0, sr.nMinWidth);     // Add minimum width to allocation
                     w->a.nHeight        = r->nHeight;                   // All allocations have same height for horizontal box
                     n_left             -= w->a.nWidth;
 
@@ -364,7 +359,7 @@ namespace lsp
                 }
                 else // vertical
                 {
-                    w->a.nHeight        = lsp_max(0, w->r.nMinHeight);  // Add minimum height to allocation
+                    w->a.nHeight        = lsp_max(0, sr.nMinHeight);    // Add minimum height to allocation
                     w->a.nWidth         = r->nWidth;                    // All allocation have same width for vertical box
                     n_left             -= w->a.nHeight;
 
@@ -502,6 +497,7 @@ namespace lsp
 
         void Box::realize_widgets(lltl::parray<cell_t> &visible)
         {
+            ws::size_limit_t sr;
             ws::rectangle_t r;
 
             for (size_t i=0, n=visible.size(); i<n; ++i)
@@ -510,11 +506,12 @@ namespace lsp
                 cell_t *w       = visible.uget(i);
 
                 // Allocated widget area may be too large, restrict it with size constraints
-                SizeConstraints::apply(&r, &w->s, &w->r);
+                w->pWidget->get_size_limits(&sr);
+                SizeConstraints::apply(&r, &w->s, &sr);
 
                 // Estimate the real widget allocation size
-                ssize_t xw      = (w->pWidget->allocation()->hfill()) ? r.nWidth    : lsp_limit(w->r.nMinWidth,  0, r.nWidth );
-                ssize_t xh      = (w->pWidget->allocation()->vfill()) ? r.nHeight   : lsp_limit(w->r.nMinHeight, 0, r.nHeight);
+                ssize_t xw      = (w->pWidget->allocation()->hfill()) ? r.nWidth    : lsp_limit(sr.nMinWidth,  0, r.nWidth );
+                ssize_t xh      = (w->pWidget->allocation()->vfill()) ? r.nHeight   : lsp_limit(sr.nMinHeight, 0, r.nHeight);
 
                 // Update location of the widget
                 w->s.nLeft     += lsp_max(0, w->s.nWidth  - r.nWidth ) >> 1;
@@ -585,6 +582,7 @@ namespace lsp
             ssize_t spacing     = scaling * sSpacing.get();
 
             // Estimated width and height, maximum width and height
+            ws::size_limit_t sr;
             ssize_t e_width = 0, e_height = 0;
             ssize_t m_width = 0, m_height = 0;
 
@@ -594,13 +592,13 @@ namespace lsp
                 // Get widget
                 cell_t *w = visible.uget(i);
 
-                w->pWidget->get_size_limits(&w->r);
+                w->pWidget->get_size_limits(&sr);
 //                lsp_trace("size_request id=%d, parameters = {%d, %d, %d, %d}",
 //                    int(i), int(w->r.nMinWidth), int(w->r.nMinHeight), int(w->r.nMaxWidth), int(w->r.nMaxHeight));
 
                 // Analyze widget class
-                ssize_t x_width     = lsp_max(0, w->r.nMinWidth);
-                ssize_t x_height    = lsp_max(0, w->r.nMinHeight);
+                ssize_t x_width     = lsp_max(0, sr.nMinWidth);
+                ssize_t x_height    = lsp_max(0, sr.nMinHeight);
                 m_width             = lsp_max(m_width,  x_width );
                 m_height            = lsp_max(m_height, x_height);
                 e_width            += x_width;

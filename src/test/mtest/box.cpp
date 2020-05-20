@@ -196,28 +196,28 @@ MTEST_BEGIN("tk", box)
             wv->allocation()->set_expand();
             wv->pointer()->set(ws::MP_HAND);
 
-//            // Create widget (2)
-//            MTEST_ASSERT(wv = new tk::Void(dpy));
-//            MTEST_ASSERT(wv->init() == STATUS_OK);
-//            MTEST_ASSERT(widgets.push(wv));
-//            MTEST_ASSERT(box->add(wv) == STATUS_OK);
-//            wv->constraints()->set(32, 32, 32, 32);
-//            wv->bg_color()->set_rgb(1.0f, 1.0f, 0.0f);
-//            wv->allocation()->set_fill();
+            // Create widget (2)
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, "void1-2") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(box->add(wv) == STATUS_OK);
+            wv->constraints()->set(32, 32, 32, 32);
+            wv->bg_color()->set_rgb(1.0f, 1.0f, 0.0f);
+            wv->allocation()->set_fill();
 
-//            // Create widget (3)
-//            MTEST_ASSERT(wv = new tk::Void(dpy));
-//            MTEST_ASSERT(wv->init() == STATUS_OK);
-//            MTEST_ASSERT(widgets.push(wv));
-//            MTEST_ASSERT(box->add(wv) == STATUS_OK);
-//            wv->constraints()->set(32, 32, 64, 64);
-//            wv->bg_color()->set_rgb(0.0f, 1.0f, 0.0f);
-//            wv->allocation()->set_expand();
+            // Create widget (3)
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, "void1-3") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(box->add(wv) == STATUS_OK);
+            wv->constraints()->set(32, 32, 64, 64);
+            wv->bg_color()->set_rgb(0.0f, 1.0f, 0.0f);
+            wv->allocation()->set_expand();
         }
-/*
+
         // Create horizontal box (2)
         MTEST_ASSERT(box = new tk::Box(dpy));
-        MTEST_ASSERT(box->init() == STATUS_OK);
+        MTEST_ASSERT(init_widget(box, vh, "hbox2") == STATUS_OK);
         MTEST_ASSERT(widgets.push(box));
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
         box->bg_color()->set_rgb(0, 0.75, 1.0);
@@ -227,7 +227,7 @@ MTEST_BEGIN("tk", box)
         {
             // Create widget (1)
             MTEST_ASSERT(wv = new tk::Void(dpy));
-            MTEST_ASSERT(wv->init() == STATUS_OK);
+            MTEST_ASSERT(init_widget(wv, vh, "void2-1") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, -1, -1);
@@ -237,7 +237,7 @@ MTEST_BEGIN("tk", box)
 
             // Create widget (2)
             MTEST_ASSERT(wv = new tk::Void(dpy));
-            MTEST_ASSERT(wv->init() == STATUS_OK);
+            MTEST_ASSERT(init_widget(wv, vh, "void2-2") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, 32, 32);
@@ -246,7 +246,7 @@ MTEST_BEGIN("tk", box)
 
             // Create widget (3)
             MTEST_ASSERT(wv = new tk::Void(dpy));
-            MTEST_ASSERT(wv->init() == STATUS_OK);
+            MTEST_ASSERT(init_widget(wv, vh, "void2-3") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, 64, 64);
@@ -257,7 +257,7 @@ MTEST_BEGIN("tk", box)
 
         // Create horizontal box (3)
         MTEST_ASSERT(box = new tk::Box(dpy));
-        MTEST_ASSERT(box->init() == STATUS_OK);
+        MTEST_ASSERT(init_widget(box, vh, "hbox2") == STATUS_OK);
         MTEST_ASSERT(widgets.push(box));
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
         box->bg_color()->set_rgb(0, 0.75, 1.0);
@@ -265,7 +265,7 @@ MTEST_BEGIN("tk", box)
         {
             // Create widget (1)
             MTEST_ASSERT(wv = new tk::Void(dpy));
-            MTEST_ASSERT(wv->init() == STATUS_OK);
+            MTEST_ASSERT(init_widget(wv, vh, "void3-1") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, -1, -1);
@@ -274,7 +274,7 @@ MTEST_BEGIN("tk", box)
 
             // Create widget (2)
             MTEST_ASSERT(wv = new tk::Void(dpy));
-            MTEST_ASSERT(wv->init() == STATUS_OK);
+            MTEST_ASSERT(init_widget(wv, vh, "void3-2") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, 32, 32);
@@ -283,14 +283,14 @@ MTEST_BEGIN("tk", box)
 
             // Create widget (3)
             MTEST_ASSERT(wv = new tk::Void(dpy));
-            MTEST_ASSERT(wv->init() == STATUS_OK);
+            MTEST_ASSERT(init_widget(wv, vh, "void3-3") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, 64, 64);
             wv->bg_color()->set_rgb(0.0f, 1.0f, 1.0f);
             wv->allocation()->set_fill(false);
         }
-*/
+
         // Show window
         wnd->visibility()->set(true);
 

@@ -31,7 +31,6 @@ namespace lsp
             protected:
                 typedef struct cell_t
                 {
-                    ws::size_limit_t    r;          // Required space
                     ws::rectangle_t     a;          // Allocated space for widget
                     ws::rectangle_t     s;          // Really used space by widget
                     Widget             *pWidget;    // Widget contained in the cell
