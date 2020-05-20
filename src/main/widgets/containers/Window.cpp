@@ -47,6 +47,9 @@ namespace lsp
             hMouse.nTop     = 0;
             hMouse.pWidget  = NULL;
 
+            hKeys.nKeys     = 0;
+            hKeys.pWidget   = NULL;
+
             pClass          = &metadata;
         }
 
@@ -594,14 +597,6 @@ namespace lsp
                     result = sSlots.execute(SLOT_CLOSE, this, &ev);
                     break;
 
-//                case ws::UIE_KEY_DOWN:
-//                case ws::UIE_KEY_UP:
-//                    lsp_trace("key event received, focus = %p", pFocus);
-//                    result = (pFocus != NULL) ?
-//                        pFocus->handle_event(e) :
-//                        Widget::handle_event(e);
-//                    break;
-
                 case ws::UIE_RESIZE:
                     if (bMapped)
                     {
@@ -702,7 +697,6 @@ namespace lsp
                         h               = find_widget(e->nLeft, e->nTop);
 
                     // Take focus first and acquire keyboard lock
-                    take_focus(h);
                     ++hKeys.nKeys;
                     hKeys.pWidget       = h;
 
@@ -928,6 +922,9 @@ namespace lsp
             if (w == NULL)
                 return;
             lsp_trace("discard widget: w=%p, class=%s", w, w->get_class()->name);
+
+            // Kill focus on the widget
+            kill_focus(w);
 
             // Send UIE_MOUSE_OUT and discard mouse handler
             Widget *old = hMouse.pWidget;
