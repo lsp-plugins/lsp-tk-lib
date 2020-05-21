@@ -871,7 +871,7 @@ namespace lsp
             a->nRows        = rows;
             a->nCols        = cols;
 
-            // FIRST STEP: scan for directly attached cells
+            // FIRST STEP: scan for directly attached cells and distribute
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 widget_t *w = vItems.uget(i);
@@ -922,6 +922,36 @@ namespace lsp
             {
                 if (!cleanup_column(a, x))
                     ++x;
+            }
+
+            // FOURTH STEP: fill gaps with empty horizontal cells
+            vcells = a->vTable.array();
+            for (size_t y=0; (y < a->nRows) && (i < n); ++y)
+            {
+                cell_t *prev = NULL;
+                for (size_t x=0; (x < a->nCols) && (i < n); ++x, ++vcells)
+                {
+                    if (*vcells == NULL)
+                    {
+                        if (prev == NULL)
+                        {
+                            // Allocate cell
+                            if ((prev = a->vCells.add()) == NULL)
+                                return STATUS_NO_MEM;
+
+                            prev->pWidget   = NULL;
+                            prev->nRows     = 1;
+                            prev->nCols     = 1;
+                            prev->nFlags    = 0;
+                        }
+                        else
+                            ++prev->nCols;
+
+                        *vcells     = prev;
+                    }
+                    else
+                        prev    = NULL;
+                }
             }
 
             return STATUS_OK;
