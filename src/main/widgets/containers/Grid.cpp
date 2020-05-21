@@ -334,52 +334,6 @@ namespace lsp
  */
         }
 
-//        Grid::cell_t *Grid::alloc_cell()
-//        {
-//            size_t n_cols   = vCols.size();
-//            if (n_cols <= 0)
-//                return NULL;
-//            size_t n_rows   = vRows.size();
-//            if (n_rows <= 0)
-//                return NULL;
-//
-//            // Move iterator
-//            while (true)
-//            {
-//                // Get cell
-//                cell_t *cell = vCells.get(nCurrRow*n_cols + nCurrCol);
-//                if (cell == NULL)
-//                    return NULL;
-//
-//                // Check that cell is not tagged as ignore
-//                if ((cell->pWidget != NULL) || (cell->nRows <= 0))
-//                    cell = NULL;
-//
-//                // Iterate to new row and column
-//                if (bVertical)
-//                {
-//                    if ((++nCurrRow) >= n_rows)
-//                    {
-//                        nCurrRow = 0;
-//                        if ((++nCurrCol) >= n_cols)
-//                            return cell;
-//                    }
-//                }
-//                else
-//                {
-//                    if ((++nCurrCol) >= n_cols)
-//                    {
-//                        nCurrCol = 0;
-//                        if ((++nCurrRow) >= n_rows)
-//                            return cell;
-//                    }
-//                }
-//
-//                // Check that cell is valid
-//                if (cell != NULL)
-//                    return cell;
-//            }
-//        }
 //
 //        status_t Grid::tag_cell(cell_t *c, bool main)
 //        {
@@ -761,9 +715,10 @@ namespace lsp
                 return false;
 
             cell->pWidget   = w->pWidget;
+            cell->nLeft     = left;
+            cell->nTop      = top;
             cell->nRows     = xmax - w->nLeft;
             cell->nCols     = ymax - w->nTop;
-            cell->nFlags    = 0;
 
             // Fill table with the cell
             for (size_t y=w->nTop; y < ymax; ++y)
@@ -776,89 +731,12 @@ namespace lsp
             return true;
         }
 
-        bool Grid::cleanup_row(alloc_t *a, size_t row)
-        {
-            cell_t **vc = a->vTable.pget(row * a->nCols);
-
-            // Step 1: Scan for NULLs
-            bool remove = true;
-            for (size_t x=0; x < a->nCols; ++x)
-                if (vc[x] != NULL)
-                {
-                    remove      = false;
-                    break;
-                }
-
-            // Step 2: Scan for filling spans
-            if ((!remove) && ((row + 1) < a->nRows))
-            {
-                remove      = true;
-                cell_t **xc = &vc[a->nCols]; // Pointer to next row
-                for (size_t x=0; x < a->nCols; ++x)
-                    if (vc[x] != xc[x])
-                    {
-                        remove      = false;
-                        break;
-                    }
-            }
-
-            // Check that we can remove row
-            if (!remove)
-                return false;
-
-            // Eliminate the row
-            for (size_t x=0; x < a->nCols; ++x)
-                if (vc[x] != NULL)
-                    --vc[x]->nRows;
-
-            a->vTable.remove_n(row * a->nCols, a->nCols);
-            return true;
-        }
-
-        bool Grid::cleanup_column(alloc_t *a, size_t col)
-        {
-            cell_t **vc = a->vTable.pget(col);
-            bool remove = true;
-
-            // Step 1: Scan for NULLs
-            bool remove = true;
-            for (size_t y=0, off=0; y < a->nRows; ++y, off += a->nCols)
-                if (vc[off] != NULL)
-                {
-                    remove      = false;
-                    break;
-                }
-
-            // Step 2: Scan for filling spans
-            if ((!remove) && ((col + 1) < a->nCols))
-            {
-                remove      = true;
-                for (size_t y=0, off=9; y < a->nRows; ++y, off += a->nCols)
-                    if (vc[off] != vc[off+1])
-                    {
-                        remove      = false;
-                        break;
-                    }
-            }
-
-            // Eliminate the column
-            for (size_t y=0, off=0; y < a->nRows; ++y, off += a->nCols-1)
-            {
-                cell_t *c = a->vTable.get(off);
-                if (c != NULL)
-                    --c->nCols;
-                a->vTable.remove(off);
-            }
-
-            return true;
-        }
-
-        status_t Grid::allocate_cells(alloc_t *a)
+        status_t Grid::attach_cells(alloc_t *a)
         {
             // Check size of grid
-            size_t rows     = lsp_min(0, sRows.get());
-            size_t cols     = lsp_min(0, sColumns.get());
-            size_t items    = rows * cols;
+            a->nRows        = lsp_min(0, sRows.get());
+            a->nCols        = lsp_min(0, sColumns.get());
+            size_t items    = a->nRows * a->nCols;
             if (items < 1)
                 return STATUS_OK;
 
@@ -868,10 +746,8 @@ namespace lsp
                 return STATUS_NO_MEM;
             for (size_t i=0, n=items; i<n; ++i)
                 vcells[i]       = NULL;
-            a->nRows        = rows;
-            a->nCols        = cols;
 
-            // FIRST STEP: scan for directly attached cells and distribute
+            // Scan for directly attach()'ed cells and distribute
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 widget_t *w = vItems.uget(i);
@@ -881,7 +757,7 @@ namespace lsp
                 attach_cell(a, w, w->nLeft, w->nTop);
             }
 
-            // SECOND STEP: distribute rest widgets between unallocated cells
+            // Distribute add()'ed widgets between unallocated cells depending on orientation
             size_t i = 0, n = vItems.size();
 
             if (sOrientation.horizontal())
@@ -911,27 +787,168 @@ namespace lsp
                         }
             }
 
-            // THIRD STEP: Remove unallocated rows and columns
+            return STATUS_OK;
+        }
+
+        bool Grid::is_null_row(alloc_t *a, size_t row)
+        {
+            size_t off = row * a->nCols;
+            for (size_t x=0; x < a->nCols; ++x, ++off)
+            {
+                if (a->vTable.uget(off) != NULL)
+                    return false;
+            }
+
+            return true;
+        }
+
+        bool Grid::is_null_col(alloc_t *a, size_t col)
+        {
+            size_t off = col;
+            for (size_t y=0; y < a->nRows; ++y, off += a->nCols)
+            {
+                if (a->vTable.uget(off) != NULL)
+                    return false;
+            }
+
+            return true;
+        }
+
+        bool Grid::row_equals(alloc_t *a, size_t r1, size_t r2)
+        {
+            if ((r1 >= a->nRows) || (r2 >= a->nRows))
+                return false;
+
+            r1 *= a->nCols;
+            r2 *= a->nCols;
+            for (size_t i=0; i<a->nCols; ++i, ++r1, ++r2)
+            {
+                cell_t *x1 = a->vTable.uget(r1);
+                cell_t *x2 = a->vTable.uget(r2);
+                if (x1 != x2)
+                    return false;
+            }
+
+            return true;
+        }
+
+        bool Grid::col_equals(alloc_t *a, size_t c1, size_t c2)
+        {
+            if ((c1 >= a->nCols) || (c2 >= a->nCols))
+                return false;
+
+            for (size_t i=0; i<a->nRows; ++i, c1 += a->nCols, c2 += a->nCols)
+            {
+                cell_t *x1 = a->vTable.uget(c1);
+                cell_t *x2 = a->vTable.uget(c2);
+                if (x1 != x2)
+                    return false;
+            }
+
+            return true;
+        }
+
+        void Grid::remove_row(alloc_t *a, size_t id)
+        {
+            // Decrement number of rows used by column
+            for (size_t i=0, off=id*a->nCols; i<a->nCols; ++i, ++off)
+            {
+                cell_t *c       = a->vTable.uget(off);
+                if (c != NULL)
+                    --c->nRows;
+            }
+
+            // Remove row in table and decrement overall number of rows
+            a->vTable.remove_n(id * a->nCols, a->nCols);
+            a->vRows.remove(id);
+            --a->nRows;
+        }
+
+        void Grid::remove_col(alloc_t *a, size_t id)
+        {
+            // Eliminate the column and decrement number of cells used by column
+            for (size_t i=0, off=id; i < a->nRows; ++i, off += a->nCols-1)
+            {
+                cell_t *c = a->vTable.get(off);
+                if (c != NULL)
+                    --c->nCols;
+                a->vTable.remove(off);
+            }
+
+            // Remove column in table and decrement overall number of columns
+            a->vCols.remove(id);
+            --a->nCols;
+        }
+
+        status_t Grid::create_row_col_descriptors(alloc_t *a)
+        {
+            header_t *h;
+
+            // Allocate row and column descriptors
+            if (!a->vRows.add_n(a->nRows))
+                return STATUS_NO_MEM;
+            if (!a->vCols.add_n(a->nCols))
+                return STATUS_NO_MEM;
+
+            // Get scaling and spacings
+            float scaling   = lsp_min(0.0f, sScaling.get());
+            size_t hspacing = lsp_min(0, scaling * sHSpacing.get());
+            size_t vspacing = lsp_min(0, scaling * sVSpacing.get());
+
+            // Initialize row and column descriptors
+            for (size_t i=0; i<a->nRows; ++i)
+            {
+                h               = a->vRows.uget(i);
+                h->nSize        = 0;
+                h->nWeight      = 1;
+                h->nSpacing     = hspacing;
+                h->nFlags       = 0;
+            }
+            for (size_t i=0; i<a->nCols; ++i)
+            {
+                h               = a->vCols.uget(i);
+                h->nSize        = 0;
+                h->nWeight      = 1;
+                h->nSpacing     = vspacing;
+                h->nFlags       = 0;
+            }
+
+            // Remove empty rows and columns
             for (size_t y=0; y < a->nRows; )
             {
-                // Try to cleanup row
-                if (!cleanup_row(a, y))
+                if (is_null_row(a, y))
+                    remove_row(a, y);
+                else if (row_equals(a, y, y+1))
+                {
+                    remove_row(a, y+1);
+                    h               = a->vRows.uget(y);
+                    ++h->nWeight;   // Increment weight of current row
+                }
+                else
                     ++y;
             }
             for (size_t x=0; x < a->nCols; )
             {
-                if (!cleanup_column(a, x))
+                if (is_null_col(a, x))
+                    remove_col(a, x);
+                else if (col_equals(a, x, x+1))
+                {
+                    remove_col(a, x);
+                    h               = a->vCols.uget(x);
+                    ++h->nWeight;   // Increment weight of current column
+                }
+                else
                     ++x;
             }
 
-            // FOURTH STEP: fill gaps with empty horizontal cells
-            vcells = a->vTable.array();
-            for (size_t y=0; (y < a->nRows) && (i < n); ++y)
+            // Replace empty cells with stubs
+            for (size_t y=0, off=0; (y < a->nRows); ++y)
             {
                 cell_t *prev = NULL;
-                for (size_t x=0; (x < a->nCols) && (i < n); ++x, ++vcells)
+                for (size_t x=0; (x < a->nCols); ++x, ++off)
                 {
-                    if (*vcells == NULL)
+                    cell_t **p = a->vTable.upget(off);
+                    if (*p == NULL)
                     {
                         if (prev == NULL)
                         {
@@ -940,19 +957,185 @@ namespace lsp
                                 return STATUS_NO_MEM;
 
                             prev->pWidget   = NULL;
+                            prev->nLeft     = x;
+                            prev->nTop      = y;
                             prev->nRows     = 1;
-                            prev->nCols     = 1;
-                            prev->nFlags    = 0;
+                            prev->nCols     = 0;
                         }
-                        else
-                            ++prev->nCols;
 
-                        *vcells     = prev;
+                        ++prev->nCols;
+                        *p      = prev;
                     }
                     else
                         prev    = NULL;
                 }
             }
+
+            // Mark last row and last column as non-spacing
+            h   = a->vRows.get(a->nRows - 1);
+            h->nSpacing     = 0;
+            h   = a->vCols.get(a->nCols - 1);
+            h->nSpacing     = 0;
+
+            // Initialize padding
+            for (size_t i=0, n=a->vCells.size(); i<n; ++i)
+            {
+                cell_t *c       = a->vCells.uget(i);
+
+                // Horizontal
+                if ((c->pWidget != NULL) && (c->pWidget->allocation()->hexpand()))
+                    for (ssize_t j=0; j<c->nCols; ++j)
+                    {
+                        h               = a->vCols.uget(c->nLeft + j);
+                        h->nFlags      |= F_EXPAND;
+                    }
+
+                // Vertical
+                if ((c->pWidget != NULL) && (c->pWidget->allocation()->vexpand()))
+                    for (ssize_t j=0; j<c->nRows; ++j)
+                    {
+                        h               = a->vRows.uget(c->nTop + j);
+                        h->nFlags      |= F_EXPAND;
+                    }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Grid::estimate_sizes(alloc_t *a)
+        {
+            ws::size_limit_t sr;
+            header_t *h;
+            header_t *vrows = a->vRows.array();
+            header_t *vcols = a->vCols.array();
+
+            // Estimate minimum row/column size for 1xN and Mx1 cells
+            for (size_t i=0, n=a->vCells.size(); i<n; ++i)
+            {
+                cell_t *w       = a->vCells.uget(i);
+                if ((w->pWidget == NULL) || (w->nRows != 1) || (w->nCols != 1))
+                    continue;
+
+                // Get size limits of the widget
+                w->pWidget->get_size_limits(&sr);
+
+                if (w->nRows == 1)
+                {
+                    h               = &vrows[i];
+                    h->nSize        = lsp_max(h->nSize, sr.nMinHeight);
+                }
+                if (w->nCols == 1)
+                {
+                    h               = &vcols[i];
+                    h->nSize        = lsp_max(h->nSize, sr.nMinWidth);
+                }
+            }
+
+            // Estimate minimum row/column size for N x M cells
+            for (size_t i=0, n=a->vCells.size(); i<n; ++i)
+            {
+                cell_t *w       = a->vCells.uget(i);
+                if (w->pWidget == NULL)
+                    continue;
+                if ((w->nRows <= 1) && (w->nCols <= 1))
+                    continue;
+
+                // Get size limits of the widget
+                w->pWidget->get_size_limits(&sr);
+
+                if ((w->nRows > 1) && (sr.nMinHeight > 0))
+                {
+                    size_t size     = 0;
+                    for (size_t j=0, m=a->vRows.size(); j<m; ++j)
+                    {
+                    }
+
+                    estimate_size(a->vRows, w->nTop, w->nRows);
+                    if (sr.nMinHeight > size)
+                        distribute_size(a->vRows, w->nTop, w->nCols, sr.nMinHeight - size);
+                }
+                if ((w->nCols > 1) && (sr.nMinWidth > 0))
+                {
+                    size_t size     = estimate_size(a->vCols, w->nLeft, w->nCols);
+                    if (sr.nMinHeight > size)
+                        distribute_size(a->vRows, w->nTop, w->nCols, sr.nMinHeight - size);
+                }
+            }
+
+//            w           = vCells.get(0);
+//            for (size_t i=0; i<n_rows; ++i)
+//            {
+//                h          = vRows.get(i);
+//                for (size_t j=0; j<n_cols; ++j, ++w)
+//                {
+//                    v           = vCols.get(j);
+//                    if (hidden_widget(w))
+//                        continue;
+//
+//                    if (w->nRows > 1)
+//                    {
+//                        ssize_t space   = w->p.nTop + w->p.nBottom;
+//                        if (w->r.nMinHeight >= 0)
+//                            space          += space;
+//                        distribute_size(vRows, i, w->nRows, space);
+//                    }
+//                    if (w->nCols > 1)
+//                    {
+//                        ssize_t space   = w->p.nLeft + w->p.nRight;
+//                        if (w->r.nMinWidth >= 0)
+//                            space          += w->r.nMinWidth;
+//                        distribute_size(vCols, j, w->nCols, space);
+//                    }
+//                }
+//            }
+//
+//            // Mark some rows/cols as expanded
+//            for (size_t i=0, n=vCells.size(); i<n; ++i)
+//            {
+//                w           = vCells.get(i);
+//                if (hidden_widget(w))
+//                    continue;
+//                if (!w->pWidget->expand())
+//                    continue;
+//                size_t row = i / n_cols;
+//                size_t col = i % n_cols;
+//                for (ssize_t i=0; i<w->nRows; ++i)
+//                    vRows.get(row + i)->bExpand = true;
+//                for (ssize_t i=0; i<w->nCols; ++i)
+//                    vCols.get(col + i)->bExpand = true;
+//            }
+//
+//            // Calculate the size of table
+//            r->nMinHeight  += estimate_size(vRows, 0, n_rows, NULL);
+//            r->nMinWidth   += estimate_size(vCols, 0, n_cols, NULL);
+//            for (size_t i=0; i<n_rows; ++i)
+//            {
+//                h   = vRows.at(i);
+//                h->nMinSize   = h->nSize;
+//            }
+//            for (size_t i=0; i<n_cols; ++i)
+//            {
+//                h   = vCols.at(i);
+//                h->nMinSize   = h->nSize;
+//            }
+//
+            return STATUS_OK;
+        }
+
+        status_t Grid::allocate_cells(alloc_t *a)
+        {
+            // Attach cells
+            status_t res    = attach_cells(a);
+            if ((res == STATUS_OK) || (a->nRows < 1) || (a->nCols < 1))
+                return res;
+
+            // Estimate row and column parameters
+            if ((res = create_row_col_descriptors(a)) != STATUS_OK)
+                return res;
+
+            // Estimate cell sizes
+            if ((res = estimate_sizes(a)) != STATUS_OK)
+                return res;
 
             return STATUS_OK;
         }

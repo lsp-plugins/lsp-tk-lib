@@ -27,8 +27,7 @@ namespace lsp
             protected:
                 enum flags_t
                 {
-                    F_PAD_RIGHT     = 1 << 0,
-                    F_PAD_BOTTOM    = 1 << 1
+                    F_EXPAND        = 1 << 0
                 };
 
                 typedef struct cell_t
@@ -36,33 +35,35 @@ namespace lsp
                     ws::rectangle_t     a;          // Allocated area for the cell
                     ws::rectangle_t     s;          // Real area used by widget
                     Widget             *pWidget;    // Widget
+                    ssize_t             nLeft;      // Horizontal position
+                    ssize_t             nTop;       // Vertical position
                     ssize_t             nRows;      // Number of rows taken by cell
                     ssize_t             nCols;      // Number of columns taken by cell
-                    size_t              nFlags;     // Flags
                 } cell_t;
-//
-//                typedef struct header_t
-//                {
-//                    ssize_t             nMinSize;
-//                    ssize_t             nSize;
-//                    ssize_t             nSpacing;
-//                    ssize_t             nOffset;
-//                    bool                bExpand;
-//                } header_t;
+
+                typedef struct header_t
+                {
+                    ssize_t             nSize;      // Size of the header
+                    size_t              nWeight;    // Weight of the header
+                    size_t              nSpacing;   // Additional spacing
+                    size_t              nFlags;     // Additional flags
+                } header_t;
 
                 typedef struct widget_t
                 {
-                    Widget             *pWidget;
-                    ssize_t             nLeft;
-                    ssize_t             nTop;
-                    size_t              nRows;
-                    size_t              nCols;
+                    Widget             *pWidget;    // Pointer to widget
+                    ssize_t             nLeft;      // Attached left position, negative for add()
+                    ssize_t             nTop;       // Attached top position, negative for add()
+                    size_t              nRows;      // Number of rows taken by widget, should be positive
+                    size_t              nCols;      // Number of columns taken by widget, should be positive
                 } widget_t;
 
                 typedef struct alloc_t
                 {
                     lltl::darray<cell_t>    vCells;
                     lltl::parray<cell_t>    vTable;
+                    lltl::darray<header_t>  vRows;
+                    lltl::darray<header_t>  vCols;
                     size_t                  nRows;
                     size_t                  nCols;
                 } alloc_t;
@@ -90,9 +91,16 @@ namespace lsp
                 void                        do_destroy();
                 static inline bool          hidden_widget(const widget_t *w);
                 status_t                    allocate_cells(alloc_t *a);
+                status_t                    attach_cells(alloc_t *a);
                 static bool                 attach_cell(alloc_t *a, widget_t *w, size_t left, size_t top);
-                static bool                 cleanup_row(alloc_t *a, size_t row);
-                static bool                 cleanup_column(alloc_t *a, size_t col);
+                static bool                 is_null_row(alloc_t *a, size_t row);
+                static bool                 is_null_col(alloc_t *a, size_t col);
+                static bool                 row_equals(alloc_t *a, size_t r1, size_t r2);
+                static bool                 col_equals(alloc_t *a, size_t c1, size_t c2);
+                static void                 remove_row(alloc_t *a, size_t id);
+                static void                 remove_col(alloc_t *a, size_t id);
+                status_t                    estimate_sizes(alloc_t *a);
+                status_t                    create_row_col_descriptors(alloc_t *a);
 
             protected:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);
