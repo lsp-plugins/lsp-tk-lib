@@ -1002,6 +1002,98 @@ namespace lsp
             return STATUS_OK;
         }
 
+        size_t Grid::estimate_size(lltl::darray<header_t> *hdr, size_t first, size_t count)
+        {
+            size_t res  = 0;
+            for (size_t i=0; i<count; ++i)
+            {
+                header_t *h = hdr->uget(first);
+                res += h->nSize;
+                if ((++first) < count)
+                    res    += h->nSpacing;
+            }
+            return res;
+        }
+
+        void Grid::distribute_size(lltl::darray<header_t> *vh, size_t first, size_t count, size_t size)
+        {
+            // Estimate number of expanded items and overall weight
+            size_t expanded = 0, weight = 0, width = 0;
+            for (size_t k=0; k<count; ++k)
+            {
+                header_t *h     = vh->uget(first + k);
+                weight         += h->nSize * h->nWeight;
+                width          += h->nSize;
+                if ((k+1) < count)
+                {
+                    weight         += h->nSpacing;
+                    width          += h->nSpacing;
+                }
+                if (h->nFlags & F_EXPAND)
+                    expanded ++;
+            }
+
+            if (size <= width)
+                return;
+            size_t left = size - width;
+
+            // Form list of items for size distribution
+            lltl::parray<header_t> vl;
+            for (size_t k=0; k<count; ++k)
+            {
+                header_t *h     = vh->uget(first + k);
+                if (expanded > 0)
+                {
+                    if (h->nFlags & F_EXPAND)
+                        vl.add(h);
+                }
+                else
+                    vl.add(h);
+            }
+            count   = vl.size();
+
+            // Distribute size between selected items
+            if (weight > 0)
+            {
+                // Distribute left size proportionally
+                ssize_t total = 0;
+                for (size_t k=0; k<count; ++k)
+                {
+                    header_t *h     = vl.uget(k);
+                    size_t hw       = h->nSize * h->nWeight;
+                    if ((k + 1) < count)
+                        hw             += h->nSpacing;
+                    size_t delta    = (hw * left) / weight;
+                    h->nSize       += delta;
+                    total          += delta;
+                }
+                left           -= total;
+            }
+
+            // Add equal size to each element
+            if (left > 0)
+            {
+                size_t delta    = left / count;
+                if (delta > 0)
+                {
+                    for (size_t k=0; k<count; ++k)
+                    {
+                        header_t *h     = vl.uget(k);
+                        h->nSize       += delta;
+                        left           -= delta;
+                    }
+                }
+            }
+
+            // Distribute the non-distributed size
+            for (size_t k=0; left > 0; k = (k+1) % count)
+            {
+                header_t *h     = vl.uget(k);
+                h->nSize ++;
+                left --;
+            }
+        }
+
         status_t Grid::estimate_sizes(alloc_t *a)
         {
             ws::size_limit_t sr;
@@ -1045,80 +1137,16 @@ namespace lsp
 
                 if ((w->nRows > 1) && (sr.nMinHeight > 0))
                 {
-                    size_t size     = 0;
-                    for (size_t j=0, m=a->vRows.size(); j<m; ++j)
-                    {
-                    }
-
-                    estimate_size(a->vRows, w->nTop, w->nRows);
-                    if (sr.nMinHeight > size)
-                        distribute_size(a->vRows, w->nTop, w->nCols, sr.nMinHeight - size);
+                    if (sr.nMinHeight > 0)
+                        distribute_size(&a->vRows, w->nTop,  w->nRows, sr.nMinHeight);
                 }
                 if ((w->nCols > 1) && (sr.nMinWidth > 0))
                 {
-                    size_t size     = estimate_size(a->vCols, w->nLeft, w->nCols);
-                    if (sr.nMinHeight > size)
-                        distribute_size(a->vRows, w->nTop, w->nCols, sr.nMinHeight - size);
+                    if (sr.nMinWidth > 0)
+                        distribute_size(&a->vCols, w->nLeft, w->nCols, sr.nMinWidth);
                 }
             }
 
-//            w           = vCells.get(0);
-//            for (size_t i=0; i<n_rows; ++i)
-//            {
-//                h          = vRows.get(i);
-//                for (size_t j=0; j<n_cols; ++j, ++w)
-//                {
-//                    v           = vCols.get(j);
-//                    if (hidden_widget(w))
-//                        continue;
-//
-//                    if (w->nRows > 1)
-//                    {
-//                        ssize_t space   = w->p.nTop + w->p.nBottom;
-//                        if (w->r.nMinHeight >= 0)
-//                            space          += space;
-//                        distribute_size(vRows, i, w->nRows, space);
-//                    }
-//                    if (w->nCols > 1)
-//                    {
-//                        ssize_t space   = w->p.nLeft + w->p.nRight;
-//                        if (w->r.nMinWidth >= 0)
-//                            space          += w->r.nMinWidth;
-//                        distribute_size(vCols, j, w->nCols, space);
-//                    }
-//                }
-//            }
-//
-//            // Mark some rows/cols as expanded
-//            for (size_t i=0, n=vCells.size(); i<n; ++i)
-//            {
-//                w           = vCells.get(i);
-//                if (hidden_widget(w))
-//                    continue;
-//                if (!w->pWidget->expand())
-//                    continue;
-//                size_t row = i / n_cols;
-//                size_t col = i % n_cols;
-//                for (ssize_t i=0; i<w->nRows; ++i)
-//                    vRows.get(row + i)->bExpand = true;
-//                for (ssize_t i=0; i<w->nCols; ++i)
-//                    vCols.get(col + i)->bExpand = true;
-//            }
-//
-//            // Calculate the size of table
-//            r->nMinHeight  += estimate_size(vRows, 0, n_rows, NULL);
-//            r->nMinWidth   += estimate_size(vCols, 0, n_cols, NULL);
-//            for (size_t i=0; i<n_rows; ++i)
-//            {
-//                h   = vRows.at(i);
-//                h->nMinSize   = h->nSize;
-//            }
-//            for (size_t i=0; i<n_cols; ++i)
-//            {
-//                h   = vCols.at(i);
-//                h->nMinSize   = h->nSize;
-//            }
-//
             return STATUS_OK;
         }
 

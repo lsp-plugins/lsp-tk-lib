@@ -99,6 +99,8 @@ namespace lsp
                 static bool                 col_equals(alloc_t *a, size_t c1, size_t c2);
                 static void                 remove_row(alloc_t *a, size_t id);
                 static void                 remove_col(alloc_t *a, size_t id);
+                static size_t               estimate_size(lltl::darray<header_t> *hdr, size_t first, size_t count);
+                static void                 distribute_size(lltl::darray<header_t> *vh, size_t first, size_t count, size_t size);
                 status_t                    estimate_sizes(alloc_t *a);
                 status_t                    create_row_col_descriptors(alloc_t *a);
 
