@@ -153,17 +153,22 @@ namespace lsp
                 return;
             }
 
-            // Draw padding
-            ws::rectangle_t xr;
+            // Compute spacing size
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = scaling * sSpacing.get();
-            sPadding.enter(&xr, &sSize, scaling);
 
-            s->fill_frame(
-                sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
-                xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
-                bg_color
-            );
+            // Draw padding
+            if (force)
+            {
+                ws::rectangle_t xr;
+                sPadding.enter(&xr, &sSize, scaling);
+
+                s->fill_frame(
+                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
+                    xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
+                    bg_color
+                );
+            }
 
             // Draw items
             bool horizontal     = sOrientation.horizontal();
@@ -195,6 +200,8 @@ namespace lsp
                                 s->fill_rect(wc->a.nLeft, wc->a.nTop + wc->a.nHeight, wc->a.nWidth, spacing, bg_color);
                         }
                     }
+
+                    // Render widget
                     w->render(s, force);
                     w->commit_redraw();
                 }

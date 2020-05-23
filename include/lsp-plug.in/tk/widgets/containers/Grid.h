@@ -35,8 +35,8 @@ namespace lsp
                     ws::rectangle_t     a;          // Allocated area for the cell
                     ws::rectangle_t     s;          // Real area used by widget
                     Widget             *pWidget;    // Widget
-                    ssize_t             nLeft;      // Horizontal position
-                    ssize_t             nTop;       // Vertical position
+                    size_t              nLeft;      // Horizontal position
+                    size_t              nTop;       // Vertical position
                     ssize_t             nRows;      // Number of rows taken by cell
                     ssize_t             nCols;      // Number of columns taken by cell
                 } cell_t;
@@ -95,6 +95,7 @@ namespace lsp
                 status_t                    estimate_sizes(alloc_t *a);
                 status_t                    create_row_col_descriptors(alloc_t *a);
                 static void                 assign_coords(alloc_t *a, const ws::rectangle_t *r);
+                static void                 realize_widgets(alloc_t *a);
 
             protected:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);
