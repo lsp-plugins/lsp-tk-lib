@@ -320,18 +320,18 @@ namespace lsp
         bool Grid::attach_cell(alloc_t *a, widget_t *w, size_t left, size_t top)
         {
             // Check that cell does not go outside the
-            if ((size_t(w->nLeft) >= a->nCols) || (size_t(w->nTop) >= a->nRows))
+            if ((left >= a->nCols) || (top >= a->nRows))
                 return false;
 
-            size_t xmax = lsp_min(w->nLeft + w->nCols, a->nCols);
-            size_t ymax = lsp_min(w->nTop  + w->nRows, a->nRows);
+            size_t xmax = lsp_min(left + w->nCols, a->nCols);
+            size_t ymax = lsp_min(top  + w->nRows, a->nRows);
 
             // Check that we can allocate cells
-            for (size_t y=w->nTop; y < ymax; ++y)
+            for (size_t y=top; y < ymax; ++y)
             {
-                cell_t **c = a->vTable.upget(y * a->nRows + w->nLeft);
-                for (size_t x=0; x < xmax; ++x, ++c)
-                    if (*c != NULL)
+                cell_t **c = a->vTable.upget(y * a->nRows);
+                for (size_t x=left; x < xmax; ++x, ++c)
+                    if (c[x] != NULL)
                         return false;
             }
 
@@ -343,15 +343,15 @@ namespace lsp
             cell->pWidget   = w->pWidget;
             cell->nLeft     = left;
             cell->nTop      = top;
-            cell->nRows     = xmax - w->nLeft;
-            cell->nCols     = ymax - w->nTop;
+            cell->nRows     = xmax - left;
+            cell->nCols     = ymax - top;
 
             // Fill table with the cell
-            for (size_t y=w->nTop; y < ymax; ++y)
+            for (size_t y=top; y < ymax; ++y)
             {
-                cell_t **c = a->vTable.upget(y * a->nRows + w->nLeft);
-                for (size_t x=0; x < xmax; ++x, ++c)
-                    *c      = cell;
+                cell_t **c = a->vTable.upget(y * a->nRows);
+                for (size_t x=left; x < xmax; ++x, ++c)
+                    c[x]      = cell;
             }
 
             return true;
@@ -360,8 +360,8 @@ namespace lsp
         status_t Grid::attach_cells(alloc_t *a)
         {
             // Check size of grid
-            a->nRows        = lsp_min(0, sRows.get());
-            a->nCols        = lsp_min(0, sColumns.get());
+            a->nRows        = lsp_max(0, sRows.get());
+            a->nCols        = lsp_max(0, sColumns.get());
             size_t items    = a->nRows * a->nCols;
             if (items < 1)
                 return STATUS_OK;
@@ -388,8 +388,9 @@ namespace lsp
 
             if (sOrientation.horizontal())
             {
-                for (size_t x=0; (x < a->nCols) && (i < n); ++x)
-                    for (size_t y=0; (y < a->nRows) && (i < n); ++y)
+                // Fill cells from left to right first, then move to next row
+                for (size_t y=0; (y < a->nRows) && (i < n); ++y)
+                    for (size_t x=0; (x < a->nCols) && (i < n); ++x)
                         for (; i < n; ++i)
                         {
                             widget_t *w = vItems.uget(i);
@@ -401,8 +402,9 @@ namespace lsp
             }
             else
             {
-                for (size_t y=0; (y < a->nRows) && (i < n); ++y)
-                    for (size_t x=0; (x < a->nCols) && (i < n); ++x)
+                // Fill cells from top to bottom first, then move to next column
+                for (size_t x=0; (x < a->nCols) && (i < n); ++x)
+                    for (size_t y=0; (y < a->nRows) && (i < n); ++y)
                         for (; i < n; ++i)
                         {
                             widget_t *w = vItems.uget(i);
@@ -517,9 +519,9 @@ namespace lsp
                 return STATUS_NO_MEM;
 
             // Get scaling and spacings
-            float scaling   = lsp_min(0.0f, sScaling.get());
-            size_t hspacing = lsp_min(0, scaling * sHSpacing.get());
-            size_t vspacing = lsp_min(0, scaling * sVSpacing.get());
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            size_t hspacing = lsp_max(0, scaling * sHSpacing.get());
+            size_t vspacing = lsp_max(0, scaling * sVSpacing.get());
 
             // Initialize row and column descriptors
             for (size_t i=0; i<a->nRows; ++i)
@@ -780,7 +782,7 @@ namespace lsp
         {
             // Attach cells
             status_t res    = attach_cells(a);
-            if ((res == STATUS_OK) || (a->nRows < 1) || (a->nCols < 1))
+            if ((res != STATUS_OK) || (a->nRows < 1) || (a->nCols < 1))
                 return res;
 
             // Estimate row and column parameters
