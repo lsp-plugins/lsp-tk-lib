@@ -418,24 +418,32 @@ namespace lsp
             return STATUS_OK;
         }
 
-        bool Grid::is_null_row(alloc_t *a, size_t row)
+        bool Grid::is_invisible_row(alloc_t *a, size_t row)
         {
             size_t off = row * a->nCols;
             for (size_t x=0; x < a->nCols; ++x, ++off)
             {
-                if (a->vTable.uget(off) != NULL)
+                cell_t *w = a->vTable.uget(off);
+                if (w == NULL)
+                    continue;
+                // Row is visible if we have at least one visible widget
+                if ((w->pWidget != NULL) && (w->pWidget->visibility()->get()))
                     return false;
             }
 
             return true;
         }
 
-        bool Grid::is_null_col(alloc_t *a, size_t col)
+        bool Grid::is_invisible_col(alloc_t *a, size_t col)
         {
             size_t off = col;
             for (size_t y=0; y < a->nRows; ++y, off += a->nCols)
             {
-                if (a->vTable.uget(off) != NULL)
+                cell_t *w = a->vTable.uget(off);
+                if (w == NULL)
+                    continue;
+                // Column is visible if we have at least one visible widget
+                if ((w->pWidget != NULL) && (w->pWidget->visibility()->get()))
                     return false;
             }
 
@@ -544,7 +552,7 @@ namespace lsp
             // Remove empty rows and columns
             for (size_t y=0; y < a->nRows; )
             {
-                if (is_null_row(a, y))
+                if (is_invisible_row(a, y))
                     remove_row(a, y);
                 else if (row_equals(a, y, y+1))
                 {
@@ -557,7 +565,7 @@ namespace lsp
             }
             for (size_t x=0; x < a->nCols; )
             {
-                if (is_null_col(a, x))
+                if (is_invisible_col(a, x))
                     remove_col(a, x);
                 else if (col_equals(a, x, x+1))
                 {

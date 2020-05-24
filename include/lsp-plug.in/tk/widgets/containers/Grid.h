@@ -84,8 +84,8 @@ namespace lsp
                 status_t                    allocate_cells(alloc_t *a);
                 status_t                    attach_cells(alloc_t *a);
                 static bool                 attach_cell(alloc_t *a, widget_t *w, size_t left, size_t top);
-                static bool                 is_null_row(alloc_t *a, size_t row);
-                static bool                 is_null_col(alloc_t *a, size_t col);
+                static bool                 is_invisible_row(alloc_t *a, size_t row);
+                static bool                 is_invisible_col(alloc_t *a, size_t col);
                 static bool                 row_equals(alloc_t *a, size_t r1, size_t r2);
                 static bool                 col_equals(alloc_t *a, size_t c1, size_t c2);
                 static void                 remove_row(alloc_t *a, size_t id);
