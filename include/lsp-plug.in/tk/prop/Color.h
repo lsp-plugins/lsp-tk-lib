@@ -84,6 +84,12 @@ namespace lsp
                 inline void get_hsl(float &h, float &s, float &l) const             { sColor.get_hsl(h, s, l); }
                 inline void get_hsla(float &h, float &s, float &l, float &a) const  { sColor.get_hsla(h, s, l, a); }
 
+                inline uint32_t rgb24() const   { return sColor.rgb24();        }
+                inline uint32_t rgba32() const  { return sColor.rgba32();       }
+
+                inline uint32_t hsl24() const   { return sColor.hsl24();        }
+                inline uint32_t hsla32() const  { return sColor.hsla32();       }
+
             public:
                 void red(float r);
                 void green(float g);
@@ -92,6 +98,10 @@ namespace lsp
 
                 void set_rgb(float r, float g, float b);
                 void set_rgba(float r, float g, float b, float a);
+                void set_rgb24(uint32_t v);
+                void set_rgba32(uint32_t v);
+                void set_hsl24(uint32_t v);
+                void set_hsla32(uint32_t v);
 
                 void hue(float h);
                 void saturation(float s);
@@ -131,8 +141,6 @@ namespace lsp
                 {
                     return sColor.format_hsla(dst, len, tolerance);
                 }
-
-                inline uint32_t rgb24() const           { return sColor.rgb24(); }
 
             public:
                 inline const lsp::Color *color() const       { return &sColor; }

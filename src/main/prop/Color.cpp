@@ -243,6 +243,46 @@ namespace lsp
             sync();
         }
 
+        void Color::set_rgb24(uint32_t v)
+        {
+            uint32_t old = sColor.rgb24();
+            if (old == v)
+                return;
+
+            sColor.set_rgb24(v);
+            sync();
+        }
+
+        void Color::set_rgba32(uint32_t v)
+        {
+            uint32_t old = sColor.rgba32();
+            if (old == v)
+                return;
+
+            sColor.set_rgba32(v);
+            sync();
+        }
+
+        void Color::set_hsl24(uint32_t v)
+        {
+            uint32_t old = sColor.hsl24();
+            if (old == v)
+                return;
+
+            sColor.set_hsl24(v);
+            sync();
+        }
+
+        void Color::set_hsla32(uint32_t v)
+        {
+            uint32_t old = sColor.hsla32();
+            if (old == v)
+                return;
+
+            sColor.set_hsla32(v);
+            sync();
+        }
+
         void Color::set_hsl(float h, float s, float l)
         {
             float xh, xs, xl;
