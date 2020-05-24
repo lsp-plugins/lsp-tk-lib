@@ -1,6 +1,18 @@
+# Determine tools
+ifeq ($(PLATFORM),OpenBSD)
+  X_CC_TOOL          := egcc
+  X_CXX_TOOL         := eg++
+  X_AS_TOOL          := gas
+else
+  X_CC_TOOL          := gcc
+  X_CXX_TOOL         := g++
+  X_AS_TOOL          := as
+endif
+
 # Define tool variables
-CC                 := gcc
-CXX                := g++
+CC                 := $(X_CC_TOOL)
+CXX                := $(X_CXX_TOOL)
+AS                 := $(X_AS_TOOL)
 LD                 := ld
 GIT                := git
 INSTALL            := install
@@ -35,15 +47,12 @@ ifeq ($(TRACE),1)
 endif
 
 ifeq ($(TEST),1)
-  CFLAGS_EXT         += -DLSP_TESTING -fvisibility=default
-  CXXFLAGS_EXT       += -DLSP_TESTING -fvisibility=default
+  CFLAGS_EXT         += -DLSP_TESTING
+  CXXFLAGS_EXT       += -DLSP_TESTING
 else
   ifneq ($(ARTIFACT_EXPORT_ALL),1)
     CFLAGS_EXT         += -fvisibility=hidden
     CXXFLAGS_EXT       += -fvisibility=hidden
-  else
-    CFLAGS_EXT         += -fvisibility=default
-    CXXFLAGS_EXT       += -fvisibility=default
   endif
 endif
 
@@ -100,13 +109,14 @@ EXE_FLAGS          := $(EXE_FLAGS_EXT) $(FLAG_RELRO) -Wl,--gc-sections
 SO_FLAGS           := $(SO_FLAGS_EXT) $(FLAG_RELRO) -Wl,--gc-sections -shared -Llibrary $(FLAG_STDLIB) -fPIC 
 
 TOOL_VARS := \
-  CC CXX LD GIT INSTALL \
+  AS CC CXX LD GIT INSTALL \
   CFLAGS CXXFLAGS LDFLAGS EXE_FLAGS SO_FLAGS \
   INCLUDE
 
 .PHONY: toolvars
 toolvars:
 	@echo "List of tool variables:"
+	@echo "  AS                        Assembler tool"
 	@echo "  CC                        C compiler execution command line"
 	@echo "  CFLAGS                    C compiler build flags"
 	@echo "  CXX                       C++ compiler execution command line"
