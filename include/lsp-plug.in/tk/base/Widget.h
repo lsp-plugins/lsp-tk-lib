@@ -118,7 +118,7 @@ namespace lsp
                  * Realize widget internally
                  * @param r real area allocated to the widget
                  */
-                virtual void            realize_widget(const ws::rectangle_t *r);
+                virtual void            realize(const ws::rectangle_t *r);
 
                 /** Hide widget
                  *
@@ -365,7 +365,7 @@ namespace lsp
                 /** Query widget for resize
                  *
                  */
-                virtual void            query_resize(size_t flags = RESIZE_PENDING | SIZE_INVALID);
+                virtual void            query_resize();
 
                 /** Get widget surface
                  *
@@ -400,7 +400,7 @@ namespace lsp
                  * Realize widget internally
                  * @param r real area allocated to the widget
                  */
-                void                    realize(const ws::rectangle_t *r);
+                void                    realize_widget(const ws::rectangle_t *r);
 
                 /** Handle UI event from the display
                  *

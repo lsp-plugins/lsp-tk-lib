@@ -471,20 +471,15 @@ namespace lsp
             return pDisplay->queue_destroy(this);
         }
 
-        void Widget::query_resize(size_t flags)
+        void Widget::query_resize()
         {
             if (!sVisibility.get())
                 return;
 
-            // Check that flags have been changed
-            flags       = nFlags | (flags & (SIZE_INVALID | RESIZE_PENDING));
-            if (flags == nFlags)
-                return;
-
             // Update flags
-            nFlags      = flags;
+            nFlags     |= (RESIZE_PENDING | SIZE_INVALID);
             if (pParent != NULL)
-                pParent->query_resize(RESIZE_PENDING);
+                pParent->query_resize();
         }
 
         void Widget::render(ws::ISurface *s, bool force)
@@ -556,7 +551,7 @@ namespace lsp
         {
         }
 
-        void Widget::realize_widget(const ws::rectangle_t *r)
+        void Widget::realize(const ws::rectangle_t *r)
         {
             // Do not report size request on size change
             if ((sSize.nLeft == r->nLeft) &&
@@ -570,10 +565,10 @@ namespace lsp
             sSlots.execute(SLOT_RESIZE, this, &sSize);
         }
 
-        void Widget::realize(const ws::rectangle_t *r)
+        void Widget::realize_widget(const ws::rectangle_t *r)
         {
             // Call for realize
-            realize_widget(r);
+            realize(r);
 
             // Reset size pending flags
             nFlags     &= ~(SIZE_INVALID | RESIZE_PENDING);

@@ -51,12 +51,12 @@ namespace lsp
                 status_t                    allocate_homogeneous(const ws::rectangle_t *r, lltl::parray<cell_t> &visible);
                 status_t                    allocate_proportional(const ws::rectangle_t *r, lltl::parray<cell_t> &visible);
                 void                        allocate_widget_space(const ws::rectangle_t *r, lltl::parray<cell_t> &visible, ssize_t spacing);
-                void                        realize_widgets(lltl::parray<cell_t> &visible);
+                void                        realize_children(lltl::parray<cell_t> &visible);
 
             protected:
                 virtual void                size_request(ws::size_limit_t *r);
                 virtual void                property_changed(Property *prop);
-                virtual void                realize_widget(const ws::rectangle_t *r);
+                virtual void                realize(const ws::rectangle_t *r);
 
             public:
                 explicit Box(Display *dpy);

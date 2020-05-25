@@ -240,8 +240,9 @@ MTEST_BEGIN("tk", box)
             MTEST_ASSERT(init_widget(wv, vh, "void2-2") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->constraints()->set(32, 32, 32, 32);
+            wv->constraints()->set(48, 32, 48, 32);
             wv->bg_color()->set_rgb(0.0f, 1.0f, 1.0f);
+            wv->padding()->set_all(0);
             wv->allocation()->set_fill(false);
 
             // Create widget (3)
@@ -260,7 +261,7 @@ MTEST_BEGIN("tk", box)
         MTEST_ASSERT(init_widget(box, vh, "hbox2") == STATUS_OK);
         MTEST_ASSERT(widgets.push(box));
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
-        box->bg_color()->set_rgb(0, 0.75, 1.0);
+        box->bg_color()->set_rgb(0, 0.75, 0.5);
         box->orientation()->set_horizontal();
         {
             // Create widget (1)
@@ -269,7 +270,7 @@ MTEST_BEGIN("tk", box)
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
             wv->constraints()->set(32, 32, -1, -1);
-            wv->bg_color()->set_rgb(0.0f, 1.0f, 0.0f);
+            wv->bg_color()->set_rgb(1.0f, 0.5f, 0.0f);
             wv->allocation()->set_fill(false);
 
             // Create widget (2)

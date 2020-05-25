@@ -208,7 +208,7 @@ MTEST_BEGIN("tk", grid)
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test box") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test grid") == STATUS_OK);
         MTEST_ASSERT(wnd->role()->set_raw("grid_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
@@ -253,7 +253,7 @@ MTEST_BEGIN("tk", grid)
             MTEST_ASSERT(init_widget(wv, vh, "void1-1-1") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
-            wv->constraints()->set(32, 32, -1, -1);
+            wv->constraints()->set(64, 48, -1, -1);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
 
@@ -261,7 +261,7 @@ MTEST_BEGIN("tk", grid)
             MTEST_ASSERT(init_widget(wv, vh, "void1-1-2") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
-            wv->constraints()->set(32, 32, -1, -1);
+            wv->constraints()->set(64, 48, -1, -1);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
 
@@ -269,7 +269,7 @@ MTEST_BEGIN("tk", grid)
             MTEST_ASSERT(init_widget(wv, vh, "void1-2-1") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
-            wv->constraints()->set(32, 32, -1, -1);
+            wv->constraints()->set(64, 48, -1, -1);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
 
@@ -277,7 +277,7 @@ MTEST_BEGIN("tk", grid)
             MTEST_ASSERT(init_widget(wv, vh, "void1-2-2") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
-            wv->constraints()->set(32, 32, -1, -1);
+            wv->constraints()->set(64, 48, -1, -1);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
         }

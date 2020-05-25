@@ -198,7 +198,7 @@ namespace lsp
                 pWindow->resize(r.nWidth, r.nHeight);
 
             // Copy actual rectangle to output
-            realize(&r);
+            realize_widget(&r);
 
             return STATUS_OK;
         }
@@ -612,7 +612,7 @@ namespace lsp
                         r.nWidth    = e->nWidth;
                         r.nHeight   = e->nHeight;
 
-                        realize_widget(&r);
+                        realize(&r);
                     }
                     break;
 
@@ -888,13 +888,13 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Window::realize_widget(const ws::rectangle_t *r)
+        void Window::realize(const ws::rectangle_t *r)
         {
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             sPosition.commit(r->nLeft, r->nTop);
             sWindowSize.commit(r->nWidth, r->nHeight, sScaling.get());
 
-            WidgetContainer::realize_widget(r);
+            WidgetContainer::realize(r);
             if ((pChild == NULL) || (!pChild->visibility()->get()))
                 return;
 
@@ -915,7 +915,7 @@ namespace lsp
             sLayout.apply(&rc, &sr);
 
             // Call for realize
-            pChild->realize(&rc);
+            pChild->realize_widget(&rc);
         }
 
         void Window::discard_widget(Widget *w)
@@ -957,7 +957,6 @@ namespace lsp
             {
                 ws::size_limit_t cr;
                 pChild->get_size_limits(&cr);
-                pChild->padding()->add(&cr, pChild->scaling()->get()); // Apply padding
 
                 r->nMinWidth       += lsp_max(cr.nMinWidth, 0);
                 r->nMinHeight      += lsp_max(cr.nMinHeight, 0);
@@ -970,7 +969,8 @@ namespace lsp
             // Apply constraints to the window
             sSizeConstraints.apply(r, scaling);
 
-            lsp_trace("w={%d, %d}, h={%d, %d}", int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
+            lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this,
+                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
         status_t Window::set_icon(const void *bgra, size_t width, size_t height)

@@ -44,8 +44,18 @@ namespace lsp
         {
             if ((sSize.nWidth > 0) && (sSize.nHeight > 0))
             {
-                lsp::Color bgColor(sBgColor);
-                s->fill_rect(sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight, bgColor);
+                lsp::Color bg_color(sBgColor);
+                s->fill_rect(sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight, bg_color);
+
+                // Debug
+                ws::rectangle_t xr;
+                bg_color.set_rgb24(0xcccccc);
+                sPadding.enter(&xr, &sSize, sScaling.get());
+                s->fill_frame(
+                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
+                    xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
+                    bg_color
+                );
             }
         }
 
@@ -54,7 +64,7 @@ namespace lsp
             // Add external size constraints
             float scaling = lsp_max(0.0f, sScaling.get());
             sConstraints.compute(r, scaling);
-            lsp_trace("w={%d, %d}, h={%d, %d}", int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
+            lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this, int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
         void Void::property_changed(Property *prop)

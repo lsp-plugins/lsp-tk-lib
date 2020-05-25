@@ -164,6 +164,8 @@ namespace lsp
 
                 if (w->pWidget == NULL)
                 {
+                    bg_color.copy(sBgColor);
+
                     size_t cw   = w->a.nWidth;
                     size_t ch   = w->a.nHeight;
                     if (size_t(w->nLeft + w->nCols) < sAlloc.nCols)
@@ -171,7 +173,7 @@ namespace lsp
                     if (size_t(w->nTop  + w->nRows) < sAlloc.nRows)
                         ch         += vspacing;
 
-                    s->fill_rect(w->a.nLeft, w->a.nTop, w->a.nWidth, w->a.nHeight, bg_color);
+                    s->fill_rect(w->a.nLeft, w->a.nTop, cw, ch, bg_color);
                     continue;
                 }
 
@@ -180,7 +182,8 @@ namespace lsp
                     if (force)
                     {
                         // Draw widget area
-                        bg_color.copy(w->pWidget->bg_color()->color());
+//                        bg_color.copy(w->pWidget->bg_color()->color());
+                        bg_color.set_rgb24(0);
                         s->fill_frame(
                             w->a.nLeft, w->a.nTop, w->a.nWidth, w->a.nHeight,
                             w->s.nLeft, w->s.nTop, w->s.nWidth, w->s.nHeight,
@@ -189,17 +192,20 @@ namespace lsp
 
                         // Need to draw spacing?
                         bg_color.copy(sBgColor);
-                        if ((hspacing > 0) && (size_t(w->nLeft + w->nCols) < sAlloc.nCols))
+                        if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
                         {
                             s->fill_rect(w->a.nLeft + w->a.nWidth, w->a.nTop, hspacing, w->a.nHeight, bg_color);
-                            if ((vspacing > 0) && (size_t(w->nTop + w->nRows) < sAlloc.nRows))
+                            if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
                                 s->fill_rect(w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth + hspacing, vspacing, bg_color);
                         }
-                        else if ((vspacing > 0) && (size_t(w->nTop + w->nRows) < sAlloc.nRows))
+                        else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
                             s->fill_rect(w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth, vspacing, bg_color);
                     }
 
                     // Render the widget
+                    lsp_trace("render widget %p, size = {%d, %d, %d, %d}",
+                            w->pWidget, int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
+                    );
                     w->pWidget->render(s, force);
                     w->pWidget->commit_redraw();
                 }
@@ -284,16 +290,17 @@ namespace lsp
             if (res != STATUS_OK)
                 return;
 
+            sPadding.enter(&xr, r, sScaling.get());
+
             // Distribute the size between rows and columns
             distribute_size(&a.vCols, 0, a.nCols, xr.nWidth);
             distribute_size(&a.vRows, 0, a.nRows, xr.nHeight);
 
             // Assign coordinates to cells
-            sPadding.enter(&xr, r, sScaling.get());
             assign_coords(&a, &xr);
 
             // Realize widgets
-            realize_widgets(&a);
+            realize_children(&a);
 
             // Swap the actual data
             sAlloc.vCells.swap(&a.vCells);
@@ -302,6 +309,9 @@ namespace lsp
             sAlloc.vCols.swap(&a.vCols);
             sAlloc.nRows    = a.nRows;
             sAlloc.nCols    = a.nCols;
+
+            // Call parent method to realize
+            WidgetContainer::realize(r);
         }
 
         void Grid::size_request(ws::size_limit_t *r)
@@ -315,6 +325,10 @@ namespace lsp
             r->nMinHeight       = estimate_size(&a.vRows, 0, a.nRows);
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
+
+            lsp_trace("w={%d, %d}, h={%d, %d}",
+                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight)
+            );
         }
 
         bool Grid::attach_cell(alloc_t *a, widget_t *w, size_t left, size_t top)
@@ -345,6 +359,10 @@ namespace lsp
             cell->nTop      = top;
             cell->nRows     = xmax - left;
             cell->nCols     = ymax - top;
+
+            lsp_trace("attach_cell widget=%p, structure={%d, %d, %d, %d}",
+                    cell->pWidget, int(cell->nLeft), int(cell->nTop), int(cell->nRows), int(cell->nCols)
+            );
 
             // Fill table with the cell
             for (size_t y=top; y < ymax; ++y)
@@ -391,13 +409,16 @@ namespace lsp
                 // Fill cells from left to right first, then move to next row
                 for (size_t y=0; (y < a->nRows) && (i < n); ++y)
                     for (size_t x=0; (x < a->nCols) && (i < n); ++x)
-                        for (; i < n; ++i)
+                        while (i < n)
                         {
                             widget_t *w = vItems.uget(i);
                             if ((w->nLeft >= 0) || (w->nTop >= 0))
                                 continue;
                             if (attach_cell(a, w, x, y))
+                            {
+                                ++i;
                                 break;
+                            }
                         }
             }
             else
@@ -405,13 +426,16 @@ namespace lsp
                 // Fill cells from top to bottom first, then move to next column
                 for (size_t x=0; (x < a->nCols) && (i < n); ++x)
                     for (size_t y=0; (y < a->nRows) && (i < n); ++y)
-                        for (; i < n; ++i)
+                        while (i < n)
                         {
                             widget_t *w = vItems.uget(i);
                             if ((w->nLeft >= 0) || (w->nTop >= 0))
                                 continue;
                             if (attach_cell(a, w, x, y))
+                            {
+                                ++i;
                                 break;
+                            }
                         }
             }
 
@@ -537,7 +561,7 @@ namespace lsp
                 h               = a->vRows.uget(i);
                 h->nSize        = 0;
                 h->nWeight      = 1;
-                h->nSpacing     = hspacing;
+                h->nSpacing     = vspacing;
                 h->nFlags       = 0;
             }
             for (size_t i=0; i<a->nCols; ++i)
@@ -545,7 +569,7 @@ namespace lsp
                 h               = a->vCols.uget(i);
                 h->nSize        = 0;
                 h->nWeight      = 1;
-                h->nSpacing     = vspacing;
+                h->nSpacing     = hspacing;
                 h->nFlags       = 0;
             }
 
@@ -613,14 +637,14 @@ namespace lsp
             h   = a->vCols.get(a->nCols - 1);
             h->nSpacing     = 0;
 
-            // Initialize padding
+            // Initialize expand flags
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
             {
                 cell_t *c       = a->vCells.uget(i);
 
                 // Horizontal
                 if ((c->pWidget != NULL) && (c->pWidget->allocation()->hexpand()))
-                    for (ssize_t j=0; j<c->nCols; ++j)
+                    for (size_t j=0; j<c->nCols; ++j)
                     {
                         h               = a->vCols.uget(c->nLeft + j);
                         h->nFlags      |= F_EXPAND;
@@ -628,7 +652,7 @@ namespace lsp
 
                 // Vertical
                 if ((c->pWidget != NULL) && (c->pWidget->allocation()->vexpand()))
-                    for (ssize_t j=0; j<c->nRows; ++j)
+                    for (size_t j=0; j<c->nRows; ++j)
                     {
                         h               = a->vRows.uget(c->nTop + j);
                         h->nFlags      |= F_EXPAND;
@@ -661,10 +685,8 @@ namespace lsp
                 weight         += h->nSize * h->nWeight;
                 width          += h->nSize;
                 if ((k+1) < count)
-                {
-                    weight         += h->nSpacing;
                     width          += h->nSpacing;
-                }
+
                 if (h->nFlags & F_EXPAND)
                     expanded ++;
             }
@@ -697,8 +719,8 @@ namespace lsp
                 {
                     header_t *h     = vl.uget(k);
                     size_t hw       = h->nSize * h->nWeight;
-                    if ((k + 1) < count)
-                        hw             += h->nSpacing;
+//                    if ((k + 1) < count)
+//                        hw             += h->nSpacing;
                     size_t delta    = (hw * left) / weight;
                     h->nSize       += delta;
                     total          += delta;
@@ -844,7 +866,7 @@ namespace lsp
             }
         }
 
-        void Grid::realize_widgets(alloc_t *a)
+        void Grid::realize_children(alloc_t *a)
         {
             ws::size_limit_t sr;
             ws::rectangle_t r;
@@ -853,25 +875,31 @@ namespace lsp
             {
                 // Get widget
                 cell_t *w       = a->vCells.uget(i);
+                if (w->pWidget == NULL)
+                    continue;
 
                 // Allocated widget area may be too large, restrict it with size constraints
                 w->pWidget->get_size_limits(&sr);
                 SizeConstraints::apply(&r, &w->s, &sr);
 
                 // Estimate the real widget allocation size
-                ssize_t xw      = (w->pWidget->allocation()->hfill()) ? r.nWidth    : lsp_limit(sr.nMinWidth,  0, r.nWidth );
-                ssize_t xh      = (w->pWidget->allocation()->vfill()) ? r.nHeight   : lsp_limit(sr.nMinHeight, 0, r.nHeight);
+                ssize_t xw      = (w->pWidget->allocation()->hfill()) ? r.nWidth    : lsp_max(sr.nMinWidth,  0);
+                ssize_t xh      = (w->pWidget->allocation()->vfill()) ? r.nHeight   : lsp_max(sr.nMinHeight, 0);
 
                 // Update location of the widget
-                w->s.nLeft     += lsp_max(0, w->s.nWidth  - r.nWidth ) >> 1;
-                w->s.nTop      += lsp_max(0, w->s.nHeight - r.nHeight) >> 1;
+                w->s            = w->a;
+                w->s.nLeft     += lsp_max(0, w->s.nWidth  - xw) >> 1;
+                w->s.nTop      += lsp_max(0, w->s.nHeight - xh) >> 1;
                 w->s.nWidth     = xw;
                 w->s.nHeight    = xh;
 
                 // Realize the widget
-                lsp_trace("realize id=%d, parameters = {%d, %d, %d, %d}",
-                        int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
-                w->pWidget->realize(&w->s);
+                lsp_trace("realize widget %p, id=%d, allocation = {%d, %d, %d, %d}, size = {%d, %d, %d, %d}",
+                        w->pWidget, int(i),
+                        int(w->a.nLeft), int(w->a.nTop), int(w->a.nWidth), int(w->a.nHeight),
+                        int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
+                );
+                w->pWidget->realize_widget(&w->s);
             }
         }
     

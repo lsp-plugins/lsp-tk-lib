@@ -37,8 +37,8 @@ namespace lsp
                     Widget             *pWidget;    // Widget
                     size_t              nLeft;      // Horizontal position
                     size_t              nTop;       // Vertical position
-                    ssize_t             nRows;      // Number of rows taken by cell
-                    ssize_t             nCols;      // Number of columns taken by cell
+                    size_t              nRows;      // Number of rows taken by cell
+                    size_t              nCols;      // Number of columns taken by cell
                 } cell_t;
 
                 typedef struct header_t
@@ -95,12 +95,13 @@ namespace lsp
                 status_t                    estimate_sizes(alloc_t *a);
                 status_t                    create_row_col_descriptors(alloc_t *a);
                 static void                 assign_coords(alloc_t *a, const ws::rectangle_t *r);
-                static void                 realize_widgets(alloc_t *a);
+                static void                 realize_children(alloc_t *a);
 
             protected:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);
                 virtual void                size_request(ws::size_limit_t *r);
                 virtual void                property_changed(Property *prop);
+                virtual void                realize(const ws::rectangle_t *r);
 
             public:
                 explicit Grid(Display *dpy);
@@ -201,13 +202,6 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t            remove(Widget *widget);
-
-                /** Realize the widget
-                 *
-                 * @param r realization structure
-                 */
-                virtual void                realize(const ws::rectangle_t *r);
-
         };
     
     } /* namespace tk */

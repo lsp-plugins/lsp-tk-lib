@@ -361,7 +361,7 @@ namespace lsp
             dst->nLeft      = src->nLeft;
             dst->nTop       = src->nTop;
             dst->nWidth     = ((sc->nMaxWidth >= 0) && (src->nWidth > sc->nMaxWidth))    ? sc->nMaxWidth  : src->nWidth;
-            dst->nHeight    = ((sc->nMaxHeight >= 0) && (dst->nHeight > sc->nMaxHeight)) ? sc->nMaxHeight : src->nHeight;
+            dst->nHeight    = ((sc->nMaxHeight >= 0) && (src->nHeight > sc->nMaxHeight)) ? sc->nMaxHeight : src->nHeight;
 
             if ((sc->nMinWidth >= 0) && (dst->nWidth < sc->nMinWidth))
                 dst->nWidth     = sc->nMinWidth;

@@ -183,7 +183,8 @@ namespace lsp
                     // Fill unused space with background
                     if (force)
                     {
-                        bg_color.copy(w->bg_color()->color());
+//                        bg_color.copy(w->bg_color()->color());
+                        bg_color.set_rgb24(0);
                         s->fill_frame(
                             wc->a.nLeft, wc->a.nTop, wc->a.nWidth, wc->a.nHeight,
                             wc->s.nLeft, wc->s.nTop, wc->s.nWidth, wc->s.nHeight,
@@ -512,7 +513,7 @@ namespace lsp
             }
         }
 
-        void Box::realize_widgets(lltl::parray<cell_t> &visible)
+        void Box::realize_children(lltl::parray<cell_t> &visible)
         {
             ws::size_limit_t sr;
             ws::rectangle_t r;
@@ -527,24 +528,28 @@ namespace lsp
                 SizeConstraints::apply(&r, &w->s, &sr);
 
                 // Estimate the real widget allocation size
-                ssize_t xw      = (w->pWidget->allocation()->hfill()) ? r.nWidth    : lsp_limit(sr.nMinWidth,  0, r.nWidth );
-                ssize_t xh      = (w->pWidget->allocation()->vfill()) ? r.nHeight   : lsp_limit(sr.nMinHeight, 0, r.nHeight);
+                ssize_t xw      = (w->pWidget->allocation()->hfill()) ? r.nWidth    : lsp_max(0, sr.nMinWidth);
+                ssize_t xh      = (w->pWidget->allocation()->vfill()) ? r.nHeight   : lsp_max(0, sr.nMinHeight);
 
                 // Update location of the widget
-                w->s.nLeft     += lsp_max(0, w->s.nWidth  - r.nWidth ) >> 1;
-                w->s.nTop      += lsp_max(0, w->s.nHeight - r.nHeight) >> 1;
+                w->s.nLeft     += lsp_max(0, w->s.nWidth  - xw) >> 1;
+                w->s.nTop      += lsp_max(0, w->s.nHeight - xh) >> 1;
                 w->s.nWidth     = xw;
                 w->s.nHeight    = xh;
 
                 // Realize the widget
-                lsp_trace("realize id=%d, parameters = {%d, %d, %d, %d}",
-                        int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
-                w->pWidget->realize(&w->s);
+                lsp_trace("realize child=%p, id=%d, parameters = {%d, %d, %d, %d}",
+                        w->pWidget, int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
+                w->pWidget->realize_widget(&w->s);
             }
         }
 
-        void Box::realize_widget(const ws::rectangle_t *r)
+        void Box::realize(const ws::rectangle_t *r)
         {
+            lsp_trace("this=%p, size={%d, %d, %d, %d}",
+                    this, int(r->nLeft), int(r->nTop), int(r->nWidth), int(r->nHeight)
+                );
+
             // Make a copy of current widget list
             lltl::darray<cell_t>    items;
             if (items.add(&vItems))
@@ -566,13 +571,13 @@ namespace lsp
                 // Update state of all widgets
                 if (res == STATUS_OK)
                 {
-                    realize_widgets(visible);
+                    realize_children(visible);
                     vItems.swap(&items);
                 }
             }
 
             // Call parent method to realize
-            WidgetContainer::realize_widget(r);
+            WidgetContainer::realize(r);
         }
 
         void Box::size_request(ws::size_limit_t *r)
@@ -610,8 +615,8 @@ namespace lsp
                 cell_t *w = visible.uget(i);
 
                 w->pWidget->get_size_limits(&sr);
-//                lsp_trace("size_request id=%d, parameters = {%d, %d, %d, %d}",
-//                    int(i), int(w->r.nMinWidth), int(w->r.nMinHeight), int(w->r.nMaxWidth), int(w->r.nMaxHeight));
+                lsp_trace("size_request id=%d, parameters = {%d, %d, %d, %d}",
+                    int(i), int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight));
 
                 // Analyze widget class
                 ssize_t x_width     = lsp_max(0, sr.nMinWidth);
@@ -639,6 +644,8 @@ namespace lsp
                 else
                     r->nMinHeight       = e_height + spacing * (visible.size() - 1);
             }
+
+            lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this, int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
     
     } /* namespace tk */
