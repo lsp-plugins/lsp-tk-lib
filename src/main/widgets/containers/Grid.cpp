@@ -283,21 +283,22 @@ namespace lsp
 
         void Grid::realize(const ws::rectangle_t *r)
         {
-            ws::rectangle_t xr;
+            lsp_trace("this=%p, size={%d, %d, %d, %d}",
+                    this, int(r->nLeft), int(r->nTop), int(r->nWidth), int(r->nHeight)
+                );
+
             alloc_t a;
 
             status_t res = allocate_cells(&a);
             if (res != STATUS_OK)
                 return;
 
-            sPadding.enter(&xr, r, sScaling.get());
-
             // Distribute the size between rows and columns
-            distribute_size(&a.vCols, 0, a.nCols, xr.nWidth);
-            distribute_size(&a.vRows, 0, a.nRows, xr.nHeight);
+            distribute_size(&a.vCols, 0, a.nCols, r->nWidth);
+            distribute_size(&a.vRows, 0, a.nRows, r->nHeight);
 
             // Assign coordinates to cells
-            assign_coords(&a, &xr);
+            assign_coords(&a, r);
 
             // Realize widgets
             realize_children(&a);
@@ -321,6 +322,7 @@ namespace lsp
             // Allocate cells
             allocate_cells(&a);
 
+            // Estimate size
             r->nMinWidth        = estimate_size(&a.vCols, 0, a.nCols);
             r->nMinHeight       = estimate_size(&a.vRows, 0, a.nRows);
             r->nMaxWidth        = -1;
@@ -343,7 +345,7 @@ namespace lsp
             // Check that we can allocate cells
             for (size_t y=top; y < ymax; ++y)
             {
-                cell_t **c = a->vTable.upget(y * a->nRows);
+                cell_t **c = a->vTable.upget(y * a->nCols);
                 for (size_t x=left; x < xmax; ++x, ++c)
                     if (c[x] != NULL)
                         return false;
@@ -367,7 +369,7 @@ namespace lsp
             // Fill table with the cell
             for (size_t y=top; y < ymax; ++y)
             {
-                cell_t **c = a->vTable.upget(y * a->nRows);
+                cell_t **c = a->vTable.upget(y * a->nCols);
                 for (size_t x=left; x < xmax; ++x, ++c)
                     c[x]      = cell;
             }
@@ -664,13 +666,13 @@ namespace lsp
 
         size_t Grid::estimate_size(lltl::darray<header_t> *hdr, size_t first, size_t count)
         {
-            size_t res  = 0;
+            size_t res      = 0;
             for (size_t i=0; i<count; ++i)
             {
-                header_t *h = hdr->uget(first);
-                res += h->nSize;
+                header_t *h     = hdr->uget(first);
+                res            += h->nSize;
                 if ((++first) < count)
-                    res    += h->nSpacing;
+                    res            += h->nSpacing;
             }
             return res;
         }
@@ -756,8 +758,6 @@ namespace lsp
         {
             ws::size_limit_t sr;
             header_t *h;
-            header_t *vrows = a->vRows.array();
-            header_t *vcols = a->vCols.array();
 
             // Estimate minimum row/column size for 1xN and Mx1 cells
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
@@ -767,16 +767,16 @@ namespace lsp
                     continue;
 
                 // Get size limits of the widget
-                w->pWidget->get_size_limits(&sr);
+                w->pWidget->get_padded_size_limits(&sr);
 
                 if (w->nRows == 1)
                 {
-                    h               = &vrows[i];
+                    h               = a->vRows.uget(w->nTop);
                     h->nSize        = lsp_max(h->nSize, sr.nMinHeight);
                 }
                 if (w->nCols == 1)
                 {
-                    h               = &vcols[i];
+                    h               = a->vCols.uget(w->nLeft);
                     h->nSize        = lsp_max(h->nSize, sr.nMinWidth);
                 }
             }
@@ -791,7 +791,7 @@ namespace lsp
                     continue;
 
                 // Get size limits of the widget
-                w->pWidget->get_size_limits(&sr);
+                w->pWidget->get_padded_size_limits(&sr);
 
                 if ((w->nRows > 1) && (sr.nMinHeight > 0))
                 {
@@ -879,19 +879,19 @@ namespace lsp
                     continue;
 
                 // Allocated widget area may be too large, restrict it with size constraints
-                w->pWidget->get_size_limits(&sr);
-                SizeConstraints::apply(&r, &w->s, &sr);
+                w->pWidget->get_padded_size_limits(&sr);
+                SizeConstraints::apply(&r, &w->a, &sr);
 
                 // Estimate the real widget allocation size
-                ssize_t xw      = (w->pWidget->allocation()->hfill()) ? r.nWidth    : lsp_max(sr.nMinWidth,  0);
-                ssize_t xh      = (w->pWidget->allocation()->vfill()) ? r.nHeight   : lsp_max(sr.nMinHeight, 0);
+                ssize_t xw      = (w->pWidget->allocation()->hfill()) ? r.nWidth    : lsp_max(0, sr.nMinWidth);
+                ssize_t xh      = (w->pWidget->allocation()->vfill()) ? r.nHeight   : lsp_max(0, sr.nMinHeight);
 
                 // Update location of the widget
-                w->s            = w->a;
-                w->s.nLeft     += lsp_max(0, w->s.nWidth  - xw) >> 1;
-                w->s.nTop      += lsp_max(0, w->s.nHeight - xh) >> 1;
+                w->s.nLeft      = w->a.nLeft + (lsp_max(0, w->a.nWidth  - xw) >> 1);
+                w->s.nTop       = w->a.nTop  + (lsp_max(0, w->a.nHeight - xh) >> 1);
                 w->s.nWidth     = xw;
                 w->s.nHeight    = xh;
+                w->pWidget->padding()->enter(&w->s, w->pWidget->scaling()->get());
 
                 // Realize the widget
                 lsp_trace("realize widget %p, id=%d, allocation = {%d, %d, %d, %d}, size = {%d, %d, %d, %d}",
