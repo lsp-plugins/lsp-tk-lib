@@ -89,6 +89,7 @@ namespace lsp
                 void            set_all(size_t value);
                 void            set_horizontal(size_t left, size_t right);
                 void            set_vertical(size_t top, size_t bottom);
+                inline void     set(size_t value)           { set_all(value);                       }
 
                 void            set(size_t left, size_t right, size_t top, size_t bottom);
                 void            set(const padding_t *p);
@@ -99,18 +100,22 @@ namespace lsp
                 void            add(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
                 void            sub(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
                 void            enter(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
+                void            leave(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
 
                 inline void     add(ws::rectangle_t *dst, float scale)              { add(dst, dst, scale);     }
                 inline void     sub(ws::rectangle_t *dst, float scale)              { sub(dst, dst, scale);     }
                 inline void     enter(ws::rectangle_t *dst, float scale)            { enter(dst, dst, scale);   }
+                inline void     leave(ws::rectangle_t *dst, float scale)            { leave(dst, dst, scale);   }
 
                 static void             add(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
                 static void             sub(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
                 static void             enter(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
+                static void             leave(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
 
                 static inline void      add(ws::rectangle_t *dst, const padding_t *pad)         { add(dst, dst, pad);       }
                 static inline void      sub(ws::rectangle_t *dst, const padding_t *pad)         { sub(dst, dst, pad);       }
                 static inline void      enter(ws::rectangle_t *dst, const padding_t *pad)       { enter(dst, dst, pad);     }
+                static inline void      leave(ws::rectangle_t *dst, const padding_t *pad)       { leave(dst, dst, pad);     }
 
         };
 

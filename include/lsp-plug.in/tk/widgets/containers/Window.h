@@ -63,7 +63,7 @@ namespace lsp
                 prop::String            sRole;
                 prop::Color             sBorderColor;
                 prop::BorderStyle       sBorderStyle;
-                prop::Float             sBorderSize;
+                prop::Integer           sBorderSize;
                 prop::Float             sBorderRadius;
                 prop::WindowActions     sActions;
                 prop::Position          sPosition;
@@ -158,6 +158,8 @@ namespace lsp
                 inline const Color             *border_color() const        { return &sBorderColor; }
                 inline BorderStyle             *border_style()              { return &sBorderStyle; }
                 inline const BorderStyle       *border_style() const        { return &sBorderStyle; }
+                inline Integer                 *border_size()               { return &sBorderSize; }
+                inline const Integer           *border_size() const         { return &sBorderSize; }
                 inline WindowActions           *actions()                   { return &sActions; }
                 inline const WindowActions     *actions() const             { return &sActions; }
                 inline Size                    *size()                      { return &sWindowSize; }

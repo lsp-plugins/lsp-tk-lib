@@ -47,13 +47,13 @@ namespace lsp
                 lsp::Color bg_color(sBgColor);
                 s->fill_rect(sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight, bg_color);
 
-                // Debug
+                // Debug padding
                 ws::rectangle_t xr;
-                bg_color.set_rgb24(0xcccccc);
-                sPadding.enter(&xr, &sSize, sScaling.get());
+                bg_color.set_rgb24(0);
+                sPadding.leave(&xr, &sSize, sScaling.get());
                 s->fill_frame(
-                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
                     xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
+                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
                     bg_color
                 );
             }

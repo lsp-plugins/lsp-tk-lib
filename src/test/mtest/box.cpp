@@ -115,18 +115,18 @@ MTEST_BEGIN("tk", box)
         h->test     = this;
         h->label    = label;
 
-        tk::handler_id_t hid;
-        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
-
-        if (hid < 0)
-            res = -hid;
+//        tk::handler_id_t hid;
+//        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
+//
+//        if (hid < 0)
+//            res = -hid;
 
         return res;
     }
@@ -154,12 +154,15 @@ MTEST_BEGIN("tk", box)
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
+//        wnd->border_size()->set(2);
+        wnd->border_color()->set_rgb(1.0f, 1.0f, 0.0f);
         wnd->size_constraints()->set(160, 100, 640, 400);
         wnd->size()->set(320, 200);
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
         wnd->pointer()->set(ws::MP_TABLE_CELL);
         wnd->layout()->set(-0.5, 0.5, 0.5, 0.5);
+//        wnd->padding()->set_all(16);
         MTEST_ASSERT(widgets.push(wnd));
 
         // Create vertical box
@@ -220,7 +223,8 @@ MTEST_BEGIN("tk", box)
         MTEST_ASSERT(init_widget(box, vh, "hbox2") == STATUS_OK);
         MTEST_ASSERT(widgets.push(box));
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
-        box->bg_color()->set_rgb(0, 0.75, 1.0);
+//        box->bg_color()->set_rgb(0, 0.75, 1.0);
+        box->bg_color()->set_rgb(1.0, 0.75, 1.0);
         box->orientation()->set_horizontal();
         box->homogeneous()->set(true);
         box->spacing()->set(8);

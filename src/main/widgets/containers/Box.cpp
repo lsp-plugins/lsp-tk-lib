@@ -183,8 +183,8 @@ namespace lsp
                     // Fill unused space with background
                     if (force)
                     {
-//                        bg_color.copy(w->bg_color()->color());
-                        bg_color.set_rgb24(0);
+                        bg_color.copy(w->bg_color()->color());
+//                        bg_color.set_rgb24(0);
                         s->fill_frame(
                             wc->a.nLeft, wc->a.nTop, wc->a.nWidth, wc->a.nHeight,
                             wc->s.nLeft, wc->s.nTop, wc->s.nWidth, wc->s.nHeight,
@@ -359,7 +359,7 @@ namespace lsp
                 cell_t *w =          visible.uget(i);
 
                 // Request size limit and padding of the widget
-                w->pWidget->get_size_limits(&sr);
+                w->pWidget->get_padded_size_limits(&sr);
 
                 if (horizontal)
                 {
@@ -524,7 +524,7 @@ namespace lsp
                 cell_t *w       = visible.uget(i);
 
                 // Allocated widget area may be too large, restrict it with size constraints
-                w->pWidget->get_size_limits(&sr);
+                w->pWidget->get_padded_size_limits(&sr);
                 SizeConstraints::apply(&r, &w->s, &sr);
 
                 // Estimate the real widget allocation size
@@ -536,6 +536,7 @@ namespace lsp
                 w->s.nTop      += lsp_max(0, w->s.nHeight - xh) >> 1;
                 w->s.nWidth     = xw;
                 w->s.nHeight    = xh;
+                w->pWidget->padding()->enter(&w->s, w->pWidget->scaling()->get());
 
                 // Realize the widget
                 lsp_trace("realize child=%p, id=%d, parameters = {%d, %d, %d, %d}",
@@ -560,12 +561,9 @@ namespace lsp
                 // Realize child widgets
                 if ((res == STATUS_OK) && (visible.size() > 0))
                 {
-                    ws::rectangle_t xr;
-                    sPadding.enter(&xr, r, sScaling.get());
-
                     res = (sHomogeneous.get()) ?
-                        allocate_homogeneous(&xr, visible) :
-                        allocate_proportional(&xr, visible);
+                        allocate_homogeneous(r, visible) :
+                        allocate_proportional(r, visible);
                 }
 
                 // Update state of all widgets
@@ -614,7 +612,7 @@ namespace lsp
                 // Get widget
                 cell_t *w = visible.uget(i);
 
-                w->pWidget->get_size_limits(&sr);
+                w->pWidget->get_padded_size_limits(&sr);
                 lsp_trace("size_request id=%d, parameters = {%d, %d, %d, %d}",
                     int(i), int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight));
 

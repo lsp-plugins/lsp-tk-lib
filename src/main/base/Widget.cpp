@@ -485,14 +485,14 @@ namespace lsp
         void Widget::render(ws::ISurface *s, bool force)
         {
             // Draw padding
-            ws::rectangle_t r;
-            sPadding.enter(&r, &sSize, sScaling.get());
-            lsp::Color bg(sBgColor);
-            s->fill_frame(
-                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
-                    r.nLeft, r.nTop, r.nWidth, r.nHeight,
-                    bg
-            );
+//            ws::rectangle_t r;
+//            sPadding.enter(&r, &sSize, sScaling.get());
+//            lsp::Color bg(sBgColor);
+//            s->fill_frame(
+//                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
+//                    r.nLeft, r.nTop, r.nWidth, r.nHeight,
+//                    bg
+//            );
 
             // Get surface of widget
             ws::ISurface *src  = get_surface(s);
@@ -577,19 +577,24 @@ namespace lsp
 
         void Widget::get_size_limits(ws::size_limit_t *l)
         {
-            if (!(nFlags & SIZE_INVALID))
+            if (nFlags & SIZE_INVALID)
             {
-                *l  = sLimit;
-                return;
+                // Perform size request
+                size_request(l);
+
+                // Store size limit and update flags
+                sLimit  = *l;
+                nFlags &= ~SIZE_INVALID;
             }
+            else
+                *l  = sLimit;
+        }
 
-            // Perform size request and apply padding
-            size_request(l);
+        void Widget::get_padded_size_limits(ws::size_limit_t *l)
+        {
+            // Get size limits and apply padding
+            get_size_limits(l);
             sPadding.add(l, sScaling.get());
-
-            // Store size limit and update flags
-            sLimit  = *l;
-            nFlags &= ~SIZE_INVALID;
         }
 
         void Widget::get_padding(padding_t *p)

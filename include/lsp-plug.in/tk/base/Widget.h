@@ -107,8 +107,10 @@ namespace lsp
                  */
                 virtual void            property_changed(Property *prop);
 
-                /** Request widget for size. Widget should return it's maximum
-                 * size without applying padding parameter
+                /** Request widget for it's minimum and maximum size.
+                 * Since parent widget is responsible for padding,
+                 * widget should return it's maximum size without applying
+                 * it's padding parameter
                  *
                  * @param limit the widget size constraints to fill
                  */
@@ -198,19 +200,34 @@ namespace lsp
                  *
                  * @return display
                  */
-                inline Display         *display()                           { return pDisplay; };
+                inline Display         *display()                                   { return pDisplay; };
 
-                /** Get widget dimensions
+                /** Get actual widget dimensions without padding
                  *
                  * @param r real widget dimensions
                  */
-                inline void             get_rectangle(ws::rectangle_t *r)   { *r = sSize; }
+                inline void             get_rectangle(ws::rectangle_t *r)           { *r = sSize; }
 
-                /**
-                 * Get size limit
-                 * @param l size limit to calculate
+                /** Get actual widget dimensions with padding applied
+                 *
+                 * @param r real widget dimensions
+                 */
+                inline void             get_padded_rectangle(ws::rectangle_t *r)    { sPadding.leave(r, &sSize, sScaling.get()); }
+
+                /** Request widget for it's minimum and maximum size.
+                 * Since parent widget is responsible for padding,
+                 * widget should return it's maximum size without applying
+                 * it's padding parameter
+                 *
+                 * @param l the widget size constraints to fill
                  */
                 void                    get_size_limits(ws::size_limit_t *l);
+
+                /**
+                 * Get size limit with padding
+                 * @param l size limit to calculate
+                 */
+                void                    get_padded_size_limits(ws::size_limit_t *l);
 
                 /**
                  * Get actual padding in pixels
@@ -397,7 +414,10 @@ namespace lsp
                 virtual void            draw(ws::ISurface *s);
 
                 /**
-                 * Realize widget internally
+                 * Realize widget by passing it's dimensions.
+                 * Since parent widget is responsible for padding, widget dimensions should
+                 * be passed without padding applied to the widget
+                 *
                  * @param r real area allocated to the widget
                  */
                 void                    realize_widget(const ws::rectangle_t *r);

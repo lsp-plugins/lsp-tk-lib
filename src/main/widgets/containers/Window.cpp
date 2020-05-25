@@ -143,9 +143,9 @@ namespace lsp
             ws::size_limit_t sr;
             ws::rectangle_t r;
 
-            get_size_limits(&sr);
+            get_padded_size_limits(&sr);
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float border        = sBorderSize.get() * scaling;
+            size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
             sPosition.get(&r);
             sWindowSize.compute(&r, scaling);
 
@@ -153,32 +153,29 @@ namespace lsp
             if (sPolicy.get() == WP_GREEDY)
             {
                 // Minimize size of window as possible
-                r.nWidth            = lsp_max(0, sr.nMinWidth + border*2);
-                r.nHeight           = lsp_max(0, sr.nMinHeight + border*2);
-                sPadding.add(&r, scaling);
+                r.nWidth            = lsp_max(0, sr.nMinWidth)  + border*2;
+                r.nHeight           = lsp_max(0, sr.nMinHeight) + border*2;
             }
             else if (sPolicy.get() == WP_CHILD)
             {
                 // Apply size constraints of the child to the window
                 sPadding.sub(&r, scaling);
-                r.nWidth            = lsp_max(1, ssize_t(r.nWidth) - border*2);
-                r.nHeight           = lsp_max(1, ssize_t(r.nHeight) - border*2);
+                r.nWidth            = lsp_max(1, ssize_t(r.nWidth  - border*2));
+                r.nHeight           = lsp_max(1, ssize_t(r.nHeight - border*2));
 
                 // Apply size constraints of the widget
                 SizeConstraints::apply(&r, &sr);
 
-                // Add border and padding
+                // Add border
                 r.nWidth           += border*2;
                 r.nHeight          += border*2;
-                sPadding.add(&r, scaling);
             }
             else
             {
-                // Add border and padding
+                // Add border
                 ws::rectangle_t     xr;
-                xr.nWidth           = lsp_max(0, sr.nMinWidth  + border*2);
-                xr.nHeight          = lsp_max(0, sr.nMinHeight + border*2);
-                sPadding.add(&r, scaling);
+                xr.nWidth           = lsp_max(0, sr.nMinWidth)  + border*2;
+                xr.nHeight          = lsp_max(0, sr.nMinHeight) + border*2;
 
                 // Maximize the width
                 r.nWidth            = lsp_max(xr.nWidth,  r.nWidth);
@@ -197,8 +194,9 @@ namespace lsp
             if ((sSize.nWidth != r.nWidth) && (sSize.nHeight != r.nHeight))
                 pWindow->resize(r.nWidth, r.nHeight);
 
-            // Copy actual rectangle to output
-            realize_widget(&r);
+            // Realize widget container
+            sPadding.enter(&r, scaling);
+            WidgetContainer::realize_widget(&r);
 
             return STATUS_OK;
         }
@@ -299,13 +297,20 @@ namespace lsp
 
             if (force)
             {
-                ws::rectangle_t cr;
+                ws::rectangle_t pr, cr;
+                pChild->get_padded_rectangle(&pr);
                 pChild->get_rectangle(&cr);
 
                 s->fill_frame(
                     0, 0, sSize.nWidth, sSize.nHeight,
+                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight,
+                    bg_color
+                );
+                s->fill_frame(
+                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight,
                     cr.nLeft, cr.nTop, cr.nWidth, cr.nHeight,
-                    bg_color);
+                    pChild->bg_color()->color()
+                );
 
                 float scaling   = sScaling.get();
                 float border    = sBorderSize.get() * scaling;
@@ -900,21 +905,24 @@ namespace lsp
 
             // Query for size
             ws::size_limit_t sr;
-            pChild->get_size_limits(&sr);
-
-            // Calculate realize parameters
-            ws::rectangle_t rc;
             float scaling       = lsp_max(sScaling.get(), 0.0f);
-            float border        = sBorderSize.get() * scaling;
+            size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
 
+            pChild->get_padded_size_limits(&sr);
+
+            // Compute size of window without border
+            ws::rectangle_t rc  = *r;
             rc.nLeft            = border;
             rc.nTop             = border;
-            rc.nWidth           = lsp_max(0, r->nWidth  - border * 2);
-            rc.nHeight          = lsp_max(0, r->nHeight - border * 2);
-            sPadding.sub(&rc, scaling);
-            sLayout.apply(&rc, &sr);
+            rc.nWidth           = lsp_max(0, ssize_t(r->nWidth  - border*2));
+            rc.nHeight          = lsp_max(0, ssize_t(r->nHeight - border*2));
+
+            // Exclude padding
+            sPadding.enter(&rc, scaling);
+            sLayout.apply(&rc, &sr); // Apply layout
 
             // Call for realize
+            pChild->padding()->enter(&rc, pChild->scaling()->get());
             pChild->realize_widget(&rc);
         }
 
@@ -945,8 +953,8 @@ namespace lsp
 
         void Window::size_request(ws::size_limit_t *r)
         {
-            float scaling       = sScaling.get();
-            float border        = sBorderSize.get() * scaling;
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
 
             r->nMinWidth        = border * 2;
             r->nMinHeight       = border * 2;
@@ -956,7 +964,7 @@ namespace lsp
             if (pChild != NULL)
             {
                 ws::size_limit_t cr;
-                pChild->get_size_limits(&cr);
+                pChild->get_padded_size_limits(&cr);
 
                 r->nMinWidth       += lsp_max(cr.nMinWidth, 0);
                 r->nMinHeight      += lsp_max(cr.nMinHeight, 0);
