@@ -8,7 +8,7 @@
 #include <lsp-plug.in/test-fw/mtest.h>
 #include <lsp-plug.in/tk/tk.h>
 
-MTEST_BEGIN("tk", box)
+MTEST_BEGIN("tk.widgets.containers", box)
     typedef struct handler_t
     {
         test_type_t    *test;

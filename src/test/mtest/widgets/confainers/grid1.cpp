@@ -1,5 +1,5 @@
 /*
- * grid2.cpp
+ * grid.cpp
  *
  *  Created on: 24 мая 2020 г.
  *      Author: sadko
@@ -8,56 +8,9 @@
 
 #include <lsp-plug.in/test-fw/mtest.h>
 #include <lsp-plug.in/tk/tk.h>
+#include <private/mtest/tk/common.h>
 
-namespace
-{
-    static const uint32_t colors[] =
-    {
-        0xff0000,
-        0x00ff00,
-        0x0000ff,
-        0xffff00,
-        0xff00ff,
-        0x00ffff,
-
-        0xcc0000,
-        0x00cc00,
-        0x0000cc,
-        0xcccc00,
-        0xcc00cc,
-        0x00cccc,
-
-        0x880000,
-        0x008800,
-        0x000088,
-        0x888800,
-        0x880088,
-        0x008888,
-
-        0x88cccc,
-        0xcc88cc,
-        0xcccc88,
-        0x8888cc,
-        0x88cc88,
-        0xcc8888,
-
-        0x88ffff,
-        0xff88ff,
-        0xffff88,
-        0x8888ff,
-        0x88ff88,
-        0xff8888,
-
-        0xffcccc,
-        0xccffcc,
-        0xccccff,
-        0xffffcc,
-        0xffccff,
-        0xccffff,
-    };
-};
-
-MTEST_BEGIN("tk", grid4)
+MTEST_BEGIN("tk.widgets.containers", grid1)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -180,13 +133,6 @@ MTEST_BEGIN("tk", grid4)
         return res;
     }
 
-    static uint32_t next_color(size_t &idx)
-    {
-        uint32_t res    = colors[idx];
-        idx = (idx + 1) % (sizeof(colors) / sizeof(uint32_t));
-        return res;
-    }
-
     MTEST_MAIN
     {
         lltl::darray<handler_t> vh;
@@ -208,7 +154,7 @@ MTEST_BEGIN("tk", grid4)
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test grid 4") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test grid 1") == STATUS_OK);
         MTEST_ASSERT(wnd->role()->set_raw("grid_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
@@ -235,7 +181,7 @@ MTEST_BEGIN("tk", grid4)
 
         // Create grid
         MTEST_ASSERT(grid = new tk::Grid(dpy));
-        MTEST_ASSERT(init_widget(grid, vh, "grid4") == STATUS_OK);
+        MTEST_ASSERT(init_widget(grid, vh, "grid1") == STATUS_OK);
         MTEST_ASSERT(widgets.push(grid));
         MTEST_ASSERT(parent->add(grid) == STATUS_OK);
         grid->padding()->set_all(1);
@@ -244,26 +190,64 @@ MTEST_BEGIN("tk", grid4)
 //        box->bg_color()->set_rgb(1.0, 1.0, 1.0);
         grid->hspacing()->set(4);
         grid->vspacing()->set(8);
-        grid->orientation()->set(tk::O_VERTICAL);
-        grid->rows()->set(4);
-        grid->columns()->set(4);
+        grid->orientation()->set(tk::O_HORIZONTAL);
+        grid->rows()->set(2);
+        grid->columns()->set(3);
         {
             // Create widget (1)
-            for (size_t i=0; i<4; ++i)
-            {
-                LSPString name;
-                MTEST_ASSERT(name.fmt_ascii("void-%d", int(i)));
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, "void1-1-1") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(grid->add(wv) == STATUS_OK);
+            wv->padding()->set(4);
+            wv->constraints()->set(64, 48, -1, -1);
+            wv->bg_color()->set_rgb24(next_color(col));
+            wv->pointer()->set(ws::MP_HAND);
 
-                MTEST_ASSERT(wv = new tk::Void(dpy));
-                MTEST_ASSERT(init_widget(wv, vh, name.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(wv));
-                MTEST_ASSERT(grid->attach(i, i, wv) == STATUS_OK);
-                wv->padding()->set(4);
-                wv->constraints()->set(32, 32, -1, -1);
-                wv->allocation()->set_fill(i & 1, i & 2);
-                wv->bg_color()->set_rgb24(next_color(col));
-                wv->pointer()->set(ws::MP_HAND);
-            }
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, "void1-1-2") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(grid->add(wv) == STATUS_OK);
+            wv->padding()->set(4);
+            wv->constraints()->set(64, 48, 64, 48);
+            wv->bg_color()->set_rgb24(next_color(col));
+            wv->pointer()->set(ws::MP_HAND);
+
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, "void1-1-3") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(grid->add(wv) == STATUS_OK);
+            wv->padding()->set(4);
+            wv->constraints()->set(32, 32, 64, 64);
+            wv->bg_color()->set_rgb24(next_color(col));
+            wv->pointer()->set(ws::MP_HAND);
+
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, "void1-2-1") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(grid->add(wv) == STATUS_OK);
+            wv->padding()->set(4);
+            wv->constraints()->set(64, 48, -1, -1);
+            wv->bg_color()->set_rgb24(next_color(col));
+            wv->pointer()->set(ws::MP_HAND);
+
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, "void1-2-2") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(grid->add(wv) == STATUS_OK);
+            wv->padding()->set(4);
+            wv->constraints()->set(64, 48, 96, 64);
+            wv->bg_color()->set_rgb24(next_color(col));
+            wv->pointer()->set(ws::MP_HAND);
+
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, "void1-2-3") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(grid->add(wv) == STATUS_OK);
+            wv->padding()->set(4);
+            wv->constraints()->set(48, 48, 96, 96);
+            wv->bg_color()->set_rgb24(next_color(col));
+            wv->pointer()->set(ws::MP_HAND);
         }
 
         // Show window

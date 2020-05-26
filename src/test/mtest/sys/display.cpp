@@ -8,7 +8,7 @@
 #include <lsp-plug.in/test-fw/mtest.h>
 #include <lsp-plug.in/tk/tk.h>
 
-MTEST_BEGIN("tk", display)
+MTEST_BEGIN("tk.sys", display)
 
     static status_t slot_close(tk::Widget *sender, void *ptr, void *data)
     {
