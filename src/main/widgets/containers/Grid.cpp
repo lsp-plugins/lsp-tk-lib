@@ -383,6 +383,7 @@ namespace lsp
             // Check size of grid
             a->nRows        = lsp_max(0, sRows.get());
             a->nCols        = lsp_max(0, sColumns.get());
+            a->nTag         = 0;
             size_t items    = a->nRows * a->nCols;
             if (items < 1)
                 return STATUS_OK;
@@ -505,18 +506,19 @@ namespace lsp
             return true;
         }
 
-        void Grid::remove_row(alloc_t *a, size_t id, size_t tag)
+        void Grid::remove_row(alloc_t *a, size_t id)
         {
             // Decrement number of rows used by column
             cell_t *c;
+            ++a->nTag;
             size_t off = id*a->nCols;
 
             for (size_t i=0; i<a->nCols; ++i)
             {
                 c           = a->vTable.uget(off + i);
-                if ((c != NULL) && (c->nTag != tag))
+                if ((c != NULL) && (c->nTag != a->nTag))
                 {
-                    c->nTag     = tag;
+                    c->nTag     = a->nTag;
                     --c->nRows;
                 }
             }
@@ -527,16 +529,18 @@ namespace lsp
             --a->nRows;
         }
 
-        void Grid::remove_col(alloc_t *a, size_t id, size_t tag)
+        void Grid::remove_col(alloc_t *a, size_t id)
         {
             // Eliminate the column and decrement number of cells used by column
             cell_t *c;
+            ++a->nTag;
+
             for (size_t i=0, off=id; i < a->nRows; ++i, off += a->nCols-1)
             {
                 c           = a->vTable.get(off);
-                if ((c != NULL) && (c->nTag != tag))
+                if ((c != NULL) && (c->nTag != a->nTag))
                 {
-                    c->nTag     = tag;
+                    c->nTag     = a->nTag;
                     --c->nCols;
                 }
                 a->vTable.remove(off);
@@ -581,17 +585,16 @@ namespace lsp
             }
 
             // Remove empty rows and columns
-            size_t tag = 0;
             for (size_t y=0; y < a->nRows; )
             {
                 if (row_equals(a, y, y+1))
                 {
-                    remove_row(a, y+1, ++tag);
+                    remove_row(a, y+1);
                     h               = a->vRows.uget(y);
                     ++h->nWeight;   // Increment weight of current row
                 }
                 else if (is_invisible_row(a, y))
-                    remove_row(a, y, ++tag);
+                    remove_row(a, y);
                 else
                     ++y;
             }
@@ -599,19 +602,19 @@ namespace lsp
             {
                 if (col_equals(a, x, x+1))
                 {
-                    remove_col(a, x+1, ++tag);
+                    remove_col(a, x+1);
                     h               = a->vCols.uget(x);
                     ++h->nWeight;   // Increment weight of current column
                 }
                 else if (is_invisible_col(a, x))
-                    remove_col(a, x, ++tag);
+                    remove_col(a, x);
                 else
                     ++x;
             }
 
             // Replace empty cells with stubs, change coordinates for
             // existing cells
-            ++tag;
+            ++a->nTag;
             for (size_t y=0, off=0; (y < a->nRows); ++y)
             {
                 cell_t *prev = NULL;
@@ -641,9 +644,9 @@ namespace lsp
                     else
                     {
                         // Assign new coordinates to the cell
-                        if (cell->nTag != tag)
+                        if (cell->nTag != a->nTag)
                         {
-                            cell->nTag      = tag;
+                            cell->nTag      = a->nTag;
                             cell->nLeft     = x;
                             cell->nTop      = y;
                         }
@@ -849,6 +852,7 @@ namespace lsp
         void Grid::assign_coords(alloc_t *a, const ws::rectangle_t *r)
         {
             ssize_t y       = r->nTop;
+            ++a->nTag;
 
             for (size_t i=0, off=0, n=a->vRows.size(); i<n; ++i)
             {
@@ -861,21 +865,30 @@ namespace lsp
                     cell_t *c       = a->vTable.uget(off);
 
                     // Allocate initial coordinates of the cell
-                    if ((c->nLeft == j) && (c->nTop == i))
+                    if (c->nTag != a->nTag)
                     {
                         c->a.nLeft      = x;
                         c->a.nTop       = y;
                         c->a.nWidth     = 0;
                         c->a.nHeight    = 0;
+                        c->nTag         = a->nTag;
                     }
 
-                    // Add some space to cell
-                    c->a.nWidth    += hr->nSize;
-                    c->a.nHeight   += vr->nSize;
-                    if ((c->nLeft + c->nCols - 1) < j)
-                        c->a.nWidth    += hr->nSpacing;
-                    if ((c->nTop + c->nRows - 1) < i)
-                        c->a.nHeight   += vr->nSpacing;
+                    // Add horizontal space to cell
+                    if (c->nTop == i)
+                    {
+                        c->a.nWidth    += hr->nSize;
+                        if (j < (c->nLeft + c->nCols - 1))
+                            c->a.nWidth    += hr->nSpacing;
+                    }
+
+                    // Add vertical space to cell
+                    if (c->nLeft == j)
+                    {
+                        c->a.nHeight   += vr->nSize;
+                        if (i < (c->nTop + c->nRows - 1))
+                            c->a.nHeight   += vr->nSpacing;
+                    }
 
                     // Update X coordinate
                     x              += hr->nSize + hr->nSpacing;
