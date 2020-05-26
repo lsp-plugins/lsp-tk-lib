@@ -961,7 +961,7 @@ namespace lsp
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
 
-            if (pChild != NULL)
+            if ((pChild != NULL) && (pChild->visibility()->get()))
             {
                 ws::size_limit_t cr;
                 pChild->get_padded_size_limits(&cr);

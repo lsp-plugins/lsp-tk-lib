@@ -78,7 +78,6 @@ namespace lsp
                 static status_t     tmr_redraw_request(ws::timestamp_t ts, void *args);
                 static status_t     slot_window_close(Widget *sender, void *ptr, void *data);
 
-                virtual Widget     *find_widget(ssize_t x, ssize_t y);
                 status_t            do_render();
                 void                do_destroy();
                 status_t            sync_size();
@@ -95,6 +94,7 @@ namespace lsp
                 bool                kill_focus(Widget *w);
 
             protected:
+                virtual Widget     *find_widget(ssize_t x, ssize_t y);
                 virtual void        property_changed(Property *prop);
                 virtual void        hide_widget();
                 virtual void        show_widget();
@@ -113,16 +113,9 @@ namespace lsp
                 explicit Window(Display *dpy, void *handle = NULL, ssize_t screen = -1);
                 virtual ~Window();
 
-                /** Init window
-                 *
-                 * @return status of operation
-                 */
-                virtual status_t init();
+                virtual status_t                init();
 
-                /** Destroy window
-                 *
-                 */
-                virtual void destroy();
+                virtual void                    destroy();
 
             //---------------------------------------------------------------------------------
             // Properties
