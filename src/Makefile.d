@@ -1,4 +1,4 @@
-$(LSP_TK_LIB_BIN)/main/widgets/Window.o: main/widgets/Window.cpp \
+$(LSP_TK_LIB_BIN)/main/widgets/Void.o: main/widgets/Void.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
@@ -46,6 +46,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/Window.o: main/widgets/Window.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -55,12 +56,17 @@ $(LSP_TK_LIB_BIN)/main/widgets/Window.o: main/widgets/Window.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -73,10 +79,279 @@ $(LSP_TK_LIB_BIN)/main/widgets/Window.o: main/widgets/Window.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
+$(LSP_TK_LIB_BIN)/main/widgets/containers/Window.o: \
+ main/widgets/containers/Window.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
+$(LSP_TK_LIB_BIN)/main/widgets/containers/Grid.o: \
+ main/widgets/containers/Grid.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
+$(LSP_TK_LIB_BIN)/main/widgets/containers/Box.o: \
+ main/widgets/containers/Box.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -126,6 +401,7 @@ $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -135,12 +411,17 @@ $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -153,10 +434,12 @@ $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/dsp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/version.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/types.h \
@@ -246,6 +529,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Timer.o: main/sys/Timer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -255,12 +539,17 @@ $(LSP_TK_LIB_BIN)/main/sys/Timer.o: main/sys/Timer.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -273,10 +562,12 @@ $(LSP_TK_LIB_BIN)/main/sys/Timer.o: main/sys/Timer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -325,6 +616,7 @@ $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -334,12 +626,17 @@ $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -352,10 +649,12 @@ $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -404,6 +703,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -413,12 +713,17 @@ $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -431,10 +736,12 @@ $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -483,6 +790,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -492,12 +800,17 @@ $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -510,10 +823,12 @@ $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/Dictionary.h
 $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
@@ -564,6 +879,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -573,12 +889,17 @@ $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -591,10 +912,12 @@ $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -643,6 +966,7 @@ $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -652,12 +976,17 @@ $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -670,10 +999,12 @@ $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -722,6 +1053,7 @@ $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -731,12 +1063,17 @@ $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -749,10 +1086,12 @@ $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InStringSequence.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Tokenizer.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/token.h
@@ -805,6 +1144,7 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleListener.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -814,12 +1154,17 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleListener.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -832,10 +1177,12 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleListener.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/style/IStyleInitializer.o: \
  main/style/IStyleInitializer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -885,6 +1232,7 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleInitializer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -894,12 +1242,17 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleInitializer.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -912,10 +1265,99 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleInitializer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/main/prop/WindowPolicy.o: main/prop/WindowPolicy.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/WindowActions.o: main/prop/WindowActions.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -964,6 +1406,7 @@ $(LSP_TK_LIB_BIN)/main/prop/WindowActions.o: main/prop/WindowActions.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -973,12 +1416,17 @@ $(LSP_TK_LIB_BIN)/main/prop/WindowActions.o: main/prop/WindowActions.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -991,10 +1439,12 @@ $(LSP_TK_LIB_BIN)/main/prop/WindowActions.o: main/prop/WindowActions.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/String.o: main/prop/String.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1043,6 +1493,7 @@ $(LSP_TK_LIB_BIN)/main/prop/String.o: main/prop/String.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1052,12 +1503,17 @@ $(LSP_TK_LIB_BIN)/main/prop/String.o: main/prop/String.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1070,10 +1526,12 @@ $(LSP_TK_LIB_BIN)/main/prop/String.o: main/prop/String.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/format.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
 $(LSP_TK_LIB_BIN)/main/prop/Size.o: main/prop/Size.cpp \
@@ -1124,6 +1582,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Size.o: main/prop/Size.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1133,12 +1592,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Size.o: main/prop/Size.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1151,10 +1615,12 @@ $(LSP_TK_LIB_BIN)/main/prop/Size.o: main/prop/Size.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/SizeConstraints.o: \
  main/prop/SizeConstraints.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -1204,6 +1670,7 @@ $(LSP_TK_LIB_BIN)/main/prop/SizeConstraints.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1213,12 +1680,17 @@ $(LSP_TK_LIB_BIN)/main/prop/SizeConstraints.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1231,10 +1703,12 @@ $(LSP_TK_LIB_BIN)/main/prop/SizeConstraints.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/SimpleProperty.o: \
  main/prop/SimpleProperty.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -1284,6 +1758,7 @@ $(LSP_TK_LIB_BIN)/main/prop/SimpleProperty.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1293,12 +1768,17 @@ $(LSP_TK_LIB_BIN)/main/prop/SimpleProperty.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1311,10 +1791,12 @@ $(LSP_TK_LIB_BIN)/main/prop/SimpleProperty.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/Property.o: main/prop/Property.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1363,6 +1845,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Property.o: main/prop/Property.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1372,12 +1855,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Property.o: main/prop/Property.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1390,10 +1878,12 @@ $(LSP_TK_LIB_BIN)/main/prop/Property.o: main/prop/Property.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InStringSequence.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Tokenizer.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/token.h
@@ -1445,6 +1935,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Position.o: main/prop/Position.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1454,12 +1945,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Position.o: main/prop/Position.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1472,10 +1968,99 @@ $(LSP_TK_LIB_BIN)/main/prop/Position.o: main/prop/Position.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/main/prop/Pointer.o: main/prop/Pointer.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/Padding.o: main/prop/Padding.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1524,6 +2109,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Padding.o: main/prop/Padding.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1533,12 +2119,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Padding.o: main/prop/Padding.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1551,10 +2142,100 @@ $(LSP_TK_LIB_BIN)/main/prop/Padding.o: main/prop/Padding.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
+$(LSP_TK_LIB_BIN)/main/prop/Orientation.o: main/prop/Orientation.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/MultiProperty.o: main/prop/MultiProperty.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1603,6 +2284,7 @@ $(LSP_TK_LIB_BIN)/main/prop/MultiProperty.o: main/prop/MultiProperty.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1612,12 +2294,17 @@ $(LSP_TK_LIB_BIN)/main/prop/MultiProperty.o: main/prop/MultiProperty.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1630,10 +2317,12 @@ $(LSP_TK_LIB_BIN)/main/prop/MultiProperty.o: main/prop/MultiProperty.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1682,6 +2371,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1691,12 +2381,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1709,10 +2404,100 @@ $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/main/prop/Layout.o: main/prop/Layout.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/prop/Integer.o: main/prop/Integer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1761,6 +2546,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Integer.o: main/prop/Integer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1770,12 +2556,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Integer.o: main/prop/Integer.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1788,10 +2579,12 @@ $(LSP_TK_LIB_BIN)/main/prop/Integer.o: main/prop/Integer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/Float.o: main/prop/Float.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1840,6 +2633,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Float.o: main/prop/Float.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1849,12 +2643,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Float.o: main/prop/Float.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1867,10 +2666,99 @@ $(LSP_TK_LIB_BIN)/main/prop/Float.o: main/prop/Float.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/main/prop/Flags.o: main/prop/Flags.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/Enum.o: main/prop/Enum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1919,6 +2807,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Enum.o: main/prop/Enum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -1928,12 +2817,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Enum.o: main/prop/Enum.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -1946,10 +2840,12 @@ $(LSP_TK_LIB_BIN)/main/prop/Enum.o: main/prop/Enum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/Color.o: main/prop/Color.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1998,6 +2894,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Color.o: main/prop/Color.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2007,12 +2904,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Color.o: main/prop/Color.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2025,10 +2927,12 @@ $(LSP_TK_LIB_BIN)/main/prop/Color.o: main/prop/Color.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/BorderStyle.o: main/prop/BorderStyle.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -2077,6 +2981,7 @@ $(LSP_TK_LIB_BIN)/main/prop/BorderStyle.o: main/prop/BorderStyle.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2086,12 +2991,17 @@ $(LSP_TK_LIB_BIN)/main/prop/BorderStyle.o: main/prop/BorderStyle.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2104,10 +3014,12 @@ $(LSP_TK_LIB_BIN)/main/prop/BorderStyle.o: main/prop/BorderStyle.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/Boolean.o: main/prop/Boolean.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -2156,6 +3068,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Boolean.o: main/prop/Boolean.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2165,12 +3078,17 @@ $(LSP_TK_LIB_BIN)/main/prop/Boolean.o: main/prop/Boolean.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2183,10 +3101,12 @@ $(LSP_TK_LIB_BIN)/main/prop/Boolean.o: main/prop/Boolean.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/prop/BitEnum.o: main/prop/BitEnum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -2235,6 +3155,7 @@ $(LSP_TK_LIB_BIN)/main/prop/BitEnum.o: main/prop/BitEnum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2244,12 +3165,17 @@ $(LSP_TK_LIB_BIN)/main/prop/BitEnum.o: main/prop/BitEnum.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2262,10 +3188,99 @@ $(LSP_TK_LIB_BIN)/main/prop/BitEnum.o: main/prop/BitEnum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/main/prop/Allocation.o: main/prop/Allocation.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/main/base/Widget.o: main/base/Widget.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -2314,6 +3329,7 @@ $(LSP_TK_LIB_BIN)/main/base/Widget.o: main/base/Widget.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2323,12 +3339,17 @@ $(LSP_TK_LIB_BIN)/main/base/Widget.o: main/base/Widget.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2341,10 +3362,13 @@ $(LSP_TK_LIB_BIN)/main/base/Widget.o: main/base/Widget.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/base/WidgetContainer.o: \
  main/base/WidgetContainer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -2394,6 +3418,7 @@ $(LSP_TK_LIB_BIN)/main/base/WidgetContainer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2403,12 +3428,17 @@ $(LSP_TK_LIB_BIN)/main/base/WidgetContainer.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2421,89 +3451,12 @@ $(LSP_TK_LIB_BIN)/main/base/WidgetContainer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
-$(LSP_TK_LIB_BIN)/main/base/ComplexWidget.o: main/base/ComplexWidget.cpp \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  test/utest/tk/style/style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -2553,6 +3506,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2562,12 +3516,17 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2580,10 +3539,12 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/utest.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
@@ -2650,6 +3611,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/schema.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2659,12 +3621,17 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/schema.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2677,10 +3644,388 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/schema.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/test/mtest/grid4.o: test/mtest/grid4.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/test/mtest/grid3.o: test/mtest/grid3.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/test/mtest/grid2.o: test/mtest/grid2.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/test/mtest/grid1.o: test/mtest/grid1.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/test/mtest/display.o: test/mtest/display.cpp \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
@@ -2736,6 +4081,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/display.o: test/mtest/display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2745,12 +4091,17 @@ $(LSP_TK_LIB_BIN)/test/mtest/display.o: test/mtest/display.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2763,10 +4114,106 @@ $(LSP_TK_LIB_BIN)/test/mtest/display.o: test/mtest/display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
+$(LSP_TK_LIB_BIN)/test/mtest/box.o: test/mtest/box.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
 $(LSP_TK_LIB_BIN)/test/main.o: test/main.cpp \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
@@ -2826,6 +4273,7 @@ $(LSP_TK_LIB_BIN)/test/init/init.o: test/init/init.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/MultiProperty.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Enum.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Flags.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Boolean.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Integer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Float.h \
@@ -2835,12 +4283,17 @@ $(LSP_TK_LIB_BIN)/test/init/init.o: test/init/init.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Orientation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Color.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Layout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Position.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Size.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Allocation.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
@@ -2853,7 +4306,9 @@ $(LSP_TK_LIB_BIN)/test/init/init.o: test/init/init.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/ComplexWidget.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Window.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/Void.h
