@@ -49,11 +49,11 @@ namespace lsp
 
                 // Debug padding
                 ws::rectangle_t xr;
-                bg_color.set_rgb24(0);
-                sPadding.leave(&xr, &sSize, sScaling.get());
+                bg_color.set_rgb24(0xcccccc);
+                sPadding.enter(&xr, &sSize, sScaling.get());
                 s->fill_frame(
-                    xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
                     sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
+                    xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
                     bg_color
                 );
             }

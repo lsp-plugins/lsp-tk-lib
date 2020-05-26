@@ -180,11 +180,13 @@ namespace lsp
                 if ((!force) && (!w->pWidget->redraw_pending()))
                     continue;
 
+                w->pWidget->render(s, force);
+                w->pWidget->commit_redraw();
+
                 if (force)
                 {
                     // Draw widget area
-//                        bg_color.copy(w->pWidget->bg_color()->color());
-                    bg_color.set_rgb24(0);
+                    bg_color.copy(w->pWidget->bg_color()->color());
                     s->fill_frame(
                         w->a.nLeft, w->a.nTop, w->a.nWidth, w->a.nHeight,
                         w->s.nLeft, w->s.nTop, w->s.nWidth, w->s.nHeight,
@@ -207,27 +209,30 @@ namespace lsp
                 lsp_trace("render widget %p, size = {%d, %d, %d, %d}",
                         w->pWidget, int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
                 );
-                w->pWidget->render(s, force);
-                w->pWidget->commit_redraw();
             }
         }
 
         status_t Grid::add(Widget *widget)
         {
-            return attach(-1, -1, widget, 1, 1);
+            return attach_internal(-1, -1, widget, 1, 1);
         }
 
         status_t Grid::attach(size_t left, size_t top, Widget *widget)
         {
-            return attach(left, top, widget, 1, 1);
+            return attach_internal(left, top, widget, 1, 1);
         }
 
         status_t Grid::add(Widget *widget, size_t rows, size_t cols)
         {
-            return attach(-1, -1, widget, rows, cols);
+            return attach_internal(-1, -1, widget, rows, cols);
         }
 
         status_t Grid::attach(size_t left, size_t top, Widget *widget, size_t rows, size_t cols)
+        {
+            return attach_internal(left, top, widget, rows, cols);
+        }
+
+        status_t Grid::attach_internal(ssize_t left, ssize_t top, Widget *widget, size_t rows, size_t cols)
         {
             // Add widget
             if ((widget == NULL) || (rows < 1) || (cols < 1))
@@ -248,8 +253,8 @@ namespace lsp
 
             // Complete item
             item->pWidget   = widget;
-            item->nLeft     = ssize_t(left);
-            item->nTop      = ssize_t(top);
+            item->nLeft     = left;
+            item->nTop      = top;
             item->nRows     = rows;
             item->nCols     = cols;
 
@@ -413,6 +418,13 @@ namespace lsp
                 // Fill cells from left to right first, then move to next row
                 for (size_t y=0; (y < a->nRows) && (i < n); ++y)
                     for (size_t x=0; (x < a->nCols) && (i < n); ++x)
+                    {
+                        // Ensure that cell is free
+                        cell_t *c = a->vTable.uget(y * a->nCols + x);
+                        if (c != NULL)
+                            continue;
+
+                        // Try to attach widget to the cell
                         while (i < n)
                         {
                             widget_t *w = vItems.uget(i++);
@@ -421,12 +433,20 @@ namespace lsp
                             if (attach_cell(a, w, x, y))
                                 break;
                         }
+                    }
             }
             else
             {
                 // Fill cells from top to bottom first, then move to next column
                 for (size_t x=0; (x < a->nCols) && (i < n); ++x)
                     for (size_t y=0; (y < a->nRows) && (i < n); ++y)
+                    {
+                        // Ensure that cell is free
+                        cell_t *c = a->vTable.uget(y * a->nCols + x);
+                        if (c != NULL)
+                            continue;
+
+                        // Try to attach widget to the cell
                         while (i < n)
                         {
                             widget_t *w = vItems.uget(i++);
@@ -435,6 +455,7 @@ namespace lsp
                             if (attach_cell(a, w, x, y))
                                 break;
                         }
+                    }
             }
 
             return STATUS_OK;

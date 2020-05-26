@@ -185,7 +185,6 @@ namespace lsp
                 if (force)
                 {
                     bg_color.copy(w->bg_color()->color());
-//                        bg_color.set_rgb24(0);
                     s->fill_frame(
                         wc->a.nLeft, wc->a.nTop, wc->a.nWidth, wc->a.nHeight,
                         wc->s.nLeft, wc->s.nTop, wc->s.nWidth, wc->s.nHeight,
