@@ -178,34 +178,34 @@ namespace lsp
                 cell_t *wc = visible.uget(i);
                 Widget *w = wc->pWidget;
 
-                if ((force) || (w->redraw_pending()))
+                if ((!force) && (!w->redraw_pending()))
+                    continue;
+
+                // Fill unused space with background
+                if (force)
                 {
-                    // Fill unused space with background
-                    if (force)
-                    {
-                        bg_color.copy(w->bg_color()->color());
+                    bg_color.copy(w->bg_color()->color());
 //                        bg_color.set_rgb24(0);
-                        s->fill_frame(
-                            wc->a.nLeft, wc->a.nTop, wc->a.nWidth, wc->a.nHeight,
-                            wc->s.nLeft, wc->s.nTop, wc->s.nWidth, wc->s.nHeight,
-                            bg_color
-                        );
+                    s->fill_frame(
+                        wc->a.nLeft, wc->a.nTop, wc->a.nWidth, wc->a.nHeight,
+                        wc->s.nLeft, wc->s.nTop, wc->s.nWidth, wc->s.nHeight,
+                        bg_color
+                    );
 
-                        // Draw spacing
-                        if (((i + 1) < n) && (spacing > 0))
-                        {
-                            bg_color.copy(sBgColor);
-                            if (horizontal)
-                                s->fill_rect(wc->a.nLeft + wc->a.nWidth, wc->a.nTop, spacing, wc->a.nHeight, bg_color);
-                            else
-                                s->fill_rect(wc->a.nLeft, wc->a.nTop + wc->a.nHeight, wc->a.nWidth, spacing, bg_color);
-                        }
+                    // Draw spacing
+                    if (((i + 1) < n) && (spacing > 0))
+                    {
+                        bg_color.copy(sBgColor);
+                        if (horizontal)
+                            s->fill_rect(wc->a.nLeft + wc->a.nWidth, wc->a.nTop, spacing, wc->a.nHeight, bg_color);
+                        else
+                            s->fill_rect(wc->a.nLeft, wc->a.nTop + wc->a.nHeight, wc->a.nWidth, spacing, bg_color);
                     }
-
-                    // Render widget
-                    w->render(s, force);
-                    w->commit_redraw();
                 }
+
+                // Render widget
+                w->render(s, force);
+                w->commit_redraw();
             }
         }
 

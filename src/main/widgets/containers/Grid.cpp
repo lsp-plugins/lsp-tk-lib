@@ -177,38 +177,38 @@ namespace lsp
                     continue;
                 }
 
-                if ((force) || (w->pWidget->redraw_pending()))
+                if ((!force) && (!w->pWidget->redraw_pending()))
+                    continue;
+
+                if (force)
                 {
-                    if (force)
-                    {
-                        // Draw widget area
+                    // Draw widget area
 //                        bg_color.copy(w->pWidget->bg_color()->color());
-                        bg_color.set_rgb24(0);
-                        s->fill_frame(
-                            w->a.nLeft, w->a.nTop, w->a.nWidth, w->a.nHeight,
-                            w->s.nLeft, w->s.nTop, w->s.nWidth, w->s.nHeight,
-                            bg_color
-                        );
-
-                        // Need to draw spacing?
-                        bg_color.copy(sBgColor);
-                        if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
-                        {
-                            s->fill_rect(w->a.nLeft + w->a.nWidth, w->a.nTop, hspacing, w->a.nHeight, bg_color);
-                            if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
-                                s->fill_rect(w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth + hspacing, vspacing, bg_color);
-                        }
-                        else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
-                            s->fill_rect(w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth, vspacing, bg_color);
-                    }
-
-                    // Render the widget
-                    lsp_trace("render widget %p, size = {%d, %d, %d, %d}",
-                            w->pWidget, int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
+                    bg_color.set_rgb24(0);
+                    s->fill_frame(
+                        w->a.nLeft, w->a.nTop, w->a.nWidth, w->a.nHeight,
+                        w->s.nLeft, w->s.nTop, w->s.nWidth, w->s.nHeight,
+                        bg_color
                     );
-                    w->pWidget->render(s, force);
-                    w->pWidget->commit_redraw();
+
+                    // Need to draw spacing?
+                    bg_color.copy(sBgColor);
+                    if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
+                    {
+                        s->fill_rect(w->a.nLeft + w->a.nWidth, w->a.nTop, hspacing, w->a.nHeight, bg_color);
+                        if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
+                            s->fill_rect(w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth + hspacing, vspacing, bg_color);
+                    }
+                    else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
+                        s->fill_rect(w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth, vspacing, bg_color);
                 }
+
+                // Render the widget
+                lsp_trace("render widget %p, size = {%d, %d, %d, %d}",
+                        w->pWidget, int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
+                );
+                w->pWidget->render(s, force);
+                w->pWidget->commit_redraw();
             }
         }
 
@@ -230,7 +230,7 @@ namespace lsp
         status_t Grid::attach(size_t left, size_t top, Widget *widget, size_t rows, size_t cols)
         {
             // Add widget
-            if (widget == NULL)
+            if ((widget == NULL) || (rows < 1) || (cols < 1))
                 return STATUS_BAD_ARGUMENTS;
 
             // Check that widget already exists
@@ -345,9 +345,9 @@ namespace lsp
             // Check that we can allocate cells
             for (size_t y=top; y < ymax; ++y)
             {
-                cell_t **c = a->vTable.upget(y * a->nCols);
-                for (size_t x=left; x < xmax; ++x, ++c)
-                    if (c[x] != NULL)
+                size_t off = y * a->nCols;
+                for (size_t x=left; x < xmax; ++x)
+                    if (a->vTable.get(off + x) != NULL)
                         return false;
             }
 
@@ -359,8 +359,9 @@ namespace lsp
             cell->pWidget   = w->pWidget;
             cell->nLeft     = left;
             cell->nTop      = top;
-            cell->nRows     = xmax - left;
-            cell->nCols     = ymax - top;
+            cell->nRows     = ymax - top;
+            cell->nCols     = xmax - left;
+            cell->nTag      = 0;
 
             lsp_trace("attach_cell widget=%p, structure={%d, %d, %d, %d}",
                     cell->pWidget, int(cell->nLeft), int(cell->nTop), int(cell->nRows), int(cell->nCols)
@@ -369,9 +370,9 @@ namespace lsp
             // Fill table with the cell
             for (size_t y=top; y < ymax; ++y)
             {
-                cell_t **c = a->vTable.upget(y * a->nCols);
-                for (size_t x=left; x < xmax; ++x, ++c)
-                    c[x]      = cell;
+                size_t off = y * a->nCols;
+                for (size_t x=left; x < xmax; ++x)
+                    a->vTable.set(off + x, cell);
             }
 
             return true;
@@ -413,14 +414,11 @@ namespace lsp
                     for (size_t x=0; (x < a->nCols) && (i < n); ++x)
                         while (i < n)
                         {
-                            widget_t *w = vItems.uget(i);
+                            widget_t *w = vItems.uget(i++);
                             if ((w->nLeft >= 0) || (w->nTop >= 0))
                                 continue;
                             if (attach_cell(a, w, x, y))
-                            {
-                                ++i;
                                 break;
-                            }
                         }
             }
             else
@@ -430,14 +428,11 @@ namespace lsp
                     for (size_t y=0; (y < a->nRows) && (i < n); ++y)
                         while (i < n)
                         {
-                            widget_t *w = vItems.uget(i);
+                            widget_t *w = vItems.uget(i++);
                             if ((w->nLeft >= 0) || (w->nTop >= 0))
                                 continue;
                             if (attach_cell(a, w, x, y))
-                            {
-                                ++i;
                                 break;
-                            }
                         }
             }
 
@@ -510,30 +505,40 @@ namespace lsp
             return true;
         }
 
-        void Grid::remove_row(alloc_t *a, size_t id)
+        void Grid::remove_row(alloc_t *a, size_t id, size_t tag)
         {
             // Decrement number of rows used by column
-            for (size_t i=0, off=id*a->nCols; i<a->nCols; ++i, ++off)
+            cell_t *c;
+            size_t off = id*a->nCols;
+
+            for (size_t i=0; i<a->nCols; ++i)
             {
-                cell_t *c       = a->vTable.uget(off);
-                if (c != NULL)
+                c           = a->vTable.uget(off + i);
+                if ((c != NULL) && (c->nTag != tag))
+                {
+                    c->nTag     = tag;
                     --c->nRows;
+                }
             }
 
             // Remove row in table and decrement overall number of rows
-            a->vTable.remove_n(id * a->nCols, a->nCols);
+            a->vTable.remove_n(off, a->nCols);
             a->vRows.remove(id);
             --a->nRows;
         }
 
-        void Grid::remove_col(alloc_t *a, size_t id)
+        void Grid::remove_col(alloc_t *a, size_t id, size_t tag)
         {
             // Eliminate the column and decrement number of cells used by column
+            cell_t *c;
             for (size_t i=0, off=id; i < a->nRows; ++i, off += a->nCols-1)
             {
-                cell_t *c = a->vTable.get(off);
-                if (c != NULL)
+                c           = a->vTable.get(off);
+                if ((c != NULL) && (c->nTag != tag))
+                {
+                    c->nTag     = tag;
                     --c->nCols;
+                }
                 a->vTable.remove(off);
             }
 
@@ -576,41 +581,45 @@ namespace lsp
             }
 
             // Remove empty rows and columns
+            size_t tag = 0;
             for (size_t y=0; y < a->nRows; )
             {
-                if (is_invisible_row(a, y))
-                    remove_row(a, y);
-                else if (row_equals(a, y, y+1))
+                if (row_equals(a, y, y+1))
                 {
-                    remove_row(a, y+1);
+                    remove_row(a, y+1, ++tag);
                     h               = a->vRows.uget(y);
                     ++h->nWeight;   // Increment weight of current row
                 }
+                else if (is_invisible_row(a, y))
+                    remove_row(a, y, ++tag);
                 else
                     ++y;
             }
             for (size_t x=0; x < a->nCols; )
             {
-                if (is_invisible_col(a, x))
-                    remove_col(a, x);
-                else if (col_equals(a, x, x+1))
+                if (col_equals(a, x, x+1))
                 {
-                    remove_col(a, x);
+                    remove_col(a, x+1, ++tag);
                     h               = a->vCols.uget(x);
                     ++h->nWeight;   // Increment weight of current column
                 }
+                else if (is_invisible_col(a, x))
+                    remove_col(a, x, ++tag);
                 else
                     ++x;
             }
 
-            // Replace empty cells with stubs
+            // Replace empty cells with stubs, change coordinates for
+            // existing cells
+            ++tag;
             for (size_t y=0, off=0; (y < a->nRows); ++y)
             {
                 cell_t *prev = NULL;
                 for (size_t x=0; (x < a->nCols); ++x, ++off)
                 {
-                    cell_t **p = a->vTable.upget(off);
-                    if (*p == NULL)
+                    cell_t **pcell  = a->vTable.upget(off);
+                    cell_t *cell    = *pcell;
+                    if (cell == NULL)
                     {
                         if (prev == NULL)
                         {
@@ -623,13 +632,24 @@ namespace lsp
                             prev->nTop      = y;
                             prev->nRows     = 1;
                             prev->nCols     = 0;
+                            prev->nTag      = 0;
                         }
 
                         ++prev->nCols;
-                        *p      = prev;
+                        *pcell  = prev;
                     }
                     else
+                    {
+                        // Assign new coordinates to the cell
+                        if (cell->nTag != tag)
+                        {
+                            cell->nTag      = tag;
+                            cell->nLeft     = x;
+                            cell->nTop      = y;
+                        }
+
                         prev    = NULL;
+                    }
                 }
             }
 

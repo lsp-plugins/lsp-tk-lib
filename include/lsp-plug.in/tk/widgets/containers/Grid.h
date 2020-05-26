@@ -39,6 +39,7 @@ namespace lsp
                     size_t              nTop;       // Vertical position
                     size_t              nRows;      // Number of rows taken by cell
                     size_t              nCols;      // Number of columns taken by cell
+                    size_t              nTag;       // Tag
                 } cell_t;
 
                 typedef struct header_t
@@ -88,8 +89,8 @@ namespace lsp
                 static bool                 is_invisible_col(alloc_t *a, size_t col);
                 static bool                 row_equals(alloc_t *a, size_t r1, size_t r2);
                 static bool                 col_equals(alloc_t *a, size_t c1, size_t c2);
-                static void                 remove_row(alloc_t *a, size_t id);
-                static void                 remove_col(alloc_t *a, size_t id);
+                static void                 remove_row(alloc_t *a, size_t id, size_t tag);
+                static void                 remove_col(alloc_t *a, size_t id, size_t tag);
                 static size_t               estimate_size(lltl::darray<header_t> *hdr, size_t first, size_t count);
                 static void                 distribute_size(lltl::darray<header_t> *vh, size_t first, size_t count, size_t size);
                 status_t                    estimate_sizes(alloc_t *a);
