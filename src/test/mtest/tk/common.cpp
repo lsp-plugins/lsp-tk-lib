@@ -11,7 +11,7 @@ namespace lsp
 {
     namespace test
     {
-        static const uint32_t colors[] =
+        const uint32_t colors[] =
         {
             0xff0000,
             0x00ff00,

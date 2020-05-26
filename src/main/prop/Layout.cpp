@@ -189,7 +189,7 @@ namespace lsp
 
         void Layout::set_align(float h, float v)
         {
-            h           = lsp_limit(v, -1.0f, 1.0f);
+            h           = lsp_limit(h, -1.0f, 1.0f);
             v           = lsp_limit(v, -1.0f, 1.0f);
             if ((hAlign == h) && (vAlign == v))
                 return;
@@ -201,7 +201,7 @@ namespace lsp
 
         void Layout::set_scale(float h, float v)
         {
-            h           = lsp_limit(v, 0.0f, 1.0f);
+            h           = lsp_limit(h, 0.0f, 1.0f);
             v           = lsp_limit(v, 0.0f, 1.0f);
             if ((hScale == h) && (vScale == v))
                 return;
@@ -244,15 +244,15 @@ namespace lsp
             if (req->nMaxWidth > 0)
                 w              = lsp_min(w, req->nMaxWidth);
             if (req->nMaxHeight > 0)
-                h              = lsp_min(h, req->nMaxWidth);
+                h              = lsp_min(h, req->nMaxHeight);
 
             // Estimate the amount of free space and update position (if possible)
             xgap            = lsp_max(0, src->nWidth - w);
             ygap            = lsp_max(0, src->nHeight - h);
 
             // Scale position (if possible) and store results
-            dst->nLeft     += xgap * (hAlign + 1.0f) * 0.5f;
-            dst->nTop      += ygap * (vAlign + 1.0f) * 0.5f;
+            dst->nLeft      = src->nLeft + xgap * (hAlign + 1.0f) * 0.5f;
+            dst->nTop       = src->nTop  + ygap * (vAlign + 1.0f) * 0.5f;
             dst->nWidth     = w;
             dst->nHeight    = h;
             lsp_trace("after: x=%d, y=%d, w=%d, h=%d", int(dst->nLeft), int(dst->nTop), int(dst->nWidth), int(dst->nHeight));

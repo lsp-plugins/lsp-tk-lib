@@ -96,17 +96,10 @@ namespace lsp
 
             if (force)
             {
-                ws::rectangle_t pr, cr;
-                pWidget->get_padded_rectangle(&pr);
+                ws::rectangle_t cr;
                 pWidget->get_rectangle(&cr);
-
                 s->fill_frame(
-                    0, 0, sSize.nWidth, sSize.nHeight,
-                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight,
-                    bg_color
-                );
-                s->fill_frame(
-                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight,
+                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
                     cr.nLeft, cr.nTop, cr.nWidth, cr.nHeight,
                     pWidget->bg_color()->color()
                 );
@@ -139,16 +132,18 @@ namespace lsp
 
         void Align::size_request(ws::size_limit_t *r)
         {
-            // Default size request
-            r->nMinWidth    = -1;
-            r->nMinHeight   = -1;
-            r->nMaxWidth    = -1;
-            r->nMaxHeight   = -1;
-
             if ((pWidget == NULL) || (!pWidget->visibility()->get()))
+            {
+                r->nMinWidth    = -1;
+                r->nMinHeight   = -1;
+                r->nMaxWidth    = -1;
+                r->nMaxHeight   = -1;
                 return;
+            }
 
             pWidget->get_padded_size_limits(r);
+            r->nMaxWidth    = -1;
+            r->nMaxHeight   = -1;
         }
 
         void Align::realize(const ws::rectangle_t *r)

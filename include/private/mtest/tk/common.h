@@ -14,7 +14,7 @@ namespace lsp
 {
     namespace test
     {
-        extern uint32_t colors[];
+        extern const uint32_t colors[];
 
         /** Get next color from colors[] array
          *

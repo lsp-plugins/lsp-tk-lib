@@ -12,7 +12,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
     typedef struct handler_t
     {
         test_type_t    *test;
-        const char     *label;
+        char           *label;
     } handler_t;
 
     static status_t slot_close(tk::Widget *sender, void *ptr, void *data)
@@ -103,17 +103,17 @@ MTEST_BEGIN("tk.widgets.containers", box)
         return STATUS_OK;
     }
 
-    status_t init_widget(tk::Widget *w, lltl::darray<handler_t> &vh, const char *label)
+    status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label)
     {
         status_t res = w->init();
         if (res != STATUS_OK)
             return res;
 
-        handler_t *h = vh.add();
-        if (h == NULL)
+        handler_t *h = new handler_t;
+        if ((h == NULL) || (!vh.add(h)))
             return STATUS_NO_MEM;
         h->test     = this;
-        h->label    = label;
+        h->label    = ::strdup(label);
 
         tk::handler_id_t hid;
         hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
@@ -131,9 +131,19 @@ MTEST_BEGIN("tk.widgets.containers", box)
         return res;
     }
 
+    static void destroy_handlers(lltl::parray<handler_t> &vh)
+    {
+        for (size_t i=0, n=vh.size(); i<n; ++i)
+        {
+            handler_t *h = vh.uget(i);
+            ::free(h->label);
+            delete h;
+        }
+    }
+
     MTEST_MAIN
     {
-        lltl::darray<handler_t> vh;
+        lltl::parray<handler_t> vh;
 
         tk::Display *dpy = new tk::Display();
         MTEST_ASSERT(dpy != NULL);
@@ -309,6 +319,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
 
         dpy->destroy();
         delete dpy;
+        destroy_handlers(vh);
     }
 
 MTEST_END
