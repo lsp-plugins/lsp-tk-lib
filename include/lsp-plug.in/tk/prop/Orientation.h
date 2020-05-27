@@ -14,6 +14,9 @@ namespace lsp
     {
         class Orientation: public Enum
         {
+            private:
+                Orientation & operator = (const Orientation &);
+
             protected:
                 static const prop::enum_t ENUM[];
 
@@ -35,7 +38,7 @@ namespace lsp
             class Orientation: public tk::Orientation
             {
                 private:
-                    Orientation & operator = (const Orientation *);
+                    Orientation & operator = (const Orientation &);
 
                 public:
                     explicit Orientation(prop::Listener *listener = NULL): tk::Orientation(listener) {};

@@ -245,5 +245,29 @@ namespace lsp
 
             return dst->size();
         }
+
+        bool Property::fmt_bit_enums(LSPString *dst, const prop::enum_t *xe, size_t v)
+        {
+            bool success = true;
+            LSPString tmp;
+
+            for (const prop::enum_t *e = xe; (e != NULL) && (e->name != NULL); ++e)
+            {
+                if (!(v & e->value))
+                    continue;
+                if (tmp.length() > 0)
+                {
+                    if (!(success = tmp.append(',')))
+                        break;
+                }
+                if (!(success = tmp.append_ascii(e->name)))
+                    break;
+            }
+
+            if (success)
+                tmp.swap(dst);
+
+            return success;
+        }
     }
 }

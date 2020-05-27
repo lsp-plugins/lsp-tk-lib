@@ -22,7 +22,7 @@ namespace lsp
         class Enum: public SimpleProperty
         {
             private:
-                Enum & operator = (const Enum *);
+                Enum & operator = (const Enum &);
 
             protected:
                 class Listener: public IStyleListener

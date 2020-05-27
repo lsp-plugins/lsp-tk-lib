@@ -127,7 +127,7 @@ namespace lsp
             class Padding: public tk::Padding
             {
                 private:
-                    Padding & operator = (const Padding *);
+                    Padding & operator = (const Padding &);
 
                 public:
                     explicit Padding(prop::Listener *listener = NULL): tk::Padding(listener) {};

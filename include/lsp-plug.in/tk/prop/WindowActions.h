@@ -21,6 +21,9 @@ namespace lsp
 
         class WindowActions: public BitEnum
         {
+            private:
+                WindowActions & operator = (const WindowActions &);
+
             protected:
                 static const prop::enum_t ENUM[];
 
@@ -90,7 +93,7 @@ namespace lsp
             class WindowActions: public tk::WindowActions
             {
                 private:
-                    WindowActions & operator = (const WindowActions *);
+                    WindowActions & operator = (const WindowActions &);
 
                 public:
                     explicit WindowActions(prop::Listener *listener = NULL): tk::WindowActions(listener) {};

@@ -22,7 +22,7 @@ namespace lsp
         class Integer: public SimpleProperty
         {
             private:
-                Integer & operator = (const Integer *);
+                Integer & operator = (const Integer &);
 
             protected:
                 class Listener: public IStyleListener
@@ -77,7 +77,7 @@ namespace lsp
             class Integer: public tk::Integer
             {
                 private:
-                    Integer & operator = (const Integer *);
+                    Integer & operator = (const Integer &);
 
                 public:
                     explicit Integer(prop::Listener *listener = NULL): tk::Integer(listener) {};

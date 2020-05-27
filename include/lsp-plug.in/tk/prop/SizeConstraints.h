@@ -116,7 +116,7 @@ namespace lsp
             class SizeConstraints: public tk::SizeConstraints
             {
                 private:
-                    SizeConstraints & operator = (const SizeConstraints *);
+                    SizeConstraints & operator = (const SizeConstraints &);
 
                 public:
                     explicit SizeConstraints(prop::Listener *listener = NULL): tk::SizeConstraints(listener) {};

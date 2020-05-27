@@ -56,6 +56,7 @@
 #include <lsp-plug.in/tk/prop/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
 #include <lsp-plug.in/tk/prop/Allocation.h>
+#include <lsp-plug.in/tk/prop/Font.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>

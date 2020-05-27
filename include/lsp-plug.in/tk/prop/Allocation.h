@@ -22,7 +22,7 @@ namespace lsp
         class Allocation: public Flags
         {
             private:
-                Allocation & operator = (const Allocation *);
+                Allocation & operator = (const Allocation &);
 
             protected:
                 static const char * const FLAGS[];
@@ -71,7 +71,7 @@ namespace lsp
             class Allocation: public tk::Allocation
             {
                 private:
-                    Allocation & operator = (const Allocation *);
+                    Allocation & operator = (const Allocation &);
 
                 public:
                     explicit Allocation(prop::Listener *listener = NULL): tk::Allocation(listener) {};

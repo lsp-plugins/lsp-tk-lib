@@ -22,7 +22,7 @@ namespace lsp
         class BitEnum: public SimpleProperty
         {
             private:
-                BitEnum & operator = (const BitEnum *);
+                BitEnum & operator = (const BitEnum &);
 
             protected:
                 class Listener: public IStyleListener
@@ -47,7 +47,6 @@ namespace lsp
                 status_t            bind(atom_t property, Style *style);
                 status_t            bind(const char *property, Style *style);
                 status_t            bind(const LSPString *property, Style *style);
-                bool                format(LSPString *dst, size_t v);
                 void                commit();
                 void                sync();
                 size_t              xset(size_t v);

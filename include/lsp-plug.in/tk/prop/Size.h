@@ -87,7 +87,7 @@ namespace lsp
             class Size: public tk::Size
             {
                 private:
-                    Size & operator = (const Size *);
+                    Size & operator = (const Size &);
 
                 public:
                     explicit Size(prop::Listener *listener = NULL): tk::Size(listener) {};

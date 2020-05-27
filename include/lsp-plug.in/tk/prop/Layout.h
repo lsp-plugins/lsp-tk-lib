@@ -105,7 +105,7 @@ namespace lsp
             class Layout: public tk::Layout
             {
                 private:
-                    Layout & operator = (const Layout *);
+                    Layout & operator = (const Layout &);
 
                 public:
                     explicit Layout(prop::Listener *listener = NULL): tk::Layout(listener) {};

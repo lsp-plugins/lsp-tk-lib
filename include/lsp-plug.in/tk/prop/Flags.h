@@ -16,7 +16,7 @@ namespace lsp
         class Flags: public Property
         {
             private:
-                Flags & operator = (const Flags *);
+                Flags & operator = (const Flags &);
 
             protected:
                 class Listener: public IStyleListener

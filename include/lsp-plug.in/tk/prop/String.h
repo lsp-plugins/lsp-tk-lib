@@ -22,6 +22,9 @@ namespace lsp
         class String: public SimpleProperty
         {
             private:
+                String & operator = (const String &);
+
+            private:
                 enum flags_t
                 {
                     F_LOCALIZED     = 1 << 0
@@ -225,7 +228,7 @@ namespace lsp
             class String: public tk::String
             {
                 private:
-                    String & operator = (const String *);
+                    String & operator = (const String &);
 
                 public:
                     explicit String(prop::Listener *listener = NULL): tk::String(listener) {};

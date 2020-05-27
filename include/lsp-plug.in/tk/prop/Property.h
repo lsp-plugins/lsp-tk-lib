@@ -27,7 +27,7 @@ namespace lsp
         class Property
         {
             private:
-                Property & operator = (const Property *);
+                Property & operator = (const Property &);
 
             protected:
                 Style              *pStyle;
@@ -51,6 +51,8 @@ namespace lsp
 
                 static size_t       parse_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum);
                 static size_t       parse_unique_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum);
+
+                static bool         fmt_bit_enums(LSPString *dst, const prop::enum_t *xe, size_t v);
 
             public:
                 /**

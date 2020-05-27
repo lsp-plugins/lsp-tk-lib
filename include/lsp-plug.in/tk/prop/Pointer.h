@@ -17,6 +17,9 @@ namespace lsp
          */
         class Pointer: public Enum
         {
+            private:
+                Pointer & operator = (const Pointer &);
+
             protected:
                 static const prop::enum_t ENUM[];
 
@@ -33,7 +36,7 @@ namespace lsp
             class Pointer: public tk::Pointer
             {
                 private:
-                    Pointer & operator = (const Pointer *);
+                    Pointer & operator = (const Pointer &);
 
                 public:
                     explicit Pointer(prop::Listener *listener = NULL): tk::Pointer(listener) {};

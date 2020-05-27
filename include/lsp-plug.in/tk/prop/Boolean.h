@@ -22,7 +22,7 @@ namespace lsp
         class Boolean: public SimpleProperty
         {
             private:
-                Boolean & operator = (const Boolean *);
+                Boolean & operator = (const Boolean &);
 
             protected:
                 class Listener: public IStyleListener
@@ -77,7 +77,7 @@ namespace lsp
             class Boolean: public tk::Boolean
             {
                 private:
-                    Boolean & operator = (const Boolean *);
+                    Boolean & operator = (const Boolean &);
 
                 public:
                     explicit inline Boolean(prop::Listener *listener = NULL): tk::Boolean(listener) {};

@@ -19,7 +19,7 @@ namespace lsp
         class SimpleProperty: public Property
         {
             private:
-                SimpleProperty & operator = (const SimpleProperty *);
+                SimpleProperty & operator = (const SimpleProperty &);
 
             protected:
                 atom_t              nAtom;

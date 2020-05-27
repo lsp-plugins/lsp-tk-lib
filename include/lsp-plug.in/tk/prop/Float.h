@@ -22,7 +22,7 @@ namespace lsp
         class Float: public SimpleProperty
         {
             private:
-                Float & operator = (const Float *);
+                Float & operator = (const Float &);
 
             protected:
                 class Listener: public IStyleListener
@@ -77,7 +77,7 @@ namespace lsp
             class Float: public tk::Float
             {
                 private:
-                    Float & operator = (const Float *);
+                    Float & operator = (const Float &);
 
                 public:
                     explicit inline Float(prop::Listener *listener = NULL): tk::Float(listener) {};

@@ -93,7 +93,7 @@ namespace lsp
             class Position: public tk::Position
             {
                 private:
-                    Position & operator = (const Position *);
+                    Position & operator = (const Position &);
 
                 public:
                     explicit Position(prop::Listener *listener = NULL): tk::Position(listener) {};

@@ -353,8 +353,8 @@ namespace lsp
                  * Style of mouse pointer
                  * @return mouse pointer style
                  */
-                inline Pointer                 *pointer()                   { return &sPointer; }
-                inline const Pointer           *pointer() const             { return &sPointer; }
+                inline Pointer         *pointer()               { return &sPointer;     }
+                inline const Pointer   *pointer() const         { return &sPointer;     }
 
             //---------------------------------------------------------------------------------
             // Manipulation

@@ -156,7 +156,7 @@ namespace lsp
             class Color: public tk::Color
             {
                 private:
-                    Color & operator = (const Color *);
+                    Color & operator = (const Color &);
 
                 public:
                     explicit inline Color(prop::Listener *listener = NULL): tk::Color(listener) {};
