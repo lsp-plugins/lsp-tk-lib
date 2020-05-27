@@ -157,19 +157,6 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = scaling * sSpacing.get();
 
-            // Draw padding
-            if (force)
-            {
-                ws::rectangle_t xr;
-                sPadding.enter(&xr, &sSize, scaling);
-
-                s->fill_frame(
-                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
-                    xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
-                    bg_color
-                );
-            }
-
             // Draw items
             bool horizontal     = sOrientation.horizontal();
 
