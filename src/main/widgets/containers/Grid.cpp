@@ -144,19 +144,6 @@ namespace lsp
             ssize_t hspacing    = scaling * sHSpacing.get();
             ssize_t vspacing    = scaling * sVSpacing.get();
 
-            // Draw padding
-            if (force)
-            {
-                ws::rectangle_t xr;
-                sPadding.enter(&xr, &sSize, scaling);
-
-                s->fill_frame(
-                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
-                    xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
-                    bg_color
-                );
-            }
-
             // Render nested widgets
             for (size_t i=0, n=sAlloc.vCells.size(); i<n; ++i)
             {
