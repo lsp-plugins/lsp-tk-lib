@@ -48,7 +48,7 @@ namespace lsp
             // Bind all ports
             status_t res = STATUS_OK;
 
-            style->begin(listener);
+            style->begin();
             {
                 for ( ; desc->postfix != NULL; ++atoms, ++desc)
                 {

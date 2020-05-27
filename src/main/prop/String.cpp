@@ -53,7 +53,7 @@ namespace lsp
             }
 
             // Bind to new handler
-            style->begin(&sParams);
+            style->begin();
             {
                 res = style->bind(property, PT_STRING, &sParams);
                 if (res == STATUS_OK)

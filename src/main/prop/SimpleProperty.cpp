@@ -26,7 +26,7 @@ namespace lsp
             }
 
             // Bind to new handler
-            style->begin(listener);
+            style->begin();
             {
                 res = style->bind(property, type, listener);
                 if (res == STATUS_OK)

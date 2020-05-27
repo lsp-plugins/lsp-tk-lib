@@ -57,6 +57,7 @@ namespace lsp
 
         void Label::property_changed(Property *prop)
         {
+            Widget::property_changed(prop);
             if (sHAlign.is(prop))
                 query_draw();
             if (sVAlign.is(prop))
@@ -116,8 +117,8 @@ namespace lsp
             // Draw background
             s->clear(bg_color);
 
-            float halign    = lsp_limit(sHAlign.get(), -1.0f, 1.0f);
-            float valign    = lsp_limit(sVAlign.get(), -1.0f, 1.0f);
+            float halign    = lsp_limit(sHAlign.get() + 1.0f, 0.0f, 2.0f);
+            float valign    = lsp_limit(sVAlign.get() + 1.0f, 0.0f, 2.0f);
             float dy        = (r.nHeight - tp.Height) * 0.5f;
             ssize_t y       = r.nTop + dy * valign - fp.Descent;
 

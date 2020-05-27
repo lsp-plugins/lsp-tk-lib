@@ -68,7 +68,7 @@ namespace lsp
             // Bind all ports
             status_t res = STATUS_OK;
 
-            style->begin(&sListener);
+            style->begin();
             {
                 atom_t *atoms = vAtoms;
                 for (const char * const *flags = pFlags; *flags != NULL; ++atoms, ++flags)
