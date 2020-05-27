@@ -88,23 +88,23 @@ namespace lsp
             tp.Height       = lsp_max(tp.Height, fp.Height);
             if (tp.Width <= sSize.nWidth)
             {
-                r.nLeft         = sSize.nLeft;
+                r.nLeft         = 0;
                 r.nWidth        = sSize.nWidth;
             }
             else
             {
-                r.nLeft         = sSize.nLeft - (tp.Width - sSize.nWidth) * 0.5f;
+                r.nLeft         = -0.5f * (tp.Width - sSize.nWidth);
                 r.nWidth        = ceil(tp.Width);
             }
 
             if (tp.Height <= sSize.nHeight)
             {
-                r.nTop          = sSize.nTop;
+                r.nTop          = 0;
                 r.nHeight       = sSize.nHeight;
             }
             else
             {
-                r.nTop          = sSize.nTop - (tp.Height - sSize.nHeight) * 0.5f;
+                r.nTop          = -0.5f * (tp.Height - sSize.nHeight);
                 r.nHeight       = ceil(tp.Height);
             }
 
