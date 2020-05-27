@@ -101,9 +101,11 @@ namespace lsp
                 void        set(const SizeConstraints *p);
 
                 void        compute(ws::size_limit_t *limit, float scale);
-                void        apply(ws::size_limit_t *sc, float scale);
-                void        apply(ws::rectangle_t *sc, float scale);
 
+                void        apply(ws::size_limit_t *dst, const ws::size_limit_t *src, float scale);
+                inline void apply(ws::size_limit_t *dst, float scale)           { apply(dst, dst, scale);   }
+
+                void        apply(ws::rectangle_t *sc, float scale);
                 static void apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc);
                 static void apply(ws::rectangle_t *dst, const ws::size_limit_t *sc);
         };

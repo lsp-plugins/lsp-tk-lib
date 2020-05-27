@@ -80,6 +80,7 @@ namespace lsp
                 inline bool         antialiasing() const    { return sValue.is_antialiasing();          }
                 inline size_t       flags() const           { return sValue.flags();                    }
                 inline void         get(ws::Font *f) const  { f->set(&sValue);                          }
+                inline void         get(ws::Font *f, float scaling) const;
 
                 void                set_name(const char *name);
                 inline void         set_name(const LSPString *name)     { set_name((name != NULL) ? name->get_utf8() : NULL );      }
@@ -146,6 +147,7 @@ namespace lsp
                      */
                     status_t            init(Style *style);
                     status_t            init(Style *style, const char *name, float size, size_t flags = 0);
+                    status_t            init(Style *style, float size, size_t flags = 0);
             };
         }
 

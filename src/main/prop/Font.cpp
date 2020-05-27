@@ -124,6 +124,11 @@ namespace lsp
                 pListener->notify(this);
         }
 
+        void Font::get(ws::Font *f, float scaling) const
+        {
+            f->set(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+        }
+
         void Font::set_name(const char *name)
         {
             const char *old = sValue.get_name();
@@ -419,7 +424,12 @@ namespace lsp
         {
             status_t Font::init(Style *style)
             {
-                return init(style, "Sans", 10, false);
+                return init(style, "Sans", 10, 0);
+            }
+
+            status_t Font::init(Style *style, float size, size_t flags)
+            {
+                return init(style, "Sans", size, flags);
             }
 
             status_t Font::init(Style *style, const char *name, float size, size_t flags)
