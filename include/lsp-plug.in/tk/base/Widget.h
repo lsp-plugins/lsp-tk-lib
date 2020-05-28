@@ -200,13 +200,13 @@ namespace lsp
                  *
                  * @return display
                  */
-                inline Display         *display()                                   { return pDisplay; };
+                inline Display         *display()                                   { return pDisplay;                  }
 
                 /** Get actual widget dimensions without padding
                  *
                  * @param r real widget dimensions
                  */
-                inline void             get_rectangle(ws::rectangle_t *r)           { *r = sSize; }
+                inline void             get_rectangle(ws::rectangle_t *r)           { *r = sSize;                       }
 
                 /** Get actual widget dimensions with padding applied
                  *
@@ -258,13 +258,13 @@ namespace lsp
                  *
                  * @return true if there is redraw request pending
                  */
-                inline bool             redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); };
+                inline bool             redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); }
 
                 /** Check if there is resize request pending
                  *
                  * @return true if there is resize request pending
                  */
-                inline bool             resize_pending() const              { return nFlags & (SIZE_INVALID | RESIZE_PENDING); };
+                inline bool             resize_pending() const              { return nFlags & (SIZE_INVALID | RESIZE_PENDING); }
 
                 /** Check that specified window coordinate lies within widget's bounds
                  * Always returns false for invisible widgets
@@ -547,7 +547,9 @@ namespace lsp
 
                 /** Geometry has changed: size or position
                  *
-                 * @param e event
+                 * @param r the new size of the widget. Handler should not rely
+                 *   on data returned by get_rectangle() and get_padded_rectangle()
+                 *   since it will contain the previous values
                  * @return status of operation
                  */
                 virtual status_t        on_resize(const ws::rectangle_t *r);

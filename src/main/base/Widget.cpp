@@ -560,9 +560,10 @@ namespace lsp
                 (sSize.nHeight == r->nHeight))
                 return;
 
-            // Update size and execute slot
+            // Execute slot and commit size
+            ws::rectangle_t xr = *r;
+            sSlots.execute(SLOT_RESIZE, this, &xr);
             sSize        = *r;
-            sSlots.execute(SLOT_RESIZE, this, &sSize);
         }
 
         void Widget::realize_widget(const ws::rectangle_t *r)
