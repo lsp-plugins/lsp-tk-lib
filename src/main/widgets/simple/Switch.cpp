@@ -6,6 +6,8 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -13,69 +15,125 @@ namespace lsp
     {
         static const float ANGLE = 15.0f * M_PI / 180.0f;
         
-        const w_class_t Switch::metadata = { "Switch", &LSPWidget::metadata };
+        const w_class_t Switch::metadata =      { "Switch", &Widget::metadata };
 
-        Switch::Switch(LSPDisplay *dpy): LSPWidget(dpy),
-            sColor(this),
-            sTextColor(this),
-            sBorderColor(this),
-            sHoleColor(this)
+        Switch::Switch(Display *dpy):
+            Widget(dpy),
+            sColor(&sProperties),
+            sTextColor(&sProperties),
+            sBorderColor(&sProperties),
+            sHoleColor(&sProperties),
+            sBorder(&sProperties),
+            sSizeRange(&sProperties),
+            sAspect(&sProperties),
+            sAngle(&sProperties),
+            sDown(&sProperties)
         {
-            nSize       = 24;
-            nBorder     = 8;
             nState      = 0;
             nBMask      = 0;
-            nAngle      = 0;
-            nAspect     = M_SQRT2;
+
             pClass      = &metadata;
         }
         
         status_t Switch::init()
         {
-            status_t result = LSPWidget::init();
+            status_t result = Widget::init();
             if (result != STATUS_OK)
                 return result;
 
-            init_color(C_KNOB_CAP, &sColor);
-            init_color(C_LABEL_TEXT, &sTextColor);
-            init_color(C_KNOB_CAP, &sBorderColor);
+            sColor.bind("color", &sStyle);
+            sTextColor.bind("text.color", &sStyle);
+            sBorderColor.bind("border.color", &sStyle);
+            sHoleColor.bind("hole.color", &sStyle);
+            sBorder.bind("border.size", &sStyle);
+            sSizeRange.bind("size.range", &sStyle);
+            sAspect.bind("size.aspect", &sStyle);
+            sAngle.bind("angle", &sStyle);
+            sDown.bind("down", &sStyle);
 
-            sHoleColor.bind("hole_color");
+            Style *sclass = style_class();
+            if (sclass != NULL)
+            {
+                sColor.init(sclass, "#444444");
+                sTextColor.init(sclass, "#eeeeee");
+                sBorderColor.init(sclass, "#444444");
+                sHoleColor.init(sclass, "#000000");
+                sBorder.init(sclass, 8);
+                sSizeRange.init(sclass, 24);
+                sAspect.init(sclass, 1.41);
+            }
 
-            if (!sSlots.add(LSPSLOT_CHANGE))
-                return STATUS_NO_MEM;
+            pClass      = &metadata;
 
-            return STATUS_OK;
+            handler_id_t id = 0;
+            id = sSlots.add(SLOT_FOCUS_IN, slot_on_change, self());
+
+            return (id >= 0) ? STATUS_OK : -id;
         }
 
         Switch::~Switch()
         {
         }
 
-        void Switch::draw(ISurface *s)
+        status_t Switch::slot_on_change(Widget *sender, void *ptr, void *data)
+        {
+            if ((ptr == NULL) || (data == NULL))
+                return STATUS_BAD_ARGUMENTS;
+
+            Switch *_this       = widget_ptrcast<Switch>(ptr);
+            bool *value         = static_cast<bool *>(data);
+            return _this->on_change(*value);
+        }
+
+        void Switch::property_changed(Property *prop)
+        {
+            Widget::property_changed(prop);
+
+            if (sColor.is(prop))
+                query_draw();
+            if (sTextColor.is(prop))
+                query_draw();
+            if (sBorderColor.is(prop))
+                query_draw();
+            if (sHoleColor.is(prop))
+                query_draw();
+            if (sBorder.is(prop))
+                query_resize();
+            if (sSizeRange.is(prop))
+                query_resize();
+            if (sAspect.is(prop))
+                query_resize();
+            if (sAngle.is(prop))
+                query_resize();
+            if (sDown.is(prop))
+                sync_state(sDown.get());
+        }
+
+        void Switch::draw(ws::ISurface *s)
         {
             // Prepare palette
-            Color bg_color(sBgColor);
-            Color border(sBorderColor);
-            Color bcl(sColor);
-            Color font(sTextColor);
+            lsp::Color bg_color(sBgColor);
+            lsp::Color border(sBorderColor);
+            lsp::Color bcl(sColor);
+            lsp::Color font(sTextColor);
 
-            border.scale_lightness(brightness());
-            font.scale_lightness(brightness());
-            bcl.scale_lightness(brightness());
+            float bright = sBrightness.get();
+            border.scale_lightness(bright);
+            font.scale_lightness(bright);
+            bcl.scale_lightness(bright);
 
             // Get resource
-            IGradient *cp;
+            ws::IGradient *cp;
 
             bool aa     = s->set_antialiasing(true);
 
             // Draw background
-            s->fill_rect(0, 0, sSize.nWidth, sSize.nHeight, bg_color);
+            s->fill_rect(0, 0, sSizeRange.nWidth, sSizeRange.nHeight, bg_color);
 
             // Get dimensions
             ssize_t w = 0, h = 0;
             dimensions(w, h);
-            ssize_t left = ssize_t((sSize.nWidth - w) >> 1), top = ssize_t((sSize.nHeight - h) >> 1);
+            ssize_t left = ssize_t((sSizeRange.nWidth - w) >> 1), top = ssize_t((sSizeRange.nHeight - h) >> 1);
 
             // Move to the left corner
             float delta = sqrtf(w*w + h*h);
@@ -241,7 +299,7 @@ namespace lsp
             sSlots.execute(LSPSLOT_CHANGE, this);
         }
 
-        void Switch::size_request(size_request_t *r)
+        void Switch::size_request(ws::size_limit_t *r)
         {
             dimensions(r->nMinWidth, r->nMinHeight);
             r->nMaxWidth        = r->nMinWidth;
@@ -255,8 +313,8 @@ namespace lsp
             w -= (nBorder + 1) << 1;
             h -= (nBorder + 1) << 1;
 
-            ssize_t left    = sSize.nLeft + ((sSize.nWidth - w) >> 1);
-            ssize_t top     = sSize.nTop + ((sSize.nHeight - h) >> 1);
+            ssize_t left    = sSizeRange.nLeft + ((sSizeRange.nWidth - w) >> 1);
+            ssize_t top     = sSizeRange.nTop + ((sSizeRange.nHeight - h) >> 1);
             ssize_t right   = left + w;
             ssize_t bottom  = top + h;
 
@@ -266,7 +324,7 @@ namespace lsp
 
         void Switch::dimensions(ssize_t &w, ssize_t &h)
         {
-            size_t width = nSize + 2;
+            size_t width  = nSize + 2;
             size_t height = roundf(nSize * nAspect) + 2;
 
             if (nBorder > 0)
@@ -292,12 +350,11 @@ namespace lsp
             }
         }
 
-        status_t Switch::on_mouse_down(const ws_event_t *e)
+        status_t Switch::on_mouse_down(const ws::event_t *e)
         {
-            take_focus();
             nBMask         |= (1 << e->nCode);
 
-            bool pressed    = (nBMask == (1 << MCB_LEFT)) && (check_mouse_over(e->nLeft, e->nTop));
+            bool pressed    = (nBMask == (1 << ws::MCB_LEFT)) && (check_mouse_over(e->nLeft, e->nTop));
             bool is_pressed = nState & S_PRESSED;
 
             if (pressed != is_pressed)
@@ -313,10 +370,10 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Switch::on_mouse_up(const ws_event_t *e)
+        status_t Switch::on_mouse_up(const ws::event_t *e)
         {
             nBMask         &= ~(1 << e->nCode);
-            bool pressed    = ((e->nCode == MCB_LEFT) && (nBMask == 0)) || ((e->nCode != MCB_LEFT) && (nBMask == (1 << MCB_LEFT)));
+            bool pressed    = ((e->nCode == ws::MCB_LEFT) && (nBMask == 0)) || ((e->nCode != ws::MCB_LEFT) && (nBMask == (1 << ws::MCB_LEFT)));
             if (pressed)
                 pressed     = (check_mouse_over(e->nLeft, e->nTop));
             if (nBMask == 0)
@@ -340,9 +397,9 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Switch::on_mouse_move(const ws_event_t *e)
+        status_t Switch::on_mouse_move(const ws::event_t *e)
         {
-            bool pressed    = (nBMask == (1 << MCB_LEFT)) && (check_mouse_over(e->nLeft, e->nTop));
+            bool pressed    = (nBMask == (1 << ws::MCB_LEFT)) && (check_mouse_over(e->nLeft, e->nTop));
             bool is_pressed = nState & S_PRESSED;
 
             if (pressed != is_pressed)
@@ -358,49 +415,19 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Switch::set_down(bool down)
+        status_t Switch::on_change(bool set)
+        {
+            return STATUS_OK;
+        }
+
+        void Switch::sync_state(bool down)
         {
             // Do not react if state does not change
-            if (!(bool(nState & S_TOGGLED) ^ down))
+            if (bool(nState & S_TOGGLED) == down)
                 return;
 
-            if (down)
-                nState |= S_TOGGLED;
-            else
-                nState &= ~S_TOGGLED;
-
-            // Request for redraw
+            nState = (down) ? nState | S_TOGGLED : nState & ~S_TOGGLED;
             query_draw();
         }
-
-        void Switch::set_up(bool up)
-        {
-            set_down(!up);
-        }
-
-        void Switch::set_size(ssize_t size)
-        {
-            nSize       = size;
-            query_resize();
-        }
-
-        void Switch::set_border(size_t border)
-        {
-            nBorder     = border;
-            query_resize();
-        }
-
-        void Switch::set_aspect(float aspect)
-        {
-            nAspect     = aspect;
-            query_resize();
-        }
-
-        void Switch::set_angle(size_t angle)
-        {
-            nAngle      = angle;
-            query_resize();
-        }
-    
     } /* namespace ctl */
 } /* namespace lsp */

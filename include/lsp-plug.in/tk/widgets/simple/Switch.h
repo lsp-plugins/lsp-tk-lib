@@ -29,23 +29,32 @@ namespace lsp
                 };
 
             protected:
-                size_t                  nState;
-                size_t                  nBMask;
+                size_t                      nState;
+                size_t                      nBMask;
 
-                prop::Color             sColor;
-                prop::Color             sTextColor;
-                prop::Color             sBorderColor;
-                prop::Color             sHoleColor;
-                prop::Integer           sBorder;
-                prop::Integer           sSize;
-                prop::Float             fAspect;
-                prop::Boolean           sDown;
+                prop::Color                 sColor;
+                prop::Color                 sTextColor;
+                prop::Color                 sBorderColor;
+                prop::Color                 sHoleColor;
+                prop::Integer               sBorder;
+                prop::SizeRange             sSizeRange;
+                prop::Float                 sAspect;
+                prop::Integer               sAngle;
+                prop::Boolean               sDown;
 
             protected:
-                bool                    check_mouse_over(ssize_t x, ssize_t y);
-                void                    dimensions(ssize_t &w, ssize_t &h);
+                bool                        check_mouse_over(ssize_t x, ssize_t y);
+                void                        dimensions(ssize_t &w, ssize_t &h);
 
-                void                    on_click(bool down);
+                void                        on_click(bool down);
+                void                        sync_state(bool down);
+
+            protected:
+                static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
+
+            protected:
+                virtual void                size_request(ws::size_limit_t *r);
+                virtual void                property_changed(Property *prop);
 
             public:
                 explicit Switch(Display *dpy);
@@ -54,49 +63,44 @@ namespace lsp
                 virtual status_t    init();
 
             public:
-                inline bool is_down() const     { return nState & S_TOGGLED; }
+                inline Color               *color()                 { return &sColor;       }
+                inline const Color         *color() const           { return &sColor;       }
 
-                inline bool is_up() const       { return !(nState & S_TOGGLED); }
+                inline Color               *text_color()            { return &sTextColor;   }
+                inline const Color         *text_color() const      { return &sTextColor;   }
 
-                inline LSPColor *color()        { return &sColor; }
+                inline Color               *border_color()          { return &sBorderColor; }
+                inline const Color         *border_color() const    { return &sBorderColor; }
 
-                inline LSPColor *text_color()   { return &sTextColor; }
+                inline Color               *hole_color()            { return &sHoleColor;   }
+                inline const Color         *hole_color() const      { return &sHoleColor;   }
 
-                inline LSPColor *border_color() { return &sBorderColor; }
+                inline SizeRange           *size()                  { return &sSizeRange;   }
+                inline const SizeRange     *size() const            { return &sSizeRange;   }
 
-                inline LSPColor *hole_color()   { return &sHoleColor; }
+                inline Integer             *border()                { return &sBorder;      }
+                inline const Integer       *border() const          { return &sBorder;      }
 
-                inline ssize_t size() const     { return nSize; }
+                inline Float               *aspect()                { return &sAspect;      }
+                inline const Float         *aspect() const          { return &sAspect;      }
 
-                inline size_t border() const    { return nBorder; }
+                inline Integer             *angle()                 { return &sAngle;       }
+                inline const Integer       *angle() const           { return &sAngle;       }
 
-                inline float aspect() const     { return nAspect; }
+                inline Boolean             *down()                  { return &sDown;        }
+                inline const Boolean       *down() const            { return &sDown;        }
 
-                inline size_t angle() const     { return nAngle; }
-
-            public:
-                void set_down(bool down = true);
-
-                void set_up(bool up = true);
-
-                void set_size(ssize_t size);
-
-                void set_border(size_t border);
-
-                void set_aspect(float aspect);
-
-                void set_angle(size_t angle);
 
             public:
-                virtual void draw(ISurface *s);
+                virtual void                draw(ws::ISurface *s);
 
-                virtual void size_request(size_request_t *r);
+                virtual status_t            on_mouse_down(const ws::event_t *e);
 
-                virtual status_t on_mouse_down(const ws_event_t *e);
+                virtual status_t            on_mouse_up(const ws::event_t *e);
 
-                virtual status_t on_mouse_up(const ws_event_t *e);
+                virtual status_t            on_mouse_move(const ws::event_t *e);
 
-                virtual status_t on_mouse_move(const ws_event_t *e);
+                virtual status_t            on_change(bool set);
         };
     
     } /* namespace tk */

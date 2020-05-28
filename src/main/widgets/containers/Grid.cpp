@@ -72,7 +72,6 @@ namespace lsp
                 Style *sclass = style_class();
                 if (sclass != NULL)
                 {
-                    sStyle.add_parent(sclass);
                     sRows.init(sclass, 1);
                     sColumns.init(sclass, 1);
                     sHSpacing.init(sclass, 0);

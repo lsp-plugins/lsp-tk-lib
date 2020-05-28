@@ -144,7 +144,7 @@ namespace lsp
             sync();
         }
 
-        void SizeRange::compute(ssize_t *min, ssize_t *max, float scale)
+        void SizeRange::compute(ssize_t *min, ssize_t *max, float scale) const
         {
             scale               = lsp_max(scale, 0.0f);
             *min                = (nMin >= 0) ? nMin * scale : -1;

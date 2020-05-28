@@ -141,12 +141,12 @@ namespace lsp
                 /** Initialize wiget
                  *
                  */
-                virtual status_t init();
+                virtual status_t        init();
 
                 /** Destroy widget
                  *
                  */
-                virtual void destroy();
+                virtual void            destroy();
 
             //---------------------------------------------------------------------------------
             // Metadata, casting and type information

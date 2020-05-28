@@ -40,7 +40,6 @@ namespace lsp
                 Style *sclass = style_class();
                 if (sclass != NULL)
                 {
-                    sStyle.add_parent(sclass);
                     sSpacing.init(sclass, 0);
                     sHomogeneous.init(sclass, false);
                     sOrientation.init(sclass, O_HORIZONTAL);

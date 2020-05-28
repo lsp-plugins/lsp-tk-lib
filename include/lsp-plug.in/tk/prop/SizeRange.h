@@ -77,7 +77,7 @@ namespace lsp
                 void        set(const SizeRange *src);
                 inline void set(ssize_t value)              { set(value, value);                    }
 
-                void        compute(ssize_t *min, ssize_t *max, float scale);
+                void        compute(ssize_t *min, ssize_t *max, float scale) const;
         };
 
         namespace prop
