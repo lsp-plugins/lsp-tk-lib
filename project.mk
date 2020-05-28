@@ -3,7 +3,7 @@ ARTIFACT_NAME               = lsp-tk-lib
 ARTIFACT_VARS               = LSP_TK_LIB
 ARTIFACT_HEADERS            = lsp-plug.in
 ARTIFACT_EXPORT_ALL         = 1
-VERSION                     = 0.5.0-devel
+ARTIFACT_VERSION            = 0.5.0-devel
 
 # List of dependencies
 TEST_DEPENDENCIES = \
