@@ -5,8 +5,8 @@
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_WIDGETS_VOID_H_
-#define LSP_PLUG_IN_TK_WIDGETS_VOID_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_SIMPLE_VOID_H_
+#define LSP_PLUG_IN_TK_WIDGETS_SIMPLE_VOID_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
@@ -51,4 +51,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* LSP_PLUG_IN_TK_WIDGETS_VOID_H_ */
+#endif /* LSP_PLUG_IN_TK_WIDGETS_SIMPLE_VOID_H_ */
