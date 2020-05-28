@@ -1,11 +1,11 @@
 /*
- * LSPSwitch.cpp
+ * Switch.cpp
  *
  *  Created on: 1 июл. 2017 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/widgets/LSPSwitch.h>
+#include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {
@@ -13,9 +13,9 @@ namespace lsp
     {
         static const float ANGLE = 15.0f * M_PI / 180.0f;
         
-        const w_class_t LSPSwitch::metadata = { "LSPSwitch", &LSPWidget::metadata };
+        const w_class_t Switch::metadata = { "Switch", &LSPWidget::metadata };
 
-        LSPSwitch::LSPSwitch(LSPDisplay *dpy): LSPWidget(dpy),
+        Switch::Switch(LSPDisplay *dpy): LSPWidget(dpy),
             sColor(this),
             sTextColor(this),
             sBorderColor(this),
@@ -30,7 +30,7 @@ namespace lsp
             pClass      = &metadata;
         }
         
-        status_t LSPSwitch::init()
+        status_t Switch::init()
         {
             status_t result = LSPWidget::init();
             if (result != STATUS_OK)
@@ -48,11 +48,11 @@ namespace lsp
             return STATUS_OK;
         }
 
-        LSPSwitch::~LSPSwitch()
+        Switch::~Switch()
         {
         }
 
-        void LSPSwitch::draw(ISurface *s)
+        void Switch::draw(ISurface *s)
         {
             // Prepare palette
             Color bg_color(sBgColor);
@@ -235,20 +235,20 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
-        void LSPSwitch::on_click(bool down)
+        void Switch::on_click(bool down)
         {
             lsp_trace("switch clicked: down=%s", (down) ? "true" : "false");
             sSlots.execute(LSPSLOT_CHANGE, this);
         }
 
-        void LSPSwitch::size_request(size_request_t *r)
+        void Switch::size_request(size_request_t *r)
         {
             dimensions(r->nMinWidth, r->nMinHeight);
             r->nMaxWidth        = r->nMinWidth;
             r->nMaxHeight       = r->nMinHeight;
         }
 
-        bool LSPSwitch::check_mouse_over(ssize_t x, ssize_t y)
+        bool Switch::check_mouse_over(ssize_t x, ssize_t y)
         {
             ssize_t w = 0, h = 0;
             dimensions(w, h);
@@ -264,7 +264,7 @@ namespace lsp
             return ((x >= left) && (x <= right) && (y >= top) && (y <= bottom));
         }
 
-        void LSPSwitch::dimensions(ssize_t &w, ssize_t &h)
+        void Switch::dimensions(ssize_t &w, ssize_t &h)
         {
             size_t width = nSize + 2;
             size_t height = roundf(nSize * nAspect) + 2;
@@ -292,7 +292,7 @@ namespace lsp
             }
         }
 
-        status_t LSPSwitch::on_mouse_down(const ws_event_t *e)
+        status_t Switch::on_mouse_down(const ws_event_t *e)
         {
             take_focus();
             nBMask         |= (1 << e->nCode);
@@ -313,7 +313,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPSwitch::on_mouse_up(const ws_event_t *e)
+        status_t Switch::on_mouse_up(const ws_event_t *e)
         {
             nBMask         &= ~(1 << e->nCode);
             bool pressed    = ((e->nCode == MCB_LEFT) && (nBMask == 0)) || ((e->nCode != MCB_LEFT) && (nBMask == (1 << MCB_LEFT)));
@@ -340,7 +340,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPSwitch::on_mouse_move(const ws_event_t *e)
+        status_t Switch::on_mouse_move(const ws_event_t *e)
         {
             bool pressed    = (nBMask == (1 << MCB_LEFT)) && (check_mouse_over(e->nLeft, e->nTop));
             bool is_pressed = nState & S_PRESSED;
@@ -358,7 +358,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void LSPSwitch::set_down(bool down)
+        void Switch::set_down(bool down)
         {
             // Do not react if state does not change
             if (!(bool(nState & S_TOGGLED) ^ down))
@@ -373,30 +373,30 @@ namespace lsp
             query_draw();
         }
 
-        void LSPSwitch::set_up(bool up)
+        void Switch::set_up(bool up)
         {
             set_down(!up);
         }
 
-        void LSPSwitch::set_size(ssize_t size)
+        void Switch::set_size(ssize_t size)
         {
             nSize       = size;
             query_resize();
         }
 
-        void LSPSwitch::set_border(size_t border)
+        void Switch::set_border(size_t border)
         {
             nBorder     = border;
             query_resize();
         }
 
-        void LSPSwitch::set_aspect(float aspect)
+        void Switch::set_aspect(float aspect)
         {
             nAspect     = aspect;
             query_resize();
         }
 
-        void LSPSwitch::set_angle(size_t angle)
+        void Switch::set_angle(size_t angle)
         {
             nAngle      = angle;
             query_resize();

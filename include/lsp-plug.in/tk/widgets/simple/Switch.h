@@ -1,22 +1,22 @@
 /*
- * LSPSwitch.h
+ * Switch.h
  *
  *  Created on: 1 июл. 2017 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_LSPSWITCH_H_
-#define UI_TK_LSPSWITCH_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_SIMPLE_SWITCH_H_
+#define LSP_PLUG_IN_TK_WIDGETS_SIMPLE_SWITCH_H_
 
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {
     namespace tk
     {
-        
-        class LSPSwitch: public LSPWidget
+        class Switch: public Widget
         {
             public:
                 static const w_class_t    metadata;
@@ -28,29 +28,30 @@ namespace lsp
                     S_TOGGLED   = (1 << 1)
                 };
 
-                LSPColor        sColor;
-                LSPColor        sTextColor;
-                LSPColor        sBorderColor;
-                LSPColor        sHoleColor;
+            protected:
+                size_t                  nState;
+                size_t                  nBMask;
 
-                size_t          nSize;
-                size_t          nBorder;
-                float           nAspect;
-                size_t          nState;
-                size_t          nBMask;
-                size_t          nAngle;
+                prop::Color             sColor;
+                prop::Color             sTextColor;
+                prop::Color             sBorderColor;
+                prop::Color             sHoleColor;
+                prop::Integer           sBorder;
+                prop::Integer           sSize;
+                prop::Float             fAspect;
+                prop::Boolean           sDown;
 
             protected:
-                bool        check_mouse_over(ssize_t x, ssize_t y);
-                void        dimensions(ssize_t &w, ssize_t &h);
+                bool                    check_mouse_over(ssize_t x, ssize_t y);
+                void                    dimensions(ssize_t &w, ssize_t &h);
 
-                void        on_click(bool down);
+                void                    on_click(bool down);
 
             public:
-                explicit LSPSwitch(LSPDisplay *dpy);
-                virtual ~LSPSwitch();
+                explicit Switch(Display *dpy);
+                virtual ~Switch();
 
-                virtual status_t init();
+                virtual status_t    init();
 
             public:
                 inline bool is_down() const     { return nState & S_TOGGLED; }
@@ -101,4 +102,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_LSPSWITCH_H_ */
+#endif /* LSP_PLUG_IN_TK_WIDGETS_SIMPLE_SWITCH_H_ */

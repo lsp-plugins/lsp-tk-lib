@@ -54,6 +54,7 @@
 #include <lsp-plug.in/tk/prop/Position.h>
 #include <lsp-plug.in/tk/prop/Size.h>
 #include <lsp-plug.in/tk/prop/SizeConstraints.h>
+#include <lsp-plug.in/tk/prop/SizeRange.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
 #include <lsp-plug.in/tk/prop/Allocation.h>
 #include <lsp-plug.in/tk/prop/Font.h>
@@ -77,6 +78,7 @@
 // Simple widgets
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>
+#include <lsp-plug.in/tk/widgets/simple/Switch.h>
 
 // Container widgets
 #include <lsp-plug.in/tk/widgets/containers/Window.h>
