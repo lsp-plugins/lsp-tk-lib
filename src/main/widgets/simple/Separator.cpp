@@ -1,0 +1,106 @@
+/*
+ * Separator.cpp
+ *
+ *  Created on: 9 июл. 2017 г.
+ *      Author: sadko
+ */
+
+#include <lsp-plug.in/tk/tk.h>
+
+namespace lsp
+{
+    namespace tk
+    {
+        const w_class_t Separator::metadata = { "Separator", &Widget::metadata };
+
+        Separator::Separator(Display *dpy):
+            Widget(dpy),
+            sOrientation(&sProperties),
+            sColor(&sProperties),
+            sSizeRange(&sProperties),
+            sThickness(&sProperties)
+        {
+            pClass          = &metadata;
+        }
+        
+        Separator::~Separator()
+        {
+        }
+
+        status_t Separator::init()
+        {
+            status_t result = Widget::init();
+            if (result != STATUS_OK)
+                return result;
+
+            sOrientation.bind("orientation", &sStyle);
+            sColor.bind("color", &sStyle);
+            sSizeRange.bind("size", &sStyle);
+            sThickness.bind("thickness", &sStyle);
+
+            Style *sclass = style_class();
+            if (sclass != NULL)
+            {
+                sOrientation.init(sclass, O_VERTICAL);
+                sColor.init(sclass, "#000000");
+                sSizeRange.init(sclass, -1, -1);
+                sThickness.init(sclass, 1);
+            }
+
+            return STATUS_OK;
+        }
+
+        void Separator::property_changed(Property *prop)
+        {
+            Widget::property_changed(prop);
+
+            if (sOrientation.is(prop))
+                query_resize();
+            if (sColor.is(prop))
+                query_draw();
+            if (sSizeRange.is(prop))
+                query_resize();
+            if (sColor.is(prop))
+                query_draw();
+            if (sThickness.is(prop))
+                query_resize();
+        }
+
+        void Separator::render(ws::ISurface *s, bool force)
+        {
+            float bright    = sBrightness.get();
+
+            // Prepare palette
+            lsp::Color color(sColor);
+            color.scale_lightness(bright);
+
+            // Draw self
+            s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+        }
+
+        void Separator::size_request(ws::size_limit_t *r)
+        {
+            ssize_t min, max;
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            size_t thick    = lsp_max(0, sThickness.get()) * scaling;
+
+            sSizeRange.get(&min, &max);
+
+            if (sOrientation.horizontal())
+            {
+                r->nMinWidth    = lsp_max(0, min);
+                r->nMaxWidth    = (max >= 0) ? lsp_max(r->nMinWidth, max) : -1;
+                r->nMinHeight   = thick;
+                r->nMaxHeight   = thick;
+            }
+            else
+            {
+                r->nMinWidth    = thick;
+                r->nMaxWidth    = thick;
+                r->nMinHeight   = lsp_max(0, min);
+                r->nMaxHeight   = (max >= 0) ? lsp_max(r->nMinHeight, max) : -1;
+            };
+        }
+    
+    } /* namespace tk */
+} /* namespace lsp */

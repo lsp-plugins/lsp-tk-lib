@@ -31,6 +31,7 @@ namespace lsp
             protected:
                 size_t                      nState;
                 size_t                      nBMask;
+                ws::rectangle_t             sButton;
 
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
@@ -54,6 +55,7 @@ namespace lsp
             protected:
                 virtual void                size_request(ws::size_limit_t *r);
                 virtual void                property_changed(Property *prop);
+                virtual void                realize(const ws::rectangle_t *r);
 
             public:
                 explicit Switch(Display *dpy);

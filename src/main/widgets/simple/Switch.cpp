@@ -29,10 +29,15 @@ namespace lsp
             sAngle(&sProperties),
             sDown(&sProperties)
         {
-            nState      = 0;
-            nBMask      = 0;
+            nState          = 0;
+            nBMask          = 0;
 
-            pClass      = &metadata;
+            sButton.nLeft   = -1;
+            sButton.nTop    = -1;
+            sButton.nWidth  = 0;
+            sButton.nHeight = 0;
+
+            pClass          = &metadata;
         }
         
         status_t Switch::init()
@@ -120,15 +125,22 @@ namespace lsp
 
             float bright    = sBrightness.get();
             float scaling   = lsp_max(0.0f, sScaling.get());
+            size_t angle    = sAngle.get() & 3;
 
             border.scale_lightness(bright);
             font.scale_lightness(bright);
             bcl.scale_lightness(bright);
 
             // Draw background
-            ws::rectangle_t r   = sSize;
-            r.nLeft             = 0;
-            r.nTop              = 0;
+            ws::rectangle_t r   = sButton;
+            r.nLeft            -= sSize.nLeft;
+            r.nTop             -= sSize.nTop;
+
+            s->fill_frame(
+                    0, 0, sSize.nWidth, sSize.nHeight,
+                    r.nLeft, r.nTop, r.nWidth, r.nHeight,
+                    bg_color
+                );
 
             // Draw border (if present)
             bool aa     = s->set_antialiasing(true);
@@ -195,7 +207,6 @@ namespace lsp
 
             // Draw button
             size_t pos      = (nState & S_PRESSED) ? 1 : (nState & S_TOGGLED) ? 2 : 0;
-            size_t angle    = sAngle.get() & 3;
             if (angle & 2)
                 pos     = 2 - pos;
             float radius    = ((angle & 1) ? r.nWidth : r.nHeight) * 0.5f / cosf(ANGLE);
@@ -312,10 +323,13 @@ namespace lsp
                 x_space            += lsp_max(1, bw * scaling) + lsp_max(1, scaling * 2.0f); // border + chamfer
 
             // Compute minimum width and height vor vertical position
-            r->nMinHeight       = lsp_max(8, sSizeRange.min());
-            r->nMaxHeight       = lsp_max(r->nMinHeight, sSizeRange.max());
+            ssize_t rmin, rmax;
+            sSizeRange.get(&rmin, &rmax);
+
+            r->nMinHeight       = lsp_max(8, rmin);
+            r->nMaxHeight       = (rmax >= 0) ? lsp_max(r->nMinHeight, rmax) : -1;
             r->nMinWidth        = lsp_max(8, r->nMinHeight* aspect);
-            r->nMaxWidth        = lsp_max(r->nMinWidth, r->nMaxHeight * aspect);
+            r->nMaxWidth        = (r->nMaxHeight >= 0) ? lsp_max(r->nMinWidth, r->nMaxHeight * aspect) : -1;
 
             // Apply rotation
             if (angle & 1)
@@ -327,8 +341,55 @@ namespace lsp
             // Scale and add extra space
             r->nMinWidth        = scaling * r->nMinWidth  + x_space * 2;
             r->nMinHeight       = scaling * r->nMinHeight + x_space * 2;
-            r->nMaxWidth        = scaling * r->nMaxWidth  + x_space * 2;
-            r->nMaxHeight       = scaling * r->nMaxHeight + x_space * 2;
+            r->nMaxWidth        = (r->nMaxWidth >= 0) ? scaling * r->nMaxWidth  + x_space * 2 : -1;
+            r->nMaxHeight       = (r->nMaxHeight >= 0) ? scaling * r->nMaxHeight + x_space * 2 : -1;
+        }
+
+        void Switch::realize(const ws::rectangle_t *r)
+        {
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float aspect        = lsp_max(1.0f, sAspect.get());
+            size_t angle        = sAngle.get();
+
+            // Add border if present
+            size_t x_space      = lsp_min(1, scaling);  // hole - extra space at each side
+            size_t bw           = lsp_max(0, sBorder.get());
+            if (bw > 0)
+                x_space            += lsp_max(1, bw * scaling) + lsp_max(1, scaling * 2.0f); // border + chamfer
+
+            ws::rectangle_t btn;
+
+            if (angle & 1)
+            {
+                btn.nWidth          = r->nWidth;
+                btn.nHeight         = (r->nWidth  - x_space*2)*aspect + x_space*2;
+
+                if (btn.nHeight > r->nHeight)
+                {
+                    btn.nHeight         = r->nHeight;
+                    btn.nWidth          = (r->nHeight - x_space*2)/aspect + x_space*2;
+                }
+            }
+            else
+            {
+                btn.nHeight         = r->nHeight;
+                btn.nWidth          = (r->nHeight - x_space*2)*aspect + x_space*2;
+
+                if (btn.nWidth > r->nWidth)
+                {
+                    btn.nWidth          = r->nWidth;
+                    btn.nHeight         = (r->nWidth  - x_space*2)/aspect + x_space*2;
+                }
+            }
+
+            btn.nLeft           = r->nLeft + ((r->nWidth  - btn.nWidth)  >> 1);
+            btn.nTop            = r->nTop  + ((r->nHeight - btn.nHeight) >> 1);
+
+            // Save parameters
+            sButton             = btn;
+
+            // Call parent widget to realize
+            Widget::realize(r);
         }
 
         bool Switch::check_mouse_over(ssize_t x, ssize_t y)
@@ -341,10 +402,10 @@ namespace lsp
             if (bw > 0)
                 x_space            += lsp_max(1, bw * scaling) + lsp_max(1, scaling * 2.0f); // border + chamfer
 
-            x                  -= sSize.nLeft + x_space;
-            y                  -= sSize.nTop  + x_space;
-            ssize_t w           = sSize.nWidth  - x_space * 2;
-            ssize_t h           = sSize.nHeight - x_space * 2;
+            x                  -= sButton.nLeft   + x_space;
+            y                  -= sButton.nTop    + x_space;
+            ssize_t w           = sButton.nWidth  - x_space * 2;
+            ssize_t h           = sButton.nHeight - x_space * 2;
 
             return (x >= 0) && (y >= 0) && (x < w) && (y < h);
         }

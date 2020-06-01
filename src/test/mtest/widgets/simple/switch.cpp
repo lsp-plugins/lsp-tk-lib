@@ -182,7 +182,7 @@ MTEST_BEGIN("tk.widgets.simple", switch)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(4);
+        grid->rows()->set(5);
         grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -261,6 +261,24 @@ MTEST_BEGIN("tk.widgets.simple", switch)
                 MTEST_ASSERT(grid->add(sw) == STATUS_OK);
 
                 sw->size()->set(x * 8, (x + 1) * 8);
+                sw->down()->set(x & 1);
+                sw->border_color()->set_rgb24(next_color(col));
+            }
+
+            // Non-limited size range
+            for (ssize_t x=0; x<4; ++x)
+            {
+                LSPString id;
+
+                // Create alignment widget
+                MTEST_ASSERT(id.fmt_ascii("switch-%d-5", x));
+                MTEST_ASSERT(sw = new tk::Switch(dpy));
+                MTEST_ASSERT(init_widget(sw, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(sw));
+                MTEST_ASSERT(grid->add(sw) == STATUS_OK);
+
+                sw->size()->set(24, -1);
+                sw->angle()->set(x);
                 sw->down()->set(x & 1);
                 sw->border_color()->set_rgb24(next_color(col));
             }

@@ -76,9 +76,10 @@
 #include <lsp-plug.in/tk/base/cast.h>
 
 // Simple widgets
-#include <lsp-plug.in/tk/widgets/simple/Void.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>
+#include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/Switch.h>
+#include <lsp-plug.in/tk/widgets/simple/Void.h>
 
 // Container widgets
 #include <lsp-plug.in/tk/widgets/containers/Window.h>
