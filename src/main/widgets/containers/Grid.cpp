@@ -793,7 +793,9 @@ namespace lsp
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
             {
                 cell_t *w       = a->vCells.uget(i);
-                if ((w->pWidget == NULL) || (w->nRows != 1) || (w->nCols != 1))
+                if (w->pWidget == NULL)
+                    continue;
+                else if ((w->nRows != 1) && (w->nCols != 1))
                     continue;
 
                 // Get size limits of the widget

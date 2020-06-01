@@ -1,7 +1,7 @@
 /*
- * label.cpp
+ * separator.cpp
  *
- *  Created on: 27 мая 2020 г.
+ *  Created on: 02 июня 2020 г.
  *      Author: sadko
  */
 
@@ -9,7 +9,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.simple", switch)
+MTEST_BEGIN("tk.widgets.simple", separator)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -155,7 +155,7 @@ MTEST_BEGIN("tk.widgets.simple", switch)
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
         tk::Grid *grid = NULL;
-        tk::Switch *sw = NULL;
+        tk::Separator *sp = NULL;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
@@ -182,106 +182,53 @@ MTEST_BEGIN("tk.widgets.simple", switch)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(5);
-        grid->columns()->set(4);
+        grid->rows()->set(3);
+        grid->columns()->set(8);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
         grid->vspacing()->set(2);
 
         {
             // Create alignment and child widget
+            LSPString id;
             size_t col = 0;
 
-            // Change angle & aspect
-            for (ssize_t x=0; x<4; ++x)
+            // Create horizontal separator
+            MTEST_ASSERT(id.fmt_ascii("hsep-0"));
+            MTEST_ASSERT(sp = new tk::Separator(dpy));
+            MTEST_ASSERT(init_widget(sp, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(sp));
+            MTEST_ASSERT(grid->attach(0, 0, sp, 1, 8) == STATUS_OK);
+
+            sp->color()->set_rgb24(next_color(col));
+            sp->orientation()->set_horizontal();
+
+            // Create vertical separators
+            for (ssize_t x=0; x<8; ++x)
             {
-                LSPString id;
-
                 // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("switch-%d-0", x));
-                MTEST_ASSERT(sw = new tk::Switch(dpy));
-                MTEST_ASSERT(init_widget(sw, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(sw));
-                MTEST_ASSERT(grid->add(sw) == STATUS_OK);
+                MTEST_ASSERT(id.fmt_ascii("vsep-%d-0", x));
+                MTEST_ASSERT(sp = new tk::Separator(dpy));
+                MTEST_ASSERT(init_widget(sp, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(sp));
+                MTEST_ASSERT(grid->add(sp) == STATUS_OK);
 
-                sw->border()->set(6);
-                sw->angle()->set(x);
-                sw->aspect()->set(x * 0.25 + 1);
-                sw->down()->set(false);
-                sw->bg_color()->set_rgb24(next_color(col));
-                sw->border_color()->set(sw->bg_color());
+                sp->color()->set_rgb24(next_color(col));
+                sp->orientation()->set_vertical();
+                sp->thickness()->set((x < 4) ? (x+1) * 2 : (8-x) * 2);
+                sp->size()->set((x < 4) ? (x+1) * 24 : (8-x) * 24);
             }
 
-            // Change border and up/down state
-            for (ssize_t x=0; x<4; ++x)
-            {
-                LSPString id;
+            // Create horizontal separator
+            MTEST_ASSERT(id.fmt_ascii("hsep-2"));
+            MTEST_ASSERT(sp = new tk::Separator(dpy));
+            MTEST_ASSERT(init_widget(sp, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(sp));
+            MTEST_ASSERT(grid->attach(0, 2, sp, 1, 8) == STATUS_OK);
 
-                // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("switch-%d-1", x));
-                MTEST_ASSERT(sw = new tk::Switch(dpy));
-                MTEST_ASSERT(init_widget(sw, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(sw));
-                MTEST_ASSERT(grid->add(sw) == STATUS_OK);
-
-                sw->border()->set(0);
-                sw->angle()->set(0);
-                sw->down()->set(x & 1);
-                sw->color()->set_rgb24(next_color(col));
-            }
-
-            // Fixed size range
-            for (ssize_t x=0; x<4; ++x)
-            {
-                LSPString id;
-
-                // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("switch-%d-2", x));
-                MTEST_ASSERT(sw = new tk::Switch(dpy));
-                MTEST_ASSERT(init_widget(sw, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(sw));
-                MTEST_ASSERT(grid->add(sw) == STATUS_OK);
-
-                sw->border()->set(4);
-                sw->size()->set(x * 8);
-                sw->down()->set(x & 1);
-                sw->text_color()->set_rgb24(next_color(col));
-            }
-
-            // Variable size range
-            for (ssize_t x=0; x<4; ++x)
-            {
-                LSPString id;
-
-                // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("switch-%d-3", x));
-                MTEST_ASSERT(sw = new tk::Switch(dpy));
-                MTEST_ASSERT(init_widget(sw, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(sw));
-                MTEST_ASSERT(grid->add(sw) == STATUS_OK);
-
-                sw->size()->set(x * 8, (x + 1) * 8);
-                sw->down()->set(x & 1);
-                sw->border_color()->set_rgb24(next_color(col));
-            }
-
-            // Non-limited size range
-            for (ssize_t x=0; x<4; ++x)
-            {
-                LSPString id;
-
-                // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("switch-%d-4", x));
-                MTEST_ASSERT(sw = new tk::Switch(dpy));
-                MTEST_ASSERT(init_widget(sw, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(sw));
-                MTEST_ASSERT(grid->add(sw) == STATUS_OK);
-
-                sw->size()->set(24, -1);
-                sw->angle()->set(x);
-                sw->down()->set(x & 1);
-                sw->border_color()->set_rgb24(next_color(col));
-            }
+            sp->color()->set_rgb24(next_color(col));
+            sp->orientation()->set_horizontal();
+            sp->thickness()->set(4);
         }
 
         // Show window

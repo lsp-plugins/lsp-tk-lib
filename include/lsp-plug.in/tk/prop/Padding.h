@@ -89,6 +89,9 @@ namespace lsp
                 void            set_all(size_t value);
                 void            set_horizontal(size_t left, size_t right);
                 void            set_vertical(size_t top, size_t bottom);
+
+                inline void     set_horizontal(size_t h)    { set_horizontal(h, h);                 }
+                inline void     set_vertical(size_t v)      { set_vertical(v, v);                   }
                 inline void     set(size_t value)           { set_all(value);                       }
 
                 void            set(size_t left, size_t right, size_t top, size_t bottom);
