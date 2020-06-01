@@ -58,7 +58,7 @@ namespace lsp
                 sTextColor.init(sclass, "#eeeeee");
                 sBorderColor.init(sclass, "#444444");
                 sHoleColor.init(sclass, "#000000");
-                sBorder.init(sclass, 8);
+                sBorder.init(sclass, 6);
                 sSizeRange.init(sclass, 24);
                 sAspect.init(sclass, 1.41);
             }

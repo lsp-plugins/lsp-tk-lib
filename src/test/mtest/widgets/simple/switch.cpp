@@ -204,7 +204,7 @@ MTEST_BEGIN("tk.widgets.simple", switch)
                 MTEST_ASSERT(widgets.push(sw));
                 MTEST_ASSERT(grid->add(sw) == STATUS_OK);
 
-                sw->border()->set(8);
+                sw->border()->set(6);
                 sw->angle()->set(x);
                 sw->aspect()->set(x * 0.25 + 1);
                 sw->down()->set(false);
