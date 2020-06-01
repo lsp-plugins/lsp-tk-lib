@@ -129,7 +129,6 @@ namespace lsp
             ws::rectangle_t r   = sSize;
             r.nLeft             = 0;
             r.nTop              = 0;
-            s->fill_rect(bg_color, r.nLeft, r.nTop, r.nWidth, r.nHeight); // TODO: remove this
 
             // Draw border (if present)
             bool aa     = s->set_antialiasing(true);
@@ -347,16 +346,7 @@ namespace lsp
             ssize_t w           = sSize.nWidth  - x_space * 2;
             ssize_t h           = sSize.nHeight - x_space * 2;
 
-            if (x < 0)
-                return false;
-            if (y < 0)
-                return false;
-            if (x >= w)
-                return false;
-            if (y >= h)
-                return false;
-
-            return true;
+            return (x >= 0) && (y >= 0) && (x < w) && (y < h);
         }
 
         status_t Switch::on_mouse_down(const ws::event_t *e)
