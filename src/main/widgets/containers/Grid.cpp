@@ -135,7 +135,7 @@ namespace lsp
             // No widgets to draw?
             if (sAlloc.vCells.is_empty())
             {
-                s->fill_rect(sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight, bg_color);
+                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
                 return;
             }
 
@@ -159,7 +159,7 @@ namespace lsp
                     if (size_t(w->nTop  + w->nRows) < sAlloc.nRows)
                         ch         += vspacing;
 
-                    s->fill_rect(w->a.nLeft, w->a.nTop, cw, ch, bg_color);
+                    s->fill_rect(bg_color, w->a.nLeft, w->a.nTop, cw, ch);
                     continue;
                 }
 
@@ -183,12 +183,12 @@ namespace lsp
                     bg_color.copy(sBgColor);
                     if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
                     {
-                        s->fill_rect(w->a.nLeft + w->a.nWidth, w->a.nTop, hspacing, w->a.nHeight, bg_color);
+                        s->fill_rect(bg_color, w->a.nLeft + w->a.nWidth, w->a.nTop, hspacing, w->a.nHeight);
                         if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
-                            s->fill_rect(w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth + hspacing, vspacing, bg_color);
+                            s->fill_rect(bg_color, w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth + hspacing, vspacing);
                     }
                     else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
-                        s->fill_rect(w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth, vspacing, bg_color);
+                        s->fill_rect(bg_color, w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth, vspacing);
                 }
 
                 // Render the widget

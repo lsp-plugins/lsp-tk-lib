@@ -162,6 +162,11 @@ namespace lsp
                 {
                     style->create_int(vAtoms[P_MIN], min);
                     style->create_int(vAtoms[P_MAX], max);
+
+                    // Compound objects
+                    LSPString s;
+                    s.fmt_ascii("%ld %ld ", long(min), long(max));
+                    style->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;

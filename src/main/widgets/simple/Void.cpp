@@ -45,7 +45,7 @@ namespace lsp
             if ((sSize.nWidth > 0) && (sSize.nHeight > 0))
             {
                 lsp::Color bg_color(sBgColor);
-                s->fill_rect(sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight, bg_color);
+                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
 
                 // Debug padding
                 ws::rectangle_t xr;

@@ -578,7 +578,21 @@ namespace lsp
             // Swap the state
             swap_context(&sCtx, ctx);
 
+            // Bind schema
+            bind();
+
             return STATUS_OK;
+        }
+
+        void Schema::bind()
+        {
+            Style *root = (sCtx.pRoot != NULL) ? &sCtx.pRoot->sStyle : NULL;
+
+            // Bind properties
+            sScaling.bind("scaling", root);
+
+            // Initialize default values
+            sScaling.init(root, 1.0f);
         }
 
         status_t Schema::parse_style_class(LSPString *cname, const LSPString *text)
@@ -776,6 +790,9 @@ namespace lsp
                 if (s == NULL)
                     return NULL;
                 sCtx.pRoot  = s;
+
+                // Bind schema
+                bind();
             }
 
             return &s->sStyle;

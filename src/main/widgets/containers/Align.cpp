@@ -84,7 +84,7 @@ namespace lsp
             // Draw background if child is invisible or not present
             if ((pWidget == NULL) || (!pWidget->visibility()->get()))
             {
-                s->fill_rect(sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight, bg_color);
+                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
                 return;
             }
 

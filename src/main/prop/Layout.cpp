@@ -271,6 +271,11 @@ namespace lsp
                     style->create_float(vAtoms[P_VALIGN], valign);
                     style->create_float(vAtoms[P_HSCALE], hscale);
                     style->create_float(vAtoms[P_VSCALE], vscale);
+
+                    // Compound objects
+                    LSPString s;
+                    s.fmt_ascii("%.4f %.4f %.4f %.4f", halign, valign, hscale, vscale);
+                    style->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;

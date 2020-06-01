@@ -445,6 +445,11 @@ namespace lsp
                     style->create_bool(vAtoms[P_ITALIC], flags & ws::FF_ITALIC);
                     style->create_bool(vAtoms[P_UNDERLINE], flags & ws::FF_UNDERLINE);
                     style->create_bool(vAtoms[P_ANTIALIAS], flags & ws::FF_ANTIALIASING);
+
+                    // Complicated properties
+                    LSPString s;
+                    Property::fmt_bit_enums(&s, FLAGS, flags);
+                    style->create_string(vAtoms[P_FLAGS], &s);
                 }
                 style->end();
                 return STATUS_OK;

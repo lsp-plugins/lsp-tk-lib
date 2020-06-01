@@ -305,6 +305,43 @@ namespace lsp
             sync();
         }
 
+        bool Color::parse(lsp::Color *c, const char *s, Style *style)
+        {
+            // Try to parse color
+            status_t res = c->parse4(s);
+            if (res != STATUS_OK)
+                res = c->parse3(s);
+            if ((res != STATUS_OK) && (style != NULL))
+            {
+                const lsp::Color *col = style->schema()->color(s);
+                if (col != NULL)
+                {
+                    c->copy(col);
+                    res = STATUS_OK;
+                }
+            }
+
+            return res == STATUS_OK;
+        }
+
+        void Color::set(const char *text)
+        {
+            if (parse(&sColor, text, pStyle))
+                sync();
+        }
+
+        void Color::set(const LSPString *text)
+        {
+            if (parse(&sColor, text->get_utf8(), pStyle))
+                sync();
+        }
+
+        void Color::set(const Color *src)
+        {
+            sColor.copy(&src->sColor);
+            sync();
+        }
+
         namespace prop
         {
             status_t Color::init(Style *style, const char *value)
@@ -313,8 +350,10 @@ namespace lsp
                     return STATUS_BAD_ARGUMENTS;
                 else if (pStyle == NULL)
                     return STATUS_BAD_STATE;
-                style->create_string(vAtoms[P_VALUE], value);
-                return STATUS_OK;
+
+                lsp::Color tmp;
+                parse(&tmp, value, style);
+                return init(style, &tmp);
             }
 
             status_t Color::init(Style *style, const LSPString *value)
@@ -323,22 +362,57 @@ namespace lsp
                     return STATUS_BAD_ARGUMENTS;
                 else if (pStyle == NULL)
                     return STATUS_BAD_STATE;
-                style->create_string(vAtoms[P_VALUE], value);
-                return STATUS_OK;
+
+                lsp::Color tmp;
+                parse(&tmp, value->get_utf8(), style);
+                return init(style, &tmp);
             }
 
-            status_t Color::init(Style *style, const lsp::Color *value)
+            status_t Color::init(Style *style, const lsp::Color *c)
             {
-                if ((style == NULL) || (value == NULL))
+                if ((style == NULL) || (c == NULL))
                     return STATUS_BAD_ARGUMENTS;
                 else if (pStyle == NULL)
                     return STATUS_BAD_STATE;
 
                 char buf[32];
-                if (value->format_rgba(buf, sizeof(buf), 2) <= 0)
-                    return STATUS_UNKNOWN_ERR;
 
-                style->create_string(vAtoms[P_VALUE], buf);
+                style->begin();
+                {
+                    // R, G, B components
+                    style->create_float(vAtoms[P_R], c->red());
+                    style->create_float(vAtoms[P_G], c->green());
+                    style->create_float(vAtoms[P_B], c->blue());
+
+                    // H, S, L components
+                    style->create_float(vAtoms[P_H], c->hue());
+                    style->create_float(vAtoms[P_S], c->saturation());
+                    style->create_float(vAtoms[P_L], c->lightness());
+
+                    // Alpha component
+                    style->create_float(vAtoms[P_A], c->alpha());
+
+                    // Mixed components
+                    c->format_rgb(buf, sizeof(buf)/sizeof(char));
+                    style->create_string(vAtoms[P_RGB], buf);
+
+                    c->format_rgba(buf, sizeof(buf)/sizeof(char));
+                    style->create_string(vAtoms[P_RGBA], buf);
+
+                    c->format_hsl(buf, sizeof(buf)/sizeof(char));
+                    style->create_string(vAtoms[P_HSL], buf);
+
+                    c->format_hsla(buf, sizeof(buf)/sizeof(char));
+                    style->create_string(vAtoms[P_HSLA], buf);
+
+                    if (c->is_hsl())
+                        c->format_hsla(buf, sizeof(buf)/sizeof(char));
+                    else
+                        c->format_rgba(buf, sizeof(buf)/sizeof(char));
+                    style->create_string(vAtoms[P_VALUE], buf);
+                }
+                style->end();
+
                 return STATUS_OK;
             }
         }

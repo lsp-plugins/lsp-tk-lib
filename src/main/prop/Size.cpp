@@ -163,6 +163,11 @@ namespace lsp
                 {
                     style->create_int(vAtoms[P_WIDTH], width);
                     style->create_int(vAtoms[P_HEIGHT], height);
+
+                    // Compound objects
+                    LSPString s;
+                    s.fmt_ascii("%ld %ld", long(width), long(height));
+                    style->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;

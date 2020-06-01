@@ -60,6 +60,7 @@ namespace lsp
             protected:
                 void                sync();
                 void                commit(atom_t property);
+                static bool         parse(lsp::Color *c, const char *text, Style *style);
 
             protected:
                 explicit Color(prop::Listener *listener = NULL);
@@ -109,6 +110,9 @@ namespace lsp
 
                 void set_hsl(float h, float s, float l);
                 void set_hsla(float h, float s, float l, float a);
+                void set(const char *text);
+                void set(const LSPString *text);
+                void set(const Color *src);
 
             public:
                 void blend(const lsp::Color &c, float alpha)                { sColor.blend(c, alpha); sync(); }

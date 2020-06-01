@@ -374,18 +374,13 @@ namespace lsp
         {
             status_t SizeConstraints::init(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
             {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
+                ws::size_limit_t sl;
+                sl.nMinWidth    = min_width;
+                sl.nMinHeight   = min_height;
+                sl.nMaxWidth    = max_width;
+                sl.nMaxHeight   = max_height;
 
-                style->begin();
-                {
-                    style->create_int(vAtoms[P_MIN_WIDTH], min_width);
-                    style->create_int(vAtoms[P_MIN_HEIGHT], min_height);
-                    style->create_int(vAtoms[P_MAX_WIDTH], max_width);
-                    style->create_int(vAtoms[P_MAX_HEIGHT], max_height);
-                }
-                style->end();
-                return STATUS_OK;
+                return init(style, &sl);
             }
 
             status_t SizeConstraints::init(Style *style, const ws::size_limit_t *p)
@@ -399,6 +394,11 @@ namespace lsp
                     style->create_int(vAtoms[P_MIN_HEIGHT], p->nMinHeight);
                     style->create_int(vAtoms[P_MAX_WIDTH], p->nMaxWidth);
                     style->create_int(vAtoms[P_MAX_HEIGHT], p->nMaxHeight);
+
+                    // Compound objects
+                    LSPString s;
+                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nMinWidth), long(p->nMinHeight), long(p->nMaxWidth), long(p->nMaxHeight));
+                    style->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;

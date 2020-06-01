@@ -67,6 +67,9 @@ namespace lsp
                  * @param dst destination property to perform swap
                  */
                 void                swap(Float *dst);
+
+                inline float        add(float value)        { return set(fValue + value);   }
+                inline float        sub(float value)        { return set(fValue - value);   }
         };
 
         namespace prop

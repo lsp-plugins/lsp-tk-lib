@@ -141,14 +141,14 @@ namespace lsp
             status_t res    = visible_items(&visible, &vItems);
             if (res != STATUS_OK)
             {
-                s->fill_rect(sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight, bg_color);
+                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
                 return;
             }
 
             // Draw background if needed
             if ((visible.is_empty()) && (force))
             {
-                s->fill_rect(sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight, bg_color);
+                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
                 return;
             }
 
@@ -182,9 +182,9 @@ namespace lsp
                     {
                         bg_color.copy(sBgColor);
                         if (horizontal)
-                            s->fill_rect(wc->a.nLeft + wc->a.nWidth, wc->a.nTop, spacing, wc->a.nHeight, bg_color);
+                            s->fill_rect(bg_color, wc->a.nLeft + wc->a.nWidth, wc->a.nTop, spacing, wc->a.nHeight);
                         else
-                            s->fill_rect(wc->a.nLeft, wc->a.nTop + wc->a.nHeight, wc->a.nWidth, spacing, bg_color);
+                            s->fill_rect(bg_color, wc->a.nLeft, wc->a.nTop + wc->a.nHeight, wc->a.nWidth, spacing);
                     }
                 }
 

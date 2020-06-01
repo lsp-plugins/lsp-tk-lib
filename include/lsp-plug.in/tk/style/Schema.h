@@ -66,6 +66,8 @@ namespace lsp
                 context_t           sCtx;
                 mutable Atoms      *pAtoms;
 
+                prop::Float         sScaling;
+
             protected:
                 status_t            apply_context(context_t *ctx);
                 static void         init_context(context_t *ctx);
@@ -86,6 +88,8 @@ namespace lsp
 
                 style_t            *get_style(const LSPString *id);
 
+                void                bind();
+
             public:
                 explicit Schema(Atoms *atoms);
                 virtual ~Schema();
@@ -99,6 +103,10 @@ namespace lsp
                 status_t            parse_data(const char *str, const char *charset = NULL);
                 status_t            parse_data(const LSPString *str);
                 status_t            parse_data(io::IInSequence *seq, size_t flags = WRAP_NONE);
+
+            public:
+                inline Float               *scaling()                   { return &sScaling;     }
+                inline const Float         *scaling() const             { return &sScaling;     }
 
             public:
                 /**

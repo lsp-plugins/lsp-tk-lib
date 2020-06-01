@@ -73,7 +73,7 @@ namespace lsp
                 sScaling.bind("scaling", &sStyle);
                 sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
-                sBgColor.bind("bg_color", &sStyle);
+                sBgColor.bind("bg.color", &sStyle);
                 sPointer.bind("pointer", &sStyle);
 
                 Style *sclass = style_class();
@@ -411,7 +411,7 @@ namespace lsp
             if (pParent != NULL)
             {
                 Window *wnd = widget_cast<Window>(toplevel());
-                sStyle.remove_parent(pParent->style()); // Unlink style
+//                sStyle.remove_parent(pParent->style()); // Unlink style
 
                 WidgetContainer *wc = widget_cast<WidgetContainer>(pParent);
                 if (wc != NULL)
@@ -420,8 +420,8 @@ namespace lsp
             }
 
             pParent = parent;
-            if (parent != NULL) // Inherit the style of parent widget
-                sStyle.add_parent(parent->style());
+//            if (parent != NULL) // Inherit the style of parent widget
+//                sStyle.add_parent(parent->style());
         }
 
         Widget *Widget::toplevel()

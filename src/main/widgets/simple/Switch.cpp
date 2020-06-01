@@ -116,102 +116,99 @@ namespace lsp
             lsp::Color border(sBorderColor);
             lsp::Color bcl(sColor);
             lsp::Color font(sTextColor);
+            lsp::Color hole(sHoleColor);
 
-            float bright = sBrightness.get();
+            float bright    = sBrightness.get();
+            float scaling   = lsp_max(0.0f, sScaling.get());
+
             border.scale_lightness(bright);
             font.scale_lightness(bright);
             bcl.scale_lightness(bright);
 
-            // Get resource
-            ws::IGradient *cp;
-
-            bool aa     = s->set_antialiasing(true);
-
             // Draw background
-            s->fill_rect(0, 0, sSizeRange.nWidth, sSizeRange.nHeight, bg_color);
+            ws::rectangle_t r   = sSize;
+            r.nLeft             = 0;
+            r.nTop              = 0;
+            s->fill_rect(bg_color, r.nLeft, r.nTop, r.nWidth, r.nHeight); // TODO: remove this
 
-            // Get dimensions
-            ssize_t w = 0, h = 0;
-            dimensions(w, h);
-            ssize_t left = ssize_t((sSizeRange.nWidth - w) >> 1), top = ssize_t((sSizeRange.nHeight - h) >> 1);
-
-            // Move to the left corner
-            float delta = sqrtf(w*w + h*h);
-            float radius    = nAspect * nSize * 0.5f / cosf(ANGLE);
-
-            // Draw border if present
-            if (nBorder > 0)
+            // Draw border (if present)
+            bool aa     = s->set_antialiasing(true);
+            ws::IGradient *g;
+            size_t xbw          = lsp_max(0, sBorder.get());
+            if (xbw > 0)
             {
-                // Draw border
-                ssize_t b_r = 3;
+                float delta     = sqrtf(r.nWidth * r.nWidth + r.nHeight * r.nHeight);
+                size_t champ    = lsp_max(1, scaling * 2.0f);
+                lsp::Color bc(border);
+                float xb        = bc.lightness();
 
-                for (ssize_t i=0; (i<b_r) && (i < ssize_t(nBorder)); ++i)
+                // Draw champfer
+                for (size_t i=0; i<champ; ++i)
                 {
-                    Color bc(border);
-                    float bright = (i + 1.0) / b_r;
-                    bc.lightness(bc.lightness() + bright);
+                    // Compute color
+                    float bright = (xb * (i + 1.0f)) / (champ + 1);
+                    bc.lightness(bright);
 
-                    cp = s->radial_gradient(
-                        left + w - (b_r << 1), top + (b_r << 1), delta * 0.5,
-                        left + w - (b_r << 1), top + (b_r << 1), delta * 2.0 / (bright + 1.0)
+                    // Create gradient
+                    g = s->radial_gradient(
+                        r.nLeft + r.nWidth, r.nTop, 0,
+                        r.nLeft + r.nWidth, r.nTop, delta * 2.0f
                     );
-                    cp->add_color(0.0, border.red() * bright, border.green() * bright, border.blue() * bright);
-                    cp->add_color(1.0, 0.5 * border.red(), 0.5 *  border.green(), 0.5 * border.blue());
-                    s->fill_rect(left + i, top + i, w - (i << 1), h - (i << 1), cp);
-                    delete cp;
+
+                    g->add_color(0.0, bc.red(), bc.green(), bc.blue());
+                    g->add_color(1.0, 0.5 * bc.red(), 0.5 *  bc.green(), 0.5 * bc.blue());
+                    s->wire_rect(g, r.nLeft, r.nTop, r.nWidth-1, r.nHeight-1, 1.0f);
+                    delete g;
+
+                    // Update rect
+                    r.nLeft        += 1;
+                    r.nTop         += 1;
+                    r.nWidth       -= 2;
+                    r.nHeight      -= 2;
                 }
 
                 // Draw border
-                if (ssize_t(nBorder) > b_r)
-                {
-                    cp = s->radial_gradient(
-                        left + w - (b_r << 1), top + (b_r << 1), delta * 0.5,
-                        left + w - (b_r << 1), top + (b_r << 1), delta * 1.0
-                    );
-                    cp->add_color(0.0, border);
-                    cp->add_color(1.0, 0.5 * border.red(), 0.5 * border.green(), 0.5 * border.blue());
-                    s->fill_rect(left + b_r, top + b_r, w - (b_r << 1), h - (b_r << 1), cp);
-                    delete cp;
-                }
-
-                // Draw hole
-                Color hole(border);
-                hole.darken(0.75);
-
-                cp = s->radial_gradient(
-                    left + w - (b_r << 1), top + (b_r << 1), 0,
-                    left + w - (b_r << 1), top + (b_r << 1), delta * 2.0
+                bc.lightness(xb);
+                size_t zbw      = lsp_max(1, xbw * scaling);
+                g = s->radial_gradient(
+                    r.nLeft + r.nWidth, r.nTop, 0,
+                    r.nLeft + r.nWidth, r.nTop, delta * 2.0f
                 );
-                cp->add_color(0.0, hole);
-                cp->add_color(1.0, 0.5 * hole.red(), 0.5 *  hole.green(), 0.5 * hole.blue());
-                s->fill_rect(left + nBorder, top + nBorder, w - (nBorder << 1), h - (nBorder << 1), cp);
-                delete cp;
-            }
-            else
-            {
-                // Draw hole
-                Color hole;
-                pDisplay->theme()->get_color(C_HOLE, &hole);
-                s->fill_rect(left + nBorder, top + nBorder, w - (nBorder << 1), h - (nBorder << 1), hole);
+
+                g->add_color(0.0, bc.red(), bc.green(), bc.blue());
+                g->add_color(1.0, 0.5 * bc.red(), 0.5 *  bc.green(), 0.5 * bc.blue());
+                s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                delete g;
+
+                // Update rect
+                r.nLeft        += zbw;
+                r.nTop         += zbw;
+                r.nWidth       -= zbw << 1;
+                r.nHeight      -= zbw << 1;
             }
 
-            size_t pos = (nState & S_PRESSED) ? 1 : (nState & S_TOGGLED) ? 2 : 0;
-            if (nAngle & 2)
-                pos     = 2 - pos;
+            // Draw hole
+            s->wire_rect(hole, r.nLeft, r.nTop, r.nWidth-1, r.nHeight-1, lsp_max(1.0f, scaling));
+            r.nLeft        += 1;
+            r.nTop         += 1;
+            r.nWidth       -= 2;
+            r.nHeight      -= 2;
 
             // Draw button
-            size_t l    = left + nBorder + 1;
-            size_t bw   = w - ((nBorder + 1) << 1);
-            size_t t    = top + nBorder + 1;
-            size_t bh   = h - ((nBorder + 1) << 1);
+            size_t pos      = (nState & S_PRESSED) ? 1 : (nState & S_TOGGLED) ? 2 : 0;
+            size_t angle    = sAngle.get() & 3;
+            if (angle & 2)
+                pos     = 2 - pos;
+            float radius    = ((angle & 1) ? r.nWidth : r.nHeight) * 0.5f / cosf(ANGLE);
 
+            // Draw button
             ssize_t dw1 = radius * (sinf((pos + 1) * ANGLE) - sinf(ANGLE));
             ssize_t dw2 = radius * (sinf((3 - pos) * ANGLE) - sinf(ANGLE));
             float bc    = bcl.lightness();
             float b1    = (pos * 0.1) + bc;
             float b2    = ((2 - pos) * 0.1) + bc;
             float b0    = 0.1 * bc;
-            size_t wid  = (nAngle & 1) ? bh : bw;
+            size_t wid  = (angle & 1) ? r.nHeight : r.nWidth;
             ssize_t cx  = (wid + dw1 - dw2) >> 1;
             ssize_t dc1 = cx - dw1;
             ssize_t dc2 = wid - (cx + dw2);
@@ -222,10 +219,10 @@ namespace lsp
                 float bright = (b1 - b0) * arg / dw1 + b0;
                 bcl.lightness(bright);
 
-                if (nAngle & 1)
-                    s->fill_rect(l, t + i, bw, dw1 - i, bcl);
+                if (angle & 1)
+                    s->fill_rect(bcl, r.nLeft, r.nTop + i, r.nWidth, dw1 - i);
                 else
-                    s->fill_rect(l + i, t, dw1 - i, bh, bcl);
+                    s->fill_rect(bcl, r.nLeft + i, r.nTop, dw1 - i, r.nHeight);
             }
 
             for (ssize_t i=0; i < dc1; ++i)
@@ -233,10 +230,10 @@ namespace lsp
                 float bright = (b1 - bc) * (dc1 - i) / dc1 + bc;
                 bcl.lightness(bright);
 
-                if (nAngle & 1)
-                    s->fill_rect(l, t + dw1 + i, bw, dc1 - i, bcl);
+                if (angle & 1)
+                    s->fill_rect(bcl, r.nLeft, r.nTop + dw1 + i, r.nWidth, dc1 - i);
                 else
-                    s->fill_rect(l + dw1 + i, t, dc1 - i, bh, bcl);
+                    s->fill_rect(bcl, r.nLeft + dw1 + i, r.nTop, dc1 - i, r.nHeight);
             }
 
             for (ssize_t i=0; i < dw2; ++i)
@@ -245,10 +242,10 @@ namespace lsp
                 float bright = (b2 - b0) * arg / dw2 + b0;
                 bcl.lightness(bright);
 
-                if (nAngle & 1)
-                    s->fill_rect(l, t + bh - dw2, bw, dw2 - i, bcl);
+                if (angle & 1)
+                    s->fill_rect(bcl, r.nLeft, r.nTop + r.nHeight - dw2, r.nWidth, dw2 - i);
                 else
-                    s->fill_rect(l + bw - dw2, t, dw2 - i, bh, bcl);
+                    s->fill_rect(bcl, r.nLeft + r.nWidth - dw2, r.nTop, dw2 - i, r.nHeight);
             }
 
             for (ssize_t i=0; i < dc2; ++i)
@@ -256,10 +253,10 @@ namespace lsp
                 float bright = (b2 - bc) * (dc2 - i) / dc2 + bc;
                 bcl.lightness(bright);
 
-                if (nAngle & 1)
-                    s->fill_rect(l, t + cx, bw, dc2 - i, bcl);
+                if (angle & 1)
+                    s->fill_rect(bcl, r.nLeft, r.nTop + cx, r.nWidth, dc2 - i);
                 else
-                    s->fill_rect(l + cx, t, dc2 - i, bh, bcl);
+                    s->fill_rect(bcl, r.nLeft + cx, r.nTop, dc2 - i, r.nHeight);
             }
 
             // Draw symbols
@@ -270,24 +267,28 @@ namespace lsp
             float s1    = (wid >> 3);
             float s2    = (wid >> 3);
 
-            font.lightness((nAngle & 2) ? b2 : b1);
-            if (nAngle & 1)
-                s->wire_arc(left + (w >> 1), t + cx + (nAngle - 2) * (wid >> 2), s1, 0, M_PI * 2.0, 2.0f, font);
-            else
-                s->wire_arc(l + cx + (nAngle - 1) * (wid >> 2), top + (h >> 1), s1, 0, M_PI * 2.0, 2.0f, font);
+            font.lightness((angle & 2) ? b2 : b1);
+            s->set_antialiasing(true);
 
-            font.lightness((nAngle & 2) ? b1 : b2);
-            if (nAngle & 1)
+            ssize_t w = ssize_t(r.nWidth >> 1), h = ssize_t(r.nHeight >> 1);
+
+            if (angle & 1)
+                s->wire_arc(r.nLeft + w, r.nTop + cx + (angle - 2) * (wid >> 2), s1, 0, M_PI * 2.0, 2.0f * scaling, font);
+            else
+                s->wire_arc(r.nLeft + cx + (angle - 1) * (wid >> 2), r.nTop + h, s1, 0, M_PI * 2.0, 2.0f * scaling, font);
+
+            font.lightness((angle & 2) ? b1 : b2);
+            if (angle & 1)
                 s->line(
-                    left + (w >> 1), t + cx - (nAngle - 2) * (wid >> 2) + s2,
-                    left + (w >> 1), t + cx - (nAngle - 2) * (wid >> 2) - s2,
-                    2.0f, font
+                    r.nLeft + w, r.nTop + cx - (angle - 2) * (wid >> 2) + s2,
+                    r.nLeft + w, r.nTop + cx - (angle - 2) * (wid >> 2) - s2,
+                    2.0f * scaling, font
                 );
             else
                 s->line(
-                    l + cx - (nAngle - 1) * (wid >> 2) + s2, top + (h >> 1),
-                    l + cx - (nAngle - 1) * (wid >> 2) - s2, top + (h >> 1),
-                    2.0f, font
+                    r.nLeft + cx - (angle - 1) * (wid >> 2) + s2, r.nTop + h,
+                    r.nLeft + cx - (angle - 1) * (wid >> 2) - s2, r.nTop + h,
+                    2.0f * scaling, font
                 );
 
             s->set_antialiasing(aa);
@@ -296,58 +297,84 @@ namespace lsp
         void Switch::on_click(bool down)
         {
             lsp_trace("switch clicked: down=%s", (down) ? "true" : "false");
-            sSlots.execute(LSPSLOT_CHANGE, this);
+            sSlots.execute(SLOT_CHANGE, this);
         }
 
         void Switch::size_request(ws::size_limit_t *r)
         {
-            dimensions(r->nMinWidth, r->nMinHeight);
-            r->nMaxWidth        = r->nMinWidth;
-            r->nMaxHeight       = r->nMinHeight;
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float aspect        = lsp_max(1.0f, sAspect.get());
+            size_t x_space      = lsp_min(1, scaling);  // hole - extra space at each side
+
+            // Add border if present
+            size_t bw           = lsp_max(0, sBorder.get());
+            if (bw > 0)
+                x_space            += lsp_max(1, bw * scaling) + lsp_max(1, scaling * 2.0f); // border + chamfer
+
+            // Compute minimum width and height vor vertical position
+            r->nMinHeight       = lsp_max(8, sSizeRange.min());
+            r->nMaxHeight       = lsp_max(r->nMinHeight, sSizeRange.max());
+            r->nMinWidth        = lsp_max(8, r->nMinHeight* aspect);
+            r->nMaxWidth        = lsp_max(r->nMinWidth, r->nMaxHeight * aspect);
+
+            // Apply rotation
+            size_t angle        = sAngle.get();
+            if (angle & 1)
+            {
+                swap(r->nMinWidth, r->nMinHeight);
+                swap(r->nMaxWidth, r->nMaxHeight);
+            }
+
+            // Scale and add extra space
+            r->nMinWidth        = scaling * r->nMinWidth  + x_space*2;
+            r->nMinHeight       = scaling * r->nMinHeight + x_space*2;
+            r->nMaxWidth        = scaling * r->nMaxWidth  + x_space*2;
+            r->nMaxHeight       = scaling * r->nMaxHeight + x_space*2;
         }
 
         bool Switch::check_mouse_over(ssize_t x, ssize_t y)
         {
-            ssize_t w = 0, h = 0;
-            dimensions(w, h);
-            w -= (nBorder + 1) << 1;
-            h -= (nBorder + 1) << 1;
-
-            ssize_t left    = sSizeRange.nLeft + ((sSizeRange.nWidth - w) >> 1);
-            ssize_t top     = sSizeRange.nTop + ((sSizeRange.nHeight - h) >> 1);
-            ssize_t right   = left + w;
-            ssize_t bottom  = top + h;
-
-    //        lsp_trace("x=%d, y=%d, l=%d, r=%d, t=%d, b=%d", int(x), int(y), int(left), int(right), int(top), int(bottom));
-            return ((x >= left) && (x <= right) && (y >= top) && (y <= bottom));
+            return false;
+//            ssize_t w = 0, h = 0;
+//            dimensions(w, h);
+//            w -= (nBorder + 1) << 1;
+//            h -= (nBorder + 1) << 1;
+//
+//            ssize_t left    = sSizeRange.nLeft + ((sSizeRange.nWidth - w) >> 1);
+//            ssize_t top     = sSizeRange.nTop + ((sSizeRange.nHeight - h) >> 1);
+//            ssize_t right   = left + w;
+//            ssize_t bottom  = top + h;
+//
+//    //        lsp_trace("x=%d, y=%d, l=%d, r=%d, t=%d, b=%d", int(x), int(y), int(left), int(right), int(top), int(bottom));
+//            return ((x >= left) && (x <= right) && (y >= top) && (y <= bottom));
         }
 
         void Switch::dimensions(ssize_t &w, ssize_t &h)
         {
-            size_t width  = nSize + 2;
-            size_t height = roundf(nSize * nAspect) + 2;
-
-            if (nBorder > 0)
-            {
-                width   += (nBorder + 1) << 1;
-                height  += (nBorder + 1) << 1;
-            }
-
-            // Round to be multiple of 2
-            width   += width & 1;
-            height  += height & 1;
-
-            // Accept rotation
-            if (nAngle & 1)
-            {
-                w       = width;
-                h       = height;
-            }
-            else
-            {
-                w       = height;
-                h       = width;
-            }
+//            size_t width  = nSize + 2;
+//            size_t height = roundf(nSize * nAspect) + 2;
+//
+//            if (nBorder > 0)
+//            {
+//                width   += (nBorder + 1) << 1;
+//                height  += (nBorder + 1) << 1;
+//            }
+//
+//            // Round to be multiple of 2
+//            width   += width & 1;
+//            height  += height & 1;
+//
+//            // Accept rotation
+//            if (nAngle & 1)
+//            {
+//                w       = width;
+//                h       = height;
+//            }
+//            else
+//            {
+//                w       = height;
+//                h       = width;
+//            }
         }
 
         status_t Switch::on_mouse_down(const ws::event_t *e)

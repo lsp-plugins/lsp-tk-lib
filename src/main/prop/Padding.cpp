@@ -460,6 +460,14 @@ namespace lsp
                     style->create_int(vAtoms[P_RIGHT], p->nRight);
                     style->create_int(vAtoms[P_TOP], p->nTop);
                     style->create_int(vAtoms[P_BOTTOM], p->nBottom);
+
+                    // Compound objects
+                    LSPString s;
+                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nTop), long(p->nRight), long(p->nBottom), long(p->nLeft));
+                    style->create_string(vAtoms[P_CSS], &s);
+
+                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nLeft), long(p->nRight), long(p->nTop), long(p->nBottom));
+                    style->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;
