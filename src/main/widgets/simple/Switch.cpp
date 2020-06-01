@@ -264,8 +264,8 @@ namespace lsp
             b1          = bc - ((2 - pos) * 0.1);
             b2          = bc - (pos * 0.1);
             wid        -= dw1 + dw2;
-            float s1    = (wid >> 3);
-            float s2    = (wid >> 3);
+            float s1    = wid * 0.125f;
+            float s2    = wid * 0.125f;
 
             font.lightness((angle & 2) ? b2 : b1);
             s->set_antialiasing(true);
@@ -304,9 +304,10 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float aspect        = lsp_max(1.0f, sAspect.get());
-            size_t x_space      = lsp_min(1, scaling);  // hole - extra space at each side
+            size_t angle        = sAngle.get();
 
             // Add border if present
+            size_t x_space      = lsp_min(1, scaling);  // hole - extra space at each side
             size_t bw           = lsp_max(0, sBorder.get());
             if (bw > 0)
                 x_space            += lsp_max(1, bw * scaling) + lsp_max(1, scaling * 2.0f); // border + chamfer
@@ -318,7 +319,6 @@ namespace lsp
             r->nMaxWidth        = lsp_max(r->nMinWidth, r->nMaxHeight * aspect);
 
             // Apply rotation
-            size_t angle        = sAngle.get();
             if (angle & 1)
             {
                 swap(r->nMinWidth, r->nMinHeight);
@@ -326,55 +326,37 @@ namespace lsp
             }
 
             // Scale and add extra space
-            r->nMinWidth        = scaling * r->nMinWidth  + x_space*2;
-            r->nMinHeight       = scaling * r->nMinHeight + x_space*2;
-            r->nMaxWidth        = scaling * r->nMaxWidth  + x_space*2;
-            r->nMaxHeight       = scaling * r->nMaxHeight + x_space*2;
+            r->nMinWidth        = scaling * r->nMinWidth  + x_space * 2;
+            r->nMinHeight       = scaling * r->nMinHeight + x_space * 2;
+            r->nMaxWidth        = scaling * r->nMaxWidth  + x_space * 2;
+            r->nMaxHeight       = scaling * r->nMaxHeight + x_space * 2;
         }
 
         bool Switch::check_mouse_over(ssize_t x, ssize_t y)
         {
-            return false;
-//            ssize_t w = 0, h = 0;
-//            dimensions(w, h);
-//            w -= (nBorder + 1) << 1;
-//            h -= (nBorder + 1) << 1;
-//
-//            ssize_t left    = sSizeRange.nLeft + ((sSizeRange.nWidth - w) >> 1);
-//            ssize_t top     = sSizeRange.nTop + ((sSizeRange.nHeight - h) >> 1);
-//            ssize_t right   = left + w;
-//            ssize_t bottom  = top + h;
-//
-//    //        lsp_trace("x=%d, y=%d, l=%d, r=%d, t=%d, b=%d", int(x), int(y), int(left), int(right), int(top), int(bottom));
-//            return ((x >= left) && (x <= right) && (y >= top) && (y <= bottom));
-        }
+            float scaling       = lsp_max(0.0f, sScaling.get());
 
-        void Switch::dimensions(ssize_t &w, ssize_t &h)
-        {
-//            size_t width  = nSize + 2;
-//            size_t height = roundf(nSize * nAspect) + 2;
-//
-//            if (nBorder > 0)
-//            {
-//                width   += (nBorder + 1) << 1;
-//                height  += (nBorder + 1) << 1;
-//            }
-//
-//            // Round to be multiple of 2
-//            width   += width & 1;
-//            height  += height & 1;
-//
-//            // Accept rotation
-//            if (nAngle & 1)
-//            {
-//                w       = width;
-//                h       = height;
-//            }
-//            else
-//            {
-//                w       = height;
-//                h       = width;
-//            }
+            // Add border if present
+            size_t x_space      = lsp_min(1, scaling);  // hole - extra space at each side
+            size_t bw           = lsp_max(0, sBorder.get());
+            if (bw > 0)
+                x_space            += lsp_max(1, bw * scaling) + lsp_max(1, scaling * 2.0f); // border + chamfer
+
+            x                  -= sSize.nLeft + x_space;
+            y                  -= sSize.nTop  + x_space;
+            ssize_t w           = sSize.nWidth  - x_space * 2;
+            ssize_t h           = sSize.nHeight - x_space * 2;
+
+            if (x < 0)
+                return false;
+            if (y < 0)
+                return false;
+            if (x >= w)
+                return false;
+            if (y >= h)
+                return false;
+
+            return true;
         }
 
         status_t Switch::on_mouse_down(const ws::event_t *e)

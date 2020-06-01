@@ -44,7 +44,6 @@ namespace lsp
 
             protected:
                 bool                        check_mouse_over(ssize_t x, ssize_t y);
-                void                        dimensions(ssize_t &w, ssize_t &h);
 
                 void                        on_click(bool down);
                 void                        sync_state(bool down);
