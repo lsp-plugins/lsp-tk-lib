@@ -100,6 +100,9 @@ namespace lsp
                 void        set(const ws::size_limit_t *p);
                 void        set(const SizeConstraints *p);
 
+                void        set_fixed(ssize_t width, ssize_t height)        { set(width, height, width, height);    }
+                inline void set_fixed(ssize_t size)                         { set(size, size, size, size);          }
+
                 void        compute(ws::size_limit_t *limit, float scale);
 
                 void        apply(ws::size_limit_t *dst, const ws::size_limit_t *src, float scale);

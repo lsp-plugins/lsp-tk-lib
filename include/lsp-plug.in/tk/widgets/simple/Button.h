@@ -56,7 +56,7 @@ namespace lsp
                 prop::TextLayout        sTextLayout;
                 prop::ButtonMode        sMode;
                 prop::Boolean           sDown;
-                prop::Boolean           sLed;
+                prop::Integer           sLed;
                 prop::Boolean           sEditable;
                 prop::Boolean           sHole;
                 prop::Boolean           sFlat;
@@ -110,8 +110,8 @@ namespace lsp
                 inline Boolean                 *down()                      { return &sDown;        }
                 inline const Boolean           *down() const                { return &sDown;        }
 
-                inline Boolean                 *led()                       { return &sLed;         }
-                inline const Boolean           *led() const                 { return &sLed;         }
+                inline Integer                 *led()                       { return &sLed;         }
+                inline const Integer           *led() const                 { return &sLed;         }
 
                 inline Boolean                 *editable()                  { return &sEditable;    }
                 inline const Boolean           *editable() const            { return &sEditable;    }

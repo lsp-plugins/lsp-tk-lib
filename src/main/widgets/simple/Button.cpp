@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
 {
@@ -81,7 +82,7 @@ namespace lsp
                 sTextLayout.init(sclass, 0.0f, 0.0f);
                 sMode.init(sclass, BM_NORMAL);
                 sDown.init(sclass, false);
-                sLed.init(sclass, false);
+                sLed.init(sclass, 0);
                 sEditable.init(sclass, true);
                 sHole.init(sclass, true);
                 sFlat.init(sclass, false);
@@ -146,7 +147,7 @@ namespace lsp
 
             if (sLed.is(prop))
             {
-                size_t state = sLed.add_as_flag(nState, S_LED);
+                size_t state = (sLed.get() > 0) ? nState | S_LED : nState & (~S_LED);
                 if (state != nState)
                 {
                     nState  = state;
@@ -184,7 +185,7 @@ namespace lsp
 
             if (sEditable.is(prop))
             {
-                nState = sLed.add_as_flag(nState, S_EDITABLE);
+                nState = sEditable.add_as_flag(nState, S_EDITABLE);
                 query_draw();
             }
         }
@@ -220,12 +221,22 @@ namespace lsp
 
         void Button::draw(ws::ISurface *s)
         {
-//            ws::IGradient *gr = NULL;
-//            size_t pressed = nState;
-//
-//            // Prepare palette
-//            Color bg_color(sBgColor);
-//            Color color(sColor);
+            ws::IGradient *gr = NULL;
+            size_t pressed = nState;
+
+            // Prepare palette
+            lsp::Color bg_color(sBgColor);
+            lsp::Color color(sColor);
+
+            color.scale_lightness(sBrightness.get());
+
+            // Draw background
+            s->fill_rect(bg_color, 0, 0, sSize.nWidth, sSize.nHeight);
+
+            bool aa     = s->set_antialiasing(false);
+
+
+
 //            color.scale_lightness(brightness());
 //
 //            // Draw background
@@ -367,80 +378,67 @@ namespace lsp
 //                sFont.draw(s, c_x - (tp.XAdvance * 0.5f), c_y - (fp.Height * 0.5f) + fp.Ascent, font_color, &title);
 //            }
 //
-//            s->set_antialiasing(aa);
+            s->set_antialiasing(aa);
         }
 
         void Button::size_request(ws::size_limit_t *r)
         {
-//            r->nMaxWidth    = -1;
-//            r->nMaxHeight   = -1;
-//            r->nMinWidth    = nMinWidth;
-//            r->nMinHeight   = nMinHeight;
-//
-//            LSPString title;
-//            sTitle.format(&title);
-//
-//            if (title.length() > 0)
-//            {
-//                text_parameters_t tp;
-//                font_parameters_t fp;
-//
-//                ISurface *s = pDisplay->create_surface(1, 1);
-//
-//                if (s != NULL)
-//                {
-//                    sFont.get_parameters(s, &fp);
-//                    sFont.get_text_parameters(s, &tp, &title);
-//                    s->destroy();
-//                    delete s;
-//
-//                    tp.Width       += 10;
-//                    fp.Height      += 10;
-//
-//                    if (r->nMinWidth < tp.Width)
-//                        r->nMinWidth    = tp.Width;
-//                    if (r->nMinHeight < fp.Height)
-//                        r->nMinHeight   = fp.Height;
-//                }
-//            }
-//
-//            size_t size     = (nWidth < nHeight) ? nWidth : nHeight;
-//            size_t delta    = (nState & S_LED) ? 2 + (size >> 2) : 2;
-//
-//            r->nMinWidth   += delta;
-//            r->nMinHeight  += delta;
+            // Compute basic elements
+            LSPString text;
+            ws::size_limit_t sc;
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            sConstraints.compute(&sc, scaling);
+            sText.format(&text);
+
+            sc.nMinWidth        = lsp_max(sc.nMinWidth,  2 * scaling);
+            sc.nMinHeight       = lsp_max(sc.nMinHeight, 2 * scaling);
+
+            // Need to analyze text parameters?
+            if ((text.length() > 0) && ((sc.nMaxWidth < 0) || (sc.nMaxHeight < 0)))
+            {
+                ws::font_parameters_t fp;
+                ws::text_parameters_t tp;
+
+                sFont.get_parameters(pDisplay, scaling, &fp);
+                sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+
+                size_t tminw    = ceil(tp.Width);
+                size_t tminh    = ceil(lsp_max(tp.Height, fp.Height));
+
+                if (sc.nMaxWidth < 0)
+                    sc.nMaxWidth    = lsp_max(sc.nMaxWidth, tminw);
+                if (sc.nMaxHeight < 0)
+                    sc.nMaxHeight   = lsp_max(sc.nMaxHeight, tminh);
+            }
+
+            // Compute additional elements
+            size_t chamfer      = lsp_max(1, scaling * 2.0f);
+            size_t hole         = (nState & S_HOLE) ? lsp_min(1, scaling) : 0;
+            size_t light        = (nState & S_LED)  ? lsp_min(1, scaling * (sLed.get() + 2)) : 0;
+            size_t outer        = lsp_max(hole, light);
+
+            // Compute final widget size limits
+            r->nMinWidth        = sc.nMinWidth  + (chamfer + outer) * 2;
+            r->nMinHeight       = sc.nMinHeight + (chamfer + outer) * 2;
+            r->nMaxWidth        = (sc.nMaxWidth  >= 0) ? lsp_max(r->nMinWidth,  r->nMaxWidth ) : -1;
+            r->nMaxHeight       = (sc.nMaxHeight >= 0) ? lsp_max(r->nMinHeight, r->nMaxHeight) : -1;
         }
 
         void Button::realize(const ws::rectangle_t *r)
         {
             Widget::realize(r);
 
-//            nWidth      = nMinWidth;
-//            nHeight     = nMinHeight;
-//
-//            LSPString title;
-//            sTitle.format(&title);
-//            if (title.length() <= 0)
-//                return;
-//
-//            text_parameters_t tp;
-//            font_parameters_t fp;
-//            ISurface *s = pDisplay->create_surface(1, 1);
-//            if (s == NULL)
-//                return;
-//
-//            sFont.get_parameters(s, &fp);
-//            sFont.get_text_parameters(s, &tp, &title);
-//            s->destroy();
-//            delete s;
-//
-//            tp.Width       += 10;
-//            fp.Height      += 10;
-//
-//            if (nWidth < tp.Width)
-//                nWidth      = tp.Width;
-//            if (nHeight < fp.Height)
-//                nHeight     = fp.Height;
+            float scaling       = lsp_max(0.0f, sScaling.get());
+
+            size_t hole         = (nState & S_HOLE) ? lsp_min(1, scaling) : 0;
+            size_t light        = (nState & S_LED)  ? lsp_min(1, scaling * (sLed.get() + 2)) : 0;
+            size_t outer        = lsp_max(hole, light);
+
+            sButton.nLeft       = r->nLeft   + outer;
+            sButton.nTop        = r->nTop    + outer;
+            sButton.nWidth      = r->nWidth  - outer*2;
+            sButton.nHeight     = r->nHeight - outer*2;
         }
 
         status_t Button::on_mouse_down(const ws::event_t *e)
