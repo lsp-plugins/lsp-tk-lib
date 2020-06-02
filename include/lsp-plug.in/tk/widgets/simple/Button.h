@@ -35,7 +35,8 @@ namespace lsp
                     S_TOGGLE    = (1 << 5),
                     S_DOWN      = (1 << 6),
                     S_EDITABLE  = (1 << 7),
-                    S_HOLE      = (1 << 8)
+                    S_HOLE      = (1 << 8),
+                    S_FLAT      = (1 << 9)
                 };
 
             protected:
@@ -52,11 +53,13 @@ namespace lsp
                 prop::Font              sFont;
                 prop::String            sText;
                 prop::SizeConstraints   sConstraints;
+                prop::TextLayout        sTextLayout;
                 prop::ButtonMode        sMode;
                 prop::Boolean           sDown;
                 prop::Boolean           sLed;
                 prop::Boolean           sEditable;
                 prop::Boolean           sHole;
+                prop::Boolean           sFlat;
 
             protected:
                 bool                check_mouse_over(ssize_t x, ssize_t y);
@@ -115,6 +118,12 @@ namespace lsp
 
                 inline Boolean                 *hole()                      { return &sHole;        }
                 inline const Boolean           *hole() const                { return &sHole;        }
+
+                inline Boolean                 *flat()                      { return &sFlat;        }
+                inline const Boolean           *flat() const                { return &sFlat;        }
+
+                inline TextLayout              *text_layout()               { return &sTextLayout;  }
+                inline const TextLayout        *text_layout() const         { return &sTextLayout;  }
 
             public:
                 virtual void        draw(ws::ISurface *s);

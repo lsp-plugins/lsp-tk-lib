@@ -23,11 +23,13 @@ namespace lsp
             sFont(&sProperties),
             sText(&sProperties),
             sConstraints(&sProperties),
+            sTextLayout(&sProperties),
             sMode(&sProperties),
             sDown(&sProperties),
             sLed(&sProperties),
             sEditable(&sProperties),
-            sHole(&sProperties)
+            sHole(&sProperties),
+            sFlat(&sProperties)
         {
             nState          = 0;
             nBMask          = 0;
@@ -58,11 +60,13 @@ namespace lsp
             sFont.bind("font", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
+            sTextLayout.bind("text.layout", &sStyle);
             sMode.bind("mode", &sStyle);
             sDown.bind("down", &sStyle);
             sLed.bind("led", &sStyle);
             sEditable.bind("editable", &sStyle);
             sHole.bind("hole", &sStyle);
+            sFlat.bind("flat", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -74,11 +78,13 @@ namespace lsp
                 sHoleColor.init(sclass, "#000000");
                 sFont.init(sclass, 12.0f);
                 sConstraints.init(sclass, 18, 18, -1, -1);
+                sTextLayout.init(sclass, 0.0f, 0.0f);
                 sMode.init(sclass, BM_NORMAL);
                 sDown.init(sclass, false);
                 sLed.init(sclass, false);
                 sEditable.init(sclass, true);
                 sHole.init(sclass, true);
+                sFlat.init(sclass, false);
             }
 
             // Additional slots
@@ -132,6 +138,8 @@ namespace lsp
                 query_resize();
             if (sConstraints.is(prop))
                 query_resize();
+            if (sTextLayout.is(prop))
+                query_draw();
 
             if (sMode.is(prop))
                 update_mode(sMode.get());
@@ -156,6 +164,12 @@ namespace lsp
                 }
             }
 
+            if (sFlat.is(prop))
+            {
+                nState = sFlat.add_as_flag(nState, S_FLAT);
+                query_draw();
+            }
+
             if (sDown.is(prop))
             {
                 size_t state    = nState & (~(S_DOWN | S_PRESSED | S_TOGGLED));
@@ -170,12 +184,8 @@ namespace lsp
 
             if (sEditable.is(prop))
             {
-                size_t state = sLed.add_as_flag(nState, S_EDITABLE);
-                if (state != nState)
-                {
-                    nState  = state;
-                    query_draw();
-                }
+                nState = sLed.add_as_flag(nState, S_EDITABLE);
+                query_draw();
             }
         }
 
@@ -262,8 +272,6 @@ namespace lsp
 //            if (pressed & S_LED)
 //            {
 //                // Draw light
-////                size_t flag = (nState & S_TRIGGER) ? S_PRESSED : S_TOGGLED;
-//
 //                if (pressed & S_DOWN)
 //                {
 //                    ssize_t x_rr = l_rr - 1;
