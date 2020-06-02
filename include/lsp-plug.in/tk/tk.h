@@ -48,16 +48,17 @@
 #include <lsp-plug.in/tk/prop/Orientation.h>
 
 // Compound properties
+#include <lsp-plug.in/tk/prop/Allocation.h>
+#include <lsp-plug.in/tk/prop/ButtonMode.h>
 #include <lsp-plug.in/tk/prop/Color.h>
-#include <lsp-plug.in/tk/prop/Padding.h>
+#include <lsp-plug.in/tk/prop/Font.h>
 #include <lsp-plug.in/tk/prop/Layout.h>
+#include <lsp-plug.in/tk/prop/Padding.h>
 #include <lsp-plug.in/tk/prop/Position.h>
 #include <lsp-plug.in/tk/prop/Size.h>
 #include <lsp-plug.in/tk/prop/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/SizeRange.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
-#include <lsp-plug.in/tk/prop/Allocation.h>
-#include <lsp-plug.in/tk/prop/Font.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>
@@ -76,6 +77,7 @@
 #include <lsp-plug.in/tk/base/cast.h>
 
 // Simple widgets
+#include <lsp-plug.in/tk/widgets/simple/Button.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/Switch.h>

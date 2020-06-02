@@ -71,6 +71,11 @@ namespace lsp
             set(tmp);
         }
 
+        size_t Boolean::add_as_flag(size_t set, size_t flag)
+        {
+            return (bValue) ? set | flag : set & (~flag);
+        }
+
         namespace prop
         {
             status_t Boolean::init(Style *style, bool value)

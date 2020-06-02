@@ -40,6 +40,7 @@ namespace lsp
             sVAlign.bind("text.valign", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("text.color", &sStyle);
+            sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
 
             Style *sclass = style_class();

@@ -39,6 +39,13 @@ namespace lsp
             WP_CHILD
         };
 
+        enum button_mode_t
+        {
+            BM_NORMAL,          //!< Simple push button
+            BM_TOGGLE,          //!< Push/Pull button
+            BM_TRIGGER          //!< Push button that acts as a trigger
+        };
+
         enum allocation_t
         {
             WA_HFILL    = 1 << 0,

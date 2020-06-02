@@ -67,6 +67,14 @@ namespace lsp
                  * @param dst destination property to perform swap
                  */
                 void                swap(Boolean *dst);
+
+                /**
+                 * Commit boolean flag as some bit in a bit set
+                 * @param set bit set to take as source
+                 * @param flag flag that indicates boolean value
+                 * @return updated bit set
+                 */
+                size_t              add_as_flag(size_t set, size_t flag);
         };
 
         namespace prop
