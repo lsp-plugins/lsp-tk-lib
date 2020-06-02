@@ -16,8 +16,7 @@ namespace lsp
 
         Label::Label(Display *dpy):
             Widget(dpy),
-            sHAlign(&sProperties),
-            sVAlign(&sProperties),
+            sTextLayout(&sProperties),
             sFont(&sProperties),
             sColor(&sProperties),
             sText(&sProperties),
@@ -36,8 +35,7 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
-            sHAlign.bind("text.halign", &sStyle);
-            sVAlign.bind("text.valign", &sStyle);
+            sTextLayout.bind("text.layout", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("text.color", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
@@ -46,8 +44,7 @@ namespace lsp
             Style *sclass = style_class();
             if (sclass != NULL)
             {
-                sHAlign.init(sclass, 0.0f);
-                sVAlign.init(sclass, 0.0f);
+                sTextLayout.init(sclass, 0.0f, 0.0f);
                 sFont.init(sclass, 12.0f);
                 sColor.init(sclass, "#000000");
                 sConstraints.init(sclass, -1, -1, -1, -1);
@@ -59,9 +56,7 @@ namespace lsp
         void Label::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
-            if (sHAlign.is(prop))
-                query_draw();
-            if (sVAlign.is(prop))
+            if (sTextLayout.is(prop))
                 query_draw();
             if (sFont.is(prop))
                 query_resize();
@@ -118,8 +113,8 @@ namespace lsp
             // Draw background
             s->clear(bg_color);
 
-            float halign    = lsp_limit(sHAlign.get() + 1.0f, 0.0f, 2.0f);
-            float valign    = lsp_limit(sVAlign.get() + 1.0f, 0.0f, 2.0f);
+            float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
+            float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
             float dy        = (r.nHeight - tp.Height) * 0.5f;
             ssize_t y       = r.nTop + dy * valign - fp.Descent;
 

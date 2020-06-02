@@ -22,8 +22,7 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
-                prop::Float                 sHAlign;        // Horizontal alignment of the font
-                prop::Float                 sVAlign;        // Vertical alignment of the font
+                prop::TextLayout            sTextLayout;    // Text layout
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
                 prop::String                sText;          // Text to display
@@ -40,11 +39,8 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline Float                   *halign()            { return &sHAlign;      }
-                inline const Float             *halign() const      { return &sHAlign;      }
-
-                inline Float                   *valign()            { return &sVAlign;      }
-                inline const Float             *valign() const      { return &sVAlign;      }
+                inline TextLayout              *text_layout()       { return &sTextLayout;  }
+                inline const TextLayout        *text_layout() const { return &sTextLayout;  }
 
                 inline Font                    *font()              { return &sFont;        }
                 inline const Font              *font() const        { return &sFont;        }
