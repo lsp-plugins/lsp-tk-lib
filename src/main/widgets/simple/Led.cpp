@@ -81,6 +81,8 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             sSizeRange.compute(r, scaling);
+            r->nMinWidth        = lsp_max(4, r->nMinWidth);
+            r->nMinHeight       = lsp_max(4, r->nMinHeight);
 
             size_t hole         = (sHole.get()) ? lsp_max(1.0f, scaling) : 0;
             size_t led          = lsp_max(0.0f, sLed.get() * scaling);
@@ -128,27 +130,27 @@ namespace lsp
             if (on)
             {
                 // Draw light
-                g = s->radial_gradient(cx, cy, 0, cx, cy, xr);
+                g = s->radial_gradient(cx, cy, r, cx, cy, xr);
                 g->add_color(0.0, col, 0.5f);
                 g->add_color(1.0, col, 1.0f);
-                s->fill_circle(cx, cy, r, g);
+                s->fill_circle(cx, cy, xr, g);
                 delete g;
 
                 // Draw led spot
                 lsp::Color c_light(col);
                 c_light.lightness(c_light.lightness() * 1.5);
 
-                g = s->radial_gradient(cx, cy, xr * 0.25, cx, cy, xr * 0.5);
+                g = s->radial_gradient(cx, cy, r * 0.25, cx, cy, r);
                 g->add_color(0.0f, c_light);
                 g->add_color(1.0f, col);
-                s->fill_circle(cx, cy, xr * 0.5, g);
+                s->fill_circle(cx, cy, r, g);
                 delete g;
 
                 // Add blink
-                g = s->radial_gradient(cx + (xr * 0.125f), cy - (xr * 0.125f), 0, cx, cy, xr * 0.5f);
+                g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), r * 0.125f, cx, cy, r);
                 g->add_color(0.0, 1.0, 1.0, 1.0, 0.0f);
                 g->add_color(1.0, 1.0, 1.0, 1.0, 1.0f);
-                s->fill_circle(cx, cy, lsp_max(0.0f, xr * 0.5f - scaling), g);
+                s->fill_circle(cx, cy, r, g);
                 delete g;
             }
             else
@@ -157,17 +159,17 @@ namespace lsp
                 c.scale_lightness(0.4f);
 
                 // Draw led glass
-                g = s->radial_gradient(cx, cy, xr * 0.125f, cx, cy, xr * 0.5f);
+                g = s->radial_gradient(cx, cy, r * 0.25f, cx, cy, r);
                 g->add_color(0.0, col);
                 g->add_color(1.0, c);
-                s->fill_circle(cx, cy, r * 0.5f + scaling, g);
+                s->fill_circle(cx, cy, r, g);
                 delete g;
 
                 // Add blink
-                g = s->radial_gradient(cx + (xr * 0.125f), cy - (xr * 0.125f), cx, cy, 0, xr * 0.5f);
-                g->add_color(0.0, 1.0, 1.0, 1.0, 0.8);
+                g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), r * 0.125f, cx, cy, r);
+                g->add_color(0.0, 1.0, 1.0, 1.0, 0.5);
                 g->add_color(1.0, 1.0, 1.0, 1.0, 1.0);
-                s->fill_circle(cx, cy, lsp_max(0.0f, xr * 0.5f - scaling), g);
+                s->fill_circle(cx, cy, r, g);
                 delete g;
             }
 

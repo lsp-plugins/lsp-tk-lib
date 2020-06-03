@@ -1,7 +1,7 @@
 /*
- * button.cpp
+ * led.cpp
  *
- *  Created on: 2 июн. 2020 г.
+ *  Created on: 3 июн. 2020 г.
  *      Author: sadko
  */
 
@@ -9,7 +9,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.simple", button)
+MTEST_BEGIN("tk.widgets.simple", led)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -85,6 +85,10 @@ MTEST_BEGIN("tk.widgets.simple", button)
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
 
+        tk::Led *led = tk::widget_cast<tk::Led>(sender);
+        if (led != NULL)
+            led->on()->toggle();
+
         return STATUS_OK;
     }
 
@@ -155,12 +159,12 @@ MTEST_BEGIN("tk.widgets.simple", button)
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
         tk::Grid *grid = NULL;
-        tk::Button *btn = NULL;
+        tk::Led *led = NULL;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test button") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("button_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test led") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("led_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
@@ -180,7 +184,7 @@ MTEST_BEGIN("tk.widgets.simple", button)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(5);
+        grid->rows()->set(4);
         grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -195,88 +199,70 @@ MTEST_BEGIN("tk.widgets.simple", button)
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("button-%d-0", x));
-                MTEST_ASSERT(btn = new tk::Button(dpy));
-                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(btn));
-                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+                MTEST_ASSERT(id.fmt_ascii("led-%d-0", x));
+                MTEST_ASSERT(led = new tk::Led(dpy));
+                MTEST_ASSERT(init_widget(led, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(led));
+                MTEST_ASSERT(grid->add(led) == STATUS_OK);
 
-                btn->color()->set_rgb24(next_color(col));
-                btn->hole()->set(x & 1);
-                btn->constraints()->set_fixed((x + 1) * 12);
+                led->color()->set_rgb24(next_color(col));
+                led->hole()->set(x & 1);
+                led->on()->set(x & 1);
+                led->led()->set((x + 1) * 4);
+                led->size()->set((x + 1) * 8);
             }
 
-            // Create buttons with text
+            // Create quad buttons
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("button-%d-1", x));
-                MTEST_ASSERT(btn = new tk::Button(dpy));
-                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(btn));
-                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+                MTEST_ASSERT(id.fmt_ascii("led-%d-1", x));
+                MTEST_ASSERT(led = new tk::Led(dpy));
+                MTEST_ASSERT(init_widget(led, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(led));
+                MTEST_ASSERT(grid->add(led) == STATUS_OK);
 
-                btn->text()->set_raw(&id);
-                btn->color()->set_rgb24(next_color(col));
-                btn->hole()->set(x & 1);
+                led->led_color()->set_rgb24(next_color(col));
+                led->hole()->set(x & 1);
+                led->on()->set(x & 1);
+                led->led()->set((x + 1) * 4);
+                led->size()->set((x + 1) * 8);
             }
 
-            // Create toggle buttons
+            // Create quad buttons
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("button-%d-2", x));
-                MTEST_ASSERT(btn = new tk::Button(dpy));
-                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(btn));
-                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+                MTEST_ASSERT(id.fmt_ascii("led-%d-2", x));
+                MTEST_ASSERT(led = new tk::Led(dpy));
+                MTEST_ASSERT(init_widget(led, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(led));
+                MTEST_ASSERT(grid->add(led) == STATUS_OK);
 
-                btn->mode()->set_toggle();
-                btn->text()->set_raw(&id);
-                btn->color()->set_rgb24(next_color(col));
-                btn->hole()->set(x & 1);
+                led->color()->set_rgb24(next_color(col));
+                led->hole()->set(!(x & 1));
+                led->on()->set(x & 1);
+                led->led()->set((x + 1) * 4);
+                led->size()->set_min((x + 1) * 8);
             }
 
-            // Create flat toggle buttons
+            // Create quad buttons
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("button-%d-3", x));
-                MTEST_ASSERT(btn = new tk::Button(dpy));
-                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(btn));
-                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+                MTEST_ASSERT(id.fmt_ascii("led-%d-3", x));
+                MTEST_ASSERT(led = new tk::Led(dpy));
+                MTEST_ASSERT(init_widget(led, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(led));
+                MTEST_ASSERT(grid->add(led) == STATUS_OK);
 
-                if (x & 1)
-                    btn->mode()->set_toggle();
-                else
-                    btn->mode()->set_trigger();
-                btn->flat()->set(true);
-                btn->text()->set_raw(&id);
-                btn->color()->set_rgb24(next_color(col));
-                btn->hole()->set(x & 1);
-            }
-
-            // Create flat toggle buttons with led
-            for (ssize_t x=0; x<4; ++x)
-            {
-                // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("button-%d-4", x));
-                MTEST_ASSERT(btn = new tk::Button(dpy));
-                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(btn));
-                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
-
-                if (x & 1)
-                    btn->mode()->set_toggle();
-                else
-                    btn->mode()->set_trigger();
-                btn->led()->set((x + 1) * 4);
-                btn->text()->set_raw(&id);
-                btn->text_clip()->set(true);
-                btn->constraints()->set_fixed((x + 1) * 12);
-                btn->led_color()->set_rgb24(next_color(col));
-                btn->hole()->set(x & 1);
+                led->color()->set_rgb24(next_color(col));
+                led->led_color()->set(led->color());
+                led->led_color()->lightness(led->led_color()->lightness() * 0.5f);
+                led->hole()->set(!(x & 1));
+                led->on()->set(x & 1);
+                led->led()->set((x + 1) * 4);
+                led->size()->set_min((x + 1) * 8);
             }
         }
 

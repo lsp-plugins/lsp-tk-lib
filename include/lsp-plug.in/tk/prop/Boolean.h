@@ -63,6 +63,12 @@ namespace lsp
                 bool                set(bool v = true);
 
                 /**
+                 * Invert the value of the property
+                 * @return previous value
+                 */
+                inline bool         toggle()                { return set(!bValue);          }
+
+                /**
                  * Swap contents
                  * @param dst destination property to perform swap
                  */
