@@ -1,44 +1,40 @@
 /*
- * LSPHyperlink.cpp
+ * Hyperlink.cpp
  *
  *  Created on: 23 окт. 2017 г.
  *      Author: sadko
  */
 
+#include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/ipc/Process.h>
-#include <lsp-plug.in/tk-old/widgets/LSPHyperlink.h>
-
-#include <unistd.h>
-#include <signal.h>
-#include <stdlib.h>
-#include <sys/wait.h>
 
 namespace lsp
 {
     namespace tk
     {
-        const w_class_t LSPHyperlink::metadata = { "LSPHyperlink", &LSPLabel::metadata };
+        const w_class_t Hyperlink::metadata =        { "Hyperlink", &Widget::metadata };
 
-        LSPHyperlink::LSPHyperlink(LSPDisplay *dpy):
-            LSPLabel(dpy),
-            sHoverColor(this),
-            sStdMenu(dpy)
+        Hyperlink::Hyperlink(Display *dpy):
+            Widget(dpy),
+            sTextLayout(&sProperties),
+            sFont(&sProperties),
+            sColor(&sProperties),
+            sHoverColor(&sProperties),
+            sText(&sProperties),
+            sConstraints(&sProperties),
+            sFollow(&sProperties),
+            sUrl(&sProperties)
         {
             pClass      = &metadata;
             nMFlags     = 0;
             nState      = 0;
-            bFollow     = true;
-            pPopup      = &sStdMenu;
-
-            vStdItems[0]    = NULL;
-            vStdItems[1]    = NULL;
         }
 
-        LSPHyperlink::~LSPHyperlink()
+        Hyperlink::~Hyperlink()
         {
         }
 
-        status_t LSPHyperlink::init()
+        status_t Hyperlink::init()
         {
             status_t res = LSPLabel::init();
             if (res != STATUS_SUCCESS)
@@ -83,27 +79,27 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPHyperlink::slot_on_submit(LSPWidget *sender, void *ptr, void *data)
+        status_t Hyperlink::slot_on_submit(LSPWidget *sender, void *ptr, void *data)
         {
-            LSPHyperlink *_this = widget_ptrcast<LSPHyperlink>(ptr);
+            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
             return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
         }
 
-        void LSPHyperlink::set_follow(bool follow)
+        void Hyperlink::set_follow(bool follow)
         {
             bFollow     = follow;
         }
 
-        status_t LSPHyperlink::slot_copy_link_action(LSPWidget *sender, void *ptr, void *data)
+        status_t Hyperlink::slot_copy_link_action(LSPWidget *sender, void *ptr, void *data)
         {
-            LSPHyperlink *_this = widget_ptrcast<LSPHyperlink>(ptr);
+            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
             if (_this == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
             return _this->copy_url(CBUF_CLIPBOARD);
         }
 
-        status_t LSPHyperlink::follow_url()
+        status_t Hyperlink::follow_url()
         {
             #ifdef PLATFORM_WINDOWS
                 ::ShellExecuteW(
@@ -130,7 +126,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPHyperlink::copy_url(clipboard_id_t cb)
+        status_t Hyperlink::copy_url(clipboard_id_t cb)
         {
             // Copy data to clipboard
             LSPTextDataSource *src = new LSPTextDataSource();
@@ -146,38 +142,23 @@ namespace lsp
             return result;
         }
 
-        status_t LSPHyperlink::on_submit()
+        status_t Hyperlink::on_submit()
         {
             lsp_trace("hyperlink submitted");
             return (bFollow) ? follow_url() : STATUS_OK;
         }
 
-        void LSPHyperlink::destroy()
-        {
-            for (size_t i=0; i<2; ++i)
-                if (vStdItems[i] != NULL)
-                {
-                    vStdItems[i]->destroy();
-                    delete vStdItems[i];
-                    vStdItems[i] = NULL;
-                }
-
-            sStdMenu.destroy();
-            LSPLabel::destroy();
-            pPopup = NULL;
-        }
-
-        status_t LSPHyperlink::set_url(const char *url)
+        status_t Hyperlink::set_url(const char *url)
         {
             return (sUrl.set_native(url)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t LSPHyperlink::set_url(const LSPString *url)
+        status_t Hyperlink::set_url(const LSPString *url)
         {
             return (sUrl.set(url)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        void LSPHyperlink::draw(ISurface *s)
+        void Hyperlink::draw(ISurface *s)
         {
             // Prepare palette
             Color bg_color(sBgColor);
@@ -230,7 +211,7 @@ namespace lsp
             }
         }
 
-        status_t LSPHyperlink::on_mouse_in(const ws_event_t *e)
+        status_t Hyperlink::on_mouse_in(const ws_event_t *e)
         {
             LSPWidget::on_mouse_in(e);
 
@@ -248,7 +229,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPHyperlink::on_mouse_out(const ws_event_t *e)
+        status_t Hyperlink::on_mouse_out(const ws_event_t *e)
         {
             LSPWidget::on_mouse_out(e);
 
@@ -264,7 +245,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPHyperlink::on_mouse_move(const ws_event_t *e)
+        status_t Hyperlink::on_mouse_move(const ws_event_t *e)
         {
             if (nState & F_MOUSE_IGN)
                 return STATUS_OK;
@@ -280,7 +261,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPHyperlink::on_mouse_down(const ws_event_t *e)
+        status_t Hyperlink::on_mouse_down(const ws_event_t *e)
         {
             size_t flags = nState;
 
@@ -306,7 +287,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPHyperlink::on_mouse_up(const ws_event_t *e)
+        status_t Hyperlink::on_mouse_up(const ws_event_t *e)
         {
             size_t flags = nMFlags;
             nMFlags &= ~ (1 << e->nCode);
