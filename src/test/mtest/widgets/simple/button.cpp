@@ -166,8 +166,8 @@ MTEST_BEGIN("tk.widgets.simple", button)
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test switch") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("switch_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test button") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("button_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
@@ -187,7 +187,7 @@ MTEST_BEGIN("tk.widgets.simple", button)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(4);
+        grid->rows()->set(5);
         grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -217,7 +217,7 @@ MTEST_BEGIN("tk.widgets.simple", button)
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("button-%d-0", x));
+                MTEST_ASSERT(id.fmt_ascii("button-%d-1", x));
                 MTEST_ASSERT(btn = new tk::Button(dpy));
                 MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
                 MTEST_ASSERT(widgets.push(btn));
@@ -225,6 +225,64 @@ MTEST_BEGIN("tk.widgets.simple", button)
 
                 btn->text()->set_raw(&id);
                 btn->color()->set_rgb24(next_color(col));
+                btn->hole()->set(x & 1);
+            }
+
+            // Create toggle buttons
+            for (ssize_t x=0; x<4; ++x)
+            {
+                // Create alignment widget
+                MTEST_ASSERT(id.fmt_ascii("button-%d-2", x));
+                MTEST_ASSERT(btn = new tk::Button(dpy));
+                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(btn));
+                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+
+                btn->mode()->set_toggle();
+                btn->text()->set_raw(&id);
+                btn->color()->set_rgb24(next_color(col));
+                btn->hole()->set(x & 1);
+            }
+
+            // Create flat toggle buttons
+            for (ssize_t x=0; x<4; ++x)
+            {
+                // Create alignment widget
+                MTEST_ASSERT(id.fmt_ascii("button-%d-3", x));
+                MTEST_ASSERT(btn = new tk::Button(dpy));
+                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(btn));
+                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+
+                if (x & 1)
+                    btn->mode()->set_toggle();
+                else
+                    btn->mode()->set_trigger();
+                btn->flat()->set(true);
+                btn->text()->set_raw(&id);
+                btn->color()->set_rgb24(next_color(col));
+                btn->hole()->set(x & 1);
+            }
+
+            // Create flat toggle buttons with led
+            for (ssize_t x=0; x<4; ++x)
+            {
+                // Create alignment widget
+                MTEST_ASSERT(id.fmt_ascii("button-%d-4", x));
+                MTEST_ASSERT(btn = new tk::Button(dpy));
+                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(btn));
+                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+
+                if (x & 1)
+                    btn->mode()->set_toggle();
+                else
+                    btn->mode()->set_trigger();
+                btn->led()->set((x + 1) * 4);
+                btn->text()->set_raw(&id);
+                btn->text_clip()->set(true);
+                btn->constraints()->set_fixed((x + 1) * 12);
+                btn->led_color()->set_rgb24(next_color(col));
                 btn->hole()->set(x & 1);
             }
         }

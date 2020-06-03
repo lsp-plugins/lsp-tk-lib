@@ -484,16 +484,6 @@ namespace lsp
 
         void Widget::render(ws::ISurface *s, bool force)
         {
-            // Draw padding
-//            ws::rectangle_t r;
-//            sPadding.enter(&r, &sSize, sScaling.get());
-//            lsp::Color bg(sBgColor);
-//            s->fill_frame(
-//                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
-//                    r.nLeft, r.nTop, r.nWidth, r.nHeight,
-//                    bg
-//            );
-
             // Get surface of widget
             ws::ISurface *src  = get_surface(s);
             if (src == NULL)

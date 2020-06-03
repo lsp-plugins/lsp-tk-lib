@@ -60,6 +60,8 @@ namespace lsp
                 prop::Boolean           sEditable;
                 prop::Boolean           sHole;
                 prop::Boolean           sFlat;
+                prop::Boolean           sTextClip;
+                prop::Padding           sTextPadding;
 
             protected:
                 bool                check_mouse_over(ssize_t x, ssize_t y);
@@ -67,6 +69,7 @@ namespace lsp
 
                 static status_t     slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t     slot_on_submit(Widget *sender, void *ptr, void *data);
+                static ws::IGradient   *create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float r1, float r2);
 
             protected:
                 virtual void        size_request(ws::size_limit_t *r);
@@ -83,14 +86,14 @@ namespace lsp
                 inline Color                   *color()                     { return &sColor;       }
                 inline const Color             *color() const               { return &sColor;       }
 
-                inline Color                   *light_color()               { return &sLightColor;  }
-                inline const Color             *light_color() const         { return &sLightColor;  }
+                inline Color                   *led_color()                 { return &sLightColor;  }
+                inline const Color             *led_color() const           { return &sLightColor;  }
 
                 inline Color                   *text_color()                { return &sTextColor;   }
                 inline const Color             *text_color() const          { return &sTextColor;   }
 
-                inline Color                   *light_text_color()          { return &sLTextColor;  }
-                inline const Color             *light_text_color() const    { return &sLTextColor;  }
+                inline Color                   *led_text_color()            { return &sLTextColor;  }
+                inline const Color             *led_text_color() const      { return &sLTextColor;  }
 
                 inline Color                   *hole_color()                { return &sHoleColor;   }
                 inline const Color             *hole_color() const          { return &sHoleColor;   }
@@ -124,6 +127,12 @@ namespace lsp
 
                 inline TextLayout              *text_layout()               { return &sTextLayout;  }
                 inline const TextLayout        *text_layout() const         { return &sTextLayout;  }
+
+                inline Boolean                 *text_clip()                 { return &sTextClip;    }
+                inline const Boolean           *text_clip() const           { return &sTextClip;    }
+
+                inline Padding                 *text_padding()              { return &sTextPadding; }
+                inline const Padding           *text_padding() const        { return &sTextPadding; }
 
             public:
                 virtual void        draw(ws::ISurface *s);

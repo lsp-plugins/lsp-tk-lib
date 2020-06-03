@@ -30,7 +30,9 @@ namespace lsp
             sLed(&sProperties),
             sEditable(&sProperties),
             sHole(&sProperties),
-            sFlat(&sProperties)
+            sFlat(&sProperties),
+            sTextClip(&sProperties),
+            sTextPadding(&sProperties)
         {
             nState          = 0;
             nBMask          = 0;
@@ -54,9 +56,9 @@ namespace lsp
                 return result;
 
             sColor.bind("color", &sStyle);
-            sLightColor.bind("light.color", &sStyle);
+            sLightColor.bind("led.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
-            sLTextColor.bind("light.text.color", &sStyle);
+            sLTextColor.bind("led.text.color", &sStyle);
             sHoleColor.bind("hole.color", &sStyle);
             sFont.bind("font", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
@@ -68,6 +70,8 @@ namespace lsp
             sEditable.bind("editable", &sStyle);
             sHole.bind("hole", &sStyle);
             sFlat.bind("flat", &sStyle);
+            sTextClip.bind("text.clip", &sStyle);
+            sTextPadding.bind("text.padding", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -86,6 +90,8 @@ namespace lsp
                 sEditable.init(sclass, true);
                 sHole.init(sclass, true);
                 sFlat.init(sclass, false);
+                sTextClip.init(sclass, false);
+                sTextPadding.init(sclass, 2, 2, 2, 2);
             }
 
             // Additional slots
@@ -140,6 +146,8 @@ namespace lsp
             if (sConstraints.is(prop))
                 query_resize();
             if (sTextLayout.is(prop))
+                query_draw();
+            if (sTextClip.is(prop))
                 query_draw();
 
             if (sMode.is(prop))
@@ -216,168 +224,230 @@ namespace lsp
             x              -= sButton.nLeft;
             y              -= sButton.nTop;
 
-            return (x >= 0) && (y >= 0) && (x < sButton.nWidth) && (x < sButton.nHeight);
+            return (x >= 0) && (y >= 0) && (x < sButton.nWidth) && (y < sButton.nHeight);
+        }
+
+        ws::IGradient *Button::create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float r1, float r2)
+        {
+            // Create gradient
+            float xoff  = 0.0f;
+            float yoff  = 0.0f;
+
+            if (pressed & S_DOWN)
+            {
+                xoff    = 0;
+                yoff    = r.nHeight;
+            }
+            else
+            {
+                xoff    = r.nWidth;
+                yoff    = 0;
+            }
+
+            if (pressed & S_PRESSED)
+                r2 *= 1.25f;
+
+            return s->radial_gradient(
+                r.nLeft + xoff, r.nTop + yoff, r1,
+                r.nLeft + xoff, r.nTop + yoff, r2
+            );
         }
 
         void Button::draw(ws::ISurface *s)
         {
-            ws::IGradient *gr = NULL;
-            size_t pressed = nState;
+            ws::IGradient *g    = NULL;
+            size_t pressed      = nState;
+            float brightness    = sBrightness.get();
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ws::rectangle_t r   = sButton;
+            r.nLeft            -= sSize.nLeft;
+            r.nTop             -= sSize.nTop;
 
             // Prepare palette
             lsp::Color bg_color(sBgColor);
             lsp::Color color(sColor);
+            lsp::Color tcolor(sTextColor);
+            if (pressed & S_LED)
+            {
+                if (pressed & S_DOWN)
+                {
+                    color.copy(sLightColor);
+                    tcolor.copy(sLTextColor);
+                }
+                else
+                {
+                    color.scale_lightness(0.5f);
+                    tcolor.scale_lightness(0.5f);
+                }
+            }
 
-            color.scale_lightness(sBrightness.get());
+            color.scale_lightness(brightness);
+            tcolor.scale_lightness(brightness);
 
             // Draw background
+            bool aa     = s->set_antialiasing(false);
             s->fill_rect(bg_color, 0, 0, sSize.nWidth, sSize.nHeight);
 
-            bool aa     = s->set_antialiasing(false);
+            // Draw hole
+            if (pressed & S_HOLE)
+            {
+                lsp::Color hcolor(sHoleColor);
+                size_t hole         = lsp_max(1, scaling);
+                s->fill_rect(hcolor, r.nLeft - hole, r.nTop - hole,
+                        r.nWidth + hole*2, r.nHeight + hole * 2);
+            }
 
+            // Draw light
+            if ((pressed & (S_LED | S_DOWN)) == (S_LED | S_DOWN))
+            {
+                float c_x   = sSize.nWidth  >> 1;
+                float c_y   = sSize.nHeight >> 1;
+                float h_p   = sButton.nLeft - sSize.nLeft;
+                float v_p   = sButton.nTop  - sSize.nTop;
+                ssize_t xe  = sSize.nWidth  - 1;
+                ssize_t ye  = sSize.nHeight - 1;
 
+                lsp::Color lc(color);
+//                lc.lightness(1.0f);
 
-//            color.scale_lightness(brightness());
-//
-//            // Draw background
-//            s->fill_rect(0, 0, sSize.nWidth, sSize.nHeight, bg_color);
-//
-//            // Calculate real boundaries
-//            ssize_t c_x     = (sSize.nWidth >> 1);
-//            ssize_t c_y     = (sSize.nHeight >> 1);
-//
-//            // Calculate parameters
-//            Color hole(0.0f, 0.0f, 0.0f);
-//            float b_rad  = sqrtf(nWidth*nWidth + nHeight*nHeight);
-//            size_t bsize = (nWidth < nHeight) ? nWidth : nHeight;
-//            ssize_t b_w  = nWidth >> 1;
-//            ssize_t b_h  = nHeight >> 1;
-//            ssize_t b_r  = bsize >> 1;          // Button radius
-//            ssize_t b_rr = 2 + (bsize >> 4);    // Button rounding radius
-//            ssize_t l_rr = (bsize >> 2);
-//
-//            // Draw hole
-//            bool aa = s->set_antialiasing(true);
-//            s->fill_round_rect(c_x - b_w - 1, c_y - b_h - 1, nWidth + 2, nHeight + 2, b_rr + 1, hole);
-//
-//            // Change size if pressed
-//            ssize_t b_l = b_rr;
-//            if (pressed & S_PRESSED)
-//            {
-//                b_l ++;
-//                b_r --;
-//                b_w --;
-//                b_h --;
-//                b_rr --;
-//            }
-//            else if (pressed & S_TOGGLED)
-//            {
-//                b_r --;
-//                b_w --;
-//                b_h --;
-//            }
-//            else
-//                b_l ++;
-//
-//            float lightness = color.lightness();
-//            if (pressed & S_LED)
-//            {
-//                // Draw light
-//                if (pressed & S_DOWN)
-//                {
-//                    ssize_t x_rr = l_rr - 1;
-//
-//                    gr  =  s->linear_gradient(c_x, c_y - b_h, c_x, c_y - b_h - x_rr);
-//                    gr->add_color(0.0, color, 0.5f);
-//                    gr->add_color(1.0, color, 1.0f);
-//                    s->fill_triangle(c_x - b_w - l_rr, c_y - b_h - l_rr, c_x + b_w + l_rr, c_y - b_h - l_rr, c_x, c_y, gr);
-//                    delete gr;
-//
-//                    gr  =  s->linear_gradient(c_x, c_y + b_h, c_x, c_y + b_h + x_rr);
-//                    gr->add_color(0.0, color, 0.5f);
-//                    gr->add_color(1.0, color, 1.0f);
-//                    s->fill_triangle(c_x + b_w + l_rr, c_y + b_h + l_rr, c_x - b_w - l_rr, c_y + b_h + l_rr, c_x, c_y, gr);
-//                    delete gr;
-//
-//                    gr  =  s->linear_gradient(c_x - b_w, c_y, c_x - b_w - x_rr, c_y);
-//                    gr->add_color(0.0, color, 0.5f);
-//                    gr->add_color(1.0, color, 1.0f);
-//                    s->fill_triangle(c_x - b_w - l_rr, c_y - b_h - l_rr, c_x - b_w - l_rr, c_y + b_h + l_rr, c_x, c_y, gr);
-//                    delete gr;
-//
-//                    gr  =  s->linear_gradient(c_x + b_w, c_y, c_x + b_w + x_rr, c_y);
-//                    gr->add_color(0.0, color, 0.5f);
-//                    gr->add_color(1.0, color, 1.0f);
-//                    s->fill_triangle(c_x + b_w + l_rr, c_y + b_h + l_rr, c_x + b_w + l_rr, c_y - b_h - l_rr, c_x, c_y, gr);
-//                    delete gr;
-//                }
-//                else
-//                    lightness  *= 0.5f;
-//            }
-//
-//            for (ssize_t i=0; (i++)<b_l; )
-//            {
-//                float bright = lightness * sqrtf(i * i) / b_l;
-//
-//                if (pressed & S_PRESSED)
-//                    gr = s->radial_gradient(c_x - b_w, c_y + b_h, b_rad * 0.25f, c_x - b_w, c_y + b_h, b_rad * 3.0f);
-//                else if (pressed & S_TOGGLED)
-//                    gr = s->radial_gradient(c_x - b_w, c_y + b_h, b_rad * 0.25f, c_x - b_w, c_y + b_h, b_rad * 3.0f);
-//                else
-//                    gr = s->radial_gradient(c_x + b_w, c_y - b_h, b_rad * 0.25f, c_x + b_w, c_y - b_h, b_rad * 3.0f);
-//
-//                Color cl(color);
-//                cl.lightness(bright);
-//                gr->add_color(0.0f, cl);
-//                cl.darken(0.9f);
-//                gr->add_color(1.0f, cl);
-//
-//                s->fill_round_rect(c_x - b_w, c_y - b_h, b_w*2, b_h*2, b_rr, gr);
-//                delete gr; // Delete gradient!
-//
-//                if ((--b_r) < 0)
-//                    b_r = 0;
-//                if ((--b_w) < 0)
-//                    b_w = 0;
-//                if ((--b_h) < 0)
-//                    b_h = 0;
-//            }
-//
-//            if (pressed & S_LED)
-//            {
-//                Color cl(color);
-//                cl.lightness(lightness);
-//
-//                gr = s->radial_gradient(c_x - b_w, c_y + b_h, b_rad * 0.25f, c_x, c_y, b_rad * 0.8f);
-//                gr->add_color(0.0, cl);
-//                gr->add_color(1.0, 1.0f, 1.0f, 1.0f);
-//                s->fill_round_rect(c_x - b_w, c_y - b_h, b_w * 2.0f, b_h * 2.0f, b_rr, gr);
-//                delete gr;
-//            }
-//
-//            // Output text
-//            LSPString title;
-//            sTitle.format(&title);
-//            if (title.length() > 0)
-//            {
-//                text_parameters_t tp;
-//                font_parameters_t fp;
-//
-//                Color font_color(sFont.raw_color());
-//                font_color.scale_lightness(brightness());
-//
-//                sFont.get_parameters(s, &fp);
-//                sFont.get_text_parameters(s, &tp, &title);
-//
-//                if (pressed & S_PRESSED)
-//                {
-//                    c_y++;
-//                    c_x++;
-//                }
-//
-//                sFont.draw(s, c_x - (tp.XAdvance * 0.5f), c_y - (fp.Height * 0.5f) + fp.Ascent, font_color, &title);
-//            }
-//
+                // Left
+                g   =  s->linear_gradient(h_p, c_y, 0, c_y);
+                g->add_color(0.0, lc, 0.5f);
+                g->add_color(1.0, color, 1.0f);
+                s->fill_triangle(0, 0, c_x, c_y, 0, ye, g);
+                delete g;
+
+                // Right
+                g   =  s->linear_gradient(xe - h_p, c_y, xe, c_y);
+                g->add_color(0.0, lc, 0.5f);
+                g->add_color(1.0, color, 1.0f);
+                s->fill_triangle(xe, ye, c_x, c_y, xe, 0, g);
+                delete g;
+
+                // Top
+                g   =  s->linear_gradient(c_x, v_p, c_x, 0);
+                g->add_color(0.0, lc, 0.5f);
+                g->add_color(1.0, color, 1.0f);
+                s->fill_triangle(0, 0, xe, 0, c_x, c_y, g);
+                delete g;
+
+                // Bottom
+                g   =  s->linear_gradient(c_x, ye - v_p, c_x, ye);
+                g->add_color(0.0, lc, 0.5f);
+                g->add_color(1.0, color, 1.0f);
+                s->fill_triangle(xe, ye, 0, ye, c_x, c_y, g);
+                delete g;
+
+//                s->set_antialiasing(aa);
+//                return;
+            }
+
+            // Draw button
+            {
+                float delta         = sqrtf(r.nWidth * r.nWidth + r.nHeight * r.nHeight);
+                float xb            = color.lightness();
+                size_t max_chamfer      = lsp_max(1, scaling * 3.0f);
+                size_t chamfer          = (pressed & S_PRESSED) ? lsp_max(1, scaling * 2.0f) : max_chamfer;
+
+                // Draw champfer
+                if ((!(pressed & S_FLAT)) || ((pressed & (S_PRESSED | S_DOWN)) != 0))
+                {
+                    for (size_t i=0; i<chamfer; ++i)
+                    {
+                        // Compute color
+                        float bright = float(i + 1.0f) / (chamfer + 1);
+
+                        // Create gradient
+                        g = create_gradient(s, r, pressed, 0, delta);
+                        color.lightness(bright);
+                        g->add_color(0.0, color.red(), color.green(), color.blue());
+                        color.lightness(xb * bright);
+                        g->add_color(1.0, color.red(), color.green(), color.blue());
+                        s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                        delete g;
+
+                        // Update rect
+                        r.nLeft        += 1;
+                        r.nTop         += 1;
+                        r.nWidth       -= 2;
+                        r.nHeight      -= 2;
+                    }
+                }
+
+                // Draw button face
+                g = create_gradient(s, r, pressed, 0, delta);
+                color.lightness(1.0f);
+                g->add_color(0.0, color.red(), color.green(), color.blue());
+                color.lightness(xb);
+                g->add_color(1.0, color.red(), color.green(), color.blue());
+                s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                delete g;
+
+                // Do we have a text?
+                LSPString text;
+                sText.format(&text);
+                if (text.length() > 0)
+                {
+                    chamfer         = max_chamfer - chamfer;
+                    r.nLeft        += chamfer;
+                    r.nTop         += chamfer;
+                    r.nWidth       -= chamfer * 2;
+                    r.nHeight      -= chamfer * 2;
+
+                    sTextPadding.enter(&r, scaling);
+                    if (!(pressed & S_PRESSED))
+                    {
+                        r.nLeft    += (pressed & S_TOGGLED) ? scaling : -scaling;
+                        r.nTop     += (pressed & S_TOGGLED) ? scaling : -scaling;
+                    }
+
+                    s->clip_begin(r.nLeft, r.nTop, r.nWidth, r.nHeight);
+
+                    // Estimate font parameters
+                    ws::font_parameters_t fp;
+                    ws::text_parameters_t tp;
+                    sFont.get_parameters(pDisplay, scaling, &fp);
+                    sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+
+                    // Prepare to draw
+                    float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
+                    float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
+                    float dy        = (r.nHeight - tp.Height) * 0.5f;
+                    ssize_t y       = r.nTop + dy * valign - fp.Descent;
+
+                    // Estimate text size
+                    ssize_t last = 0, curr = 0, tail = 0, len = text.length();
+
+                    while (curr < len)
+                    {
+                        // Get next line indexes
+                        curr    = text.index_of(last, '\n');
+                        if (curr < 0)
+                        {
+                            curr        = len;
+                            tail        = len;
+                        }
+                        else
+                        {
+                            tail        = curr;
+                            if ((tail > last) && (text.at(tail-1) == '\r'))
+                                --tail;
+                        }
+
+                        // Calculate text location
+                        sFont.get_text_parameters(s, &tp, scaling, &text, last, tail);
+                        float dx    = (r.nWidth - tp.Width) * 0.5f;
+                        ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
+                        y          += fp.Height;
+
+                        sFont.draw(s, x, y, tcolor, scaling, &text, last, tail);
+                        last    = curr + 1;
+                    }
+
+                    s->clip_end();
+                }
+            }
+
             s->set_antialiasing(aa);
         }
 
@@ -395,7 +465,7 @@ namespace lsp
             sc.nMinHeight       = lsp_max(sc.nMinHeight, 2 * scaling);
 
             // Need to analyze text parameters?
-            if ((text.length() > 0) && ((sc.nMaxWidth < 0) || (sc.nMaxHeight < 0)))
+            if ((text.length() > 0) && (!sTextClip.get()))
             {
                 ws::font_parameters_t fp;
                 ws::text_parameters_t tp;
@@ -403,19 +473,23 @@ namespace lsp
                 sFont.get_parameters(pDisplay, scaling, &fp);
                 sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
 
-                size_t tminw    = ceil(tp.Width);
-                size_t tminh    = ceil(lsp_max(tp.Height, fp.Height));
+                ssize_t tminw   = ceil(tp.Width) + 2 * scaling;
+                ssize_t tminh   = ceil(lsp_max(tp.Height, fp.Height)) + 2 * scaling;
+
+                sc.nMinWidth    = lsp_max(sc.nMinWidth, tminw);
+                sc.nMinHeight   = lsp_max(sc.nMinHeight, tminh);
 
                 if (sc.nMaxWidth < 0)
                     sc.nMaxWidth    = lsp_max(sc.nMaxWidth, tminw);
                 if (sc.nMaxHeight < 0)
                     sc.nMaxHeight   = lsp_max(sc.nMaxHeight, tminh);
+                sTextPadding.add(&sc, scaling);
             }
 
             // Compute additional elements
-            size_t chamfer      = lsp_max(1, scaling * 2.0f);
-            size_t hole         = (nState & S_HOLE) ? lsp_min(1, scaling) : 0;
-            size_t light        = (nState & S_LED)  ? lsp_min(1, scaling * (sLed.get() + 2)) : 0;
+            size_t chamfer      = lsp_max(1, scaling * 3.0f);
+            size_t hole         = (nState & S_HOLE) ? lsp_max(1, scaling) : 0;
+            size_t light        = (nState & S_LED)  ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
             size_t outer        = lsp_max(hole, light);
 
             // Compute final widget size limits
@@ -431,8 +505,8 @@ namespace lsp
 
             float scaling       = lsp_max(0.0f, sScaling.get());
 
-            size_t hole         = (nState & S_HOLE) ? lsp_min(1, scaling) : 0;
-            size_t light        = (nState & S_LED)  ? lsp_min(1, scaling * (sLed.get() + 2)) : 0;
+            size_t hole         = (nState & S_HOLE) ? lsp_max(1, scaling) : 0;
+            size_t light        = (nState & S_LED)  ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
             size_t outer        = lsp_max(hole, light);
 
             sButton.nLeft       = r->nLeft   + outer;
