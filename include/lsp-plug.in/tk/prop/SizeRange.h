@@ -78,6 +78,7 @@ namespace lsp
                 inline void set(ssize_t value)              { set(value, value);                    }
 
                 void        compute(ssize_t *min, ssize_t *max, float scale) const;
+                void        compute(ws::size_limit_t *r, float scale) const;
         };
 
         namespace prop

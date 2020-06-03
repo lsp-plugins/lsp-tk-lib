@@ -151,6 +151,19 @@ namespace lsp
             *max                = (nMax >= 0) ? nMax * scale : -1;
         }
 
+        void SizeRange::compute(ws::size_limit_t *r, float scale) const
+        {
+            scale               = lsp_max(scale, 0.0f);
+
+            r->nMinWidth        = (nMin >= 0) ? nMin * scale : -1;
+            r->nMaxWidth        = (nMax >= 0) ? nMax * scale : -1;
+            if ((r->nMaxWidth >= 0) && (r->nMaxWidth < r->nMinWidth))
+                r->nMaxWidth        = r->nMinWidth;
+
+            r->nMinHeight       = r->nMinWidth;
+            r->nMinHeight       = r->nMinWidth;
+        }
+
         namespace prop
         {
             status_t SizeRange::init(Style *style, ssize_t min, ssize_t max)

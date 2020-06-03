@@ -80,6 +80,7 @@
 // Simple widgets
 #include <lsp-plug.in/tk/widgets/simple/Button.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>
+#include <lsp-plug.in/tk/widgets/simple/Led.h>
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/Switch.h>
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
