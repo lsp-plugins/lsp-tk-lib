@@ -191,7 +191,7 @@ MTEST_BEGIN("tk.widgets.simple", knob)
             LSPString id;
             size_t col = 0;
 
-            // Create hyperlink (default)
+            // Create knob
             for (size_t x=0; x<4; ++x)
             {
                 MTEST_ASSERT(id.fmt_ascii("knob-%d-0", x));
@@ -200,9 +200,56 @@ MTEST_BEGIN("tk.widgets.simple", knob)
                 MTEST_ASSERT(widgets.push(kn));
                 MTEST_ASSERT(grid->add(kn) == STATUS_OK);
 
-                kn->size()->set((x+1) * 4);
+                kn->size()->set((x+1) * 8);
                 kn->color()->set_rgb24(next_color(col));
                 kn->tip_color()->set_rgb24(next_color(col));
+            }
+
+            // Create knob
+            for (size_t x=0; x<4; ++x)
+            {
+                MTEST_ASSERT(id.fmt_ascii("knob-%d-1", x));
+                MTEST_ASSERT(kn = new tk::Knob(dpy));
+                MTEST_ASSERT(init_widget(kn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(kn));
+                MTEST_ASSERT(grid->add(kn) == STATUS_OK);
+
+                kn->size()->set((x + 1) * 4, -1);
+                kn->scale_color()->set_rgb24(next_color(col));
+                kn->scale()->set((x + 1) * 4);
+            }
+
+            // Create knob
+            for (size_t x=0; x<4; ++x)
+            {
+                MTEST_ASSERT(id.fmt_ascii("knob-%d-2", x));
+                MTEST_ASSERT(kn = new tk::Knob(dpy));
+                MTEST_ASSERT(init_widget(kn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(kn));
+                MTEST_ASSERT(grid->add(kn) == STATUS_OK);
+
+                kn->balance()->set(x * 0.25f);
+                kn->size()->set(24, -1);
+                kn->scale_color()->set_rgb24(next_color(col));
+                kn->bg_color()->set_rgb24(0x222222);
+                kn->scale()->set((x + 1) * 4);
+                kn->value()->set_range(1.0f, 0.0f);
+            }
+
+            // Create knob
+            for (size_t x=0; x<4; ++x)
+            {
+                MTEST_ASSERT(id.fmt_ascii("knob-%d-2", x));
+                MTEST_ASSERT(kn = new tk::Knob(dpy));
+                MTEST_ASSERT(init_widget(kn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(kn));
+                MTEST_ASSERT(grid->add(kn) == STATUS_OK);
+
+                kn->balance()->set(x * 0.25f);
+                kn->size()->set(24, -1);
+                kn->scale_color()->set_rgb24(next_color(col));
+                kn->bg_color()->set_rgb24(0);
+                kn->cycling()->set(true);
             }
         }
 

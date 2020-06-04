@@ -110,7 +110,7 @@ namespace lsp
             lsp_trace("value=%f, delta=%f", sValue.get(), delta);
 
             // Check that value is in range
-            sValue.add(delta);
+            sValue.add(delta, sCycling.get());
             sSlots.execute(SLOT_CHANGE, this);
         }
 
@@ -138,13 +138,13 @@ namespace lsp
                 else
                     angle          -= M_PI * 0.5f;
 
-                sValue.set_normalized(1.0f - angle / (M_PI * 2.0f));
+                sValue.set_normalized(1.0f - angle / (M_PI * 2.0f), true);
             }
             else
             {
                 if (angle < (-M_PI / 3.0))
                 {
-                    sValue.set_normalized((dx > 0) ? 1.0f : 0.0f);
+                    sValue.set_normalized((dx > 0) ? 1.0f : 0.0f, false);
                     return;
                 }
                 if (dx < 0.0f)
@@ -153,7 +153,7 @@ namespace lsp
                 angle          += M_PI / 3.0;
 
                 // Update value
-                sValue.set_normalized(1.0f - (angle / (5.0f * M_PI  / 3.0f)));
+                sValue.set_normalized(1.0f - (angle / (5.0f * M_PI  / 3.0f)), false);
             }
         }
 
@@ -206,10 +206,10 @@ namespace lsp
             size_t extra        = hole + ((scale > 0) ? scale + gap : 0);
 
             ssize_t min, max;
-            sSizeRange.compute(&min, &max, scale);
+            sSizeRange.compute(&min, &max, scaling);
 
-            r->nMinWidth        = lsp_max(min, chamfer * 2) + extra;
-            r->nMaxWidth        = (max >= 0) ? lsp_max(max, chamfer * 2) + extra : -1;
+            r->nMinWidth        = lsp_max(min, (chamfer + scaling) * 2) + extra * 2;
+            r->nMaxWidth        = (max >= 0) ? lsp_max(max, (chamfer + scaling) * 2) + extra * 2 : -1;
 
             r->nMinHeight       = r->nMinWidth;
             r->nMaxHeight       = r->nMaxWidth;
@@ -339,16 +339,16 @@ namespace lsp
             if (sCycling.get())
             {
                 nsectors      = 24;
-                base          = 1.5f * M_PI;
                 delta         = 2.0f * M_PI;
+                base          = 1.5f * M_PI + balance * delta;
+                v_angle2      = base;
                 v_angle1      = base + value * delta;
-                v_angle2      = base + balance * delta * 0.5f;
             }
             else
             {
                 nsectors      = 20;
-                base          = 2.0f * M_PI / 3.0f;
                 delta         = 5.0f * M_PI / 3.0f;
+                base          = 2.0f * M_PI / 3.0f;
                 v_angle1      = base + value * delta;
                 v_angle2      = base + balance * delta;
             }
@@ -359,10 +359,10 @@ namespace lsp
                 if (sCycling.get())
                 {
                     s->fill_circle(c_x, c_y, xr, sdcol);
-                    if (value < balance)
-                        s->fill_sector(c_x, c_y, xr, v_angle1, v_angle2, scol);
-                    else
+//                    if (value < balance)
                         s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
+//                    else
+//                        s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
 
                 }
                 else

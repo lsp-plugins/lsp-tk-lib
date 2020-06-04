@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
 {
@@ -147,9 +148,11 @@ namespace lsp
             return (v - fMin) / (fMax - fMin);
         }
 
-        float RangeFloat::set_normalized(float value)
+        float RangeFloat::set_normalized(float value, bool cyclic)
         {
             float old   = fValue;
+            if (cyclic)
+                value       = value - truncf(value);
             value       = fMin + (fMax - fMin) * lsp_limit(value, 0.0f, 1.0f);
             if (value == old)
                 return old;
@@ -199,6 +202,27 @@ namespace lsp
             return lsp_limit(value, fMin, fMax);
         }
 
+        float RangeFloat::climited(float value) const
+        {
+            float delta = fMax - fMin;
+            if (delta > 0)
+            {
+                while (value >= fMax)
+                    value  -= delta;
+                while (value < fMin)
+                    value  += delta;
+            }
+            else
+            {
+                while (value > fMin)
+                    value  -= delta;
+                while (value <= fMax)
+                    value  += delta;
+            }
+
+            return value;
+        }
+
         float RangeFloat::change(float k, float step)
         {
             float old   = fValue;
@@ -211,10 +235,10 @@ namespace lsp
             return old;
         }
 
-        float RangeFloat::add(float v)
+        float RangeFloat::add(float v, bool cyclic)
         {
             float old   = fValue;
-            v           = limited(old + v);
+            v           = (cyclic) ? climited(old + v) : limited(old + v);
             if (old == v)
                 return old;
 
@@ -223,10 +247,10 @@ namespace lsp
             return old;
         }
 
-        float RangeFloat::sub(float v)
+        float RangeFloat::sub(float v, bool cyclic)
         {
             float old   = fValue;
-            v           = limited(old - v);
+            v           = (cyclic) ? climited(old + v) : limited(old + v);
             if (old == v)
                 return old;
 
