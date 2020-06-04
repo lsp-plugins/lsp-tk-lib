@@ -164,7 +164,7 @@ namespace lsp
             // Update coordinates
             x              -= sSize.nLeft;
             y              -= sSize.nTop;
-            size_t xr       = lsp_min(sSize.nWidth, sSize.nHeight);
+            size_t xr       = lsp_min(sSize.nWidth, sSize.nHeight) >> 1;
 
             // Estimate center coordinates and difference
             ssize_t cx      = ssize_t(sSize.nWidth) >> 1;
@@ -199,7 +199,7 @@ namespace lsp
         void Knob::size_request(ws::size_limit_t *r)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
-            size_t chamfer      = lsp_max(1, scaling * 3.0f);
+            ssize_t chamfer     = lsp_max(1, scaling * 3.0f);
             size_t hole         = lsp_max(1, scaling);
             size_t gap          = lsp_max(1, scaling);
             size_t scale        = lsp_max(0, sScale.get() * scaling);
@@ -303,128 +303,126 @@ namespace lsp
 
         void Knob::draw(ws::ISurface *s)
         {
-//            // Prepare the color palette
-//            float bright    = brightness();
-//
-//            Color scol(sScaleColor);
-//            Color sdcol(sScaleColor);
-//            Color hole(sHoleColor);
-//            Color bg_color(sBgColor);
-//            Color cap(sColor);
-//            Color tip(sTipColor);
-//
-//            sdcol.blend(bg_color, 0.75f);
-//
-//            scol.scale_lightness(bright);
-//            sdcol.scale_lightness(bright);
-//            cap.scale_lightness(bright);
-//            tip.scale_lightness(bright);
-//
-//            // Get actual values
-//            float value     = get_normalized_value(fValue);
-//            float balance   = get_normalized_value(fBalance);
-//
-//            // Draw background
-//            s->fill_rect(0, 0, sSize.nWidth, sSize.nHeight, bg_color);
-//
-//            // Calculate real boundaries
-//            ssize_t c_x     = (sSize.nWidth >> 1);
-//            ssize_t c_y     = (sSize.nHeight >> 1);
-//
-//            // Draw scale background
-//            float knob_r        = (nSize >> 1);
-//            float hole_r        = (nSize >> 1) + 1;
-//            float scale_in_r    = hole_r + 2;
-//            float scale_out_r   = scale_in_r + 5;
-//
-//            float delta, base, v_angle1, v_angle2;
-//            size_t nsectors;
-//
-//            bool aa = s->set_antialiasing(true);
-//
-//            if (!bCycling)
-//            {
-//                nsectors      = 20;
-//                base          = 2.0f * M_PI / 3.0f;
-//                delta         = 5.0f * M_PI / 3.0f;
-//                v_angle1      = base + value * delta;
-//                v_angle2      = base + balance * delta;
-//
-//                s->fill_sector(c_x, c_y, scale_out_r, base, base + delta, sdcol);
-//                if (value < balance)
-//                    s->fill_sector(c_x, c_y, scale_out_r, v_angle1, v_angle2, scol);
-//                else
-//                    s->fill_sector(c_x, c_y, scale_out_r, v_angle2, v_angle1, scol);
-//
-//                s->fill_circle(c_x, c_y, scale_in_r, bg_color);
-//                s->fill_circle(c_x, c_y, hole_r, hole);
-//            }
-//            else
-//            {
-//                nsectors      = 24;
-//                base          = 1.5f * M_PI;
-//                delta         = 2.0f * M_PI;
-//                v_angle1      = base + value * delta;
-//                v_angle2      = base + balance * delta * 0.5f;
-//
-//                s->fill_circle(c_x, c_y, scale_out_r, sdcol);
-//                if (value < balance)
-//                    s->fill_sector(c_x, c_y, scale_out_r, v_angle1, v_angle2, scol);
-//                else
-//                    s->fill_sector(c_x, c_y, scale_out_r, v_angle2, v_angle1, scol);
-//
-//                s->fill_circle(c_x, c_y, scale_in_r, bg_color);
-//                s->fill_circle(c_x, c_y, hole_r, hole);
-//            }
-//
-//            // Draw scales: overall 10 segments separated by 2 sub-segments
-//            delta   = 0.25f * M_PI / 3.0f;
-//
-//            for (size_t i=0; i<=nsectors; ++i)
-//            {
-//                float angle = base + delta * i;
-//                float r2    = scale_in_r + 3.0f * (i & 1);
-//                float f_sin = sinf(angle), f_cos = cosf(angle);
-//
-//                s->line(c_x + (scale_out_r + 1) * f_cos,
-//                        c_y + (scale_out_r + 1) * f_sin,
-//                        c_x + r2 * f_cos,
-//                        c_y + r2 * f_sin,
-//                        1.0f, bg_color);
-//            }
-//
-//            // Draw knob body
-//            ssize_t k_l = (nSize >> 3);
-//            if (k_l < 2)
-//                k_l = 2;
-//            float k_r = knob_r;
-//            float f_sin = sinf(v_angle1), f_cos = cosf(v_angle1);
-//
-//            // Draw cap and tip
-//            for (ssize_t i=0; (i++)<k_l; )
-//            {
-//                float bright = sqrtf(i * i) / k_l;
-//                scol.blend(cap, hole, bright);
-//                sdcol.blend(scol, hole, 0.5f);
-//
-//                // Draw cap
-//                IGradient *gr = s->radial_gradient(c_x + k_r, c_y - k_r, knob_r, c_x + k_r, c_y - k_r, knob_r * 4.0);
-//                gr->add_color(0.0f, scol);
-//                gr->add_color(1.0f, sdcol);
-//                s->fill_circle(c_x, c_y, k_r, gr);
-//                delete gr;
-//
-//                // Draw tip
-//                scol.copy(tip);
-//                scol.blend(hole, bright);
-//                s->line(c_x + (knob_r * 0.25f) * f_cos, c_y + (knob_r * 0.25f) * f_sin,
-//                        c_x + k_r * f_cos, c_y + k_r * f_sin, 3.0f, scol);
-//
-//                if ((--k_r) < 0.0f)
-//                    k_r = 0.0f;
-//            }
-//
-//            s->set_antialiasing(aa);
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+            float value         = sValue.get_normalized();
+            float balance       = sValue.get_normalized(sBalance.get());
+
+            // Calculate knob parameters
+            ssize_t c_x         = (sSize.nWidth >> 1);
+            ssize_t c_y         = (sSize.nHeight >> 1);
+            size_t xr           = lsp_min(sSize.nWidth, sSize.nHeight) >> 1;
+            size_t chamfer      = lsp_max(1, scaling * 3.0f);
+            size_t hole         = lsp_max(1, scaling);
+            size_t gap          = lsp_max(1, scaling);
+            size_t scale        = lsp_max(0, sScale.get() * scaling);
+
+            // Prepare the color palette
+            lsp::Color scol(sScaleColor);
+            lsp::Color sdcol(sScaleColor);
+            lsp::Color hcol(sHoleColor);
+            lsp::Color bg_color(sBgColor);
+            lsp::Color cap(sColor);
+            lsp::Color tip(sTipColor);
+
+            scol.scale_lightness(bright);
+            sdcol.scale_lightness(0.75f * bright);
+            cap.scale_lightness(bright);
+            tip.scale_lightness(bright);
+
+            // Draw background
+            s->clear(bg_color);
+            bool aa = s->set_antialiasing(true);
+
+            size_t nsectors;
+            float delta, base, v_angle1, v_angle2;
+            if (sCycling.get())
+            {
+                nsectors      = 24;
+                base          = 1.5f * M_PI;
+                delta         = 2.0f * M_PI;
+                v_angle1      = base + value * delta;
+                v_angle2      = base + balance * delta * 0.5f;
+            }
+            else
+            {
+                nsectors      = 20;
+                base          = 2.0f * M_PI / 3.0f;
+                delta         = 5.0f * M_PI / 3.0f;
+                v_angle1      = base + value * delta;
+                v_angle2      = base + balance * delta;
+            }
+
+            // Draw scale
+            if (scale > 0)
+            {
+                if (sCycling.get())
+                {
+                    s->fill_circle(c_x, c_y, xr, sdcol);
+                    if (value < balance)
+                        s->fill_sector(c_x, c_y, xr, v_angle1, v_angle2, scol);
+                    else
+                        s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
+
+                }
+                else
+                {
+                    s->fill_sector(c_x, c_y, xr, base, base + delta, sdcol);
+                    if (value < balance)
+                        s->fill_sector(c_x, c_y, xr, v_angle1, v_angle2, scol);
+                    else
+                        s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
+                }
+
+                // Draw scales: overall 10 segments separated by 2 sub-segments
+                float r1    = xr + 1;
+                float r2    = xr - scale * 0.5f;
+                float r3    = xr - scale - 1;
+                delta   = 0.25f * M_PI / 3.0f;
+
+                for (size_t i=0; i <= nsectors; ++i)
+                {
+                    float angle = base + delta * i;
+                    float scr   = (i & 1) ? r2 : r3;
+                    float f_sin = sinf(angle), f_cos = cosf(angle);
+
+                    s->line(c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling, bg_color);
+                }
+
+                // Draw hole and update radius
+                s->fill_circle(c_x, c_y, xr - scale, bg_color);
+                xr             -= (scale + gap);
+            }
+
+            // Draw hole
+            s->fill_circle(c_x, c_y, xr, hcol);
+            xr -= hole;
+
+            // Draw knob
+            float f_sin = sinf(v_angle1), f_cos = cosf(v_angle1);
+
+            for (size_t i=0; i<=chamfer; ++i, --xr)
+            {
+                // Compute color
+                float bright = float(i + 1.0f) / (chamfer + 1);
+                scol.blend(cap, hcol, bright);
+                sdcol.blend(scol, hcol, 0.5f);
+
+                // Draw cap
+                ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, xr, c_x + xr, c_y - xr, xr * 4.0);
+                gr->add_color(0.0f, scol);
+                gr->add_color(1.0f, sdcol);
+                s->fill_circle(c_x, c_y, xr, gr);
+                delete gr;
+
+                // Draw tip
+                scol.copy(tip);
+                scol.blend(hcol, bright);
+                s->line(c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
+                        c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, scol);
+            }
+
+            s->set_antialiasing(aa);
         }
 
         status_t Knob::on_change()

@@ -244,12 +244,12 @@ namespace lsp
 
                 style->begin();
                 {
-                    style->create_int(vAtoms[P_VALUE], value);
-                    style->create_int(vAtoms[P_MIN], min);
-                    style->create_int(vAtoms[P_MAX], max);
-                    style->create_int(vAtoms[P_STEP], step);
-                    style->create_int(vAtoms[P_QUICK], quick);
-                    style->create_int(vAtoms[P_SLOW], slow);
+                    style->create_float(vAtoms[P_VALUE], value);
+                    style->create_float(vAtoms[P_MIN], min);
+                    style->create_float(vAtoms[P_MAX], max);
+                    style->create_float(vAtoms[P_STEP], step);
+                    style->create_float(vAtoms[P_QUICK], quick);
+                    style->create_float(vAtoms[P_SLOW], slow);
                 }
                 style->end();
                 return STATUS_OK;

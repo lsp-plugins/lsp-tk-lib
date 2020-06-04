@@ -1,5 +1,5 @@
 /*
- * hyperlink.cpp
+ * knob.cpp
  *
  *  Created on: 4 июн. 2020 г.
  *      Author: sadko
@@ -9,7 +9,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.simple", hyperlink)
+MTEST_BEGIN("tk.widgets.simple", knob)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -155,12 +155,12 @@ MTEST_BEGIN("tk.widgets.simple", hyperlink)
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
         tk::Grid *grid = NULL;
-        tk::Hyperlink *hl = NULL;
+        tk::Knob *kn = NULL;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test hyperlink") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("hyperlink_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test knob") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("knob_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
@@ -180,8 +180,8 @@ MTEST_BEGIN("tk.widgets.simple", hyperlink)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(3);
-        grid->columns()->set(1);
+        grid->rows()->set(4);
+        grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
         grid->vspacing()->set(2);
@@ -189,43 +189,21 @@ MTEST_BEGIN("tk.widgets.simple", hyperlink)
         {
             // Create alignment and child widget
             LSPString id;
+            size_t col = 0;
 
             // Create hyperlink (default)
-            MTEST_ASSERT(id.fmt_ascii("hlink-0"));
-            MTEST_ASSERT(hl = new tk::Hyperlink(dpy));
-            MTEST_ASSERT(init_widget(hl, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(hl));
-            MTEST_ASSERT(grid->add(hl) == STATUS_OK);
+            for (size_t x=0; x<4; ++x)
+            {
+                MTEST_ASSERT(id.fmt_ascii("knob-%d-0", x));
+                MTEST_ASSERT(kn = new tk::Knob(dpy));
+                MTEST_ASSERT(init_widget(kn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(kn));
+                MTEST_ASSERT(grid->add(kn) == STATUS_OK);
 
-            hl->url()->set_raw("https://lsp-plug.in/");
-            hl->text()->set_raw("LSP Plugins site");
-            hl->text_layout()->set_halign(-1.0f);
-
-            // Create hyperlink
-            MTEST_ASSERT(id.fmt_ascii("hlink-1"));
-            MTEST_ASSERT(hl = new tk::Hyperlink(dpy));
-            MTEST_ASSERT(init_widget(hl, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(hl));
-            MTEST_ASSERT(grid->add(hl) == STATUS_OK);
-
-            hl->url()->set_raw("https://github.com/sadko4u");
-            hl->text()->set_raw("Developer profile");
-            hl->color()->set_rgb24(0x00cc44);
-            hl->hover_color()->set_rgb24(0x888800);
-            hl->text_layout()->set_halign(1.0f);
-
-            // Create hyperlink
-            MTEST_ASSERT(id.fmt_ascii("hlink-2"));
-            MTEST_ASSERT(hl = new tk::Hyperlink(dpy));
-            MTEST_ASSERT(init_widget(hl, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(hl));
-            MTEST_ASSERT(grid->add(hl) == STATUS_OK);
-
-            hl->url()->set_raw("https://github.com/sadko4u/lsp-tk-lib/");
-            hl->text()->set_raw("Link to project's repository");
-            hl->color()->set_rgb24(0xff0000);
-            hl->hover_color()->set_rgb24(0x0000cc);
-            hl->text_layout()->set_halign(0.0f);
+                kn->size()->set((x+1) * 4);
+                kn->color()->set_rgb24(next_color(col));
+                kn->tip_color()->set_rgb24(next_color(col));
+            }
         }
 
         // Show window
@@ -245,9 +223,6 @@ MTEST_BEGIN("tk.widgets.simple", hyperlink)
     }
 
 MTEST_END
-
-
-
 
 
 
