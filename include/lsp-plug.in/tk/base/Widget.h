@@ -254,6 +254,12 @@ namespace lsp
                  */
                 bool                    kill_focus();
 
+                /**
+                 * Get current mouse pointer
+                 * @return current mouse pointer
+                 */
+                virtual ws::mouse_pointer_t current_pointer();
+
                 /** Check if there is redraw request pending
                  *
                  * @return true if there is redraw request pending

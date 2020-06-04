@@ -91,6 +91,10 @@ namespace lsp
                 inline float        change_step(float k)    { return change(k, fStep);      }
                 inline float        change_quick(float k)   { return change(k, fQuick);     }
                 inline float        change_slow(float k)    { return change(k, fSlow);      }
+
+                float               get_normalized(float value) const;
+                inline float        get_normalized() const  { return get_normalized(fValue); }
+                float               set_normalized(float value);
         };
 
         namespace prop

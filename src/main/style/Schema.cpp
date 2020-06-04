@@ -589,7 +589,7 @@ namespace lsp
             Style *root = (sCtx.pRoot != NULL) ? &sCtx.pRoot->sStyle : NULL;
 
             // Bind properties
-            sScaling.bind("scaling", root);
+            sScaling.bind("size.scaling", root);
 
             // Initialize default values
             sScaling.init(root, 1.0f);

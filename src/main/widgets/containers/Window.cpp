@@ -349,7 +349,7 @@ namespace lsp
 
             ws::mouse_pointer_t mp  = sPointer.get();
             if ((!bOverridePointer) && (hMouse.pWidget != NULL))
-                mp      = hMouse.pWidget->pointer()->get();
+                mp      = hMouse.pWidget->current_pointer();
 
             return (mp == pWindow->get_mouse_pointer()) ? STATUS_OK : pWindow->set_mouse_pointer(mp);
         }

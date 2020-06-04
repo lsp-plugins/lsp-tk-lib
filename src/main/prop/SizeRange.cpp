@@ -149,6 +149,8 @@ namespace lsp
             scale               = lsp_max(scale, 0.0f);
             *min                = (nMin >= 0) ? nMin * scale : -1;
             *max                = (nMax >= 0) ? nMax * scale : -1;
+            if ((*max >= 0) && (*max < *min))
+                *max                = *min;
         }
 
         void SizeRange::compute(ws::size_limit_t *r, float scale) const

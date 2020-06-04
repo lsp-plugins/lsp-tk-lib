@@ -70,7 +70,7 @@ namespace lsp
             if (res == STATUS_OK)
             {
                 sAllocation.bind("allocation", &sStyle);
-                sScaling.bind("scaling", &sStyle);
+                sScaling.bind("size.scaling", &sStyle);
                 sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
                 sBgColor.bind("bg.color", &sStyle);
@@ -619,6 +619,11 @@ namespace lsp
         {
             Window *wnd = widget_cast<Window>(toplevel());
             return (wnd != NULL) ? wnd->kill_focus(this) : false;
+        }
+
+        ws::mouse_pointer_t Widget::current_pointer()
+        {
+            return sPointer.get();
         }
 
         status_t Widget::handle_event(const ws::event_t *e)

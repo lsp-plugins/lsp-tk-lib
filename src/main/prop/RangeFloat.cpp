@@ -138,6 +138,27 @@ namespace lsp
             return old;
         }
 
+        float RangeFloat::get_normalized(float value) const
+        {
+            if (fMin == fMax)
+                return 0.0f;
+
+            float v         = limited(value);
+            return (v - fMin) / (fMax - fMin);
+        }
+
+        float RangeFloat::set_normalized(float value)
+        {
+            float old   = fValue;
+            value       = fMin + (fMax - fMin) * lsp_limit(value, 0.0f, 1.0f);
+            if (value == old)
+                return old;
+
+            fValue              = value;
+            sync();
+            return old;
+        }
+
         float RangeFloat::set_step(float value)
         {
             float old = fStep;
