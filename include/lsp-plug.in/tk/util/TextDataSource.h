@@ -1,28 +1,32 @@
 /*
- * LSPTextDataSource.h
+ * TextDataSource.h
  *
  *  Created on: 21 авг. 2019 г.
  *      Author: sadko
  */
 
-#ifndef UI_TK_UTIL_LSPTEXTDATASOURCE_H_
-#define UI_TK_UTIL_LSPTEXTDATASOURCE_H_
+#ifndef LSP_PLUG_IN_TK_UTIL_TEXTDATASOURCE_H_
+#define LSP_PLUG_IN_TK_UTIL_TEXTDATASOURCE_H_
 
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
 
 namespace lsp
 {
     namespace tk
     {
-        class LSPTextDataSource: public ws::IDataSource
+        /**
+         * Text data source object for clipboard data
+         */
+        class TextDataSource: public ws::IDataSource
         {
             protected:
                 LSPString   sText;
 
             public:
-                explicit LSPTextDataSource();
-                virtual ~LSPTextDataSource();
+                explicit TextDataSource();
+                virtual ~TextDataSource();
 
             public:
                 /**
@@ -63,4 +67,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_UTIL_LSPTEXTDATASOURCE_H_ */
+#endif /* LSP_PLUG_IN_TK_UTIL_TEXTDATASOURCE_H_ */

@@ -1,11 +1,12 @@
 /*
- * LSPTextDataSource.cpp
+ * TextDataSource.cpp
  *
  *  Created on: 21 авг. 2019 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/util/LSPTextDataSource.h>
+#include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/io/InMemoryStream.h>
 
 namespace lsp
 {
@@ -22,16 +23,16 @@ namespace lsp
             NULL
         };
         
-        LSPTextDataSource::LSPTextDataSource(): IDataSource(mimes)
+        TextDataSource::TextDataSource(): IDataSource(mimes)
         {
         }
         
-        LSPTextDataSource::~LSPTextDataSource()
+        TextDataSource::~TextDataSource()
         {
             sText.truncate();
         }
 
-        io::IInStream   *LSPTextDataSource::open(const char *mime)
+        io::IInStream *TextDataSource::open(const char *mime)
         {
             // Scan supported MIME types
             ssize_t idx = -1, i=0;
@@ -95,22 +96,22 @@ namespace lsp
             return stream;
         }
 
-        status_t LSPTextDataSource::set_text(const char *text)
+        status_t TextDataSource::set_text(const char *text)
         {
             return sText.set_utf8(text) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t LSPTextDataSource::set_text(const LSPString *text)
+        status_t TextDataSource::set_text(const LSPString *text)
         {
             return sText.set(text) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t LSPTextDataSource::set_text(const LSPString *text, ssize_t first)
+        status_t TextDataSource::set_text(const LSPString *text, ssize_t first)
         {
             return sText.set(text, first) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t LSPTextDataSource::set_text(const LSPString *text, ssize_t first, ssize_t last)
+        status_t TextDataSource::set_text(const LSPString *text, ssize_t first, ssize_t last)
         {
             return sText.set(text, first, last) ? STATUS_OK : STATUS_NO_MEM;
         }

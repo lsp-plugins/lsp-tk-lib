@@ -55,7 +55,7 @@ namespace lsp
             if (sclass != NULL)
             {
                 sTextLayout.init(sclass, 0.0f, 0.0f);
-                sFont.init(sclass, 12.0f);
+                sFont.init(sclass, 12.0f, ws::FF_UNDERLINE);
                 sColor.init(sclass, "#0000cc");
                 sHoverColor.init(sclass, "#ff0000");
                 sConstraints.init(sclass, -1, -1, -1, -1);
@@ -66,9 +66,7 @@ namespace lsp
             }
 
 
-//            set_cursor(MP_HAND); // Initialize pointer
-//            sFont.set_underline();
-//
+// TODO: add default menu
 //            ui_handler_id_t id = 0;
 //
 //            LSP_STATUS_ASSERT(sStdMenu.init());
@@ -181,20 +179,23 @@ namespace lsp
 
         status_t Hyperlink::copy_url(ws::clipboard_id_t cb)
         {
-// TODO
-//            // Copy data to clipboard
-//            LSPTextDataSource *src = new LSPTextDataSource();
-//            if (src == NULL)
-//                return STATUS_NO_MEM;
-//            src->acquire();
-//
-//            status_t result = src->set_text(&sUrl);
-//            if (result == STATUS_OK)
-//                pDisplay->set_clipboard(cb, src);
-//            src->release();
-//
-//            return result;
-            return STATUS_OK;
+            // Prepare URL to copy
+            LSPString url;
+            if (!sUrl.format(&url))
+                return STATUS_NO_MEM;
+
+            // Copy data to clipboard
+            TextDataSource *src = new TextDataSource();
+            if (src == NULL)
+                return STATUS_NO_MEM;
+            src->acquire();
+
+            status_t result = src->set_text(&url);
+            if (result == STATUS_OK)
+                pDisplay->set_clipboard(cb, src);
+            src->release();
+
+            return result;
         }
 
         status_t Hyperlink::on_submit()

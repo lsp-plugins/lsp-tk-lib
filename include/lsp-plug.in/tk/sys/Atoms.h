@@ -1,12 +1,12 @@
 /*
- * IAtoms.h
+ * Atoms.h
  *
  *  Created on: 13 мая 2020 г.
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_SYS_IATOMS_H_
-#define LSP_PLUG_IN_TK_SYS_IATOMS_H_
+#ifndef LSP_PLUG_IN_TK_SYS_ATOMS_H_
+#define LSP_PLUG_IN_TK_SYS_ATOMS_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
@@ -60,4 +60,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* INCLUDE_LSP_PLUG_IN_TK_SYS_IATOMS_H_ */
+#endif /* INCLUDE_LSP_PLUG_IN_TK_SYS_ATOMS_H_ */

@@ -72,6 +72,9 @@
 #include <lsp-plug.in/tk/sys/Timer.h>
 #include <lsp-plug.in/tk/sys/Display.h>
 
+// Utilitary objects
+#include <lsp-plug.in/tk/util/TextDataSource.h>
+
 // Base widgets
 #include <lsp-plug.in/tk/base/Widget.h>
 #include <lsp-plug.in/tk/base/WidgetContainer.h>
