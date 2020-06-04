@@ -399,25 +399,25 @@ namespace lsp
             return s->get_text_parameters(f, tp, text, first, last);
         }
 
-        void Font::draw(ws::ISurface *s, float x, float y, const lsp::Color &c, float scaling, const LSPString *text) const
+        void Font::draw(ws::ISurface *s, const lsp::Color &c, float x, float y, float scaling, const LSPString *text) const
         {
             if (text != NULL)
-                draw(s, x, y, c, scaling, text, 0, text->length());
+                draw(s, c, x, y, scaling, text, 0, text->length());
         }
 
-        void Font::draw(ws::ISurface *s, float x, float y, const lsp::Color &c, float scaling, const LSPString *text, size_t first) const
+        void Font::draw(ws::ISurface *s, const lsp::Color &c, float x, float y, float scaling, const LSPString *text, size_t first) const
         {
             if (text != NULL)
-                draw(s, x, y, c, scaling, text, first, text->length());
+                draw(s, c, x, y, scaling, text, first, text->length());
         }
 
-        void Font::draw(ws::ISurface *s, float x, float y, const lsp::Color &c, float scaling, const LSPString *text, size_t first, size_t last) const
+        void Font::draw(ws::ISurface *s, const lsp::Color &c, float x, float y, float scaling, const LSPString *text, size_t first, size_t last) const
         {
             if (s == NULL)
                 return;
 
             ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
-            s->out_text(f, x, y, c, text, first, last);
+            s->out_text(f, c, x, y, text, first, last);
         }
 
         namespace prop

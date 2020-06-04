@@ -47,6 +47,8 @@ namespace lsp
 
             protected:
                 static status_t                 slot_on_submit(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_on_before_popup(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_on_popup(Widget *sender, void *ptr, void *data);
                 static status_t                 slot_copy_link_action(Widget *sender, void *ptr, void *data);
 
             protected:
@@ -100,6 +102,10 @@ namespace lsp
                 virtual status_t                on_mouse_down(const ws::event_t *e);
 
                 virtual status_t                on_mouse_up(const ws::event_t *e);
+
+                virtual status_t                on_before_popup(/* Menu *menu */);
+
+                virtual status_t                on_popup(/* Menu *menu */);
 
                 virtual status_t                on_submit();
 

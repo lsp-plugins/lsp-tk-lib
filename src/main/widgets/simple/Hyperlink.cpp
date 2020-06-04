@@ -65,6 +65,11 @@ namespace lsp
                 sPointer.override(sclass, ws::MP_HAND);
             }
 
+            handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEFORE_POPUP, slot_on_before_popup, self());
+            if (id >= 0) id = sSlots.add(SLOT_POPUP, slot_on_popup, self());
+            if (id < 0)
+                return -id;
 
 // TODO: add default menu
 //            ui_handler_id_t id = 0;
@@ -92,10 +97,6 @@ namespace lsp
 //            if (id < 0)
 //                return -id;
 //
-//            id = sSlots.add(LSPSLOT_SUBMIT, slot_on_submit, self());
-//            if (id < 0) return -id;
-//            sSlots.add(LSPSLOT_BEFORE_POPUP);
-//            sSlots.add(LSPSLOT_POPUP);
 
             return STATUS_OK;
         }
@@ -128,6 +129,19 @@ namespace lsp
 
         void Hyperlink::property_changed(Property *prop)
         {
+            Widget::property_changed(prop);
+            if (sTextLayout.is(prop))
+                query_draw();
+            if (sFont.is(prop))
+                query_resize();
+            if (sColor.is(prop))
+                query_draw();
+            if (sHoverColor.is(prop))
+                query_draw();
+            if (sText.is(prop))
+                query_resize();
+            if (sConstraints.is(prop))
+                query_resize();
         }
 
 
@@ -135,6 +149,20 @@ namespace lsp
         {
             Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
             return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Hyperlink::slot_on_before_popup(Widget *sender, void *ptr, void *data)
+        {
+            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
+            /* Menu *menu = widget_ptrcast<Menu>(data); */
+            return (_this != NULL) ? _this->on_before_popup(/* menu */) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Hyperlink::slot_on_popup(Widget *sender, void *ptr, void *data)
+        {
+            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
+            /* Menu *menu = widget_ptrcast<Menu>(data); */
+            return (_this != NULL) ? _this->on_popup(/* menu */) : STATUS_BAD_ARGUMENTS;
         }
 
         status_t Hyperlink::slot_copy_link_action(Widget *sender, void *ptr, void *data)
@@ -149,8 +177,9 @@ namespace lsp
         status_t Hyperlink::follow_url() const
         {
             LSPString url;
-            if (!sUrl.format(&url))
-                return STATUS_NO_MEM;
+            status_t res = sUrl.format(&url);
+            if (res != STATUS_OK)
+                return res;
 
             #ifdef PLATFORM_WINDOWS
                 ::ShellExecuteW(
@@ -162,7 +191,7 @@ namespace lsp
                     SW_SHOWNORMAL       // Show command
                 );
             #else
-                status_t res;
+
                 ipc::Process p;
 
                 if ((res = p.set_command("xdg-open")) != STATUS_OK)
@@ -181,8 +210,9 @@ namespace lsp
         {
             // Prepare URL to copy
             LSPString url;
-            if (!sUrl.format(&url))
-                return STATUS_NO_MEM;
+            status_t res = sUrl.format(&url);
+            if (res != STATUS_OK)
+                return res;
 
             // Copy data to clipboard
             TextDataSource *src = new TextDataSource();
@@ -281,7 +311,7 @@ namespace lsp
                 ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
                 y          += fp.Height;
 
-                sFont.draw(s, x, y, f_color, scaling, &text, last, tail);
+                sFont.draw(s, f_color, x, y, scaling, &text, last, tail);
                 last    = curr + 1;
             }
         }
@@ -395,5 +425,16 @@ namespace lsp
 
             return STATUS_OK;
         }
+
+        status_t Hyperlink::on_before_popup(/* Menu *menu */)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Hyperlink::on_popup(/* Menu *menu */)
+        {
+            return STATUS_OK;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */

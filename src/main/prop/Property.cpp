@@ -104,6 +104,7 @@ namespace lsp
             expr::Tokenizer tok(&is);
             status_t res = STATUS_OK;
             const prop::enum_t *xe;
+            size_t xdst  = 0;
 
             while ((res = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) != expr::TT_EOF)
             {
@@ -121,9 +122,11 @@ namespace lsp
                 if ((xe = find_enum(tok.text_value(), xenum)) == NULL)
                     return -1;
 
-                *dst    |= xe->value;
+                xdst   |= xe->value;
                 ++n;
             }
+
+            *dst    = xdst;
 
             return n;
         }

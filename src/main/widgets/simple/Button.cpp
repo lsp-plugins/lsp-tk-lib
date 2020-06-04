@@ -440,7 +440,7 @@ namespace lsp
                         ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
                         y          += fp.Height;
 
-                        sFont.draw(s, x, y, tcolor, scaling, &text, last, tail);
+                        sFont.draw(s, tcolor, x, y, scaling, &text, last, tail);
                         last    = curr + 1;
                     }
 

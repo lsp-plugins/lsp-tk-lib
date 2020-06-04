@@ -113,9 +113,9 @@ namespace lsp
                 bool get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const;
                 bool get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const;
 
-                void draw(ws::ISurface *s, float x, float y, const lsp::Color &c, float scaling, const LSPString *text) const;
-                void draw(ws::ISurface *s, float x, float y, const lsp::Color &c, float scaling, const LSPString *text, size_t first) const;
-                void draw(ws::ISurface *s, float x, float y, const lsp::Color &c, float scaling, const LSPString *text, size_t first, size_t last) const;
+                void draw(ws::ISurface *s, const lsp::Color &c, float x, float y, float scaling, const LSPString *text) const;
+                void draw(ws::ISurface *s, const lsp::Color &c, float x, float y, float scaling, const LSPString *text, size_t first) const;
+                void draw(ws::ISurface *s, const lsp::Color &c, float x, float y, float scaling, const LSPString *text, size_t first, size_t last) const;
         };
 
         namespace prop

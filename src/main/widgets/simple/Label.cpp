@@ -64,6 +64,8 @@ namespace lsp
                 query_draw();
             if (sText.is(prop))
                 query_resize();
+            if (sConstraints.is(prop))
+                query_resize();
         }
 
         void Label::draw(ws::ISurface *s)
@@ -143,7 +145,7 @@ namespace lsp
                 ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
                 y          += fp.Height;
 
-                sFont.draw(s, x, y, f_color, scaling, &text, last, tail);
+                sFont.draw(s, f_color, x, y, scaling, &text, last, tail);
                 last    = curr + 1;
             }
         }
