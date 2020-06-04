@@ -80,6 +80,14 @@ namespace lsp
                 style->create_float(nAtom, value);
                 return STATUS_OK;
             }
+
+            status_t Float::override(Style *style, float value)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+                style->override_float(nAtom, value);
+                return STATUS_OK;
+            }
         }
     
     } /* namespace calc */

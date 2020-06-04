@@ -71,9 +71,6 @@ namespace lsp
             if ((result = WidgetContainer::init()) != STATUS_OK)
                 return result;
 
-            // Override some properties
-            sVisibility.set(false);
-
             // Bind properties
             sTitle.bind(&sStyle, pDisplay->dictionary());
             sRole.bind(&sStyle, pDisplay->dictionary());
@@ -101,6 +98,9 @@ namespace lsp
                 sSizeConstraints.init(sclass, -1, -1, -1, -1);
                 sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
                 sPolicy.init(sclass, WP_NORMAL);
+
+                // Overrides
+                sVisibility.override(sclass, false);
             }
 
             // Cache the actual scaling factor

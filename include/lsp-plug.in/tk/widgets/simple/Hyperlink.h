@@ -34,7 +34,7 @@ namespace lsp
             protected:
                 size_t                      nMFlags;
                 size_t                      nState;
-                Menu                       *pPopup;
+//                Menu                       *pPopup;         // TODO
 
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::Font                  sFont;          // Font parameters
@@ -44,10 +44,6 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Boolean               sFollow;        // Follow hyperlink
                 prop::String                sUrl;           // URL
-
-//            protected:
-//                LSPString                   sUrl;
-//                Menu                       *pPopup;
 
             protected:
                 static status_t                 slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -90,6 +86,7 @@ namespace lsp
 
             public:
                 status_t                        copy_url(ws::clipboard_id_t cb);
+                status_t                        follow_url() const;
 
             public:
                 virtual void                    draw(ws::ISurface *s);

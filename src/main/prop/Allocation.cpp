@@ -72,6 +72,22 @@ namespace lsp
                 style->end();
                 return STATUS_OK;
             }
+
+            status_t Allocation::override(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->override_bool(vAtoms[F_HFILL], hfill);
+                    style->override_bool(vAtoms[F_VFILL], vfill);
+                    style->override_bool(vAtoms[F_HEXPAND], hexpand);
+                    style->override_bool(vAtoms[F_VEXPAND], vexpand);
+                }
+                style->end();
+                return STATUS_OK;
+            }
         }
 
     } /* namespace tk */

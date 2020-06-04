@@ -52,7 +52,7 @@ namespace lsp
                     /**
                      * Unbind property
                      */
-                    inline status_t     unbind()                                        { return tk::Pointer::unbind(); };
+                    inline status_t     unbind()                                        { return tk::Pointer::unbind(); }
 
                     /**
                      * Initialize default value
@@ -60,7 +60,8 @@ namespace lsp
                      * @param mp default mouse pointer
                      * @return status of operation
                      */
-                    inline status_t     init(Style *style, ws::mouse_pointer_t mp)      { return tk::Pointer::init(style, mp);      };
+                    inline status_t     init(Style *style, ws::mouse_pointer_t mp)      { return tk::Pointer::init(style, mp);      }
+                    inline status_t     override(Style *style, ws::mouse_pointer_t mp)  { return tk::Pointer::override(style, mp);  }
             };
         }
     } /* namespace tk */

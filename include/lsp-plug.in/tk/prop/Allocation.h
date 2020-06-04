@@ -94,6 +94,7 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand);
+                    status_t            override(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand);
             };
         }
     

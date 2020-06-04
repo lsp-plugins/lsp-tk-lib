@@ -81,6 +81,14 @@ namespace lsp
                 style->create_int(nAtom, value);
                 return STATUS_OK;
             }
+
+            status_t Integer::override(Style *style, ssize_t value)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+                style->override_int(nAtom, value);
+                return STATUS_OK;
+            }
         }
     } /* namespace tk */
 } /* namespace lsp */

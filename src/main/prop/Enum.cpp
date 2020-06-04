@@ -113,6 +113,19 @@ namespace lsp
             return STATUS_OK;
         }
 
+        ssize_t Enum::override(Style *style, ssize_t v)
+        {
+            if (pStyle == NULL)
+                return STATUS_BAD_STATE;
+
+            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
+            {
+                if (v == e->value)
+                    style->override_string(nAtom, e->name);
+            }
+            return STATUS_OK;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

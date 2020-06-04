@@ -1220,27 +1220,10 @@ namespace lsp
             return (atom >= 0) ? set_default(atom) : STATUS_UNKNOWN_ERR;
         }
 
-        status_t Style::create_local_property(atom_t id, const property_t *src)
+        status_t Style::update_default_value(property_t *p, const property_t *src)
         {
-            // Lookup for property first
-            property_t *p = get_property(id);
-            if (p == NULL)
-            {
-                // Just create property and mark as explicitly created
-                p = create_property(id, src, F_CREATED);
-                if (p == NULL)
-                    return STATUS_NO_MEM;
-
-                notify_listeners(p);
-                notify_children(p);
-
-                return STATUS_OK;
-            }
-
-            // Check that property has already been explicitly created previously
-            if (p->flags & F_CREATED)
-                return STATUS_ALREADY_EXISTS;
-            else if (p->type != src->type)
+            // Check that types of properties match
+            if (p->type != src->type)
                 return STATUS_BAD_TYPE;
 
             // Override values
@@ -1317,6 +1300,40 @@ namespace lsp
             }
 
             return STATUS_OK;
+        }
+
+        status_t Style::create_local_property(atom_t id, const property_t *src)
+        {
+            // Lookup for property first
+            property_t *p = get_property(id);
+            if (p == NULL)
+            {
+                // Just create property and mark as explicitly created
+                p = create_property(id, src, F_CREATED);
+                if (p == NULL)
+                    return STATUS_NO_MEM;
+
+                notify_listeners(p);
+                notify_children(p);
+
+                return STATUS_OK;
+            }
+            else if (p->flags & F_CREATED) // Check that property has already been explicitly created previously
+                return STATUS_ALREADY_EXISTS;
+
+            // Update default value of the property
+            return update_default_value(p, src);
+        }
+
+        status_t Style::override_local_property(atom_t id, const property_t *src)
+        {
+            // Lookup for property first
+            property_t *p = get_property(id);
+            if ((p == NULL) || (!(p->flags & F_CREATED)))
+                return STATUS_NOT_FOUND;
+
+            // Update default value of the property
+            return update_default_value(p, src);
         }
 
         status_t Style::create_int(atom_t id, ssize_t value)
@@ -1428,6 +1445,117 @@ namespace lsp
         {
             atom_t atom = pSchema->atom_id(id);
             return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_int(atom_t id, ssize_t value)
+        {
+            property_t tmp;
+            tmp.type        = PT_INT;
+            tmp.v.iValue    = value;
+            tmp.dv.iValue   = value;
+            return override_local_property(id, &tmp);
+        }
+
+        status_t Style::override_int(const char *id, ssize_t value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_int(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_int(const LSPString *id, ssize_t value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_int(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_float(atom_t id, float value)
+        {
+            property_t tmp;
+            tmp.type        = PT_FLOAT;
+            tmp.v.fValue    = value;
+            tmp.dv.fValue   = value;
+            return override_local_property(id, &tmp);
+        }
+
+        status_t Style::override_float(const char *id, float value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_float(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_float(const LSPString *id, float value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_float(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_bool(atom_t id, bool value)
+        {
+            property_t tmp;
+            tmp.type        = PT_BOOL;
+            tmp.v.bValue    = value;
+            tmp.dv.bValue   = value;
+            return override_local_property(id, &tmp);
+        }
+
+        status_t Style::override_bool(const char *id, bool value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_bool(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_bool(const LSPString *id, bool value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_bool(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_string(atom_t id, const LSPString *value)
+        {
+            if (value == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            property_t tmp;
+            tmp.type        = PT_STRING;
+            tmp.v.sValue    = const_cast<char *>(value->get_utf8());
+            tmp.dv.sValue   = const_cast<char *>(value->get_utf8());
+            return override_local_property(id, &tmp);
+        }
+
+        status_t Style::override_string(const char *id, const LSPString *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_string(const LSPString *id, const LSPString *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_string(atom_t id, const char *value)
+        {
+            if (value == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            property_t tmp;
+            tmp.type        = PT_STRING;
+            tmp.v.sValue    = const_cast<char *>(value);
+            tmp.dv.sValue   = const_cast<char *>(value);
+            return override_local_property(id, &tmp);
+        }
+
+        status_t Style::override_string(const char *id, const char *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_string(atom, value) : STATUS_UNKNOWN_ERR;
+        }
+
+        status_t Style::override_string(const LSPString *id, const char *value)
+        {
+            atom_t atom = pSchema->atom_id(id);
+            return (atom >= 0) ? override_string(atom, value) : STATUS_UNKNOWN_ERR;
         }
 
         status_t Style::remove(atom_t id)

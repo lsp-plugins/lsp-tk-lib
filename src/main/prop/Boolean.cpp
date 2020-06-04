@@ -86,6 +86,14 @@ namespace lsp
                 return STATUS_OK;
             }
 
+            status_t Boolean::override(Style *style, bool value)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+                style->override_bool(nAtom, value);
+                return STATUS_OK;
+            }
+
             bool Boolean::commit(bool v)
             {
                 bool prev = bValue;

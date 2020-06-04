@@ -105,6 +105,7 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, float value);
+                    status_t            override(Style *style, float value);
             };
         }
 

@@ -102,6 +102,7 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, ssize_t value);
+                    status_t            override(Style *style, ssize_t value);
             };
         }
     

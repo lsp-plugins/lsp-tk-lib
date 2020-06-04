@@ -99,6 +99,8 @@ namespace lsp
                 status_t            set_property_default(property_t *dst);
                 status_t            copy_property(property_t *dst, const property_t *src);
                 status_t            create_local_property(atom_t id, const property_t *src);
+                status_t            override_local_property(atom_t id, const property_t *src);
+                status_t            update_default_value(property_t *p, const property_t *src);
 
                 inline const property_t   *get_property(atom_t id) const { return const_cast<Style *>(this)->get_property(id); };
                 inline const property_t   *get_property_recursive(atom_t id) const { return const_cast<Style *>(this)->get_property_recursive(id); };
@@ -509,6 +511,57 @@ namespace lsp
                 status_t                create_string(const char *id, const char *value);
                 status_t                create_string(const LSPString *id, const char *value);
 
+
+                /**
+                 * Override default value of local integer property
+                 * @param id property identifier
+                 * @param value default value
+                 * @return status of operation
+                 */
+                status_t                override_int(atom_t id, ssize_t value);
+                status_t                override_int(const char *id, ssize_t value);
+                status_t                override_int(const LSPString *id, ssize_t value);
+
+                /**
+                 * Override default value of local floating-point property
+                 * @param id property identifier
+                 * @param value default value
+                 * @return status of operation
+                 */
+                status_t                override_float(atom_t id, float value);
+                status_t                override_float(const char *id, float value);
+                status_t                override_float(const LSPString *id, float value);
+
+                /**
+                 * Override default value of local boolean property
+                 * @param id property identifier
+                 * @param value default value
+                 * @return status of operation
+                 */
+                status_t                override_bool(atom_t id, bool value);
+                status_t                override_bool(const char *id, bool value);
+                status_t                override_bool(const LSPString *id, bool value);
+
+                /**
+                 * Override default value of local string property
+                 * @param id property identifier
+                 * @param value default value
+                 * @return status of operation
+                 */
+                status_t                override_string(atom_t id, const LSPString *value);
+                status_t                override_string(const char *id, const LSPString *value);
+                status_t                override_string(const LSPString *id, const LSPString *value);
+
+                /**
+                 * Override default value of local string property
+                 * @param id property identifier
+                 * @param value default value (UTF-8 encoded)
+                 * @return status of operation
+                 */
+                status_t                override_string(atom_t id, const char *value);
+                status_t                override_string(const char *id, const char *value);
+                status_t                override_string(const LSPString *id, const char *value);
+
                 /**
                  * Remove locally-created property
                  * @param id property identifier
@@ -523,21 +576,21 @@ namespace lsp
                  * @param name atom name
                  * @return atom identifier or negative error code
                  */
-                atom_t              atom_id(const char *name) const;
+                atom_t                  atom_id(const char *name) const;
 
                 /**
                  * Get atom identifier by name
                  * @param name atom name
                  * @return atom identifier or negative error code
                  */
-                atom_t              atom_id(const LSPString *name) const;
+                atom_t                  atom_id(const LSPString *name) const;
 
                 /**
                  * Get atom name by identifier
                  * @param name atom name or NULL
                  * @return atom identifier
                  */
-                const char         *atom_name(atom_t id) const;
+                const char             *atom_name(atom_t id) const;
         };
     
     } /* namespace tk */

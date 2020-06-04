@@ -35,7 +35,9 @@ namespace lsp
 
             Style *sclass = style_class();
             if (sclass != NULL)
+            {
                 sConstraints.init(sclass, -1, -1, -1, -1);
+            }
 
             return res;
         }

@@ -116,13 +116,14 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, bool value);
+                    status_t            override(Style *style, bool value);
 
                     /**
                      * Commit value
                      * @param value value to commit
                      * @return previous value
                      */
-                    bool                 commit(bool value);
+                    bool                commit(bool value);
             };
         }
 

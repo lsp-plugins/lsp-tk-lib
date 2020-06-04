@@ -145,14 +145,6 @@ namespace lsp
 
                 sFont.draw(s, x, y, f_color, scaling, &text, last, tail);
                 last    = curr + 1;
-
-//                s->line(x - 3, y - 3, x + 3, y + 3, 1, red);
-//                s->line(x + 3, y - 3, x - 3, y + 3, 1, red);
-//
-//                s->line(x - 3 + tp.XAdvance, y - 3, x + 3 + tp.XAdvance, y + 3, 1, yellow);
-//                s->line(x + 3 + tp.XAdvance, y - 3, x - 3 + tp.XAdvance, y + 3, 1, yellow);
-//                s->line(x - 3 + tp.XAdvance, y - 3, x + 3 + tp.XAdvance, y + 3, 1, yellow);
-//                s->line(x + 3 + tp.XBearing, y - 3, x - 3 + tp.XBearing, y + 3, 1, yellow);
             }
         }
 

@@ -61,26 +61,26 @@ namespace lsp
         status_t Grid::init()
         {
             status_t res = WidgetContainer::init();
-            if (res == STATUS_OK)
+            if (res != STATUS_OK)
+                return res;
+
+            sRows.bind("rows", &sStyle);
+            sColumns.bind("columns", &sStyle);
+            sHSpacing.bind("hspacing", &sStyle);
+            sVSpacing.bind("vspacing", &sStyle);
+            sOrientation.bind("orientation", &sStyle);
+
+            Style *sclass = style_class();
+            if (sclass != NULL)
             {
-                sRows.bind("rows", &sStyle);
-                sColumns.bind("columns", &sStyle);
-                sHSpacing.bind("hspacing", &sStyle);
-                sVSpacing.bind("vspacing", &sStyle);
-                sOrientation.bind("orientation", &sStyle);
+                sRows.init(sclass, 1);
+                sColumns.init(sclass, 1);
+                sHSpacing.init(sclass, 0);
+                sVSpacing.init(sclass, 0);
+                sOrientation.init(sclass, O_HORIZONTAL);
 
-                Style *sclass = style_class();
-                if (sclass != NULL)
-                {
-                    sRows.init(sclass, 1);
-                    sColumns.init(sclass, 1);
-                    sHSpacing.init(sclass, 0);
-                    sVSpacing.init(sclass, 0);
-                    sOrientation.init(sclass, O_HORIZONTAL);
-                }
-
-                // Override settings for hfill and vfill
-                sAllocation.set(true, false);
+                // Overrides
+                sAllocation.override(sclass, true, true, false, false);
             }
 
             return STATUS_OK;
