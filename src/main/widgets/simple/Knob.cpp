@@ -359,11 +359,7 @@ namespace lsp
                 if (sCycling.get())
                 {
                     s->fill_circle(c_x, c_y, xr, sdcol);
-//                    if (value < balance)
-                        s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
-//                    else
-//                        s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
-
+                    s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
                 }
                 else
                 {
