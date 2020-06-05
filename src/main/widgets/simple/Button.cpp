@@ -219,14 +219,6 @@ namespace lsp
                 query_draw();
         }
 
-        bool Button::check_mouse_over(ssize_t x, ssize_t y)
-        {
-            x              -= sButton.nLeft;
-            y              -= sButton.nTop;
-
-            return (x >= 0) && (y >= 0) && (x < sButton.nWidth) && (y < sButton.nHeight);
-        }
-
         ws::IGradient *Button::create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float r1, float r2)
         {
             // Create gradient
@@ -522,7 +514,7 @@ namespace lsp
 
             take_focus();
 
-            bool m_over         = check_mouse_over(e->nLeft, e->nTop);
+            bool m_over         = Position::inside(&sButton, e->nLeft, e->nTop);
             size_t mask         = nBMask;
             nBMask             |= (1 << e->nCode);
 
@@ -587,7 +579,7 @@ namespace lsp
             }
 
             size_t state        = nState;
-            bool m_over         = check_mouse_over(e->nLeft, e->nTop);
+            bool m_over         = Position::inside(&sButton, e->nLeft, e->nTop);
 
             if (nState & S_TRIGGER)
             {
@@ -678,7 +670,7 @@ namespace lsp
 
             // Update state according to mouse position and mouse button state
             size_t state        = nState;
-            if ((nBMask == (1 << ws::MCB_LEFT)) && (check_mouse_over(e->nLeft, e->nTop)))
+            if ((nBMask == (1 << ws::MCB_LEFT)) && (Position::inside(&sButton, e->nLeft, e->nTop)))
                 nState     |= S_PRESSED;
             else
                 nState     &= ~S_PRESSED;

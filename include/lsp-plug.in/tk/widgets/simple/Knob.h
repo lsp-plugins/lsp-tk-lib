@@ -29,6 +29,7 @@ namespace lsp
                     S_CLICK
                 };
 
+            protected:
                 ssize_t             nLastY;
                 size_t              nState;
                 size_t              nButtons;
@@ -60,7 +61,7 @@ namespace lsp
                 explicit Knob(Display *dpy);
                 virtual ~Knob();
 
-                virtual status_t init();
+                virtual status_t                init();
 
             public:
                 inline Color                   *color()                 { return &sColor;       }

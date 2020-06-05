@@ -64,7 +64,6 @@ namespace lsp
                 prop::Padding           sTextPadding;
 
             protected:
-                bool                check_mouse_over(ssize_t x, ssize_t y);
                 void                update_mode(button_mode_t mode);
 
                 static status_t     slot_on_change(Widget *sender, void *ptr, void *data);

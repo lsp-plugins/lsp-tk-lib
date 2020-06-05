@@ -62,7 +62,6 @@ namespace lsp
             protected:
                 void                sync();
                 void                commit(atom_t property);
-                float               limited(float v) const;
                 float               climited(float v) const;
                 float               change(float k, float step);
 
@@ -71,7 +70,7 @@ namespace lsp
                 ~RangeFloat();
 
             public:
-                inline float        get() const             { return limited(fValue);       }
+                inline float        get() const             { return limit(fValue);         }
                 inline float        min() const             { return fMin;                  }
                 inline float        max() const             { return fMax;                  }
                 inline float        step() const            { return fStep;                 }
@@ -96,6 +95,7 @@ namespace lsp
                 float               get_normalized(float value) const;
                 inline float        get_normalized() const  { return get_normalized(fValue); }
                 float               set_normalized(float value, bool cyclic = false);
+                float               limit(float v) const;
         };
 
         namespace prop

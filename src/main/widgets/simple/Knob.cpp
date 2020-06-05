@@ -110,8 +110,9 @@ namespace lsp
             lsp_trace("value=%f, delta=%f", sValue.get(), delta);
 
             // Check that value is in range
-            sValue.add(delta, sCycling.get());
-            sSlots.execute(SLOT_CHANGE, this);
+            float old = sValue.add(delta, sCycling.get());
+            if (old != sValue.get())
+                sSlots.execute(SLOT_CHANGE, this);
         }
 
         void Knob::on_click(ssize_t x, ssize_t y)
