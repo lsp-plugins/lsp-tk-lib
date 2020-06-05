@@ -62,7 +62,7 @@ namespace lsp
             sBtnWidth.bind("button.width", &sStyle);
             sBtnAspect.bind("button.aspect", &sStyle);
             sAngle.bind("angle", &sStyle);
-            sBtnPointer.bind("pointer", &sStyle);
+            sBtnPointer.bind("button.pointer", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)

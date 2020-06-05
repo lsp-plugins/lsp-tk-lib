@@ -202,6 +202,7 @@ MTEST_BEGIN("tk.widgets.simple", fader)
 
             fd->color()->set_rgb24(next_color(col));
             fd->button_width()->set(14);
+            fd->button_pointer()->set(ws::MP_HSIZE);
 
             // Create vertical faders
             for (ssize_t x=0; x<8; ++x)
@@ -217,6 +218,7 @@ MTEST_BEGIN("tk.widgets.simple", fader)
                 fd->value()->set(x / 7.0);
                 fd->button_width()->set(18);
                 fd->button_aspect()->set((x + 1.0f) / 4.0f);
+                fd->button_pointer()->set(ws::MP_VSIZE);
 
                 fd->angle()->set(1);
             }
@@ -229,6 +231,7 @@ MTEST_BEGIN("tk.widgets.simple", fader)
             MTEST_ASSERT(grid->add(fd, 1, 8) == STATUS_OK);
 
             fd->color()->set_rgb24(next_color(col));
+            fd->button_pointer()->set(ws::MP_HSIZE);
         }
 
         // Show window
