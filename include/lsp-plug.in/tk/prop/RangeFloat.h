@@ -76,6 +76,7 @@ namespace lsp
                 inline float        step() const            { return fStep;                 }
                 inline float        quick() const           { return fQuick;                }
                 inline float        slow() const            { return fSlow;                 }
+                inline float        range() const           { return fMax - fMin;           }
 
                 float               set(float v);
                 float               set_min(float v);

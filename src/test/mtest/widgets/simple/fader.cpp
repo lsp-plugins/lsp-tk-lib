@@ -1,7 +1,7 @@
 /*
- * separator.cpp
+ * fader.cpp
  *
- *  Created on: 02 июня 2020 г.
+ *  Created on: 05 июн. 2020 г.
  *      Author: sadko
  */
 
@@ -9,7 +9,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.simple", separator)
+MTEST_BEGIN("tk.widgets.simple", fader)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -155,12 +155,12 @@ MTEST_BEGIN("tk.widgets.simple", separator)
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
         tk::Grid *grid = NULL;
-        tk::Separator *sp = NULL;
+        tk::Fader *fd = NULL;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test separaotr") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("separator_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test fader") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("fader_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
@@ -193,42 +193,42 @@ MTEST_BEGIN("tk.widgets.simple", separator)
             LSPString id;
             size_t col = 0;
 
-            // Create horizontal separator
-            MTEST_ASSERT(id.fmt_ascii("hsep-0"));
-            MTEST_ASSERT(sp = new tk::Separator(dpy));
-            MTEST_ASSERT(init_widget(sp, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(sp));
-            MTEST_ASSERT(grid->attach(0, 0, sp, 1, 8) == STATUS_OK);
+            // Create horizontal fader
+            MTEST_ASSERT(id.fmt_ascii("hfader-0"));
+            MTEST_ASSERT(fd = new tk::Fader(dpy));
+            MTEST_ASSERT(init_widget(fd, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(fd));
+            MTEST_ASSERT(grid->add(fd, 1, 8) == STATUS_OK);
 
-            sp->color()->set_rgb24(next_color(col));
-            sp->orientation()->set_horizontal();
+            fd->color()->set_rgb24(next_color(col));
+            fd->button_width()->set(14);
 
-            // Create vertical separators
+            // Create vertical faders
             for (ssize_t x=0; x<8; ++x)
             {
                 // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("vsep-%d-0", x));
-                MTEST_ASSERT(sp = new tk::Separator(dpy));
-                MTEST_ASSERT(init_widget(sp, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(sp));
-                MTEST_ASSERT(grid->add(sp) == STATUS_OK);
+                MTEST_ASSERT(id.fmt_ascii("fvader-%d-0", x));
+                MTEST_ASSERT(fd = new tk::Fader(dpy));
+                MTEST_ASSERT(init_widget(fd, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(fd));
+                MTEST_ASSERT(grid->add(fd) == STATUS_OK);
 
-                sp->color()->set_rgb24(next_color(col));
-                sp->orientation()->set_vertical();
-                sp->thickness()->set((x < 4) ? (x+1) * 2 : (8-x) * 2);
-                sp->size()->set((x < 4) ? (x+1) * 24 : (8-x) * 24);
+                fd->color()->set_rgb24(next_color(col));
+                fd->value()->set(x / 7.0);
+                fd->button_width()->set(18);
+                fd->button_aspect()->set((x + 1.0f) / 4.0f);
+
+                fd->angle()->set(1);
             }
 
-            // Create horizontal separator
-            MTEST_ASSERT(id.fmt_ascii("hsep-2"));
-            MTEST_ASSERT(sp = new tk::Separator(dpy));
-            MTEST_ASSERT(init_widget(sp, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(sp));
-            MTEST_ASSERT(grid->attach(0, 2, sp, 1, 8) == STATUS_OK);
+            // Create horizontal fader
+            MTEST_ASSERT(id.fmt_ascii("hfader-2"));
+            MTEST_ASSERT(fd = new tk::Fader(dpy));
+            MTEST_ASSERT(init_widget(fd, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(fd));
+            MTEST_ASSERT(grid->add(fd, 1, 8) == STATUS_OK);
 
-            sp->color()->set_rgb24(next_color(col));
-            sp->orientation()->set_horizontal();
-            sp->thickness()->set(4);
+            fd->color()->set_rgb24(next_color(col));
         }
 
         // Show window

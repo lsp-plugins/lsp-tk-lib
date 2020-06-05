@@ -338,8 +338,8 @@ namespace lsp
             {
                 float delta         = sqrtf(r.nWidth * r.nWidth + r.nHeight * r.nHeight);
                 float xb            = color.lightness();
-                size_t max_chamfer      = lsp_max(1, scaling * 3.0f);
-                size_t chamfer          = (pressed & S_PRESSED) ? lsp_max(1, scaling * 2.0f) : max_chamfer;
+                size_t max_chamfer  = lsp_max(1, scaling * 3.0f);
+                size_t chamfer      = (pressed & S_PRESSED) ? lsp_max(1, scaling * 2.0f) : max_chamfer;
 
                 // Draw champfer
                 if ((!(pressed & S_FLAT)) || ((pressed & (S_PRESSED | S_DOWN)) != 0))
