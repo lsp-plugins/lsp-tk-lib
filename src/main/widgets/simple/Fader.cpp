@@ -20,6 +20,7 @@ namespace lsp
             sHoleColor(&sProperties),
             sSizeRange(&sProperties),
             sValue(&sProperties),
+            sStep(&sProperties),
             sBtnWidth(&sProperties),
             sBtnAspect(&sProperties),
             sAngle(&sProperties),
@@ -59,6 +60,7 @@ namespace lsp
             sHoleColor.bind("hole.color", &sStyle);
             sSizeRange.bind("size", &sStyle);
             sValue.bind("value", &sStyle);
+            sStep.bind("step", &sStyle);
             sBtnWidth.bind("button.width", &sStyle);
             sBtnAspect.bind("button.aspect", &sStyle);
             sAngle.bind("angle", &sStyle);
@@ -70,7 +72,8 @@ namespace lsp
                 sColor.init(sclass, "#cccccc");
                 sHoleColor.init(sclass, "#000000");
                 sSizeRange.init(sclass, 64, -1);
-                sValue.init(sclass, 0.5f, 0.0f, 1.0f, 0.01f);
+                sValue.init(sclass, 0.5f);
+                sStep.init(sclass, 0.01f);
                 sBtnWidth.init(sclass, 0);
                 sBtnAspect.init(sclass, 1.41f);
                 sAngle.init(sclass, 0);
@@ -310,29 +313,28 @@ namespace lsp
             nXFlags        |= F_MOVER;
             ssize_t angle   = sAngle.get() & 3;
 
-            ssize_t value = (angle & 1) ? e->nTop : e->nLeft;
-            float result  = fLastValue;
+            ssize_t value   = (angle & 1) ? e->nTop : e->nLeft;
+            float result    = fLastValue;
             if (value != nLastV)
             {
-                ssize_t range = (angle & 1) ? sSize.nHeight - sButton.nHeight : sSize.nWidth - sButton.nWidth;
-                float delta   = sValue.range() * float(value - nLastV) / range; // normalized
-                float step;
+                ssize_t range   = (angle & 1) ? sSize.nHeight - sButton.nHeight : sSize.nWidth - sButton.nWidth;
+                float delta     = sValue.range() * float(value - nLastV) / range; // normalized
+                float accel     = 1.0f;;
 
                 if (nXFlags & F_PRECISION)
                 {
-                    step = (e->nState & ws::MCF_SHIFT)   ? sValue.step() :
-                           (e->nState & ws::MCF_CONTROL) ? sValue.quick() :
-                           sValue.slow();
+                    accel = (e->nState & ws::MCF_SHIFT)   ? 1.0f :
+                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                            sStep.decel();
                 }
                 else
                 {
-                    step = (e->nState & ws::MCF_SHIFT) ? sValue.slow() :
-                           (e->nState & ws::MCF_CONTROL) ? sValue.quick() :
-                           sValue.step();
+                    accel = (e->nState & ws::MCF_SHIFT)   ? sStep.decel() :
+                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                            1.0f;
                 }
 
-                delta        *= step / sValue.step();
-                result        = ((angle == 1) || (angle == 2)) ? result - delta : result + delta;
+                result        = ((angle == 1) || (angle == 2)) ? result - delta*accel : result + delta*accel;
             }
 
             // Update value
@@ -345,9 +347,9 @@ namespace lsp
         status_t Fader::on_mouse_scroll(const ws::event_t *e)
         {
             ssize_t angle   = sAngle.get();
-            float step = (e->nState & ws::MCF_SHIFT) ? sValue.slow() :
-                         (e->nState & ws::MCF_CONTROL) ? sValue.quick() :
-                         sValue.step();
+            float step = (e->nState & ws::MCF_SHIFT)   ? sStep.step_decel() :
+                         (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
+                         sStep.step();
 
             if (((angle & 3) == 0) || ((angle & 3) == 3))
                 step            = - step;

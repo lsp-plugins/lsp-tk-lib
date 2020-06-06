@@ -103,7 +103,7 @@ namespace lsp
                         pStyle->set_float(vAtoms[P_DECEL], fDecel);
 
                     // Compound properties
-                    s.fmt_ascii("%f %f %f", fStep, fAccel, fDecel);
+                    s.fmt_ascii("%.10f %.10f %.10f", fStep, fAccel, fDecel);
                     if (vAtoms[P_VALUE] >= 0)
                         pStyle->set_string(vAtoms[P_VALUE], &s);
                 }
@@ -170,13 +170,13 @@ namespace lsp
                 {
                     LSPString s;
 
-                    pStyle->create_float(vAtoms[P_STEP], fStep);
-                    pStyle->create_float(vAtoms[P_ACCEL], fAccel);
-                    pStyle->create_float(vAtoms[P_DECEL], fDecel);
+                    style->create_float(vAtoms[P_STEP], step);
+                    style->create_float(vAtoms[P_ACCEL], accel);
+                    style->create_float(vAtoms[P_DECEL], decel);
 
                     // Compound properties
-                    s.fmt_ascii("%f %f %f", fStep, fAccel, fDecel);
-                    pStyle->create_string(vAtoms[P_VALUE], &s);
+                    s.fmt_ascii("%.10f %.10f %.10f", step, accel, decel);
+                    style->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;

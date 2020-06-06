@@ -24,11 +24,9 @@ namespace lsp
                 enum property_t
                 {
                     P_VALUE,
+                    P_RVALUE,
                     P_MIN,
                     P_MAX,
-                    P_STEP,
-                    P_QUICK,
-                    P_SLOW,
 
                     P_COUNT
                 };
@@ -54,9 +52,6 @@ namespace lsp
                 float               fValue;
                 float               fMin;
                 float               fMax;
-                float               fStep;
-                float               fQuick;
-                float               fSlow;
                 Listener            sListener;
 
             protected:
@@ -73,25 +68,15 @@ namespace lsp
                 inline float        get() const             { return limit(fValue);         }
                 inline float        min() const             { return fMin;                  }
                 inline float        max() const             { return fMax;                  }
-                inline float        step() const            { return fStep;                 }
-                inline float        quick() const           { return fQuick;                }
-                inline float        slow() const            { return fSlow;                 }
                 inline float        range() const           { return fMax - fMin;           }
 
                 float               set(float v);
                 float               set_min(float v);
                 float               set_max(float v);
                 void                set_range(float min, float max);
-                void                set_step(float step, float quick, float slow);
-                float               set_step(float v);
-                float               set_quick(float v);
-                float               set_slow(float v);
 
                 float               add(float value, bool cyclic = false);
                 float               sub(float value, bool cyclic = false);
-                inline float        change_step(float k)    { return change(k, fStep);      }
-                inline float        change_quick(float k)   { return change(k, fQuick);     }
-                inline float        change_slow(float k)    { return change(k, fSlow);      }
 
                 float               get_normalized(float value) const;
                 inline float        get_normalized() const  { return get_normalized(fValue); }
@@ -130,8 +115,8 @@ namespace lsp
                      * @param style style
                      * @return status of operation
                      */
-                    status_t            init(Style *style, float value, float min, float max, float step, float quick, float slow);
-                    inline status_t     init(Style *style, float value, float min = 0.0f, float max = 1.0f, float step = 0.1f) { return init(style, value, min, max, step, step * 10.0f, step * 0.1f); }
+                    status_t            init(Style *style, float value, float min, float max);
+                    inline status_t     init(Style *style, float value)                 { return init(style, value, 0.0f, 1.0f); }
             };
         }
 

@@ -15,11 +15,9 @@ namespace lsp
         const prop::desc_t RangeFloat::DESC[] =
         {
             { "",               PT_FLOAT    },
+            { ".value",         PT_FLOAT    },
             { ".min",           PT_FLOAT    },
             { ".max",           PT_FLOAT    },
-            { ".step",          PT_FLOAT    },
-            { ".quick",         PT_FLOAT    },
-            { ".slow",          PT_FLOAT    },
             { NULL,             PT_UNKNOWN  }
         };
 
@@ -35,9 +33,6 @@ namespace lsp
             fMin        = 0.0f;
             fMax        = 1.0f;
             fValue      = 0.0f;
-            fStep       = 0.1f;
-            fQuick      = 0.2f;
-            fSlow       = 0.05f;
         }
 
         RangeFloat::~RangeFloat()
@@ -50,20 +45,41 @@ namespace lsp
             if ((pStyle == NULL) || (property < 0))
                 return;
 
+            LSPString s;
             float v;
-            if ((property == vAtoms[P_VALUE]) && (pStyle->get_float(vAtoms[P_VALUE], &v) == STATUS_OK))
+            if ((property == vAtoms[P_RVALUE]) && (pStyle->get_float(vAtoms[P_RVALUE], &v) == STATUS_OK))
                 fValue          = v;
             if ((property == vAtoms[P_MIN]) && (pStyle->get_float(vAtoms[P_MIN], &v) == STATUS_OK))
                 fMin            = v;
             if ((property == vAtoms[P_MAX]) && (pStyle->get_float(vAtoms[P_MAX], &v) == STATUS_OK))
                 fMax            = v;
-            if ((property == vAtoms[P_STEP]) && (pStyle->get_float(vAtoms[P_STEP], &v) == STATUS_OK))
-                fStep           = v;
-            if ((property == vAtoms[P_QUICK]) && (pStyle->get_float(vAtoms[P_QUICK], &v) == STATUS_OK))
-                fQuick          = v;
-            if ((property == vAtoms[P_SLOW]) && (pStyle->get_float(vAtoms[P_SLOW], &v) == STATUS_OK))
-                fSlow           = v;
 
+            // Compound property
+            if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
+            {
+                float v[3];
+                size_t n    = Property::parse_floats(v, 3, &s);
+                switch (n)
+                {
+                    case 1:
+                        fValue      = v[0];
+                        fMin        = fValue;
+                        fMax        = fValue;
+                        break;
+                    case 2:
+                        fValue      = v[0];
+                        fMin        = v[1];
+                        fMax        = fValue*2.0f - fMin;
+                        break;
+                    case 3:
+                        fValue      = v[0];
+                        fMin        = v[1];
+                        fMax        = v[2];
+                        break;
+                    default:
+                        break;
+                }
+            }
             if (pListener != NULL)
                 pListener->notify(this);
         }
@@ -74,19 +90,20 @@ namespace lsp
             {
                 pStyle->begin(&sListener);
                 {
+                    LSPString s;
+
                     // Simple components
-                    if (vAtoms[P_VALUE] >= 0)
-                        pStyle->set_float(vAtoms[P_VALUE], fValue);
+                    if (vAtoms[P_RVALUE] >= 0)
+                        pStyle->set_float(vAtoms[P_RVALUE], fValue);
                     if (vAtoms[P_MIN] >= 0)
                         pStyle->set_float(vAtoms[P_MIN], fMin);
                     if (vAtoms[P_MAX] >= 0)
                         pStyle->set_float(vAtoms[P_MAX], fMax);
-                    if (vAtoms[P_STEP] >= 0)
-                        pStyle->set_float(vAtoms[P_STEP], fStep);
-                    if (vAtoms[P_QUICK] >= 0)
-                        pStyle->set_float(vAtoms[P_QUICK], fQuick);
-                    if (vAtoms[P_SLOW] >= 0)
-                        pStyle->set_float(vAtoms[P_SLOW], fSlow);
+
+                    // Compound properties
+                    s.fmt_ascii("%.10f %.10f %.10f", fValue, fMin, fMax);
+                    if (vAtoms[P_VALUE] >= 0)
+                        pStyle->set_string(vAtoms[P_VALUE], &s);
                 }
                 pStyle->end();
             }
@@ -162,39 +179,6 @@ namespace lsp
             return old;
         }
 
-        float RangeFloat::set_step(float value)
-        {
-            float old = fStep;
-            if (value == old)
-                return old;
-
-            fStep               = value;
-            sync();
-            return old;
-        }
-
-        float RangeFloat::set_quick(float value)
-        {
-            float old = fQuick;
-            if (value == old)
-                return old;
-
-            fQuick              = value;
-            sync();
-            return old;
-        }
-
-        float RangeFloat::set_slow(float value)
-        {
-            float old = fSlow;
-            if (value == old)
-                return old;
-
-            fSlow               = value;
-            sync();
-            return old;
-        }
-
         float RangeFloat::limit(float value) const
         {
             if (fMin > fMax)
@@ -261,19 +245,22 @@ namespace lsp
 
         namespace prop
         {
-            status_t RangeFloat::init(Style *style, float value, float min, float max, float step, float quick, float slow)
+            status_t RangeFloat::init(Style *style, float value, float min, float max)
             {
                 if (pStyle == NULL)
                     return STATUS_BAD_STATE;
 
                 style->begin();
                 {
-                    style->create_float(vAtoms[P_VALUE], value);
+                    LSPString s;
+
+                    style->create_float(vAtoms[P_RVALUE], value);
                     style->create_float(vAtoms[P_MIN], min);
                     style->create_float(vAtoms[P_MAX], max);
-                    style->create_float(vAtoms[P_STEP], step);
-                    style->create_float(vAtoms[P_QUICK], quick);
-                    style->create_float(vAtoms[P_SLOW], slow);
+
+                    // Compound properties
+                    s.fmt_ascii("%.10f %.10f %.10f", value, min, max);
+                    style->set_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;

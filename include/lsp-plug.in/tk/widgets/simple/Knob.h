@@ -42,6 +42,7 @@ namespace lsp
                 prop::Float         sScale;
 
                 prop::RangeFloat    sValue;
+                prop::StepFloat     sStep;
                 prop::Float         sBalance;
                 prop::Boolean       sCycling;
 
@@ -84,6 +85,9 @@ namespace lsp
 
                 inline RangeFloat              *value()                 { return &sValue;       }
                 inline const RangeFloat        *value() const           { return &sValue;       }
+
+                inline StepFloat               *step()                  { return &sStep;        }
+                inline const StepFloat         *step() const            { return &sStep;        }
 
                 inline Float                   *balance()               { return &sBalance;     }
                 inline const Float             *balance() const         { return &sBalance;     }

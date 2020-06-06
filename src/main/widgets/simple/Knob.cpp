@@ -24,6 +24,7 @@ namespace lsp
             sSizeRange(&sProperties),
             sScale(&sProperties),
             sValue(&sProperties),
+            sStep(&sProperties),
             sBalance(&sProperties),
             sCycling(&sProperties)
         {
@@ -51,6 +52,7 @@ namespace lsp
             sSizeRange.bind("size.range", &sStyle);
             sScale.bind("scale.size", &sStyle);
             sValue.bind("value", &sStyle);
+            sStep.bind("step", &sStyle);
             sBalance.bind("value.balance", &sStyle);
             sCycling.bind("value.cycling", &sStyle);
 
@@ -63,7 +65,8 @@ namespace lsp
                 sTipColor.init(sclass, "#000000");
                 sSizeRange.init(sclass, 8, -1);
                 sScale.init(sclass, 4);
-                sValue.init(sclass, 0.5f, 0.0f, 1.0f, 0.01f);
+                sValue.init(sclass, 0.5f, 0.0f, 1.0f);
+                sStep.init(sclass, 0.01f);
                 sBalance.init(sclass, 0.5f);
                 sCycling.init(sclass, false);
             }
@@ -253,18 +256,18 @@ namespace lsp
 
                 // Update value
                 float scaling   = lsp_max(0.0f, sScaling.get());
-                float step      = sValue.step();
+                float step      = sStep.step();
                 if (nButtons & ws::MCF_RIGHT)
                 {
-                    step = (e->nState & ws::MCF_SHIFT)   ? sValue.step() :
-                           (e->nState & ws::MCF_CONTROL) ? sValue.quick() :
-                           sValue.slow();
+                    step = (e->nState & ws::MCF_SHIFT)   ? sStep.step() :
+                           (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
+                           sStep.step_decel();
                 }
                 else
                 {
-                    step = (e->nState & ws::MCF_SHIFT) ? sValue.slow() :
-                           (e->nState & ws::MCF_CONTROL) ? sValue.quick() :
-                           sValue.step();
+                    step = (e->nState & ws::MCF_SHIFT) ? sStep.step_decel() :
+                           (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
+                           sStep.step();
                 }
 
                 update_value(step * (nLastY - e->nTop) / scaling);
@@ -284,9 +287,9 @@ namespace lsp
         status_t Knob::on_mouse_scroll(const ws::event_t *e)
         {
 //            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
-            float step = (e->nState & ws::MCF_SHIFT) ? sValue.slow() :
-                         (e->nState & ws::MCF_CONTROL) ? sValue.quick() :
-                         sValue.step();
+            float step = (e->nState & ws::MCF_SHIFT) ? sStep.step_decel() :
+                         (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
+                         sStep.step();
 
             // Update value
             float delta = 0.0;

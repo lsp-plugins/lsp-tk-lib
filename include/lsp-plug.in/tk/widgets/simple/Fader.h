@@ -45,6 +45,7 @@ namespace lsp
                 prop::Color                     sHoleColor;
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
+                prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;
                 prop::Float                     sBtnAspect;
                 prop::Integer                   sAngle;
@@ -84,6 +85,9 @@ namespace lsp
 
                 inline RangeFloat              *value()                     { return &sValue;       }
                 inline const RangeFloat        *value() const               { return &sValue;       }
+
+                inline StepFloat               *step()                      { return &sStep;        }
+                inline const StepFloat         *step() const                { return &sStep;        }
 
                 inline SizeRange               *button_width()              { return &sBtnWidth;    }
                 inline const SizeRange         *button_width() const        { return &sBtnWidth;    }
