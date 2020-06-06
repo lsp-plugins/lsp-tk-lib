@@ -23,6 +23,8 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
+                ws::rectangle_t                 sTextArea;          // Actual text area used
+
                 prop::RangeFloat                sValue;             // The actual progress value
                 prop::SizeConstraints           sConstraints;       // Size constraings
                 prop::String                    sText;              // Text to display
@@ -42,6 +44,7 @@ namespace lsp
             protected:
                 virtual void                    size_request(ws::size_limit_t *r);
                 virtual void                    property_changed(Property *prop);
+                virtual void                    realize(const ws::rectangle_t *r);
 
             public:
                 explicit ProgressBar(Display *dpy);

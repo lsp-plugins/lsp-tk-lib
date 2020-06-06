@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
 {
@@ -31,7 +32,12 @@ namespace lsp
             sInvColor(&sProperties),
             sInvTextColor(&sProperties)
         {
-            pClass      = &metadata;
+            sTextArea.nLeft     = -1;
+            sTextArea.nTop      = -1;
+            sTextArea.nWidth    = 0;
+            sTextArea.nHeight   = 0;
+
+            pClass              = &metadata;
         }
         
         ProgressBar::~ProgressBar()
@@ -105,6 +111,10 @@ namespace lsp
                 query_draw();
             if (sBorderSize.is(prop))
                 query_resize();
+            if (sBorderGapSize.is(prop))
+                query_resize();
+            if (sBorderGapColor.is(prop))
+                query_draw();
             if (sBorderRadius.is(prop))
                 query_resize();
             if (sColor.is(prop))
@@ -117,10 +127,68 @@ namespace lsp
                 query_draw();
         }
 
-
         void ProgressBar::size_request(ws::size_limit_t *r)
         {
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            size_t border   = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            size_t radius   = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            if (border > 0)
+                border         += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
 
+            size_t extra    = lsp_max(radius, border);
+            r->nMinWidth    = lsp_max(extra*2, border*2 + scaling*4);
+            r->nMinHeight   = lsp_max(extra*2, border*2 + scaling*4);
+
+            if (sShowText.get())
+            {
+                size_t rgap    = border + lsp_max(0.0f, ceil((1.0f - M_SQRT1_2) * (radius - border)));
+
+                // Form the text string
+                LSPString text;
+                sText.format(&text);
+
+                // Estimate sizes
+                float scaling   = sScaling.get();
+                ws::font_parameters_t fp;
+                ws::text_parameters_t tp;
+
+                sFont.get_parameters(pDisplay, scaling, &fp);
+                sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+
+                tp.Height       = lsp_max(tp.Height, fp.Height);
+                r->nMinHeight   = lsp_max(r->nMinHeight, rgap*2 + tp.Height);
+            }
+
+            r->nMaxWidth    = -1;
+            r->nMaxHeight   = -1;
+        }
+
+        void ProgressBar::realize(const ws::rectangle_t *r)
+        {
+            Widget::realize(r);
+
+            if (sShowText.get())
+            {
+                float scaling       = lsp_max(0.0f, sScaling.get());
+                size_t border       = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+                size_t radius       = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+                if (border > 0)
+                    border         += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+
+                border         += border + lsp_max(0.0f, ceil((1.0f - M_SQRT1_2) * (radius - border)));
+
+                sTextArea.nLeft     = sSize.nLeft   + border;
+                sTextArea.nTop      = sSize.nTop    + border;
+                sTextArea.nWidth    = sSize.nWidth  - border * 2;
+                sTextArea.nHeight   = sSize.nHeight - border * 2;
+            }
+            else
+            {
+                sTextArea.nLeft     = -1;
+                sTextArea.nTop      = -1;
+                sTextArea.nWidth    = 0;
+                sTextArea.nHeight   = 0;
+            }
         }
     
         void ProgressBar::draw(ws::ISurface *s)
