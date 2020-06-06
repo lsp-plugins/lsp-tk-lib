@@ -85,6 +85,7 @@
 #include <lsp-plug.in/tk/widgets/simple/Button.h>
 #include <lsp-plug.in/tk/widgets/simple/Fader.h>
 #include <lsp-plug.in/tk/widgets/simple/Hyperlink.h>
+#include <lsp-plug.in/tk/widgets/simple/Indicator.h>
 #include <lsp-plug.in/tk/widgets/simple/Knob.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>
 #include <lsp-plug.in/tk/widgets/simple/Led.h>
