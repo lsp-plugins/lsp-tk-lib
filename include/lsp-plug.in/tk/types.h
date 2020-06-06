@@ -27,9 +27,10 @@ namespace lsp
 
         enum scrolling_t
         {
-            SCROLL_NONE,        //!< SCROLL_NONE no scrolling permitted
-            SCROLL_OPTIONAL,    //!< SCROLL_OPTIONAL scrolling is permitted but in optional state
-            SCROLL_ALWAYS       //!< SCROLL_ALWAYS scrolling is permitted but in optional state
+            SCROLL_NONE,        //!< SCROLL_NONE no scrolling permitted, the nested widget fully fits the area
+            SCROLL_CLIP,        //!< SCROLL_CLIP no scrolling permitted, nested widget is clipped
+            SCROLL_OPTIONAL,    //!< SCROLL_OPTIONAL scrolling is permitted but only when necessary
+            SCROLL_ALWAYS       //!< SCROLL_ALWAYS scrolling is always enabled
         };
 
         enum window_policy_t

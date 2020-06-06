@@ -59,6 +59,7 @@
 #include <lsp-plug.in/tk/prop/Size.h>
 #include <lsp-plug.in/tk/prop/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/SizeRange.h>
+#include <lsp-plug.in/tk/prop/StepFloat.h>
 #include <lsp-plug.in/tk/prop/TextLayout.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
 
@@ -89,6 +90,7 @@
 #include <lsp-plug.in/tk/widgets/simple/Knob.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>
 #include <lsp-plug.in/tk/widgets/simple/Led.h>
+#include <lsp-plug.in/tk/widgets/simple/ProgressBar.h>
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/Switch.h>
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
