@@ -55,18 +55,18 @@ namespace lsp
             0xffff, 0x0000, 0x0000, 0xffff, 0xffff, 0x0000, 0xffff, 0xffff, // 0x08 - 0x0f
             0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, // 0x10 - 0x17
             0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, 0xffff, // 0x18 - 0x1f
-            0x0000, 0x0700, 0x0014, 0xffff, 0xffff, 0xffff, 0xffff, 0x0010, // 0x20 - 0x27    !"#$%&'
-            0x004e, 0x003c, 0x00b7, 0x0081, 0x0100, 0x0080, 0x0080, 0x0013, // 0x28 - 0x2f   ()*+,-./
+            0x0000, 0x0700, 0x0014, 0xffff, 0x00ed, 0xffff, 0xffff, 0x0010, // 0x20 - 0x27    !"#$%&'
+            0x000e, 0x0070, 0x00b7, 0x0081, 0x0140, 0x0080, 0x0100, 0x0013, // 0x28 - 0x2f   ()*+,-./
             0x007e, 0x0030, 0x00da, 0x00f8, 0x00b4, 0x00ec, 0x00ee, 0x0038, // 0x30 - 0x37   01234567
-            0x00fe, 0x00fc, 0x0600, 0x0600, 0x00b0, 0x00c0, 0x0086, 0x009e, // 0x38 - 0x3f   89:;<=>?
-            0xffff, 0x00be, 0x00e6, 0x004e, 0x00f2, 0x006e, 0x008e, 0x00e7, // 0x40 - 0x47   @ABCDEFG
-            0x00b6, 0x0006, 0x0072, 0x0027, 0x0066, 0x0034, 0x003e, 0x007e, // 0x48 - 0x4f   HIJKLMNO
-            0x009e, 0x017e, 0x0082, 0x00ec, 0x00c6, 0x0076, 0x0062, 0x0070, // 0x50 - 0x57   PQRSTUVW
-            0x0067, 0x00f4, 0x005b, 0x004e, 0x0025, 0x003c, 0x0004, 0x0040, // 0x58 - 0x5f   XYZ[\]^_
-            0x0004, 0x00be, 0x00e6, 0x004e, 0x00f2, 0x006e, 0x008e, 0x00e7, // 0x60 - 0x67   `abcdefg
+            0x00fe, 0x00fc, 0x0600, 0x0600, 0x00b0, 0x00c0, 0x0086, 0x009a, // 0x38 - 0x3f   89:;<=>?
+            0xffff, 0x00be, 0x00e6, 0x004e, 0x00f2, 0x00ce, 0x008e, 0x006e, // 0x40 - 0x47   @ABCDEFG
+            0x00b6, 0x0006, 0x0072, 0x0027, 0x0066, 0x0038, 0x003e, 0x007e, // 0x48 - 0x4f   HIJKLMNO
+            0x009e, 0x017e, 0x001e, 0x00ec, 0x00c6, 0x0076, 0x0062, 0x0070, // 0x50 - 0x57   PQRSTUVW
+            0x0037, 0x00f4, 0x005b, 0x000e, 0x0025, 0x0070, 0x0004, 0x0040, // 0x58 - 0x5f   XYZ[\]^_
+            0x0004, 0x00be, 0x00e6, 0x00c2, 0x00f2, 0x00de, 0x008e, 0x006e, // 0x60 - 0x67   `abcdefg
             0x00a6, 0x0006, 0x0070, 0x0027, 0x0046, 0x00a0, 0x00a2, 0x00e2, // 0x68 - 0x6f   hijklmno
             0x009e, 0x01e2, 0x0082, 0x00ec, 0x00c6, 0x0076, 0x0062, 0x0060, // 0x70 - 0x77   pqrstuvw
-            0x0067, 0x00f4, 0x005b, 0x004e, 0x0036, 0x003c, 0x00e4, 0xffff, // 0x78 - 0x7f   xyz{|}~
+            0x0037, 0x00f4, 0x005b, 0x000e, 0x0036, 0x0070, 0x00e4, 0xffff, // 0x78 - 0x7f   xyz{|}~
             // Special cases: M, W, m, w
         };
 
@@ -78,6 +78,7 @@ namespace lsp
             sRows(&sProperties),
             sColumns(&sProperties),
             sShift(&sProperties),
+            sTextGap(&sProperties),
             sLoop(&sProperties),
             sText(&sProperties)
         {
@@ -99,6 +100,7 @@ namespace lsp
             sRows.bind("rows", &sStyle);
             sColumns.bind("columns", &sStyle);
             sShift.bind("text.shift", &sStyle);
+            sTextGap.bind("text.gap", &sStyle);
             sLoop.bind("text.loop", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
 
@@ -110,9 +112,9 @@ namespace lsp
                 sRows.init(sclass, 1);
                 sColumns.init(sclass, 5);
                 sShift.init(sclass, 0);
-                sLoop.init(sclass, -1);
+                sTextGap.init(sclass, 0);
+                sLoop.init(sclass, false);
             }
-
 
             return STATUS_OK;
         }
@@ -130,6 +132,8 @@ namespace lsp
                 query_resize();
             if (sShift.is(prop))
                 query_draw();
+            if (sTextGap.is(prop))
+                query_draw();
             if (sLoop.is(prop))
                 query_draw();
             if (sText.is(prop))
@@ -144,7 +148,7 @@ namespace lsp
             for (size_t i=0, m=1; i<11; ++i, m <<= 1, ++r)
             {
                 const lsp::Color &col = (state & m) ? on : off;
-                s->wire_rect(col, x + r->x * scaling, y + r->y * scaling, r->w * scaling, r->h * scaling, scaling);
+                s->wire_rect(col, x + r->x * scaling - 0.5f, y + r->y * scaling - 0.5f, r->w * scaling, r->h * scaling, scaling);
             }
         }
 
@@ -162,11 +166,19 @@ namespace lsp
 
         uint8_t Indicator::get_char(const LSPString *str, size_t index)
         {
-            ssize_t shift   = sShift.get();
-            if (shift >= 0)
-                index      %= size_t(shift + str->length());
+            // Compute the real index of character
+            size_t length   = lsp_max(0, sTextGap.get()) + str->length();
+            length          = lsp_max(1u, length);
+            ssize_t shift   = sShift.get() + index;
+            if (sLoop.get())
+            {
+                shift          %= ssize_t(length);
+                if (shift < 0)
+                    shift          += length;
+            }
 
-            lsp_wchar_t ch  = (index < str->length()) ? str->char_at(index) : ' ';
+            // Get character
+            lsp_wchar_t ch  = ((shift >= 0) && (size_t(shift) < str->length())) ? str->char_at(shift) : ' ';
 
             // Check ascii table match
             if (ch >= 0x80)
@@ -255,14 +267,18 @@ namespace lsp
 
                 // Output character
                 size_t col      = offset % cols;
+                size_t row      = offset / cols;
 
                 if (ch == '\n') // Need to fill up to end-of-line
                 {
                     for ( ; col < cols; ++col, ++offset)
-                        draw_digit(s, (col*16 + 1) * scaling, (20*rows + 1) * scaling, state, on, off);
+                        draw_digit(s, (col*16 + 1) * scaling, (20*row + 1) * scaling, state, on, off);
                 }
                 else
-                    draw_digit(s, (col*16 + 1) * scaling, (20*rows + 1) * scaling, state, on, off);
+                {
+                    draw_digit(s, (col*16 + 1) * scaling, (20*row + 1) * scaling, state, on, off);
+                    ++offset;
+                }
             }
 
             s->set_antialiasing(aa);

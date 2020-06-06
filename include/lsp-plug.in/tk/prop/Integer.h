@@ -62,6 +62,9 @@ namespace lsp
                  */
                 ssize_t             set(ssize_t v);
 
+                inline ssize_t      add(ssize_t v)          { return set(nValue + v);       }
+                inline ssize_t      sub(ssize_t v)          { return set(nValue - v);       }
+
                 /**
                  * Swap contents
                  * @param dst destination property to perform swap
