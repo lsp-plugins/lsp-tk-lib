@@ -191,7 +191,7 @@ namespace lsp
             float delta = fMax - fMin;
             if (delta > 0)
             {
-                while (value >= fMax)
+                while (value > fMax)
                     value  -= delta;
                 while (value < fMin)
                     value  += delta;
@@ -200,7 +200,7 @@ namespace lsp
             {
                 while (value > fMin)
                     value  -= delta;
-                while (value <= fMax)
+                while (value < fMax)
                     value  += delta;
             }
 
@@ -234,7 +234,7 @@ namespace lsp
         float RangeFloat::sub(float v, bool cyclic)
         {
             float old   = fValue;
-            v           = (cyclic) ? climited(old + v) : limit(old + v);
+            v           = (cyclic) ? climited(old - v) : limit(old - v);
             if (old == v)
                 return old;
 

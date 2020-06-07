@@ -397,7 +397,7 @@ namespace lsp
 
                 g->add_color(0.0, hole);
                 g->add_color(1.0, 0.5 * hole.red(), 0.5 *  hole.green(), 0.5 * hole.blue());
-                s->fill_round_rect(h.nLeft, h.nTop, h.nWidth, h.nHeight, xr--, SURFMASK_ALL_CORNER, g);
+                s->fill_round_rect(g, SURFMASK_ALL_CORNER, h.nLeft, h.nTop, h.nWidth, h.nHeight, xr--);
                 delete g;
 
                 h.nLeft        += 1;
@@ -407,7 +407,7 @@ namespace lsp
             }
 
             hole.copy(sHoleColor);
-            s->fill_round_rect(h.nLeft, h.nTop, h.nWidth, h.nHeight, xr--, SURFMASK_ALL_CORNER, hole);
+            s->fill_round_rect(hole, SURFMASK_ALL_CORNER, h.nLeft, h.nTop, h.nWidth, h.nHeight, xr--);
 
             // Draw button
             delta           = sqrtf(sButton.nWidth * sButton.nWidth + sButton.nHeight * sButton.nHeight) * 0.5f;
@@ -428,7 +428,7 @@ namespace lsp
                 g->add_color(0.0, color.red(), color.green(), color.blue());
                 color.lightness(xb * bright);
                 g->add_color(1.0, color.red(), color.green(), color.blue());
-                s->fill_round_rect(h.nLeft, h.nTop, h.nWidth, h.nHeight, xr--, SURFMASK_ALL_CORNER, g);
+                s->fill_round_rect(g, SURFMASK_ALL_CORNER, h.nLeft, h.nTop, h.nWidth, h.nHeight, xr--);
                 delete g;
 
                 // Update rect
@@ -444,7 +444,7 @@ namespace lsp
             g->add_color(0.0, color.red(), color.green(), color.blue());
             color.lightness(xb);
             g->add_color(1.0, color.red(), color.green(), color.blue());
-            s->fill_round_rect(h.nLeft, h.nTop, h.nWidth, h.nHeight, xr, SURFMASK_ALL_CORNER, g);
+            s->fill_round_rect(g, SURFMASK_ALL_CORNER, h.nLeft, h.nTop, h.nWidth, h.nHeight, xr);
             delete g;
 
             // Restore antialiasing

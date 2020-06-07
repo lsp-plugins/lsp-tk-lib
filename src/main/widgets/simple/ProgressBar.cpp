@@ -136,8 +136,8 @@ namespace lsp
                 border         += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
 
             size_t extra    = lsp_max(radius, border);
-            r->nMinWidth    = lsp_max(extra*2, border*2 + scaling*4);
-            r->nMinHeight   = lsp_max(extra*2, border*2 + scaling*4);
+            r->nMinWidth    = lsp_max(extra*2, border*2 + scaling*2);
+            r->nMinHeight   = lsp_max(extra*2, border*2 + scaling*2);
 
             if (sShowText.get())
             {
@@ -161,6 +161,9 @@ namespace lsp
 
             r->nMaxWidth    = -1;
             r->nMaxHeight   = -1;
+
+            // Apply size constraints
+            sConstraints.apply(r, scaling);
         }
 
         void ProgressBar::realize(const ws::rectangle_t *r)
@@ -170,12 +173,12 @@ namespace lsp
             if (sShowText.get())
             {
                 float scaling       = lsp_max(0.0f, sScaling.get());
-                size_t border       = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
-                size_t radius       = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+                ssize_t radius      = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+                ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
                 if (border > 0)
-                    border         += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+                    border             += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
 
-                border         += border + lsp_max(0.0f, ceil((1.0f - M_SQRT1_2) * (radius - border)));
+                border             += lsp_max(0.0f, ceil((1.0f - M_SQRT1_2) * (radius - border)));
 
                 sTextArea.nLeft     = sSize.nLeft   + border;
                 sTextArea.nTop      = sSize.nTop    + border;
@@ -194,6 +197,8 @@ namespace lsp
         void ProgressBar::out_text(ws::ISurface *s, const LSPString *text, lsp::Color &color)
         {
             ws::rectangle_t xr  = sTextArea;
+            xr.nLeft       -= sSize.nLeft;
+            xr.nTop        -= sSize.nTop;
 
             // Estimate sizes
             float scaling   = sScaling.get();
@@ -244,7 +249,7 @@ namespace lsp
             float bright    = sBrightness.get();
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
-            ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+            ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
 
             ws::rectangle_t xr  = sSize;
             xr.nLeft            = 0;
@@ -261,7 +266,7 @@ namespace lsp
                 lsp::Color bcolor(sBorderColor);
                 bcolor.scale_lightness(bright);
 
-                s->fill_round_rect(xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius, bcolor);
+                s->fill_round_rect(bcolor, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
                 radius      = lsp_max(0, radius - border);
                 xr.nLeft   += border;
                 xr.nTop    += border;
@@ -274,7 +279,7 @@ namespace lsp
                     bcolor.copy(sBorderGapColor);
                     bcolor.scale_lightness(bright);
 
-                    s->fill_round_rect(xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius, bcolor);
+                    s->fill_round_rect(bcolor, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
                     radius      = lsp_max(0, radius - gap);
 
                     xr.nLeft   += gap;
@@ -294,7 +299,7 @@ namespace lsp
                 color.scale_lightness(bright);
 
                 s->clip_begin(xr.nLeft, xr.nTop, split, xr.nHeight);
-                s->fill_round_rect(xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius, SURFMASK_ALL_CORNER, color);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
                 s->clip_end();
             }
             if (split < xr.nWidth)
@@ -303,7 +308,7 @@ namespace lsp
                 color.scale_lightness(bright);
 
                 s->clip_begin(xr.nLeft + split, xr.nTop, xr.nWidth - split, xr.nHeight);
-                s->fill_round_rect(xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius, SURFMASK_ALL_CORNER, color);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
                 s->clip_end();
             }
 
@@ -313,8 +318,10 @@ namespace lsp
                 LSPString text;
                 sText.format(&text);
 
-                xr      = sTextArea;
-                split   = xr.nWidth * sValue.get_normalized();
+                xr          = sTextArea;
+                xr.nLeft   -= sSize.nLeft;
+                xr.nTop    -= sSize.nTop;
+                split       = xr.nWidth * sValue.get_normalized();
 
                 if (split > 0)
                 {

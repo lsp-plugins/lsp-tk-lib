@@ -74,26 +74,22 @@ namespace lsp
                 sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
                 sBgColor.bind("bg.color", &sStyle);
+                sVisibility.bind("visible", &sStyle);
                 sPointer.bind("pointer", &sStyle);
 
                 Style *sclass = style_class();
                 if (sclass != NULL)
                 {
                     sStyle.add_parent(sclass);
-                    sAllocation.init(sclass, true, true, false, false);
+                    sAllocation.init(sclass, true, false);
                     sPadding.init(sclass, 0, 0, 0, 0);
                     sScaling.init(sclass, 1.0f);
                     sBrightness.init(sclass, 1.0f);
                     sBgColor.init(sclass, "#cccccc");
+                    sVisibility.init(sclass, true);
                     sPointer.init(sclass, ws::MP_DEFAULT);
                 }
-
-                // Override settings for hfill and vfill
-                sAllocation.set(true, false);
             }
-
-            // Override some properties
-            sVisibility.set(true);
 
             // Declare slots
             handler_id_t id = 0;
