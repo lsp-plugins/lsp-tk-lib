@@ -46,6 +46,9 @@ namespace lsp
                 virtual void                    property_changed(Property *prop);
                 virtual void                    realize(const ws::rectangle_t *r);
 
+            protected:
+                void                            out_text(ws::ISurface *s, const LSPString *text, lsp::Color &color);
+
             public:
                 explicit ProgressBar(Display *dpy);
                 virtual ~ProgressBar();

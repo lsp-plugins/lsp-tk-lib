@@ -78,7 +78,7 @@ namespace lsp
                 sBorderGapColor.init(sclass, "#000000");
                 sBorderSize.init(sclass, 1);
                 sBorderGapSize.init(sclass, 1);
-                sBorderRadius.init(sclass, 3);
+                sBorderRadius.init(sclass, 4);
                 sColor.init(sclass, "#008800");
                 sTextColor.init(sclass, "#ffffff");
                 sInvColor.init(sclass, "#ffffff");
@@ -190,70 +190,154 @@ namespace lsp
                 sTextArea.nHeight   = 0;
             }
         }
+
+        void ProgressBar::out_text(ws::ISurface *s, const LSPString *text, lsp::Color &color)
+        {
+            ws::rectangle_t xr  = sTextArea;
+
+            // Estimate sizes
+            float scaling   = sScaling.get();
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+
+            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_multitext_parameters(pDisplay, &tp, scaling, text);
+
+            float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
+            float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
+            float dy        = (xr.nHeight - tp.Height) * 0.5f;
+            ssize_t y       = xr.nTop + dy * valign - fp.Descent;
+
+            // Estimate text size
+            ssize_t last = 0, curr = 0, tail = 0, len = text->length();
+
+            while (curr < len)
+            {
+                // Get next line indexes
+                curr    = text->index_of(last, '\n');
+                if (curr < 0)
+                {
+                    curr        = len;
+                    tail        = len;
+                }
+                else
+                {
+                    tail        = curr;
+                    if ((tail > last) && (text->at(tail-1) == '\r'))
+                        --tail;
+                }
+
+                // Calculate text location
+                sFont.get_text_parameters(s, &tp, scaling, text, last, tail);
+                float dx    = (xr.nWidth - tp.Width) * 0.5f;
+                ssize_t x   = xr.nLeft   + dx * halign - tp.XBearing;
+                y          += fp.Height;
+
+                sFont.draw(s, color, x, y, scaling, text, last, tail);
+                last    = curr + 1;
+            }
+        }
     
         void ProgressBar::draw(ws::ISurface *s)
         {
-//            size_t w    = sSize.nWidth;
-//            size_t h    = sSize.nHeight;
-//            size_t dw   = sSize.nWidth - 4;
-//
-//            // Prepare palette
-//            Color bg_color(sBgColor);
-//            Color color(sColor);
-//            Color sel_color(sSelColor);
-//            Color font(sFont.raw_color());
-//
-//            color.scale_lightness(brightness());
-//            sel_color.scale_lightness(brightness());
-//            font.scale_lightness(brightness());
-//
-//            // Draw the entire control
-//            s->clear(bg_color);
-//            bool aa = s->set_antialiasing(true);
-//            s->fill_round_rect(0.5f, 0.5f, w-1, h-1, 4.0f, SURFMASK_ALL_CORNER, color);
-//            s->set_antialiasing(aa);
-//
-//            font_parameters_t fp;
-//            text_parameters_t tp;
-//            if (!sText.is_empty())
-//            {
-//                sFont.get_parameters(s, &fp);
-//                sFont.get_text_parameters(s, &tp, &sText);
-//                sFont.draw(s, (w - tp.Width) * 0.5f, (h - fp.Height) * 0.5f + fp.Ascent, font, &sText);
-//            }
-//
-//            // Need to draw the value over?
-//            float k = fabs(fValue / (fMax - fMin));
-//            if (k < 0.0f)
-//                k       = 0.0f;
-//            else if (k > 1.0f)
-//                k       = 1.0f;
-//
-//            size_t pixels = dw * k;
-//            if (pixels > 0)
-//            {
-//                ISurface *xs = pDisplay->create_surface(pixels + 2, h);
-//                if (xs == NULL)
-//                    return;
-//
-//                xs->clear(bg_color);
-//                aa = xs->set_antialiasing(true);
-//                xs->fill_round_rect(0.5f, 0.5f, w-1, h-1, 4.0f, SURFMASK_ALL_CORNER, sel_color);
-//                xs->set_antialiasing(aa);
-//
-//                if (!sText.is_empty())
-//                    sFont.draw(xs, (w - tp.Width) * 0.5f, (h - fp.Height) * 0.5f + fp.Ascent, color, &sText);
-//                s->draw(xs, 0, 0);
-//
-//                xs->destroy();
-//                delete xs;
-//            }
-//
-//            // Finally, draw frames
-//            aa = s->set_antialiasing(true);
-//            s->wire_round_rect(1.5f, 1.5f, w - 3, h - 3, 4.0f, SURFMASK_ALL_CORNER, 1.0f, bg_color);
-//            s->wire_round_rect(0.5f, 0.5f, w - 1, h - 1, 4.0f, SURFMASK_ALL_CORNER, 1.0f, color);
-//            s->set_antialiasing(aa);
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float bright    = sBrightness.get();
+            ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+
+            ws::rectangle_t xr  = sSize;
+            xr.nLeft            = 0;
+            xr.nTop             = 0;
+
+            // Draw background
+            lsp::Color bg_color(sBgColor);
+            s->clear(bg_color);
+            bool aa = s->set_antialiasing(true);
+
+            // Draw the border (if it is)
+            if (border > 0)
+            {
+                lsp::Color bcolor(sBorderColor);
+                bcolor.scale_lightness(bright);
+
+                s->fill_round_rect(xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius, bcolor);
+                radius      = lsp_max(0, radius - border);
+                xr.nLeft   += border;
+                xr.nTop    += border;
+                xr.nWidth  -= border * 2;
+                xr.nHeight -= border * 2;
+
+                // Draw the border gap
+                if (gap > 0)
+                {
+                    bcolor.copy(sBorderGapColor);
+                    bcolor.scale_lightness(bright);
+
+                    s->fill_round_rect(xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius, bcolor);
+                    radius      = lsp_max(0, radius - gap);
+
+                    xr.nLeft   += gap;
+                    xr.nTop    += gap;
+                    xr.nWidth  -= gap * 2;
+                    xr.nHeight -= gap * 2;
+                }
+            }
+
+            // Compute the progress value
+            ssize_t split   = xr.nWidth * sValue.get_normalized();
+
+            // Draw progress
+            if (split > 0)
+            {
+                lsp::Color color(sColor);
+                color.scale_lightness(bright);
+
+                s->clip_begin(xr.nLeft, xr.nTop, split, xr.nHeight);
+                s->fill_round_rect(xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius, SURFMASK_ALL_CORNER, color);
+                s->clip_end();
+            }
+            if (split < xr.nWidth)
+            {
+                lsp::Color color(sInvColor);
+                color.scale_lightness(bright);
+
+                s->clip_begin(xr.nLeft + split, xr.nTop, xr.nWidth - split, xr.nHeight);
+                s->fill_round_rect(xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius, SURFMASK_ALL_CORNER, color);
+                s->clip_end();
+            }
+
+            // Draw text
+            if (sShowText.get())
+            {
+                LSPString text;
+                sText.format(&text);
+
+                xr      = sTextArea;
+                split   = xr.nWidth * sValue.get_normalized();
+
+                if (split > 0)
+                {
+                    lsp::Color color(sTextColor);
+                    color.scale_lightness(bright);
+
+                    s->clip_begin(xr.nLeft, xr.nTop, split, xr.nHeight);
+                    out_text(s, &text, color);
+                    s->clip_end();
+                }
+
+                if (split < sTextArea.nWidth)
+                {
+                    lsp::Color color(sInvTextColor);
+                    color.scale_lightness(bright);
+
+                    s->clip_begin(xr.nLeft + split, xr.nTop, xr.nWidth - split, xr.nHeight);
+                    out_text(s, &text, color);
+                    s->clip_end();
+                }
+            }
+
+            s->set_antialiasing(aa);
         }
     } /* namespace tk */
 } /* namespace lsp */
