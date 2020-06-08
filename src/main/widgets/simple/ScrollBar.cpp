@@ -346,83 +346,24 @@ namespace lsp
 
         size_t ScrollBar::check_mouse_over(ssize_t x, ssize_t y)
         {
+            if (Position::inside(&sIncButton, x, y))
+                return F_BTN_UP_ACTIVE;
+
+            if (Position::inside(&sDecButton, x, y))
+                return F_BTN_DOWN_ACTIVE;
+
+            if (Position::inside(&sSlider, x, y))
+                return F_SLIDER_ACTIVE;
+
+            if (Position::inside(&sSpareSpace, x, y))
+            {
+                if (sOrientation.horizontal())
+                    return (x < sSlider.nLeft) ? F_SPARE_DOWN_ACTIVE : F_SPARE_UP_ACTIVE;
+                else
+                    return (y < sSlider.nTop) ? F_SPARE_DOWN_ACTIVE : F_SPARE_UP_ACTIVE;
+            }
+
             return 0;
-// TODO
-//            float value     = get_normalized_value();
-//
-//            realize_t r     = sSize;
-//            ssize_t wsize   = nSize + 1;
-//
-//            if (enOrientation == O_VERTICAL) // Vertical
-//            {
-//                // Update dimensions
-//                if (!(nFlags & F_FILL))
-//                {
-//                    r.nLeft += (r.nWidth - nSize) >> 1;
-//                    r.nWidth = nSize;
-//                }
-//                r.nHeight   --;
-//            }
-//            else
-//            {
-//                // Update dimensions
-//                if (!(nFlags & F_FILL))
-//                {
-//                    r.nTop     += (r.nHeight - nSize) >> 1;
-//                    r.nHeight   = nSize;
-//                }
-//                r.nWidth    --;
-//            }
-//
-//            // Check overall coordinates
-//            if ((x < r.nLeft) ||
-//                (x > (r.nLeft + r.nWidth)) ||
-//                (y < r.nTop) ||
-//                (y > (r.nTop + r.nHeight)))
-//                return 0;
-//
-//            if (enOrientation == O_VERTICAL) // Vertical
-//            {
-//                y -= r.nTop;
-//                if (y < wsize)
-//                    return F_BTN_DOWN_ACTIVE;
-//                y -= wsize;
-//
-//                ssize_t spare_space     = r.nHeight - (wsize << 1) - wsize;
-//                ssize_t spare_up_size   = spare_space * value;
-//                ssize_t spare_down_size = spare_space * (1.0f - value);
-//
-//                if (y < spare_up_size)
-//                    return F_SPARE_DOWN_ACTIVE;
-//                y -= spare_up_size;
-//
-//                if (y < wsize)
-//                    return F_SLIDER_ACTIVE;
-//                y -= wsize;
-//
-//                return (y < spare_down_size) ? F_SPARE_UP_ACTIVE : F_BTN_UP_ACTIVE;
-//            }
-//            else
-//            {
-//                x -= r.nLeft;
-//                if (x < wsize)
-//                    return F_BTN_DOWN_ACTIVE;
-//                x -= wsize;
-//
-//                ssize_t spare_space     = r.nWidth - (wsize << 1) - wsize;
-//                ssize_t spare_down_size = spare_space * value;
-//                ssize_t spare_up_size   = spare_space * (1.0f - value);
-//
-//                if (x < spare_down_size)
-//                    return F_SPARE_DOWN_ACTIVE;
-//                x -= spare_down_size;
-//
-//                if (x < wsize)
-//                    return F_SLIDER_ACTIVE;
-//                x -= wsize;
-//
-//                return (x < spare_up_size) ? F_SPARE_UP_ACTIVE : F_BTN_UP_ACTIVE;
-//            }
         }
 
         status_t ScrollBar::on_change()
@@ -433,6 +374,8 @@ namespace lsp
         status_t ScrollBar::on_mouse_down(const ws::event_t *e)
         {
 //            lsp_trace("nButtons = %d, code = %d", int(nButtons), int(e->nCode));
+            nKeys       = e->nState;
+
             if (nButtons == 0)
             {
                 // Update state of buttons
@@ -545,10 +488,43 @@ namespace lsp
                 enMousePointer = pointer()->get();
         }
 
+        status_t ScrollBar::on_key_down(const ws::event_t *e)
+        {
+            switch (e->nCode)
+            {
+                case ws::WSK_CONTROL_L:
+                case ws::WSK_CONTROL_R:
+                    nKeys      |= ws::MCF_CONTROL;
+                    break;
+                case ws::WSK_SHIFT_L:
+                case ws::WSK_SHIFT_R:
+                    nKeys      |= ws::MCF_SHIFT;
+                    break;
+            }
+            return STATUS_OK;
+        }
+
+        status_t ScrollBar::on_key_up(const ws::event_t *e)
+        {
+            switch (e->nCode)
+            {
+                case ws::WSK_CONTROL_L:
+                case ws::WSK_CONTROL_R:
+                    nKeys      &= ~ws::MCF_CONTROL;
+                    break;
+                case ws::WSK_SHIFT_L:
+                case ws::WSK_SHIFT_R:
+                    nKeys      &= ~ws::MCF_SHIFT;
+                    break;
+            }
+            return STATUS_OK;
+        }
+
         status_t ScrollBar::on_mouse_up(const ws::event_t *e)
         {
 //            lsp_trace("nButtons = %d, code = %d", int(nButtons), int(e->nCode));
             nButtons   &= ~(1 << e->nCode);
+            nKeys       = e->nState;
             if (nFlags & F_OUTSIDE)
             {
                 if (nButtons == 0)
@@ -626,6 +602,7 @@ namespace lsp
 
         status_t ScrollBar::on_mouse_move(const ws::event_t *e)
         {
+            nKeys       = e->nState;
             if (nFlags & F_OUTSIDE)
                 return STATUS_OK;
             if (nButtons == 0)
@@ -829,11 +806,11 @@ namespace lsp
                 xr              = sDecButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
                 s->fill_round_rect(color, SURFMASK_L_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
 
-                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
                         xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.5f,
                         xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.25f,
@@ -844,11 +821,11 @@ namespace lsp
                 xr              = sIncButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
                 s->fill_round_rect(color, SURFMASK_R_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
 
-                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
                         xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.5f,
                         xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.75f,
@@ -863,7 +840,7 @@ namespace lsp
 
                 if (xr.nWidth > 0)
                 {
-                    color.copy((nFlags & F_SPARE_UP_ACTIVE) ? sIncActiveColor : sIncColor);
+                    color.copy((nFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
                     color.scale_lightness(bright);
                     s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
                 }
@@ -876,7 +853,7 @@ namespace lsp
 
                 if (xr.nWidth > 0)
                 {
-                    color.copy((nFlags & F_SPARE_DOWN_ACTIVE) ? sDecActiveColor : sDecColor);
+                    color.copy((nFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
                     color.scale_lightness(bright);
                     s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
                 }
@@ -887,11 +864,11 @@ namespace lsp
                 xr              = sDecButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
                 s->fill_round_rect(color, SURFMASK_T_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
 
-                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
                         xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.25f,
                         xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.75f,
@@ -902,11 +879,11 @@ namespace lsp
                 xr              = sIncButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
                 s->fill_round_rect(color, SURFMASK_B_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
 
-                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
                         xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.75f,
                         xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.25f,
@@ -919,9 +896,9 @@ namespace lsp
                 xr.nWidth       = sSpareSpace.nWidth;
                 xr.nHeight      = sSlider.nTop - sSpareSpace.nTop - gap;
 
-                if (xr.nWidth > 0)
+                if (xr.nHeight > 0)
                 {
-                    color.copy((nFlags & F_SPARE_UP_ACTIVE) ? sIncActiveColor : sIncColor);
+                    color.copy((nFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
                     color.scale_lightness(bright);
                     s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
                 }
@@ -932,9 +909,9 @@ namespace lsp
                 xr.nWidth       = sSpareSpace.nWidth;
                 xr.nHeight      = sSpareSpace.nTop - sSize.nTop + sSpareSpace.nHeight - xr.nTop;
 
-                if (xr.nWidth > 0)
+                if (xr.nHeight > 0)
                 {
-                    color.copy((nFlags & F_SPARE_DOWN_ACTIVE) ? sDecActiveColor : sDecColor);
+                    color.copy((nFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
                     color.scale_lightness(bright);
                     s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
                 }

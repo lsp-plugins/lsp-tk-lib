@@ -201,6 +201,10 @@ namespace lsp
 
                 virtual status_t                on_mouse_up(const ws::event_t *e);
 
+                virtual status_t                on_key_down(const ws::event_t *e);
+
+                virtual status_t                on_key_up(const ws::event_t *e);
+
                 virtual status_t                on_mouse_move(const ws::event_t *e);
 
                 virtual status_t                on_mouse_scroll(const ws::event_t *e);
