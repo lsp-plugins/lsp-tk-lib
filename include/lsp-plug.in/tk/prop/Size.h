@@ -77,6 +77,8 @@ namespace lsp
                 void    set(const Size *p);
 
                 void    compute(ws::rectangle_t *dst, float scale);
+
+                static bool     intersection(ws::rectangle_t *dst, const ws::rectangle_t *a, const ws::rectangle_t *b);
         };
 
         namespace prop
