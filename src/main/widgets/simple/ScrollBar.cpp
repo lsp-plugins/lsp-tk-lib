@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
 
 namespace lsp
@@ -57,15 +58,10 @@ namespace lsp
             sDecButton.nWidth   = 0;
             sDecButton.nHeight  = 0;
 
-            sIncSpace.nLeft     = -1;
-            sIncSpace.nTop      = -1;
-            sIncSpace.nWidth    = 0;
-            sIncSpace.nHeight   = 0;
-
-            sDecSpace.nLeft     = -1;
-            sDecSpace.nTop      = -1;
-            sDecSpace.nWidth    = 0;
-            sDecSpace.nHeight   = 0;
+            sSpareSpace.nLeft   = -1;
+            sSpareSpace.nTop    = -1;
+            sSpareSpace.nWidth  = 0;
+            sSpareSpace.nHeight = 0;
 
             sSlider.nLeft       = -1;
             sSlider.nTop        = -1;
@@ -125,7 +121,7 @@ namespace lsp
                 sValue.init(sclass, 0.5f);
                 sStep.init(sclass, 0.01);
                 sAccelStep.init(sclass, 0.05);
-                sConstraints.init(sclass, -1, -1, -1, -1);
+                sConstraints.init(sclass, -1, -1, 16, -1);
                 sOrientation.init(sclass, O_HORIZONTAL);
                 sSliderPointer.init(sclass, ws::MP_DEFAULT);
                 sIncPointer.init(sclass, ws::MP_DEFAULT);
@@ -165,7 +161,10 @@ namespace lsp
             Widget::property_changed(prop);
 
             if (sValue.is(prop))
-                query_draw();
+            {
+                update_slider();
+                sSlots.execute(SLOT_CHANGE, this);
+            }
             if (sConstraints.is(prop))
                 query_resize();
             if (sOrientation.is(prop))
@@ -203,17 +202,118 @@ namespace lsp
 
         void ScrollBar::size_request(ws::size_limit_t *r)
         {
-// TODO
-//            r->nMinWidth    = (enOrientation == O_VERTICAL) ? nSize + 1 : (nSize + 1) * 5;
-//            r->nMinHeight   = (enOrientation == O_VERTICAL) ? (nSize + 1) * 5 : nSize + 1;
-//            r->nMaxWidth    = ((enOrientation == O_HORIZONTAL) || (nFlags & F_FILL)) ? -1 : r->nMinWidth;
-//            r->nMaxHeight   = ((enOrientation == O_VERTICAL) || (nFlags & F_FILL)) ? -1 : r->nMinHeight;
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            size_t border   = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            size_t radius   = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            size_t gap      = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get()) : 0;
+            size_t sborder  = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
+
+            size_t ssize    = lsp_max(4.0f, 4.0f * scaling);    // Minimum slider/button size
+
+            // Estimate minimum size for vertical scroll bar
+            r->nMinWidth    = lsp_max(radius * 2, ssize + (sborder + gap + border)*2);
+            r->nMinHeight   = lsp_max(radius * 2, ssize*5 + gap*4 + (border + sborder)*2);
+            r->nMaxWidth    = -1;
+            r->nMaxHeight   = -1;
+
+            // Apply constraints to the vertical scroll bar parameters
+            sConstraints.apply(r, scaling);
+
+            // Transpose for horizontal
+            if (sOrientation.horizontal())
+            {
+                swap(r->nMinWidth, r->nMinHeight);
+                swap(r->nMaxWidth, r->nMaxHeight);
+            }
         }
 
         void ScrollBar::realize(const ws::rectangle_t *r)
         {
             Widget::realize(r);
-            // TODO
+
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get()) : 0;
+            ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
+
+            // Compute parameters of each element
+            if (sOrientation.horizontal())
+            {
+                ssize_t req             = (r->nWidth - gap*4 + (border + sborder)*2) / 5;
+
+                sDecButton.nHeight      = r->nHeight - border;
+                sDecButton.nWidth       = lsp_min(req, sDecButton.nHeight);
+                sDecButton.nLeft        = r->nLeft  + border;
+                sDecButton.nTop         = r->nTop   + border;
+
+                sIncButton.nWidth       = sDecButton.nWidth;
+                sIncButton.nHeight      = sDecButton.nHeight;
+                sIncButton.nTop         = sDecButton.nTop;
+                sIncButton.nLeft        = r->nLeft + r->nWidth - border - sIncButton.nWidth;
+
+                sSpareSpace.nLeft       = sDecButton.nLeft + sDecButton.nWidth + gap;
+                sSpareSpace.nTop        = sDecButton.nTop  + gap;
+                sSpareSpace.nWidth      = sIncButton.nLeft - sSpareSpace.nLeft - gap;
+                sSpareSpace.nHeight     = sDecButton.nHeight - gap*2;
+            }
+            else
+            {
+                ssize_t req             = (r->nHeight - gap*4 + (border + sborder)*2) / 5;
+
+                sDecButton.nWidth       = r->nWidth  - border;
+                sDecButton.nHeight      = lsp_min(req, sDecButton.nWidth);
+                sDecButton.nLeft        = r->nLeft  + border;
+                sDecButton.nTop         = r->nTop   + border;
+
+                sIncButton.nWidth       = sDecButton.nWidth;
+                sIncButton.nHeight      = sDecButton.nHeight;
+                sIncButton.nTop         = r->nTop + r->nHeight - border - sIncButton.nHeight;
+                sIncButton.nLeft        = sDecButton.nLeft;
+
+                sSpareSpace.nLeft       = sDecButton.nLeft + gap;
+                sSpareSpace.nTop        = sDecButton.nTop + sDecButton.nHeight + gap;
+                sSpareSpace.nWidth      = sDecButton.nWidth - gap*2;
+                sSpareSpace.nHeight     = sIncButton.nTop - sSpareSpace.nTop - gap;
+            }
+
+            // Update slider parameters
+            update_slider();
+        }
+
+        void ScrollBar::update_slider()
+        {
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
+
+            // Estimate the amount of space
+            size_t ssize    = lsp_max(4.0f, 4.0f * scaling) + sborder*2;    // Minimum slider/button size
+            float range     = sValue.abs_range();
+
+            if (sOrientation.horizontal())
+            {
+                if (range > 0.0f)
+                    ssize           = lsp_max((sSpareSpace.nWidth * sStep.get()) / range, ssize);
+                ssize_t left        = sSpareSpace.nHeight - ssize;
+
+                sSlider.nLeft       = sSpareSpace.nLeft + left * sValue.get_normalized();
+                sSlider.nTop        = sSpareSpace.nTop;
+                sSlider.nWidth      = ssize;
+                sSlider.nHeight     = sSpareSpace.nHeight;
+            }
+            else
+            {
+                if (range > 0.0f)
+                    ssize           = lsp_max((sSpareSpace.nHeight * sStep.get()) / range, ssize);
+                ssize_t left        = sSpareSpace.nHeight - ssize;
+
+                sSlider.nLeft       = sSpareSpace.nLeft;
+                sSlider.nTop        = sSpareSpace.nTop + left * sValue.get_normalized();
+                sSlider.nWidth      = sSpareSpace.nWidth;
+                sSlider.nHeight     = ssize;
+            }
+
+            query_draw();
         }
 
         status_t ScrollBar::timer_handler(ws::timestamp_t time, void *arg)
@@ -235,18 +335,6 @@ namespace lsp
         {
             return enMousePointer;
         }
-
-//        void ScrollBar::set_value(float value)
-//        {
-//            value       = limit_value(value);
-//
-//            if (value == fValue)
-//                return;
-//
-//            fValue      = value;
-//            sSlots.execute(LSPSLOT_CHANGE, this);
-//            query_draw();
-//        }
 
         size_t ScrollBar::check_mouse_over(ssize_t x, ssize_t y)
         {

@@ -60,8 +60,7 @@ namespace lsp
                 ws::mouse_pointer_t     enMousePointer;
                 ws::rectangle_t         sIncButton;
                 ws::rectangle_t         sDecButton;
-                ws::rectangle_t         sIncSpace;
-                ws::rectangle_t         sDecSpace;
+                ws::rectangle_t         sSpareSpace;
                 ws::rectangle_t         sSlider;
 
                 prop::RangeFloat        sValue;
@@ -97,6 +96,7 @@ namespace lsp
                 void                            do_destroy();
                 void                            update_by_timer();
                 void                            update_cursor_state(ssize_t x, ssize_t y, bool set);
+                void                            update_slider();
 
             protected:
                 static status_t                 slot_on_change(Widget *sender, void *ptr, void *data);
@@ -145,8 +145,8 @@ namespace lsp
                 inline Integer                 *border_size()               { return &sBorderSize;          }
                 inline const Integer           *border_size() const         { return &sBorderSize;          }
 
-                inline Integer                 *border_gap()                { return &sBorderGap;           }
-                inline const Integer           *border_gap() const          { return &sBorderGap;           }
+                inline Integer                 *border_gap_size()           { return &sBorderGap;           }
+                inline const Integer           *border_gap_size() const     { return &sBorderGap;           }
 
                 inline Integer                 *slider_border_size()        { return &sSliderBorderSize;    }
                 inline const Integer           *slider_border_size() const  { return &sSliderBorderSize;    }
