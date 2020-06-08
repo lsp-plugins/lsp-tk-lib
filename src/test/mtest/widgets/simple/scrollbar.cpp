@@ -191,7 +191,6 @@ MTEST_BEGIN("tk.widgets.simple", scrollbar)
         {
             // Create alignment and child widget
             LSPString id;
-            size_t col = 0;
 
             // Create horizontal scrollbar
             MTEST_ASSERT(id.fmt_ascii("hscroll-0"));
