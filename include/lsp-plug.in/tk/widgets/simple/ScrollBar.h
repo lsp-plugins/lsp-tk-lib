@@ -88,6 +88,8 @@ namespace lsp
                 prop::Color             sSliderColor;
                 prop::Color             sSliderBorderColor;
                 prop::Color             sSliderActiveColor;
+                prop::Color             sTextColor;
+                prop::Color             sTextActiveColor;
 
                 Timer                   sTimer;
 
@@ -183,6 +185,12 @@ namespace lsp
 
                 inline Color                   *border_gap_color()          { return &sBorderGapColor;      }
                 inline const Color             *border_gap_color() const    { return &sBorderGapColor;      }
+
+                inline Color                   *text_color()                { return &sTextColor;           }
+                inline const Color             *text_color() const          { return &sTextColor;           }
+
+                inline Color                   *text_active_color()         { return &sTextActiveColor;     }
+                inline const Color             *text_active_color() const   { return &sTextActiveColor;     }
 
             public:
                 virtual ws::mouse_pointer_t     current_pointer();

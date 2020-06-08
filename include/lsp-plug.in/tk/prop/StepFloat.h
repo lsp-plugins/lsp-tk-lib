@@ -67,12 +67,13 @@ namespace lsp
                 ~StepFloat();
 
             public:
-                inline float        get() const             { return fStep;                 }
-                inline float        accel() const           { return fAccel;                }
-                inline float        decel() const           { return fDecel;                }
-                inline float        step() const            { return fStep;                 }
-                inline float        step_accel() const      { return fStep * fAccel;        }
-                inline float        step_decel() const      { return fStep * fDecel;        }
+                inline float        get() const             { return fStep;                             }
+                inline float        get_abs() const         { return (fStep >= 0.0f) ? fStep : -fStep;  }
+                inline float        accel() const           { return fAccel;                            }
+                inline float        decel() const           { return fDecel;                            }
+                inline float        step() const            { return fStep;                             }
+                inline float        step_accel() const      { return fStep * fAccel;                    }
+                inline float        step_decel() const      { return fStep * fDecel;                    }
 
                 float               set(float v);
                 void                set(float v, float accel, float decel);

@@ -25,6 +25,7 @@ namespace lsp
             sSliderPointer(&sProperties),
             sIncPointer(&sProperties),
             sDecPointer(&sProperties),
+            sBorderRadius(&sProperties),
             sBorderSize(&sProperties),
             sBorderGap(&sProperties),
             sSliderBorderSize(&sProperties),
@@ -38,7 +39,9 @@ namespace lsp
             sBorderGapColor(&sProperties),
             sSliderColor(&sProperties),
             sSliderBorderColor(&sProperties),
-            sSliderActiveColor(&sProperties)
+            sSliderActiveColor(&sProperties),
+            sTextColor(&sProperties),
+            sTextActiveColor(&sProperties)
         {
             nFlags              = 0;
             nButtons            = 0;
@@ -100,6 +103,7 @@ namespace lsp
             sSliderPointer.bind("slider.pointer", &sStyle);
             sIncPointer.bind("inc.pointer", &sStyle);
             sDecPointer.bind("dec.pointer", &sStyle);
+            sBorderRadius.bind("border.radius", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderGap.bind("border.gap", &sStyle);
             sSliderBorderSize.bind("slider.border.size", &sStyle);
@@ -114,6 +118,8 @@ namespace lsp
             sSliderColor.bind("slider.color", &sStyle);
             sSliderBorderColor.bind("slider.border.color", &sStyle);
             sSliderActiveColor.bind("slider.active.color", &sStyle);
+            sTextColor.bind("text.color", &sStyle);
+            sTextActiveColor.bind("text.active.color", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -121,25 +127,28 @@ namespace lsp
                 sValue.init(sclass, 0.5f);
                 sStep.init(sclass, 0.01);
                 sAccelStep.init(sclass, 0.05);
-                sConstraints.init(sclass, -1, -1, 16, -1);
+                sConstraints.init(sclass, 16, -1, 16, -1);
                 sOrientation.init(sclass, O_HORIZONTAL);
                 sSliderPointer.init(sclass, ws::MP_DEFAULT);
                 sIncPointer.init(sclass, ws::MP_DEFAULT);
                 sDecPointer.init(sclass, ws::MP_DEFAULT);
+                sBorderRadius.init(sclass, 4);
                 sBorderSize.init(sclass, 1);
                 sBorderGap.init(sclass, 1);
                 sSliderBorderSize.init(sclass, 1);
                 sButtonColor.init(sclass, "#cccccc");
                 sButtonActiveColor.init(sclass, "#ffffff");
-                sIncColor.init(sclass, "#cccccc");
+                sIncColor.init(sclass, "#888888");
                 sIncActiveColor.init(sclass, "#ffffff");
-                sDecColor.init(sclass, "#cccccc");
+                sDecColor.init(sclass, "#888888");
                 sDecActiveColor.init(sclass, "#ffffff");
                 sBorderColor.init(sclass, "#000000");
-                sBorderGapColor.init(sclass, "#cccccc");
+                sBorderGapColor.init(sclass, "#888888");
                 sSliderColor.init(sclass, "#cccccc");
                 sSliderBorderColor.init(sclass, "#000000");
                 sSliderActiveColor.init(sclass, "#ffffff");
+                sTextColor.init(sclass, "#000000");
+                sTextActiveColor.init(sclass, "#000000");
             }
 
             handler_id_t id = 0;
@@ -233,7 +242,6 @@ namespace lsp
 
             float scaling   = lsp_max(0.0f, sScaling.get());
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
-            ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get()) : 0;
             ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
 
@@ -242,7 +250,7 @@ namespace lsp
             {
                 ssize_t req             = (r->nWidth - gap*4 + (border + sborder)*2) / 5;
 
-                sDecButton.nHeight      = r->nHeight - border;
+                sDecButton.nHeight      = r->nHeight - border*2;
                 sDecButton.nWidth       = lsp_min(req, sDecButton.nHeight);
                 sDecButton.nLeft        = r->nLeft  + border;
                 sDecButton.nTop         = r->nTop   + border;
@@ -261,7 +269,7 @@ namespace lsp
             {
                 ssize_t req             = (r->nHeight - gap*4 + (border + sborder)*2) / 5;
 
-                sDecButton.nWidth       = r->nWidth  - border;
+                sDecButton.nWidth       = r->nWidth  - border*2;
                 sDecButton.nHeight      = lsp_min(req, sDecButton.nWidth);
                 sDecButton.nLeft        = r->nLeft  + border;
                 sDecButton.nTop         = r->nTop   + border;
@@ -287,14 +295,15 @@ namespace lsp
             ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
 
             // Estimate the amount of space
-            size_t ssize    = lsp_max(4.0f, 4.0f * scaling) + sborder*2;    // Minimum slider/button size
+            ssize_t ssize   = lsp_max(4.0f, 4.0f * scaling) + sborder*2;    // Minimum slider/button size
             float range     = sValue.abs_range();
+            float step      = sStep.get_abs();
+            ssize_t pixels  = ((range > 0.0f) && (step > 0.0f)) ? lsp_max(0, ceil(range / sStep.get_abs())) : 0;
 
             if (sOrientation.horizontal())
             {
-                if (range > 0.0f)
-                    ssize           = lsp_max((sSpareSpace.nWidth * sStep.get()) / range, ssize);
-                ssize_t left        = sSpareSpace.nHeight - ssize;
+                ssize               = lsp_max(sSpareSpace.nWidth - pixels, ssize);
+                ssize_t left        = sSpareSpace.nWidth - ssize;
 
                 sSlider.nLeft       = sSpareSpace.nLeft + left * sValue.get_normalized();
                 sSlider.nTop        = sSpareSpace.nTop;
@@ -303,8 +312,7 @@ namespace lsp
             }
             else
             {
-                if (range > 0.0f)
-                    ssize           = lsp_max((sSpareSpace.nHeight * sStep.get()) / range, ssize);
+                ssize               = lsp_max(sSpareSpace.nHeight - pixels, ssize);
                 ssize_t left        = sSpareSpace.nHeight - ssize;
 
                 sSlider.nLeft       = sSpareSpace.nLeft;
@@ -424,8 +432,6 @@ namespace lsp
 
         status_t ScrollBar::on_mouse_down(const ws::event_t *e)
         {
-            take_focus();
-
 //            lsp_trace("nButtons = %d, code = %d", int(nButtons), int(e->nCode));
             if (nButtons == 0)
             {
@@ -778,186 +784,185 @@ namespace lsp
 
         void ScrollBar::draw(ws::ISurface *s)
         {
-// TODO
-//            // Prepare palette
-//            Color bg_color(sBgColor);
-//            Color color(sColor);
-//            Color quarter(sSelColor, 0.25f);
-//            Color half(sSelColor, 0.5f);
-//
-//            color.scale_lightness(brightness());
-//            quarter.scale_lightness(brightness());
-//            half.scale_lightness(brightness());
-//
-//            // Draw background
-//            s->fill_rect(0, 0, sSize.nWidth, sSize.nHeight, bg_color);
-//
-//            float value     = get_normalized_value();
-//            float aa        = s->set_antialiasing(true);
-//
-//            realize_t r     = sSize;
-//            r.nLeft         = 0;
-//            r.nTop          = 0;
-//            ssize_t size3   = nSize/3;
-//            ssize_t w       = nSize + 1;
-//
-//            if (enOrientation == O_VERTICAL) // Vertical
-//            {
-//                // Update dimensions
-//                if (!(nFlags & F_FILL))
-//                {
-//                    r.nLeft += (r.nWidth - nSize) >> 1;
-//                    r.nWidth = nSize;
-//                }
-//                r.nHeight   --;
-//
-//                // Draw button up
-//                if (nFlags & F_BTN_UP_ACTIVE)
-//                {
-//                    float top = r.nTop + r.nHeight - nSize + 0.5f;
-//                    s->fill_round_rect(r.nLeft, r.nTop + r.nHeight - nSize + 1, r.nWidth + 1, nSize - 1, 3.0f, SURFMASK_B_CORNER, half);
-//                    s->line(r.nLeft + 0.5f, top, r.nLeft + r.nWidth + 0.5f, top, 1.0f, color);
-//                    s->fill_triangle(
-//                            r.nLeft + 0.2f*w, r.nTop + r.nHeight + 1 - size3*2,
-//                            r.nLeft + 0.5f*w, r.nTop + r.nHeight + 1 - size3,
-//                            r.nLeft + 0.8f*w, r.nTop + r.nHeight + 1 - size3*2,
-//                            color);
-//                }
-//                else
-//                {
-//                    s->fill_round_rect(r.nLeft, r.nTop + r.nHeight - nSize, r.nWidth + 1, nSize, 3.0f, SURFMASK_B_CORNER, color);
-//                    s->fill_triangle(
-//                            r.nLeft + 0.2f*w, r.nTop + r.nHeight + 1 - size3*2,
-//                            r.nLeft + 0.5f*w, r.nTop + r.nHeight + 1 - size3,
-//                            r.nLeft + 0.8f*w, r.nTop + r.nHeight + 1 - size3*2,
-//                            bg_color);
-//                }
-//
-//                // Draw button down
-//                if (nFlags & F_BTN_DOWN_ACTIVE)
-//                {
-//                    float top = r.nTop + nSize + 0.5f;
-////                    s->fill_rect(r.nLeft + 2, 2, nSize - 3, nSize - 3, sColor);
-//                    s->fill_round_rect(r.nLeft, r.nTop+1, r.nWidth + 1, nSize-1, 3.0f, SURFMASK_T_CORNER, half);
-//                    s->line(r.nLeft + 0.5f, top, r.nLeft + r.nWidth + 0.5f, top, 1.0f, color);
-//                    s->fill_triangle(
-//                            r.nLeft + 0.2f*w, r.nTop + size3*2,
-//                            r.nLeft + 0.5f*w, r.nTop + size3,
-//                            r.nLeft + 0.8f*w, r.nTop + size3*2,
-//                            color);
-//                }
-//                else
-//                {
-//                    s->fill_round_rect(r.nLeft, r.nTop+1, r.nWidth + 1, nSize, 3.0f, SURFMASK_T_CORNER, color);
-//                    s->fill_triangle(
-//                            r.nLeft + 0.2f*w, r.nTop + size3*2,
-//                            r.nLeft + 0.5f*w, r.nTop + size3,
-//                            r.nLeft + 0.8f*w, r.nTop + size3*2,
-//                            bg_color);
-//                }
-//
-//                ssize_t spare_space     = r.nHeight - ((nSize + 1) << 1) - nSize - 1;
-//                ssize_t spare_up_size   = spare_space * value;
-//                ssize_t spare_down_size = spare_space * (1.0f - value);
-//
-//                // Draw slider
-//                if (nFlags & F_SLIDER_ACTIVE)
-//                {
-//                    s->wire_rect(r.nLeft + 2.5f, r.nTop + nSize + spare_up_size + 2.5f, r.nWidth - 4, nSize - 1, 1.0f, color);
-//                    s->fill_rect(r.nLeft + 3, r.nTop + nSize + spare_up_size + 3, r.nWidth - 5, nSize - 2, quarter);
-//                }
-//                else
-//                    s->fill_rect(r.nLeft + 2, r.nTop + nSize + spare_up_size + 2, r.nWidth - 3, nSize, color);
-//
-//                // Draw spares
-//                if ((nFlags & F_SPARE_UP_ACTIVE) && (spare_down_size > 0))
-//                    s->fill_rect(r.nLeft + 2, r.nTop + spare_up_size + nSize*2 + 3, r.nWidth - 3, spare_down_size, quarter);
-//
-//                if ((nFlags & F_SPARE_DOWN_ACTIVE) && (spare_up_size > 1))
-//                    s->fill_rect(r.nLeft + 2, r.nTop + nSize + 2, r.nWidth - 3, spare_up_size - 1, quarter);
-//
-//                // Draw binding
-//                s->wire_round_rect(r.nLeft + 0.5f, r.nTop + 0.5f, r.nWidth, r.nHeight, 3, SURFMASK_ALL_CORNER, 1.0f, color);
-//            }
-//            else // Horizontal
-//            {
-//                // Update dimensions
-//                if (!(nFlags & F_FILL))
-//                {
-//                    r.nTop     += (r.nHeight - nSize) >> 1;
-//                    r.nHeight   = nSize;
-//                }
-//                r.nWidth    --;
-//
-//                // Draw button up
-//                if (nFlags & F_BTN_UP_ACTIVE)
-//                {
-//                    float left = r.nLeft + r.nWidth - nSize + 0.5f;
-//                    s->fill_round_rect(r.nLeft + r.nWidth - nSize + 1, r.nTop+1, nSize, r.nHeight, 3.0f, SURFMASK_R_CORNER, half);
-//                    s->line(left, r.nTop + 0.5f, left, r.nTop + r.nWidth + 0.5f, 1.0f, color);
-//                    s->fill_triangle(
-//                            r.nLeft + r.nWidth + 1 - size3*2, r.nTop + 0.2f*w,
-//                            r.nLeft + r.nWidth + 1 - size3,   r.nTop + 0.5f*w,
-//                            r.nLeft + r.nWidth + 1 - size3*2, r.nTop + 0.8f*w,
-//                            color);
-//                }
-//                else
-//                {
-//                    s->fill_round_rect(r.nLeft + r.nWidth - nSize, r.nTop+1, nSize+1, r.nHeight, 3.0f, SURFMASK_R_CORNER, color);
-//                    s->fill_triangle(
-//                            r.nLeft + r.nWidth + 1 - size3*2, r.nTop + 0.2f*w,
-//                            r.nLeft + r.nWidth + 1 - size3,   r.nTop + 0.5f*w,
-//                            r.nLeft + r.nWidth + 1 - size3*2, r.nTop + 0.8f*w,
-//                            bg_color);
-//                }
-//
-//                // Draw button down
-//                if (nFlags & F_BTN_DOWN_ACTIVE)
-//                {
-//                    float left = r.nLeft + nSize + 0.5f;
-//                    s->fill_round_rect(r.nLeft, r.nTop, nSize, r.nHeight, 3.0f, SURFMASK_L_CORNER, half);
-//                    s->line(left, r.nTop + 0.5f, left, r.nLeft + r.nHeight + 0.5f, 1.0f, color);
-//                    s->fill_triangle(
-//                            r.nLeft + size3*2, r.nTop + 0.2f*w,
-//                            r.nLeft + size3,   r.nTop + 0.5f*w,
-//                            r.nLeft + size3*2, r.nTop + 0.8f*w,
-//                            color);
-//                }
-//                else
-//                {
-//                    s->fill_round_rect(r.nLeft+1, r.nTop, nSize, r.nHeight, 3.0f, SURFMASK_L_CORNER, color);
-//                    s->fill_triangle(
-//                            r.nLeft + size3*2, r.nTop + 0.2f*w,
-//                            r.nLeft + size3,   r.nTop + 0.5f*w,
-//                            r.nLeft + size3*2, r.nTop + 0.8f*w,
-//                            bg_color);
-//                }
-//
-//                ssize_t spare_space     = r.nWidth - ((nSize + 1) << 1) - nSize - 1;
-//                ssize_t spare_down_size = spare_space * value;
-//                ssize_t spare_up_size   = spare_space * (1.0f - value);
-//
-//                // Draw slider
-//                if (nFlags & F_SLIDER_ACTIVE)
-//                {
-//                    s->wire_rect(r.nLeft + nSize + spare_down_size + 2.5f, r.nTop + 2.5f, nSize - 1, r.nHeight - 4, 1.0f, color);
-//                    s->fill_rect(r.nLeft + nSize + spare_down_size + 3, r.nTop + 3, nSize - 2, r.nHeight - 5, quarter);
-//                }
-//                else
-//                    s->fill_rect(r.nLeft + nSize + spare_down_size + 2, r.nTop + 2, nSize, r.nHeight - 3, color);
-//
-//                // Draw spares
-//                if ((nFlags & F_SPARE_UP_ACTIVE) && (spare_up_size > 0))
-//                    s->fill_rect(r.nLeft + spare_down_size + nSize*2 + 3, r.nTop + 2, spare_up_size, r.nHeight - 3, quarter);
-//
-//                if ((nFlags & F_SPARE_DOWN_ACTIVE) && (spare_down_size > 1))
-//                    s->fill_rect(r.nLeft + nSize + 2, r.nTop + 2, spare_down_size - 1, r.nHeight - 3, quarter);
-//
-//                // Draw binding
-//                s->wire_round_rect(r.nLeft + 0.5f, r.nTop + 0.5f, r.nWidth, r.nHeight, 3, SURFMASK_ALL_CORNER, 1.0f, color);
-//            }
-//
-//            s->set_antialiasing(aa);
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float bright    = sBrightness.get();
+            ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get()) : 0;
+            ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
+
+            // Draw background
+            lsp::Color color(sBgColor);
+            s->clear(color);
+
+            bool aa         = s->set_antialiasing(true);
+            ws::rectangle_t xr;
+            xr              = sSize;
+            xr.nLeft       -= sSize.nLeft;
+            xr.nTop        -= sSize.nTop;
+
+            // Draw border
+            if (border > 0)
+            {
+                color.copy(sBorderColor);
+                color.scale_lightness(bright);
+
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                xr.nLeft       += border;
+                xr.nTop        += border;
+                xr.nWidth      -= border*2;
+                xr.nHeight     -= border*2;
+                radius          = lsp_max(0, radius - 1);
+            }
+
+            // Draw border gap
+            if (gap > 0)
+            {
+                color.copy(sBorderGapColor);
+                color.scale_lightness(bright);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+            }
+
+            if (sOrientation.horizontal())
+            {
+                // Draw dec button
+                xr              = sDecButton;
+                xr.nLeft       -= sSize.nLeft;
+                xr.nTop        -= sSize.nTop;
+                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.scale_lightness(bright);
+                s->fill_round_rect(color, SURFMASK_L_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+
+                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
+                s->fill_triangle(
+                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.5f,
+                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.25f,
+                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.75f,
+                        color);
+
+                // Draw inc button
+                xr              = sIncButton;
+                xr.nLeft       -= sSize.nLeft;
+                xr.nTop        -= sSize.nTop;
+                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.scale_lightness(bright);
+                s->fill_round_rect(color, SURFMASK_R_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+
+                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
+                s->fill_triangle(
+                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.5f,
+                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.75f,
+                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.25f,
+                        color);
+
+                // Draw the dec spare
+                xr.nLeft        = sSpareSpace.nLeft - sSize.nLeft;
+                xr.nTop         = sSpareSpace.nTop  - sSize.nTop;
+                xr.nWidth       = sSlider.nLeft - sSpareSpace.nLeft - gap;
+                xr.nHeight      = sSpareSpace.nHeight;
+
+                if (xr.nWidth > 0)
+                {
+                    color.copy((nFlags & F_SPARE_UP_ACTIVE) ? sIncActiveColor : sIncColor);
+                    color.scale_lightness(bright);
+                    s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                }
+
+                // Draw the inc spare
+                xr.nLeft        = sSlider.nLeft - sSize.nLeft + sSlider.nWidth + gap;
+                xr.nTop         = sSpareSpace.nTop  - sSize.nTop;
+                xr.nWidth       = sSpareSpace.nLeft - sSize.nLeft + sSpareSpace.nWidth - xr.nLeft;
+                xr.nHeight      = sSpareSpace.nHeight;
+
+                if (xr.nWidth > 0)
+                {
+                    color.copy((nFlags & F_SPARE_DOWN_ACTIVE) ? sDecActiveColor : sDecColor);
+                    color.scale_lightness(bright);
+                    s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                }
+            }
+            else
+            {
+                // Draw dec button
+                xr              = sDecButton;
+                xr.nLeft       -= sSize.nLeft;
+                xr.nTop        -= sSize.nTop;
+                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.scale_lightness(bright);
+                s->fill_round_rect(color, SURFMASK_T_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+
+                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
+                s->fill_triangle(
+                        xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.25f,
+                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.75f,
+                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.75f,
+                        color);
+
+                // Draw inc button
+                xr              = sIncButton;
+                xr.nLeft       -= sSize.nLeft;
+                xr.nTop        -= sSize.nTop;
+                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.scale_lightness(bright);
+                s->fill_round_rect(color, SURFMASK_B_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+
+                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
+                s->fill_triangle(
+                        xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.75f,
+                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.25f,
+                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.25f,
+                        color);
+
+                // Draw the dec spare
+                xr.nLeft        = sSpareSpace.nLeft - sSize.nLeft;
+                xr.nTop         = sSpareSpace.nTop  - sSize.nTop;
+                xr.nWidth       = sSpareSpace.nWidth;
+                xr.nHeight      = sSlider.nTop - sSpareSpace.nTop - gap;
+
+                if (xr.nWidth > 0)
+                {
+                    color.copy((nFlags & F_SPARE_UP_ACTIVE) ? sIncActiveColor : sIncColor);
+                    color.scale_lightness(bright);
+                    s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                }
+
+                // Draw the inc spare
+                xr.nLeft        = sSpareSpace.nLeft - sSize.nLeft;
+                xr.nTop         = sSlider.nTop - sSize.nTop + sSlider.nHeight + gap;
+                xr.nWidth       = sSpareSpace.nWidth;
+                xr.nHeight      = sSpareSpace.nTop - sSize.nTop + sSpareSpace.nHeight - xr.nTop;
+
+                if (xr.nWidth > 0)
+                {
+                    color.copy((nFlags & F_SPARE_DOWN_ACTIVE) ? sDecActiveColor : sDecColor);
+                    color.scale_lightness(bright);
+                    s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                }
+            }
+
+            // Draw the slider
+            xr.nLeft        = sSlider.nLeft - sSize.nLeft;
+            xr.nTop         = sSlider.nTop  - sSize.nTop;
+            xr.nWidth       = sSlider.nWidth;
+            xr.nHeight      = sSlider.nHeight;
+
+            if (sborder > 0)
+            {
+                color.copy(sSliderBorderColor);
+                color.scale_lightness(bright);
+                s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+
+                xr.nLeft       += sborder;
+                xr.nTop        += sborder;
+                xr.nWidth      -= sborder * 2;
+                xr.nHeight     -= sborder * 2;
+            }
+
+            color.copy((nFlags & F_SLIDER_ACTIVE) ? sSliderActiveColor : sSliderColor);
+            color.scale_lightness(bright);
+            s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+
+            s->set_antialiasing(aa);
         }
 
     } /* namespace tk */

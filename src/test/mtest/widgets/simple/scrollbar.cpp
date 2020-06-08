@@ -1,5 +1,5 @@
 /*
- * fader.cpp
+ * scrollbar.cpp
  *
  *  Created on: 05 июн. 2020 г.
  *      Author: sadko
@@ -9,7 +9,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.simple", fader)
+MTEST_BEGIN("tk.widgets.simple", scrollbar)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -155,12 +155,12 @@ MTEST_BEGIN("tk.widgets.simple", fader)
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
         tk::Grid *grid = NULL;
-        tk::Fader *fd = NULL;
+        tk::ScrollBar *sb = NULL;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test fader") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("fader_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test scrollbar") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("scrollbar_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
@@ -193,45 +193,39 @@ MTEST_BEGIN("tk.widgets.simple", fader)
             LSPString id;
             size_t col = 0;
 
-            // Create horizontal fader
-            MTEST_ASSERT(id.fmt_ascii("hfader-0"));
-            MTEST_ASSERT(fd = new tk::Fader(dpy));
-            MTEST_ASSERT(init_widget(fd, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(fd));
-            MTEST_ASSERT(grid->add(fd, 1, 8) == STATUS_OK);
+            // Create horizontal scrollbar
+            MTEST_ASSERT(id.fmt_ascii("hscroll-0"));
+            MTEST_ASSERT(sb = new tk::ScrollBar(dpy));
+            MTEST_ASSERT(init_widget(sb, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(sb));
+            MTEST_ASSERT(grid->add(sb, 1, 8) == STATUS_OK);
 
-            fd->color()->set_rgb24(next_color(col));
-            fd->button_width()->set(14);
-            fd->button_pointer()->set(ws::MP_HSIZE);
+            sb->orientation()->set_horizontal();
+            sb->value()->set(0.5f);
 
             // Create vertical faders
             for (ssize_t x=0; x<8; ++x)
             {
                 // Create alignment widget
-                MTEST_ASSERT(id.fmt_ascii("vfader-%d-0", x));
-                MTEST_ASSERT(fd = new tk::Fader(dpy));
-                MTEST_ASSERT(init_widget(fd, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(fd));
-                MTEST_ASSERT(grid->add(fd) == STATUS_OK);
+                MTEST_ASSERT(id.fmt_ascii("vscroll-%d-0", x));
+                MTEST_ASSERT(sb = new tk::ScrollBar(dpy));
+                MTEST_ASSERT(init_widget(sb, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(sb));
+                MTEST_ASSERT(grid->add(sb) == STATUS_OK);
 
-                fd->color()->set_rgb24(next_color(col));
-                fd->value()->set(x / 7.0);
-                fd->button_width()->set(18);
-                fd->button_aspect()->set((x + 1.0f) / 4.0f);
-                fd->button_pointer()->set(ws::MP_VSIZE);
-
-                fd->angle()->set(1);
+                sb->orientation()->set_vertical();
             }
 
             // Create horizontal fader
-            MTEST_ASSERT(id.fmt_ascii("hfader-1"));
-            MTEST_ASSERT(fd = new tk::Fader(dpy));
-            MTEST_ASSERT(init_widget(fd, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(fd));
-            MTEST_ASSERT(grid->add(fd, 1, 8) == STATUS_OK);
+            MTEST_ASSERT(id.fmt_ascii("hscroll-1"));
+            MTEST_ASSERT(sb = new tk::ScrollBar(dpy));
+            MTEST_ASSERT(init_widget(sb, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(sb));
+            MTEST_ASSERT(grid->add(sb, 1, 8) == STATUS_OK);
 
-            fd->color()->set_rgb24(next_color(col));
-            fd->button_pointer()->set(ws::MP_HSIZE);
+            sb->orientation()->set_horizontal();
+            sb->value()->set(0.5f);
+            sb->step()->set(0.005f);
         }
 
         // Show window
