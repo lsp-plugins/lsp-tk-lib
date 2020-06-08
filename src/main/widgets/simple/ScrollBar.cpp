@@ -726,7 +726,7 @@ namespace lsp
                               sStep.get();
             float delta     = (e->nCode == ws::MCD_UP) ? -step : step;
 
-            sValue.set(sValue.get() + delta);
+            sValue.add(delta);
 
             return STATUS_OK;
         }

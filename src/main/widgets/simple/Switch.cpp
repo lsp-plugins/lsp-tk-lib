@@ -27,10 +27,12 @@ namespace lsp
             sSizeRange(&sProperties),
             sAspect(&sProperties),
             sAngle(&sProperties),
-            sDown(&sProperties)
+            sDown(&sProperties),
+            sButtonPointer(&sProperties)
         {
             nState          = 0;
             nBMask          = 0;
+            enPointer       = ws::MP_DEFAULT;
 
             sButton.nLeft   = -1;
             sButton.nTop    = -1;
@@ -55,6 +57,7 @@ namespace lsp
             sAspect.bind("size.aspect", &sStyle);
             sAngle.bind("angle", &sStyle);
             sDown.bind("down", &sStyle);
+            sButtonPointer.bind("button.pointer", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -66,6 +69,7 @@ namespace lsp
                 sBorder.init(sclass, 6);
                 sSizeRange.init(sclass, 24);
                 sAspect.init(sclass, 1.41);
+                sButtonPointer.init(sclass, ws::MP_DEFAULT);
             }
 
             pClass      = &metadata;
@@ -111,7 +115,15 @@ namespace lsp
             if (sAngle.is(prop))
                 query_resize();
             if (sDown.is(prop))
+            {
                 sync_state(sDown.get());
+                sSlots.execute(SLOT_CHANGE, this);
+            }
+        }
+
+        ws::mouse_pointer_t Switch::current_pointer()
+        {
+            return enPointer;
         }
 
         void Switch::draw(ws::ISurface *s)
@@ -304,12 +316,6 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
-        void Switch::on_click(bool down)
-        {
-            lsp_trace("switch clicked: down=%s", (down) ? "true" : "false");
-            sSlots.execute(SLOT_CHANGE, this);
-        }
-
         void Switch::size_request(ws::size_limit_t *r)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
@@ -402,19 +408,29 @@ namespace lsp
             if (bw > 0)
                 x_space            += lsp_max(1, bw * scaling) + lsp_max(1, scaling * 2.0f); // border + chamfer
 
-            x                  -= sButton.nLeft   + x_space;
-            y                  -= sButton.nTop    + x_space;
-            ssize_t w           = sButton.nWidth  - x_space * 2;
-            ssize_t h           = sButton.nHeight - x_space * 2;
+            enPointer           = Widget::current_pointer();
 
-            return (x >= 0) && (y >= 0) && (x < w) && (y < h);
+            ws::rectangle_t xr  = sButton;
+            xr.nLeft           += x_space;
+            xr.nTop            += x_space;
+            xr.nWidth          -= x_space * 2;
+            xr.nHeight         -= x_space * 2;
+
+            if (Position::inside(&xr, x, y))
+            {
+                enPointer           = sButtonPointer.get(ws::MP_HAND);
+                return true;
+            }
+
+            return false;
         }
 
         status_t Switch::on_mouse_down(const ws::event_t *e)
         {
             nBMask         |= (1 << e->nCode);
 
-            bool pressed    = (nBMask == (1 << ws::MCB_LEFT)) && (check_mouse_over(e->nLeft, e->nTop));
+            bool mover      = check_mouse_over(e->nLeft, e->nTop);
+            bool pressed    = (nBMask == (1 << ws::MCB_LEFT)) && (mover);
             bool is_pressed = nState & S_PRESSED;
 
             if (pressed != is_pressed)
@@ -432,10 +448,11 @@ namespace lsp
 
         status_t Switch::on_mouse_up(const ws::event_t *e)
         {
+            bool mover      = check_mouse_over(e->nLeft, e->nTop);
             nBMask         &= ~(1 << e->nCode);
             bool pressed    = ((e->nCode == ws::MCB_LEFT) && (nBMask == 0)) || ((e->nCode != ws::MCB_LEFT) && (nBMask == (1 << ws::MCB_LEFT)));
             if (pressed)
-                pressed     = (check_mouse_over(e->nLeft, e->nTop));
+                pressed     = mover;
             if (nBMask == 0)
                 pressed     = false;
 
@@ -450,7 +467,7 @@ namespace lsp
                     nState     &= ~S_PRESSED;
 
                 if (nBMask == 0)
-                    on_click(nState & S_TOGGLED);
+                    sDown.set(nState & S_TOGGLED);
 
                 query_draw();
             }
@@ -459,7 +476,8 @@ namespace lsp
 
         status_t Switch::on_mouse_move(const ws::event_t *e)
         {
-            bool pressed    = (nBMask == (1 << ws::MCB_LEFT)) && (check_mouse_over(e->nLeft, e->nTop));
+            bool mover      = check_mouse_over(e->nLeft, e->nTop);
+            bool pressed    = (nBMask == (1 << ws::MCB_LEFT)) && (mover);
             bool is_pressed = nState & S_PRESSED;
 
             if (pressed != is_pressed)

@@ -226,6 +226,19 @@ MTEST_BEGIN("tk.widgets.simple", scrollbar)
             sb->orientation()->set_horizontal();
             sb->value()->set(0.5f);
             sb->step()->set(0.005f);
+            sb->padding()->set(2);
+            sb->bg_color()->set_rgb24(0x1b1c22);
+            sb->border_color()->set_rgb24(0xdae0ff);
+            sb->border_gap_color()->set_rgb24(0x1b1c22);
+            sb->inc_color()->set_rgb24(0x1b1c22);
+            sb->dec_color()->set_rgb24(0x1b1c22);
+            sb->inc_active_color()->set_rgb24(0x00c0ff);
+            sb->dec_active_color()->set_rgb24(0x00c0ff);
+            sb->slider_border_color()->set_rgb24(0xdae0ff);
+            sb->slider_color()->set_rgb24(0xdae0ff);
+            sb->slider_active_color()->set_rgb24(0x00c0ff);
+            sb->button_color()->set_rgb24(0xdae0ff);
+            sb->button_active_color()->set_rgb24(0x00c0ff);
         }
 
         // Show window

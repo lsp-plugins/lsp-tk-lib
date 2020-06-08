@@ -454,7 +454,7 @@ namespace lsp
         ws::mouse_pointer_t Fader::current_pointer()
         {
             return ((nXFlags & (F_MOVER | F_IGNORE)) == F_MOVER) ?
-                    sBtnPointer.get() :
+                    sBtnPointer.get((sAngle.get() & 1) ? ws::MP_VSIZE : ws::MP_HSIZE) :
                     Widget::current_pointer();
         }
     

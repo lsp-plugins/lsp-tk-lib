@@ -32,6 +32,7 @@ namespace lsp
                 size_t                      nState;
                 size_t                      nBMask;
                 ws::rectangle_t             sButton;
+                ws::mouse_pointer_t         enPointer;
 
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
@@ -42,11 +43,11 @@ namespace lsp
                 prop::Float                 sAspect;
                 prop::Integer               sAngle;
                 prop::Boolean               sDown;
+                prop::Pointer               sButtonPointer;
 
             protected:
                 bool                        check_mouse_over(ssize_t x, ssize_t y);
 
-                void                        on_click(bool down);
                 void                        sync_state(bool down);
 
             protected:
@@ -61,7 +62,7 @@ namespace lsp
                 explicit Switch(Display *dpy);
                 virtual ~Switch();
 
-                virtual status_t    init();
+                virtual status_t            init();
 
             public:
                 inline Color               *color()                 { return &sColor;       }
@@ -91,8 +92,13 @@ namespace lsp
                 inline Boolean             *down()                  { return &sDown;        }
                 inline const Boolean       *down() const            { return &sDown;        }
 
+                inline Pointer             *button_pointer()        { return &sButtonPointer;}
+                inline const Pointer       *button_pointer() const  { return &sButtonPointer;}
+
 
             public:
+                virtual ws::mouse_pointer_t     current_pointer();
+
                 virtual void                draw(ws::ISurface *s);
 
                 virtual status_t            on_mouse_down(const ws::event_t *e);
