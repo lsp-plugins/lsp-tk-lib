@@ -27,8 +27,9 @@ namespace lsp
                 explicit Pointer(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
 
             public:
-                inline ws::mouse_pointer_t  get() const                 { return ws::mouse_pointer_t(nValue);       }
-                inline ws::mouse_pointer_t  set(ws::mouse_pointer_t v)  { return ws::mouse_pointer_t(Enum::set(v)); }
+                inline ws::mouse_pointer_t  get() const                         { return ws::mouse_pointer_t(nValue);           }
+                inline ws::mouse_pointer_t  get(ws::mouse_pointer_t dfl) const  { return (nValue == ws::MP_DEFAULT) ? dfl : ws::mouse_pointer_t(nValue);    }
+                inline ws::mouse_pointer_t  set(ws::mouse_pointer_t v)          { return ws::mouse_pointer_t(Enum::set(v));     }
         };
     
         namespace prop

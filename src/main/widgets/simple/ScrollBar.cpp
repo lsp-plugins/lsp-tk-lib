@@ -43,7 +43,7 @@ namespace lsp
             sTextColor(&sProperties),
             sTextActiveColor(&sProperties)
         {
-            nFlags              = 0;
+            nXFlags             = 0;
             nButtons            = 0;
             nKeys               = 0;
             nLastV              = 0;
@@ -81,7 +81,7 @@ namespace lsp
 
         void ScrollBar::do_destroy()
         {
-            sTimer.cancel();
+            cancel_timer();
         }
 
         status_t ScrollBar::init()
@@ -163,6 +163,18 @@ namespace lsp
         {
             do_destroy();
             Widget::destroy();
+        }
+
+        void ScrollBar::launch_timer()
+        {
+            lsp_trace("launch timer");
+            sTimer.launch(0, 100, 200);
+        }
+
+        void ScrollBar::cancel_timer()
+        {
+            lsp_trace("cancel timer");
+            sTimer.cancel();
         }
 
         void ScrollBar::property_changed(Property *prop)
@@ -368,13 +380,15 @@ namespace lsp
 
         status_t ScrollBar::on_change()
         {
+            lsp_trace("value = %f", sValue.get());
             return STATUS_OK;
         }
 
         status_t ScrollBar::on_mouse_down(const ws::event_t *e)
         {
 //            lsp_trace("nButtons = %d, code = %d", int(nButtons), int(e->nCode));
-            nKeys       = e->nState;
+            nKeys           = e->nState;
+            bool launched   = false;
 
             if (nButtons == 0)
             {
@@ -387,36 +401,33 @@ namespace lsp
 
                 if (flags == 0)
                 {
-                    nFlags         |= F_OUTSIDE;
+                    nXFlags         |= F_OUTSIDE;
                     return STATUS_OK;
                 }
 
                 // What button was pressed?
                 if (e->nCode == ws::MCB_LEFT)
                 {
-                    nFlags      = flags | (flags << F_ACTIVITY_BITS);
+                    nXFlags      = flags | (flags << F_ACTIVITY_BITS);
 
                     if (flags != F_SLIDER_ACTIVE)
-                    {
-                        lsp_trace("launch timer");
-                        sTimer.launch(0, 100);
-                    }
+                        launched        = true;
                 }
                 else if (e->nCode == ws::MCB_RIGHT)
                 {
                     // Only slider allows right button
                     if (flags != F_SLIDER_ACTIVE)
                     {
-                        nFlags         |= F_OUTSIDE;
+                        nXFlags         |= F_OUTSIDE;
                         return STATUS_OK;
                     }
 
                     // Slider with precision option
-                    nFlags      = flags | (flags << F_ACTIVITY_BITS) | F_PRECISION;
+                    nXFlags      = flags | (flags << F_ACTIVITY_BITS) | F_PRECISION;
                 }
                 else
                 {
-                    nFlags         |= F_OUTSIDE;
+                    nXFlags         |= F_OUTSIDE;
                     return STATUS_OK;
                 }
 
@@ -428,23 +439,23 @@ namespace lsp
             else
             {
                 nButtons   |= (1 << e->nCode);
-                if (nFlags & F_OUTSIDE)
+                if (nXFlags & F_OUTSIDE)
                     return STATUS_OK;
 
                 float value = sValue.get();
 
-                if (nFlags & F_TRG_SLIDER_ACTIVE) // Slider
+                if (nXFlags & F_TRG_SLIDER_ACTIVE) // Slider
                 {
-                    size_t mask = (nFlags & F_PRECISION) ? ws::MCF_LEFT : ws::MCF_RIGHT;
+                    size_t mask = (nXFlags & F_PRECISION) ? ws::MCF_LEFT : ws::MCF_RIGHT;
 
                     if (nButtons == mask)
                     {
-                        nFlags  = (nFlags & (~F_ACTIVITY_MASK)) | ((nFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK); // Restore activity state
+                        nXFlags  = (nXFlags & (~F_ACTIVITY_MASK)) | ((nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK); // Restore activity state
                         value   = fCurrValue;
                     }
                     else
                     {
-                        nFlags &= ~F_ACTIVITY_MASK; // Clear activity state
+                        nXFlags &= ~F_ACTIVITY_MASK; // Clear activity state
                         value   = fLastValue;
                     }
                 }
@@ -452,29 +463,29 @@ namespace lsp
                 {
                     if (nButtons == ws::MCF_LEFT)
                     {
-                        nFlags  = (nFlags & (~F_ACTIVITY_MASK)) | ((nFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK); // Restore activity state
+                        nXFlags  = (nXFlags & (~F_ACTIVITY_MASK)) | ((nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK); // Restore activity state
                         value   = fCurrValue;
 
-                        lsp_trace("launch timer");
-                        sTimer.launch(0, 100);
+                        launched    = true;
                     }
                     else
                     {
-                        lsp_trace("cancel timer");
-                        sTimer.cancel();
+                        cancel_timer();
 
-                        nFlags &= ~F_ACTIVITY_MASK; // Clear activity state
+                        nXFlags &= ~F_ACTIVITY_MASK; // Clear activity state
                         value   = fLastValue;
                     }
                 }
 
                 // Update value
-                value   = sValue.limit(value);
-                if (value != sValue.set(value))
-                    sSlots.execute(SLOT_CHANGE, this);
+                sValue.set(value);
             }
 
-            query_draw();
+            if (launched)
+            {
+                update_by_timer();
+                launch_timer();
+            }
 
             return STATUS_OK;
         }
@@ -482,10 +493,28 @@ namespace lsp
         void ScrollBar::update_cursor_state(ssize_t x, ssize_t y, bool set)
         {
             size_t flags = (set) ? check_mouse_over(x,y) : 0;
-            if (flags & F_SLIDER_ACTIVE)
-                enMousePointer = (sOrientation.vertical()) ? ws::MP_VSIZE : ws::MP_HSIZE;
+            if (sOrientation.horizontal())
+            {
+                if (flags & F_SLIDER_ACTIVE)
+                    enMousePointer = sSliderPointer.get(ws::MP_HSIZE);
+                else if (flags & F_SPARE_UP_ACTIVE)
+                    enMousePointer = sIncPointer.get(ws::MP_ARROW_RIGHT);
+                else if (flags & F_SPARE_DOWN_ACTIVE)
+                    enMousePointer = sIncPointer.get(ws::MP_ARROW_LEFT);
+                else
+                    enMousePointer = Widget::current_pointer();
+            }
             else
-                enMousePointer = pointer()->get();
+            {
+                if (flags & F_SLIDER_ACTIVE)
+                    enMousePointer = sSliderPointer.get(ws::MP_VSIZE);
+                else if (flags & F_SPARE_UP_ACTIVE)
+                    enMousePointer = sIncPointer.get(ws::MP_ARROW_DOWN);
+                else if (flags & F_SPARE_DOWN_ACTIVE)
+                    enMousePointer = sIncPointer.get(ws::MP_ARROW_UP);
+                else
+                    enMousePointer = Widget::current_pointer();
+            }
         }
 
         status_t ScrollBar::on_key_down(const ws::event_t *e)
@@ -525,33 +554,33 @@ namespace lsp
 //            lsp_trace("nButtons = %d, code = %d", int(nButtons), int(e->nCode));
             nButtons   &= ~(1 << e->nCode);
             nKeys       = e->nState;
-            if (nFlags & F_OUTSIDE)
+            if (nXFlags & F_OUTSIDE)
             {
                 if (nButtons == 0)
-                    nFlags &= ~F_OUTSIDE;
+                    nXFlags &= ~F_OUTSIDE;
 
                 return STATUS_OK;
             }
 
             float value     = sValue.get();
 
-            if (nFlags & F_TRG_SLIDER_ACTIVE)
+            if (nXFlags & F_TRG_SLIDER_ACTIVE)
             {
-                size_t key  = (nFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
+                size_t key  = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
 
                 if (nButtons == 0) // All mouse buttons are released now
                 {
-                    nFlags  &= ~(F_ALL_ACTIVITY_MASK | F_PRECISION);
-                    value = (e->nCode == key) ? fCurrValue : fLastValue;
+                    nXFlags  &= ~(F_ALL_ACTIVITY_MASK | F_PRECISION);
+                    value   = (e->nCode == key) ? fCurrValue : fLastValue;
                 }
                 else if (nButtons == size_t(1 << key)) // Currently pressed initially selected button
                 {
-                    nFlags  = (nFlags & (~F_ACTIVITY_MASK)) | ((nFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK); // Restore activity state
-                    value = fCurrValue;
+                    nXFlags  = (nXFlags & (~F_ACTIVITY_MASK)) | ((nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK); // Restore activity state
+                    value   = fCurrValue;
                 }
                 else
                 {
-                    nFlags &= ~F_ACTIVITY_MASK; // Clear activity state
+                    nXFlags &= ~F_ACTIVITY_MASK; // Clear activity state
                     value   = fLastValue;
                 }
             }
@@ -559,43 +588,37 @@ namespace lsp
             {
                 if (nButtons == 0)
                 {
-                    lsp_trace("cancel timer");
-                    sTimer.cancel();
+                    cancel_timer();
 
-                    nFlags  &= ~F_ALL_ACTIVITY_MASK;
+                    nXFlags  &= ~F_ALL_ACTIVITY_MASK;
                     value = (e->nCode == ws::MCB_LEFT) ? fCurrValue : fLastValue;
                 }
                 else if (nButtons == ws::MCF_LEFT)
                 {
                     size_t flags = check_mouse_over(e->nLeft, e->nTop);
-                    size_t mask  = (nFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK;
+                    size_t mask  = (nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK;
 
                     if (mask == flags)
                     {
-                        nFlags     |= flags;
+                        nXFlags     |= flags;
                         value       = fCurrValue;
 
-                        lsp_trace("launch timer");
-                        sTimer.launch(0, 100);
+                        launch_timer();
                     }
                     else
                     {
-                        nFlags     &= ~F_ACTIVITY_MASK;
-                        lsp_trace("cancel timer");
-                        sTimer.cancel();
+                        nXFlags     &= ~F_ACTIVITY_MASK;
+                        cancel_timer();
                     }
                 }
             }
 
             // Update value
-            value   = sValue.limit(value);
-            query_draw();
-
             if (nButtons == 0)
                 update_cursor_state(e->nLeft, e->nTop, false);
 
-            if (value != sValue.set(value))
-                sSlots.execute(SLOT_CHANGE, this);
+            sValue.set(value);
+            query_draw();
 
             return STATUS_OK;
         }
@@ -603,7 +626,7 @@ namespace lsp
         status_t ScrollBar::on_mouse_move(const ws::event_t *e)
         {
             nKeys       = e->nState;
-            if (nFlags & F_OUTSIDE)
+            if (nXFlags & F_OUTSIDE)
                 return STATUS_OK;
             if (nButtons == 0)
             {
@@ -611,81 +634,78 @@ namespace lsp
                 return STATUS_OK;
             }
 
-            if (nFlags & F_TRG_SLIDER_ACTIVE)
+            if (nXFlags & F_TRG_SLIDER_ACTIVE)
             {
-                size_t key = (nFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
+                size_t key = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
                 if (nButtons != size_t(1 << key))
                     return STATUS_OK;
 
                 // Different behaviour for slider
-                ssize_t value = (sOrientation.vertical()) ? e->nTop : e->nLeft;
-                float result  = fLastValue;
-//                if (value != nLastV)
-//                {
-//                    ssize_t range = (sOrientation.vertical()) ? sSize.nHeight : sSize.nWidth;
-//                    ssize_t spare_space = range - ((nSize + 1) << 1) - nSize - 2;
-//
-//                    float delta   = (fMax - fMin) * float(value - nLastV) / float(spare_space);
-//                    if (nFlags & F_PRECISION)
-//                        delta       *= 0.1f;
-//                    result        = sValue.limit(result + delta);
-//                }
+                ssize_t range   = (sOrientation.horizontal()) ? sSpareSpace.nWidth : sSpareSpace.nHeight;
 
-                if (fCurrValue != result)
+                float value     = (sOrientation.horizontal()) ? e->nLeft : e->nTop;
+                float result    = fLastValue;
+                float delta     = sValue.range() * float(value - nLastV) / range; // normalized
+                float accel     = 1.0f;;
+
+                if (nXFlags & F_PRECISION)
                 {
-                    lsp_trace("set value to %f", result);
-                    fCurrValue  = result;
-                    sValue.set(value);
-                    query_draw();
-
-                    sSlots.execute(SLOT_CHANGE, this);
+                    accel = (e->nState & ws::MCF_SHIFT)   ? 1.0f :
+                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                            sStep.decel();
                 }
+                else
+                {
+                    accel = (e->nState & ws::MCF_SHIFT)   ? sStep.decel() :
+                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                            1.0f;
+                }
+
+                result        = result + delta*accel;
+                fCurrValue  = result;
+                sValue.set(result);
             }
             else
             {
                 size_t flags = check_mouse_over(e->nLeft, e->nTop);
 
-                if (nFlags & (F_TRG_SPARE_UP_ACTIVE | F_TRG_SPARE_DOWN_ACTIVE))
+                if (nXFlags & (F_TRG_SPARE_UP_ACTIVE | F_TRG_SPARE_DOWN_ACTIVE))
                 {
                     if (flags == 0)
                     {
-                        if (nFlags & F_ACTIVITY_MASK)
+                        if (nXFlags & F_ACTIVITY_MASK)
                         {
-                            nFlags &= ~F_ACTIVITY_MASK;
-                            lsp_trace("cancel timer");
-                            sTimer.cancel();
+                            nXFlags &= ~F_ACTIVITY_MASK;
+                            cancel_timer();
                         }
                     }
                     else
                     {
-                        if ((nFlags & F_ACTIVITY_MASK) != ((nFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK))
+                        if ((nXFlags & F_ACTIVITY_MASK) != ((nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK))
                         {
-                            nFlags = (nFlags & (~F_ACTIVITY_MASK)) | ((nFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK);
-                            lsp_trace("launch timer");
-                            sTimer.launch(0, 100);
+                            nXFlags = (nXFlags & (~F_ACTIVITY_MASK)) | ((nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK);
+                            launch_timer();
                         }
                     }
                 }
                 else
                 {
-                    size_t k = ((nFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK);
+                    size_t k = ((nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK);
 
                     if (k != flags)
                     {
-                        if (nFlags & F_ACTIVITY_MASK)
+                        if (nXFlags & F_ACTIVITY_MASK)
                         {
-                            nFlags &= (~F_ACTIVITY_MASK);
-                            lsp_trace("cancel timer");
-                            sTimer.cancel();
+                            nXFlags &= (~F_ACTIVITY_MASK);
+                            cancel_timer();
                         }
                     }
                     else
                     {
-                        if ((nFlags & F_ACTIVITY_MASK) != ((nFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK))
+                        if ((nXFlags & F_ACTIVITY_MASK) != ((nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK))
                         {
-                            nFlags = (nFlags & (~F_ACTIVITY_MASK)) | flags;
-                            lsp_trace("launch timer");
-                            sTimer.launch(0, 100);
+                            nXFlags = (nXFlags & (~F_ACTIVITY_MASK)) | flags;
+                            launch_timer();
                         }
                     }
                 }
@@ -698,20 +718,15 @@ namespace lsp
 
         status_t ScrollBar::on_mouse_scroll(const ws::event_t *e)
         {
-            if (nFlags & F_ALL_ACTIVITY_MASK)
+            if (nXFlags & F_ALL_ACTIVITY_MASK)
                 return STATUS_OK;
 
             float step      = (e->nState & ws::MCF_SHIFT) ? sStep.step_decel() :
                               (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
                               sStep.get();
             float delta     = (e->nCode == ws::MCD_UP) ? -step : step;
-            float result    = sValue.limit(sValue.get() + delta);
 
-            if (result != sValue.set(result))
-            {
-                query_draw();
-                sSlots.execute(SLOT_CHANGE, this);
-            }
+            sValue.set(sValue.get() + delta);
 
             return STATUS_OK;
         }
@@ -721,7 +736,7 @@ namespace lsp
             float value     = fCurrValue;
             float delta     = 0.0f;
 
-            switch (nFlags & F_ACTIVITY_MASK)
+            switch (nXFlags & F_ACTIVITY_MASK)
             {
                 case F_BTN_UP_ACTIVE:
                     delta       = (nKeys & ws::MCF_SHIFT)   ? sStep.step_decel() :
@@ -748,15 +763,8 @@ namespace lsp
                     break;
             }
 
-            value   = sValue.limit(value + delta);
-            if (value != sValue.set(value))
-            {
-                lsp_trace("set value to %f", value);
-                fCurrValue  = value;
-                query_draw();
-
-                sSlots.execute(SLOT_CHANGE, this);
-            }
+            sValue.set(value + delta);
+            fCurrValue = sValue.get();
         }
 
         void ScrollBar::draw(ws::ISurface *s)
@@ -806,11 +814,11 @@ namespace lsp
                 xr              = sDecButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
                 s->fill_round_rect(color, SURFMASK_L_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
 
-                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
                         xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.5f,
                         xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.25f,
@@ -821,11 +829,11 @@ namespace lsp
                 xr              = sIncButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
                 s->fill_round_rect(color, SURFMASK_R_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
 
-                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
                         xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.5f,
                         xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.75f,
@@ -840,7 +848,7 @@ namespace lsp
 
                 if (xr.nWidth > 0)
                 {
-                    color.copy((nFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
+                    color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
                     color.scale_lightness(bright);
                     s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
                 }
@@ -853,7 +861,7 @@ namespace lsp
 
                 if (xr.nWidth > 0)
                 {
-                    color.copy((nFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
+                    color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
                     color.scale_lightness(bright);
                     s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
                 }
@@ -864,11 +872,11 @@ namespace lsp
                 xr              = sDecButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
                 s->fill_round_rect(color, SURFMASK_T_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
 
-                color.copy((nFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
                         xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.25f,
                         xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.75f,
@@ -879,11 +887,11 @@ namespace lsp
                 xr              = sIncButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
                 s->fill_round_rect(color, SURFMASK_B_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
 
-                color.copy((nFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
                         xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.75f,
                         xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.25f,
@@ -898,7 +906,7 @@ namespace lsp
 
                 if (xr.nHeight > 0)
                 {
-                    color.copy((nFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
+                    color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
                     color.scale_lightness(bright);
                     s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
                 }
@@ -911,7 +919,7 @@ namespace lsp
 
                 if (xr.nHeight > 0)
                 {
-                    color.copy((nFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
+                    color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
                     color.scale_lightness(bright);
                     s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
                 }
@@ -935,7 +943,7 @@ namespace lsp
                 xr.nHeight     -= sborder * 2;
             }
 
-            color.copy((nFlags & F_SLIDER_ACTIVE) ? sSliderActiveColor : sSliderColor);
+            color.copy((nXFlags & F_SLIDER_ACTIVE) ? sSliderActiveColor : sSliderColor);
             color.scale_lightness(bright);
             s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
 

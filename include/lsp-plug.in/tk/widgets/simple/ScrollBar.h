@@ -51,7 +51,7 @@ namespace lsp
                 };
 
             protected:
-                size_t                  nFlags;
+                size_t                  nXFlags;
                 size_t                  nButtons;
                 size_t                  nKeys;
                 ssize_t                 nLastV;
@@ -99,6 +99,8 @@ namespace lsp
                 void                            update_by_timer();
                 void                            update_cursor_state(ssize_t x, ssize_t y, bool set);
                 void                            update_slider();
+                void                            launch_timer();
+                void                            cancel_timer();
 
             protected:
                 static status_t                 slot_on_change(Widget *sender, void *ptr, void *data);
