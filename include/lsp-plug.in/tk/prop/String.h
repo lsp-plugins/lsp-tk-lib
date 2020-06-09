@@ -24,7 +24,7 @@ namespace lsp
             private:
                 String & operator = (const String &);
 
-            private:
+            protected:
                 enum flags_t
                 {
                     F_LOCALIZED     = 1 << 0
@@ -234,6 +234,9 @@ namespace lsp
                     explicit String(prop::Listener *listener = NULL): tk::String(listener) {};
 
                 public:
+                    LSPString          *edit();
+                    inline void         sync()                      { tk::String::sync(); }
+
                     /**
                      * Bind property with specified name to the style of linked widget
                      */

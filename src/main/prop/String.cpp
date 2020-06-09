@@ -401,6 +401,22 @@ namespace lsp
 
         namespace prop
         {
+            LSPString *String::edit()
+            {
+                // Transform localized string to non-localized
+                if (nFlags & F_LOCALIZED)
+                {
+                    LSPString tmp;
+                    status_t res = format(&tmp);
+                    if (res != STATUS_OK)
+                        return NULL;
+
+                    sText.swap(&tmp);
+                    nFlags &= ~F_LOCALIZED;
+                }
+
+                return &sText;
+            }
         }
 
     } /* namespace tk */

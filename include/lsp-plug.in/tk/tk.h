@@ -61,6 +61,7 @@
 #include <lsp-plug.in/tk/prop/SizeRange.h>
 #include <lsp-plug.in/tk/prop/StepFloat.h>
 #include <lsp-plug.in/tk/prop/TextLayout.h>
+#include <lsp-plug.in/tk/prop/TextSelection.h>
 #include <lsp-plug.in/tk/prop/WindowActions.h>
 
 // Styles and schemas

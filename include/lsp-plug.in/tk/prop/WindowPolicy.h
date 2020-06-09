@@ -8,6 +8,10 @@
 #ifndef LSP_PLUG_IN_TK_PROP_WINDOWPOLICY_H_
 #define LSP_PLUG_IN_TK_PROP_WINDOWPOLICY_H_
 
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 namespace lsp
 {
     namespace tk
