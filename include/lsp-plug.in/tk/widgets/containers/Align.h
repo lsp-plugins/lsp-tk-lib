@@ -51,7 +51,7 @@ namespace lsp
                 inline const Layout    *layout() const                  { return &sLayout; }
 
             public:
-                virtual void            render(ws::ISurface *s, bool force);
+                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
 
                 virtual status_t        add(Widget *widget);
 

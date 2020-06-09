@@ -195,6 +195,43 @@ namespace lsp
             return true;
         }
 
+        bool Size::overlap(const ws::rectangle_t *a, const ws::rectangle_t *b)
+        {
+            // Obtain horizontal coordinates
+            ssize_t l1 = a->nLeft, r1 = a->nLeft + a->nWidth;
+            ssize_t l2 = b->nLeft, r2 = b->nLeft + b->nWidth;
+
+            // We need to guarantee that l1 <= r1 and l2 <= r2
+            if (l1 > r1)
+                swap(l1, r1);
+            if (l2 > r2)
+                swap(l2, r2);
+
+            // Check simple case for horizontal coordinates
+            if ((l1 <= l2) && (r1 <= l2))   // A is at the left of B?
+                return false;
+            if ((l1 >= r2) && (r1 >= r2))   // A is at the right of B?
+                return false;
+
+            // Obtain vertical coordinates
+            ssize_t t1 = a->nTop, b1 = a->nTop + a->nHeight;
+            ssize_t t2 = b->nTop, b2 = b->nTop + b->nHeight;
+
+            // We need to guarantee that t1 <= b1 and t2 <= b2
+            if (t1 > b1)
+                swap(t1, b1);
+            if (t2 > b2)
+                swap(t2, b2);
+
+            // Check simple case for vertical coordinates
+            if ((t1 <= t2) && (b1 <= t2))    // A is at the top of B ?
+                return false;
+            if ((t1 >= b2) && (b1 <= b2))    // A is at the bottom of B ?
+                return false;
+
+            return true;
+        }
+
         namespace prop
         {
             status_t Size::init(Style *style, size_t width, size_t height)

@@ -94,7 +94,7 @@ namespace lsp
             public:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);
 
-                virtual void                render(ws::ISurface *s, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
 
                 virtual status_t            add(Widget *widget);
 

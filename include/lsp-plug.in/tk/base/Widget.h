@@ -409,9 +409,10 @@ namespace lsp
                 /** Render widget to the external surface
                  *
                  * @param surface surface to perform rendering
+                 * @param area the actual area that will be used for drawing
                  * @param force force child rendering
                  */
-                virtual void            render(ws::ISurface *s, bool force);
+                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
 
                 /** Draw widget on the internal surface
                  *

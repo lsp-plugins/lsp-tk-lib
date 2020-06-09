@@ -258,8 +258,13 @@ namespace lsp
             if (s == NULL)
                 return STATUS_OK;
 
+            ws::rectangle_t xr;
             s->begin();
-                render(s, nFlags & REDRAW_SURFACE);
+                xr.nLeft    = 0;
+                xr.nTop     = 0;
+                xr.nWidth   = sSize.nWidth;
+                xr.nHeight  = sSize.nHeight;
+                render(s, &xr, nFlags & REDRAW_SURFACE);
                 commit_redraw();
             s->end();
 
@@ -276,7 +281,7 @@ namespace lsp
             return pWindow->get_absolute_geometry(r);
         }
 
-        void Window::render(ws::ISurface *s, bool force)
+        void Window::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             if (!bMapped)
                 return;
@@ -291,7 +296,12 @@ namespace lsp
 
             if ((force) || (pChild->redraw_pending()))
             {
-                pChild->render(s, force);
+                // Draw the child only if it is visible in the area
+                ws::rectangle_t xr;
+                pChild->get_padded_rectangle(&xr);
+                if (Size::intersection(&xr, area))
+                    pChild->render(s, &xr, force);
+
                 pChild->commit_redraw();
             }
 
@@ -301,16 +311,11 @@ namespace lsp
                 pChild->get_padded_rectangle(&pr);
                 pChild->get_rectangle(&cr);
 
-                s->fill_frame(
+                s->fill_frame(bg_color,
                     0, 0, sSize.nWidth, sSize.nHeight,
-                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight,
-                    bg_color
+                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
                 );
-                s->fill_frame(
-                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight,
-                    cr.nLeft, cr.nTop, cr.nWidth, cr.nHeight,
-                    pChild->bg_color()->color()
-                );
+                s->fill_frame(pChild->bg_color()->color(), &pr, &cr);
 
                 float scaling   = sScaling.get();
                 float border    = sBorderSize.get() * scaling;

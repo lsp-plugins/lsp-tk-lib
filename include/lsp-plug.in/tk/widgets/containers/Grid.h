@@ -162,7 +162,7 @@ namespace lsp
                  * @param s surface to render
                  * @param force force flag
                  */
-                virtual void                render(ws::ISurface *s, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
 
                 /** Add widget to the grid
                  *

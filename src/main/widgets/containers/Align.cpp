@@ -73,7 +73,7 @@ namespace lsp
                 query_resize();
         }
 
-        void Align::render(ws::ISurface *s, bool force)
+        void Align::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             if (nFlags & REDRAW_SURFACE)
                 force = true;
@@ -90,19 +90,29 @@ namespace lsp
 
             if ((force) || (pWidget->redraw_pending()))
             {
-                pWidget->render(s, force);
+                // Draw the child only if it is visible in the area
+                ws::rectangle_t xr;
+                pWidget->get_rectangle(&xr);
+                if (Size::intersection(&xr, &sSize))
+                    pWidget->render(s, &xr, force);
+
                 pWidget->commit_redraw();
             }
 
             if (force)
             {
                 ws::rectangle_t cr;
+
                 pWidget->get_rectangle(&cr);
-                s->fill_frame(
-                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
-                    cr.nLeft, cr.nTop, cr.nWidth, cr.nHeight,
-                    pWidget->bg_color()->color()
-                );
+                if (Size::overlap(area, &sSize))
+                {
+                    s->clip_begin(area);
+                    {
+                        bg_color.copy(pWidget->bg_color()->color());
+                        s->fill_frame(bg_color, &sSize, &cr);
+                    }
+                    s->clip_end();
+                }
             }
         }
 

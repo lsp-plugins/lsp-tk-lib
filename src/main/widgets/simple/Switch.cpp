@@ -148,11 +148,7 @@ namespace lsp
             r.nLeft            -= sSize.nLeft;
             r.nTop             -= sSize.nTop;
 
-            s->fill_frame(
-                    0, 0, sSize.nWidth, sSize.nHeight,
-                    r.nLeft, r.nTop, r.nWidth, r.nHeight,
-                    bg_color
-                );
+            s->clear(bg_color);
 
             // Draw border (if present)
             bool aa     = s->set_antialiasing(true);

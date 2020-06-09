@@ -127,7 +127,7 @@ namespace lsp
                 query_resize();
         }
 
-        void Box::render(ws::ISurface *s, bool force)
+        void Box::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             // Check dirty flag
             if (nFlags & REDRAW_SURFACE)
@@ -158,6 +158,7 @@ namespace lsp
 
             // Draw items
             bool horizontal     = sOrientation.horizontal();
+            ws::rectangle_t xr;
 
             for (size_t i=0, n=visible.size(); i<n; ++i)
             {
@@ -167,30 +168,46 @@ namespace lsp
                 if ((!force) && (!w->redraw_pending()))
                     continue;
 
+                // Render widget
+                if (Size::intersection(&xr, area, &wc->s))
+                    w->render(s, &xr, force);
+                w->commit_redraw();
+
                 // Fill unused space with background
                 if (force)
                 {
-                    bg_color.copy(w->bg_color()->color());
-                    s->fill_frame(
-                        wc->a.nLeft, wc->a.nTop, wc->a.nWidth, wc->a.nHeight,
-                        wc->s.nLeft, wc->s.nTop, wc->s.nWidth, wc->s.nHeight,
-                        bg_color
-                    );
-
-                    // Draw spacing
-                    if (((i + 1) < n) && (spacing > 0))
+                    s->clip_begin(area);
                     {
-                        bg_color.copy(sBgColor);
-                        if (horizontal)
-                            s->fill_rect(bg_color, wc->a.nLeft + wc->a.nWidth, wc->a.nTop, spacing, wc->a.nHeight);
-                        else
-                            s->fill_rect(bg_color, wc->a.nLeft, wc->a.nTop + wc->a.nHeight, wc->a.nWidth, spacing);
+                        bg_color.copy(w->bg_color()->color());
+                        if (Size::overlap(area, &wc->a))
+                            s->fill_frame(bg_color, &wc->a, &wc->s);
+
+                        // Draw spacing
+                        if (((i + 1) < n) && (spacing > 0))
+                        {
+                            bg_color.copy(sBgColor);
+                            if (horizontal)
+                            {
+                                xr.nLeft    = wc->a.nLeft + wc->a.nWidth;
+                                xr.nTop     = wc->a.nTop;
+                                xr.nWidth   = spacing;
+                                xr.nHeight  = wc->a.nHeight;
+                            }
+                            else
+                            {
+                                xr.nLeft    = wc->a.nLeft;
+                                xr.nTop     = wc->a.nTop + wc->a.nHeight;
+                                xr.nWidth   = spacing;
+                                xr.nHeight  = wc->a.nHeight;
+                            }
+
+                            if (Size::overlap(area, &xr))
+                                s->fill_rect(bg_color, &xr);
+                        }
+
+                        s->clip_end();
                     }
                 }
-
-                // Render widget
-                w->render(s, force);
-                w->commit_redraw();
             }
         }
 

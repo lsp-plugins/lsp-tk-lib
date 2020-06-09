@@ -124,7 +124,7 @@ namespace lsp
             return NULL;
         }
 
-        void Grid::render(ws::ISurface *s, bool force)
+        void Grid::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             lsp::Color bg_color(sBgColor);
 
@@ -142,6 +142,7 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t hspacing    = scaling * sHSpacing.get();
             ssize_t vspacing    = scaling * sVSpacing.get();
+            ws::rectangle_t xr;
 
             // Render nested widgets
             for (size_t i=0, n=sAlloc.vCells.size(); i<n; ++i)
@@ -166,35 +167,59 @@ namespace lsp
                 if ((!force) && (!w->pWidget->redraw_pending()))
                     continue;
 
-                w->pWidget->render(s, force);
+                // Render the widget
+                if (Size::intersection(&xr, area, &w->s))
+                    w->pWidget->render(s, &xr, force);
                 w->pWidget->commit_redraw();
 
+                // Fill unused space with background
                 if (force)
                 {
-                    // Draw widget area
-                    bg_color.copy(w->pWidget->bg_color()->color());
-                    s->fill_frame(
-                        w->a.nLeft, w->a.nTop, w->a.nWidth, w->a.nHeight,
-                        w->s.nLeft, w->s.nTop, w->s.nWidth, w->s.nHeight,
-                        bg_color
-                    );
-
-                    // Need to draw spacing?
-                    bg_color.copy(sBgColor);
-                    if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
+                    s->clip_begin(area);
                     {
-                        s->fill_rect(bg_color, w->a.nLeft + w->a.nWidth, w->a.nTop, hspacing, w->a.nHeight);
-                        if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
-                            s->fill_rect(bg_color, w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth + hspacing, vspacing);
-                    }
-                    else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
-                        s->fill_rect(bg_color, w->a.nLeft, w->a.nTop + w->a.nHeight, w->a.nWidth, vspacing);
-                }
+                        // Draw widget area
+                        if (Size::overlap(area, &w->a))
+                        {
+                            bg_color.copy(w->pWidget->bg_color()->color());
+                            s->fill_frame(bg_color, &w->a, &w->s);
+                        }
 
-                // Render the widget
-                lsp_trace("render widget %p, size = {%d, %d, %d, %d}",
-                        w->pWidget, int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
-                );
+                        // Need to draw spacing?
+                        bg_color.copy(sBgColor);
+                        if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
+                        {
+                            xr.nLeft    = w->a.nLeft + w->a.nWidth;
+                            xr.nTop     = w->a.nTop;
+                            xr.nWidth   = hspacing;
+                            xr.nHeight  = w->a.nHeight;
+
+                            if (Size::overlap(area, &xr))
+                                s->fill_rect(bg_color, &xr);
+
+                            if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
+                            {
+                                xr.nLeft    = w->a.nLeft;
+                                xr.nTop     = w->a.nTop + w->a.nHeight;
+                                xr.nWidth   = w->a.nWidth + hspacing;
+                                xr.nHeight  = vspacing;
+
+                                if (Size::overlap(area, &xr))
+                                    s->fill_rect(bg_color, &xr);
+                            }
+                        }
+                        else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
+                        {
+                            xr.nLeft    = w->a.nLeft;
+                            xr.nTop     = w->a.nTop + w->a.nHeight;
+                            xr.nWidth   = w->a.nWidth;
+                            xr.nHeight  = vspacing;
+
+                            if (Size::overlap(area, &xr))
+                                s->fill_rect(bg_color, &xr);
+                        }
+                    }
+                    s->clip_end();
+                }
             }
         }
 

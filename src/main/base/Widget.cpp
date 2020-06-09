@@ -478,7 +478,7 @@ namespace lsp
                 pParent->query_resize();
         }
 
-        void Widget::render(ws::ISurface *s, bool force)
+        void Widget::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             // Get surface of widget
             ws::ISurface *src  = get_surface(s);
@@ -486,7 +486,9 @@ namespace lsp
                 return;
 
             // Render to the main surface
+            s->clip_begin(area);
             s->draw(src, sSize.nLeft, sSize.nTop);
+            s->clip_end();
         }
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s)

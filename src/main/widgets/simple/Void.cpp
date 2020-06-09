@@ -50,14 +50,10 @@ namespace lsp
                 s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
 
                 // Debug padding
-                ws::rectangle_t xr;
-                bg_color.set_rgb24(0xcccccc);
-                sPadding.enter(&xr, &sSize, sScaling.get());
-                s->fill_frame(
-                    sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight,
-                    xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight,
-                    bg_color
-                );
+//                ws::rectangle_t xr;
+//                bg_color.set_rgb24(0xcccccc);
+//                sPadding.enter(&xr, &sSize, sScaling.get());
+//                s->fill_frame(bg_color, &sSize, &xr);
             }
         }
 
