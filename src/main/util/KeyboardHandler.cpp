@@ -1,52 +1,53 @@
 /*
- * LSPKeyboardHandler.cpp
+ * KeyboardHandler.cpp
  *
  *  Created on: 11 сент. 2017 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/util/LSPKeyboardHandler.h>
+#include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
     namespace tk
     {
-        LSPKeyboardHandler::LSPKeyboardHandler()
+        KeyboardHandler::KeyboardHandler()
         {
             nPause      = 1000;
             nRepeat     = 250;
             nRepeatSize = 0;
         }
 
-        LSPKeyboardHandler::~LSPKeyboardHandler()
+        KeyboardHandler::~KeyboardHandler()
         {
         }
 
-        status_t LSPKeyboardHandler::init(LSPDisplay *dpy)
+        status_t KeyboardHandler::init(Display *dpy)
         {
             sTimer.bind(dpy);
             return STATUS_OK;
         }
 
-        void LSPKeyboardHandler::set_pause_time(size_t value)
+        void KeyboardHandler::set_pause_time(size_t value)
         {
             nPause      = value;
         }
 
-        void LSPKeyboardHandler::set_repeat_time(size_t value)
+        void KeyboardHandler::set_repeat_time(size_t value)
         {
             nRepeat     = value;
         }
 
         // Event handling callbacks
-        status_t LSPKeyboardHandler::handle_event(const ws_event_t *e)
+        status_t KeyboardHandler::handle_event(const ws::event_t *e)
         {
             switch (e->nType)
             {
-                case UIE_KEY_DOWN:
+                case ws::UIE_KEY_DOWN:
                     return process_key_down(e);
 
-                case UIE_KEY_UP:
+                case ws::UIE_KEY_UP:
                     return process_key_up(e);
 
                 default:
@@ -54,8 +55,10 @@ namespace lsp
             }
         }
 
-        ws_code_t LSPKeyboardHandler::translate_keypad(ws_code_t code)
+        ws::code_t KeyboardHandler::translate_keypad(ws::code_t code)
         {
+            using namespace ws;
+
             switch (code)
             {
                 // Keypad characters
@@ -100,13 +103,13 @@ namespace lsp
             return code;
         }
 
-        status_t LSPKeyboardHandler::process_key_down(const ws_event_t *e)
+        status_t KeyboardHandler::process_key_down(const ws::event_t *e)
         {
-            ws_event_t ev   = *e;
+            ws::event_t ev  = *e;
             ev.nCode        = translate_keypad(ev.nCode);
             sLast           = ev;
 
-            if (is_modifier_key(ev.nCode))
+            if (ws::is_modifier_key(ev.nCode))
                 return on_key_down(e);
 
             if (nRepeatSize >= RPT_BUF_SIZE)
@@ -125,22 +128,22 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPKeyboardHandler::process_key_up(const ws_event_t *e)
+        status_t KeyboardHandler::process_key_up(const ws::event_t *e)
         {
-            ws_event_t ev   = *e;
+            ws::event_t ev  = *e;
             ev.nCode        = translate_keypad(ev.nCode);
             sLast           = ev;
 
-            if (is_modifier_key(ev.nCode))
+            if (ws::is_modifier_key(ev.nCode))
                 return on_key_down(e);
 
             // Remove key from list and decrement the size of buffer
-            ws_code_t *c = vRepeat, *last = &vRepeat[nRepeatSize];
+            ws::code_t *c   = vRepeat, *last = &vRepeat[nRepeatSize];
             while (c < last)
                 if (*(c++) == ev.nCode)
                     break;
             if (c != last)
-                memmove(&c[-1], c, (last - c)*sizeof(ws_code_t));
+                memmove(&c[-1], c, (last - c)*sizeof(ws::code_t));
 
             if (nRepeatSize > 0)
                 nRepeatSize--;
@@ -154,18 +157,18 @@ namespace lsp
             return on_key_up(&ev);
         }
 
-        status_t LSPKeyboardHandler::simulate_repeat(timestamp_t ts, void *arg)
+        status_t KeyboardHandler::simulate_repeat(ws::timestamp_t ts, void *arg)
         {
             if (arg == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            LSPKeyboardHandler *c = static_cast<LSPKeyboardHandler *>(arg);
+            KeyboardHandler *c = static_cast<KeyboardHandler *>(arg);
             c->simulate_repeat(ts);
 
             return STATUS_OK;
         }
 
-        void LSPKeyboardHandler::simulate_repeat(timestamp_t ts)
+        void KeyboardHandler::simulate_repeat(ws::timestamp_t ts)
         {
             if (nRepeatSize <= 0)
             {
@@ -173,18 +176,18 @@ namespace lsp
                 return;
             }
 
-            ws_event_t ev   = sLast;
+            ws::event_t ev  = sLast;
             ev.nCode        = vRepeat[nRepeatSize-1];
             ev.nTime        = ts;
 
             // Simulate Key up event
-            ev.nType        = UIE_KEY_UP;
+            ev.nType        = ws::UIE_KEY_UP;
             status_t ret    = on_key_up(&ev);
             if (ret != STATUS_OK)
                 return;
 
             // Simulate Key down event
-            ev.nType        = UIE_KEY_DOWN;
+            ev.nType        = ws::UIE_KEY_DOWN;
             ret             = on_key_down(&ev);
             if (ret != STATUS_OK)
                 return;
@@ -199,17 +202,17 @@ namespace lsp
                 sTimer.launch(0, nRepeat);
         }
 
-        status_t LSPKeyboardHandler::on_key_press(const ws_event_t *e)
+        status_t KeyboardHandler::on_key_press(const ws::event_t *e)
         {
             return STATUS_OK;
         }
 
-        status_t LSPKeyboardHandler::on_key_down(const ws_event_t *e)
+        status_t KeyboardHandler::on_key_down(const ws::event_t *e)
         {
             return STATUS_OK;
         }
 
-        status_t LSPKeyboardHandler::on_key_up(const ws_event_t *e)
+        status_t KeyboardHandler::on_key_up(const ws::event_t *e)
         {
             return STATUS_OK;
         }

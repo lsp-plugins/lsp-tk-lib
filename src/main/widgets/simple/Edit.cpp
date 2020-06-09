@@ -1,81 +1,59 @@
 /*
- * LSPEdit.cpp
+ * Edit.cpp
  *
  *  Created on: 29 авг. 2017 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/widgets/LSPEdit.h>
+#include <lsp-plug.in/tk-old/widgets/Edit.h>
 #include <wctype.h>
 
 namespace lsp
 {
     namespace tk
     {
-        const w_class_t LSPEdit::metadata = { "LSPEdit", &LSPWidget::metadata };
+        const w_class_t Edit::metadata = { "Edit", &LSPWidget::metadata };
 
         //-----------------------------------------------------------------------------
-        // LSPEdit::TextSelection implementation
-        LSPEdit::TextSelection::TextSelection(LSPEdit *widget): LSPTextSelection()
+        // Edit::TextCursor implementation
+        Edit::TextCursor::TextCursor(Edit *widget): LSPTextCursor(widget->display())
         {
             pEdit   = widget;
         }
 
-        LSPEdit::TextSelection::~TextSelection()
+        Edit::TextCursor::~TextCursor()
         {
         }
 
-        ssize_t LSPEdit::TextSelection::limit(ssize_t value)
-        {
-            ssize_t max = pEdit->sText.length();
-            return (value > max) ? max : value;
-        }
-
-        void LSPEdit::TextSelection::on_change()
-        {
-            pEdit->query_draw();
-        }
-
-        //-----------------------------------------------------------------------------
-        // LSPEdit::TextCursor implementation
-        LSPEdit::TextCursor::TextCursor(LSPEdit *widget): LSPTextCursor(widget->display())
-        {
-            pEdit   = widget;
-        }
-
-        LSPEdit::TextCursor::~TextCursor()
-        {
-        }
-
-        ssize_t LSPEdit::TextCursor::limit(ssize_t value)
+        ssize_t Edit::TextCursor::limit(ssize_t value)
         {
             ssize_t max = pEdit->sText.length();
             return (value < 0) ? 0 : (value > max) ? max : value;
         }
 
-        void LSPEdit::TextCursor::on_change()
+        void Edit::TextCursor::on_change()
         {
             set_shining(true);
             pEdit->query_draw();
         }
 
-        void LSPEdit::TextCursor::on_blink()
+        void Edit::TextCursor::on_blink()
         {
             pEdit->query_draw();
         }
 
         //-----------------------------------------------------------------------------
-        // LSPEdit::KeyboardInput implementation
-        LSPEdit::KeyboardInput::KeyboardInput(LSPEdit *widget)
+        // Edit::KeyboardInput implementation
+        Edit::KeyboardInput::KeyboardInput(Edit *widget)
         {
             pEdit   = widget;
         }
 
-        LSPEdit::KeyboardInput::~KeyboardInput()
+        Edit::KeyboardInput::~KeyboardInput()
         {
         }
 
-        status_t LSPEdit::KeyboardInput::on_key_press(const ws_event_t *e)
+        status_t Edit::KeyboardInput::on_key_press(const ws::event_t *e)
         {
             LSPString s;
             s.set(lsp_wchar_t(e->nCode));
@@ -85,19 +63,19 @@ namespace lsp
         }
 
         //-----------------------------------------------------------------------------
-        // LSPEdit::DataSink implementation
-        LSPEdit::DataSink::DataSink(LSPEdit *widget)
+        // Edit::DataSink implementation
+        Edit::DataSink::DataSink(Edit *widget)
         {
             pEdit   = widget;
             pMime   = NULL;
         }
 
-        LSPEdit::DataSink::~DataSink()
+        Edit::DataSink::~DataSink()
         {
             unbind();
         }
 
-        void LSPEdit::DataSink::unbind()
+        void Edit::DataSink::unbind()
         {
             if (pEdit != NULL)
             {
@@ -115,7 +93,7 @@ namespace lsp
             }
         }
 
-        ssize_t LSPEdit::DataSink::open(const char * const *mime_types)
+        ssize_t Edit::DataSink::open(const char * const *mime_types)
         {
             const char *mime = NULL;
             size_t i=0, idx = 0;
@@ -141,7 +119,7 @@ namespace lsp
             return (pMime != NULL) ? idx : -STATUS_NO_MEM;
         }
 
-        status_t LSPEdit::DataSink::write(const void *buf, size_t count)
+        status_t Edit::DataSink::write(const void *buf, size_t count)
         {
             if (pEdit == NULL)
                 return STATUS_CANCELLED;
@@ -151,7 +129,7 @@ namespace lsp
             return (written >= ssize_t(count)) ? STATUS_OK : STATUS_UNKNOWN_ERR;
         }
 
-        status_t LSPEdit::DataSink::close(status_t code)
+        status_t Edit::DataSink::close(status_t code)
         {
             lsp_trace("code: %x", int(code));
             if ((pMime == NULL) || (pEdit == NULL))
@@ -183,8 +161,8 @@ namespace lsp
         }
 
         //-----------------------------------------------------------------------------
-        // LSPEdit implementation
-        LSPEdit::LSPEdit(LSPDisplay *dpy):
+        // Edit implementation
+        Edit::Edit(LSPDisplay *dpy):
             LSPWidget(dpy),
             sSelection(this),
             sCursor(this),
@@ -210,11 +188,11 @@ namespace lsp
             sScroll.set_handler(timer_handler, this);
         }
 
-        LSPEdit::~LSPEdit()
+        Edit::~Edit()
         {
         }
 
-        status_t LSPEdit::init()
+        status_t Edit::init()
         {
             status_t result = LSPWidget::init();
             if (result != STATUS_OK)
@@ -282,7 +260,7 @@ namespace lsp
             return (id >= 0) ? STATUS_OK : -id;
         }
 
-        void LSPEdit::destroy()
+        void Edit::destroy()
         {
             for (size_t i=0; i<3; ++i)
                 if (vStdItems[i] != NULL)
@@ -301,16 +279,16 @@ namespace lsp
             LSPWidget::destroy();
         }
 
-        status_t LSPEdit::timer_handler(timestamp_t time, void *arg)
+        status_t Edit::timer_handler(timestamp_t time, void *arg)
         {
-            LSPEdit *_this = static_cast<LSPEdit *>(arg);
+            Edit *_this = static_cast<Edit *>(arg);
             if (_this == NULL)
                 return STATUS_BAD_ARGUMENTS;
             _this->update_scroll();
             return STATUS_OK;
         }
 
-        void LSPEdit::run_scroll(ssize_t dir)
+        void Edit::run_scroll(ssize_t dir)
         {
             nScrDirection = dir;
             if (dir == 0)
@@ -319,7 +297,7 @@ namespace lsp
                 sScroll.launch(0, 25);
         }
 
-        void LSPEdit::update_scroll()
+        void Edit::update_scroll()
         {
             sCursor.move(nScrDirection);
             if (sSelection.valid())
@@ -328,7 +306,7 @@ namespace lsp
                 sScroll.cancel();
         }
 
-        void LSPEdit::update_clipboard(size_t bufid)
+        void Edit::update_clipboard(size_t bufid)
         {
             if (sSelection.valid() && sSelection.non_empty())
             {
@@ -348,7 +326,7 @@ namespace lsp
             }
         }
 
-        status_t LSPEdit::set_text(const char *text)
+        status_t Edit::set_text(const char *text)
         {
             if (!sText.set_native(text))
                 return STATUS_NO_MEM;
@@ -370,7 +348,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPEdit::set_text(const LSPString *text)
+        status_t Edit::set_text(const LSPString *text)
         {
             if (!sText.set(text))
                 return STATUS_NO_MEM;
@@ -390,7 +368,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void LSPEdit::set_min_width(ssize_t width)
+        void Edit::set_min_width(ssize_t width)
         {
             if (width == nMinWidth)
                 return;
@@ -398,7 +376,7 @@ namespace lsp
             query_resize();
         }
 
-        void LSPEdit::size_request(size_request_t *r)
+        void Edit::size_request(size_request_t *r)
         {
             size_t pad      = 3;
 
@@ -416,7 +394,7 @@ namespace lsp
             r->nMaxHeight   = r->nMinHeight;
         }
 
-        void LSPEdit::draw(ISurface *s)
+        void Edit::draw(ISurface *s)
         {
             font_parameters_t fp;
             text_parameters_t tp;
@@ -546,18 +524,18 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
-        status_t LSPEdit::on_change()
+        status_t Edit::on_change()
         {
             return STATUS_OK;
         }
 
-        status_t LSPEdit::slot_on_change(LSPWidget *sender, void *ptr, void *data)
+        status_t Edit::slot_on_change(LSPWidget *sender, void *ptr, void *data)
         {
-            LSPEdit *_this = widget_ptrcast<LSPEdit>(ptr);
+            Edit *_this = widget_ptrcast<Edit>(ptr);
             return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
-        status_t LSPEdit::on_mouse_down(const ws_event_t *e)
+        status_t Edit::on_mouse_down(const ws_event_t *e)
         {
             size_t state = nMBState;
             nMBState    |= (1 << e->nCode);
@@ -577,7 +555,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        ssize_t LSPEdit::mouse_to_cursor_pos(ssize_t x, ssize_t y)
+        ssize_t Edit::mouse_to_cursor_pos(ssize_t x, ssize_t y)
         {
             x -= sSize.nLeft;
             if ((x < 0) || (x >= sSize.nWidth))
@@ -631,7 +609,7 @@ namespace lsp
             return left;
         }
 
-        status_t LSPEdit::on_mouse_dbl_click(const ws_event_t *e)
+        status_t Edit::on_mouse_dbl_click(const ws_event_t *e)
         {
             if (e->nCode == MCB_LEFT)
             {
@@ -660,7 +638,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPEdit::on_mouse_tri_click(const ws_event_t *e)
+        status_t Edit::on_mouse_tri_click(const ws_event_t *e)
         {
             if (e->nCode == MCB_LEFT)
             {
@@ -670,7 +648,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPEdit::on_mouse_up(const ws_event_t *e)
+        status_t Edit::on_mouse_up(const ws_event_t *e)
         {
             lsp_trace("mouse up");
             if ((nMBState == (1 << MCB_RIGHT)) && (e->nCode == MCB_RIGHT))
@@ -696,7 +674,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPEdit::on_mouse_move(const ws_event_t *e)
+        status_t Edit::on_mouse_move(const ws_event_t *e)
         {
             if (nMBState == (1 << MCB_LEFT))
             {
@@ -720,25 +698,25 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPEdit::on_focus_in(const ws_event_t *e)
+        status_t Edit::on_focus_in(const ws_event_t *e)
         {
             sCursor.show();
             return STATUS_OK;
         }
 
-        status_t LSPEdit::on_focus_out(const ws_event_t *e)
+        status_t Edit::on_focus_out(const ws_event_t *e)
         {
             sCursor.hide();
             return STATUS_OK;
         }
 
-        status_t LSPEdit::clipboard_handler(void *arg, status_t s, io::IInStream *is)
+        status_t Edit::clipboard_handler(void *arg, status_t s, io::IInStream *is)
         {
-            LSPEdit *_this = widget_ptrcast<LSPEdit>(arg);
+            Edit *_this = widget_ptrcast<Edit>(arg);
             return ((s == STATUS_OK) && (_this != NULL) && (is != NULL)) ? _this->paste_data(is) : STATUS_BAD_STATE;
         }
 
-        status_t LSPEdit::paste_data(io::IInStream *is)
+        status_t Edit::paste_data(io::IInStream *is)
         {
             LSPString s;
             size_t avail = is->avail();
@@ -776,7 +754,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void LSPEdit::paste_clipboard(const LSPString *s)
+        void Edit::paste_clipboard(const LSPString *s)
         {
             if (sSelection.valid() && sSelection.non_empty())
             {
@@ -794,7 +772,7 @@ namespace lsp
             sSelection.set(pos);
         }
 
-        status_t LSPEdit::on_key_down(const ws_event_t *e)
+        status_t Edit::on_key_down(const ws_event_t *e)
         {
             LSPString s;
             s.set(lsp_wchar_t(e->nCode));
@@ -943,7 +921,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void LSPEdit::request_clipboard(size_t bufid)
+        void Edit::request_clipboard(size_t bufid)
         {
             // Unbind previous data sink
             if (pDataSink != NULL)
@@ -972,7 +950,7 @@ namespace lsp
 //            pDisplay->fetch_clipboard(bufid, "UTF8_STRING", clipboard_handler, self());
         }
 
-        status_t LSPEdit::on_key_up(const ws_event_t *e)
+        status_t Edit::on_key_up(const ws_event_t *e)
         {
             lsp_trace("Key code released=%x, modifiers=%x", int(e->nCode), int(e->nState));
             ws_code_t key = LSPKeyboardHandler::translate_keypad(e->nCode);
@@ -982,7 +960,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPEdit::cut_data(size_t bufid)
+        status_t Edit::cut_data(size_t bufid)
         {
             if (sSelection.valid() && sSelection.non_empty())
             {
@@ -994,34 +972,34 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPEdit::copy_data(size_t bufid)
+        status_t Edit::copy_data(size_t bufid)
         {
             if (sSelection.valid() && sSelection.non_empty())
                 update_clipboard(bufid);
             return STATUS_OK;
         }
 
-        status_t LSPEdit::paste_data(size_t bufid)
+        status_t Edit::paste_data(size_t bufid)
         {
             request_clipboard(bufid);
             return STATUS_OK;
         }
 
-        status_t LSPEdit::slot_popup_cut_action(LSPWidget *sender, void *ptr, void *data)
+        status_t Edit::slot_popup_cut_action(LSPWidget *sender, void *ptr, void *data)
         {
-            LSPEdit *_this = widget_ptrcast<LSPEdit>(ptr);
+            Edit *_this = widget_ptrcast<Edit>(ptr);
             return (_this != NULL) ? _this->cut_data(CBUF_CLIPBOARD) : STATUS_BAD_ARGUMENTS;
         }
 
-        status_t LSPEdit::slot_popup_copy_action(LSPWidget *sender, void *ptr, void *data)
+        status_t Edit::slot_popup_copy_action(LSPWidget *sender, void *ptr, void *data)
         {
-            LSPEdit *_this = widget_ptrcast<LSPEdit>(ptr);
+            Edit *_this = widget_ptrcast<Edit>(ptr);
             return (_this != NULL) ? _this->copy_data(CBUF_CLIPBOARD) : STATUS_BAD_ARGUMENTS;
         }
 
-        status_t LSPEdit::slot_popup_paste_action(LSPWidget *sender, void *ptr, void *data)
+        status_t Edit::slot_popup_paste_action(LSPWidget *sender, void *ptr, void *data)
         {
-            LSPEdit *_this = widget_ptrcast<LSPEdit>(ptr);
+            Edit *_this = widget_ptrcast<Edit>(ptr);
             return (_this != NULL) ? _this->paste_data(CBUF_CLIPBOARD) : STATUS_BAD_ARGUMENTS;
         }
 

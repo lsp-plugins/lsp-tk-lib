@@ -76,6 +76,7 @@
 #include <lsp-plug.in/tk/sys/Display.h>
 
 // Utilitary objects
+#include <lsp-plug.in/tk/util/KeyboardHandler.h>
 #include <lsp-plug.in/tk/util/TextDataSource.h>
 
 // Base widgets
@@ -85,6 +86,7 @@
 
 // Simple widgets
 #include <lsp-plug.in/tk/widgets/simple/Button.h>
+#include <lsp-plug.in/tk/widgets/simple/Edit.h>
 #include <lsp-plug.in/tk/widgets/simple/Fader.h>
 #include <lsp-plug.in/tk/widgets/simple/Hyperlink.h>
 #include <lsp-plug.in/tk/widgets/simple/Indicator.h>
