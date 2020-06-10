@@ -5,8 +5,7 @@
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/widgets/Edit.h>
-#include <wctype.h>
+#include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {
