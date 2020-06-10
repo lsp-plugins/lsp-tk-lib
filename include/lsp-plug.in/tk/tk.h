@@ -77,6 +77,7 @@
 
 // Utilitary objects
 #include <lsp-plug.in/tk/util/KeyboardHandler.h>
+#include <lsp-plug.in/tk/util/TextCursor.h>
 #include <lsp-plug.in/tk/util/TextDataSink.h>
 #include <lsp-plug.in/tk/util/TextDataSource.h>
 

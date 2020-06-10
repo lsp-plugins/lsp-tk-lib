@@ -29,9 +29,6 @@ namespace lsp
                 const char             *pMime;
 
             protected:
-                void                    drop_data();
-
-            protected:
                 virtual status_t        receive(const LSPString *text, const char *mime);
 
             public:
@@ -42,7 +39,7 @@ namespace lsp
                 inline const char      *mime() const    { return pMime;     }
 
             public:
-                virtual void            clear();
+                void                    clear();
 
                 virtual ssize_t         open(const char * const *mime_types);
                 virtual status_t        write(const void *buf, size_t count);

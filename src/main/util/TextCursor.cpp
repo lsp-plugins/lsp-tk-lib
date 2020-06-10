@@ -1,43 +1,43 @@
 /*
- * LSPTextCursor.cpp
+ * TextCursor.cpp
  *
  *  Created on: 4 сент. 2017 г.
  *      Author: sadko
  */
 
-#include <lsp-plug.in/tk-old/util/LSPTextCursor.h>
+#include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {
     namespace tk
     {
-        ssize_t LSPTextCursor::limit(ssize_t value)
+        ssize_t TextCursor::limit(ssize_t value)
         {
             return value;
         }
 
-        void LSPTextCursor::on_change()
+        void TextCursor::on_change()
         {
 
         }
 
-        void LSPTextCursor::on_blink()
+        void TextCursor::on_blink()
         {
         }
 
-        status_t LSPTextCursor::update_blink(timestamp_t ts, void *arg)
+        status_t TextCursor::update_blink(ws::timestamp_t ts, void *arg)
         {
             if (arg == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            LSPTextCursor *c = static_cast<LSPTextCursor *>(arg);
+            TextCursor *c = static_cast<TextCursor *>(arg);
             c->on_blink();
             c->nFlags       ^= F_SHINE;
 
             return STATUS_OK;
         }
 
-        LSPTextCursor::LSPTextCursor(LSPDisplay *dpy)
+        TextCursor::TextCursor(Display *dpy)
         {
             nLocation       = 0;
             nFlags          = 0;
@@ -47,11 +47,11 @@ namespace lsp
             sTimer.set_handler(update_blink, this);
         }
 
-        LSPTextCursor::~LSPTextCursor()
+        TextCursor::~TextCursor()
         {
         }
 
-        void LSPTextCursor::hide()
+        void TextCursor::hide()
         {
             if (!(nFlags & F_VISIBLE))
                 return;
@@ -60,7 +60,7 @@ namespace lsp
             on_change();
         }
 
-        void LSPTextCursor::set_visibility(bool visible)
+        void TextCursor::set_visibility(bool visible)
         {
             size_t flags    = nFlags;
             nFlags          = (visible) ? nFlags | F_VISIBLE : nFlags & (~F_VISIBLE);
@@ -78,7 +78,7 @@ namespace lsp
             on_change();
         }
 
-        void LSPTextCursor::show()
+        void TextCursor::show()
         {
             if (nFlags & F_VISIBLE)
                 return;
@@ -89,7 +89,7 @@ namespace lsp
             on_change();
         }
 
-        void LSPTextCursor::set_shining(bool blink)
+        void TextCursor::set_shining(bool blink)
         {
             if (!(nFlags & F_VISIBLE))
                 return;
@@ -98,13 +98,13 @@ namespace lsp
                 sTimer.launch(-1, nBlinkPeriod, nBlinkPeriod);
         }
 
-        void LSPTextCursor::blink(bool blink)
+        void TextCursor::blink(bool blink)
         {
             set_shining(blink);
             on_change();
         }
 
-        void LSPTextCursor::set_inserting(bool value)
+        void TextCursor::set_inserting(bool value)
         {
             size_t flags    = nFlags;
             nFlags          = (value) ? nFlags & (~F_REPLACE) : nFlags | F_REPLACE;
@@ -113,7 +113,7 @@ namespace lsp
             on_change();
         }
 
-        void LSPTextCursor::set_replacing(bool value)
+        void TextCursor::set_replacing(bool value)
         {
             size_t flags    = nFlags;
             nFlags          = (value) ? nFlags | F_REPLACE : nFlags & (~F_REPLACE);
@@ -122,13 +122,13 @@ namespace lsp
             on_change();
         }
 
-        void LSPTextCursor::toggle_mode()
+        void TextCursor::toggle_mode()
         {
             nFlags         ^= F_REPLACE;
             on_change();
         }
 
-        void LSPTextCursor::toggle_visibility()
+        void TextCursor::toggle_visibility()
         {
             nFlags         ^= F_VISIBLE;
             if (nFlags & F_VISIBLE)
@@ -143,7 +143,7 @@ namespace lsp
             on_change();
         }
 
-        void LSPTextCursor::set_blink_period(size_t value)
+        void TextCursor::set_blink_period(size_t value)
         {
             if (nBlinkPeriod == value)
                 return;
@@ -159,7 +159,7 @@ namespace lsp
             on_change();
         }
 
-        ssize_t LSPTextCursor::set(ssize_t location)
+        ssize_t TextCursor::set(ssize_t location)
         {
             location        = limit(location);
             if (location != nLocation)
@@ -170,7 +170,7 @@ namespace lsp
             return location;
         }
 
-        ssize_t LSPTextCursor::move(ssize_t distance)
+        ssize_t TextCursor::move(ssize_t distance)
         {
             distance        = limit(nLocation + distance);
             if (distance != nLocation)

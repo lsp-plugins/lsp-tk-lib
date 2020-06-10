@@ -6,37 +6,38 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
     namespace tk
     {
-        const w_class_t Edit::metadata = { "Edit", &LSPWidget::metadata };
+        const w_class_t Edit::metadata      = { "Edit", &Widget::metadata };
 
         //-----------------------------------------------------------------------------
         // Edit::TextCursor implementation
-        Edit::TextCursor::TextCursor(Edit *widget): LSPTextCursor(widget->display())
+        Edit::EditCursor::EditCursor(Edit *widget): TextCursor(widget->display())
         {
             pEdit   = widget;
         }
 
-        Edit::TextCursor::~TextCursor()
+        Edit::EditCursor::~EditCursor()
         {
         }
 
-        ssize_t Edit::TextCursor::limit(ssize_t value)
+        ssize_t Edit::EditCursor::limit(ssize_t value)
         {
             ssize_t max = pEdit->sText.length();
             return (value < 0) ? 0 : (value > max) ? max : value;
         }
 
-        void Edit::TextCursor::on_change()
+        void Edit::EditCursor::on_change()
         {
             set_shining(true);
             pEdit->query_draw();
         }
 
-        void Edit::TextCursor::on_blink()
+        void Edit::EditCursor::on_blink()
         {
             pEdit->query_draw();
         }
@@ -66,7 +67,6 @@ namespace lsp
         Edit::DataSink::DataSink(Edit *widget)
         {
             pEdit   = widget;
-            pMime   = NULL;
         }
 
         Edit::DataSink::~DataSink()
@@ -82,87 +82,27 @@ namespace lsp
                     pEdit->pDataSink = NULL;
                 pEdit       = NULL;
             }
-
-            sOS.drop();
-
-            if (pMime != NULL)
-            {
-                ::free(pMime);
-                pMime   = NULL;
-            }
         }
 
-        ssize_t Edit::DataSink::open(const char * const *mime_types)
+        status_t Edit::DataSink::receive(const LSPString *text, const char *mime)
         {
-            const char *mime = NULL;
-            size_t i=0, idx = 0;
-            for (const char * const *p = mime_types; *p != NULL; ++p, ++i)
-            {
-                lsp_trace("available mime type: %s", *p);
-                if (!::strcasecmp(*p, "text/plain"))
-                {
-                    mime    = *p;
-                    idx     = i;
-                }
-                else if (!::strcasecmp(*p, "utf8_string"))
-                {
-                    mime    = *p;
-                    idx     = i;
-                    break;
-                }
-            }
-            if (mime == NULL)
-                return -STATUS_UNSUPPORTED_FORMAT;
-            pMime   = ::strdup(mime);
-            lsp_trace("Selected mime type: %s, index=%d", pMime, int(idx));
-            return (pMime != NULL) ? idx : -STATUS_NO_MEM;
-        }
-
-        status_t Edit::DataSink::write(const void *buf, size_t count)
-        {
-            if (pEdit == NULL)
-                return STATUS_CANCELLED;
-            if (pMime == NULL)
-                return STATUS_CLOSED;
-            ssize_t written = sOS.write(buf, count);
-            return (written >= ssize_t(count)) ? STATUS_OK : STATUS_UNKNOWN_ERR;
+            if (pEdit != NULL)
+                pEdit->paste_clipboard(text);
+            return STATUS_OK;
         }
 
         status_t Edit::DataSink::close(status_t code)
         {
-            lsp_trace("code: %x", int(code));
-            if ((pMime == NULL) || (pEdit == NULL))
-            {
-                unbind();
-                return STATUS_OK;
-            }
-
-            // Commit data
-            if (code == STATUS_OK)
-            {
-                LSPString tmp;
-
-                bool ok = false;
-                if (!::strcasecmp(pMime, "utf8_string"))
-                    ok  = tmp.set_utf8(reinterpret_cast<const char *>(sOS.data()), sOS.size());
-                else
-                    ok  = tmp.set_native(reinterpret_cast<const char *>(sOS.data()), sOS.size());
-
-                // Successful set?
-                if (ok)
-                    pEdit->paste_clipboard(&tmp);
-            }
-
-            // Unbind
+            status_t res = TextDataSink::close(code);
             unbind();
 
-            return STATUS_OK;
+            return res;
         }
 
         //-----------------------------------------------------------------------------
         // Edit implementation
-        Edit::Edit(LSPDisplay *dpy):
-            LSPWidget(dpy),
+        Edit::Edit(Display *dpy):
+            Widget(dpy),
             sSelection(this),
             sCursor(this),
             sFont(dpy, this),

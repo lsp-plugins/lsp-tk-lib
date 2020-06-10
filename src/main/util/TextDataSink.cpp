@@ -23,16 +23,22 @@ namespace lsp
             NULL
         };
 
-        void TextDataSink::drop_data()
+        TextDataSink::TextDataSink()
         {
-            sOS.drop();
             nMime   = -1;
             pMime   = NULL;
         }
 
+        TextDataSink::~TextDataSink()
+        {
+            clear();
+        }
+
         void TextDataSink::clear()
         {
-            drop_data();
+            sOS.drop();
+            nMime   = -1;
+            pMime   = NULL;
         }
 
         ssize_t TextDataSink::open(const char * const *mime_types)
@@ -121,7 +127,7 @@ namespace lsp
             }
 
             // Drop data
-            drop_data();
+            clear();
 
             return code;
         }

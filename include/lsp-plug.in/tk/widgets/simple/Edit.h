@@ -22,19 +22,19 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
-                class TextCursor: public LSPTextCursor
+                class EditCursor: public TextCursor
                 {
                     protected:
-                        Edit     *pEdit;
+                        Edit                   *pEdit;
 
                     protected:
-                        virtual ssize_t limit(ssize_t value);
-                        virtual void on_change();
-                        virtual void on_blink();
+                        virtual ssize_t         limit(ssize_t value);
+                        virtual void            on_change();
+                        virtual void            on_blink();
 
                     public:
-                        explicit TextCursor(Edit *widget);
-                        virtual ~TextCursor();
+                        explicit                EditCursor(Edit *widget);
+                        virtual                ~EditCursor();
                 };
 
                 class KeyboardInput: public KeyboardHandler
@@ -50,24 +50,22 @@ namespace lsp
                         virtual status_t on_key_press(const ws::event_t *e);
                 };
 
-                class DataSink: public ws::IDataSink
+                class DataSink: public TextDataSink
                 {
                     protected:
-                        Edit               *pEdit;
-                        io::OutMemoryStream sOS;
-                        char               *pMime;
+                        Edit                   *pEdit;
+
+                    protected:
+                        virtual status_t        receive(const LSPString *text, const char *mime);
 
                     public:
                         explicit DataSink(Edit *widget);
-                        virtual ~DataSink();
 
                     public:
-                        void unbind();
+                        virtual status_t        close();
 
                     public:
-                        virtual ssize_t     open(const char * const *mime_types);
-                        virtual status_t    write(const void *buf, size_t count);
-                        virtual status_t    close(status_t code);
+                        void                    unbind();
                 };
 
             protected:
