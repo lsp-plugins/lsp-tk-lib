@@ -121,22 +121,53 @@ namespace lsp
                 void                        paste_clipboard(const LSPString *data);
 
             public:
-                explicit Edit(Display *dpy);
-                virtual ~Edit();
+                explicit                    Edit(Display *dpy);
+                virtual                    ~Edit();
 
-                virtual status_t init();
-                virtual void destroy();
+                virtual status_t            init();
+                virtual void                destroy();
 
             public:
-                inline LSPTextSelection   *selection()         { return &sSelection;   }
-                inline LSPTextCursor      *cursor()            { return &sCursor;      }
-                inline LSPFont            *font()              { return &sFont;        }
-                inline const char         *text() const        { return sText.get_native(); }
-                inline status_t            get_text(LSPString *dst) const { return dst->set(&sText) ? STATUS_OK : STATUS_NO_MEM; };
-                inline const ssize_t       min_width() const   { return nMinWidth;     }
-                inline LSPColor           *sel_color()         { return &sSelColor;    }
-                inline LSPColor           *color()             { return &sColor;       }
-                inline LSPMenu            *get_popup()         { return pPopup;        }
+                inline TextSelection               *selection()             { return &sSelection;       }
+                inline const TextSelection         *selection() const       { return &sSelection;       }
+
+                inline Font                        *font()                  { return &sFont;            }
+                inline const Font                  *font() const            { return &sFont;            }
+
+                inline Color                       *color()                 { return &sColor;           }
+                inline const Color                 *color() const           { return &sColor;           }
+
+                inline Color                       *border_color()          { return &sBorderColor;     }
+                inline const Color                 *border_color() const    { return &sBorderColor;     }
+
+                inline Color                       *border_gap_color()      { return &sBorderGapColor;  }
+                inline const Color                 *border_gap_color() const{ return &sBorderGapColor;  }
+
+                inline Color                       *cursor_color()          { return &sCursorColor;     }
+                inline const Color                 *cursor_color() const    { return &sCursorColor;     }
+
+                inline Color                       *text_color()            { return &sTextColor;       }
+                inline const Color                 *text_color() const      { return &sTextColor;       }
+
+                inline Color                       *text_selected_color()       { return &sTextSelectedColor;   }
+                inline const Color                 *text_selected_color() const { return &sTextSelectedColor;   }
+
+                inline Color                       *selection_color()       { return &sSelectionColor;  }
+                inline const Color                 *selection_color() const { return &sSelectionColor;  }
+
+                inline Integer                     *border_size()           { return &sBorderSize;      }
+                inline const Integer               *border_size() const     { return &sBorderSize;      }
+
+                inline Integer                     *border_gap()            { return &sBorderGap;       }
+                inline const Integer               *border_gap() const      { return &sBorderGap;       }
+
+                inline Integer                     *border_radius()         { return &sBorderRadius;    }
+                inline const Integer               *border_radius() const   { return &sBorderRadius;    }
+
+                inline SizeConstraints             *constraints()           { return &sConstraints;     }
+                inline const SizeConstraints       *constraints() const     { return &sConstraints;     }
+
+//                inline Menu                        *get_popup()             { return pPopup;            }
 
             public:
 //                status_t                    set_text(const char *text);

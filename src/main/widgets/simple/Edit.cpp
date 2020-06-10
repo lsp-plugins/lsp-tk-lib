@@ -218,9 +218,9 @@ namespace lsp
             LSPWidget::destroy();
         }
 
-        status_t Edit::timer_handler(timestamp_t time, void *arg)
+        status_t Edit::timer_handler(ws::timestamp_t time, void *arg)
         {
-            Edit *_this = static_cast<Edit *>(arg);
+            Edit *_this = widget_ptrcast<Edit>(arg);
             if (_this == NULL)
                 return STATUS_BAD_ARGUMENTS;
             _this->update_scroll();
@@ -249,14 +249,13 @@ namespace lsp
         {
             if (sSelection.valid() && sSelection.non_empty())
             {
-                LSPTextDataSource *src = new LSPTextDataSource();
+                TextDataSource *src = new TextDataSource();
                 if (src == NULL)
                     return;
                 src->acquire();
 
                 // Set the selection
-                ssize_t first, last;
-                sSelection.read_range(&first, &last);
+                ssize_t first = sSelection.first(), last = sSelection.last();
                 status_t result = src->set_text(&sText, first, last);
                 if (result == STATUS_OK)
                     pDisplay->set_clipboard(bufid, src);
