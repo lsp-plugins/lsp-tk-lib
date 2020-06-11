@@ -148,7 +148,6 @@ namespace lsp
                 sText.format(&text);
 
                 // Estimate sizes
-                float scaling   = sScaling.get();
                 ws::font_parameters_t fp;
                 ws::text_parameters_t tp;
 
@@ -180,10 +179,10 @@ namespace lsp
 
                 border             += lsp_max(0.0f, ceil((1.0f - M_SQRT1_2) * (radius - border)));
 
-                sTextArea.nLeft     = sSize.nLeft   + border;
-                sTextArea.nTop      = sSize.nTop    + border;
-                sTextArea.nWidth    = sSize.nWidth  - border * 2;
-                sTextArea.nHeight   = sSize.nHeight - border * 2;
+                sTextArea.nLeft     = r->nLeft   + border;
+                sTextArea.nTop      = r->nTop    + border;
+                sTextArea.nWidth    = r->nWidth  - border * 2;
+                sTextArea.nHeight   = r->nHeight - border * 2;
             }
             else
             {
@@ -266,7 +265,7 @@ namespace lsp
                 lsp::Color bcolor(sBorderColor);
                 bcolor.scale_lightness(bright);
 
-                s->fill_round_rect(bcolor, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(bcolor, SURFMASK_ALL_CORNER, radius, &xr);
                 radius      = lsp_max(0, radius - border);
                 xr.nLeft   += border;
                 xr.nTop    += border;
@@ -279,7 +278,7 @@ namespace lsp
                     bcolor.copy(sBorderGapColor);
                     bcolor.scale_lightness(bright);
 
-                    s->fill_round_rect(bcolor, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                    s->fill_round_rect(bcolor, SURFMASK_ALL_CORNER, radius, &xr);
                     radius      = lsp_max(0, radius - gap);
 
                     xr.nLeft   += gap;
@@ -299,7 +298,7 @@ namespace lsp
                 color.scale_lightness(bright);
 
                 s->clip_begin(xr.nLeft, xr.nTop, split, xr.nHeight);
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
                 s->clip_end();
             }
             if (split < xr.nWidth)
@@ -308,7 +307,7 @@ namespace lsp
                 color.scale_lightness(bright);
 
                 s->clip_begin(xr.nLeft + split, xr.nTop, xr.nWidth - split, xr.nHeight);
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
                 s->clip_end();
             }
 

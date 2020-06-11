@@ -397,7 +397,7 @@ namespace lsp
             if (res == STATUS_NOT_FOUND)
                 res = (sCache.set(&sText)) ? STATUS_OK : STATUS_NO_MEM; // By default output dictionary key
             else if (res != STATUS_OK)
-                return NULL;
+                return &sCache;
             else
                 res = expr::format(&sCache, &templ, &sParams);
 

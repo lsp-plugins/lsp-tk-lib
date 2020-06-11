@@ -7,6 +7,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
+#include <lsp-plug.in/stdlib/math.h>
 #include <wctype.h>
 
 namespace lsp
@@ -122,16 +123,21 @@ namespace lsp
             sBorderRadius(&sProperties),
             sConstraints(&sProperties)
         {
-            sTextPos        = 0;
-            nMBState        = 0;
-            nScrDirection   = 0;
+            sTextPos            = 0;
+            nMBState            = 0;
+            nScrDirection       = 0;
 //            pPopup          = &sStdPopup;
-            pDataSink       = NULL;
-            pClass          = &metadata;
+            pDataSink           = NULL;
+
+            sTextArea.nLeft     = -1;
+            sTextArea.nTop      = -1;
+            sTextArea.nWidth    = 0;
+            sTextArea.nHeight   = 0;
 
 //            vStdItems[0]    = NULL;
 //            vStdItems[1]    = NULL;
 //            vStdItems[2]    = NULL;
+            pClass          = &metadata;
         }
 
         Edit::~Edit()
@@ -182,7 +188,7 @@ namespace lsp
                 sBorderSize.init(sclass, 1);
                 sBorderGapSize.init(sclass, 1);
                 sBorderRadius.init(sclass, 4);
-                sConstraints.init(sclass);
+                sConstraints.init(sclass, -1, -1, -1, 8);
 
                 // Overrides
                 sPointer.override(sclass, ws::MP_IBEAM);
@@ -298,29 +304,48 @@ namespace lsp
 
         void Edit::size_request(ws::size_limit_t *r)
         {
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            size_t radius   = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            size_t border   = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            if (border > 0)
+                border         += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
 
+            size_t extra    = lsp_max(radius, border);
+
+            r->nMinWidth    = extra*2;
+            r->nMinHeight   = extra*2;
+
+            // Compute text parameters
+            size_t rgap     = radius - lsp_max(0.0f, truncf(M_SQRT1_2 * (radius - border)));
+
+            // Estimate sizes
+            ws::font_parameters_t fp;
+            sFont.get_parameters(pDisplay, scaling, &fp);
+            r->nMinHeight   = lsp_max(r->nMinHeight, rgap*2 + fp.Height);
+
+            r->nMaxWidth    = -1;
+            r->nMaxHeight   = -1;
+
+            // Apply size constraints
+            sConstraints.apply(r, scaling);
         }
-
-//        void Edit::size_request(size_request_t *r)
-//        {
-//            size_t pad      = 3;
-//
-//            text_parameters_t tp;
-//            if (!sFont.estimate_text_parameters(&tp, "WW"))
-//                tp.Width = 0;
-//
-//            r->nMinWidth    = pad * 2;
-//            if (nMinWidth > 0)
-//                r->nMinWidth    += (nMinWidth > tp.Width) ? nMinWidth : tp.Width;
-//            else
-//                r->nMinWidth    += tp.Width;
-//            r->nMinHeight   = sFont.height() + pad * 2;
-//            r->nMaxWidth    = -1;
-//            r->nMaxHeight   = r->nMinHeight;
-//        }
 
         void Edit::realize(const ws::rectangle_t *r)
         {
+            Widget::realize(r);
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t radius      = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            if (border > 0)
+                border             += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+
+            border              = lsp_max(border, radius - truncf(M_SQRT1_2 * (radius - border)));
+
+            sTextArea.nLeft     = r->nLeft  + border;
+            sTextArea.nTop      = r->nTop   + border;
+            sTextArea.nWidth    = r->nWidth - border*2;
+            sTextArea.nHeight   = r->nHeight- border*2;
         }
 
         status_t Edit::timer_handler(ws::timestamp_t time, void *arg)
@@ -398,6 +423,54 @@ namespace lsp
 
         void Edit::draw(ws::ISurface *s)
         {
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+            ws::rectangle_t xr;
+
+            xr.nLeft        = 0;
+            xr.nTop         = 0;
+            xr.nWidth       = sSize.nWidth;
+            xr.nHeight      = sSize.nHeight;
+
+            // Clear
+            lsp::Color color(sBgColor);
+            s->clear(color);
+
+            // Draw border
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float lightness = sBrightness.get();
+            ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            float aa        = s->set_antialiasing(true);
+
+            // Draw border
+            if (border > 0)
+            {
+                color.copy(sBorderColor);
+                color.scale_lightness(lightness);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
+
+                xr.nLeft       += border;
+                xr.nTop        += border;
+                xr.nWidth      -= border * 2;
+                xr.nHeight     -= border * 2;
+                radius          = lsp_max(0, radius - border);
+
+                ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+                if (gap > 0)
+                {
+                    color.copy(sBorderGapColor);
+                    color.scale_lightness(lightness);
+                    s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
+
+                    xr.nLeft       += gap;
+                    xr.nTop        += gap;
+                    xr.nWidth      -= gap * 2;
+                    xr.nHeight     -= gap * 2;
+                    radius          = lsp_max(0, radius - gap);
+                }
+            }
+
 //            font_parameters_t fp;
 //            text_parameters_t tp;
 //            ssize_t pad  = 3;
@@ -523,7 +596,7 @@ namespace lsp
 //            s->set_antialiasing(true);
 //            s->wire_round_rect(0.5f, 0.5f, sSize.nWidth - 1, sSize.nHeight - 1, 4, SURFMASK_ALL_CORNER, 1, color);
 //
-//            s->set_antialiasing(aa);
+            s->set_antialiasing(aa);
         }
 
         status_t Edit::on_change()

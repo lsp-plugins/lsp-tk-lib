@@ -792,7 +792,7 @@ namespace lsp
                 color.copy(sBorderColor);
                 color.scale_lightness(bright);
 
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
                 xr.nLeft       += border;
                 xr.nTop        += border;
                 xr.nWidth      -= border*2;
@@ -805,7 +805,7 @@ namespace lsp
             {
                 color.copy(sBorderGapColor);
                 color.scale_lightness(bright);
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
             }
 
             if (sOrientation.horizontal())
@@ -816,7 +816,7 @@ namespace lsp
                 xr.nTop        -= sSize.nTop;
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
-                s->fill_round_rect(color, SURFMASK_L_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(color, SURFMASK_L_CORNER, radius, &xr);
 
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
@@ -831,7 +831,7 @@ namespace lsp
                 xr.nTop        -= sSize.nTop;
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
-                s->fill_round_rect(color, SURFMASK_R_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(color, SURFMASK_R_CORNER, radius, &xr);
 
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
@@ -850,7 +850,7 @@ namespace lsp
                 {
                     color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
                     color.scale_lightness(bright);
-                    s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                    s->fill_rect(color, &xr);
                 }
 
                 // Draw the inc spare
@@ -863,7 +863,7 @@ namespace lsp
                 {
                     color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
                     color.scale_lightness(bright);
-                    s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                    s->fill_rect(color, &xr);
                 }
             }
             else
@@ -874,7 +874,7 @@ namespace lsp
                 xr.nTop        -= sSize.nTop;
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
-                s->fill_round_rect(color, SURFMASK_T_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(color, SURFMASK_T_CORNER, radius, &xr);
 
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
@@ -889,7 +889,7 @@ namespace lsp
                 xr.nTop        -= sSize.nTop;
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
                 color.scale_lightness(bright);
-                s->fill_round_rect(color, SURFMASK_B_CORNER, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight, radius);
+                s->fill_round_rect(color, SURFMASK_B_CORNER, radius, &xr);
 
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
@@ -908,7 +908,7 @@ namespace lsp
                 {
                     color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
                     color.scale_lightness(bright);
-                    s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                    s->fill_rect(color, &xr);
                 }
 
                 // Draw the inc spare
@@ -921,7 +921,7 @@ namespace lsp
                 {
                     color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
                     color.scale_lightness(bright);
-                    s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                    s->fill_rect(color, &xr);
                 }
             }
 
@@ -935,7 +935,7 @@ namespace lsp
             {
                 color.copy(sSliderBorderColor);
                 color.scale_lightness(bright);
-                s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+                s->fill_rect(color, &xr);
 
                 xr.nLeft       += sborder;
                 xr.nTop        += sborder;
@@ -945,7 +945,7 @@ namespace lsp
 
             color.copy((nXFlags & F_SLIDER_ACTIVE) ? sSliderActiveColor : sSliderColor);
             color.scale_lightness(bright);
-            s->fill_rect(color, xr.nLeft, xr.nTop, xr.nWidth, xr.nHeight);
+            s->fill_rect(color, &xr);
 
             s->set_antialiasing(aa);
         }

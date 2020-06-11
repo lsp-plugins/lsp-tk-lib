@@ -79,6 +79,8 @@ namespace lsp
                 EditCursor              sCursor;
                 Timer                   sScroll;
 
+                ws::rectangle_t         sTextArea;
+
                 prop::String            sText;
                 prop::TextSelection     sSelection;
                 prop::Font              sFont;
