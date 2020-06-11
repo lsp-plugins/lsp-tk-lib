@@ -60,25 +60,26 @@ namespace lsp
 
                     public:
                         explicit DataSink(Edit *widget);
+                        virtual ~DataSink();
 
                     public:
-                        virtual status_t        close();
+                        virtual status_t        close(status_t code);
 
                     public:
                         void                    unbind();
                 };
 
             protected:
-                LSPString               sText;          // Cached text
                 size_t                  nMBState;
                 ssize_t                 sTextPos;
                 ssize_t                 nScrDirection;  // Scroll direction
 
                 DataSink               *pDataSink;      // Data sink
                 KeyboardInput           sInput;         // Keyboard input handler
-                TextCursor              sCursor;
+                EditCursor              sCursor;
                 Timer                   sScroll;
 
+                prop::String            sText;
                 prop::TextSelection     sSelection;
                 prop::Font              sFont;
                 prop::Color             sColor;
@@ -89,7 +90,7 @@ namespace lsp
                 prop::Color             sTextSelectedColor;
                 prop::Color             sSelectionColor;
                 prop::Integer           sBorderSize;
-                prop::Integer           sBorderGap;
+                prop::Integer           sBorderGapSize;
                 prop::Integer           sBorderRadius;
                 prop::SizeConstraints   sConstraints;
 
@@ -99,84 +100,83 @@ namespace lsp
 //                Menu                   *pPopup;
 
             protected:
-                static status_t             timer_handler(ws::timestamp_t time, void *arg);
-                static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
-                static status_t             clipboard_handler(void *arg, status_t s, io::IInStream *is);
-
-// TODO
-//                static status_t             slot_popup_cut_action(Widget *sender, void *ptr, void *data);
-//                static status_t             slot_popup_copy_action(Widget *sender, void *ptr, void *data);
-//                static status_t             slot_popup_paste_action(Widget *sender, void *ptr, void *data);
+                static status_t                     timer_handler(ws::timestamp_t time, void *arg);
+                static status_t                     slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t                     slot_popup_cut_action(Widget *sender, void *ptr, void *data);
+                static status_t                     slot_popup_copy_action(Widget *sender, void *ptr, void *data);
+                static status_t                     slot_popup_paste_action(Widget *sender, void *ptr, void *data);
 
             protected:
-                ssize_t                     mouse_to_cursor_pos(ssize_t x, ssize_t y);
-                void                        run_scroll(ssize_t dir);
-                void                        update_scroll();
-                void                        update_clipboard(size_t bufid);
-                void                        request_clipboard(size_t bufid);
-                status_t                    paste_data(io::IInStream *is);
-                status_t                    cut_data(size_t bufid);
-                status_t                    copy_data(size_t bufid);
-                status_t                    paste_data(size_t bufid);
-                void                        paste_clipboard(const LSPString *data);
+                ssize_t                             mouse_to_cursor_pos(ssize_t x, ssize_t y);
+                void                                run_scroll(ssize_t dir);
+                void                                update_scroll();
+                void                                update_clipboard(size_t bufid);
+                void                                request_clipboard(size_t bufid);
+                status_t                            cut_data(size_t bufid);
+                status_t                            copy_data(size_t bufid);
+                status_t                            paste_data(size_t bufid);
+                void                                paste_clipboard(const LSPString *data);
+
+            protected:
+                virtual void                        size_request(ws::size_limit_t *r);
+                virtual void                        property_changed(Property *prop);
+                virtual void                        realize(const ws::rectangle_t *r);
 
             public:
-                explicit                    Edit(Display *dpy);
-                virtual                    ~Edit();
+                explicit                            Edit(Display *dpy);
+                virtual                            ~Edit();
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t                    init();
+                virtual void                        destroy();
 
             public:
-                inline TextSelection               *selection()             { return &sSelection;       }
-                inline const TextSelection         *selection() const       { return &sSelection;       }
+                inline String                      *text()                      { return &sText;                }
 
-                inline Font                        *font()                  { return &sFont;            }
-                inline const Font                  *font() const            { return &sFont;            }
+                inline TextSelection               *selection()                 { return &sSelection;           }
+                inline const TextSelection         *selection() const           { return &sSelection;           }
 
-                inline Color                       *color()                 { return &sColor;           }
-                inline const Color                 *color() const           { return &sColor;           }
+                inline Font                        *font()                      { return &sFont;                }
+                inline const Font                  *font() const                { return &sFont;                }
 
-                inline Color                       *border_color()          { return &sBorderColor;     }
-                inline const Color                 *border_color() const    { return &sBorderColor;     }
+                inline Color                       *color()                     { return &sColor;               }
+                inline const Color                 *color() const               { return &sColor;               }
 
-                inline Color                       *border_gap_color()      { return &sBorderGapColor;  }
-                inline const Color                 *border_gap_color() const{ return &sBorderGapColor;  }
+                inline Color                       *border_color()              { return &sBorderColor;         }
+                inline const Color                 *border_color() const        { return &sBorderColor;         }
 
-                inline Color                       *cursor_color()          { return &sCursorColor;     }
-                inline const Color                 *cursor_color() const    { return &sCursorColor;     }
+                inline Color                       *border_gap_color()          { return &sBorderGapColor;      }
+                inline const Color                 *border_gap_color() const    { return &sBorderGapColor;      }
 
-                inline Color                       *text_color()            { return &sTextColor;       }
-                inline const Color                 *text_color() const      { return &sTextColor;       }
+                inline Color                       *cursor_color()              { return &sCursorColor;         }
+                inline const Color                 *cursor_color() const        { return &sCursorColor;         }
+
+                inline Color                       *text_color()                { return &sTextColor;           }
+                inline const Color                 *text_color() const          { return &sTextColor;           }
 
                 inline Color                       *text_selected_color()       { return &sTextSelectedColor;   }
                 inline const Color                 *text_selected_color() const { return &sTextSelectedColor;   }
 
-                inline Color                       *selection_color()       { return &sSelectionColor;  }
-                inline const Color                 *selection_color() const { return &sSelectionColor;  }
+                inline Color                       *selection_color()           { return &sSelectionColor;      }
+                inline const Color                 *selection_color() const     { return &sSelectionColor;      }
 
-                inline Integer                     *border_size()           { return &sBorderSize;      }
-                inline const Integer               *border_size() const     { return &sBorderSize;      }
+                inline Integer                     *border_size()               { return &sBorderSize;          }
+                inline const Integer               *border_size() const         { return &sBorderSize;          }
 
-                inline Integer                     *border_gap()            { return &sBorderGap;       }
-                inline const Integer               *border_gap() const      { return &sBorderGap;       }
+                inline Integer                     *border_gap_size()           { return &sBorderGapSize;       }
+                inline const Integer               *border_gap_size() const     { return &sBorderGapSize;       }
 
-                inline Integer                     *border_radius()         { return &sBorderRadius;    }
-                inline const Integer               *border_radius() const   { return &sBorderRadius;    }
+                inline Integer                     *border_radius()             { return &sBorderRadius;        }
+                inline const Integer               *border_radius() const       { return &sBorderRadius;        }
 
-                inline SizeConstraints             *constraints()           { return &sConstraints;     }
-                inline const SizeConstraints       *constraints() const     { return &sConstraints;     }
+                inline SizeConstraints             *constraints()               { return &sConstraints;         }
+                inline const SizeConstraints       *constraints() const         { return &sConstraints;         }
 
 //                inline Menu                        *get_popup()             { return pPopup;            }
 
             public:
-//                status_t                    set_text(const char *text);
-//                status_t                    set_text(const LSPString *text);
 //                inline void         set_popup(LSPMenu *popup)   { pPopup = popup; }
 
             public:
-                virtual void                    size_request(ws::size_limit_t *r);
-
                 virtual void                    draw(ws::ISurface *s);
 
                 virtual status_t                on_change();

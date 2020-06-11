@@ -383,6 +383,17 @@ namespace lsp
                 return init(style, &sl);
             }
 
+            status_t SizeConstraints::init(Style *style)
+            {
+                ws::size_limit_t sl;
+                sl.nMinWidth    = -1;
+                sl.nMinHeight   = -1;
+                sl.nMaxWidth    = -1;
+                sl.nMaxHeight   = -1;
+
+                return init(style, &sl);
+            }
+
             status_t SizeConstraints::init(Style *style, const ws::size_limit_t *p)
             {
                 if ((pStyle == NULL) || (p == NULL))

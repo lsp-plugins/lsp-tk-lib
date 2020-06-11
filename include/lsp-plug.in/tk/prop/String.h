@@ -27,7 +27,8 @@ namespace lsp
             protected:
                 enum flags_t
                 {
-                    F_LOCALIZED     = 1 << 0
+                    F_LOCALIZED     = 1 << 0,
+                    F_MATCHING      = 1 << 1
                 };
 
             protected:
@@ -46,12 +47,15 @@ namespace lsp
 
             protected:
                 LSPString           sText;      // Text used for rendering
+                mutable LSPString   sCache;     // Cache
                 Params              sParams;    // Parameters
-                size_t              nFlags;     // Different flags
+                mutable size_t      nFlags;     // Different flags
                 i18n::IDictionary  *pDict;      // Related dictionary
 
             protected:
-                status_t            fmt_internal(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const;
+                status_t            fmt_internal(LSPString *out, const LSPString *lang) const;
+                LSPString          *fmt_for_update();
+                status_t            lookup_template(LSPString *templ, const LSPString *lang) const;
 
             protected:
                 status_t            bind(atom_t property, Style *style, i18n::IDictionary *dict);
@@ -59,7 +63,7 @@ namespace lsp
                 status_t            bind(const LSPString *property, Style *style, i18n::IDictionary *dict);
                 status_t            unbind();
                 void                sync();
-                void                commit();
+                void                commit(atom_t property);
 
             protected:
                 explicit String(prop::Listener *listener = NULL);
@@ -175,46 +179,27 @@ namespace lsp
                 void clear();
 
                 /**
-                 * Output the formatted message to the string
-                 * @param out output string
-                 * @param dict dictionary that stores localization data
-                 * @param lang the target language to use
-                 * @return status of operation
-                 */
-                status_t format(LSPString *out, i18n::IDictionary *dict, const char *lang) const;
-
-                /**
-                 * Output the formatted message to the string
-                 * @param out output string
-                 * @param dict dictionary that stores localization data
-                 * @param lang the target language to use (UTF-8 encoded)
-                 * @return status of operation
-                 */
-                status_t format(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const;
-
-                /**
-                 * Output the formatted message to the string
-                 * @param out output string
-                 * @param dpy display to use as dictionary source
-                 * @param style the style to take language identifier from
-                 * @return status of operation
-                 */
-                status_t format(LSPString *out, Display *dpy, const Style *style) const;
-
-                /**
-                 * Output the formatted message to the string
-                 * @param out output string
-                 * @param widget LSP widget
-                 * @return status of operation
-                 */
-                status_t format(LSPString *out, Widget *widget) const;
-
-                /**
                  * Format the message using dictionary and style from derived widget
                  * @param out output string
                  * @return status of operation
                  */
                 status_t format(LSPString *out) const;
+
+                /**
+                 * Format the message using dictionary and style from derived widget
+                 * @param out output string
+                 * @param lang language
+                 * @return status of operation
+                 */
+                status_t format(LSPString *out, const char *lang) const;
+
+                /**
+                 * Format the message using dictionary and style from derived widget
+                 * @param out output string
+                 * @param lang language
+                 * @return status of operation
+                 */
+                status_t format(LSPString *out, const LSPString *lang) const;
 
                 /**
                  * Swap contents
@@ -234,8 +219,15 @@ namespace lsp
                     explicit String(prop::Listener *listener = NULL): tk::String(listener) {};
 
                 public:
-                    LSPString          *edit();
-                    inline void         sync()                      { tk::String::sync(); }
+                    using tk::String::format;
+
+                    /**
+                     * Get formatted string for update
+                     * @return pointer to cached formatted string or NULL on error
+                     */
+                    inline LSPString   *format()                    { return tk::String::fmt_for_update();      }
+                    bool                invalidate();
+                    inline void         sync()                      { tk::String::sync();                       }
 
                     /**
                      * Bind property with specified name to the style of linked widget

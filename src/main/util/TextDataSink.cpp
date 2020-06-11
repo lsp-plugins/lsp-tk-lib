@@ -43,7 +43,6 @@ namespace lsp
 
         ssize_t TextDataSink::open(const char * const *mime_types)
         {
-            const char *mime = NULL;
             ssize_t found = -1, idx = 0;
 
             for (const char *const *p = mimes; (*p != NULL) && (found < 0); ++p, ++idx)

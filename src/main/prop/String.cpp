@@ -14,13 +14,15 @@ namespace lsp
     {
         void String::Params::modified()
         {
+            pString->sCache.truncate();
+            pString->nFlags &= ~F_MATCHING;
+
             pString->sync();
         }
 
         void String::Params::notify(atom_t property)
         {
-            if (property == pString->nAtom)
-                pString->commit();
+            pString->commit(property);
         }
 
         String::String(prop::Listener *listener):
@@ -96,8 +98,18 @@ namespace lsp
             return res;
         }
 
-        void String::commit()
+        void String::commit(atom_t property)
         {
+            if (pStyle != NULL)
+            {
+                const char *lang;
+                if ((property == nAtom) && (pStyle->get_string(property, &lang) == STATUS_OK))
+                {
+                    sCache.truncate();
+                    nFlags &= ~F_MATCHING;
+                }
+            }
+
             if (pListener != NULL)
                 pListener->notify(this);
         }
@@ -116,6 +128,7 @@ namespace lsp
                 return STATUS_NO_MEM;
 
             nFlags      = 0;
+            sCache.truncate();
             sParams.clear();
 
             sync();
@@ -130,6 +143,7 @@ namespace lsp
                 return STATUS_NO_MEM;
 
             nFlags      = 0;
+            sCache.truncate();
             sParams.clear();
 
             sync();
@@ -270,17 +284,21 @@ namespace lsp
         void String::clear()
         {
             sText.truncate();
+            sCache.truncate();
             sParams.clear();
             nFlags      = 0;
+
             sync();
         }
 
-        status_t String::fmt_internal(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const
+        status_t String::lookup_template(LSPString *templ, const LSPString *lang) const
         {
-            LSPString path, templ;
-            status_t res = STATUS_NOT_FOUND;
+            if (pDict == NULL)
+                return STATUS_NOT_FOUND;
 
-            // Search first template in target language if target language specified
+            LSPString path;
+
+            status_t res = STATUS_NOT_FOUND;
             if (lang != NULL)
             {
                 if (!path.append(lang))
@@ -290,7 +308,7 @@ namespace lsp
                 if (!path.append(&sText))
                     return STATUS_NO_MEM;
 
-                res = dict->lookup(&path, &templ);
+                res = pDict->lookup(&path, templ);
             }
 
             // Now search in default language
@@ -304,89 +322,118 @@ namespace lsp
                 if (!path.append(&sText))
                     return STATUS_NO_MEM;
 
-                res = dict->lookup(&path, &templ);
+                res = pDict->lookup(&path, templ);
             }
+
+            return res;
+        }
+
+        status_t String::fmt_internal(LSPString *out, const LSPString *lang) const
+        {
+            // Check that string is not localized
+            if (!(nFlags & F_LOCALIZED))
+            {
+                sCache.truncate();
+                return (out->set(&sText)) ? STATUS_OK : STATUS_NO_MEM;
+            }
+
+            // Check that value has been cached
+            const char *xlang;
+            if (pStyle != NULL)
+                pStyle->get_string(nAtom, &xlang);
+
+            bool caching = ((lang != NULL) && (xlang != NULL) && (lang->equals_ascii(xlang)));
+            if ((caching) && (nFlags & F_MATCHING))
+                return (out->set(&sCache)) ? STATUS_OK : STATUS_NO_MEM;
+
+            // Lookup template
+            LSPString templ;
+            status_t res = lookup_template(&templ, lang);
 
             // Still no template? Leave
             if (res == STATUS_NOT_FOUND)
-                return (out->set(&sText)) ? STATUS_OK : STATUS_NO_MEM; // By default output dictionary key
+                res = (out->set(&sText)) ? STATUS_OK : STATUS_NO_MEM; // By default output dictionary key
             else if (res != STATUS_OK)
                 return res;
+            else
+                res = expr::format(out, &templ, &sParams);
 
             // Format the template
-            return expr::format(out, &templ, &sParams);
-        }
-
-        status_t String::format(LSPString *out, i18n::IDictionary *dict, const char *lang) const
-        {
-            if (out == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
-            if (!(nFlags & F_LOCALIZED))
-                return (out->set(&sText)) ? STATUS_OK : STATUS_NO_MEM;
-
-            if (dict == NULL)
+            if ((res == STATUS_OK) && (caching))
             {
-                out->clear();
-                return STATUS_OK;
+                if (sCache.set(out))
+                    nFlags     |= F_MATCHING;
             }
-
-            LSPString xlang;
-            if (lang == NULL)
-                lang = "default";
-            if (!xlang.set_utf8(lang))
-                return STATUS_NO_MEM;
-
-            return fmt_internal(out, dict, &xlang);
+            return res;
         }
 
-        status_t String::format(LSPString *out, i18n::IDictionary *dict, const LSPString *lang) const
+        LSPString *String::fmt_for_update()
         {
-            if (out == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
+            // Check that value is not localized
             if (!(nFlags & F_LOCALIZED))
-                return (out->set(&sText)) ? STATUS_OK : STATUS_NO_MEM;
-
-            if (dict == NULL)
             {
-                out->clear();
-                return STATUS_OK;
+                sCache.truncate();
+                return &sText;
             }
+            else if (nFlags & F_MATCHING)
+                return &sCache;
 
-            return fmt_internal(out, dict, lang);
-        }
+            // Lookup template
+            LSPString templ;
+            status_t res;
 
-        status_t String::format(LSPString *out, Display *dpy, const Style *style) const
-        {
-            if ((dpy == NULL) || (style == NULL))
-                return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
+            if (pStyle != NULL)
+            {
+                LSPString lang;
+                if (pStyle->get_string(nAtom, &lang) == STATUS_OK)
+                    res = lookup_template(&templ, &lang);
+                else
+                    res = lookup_template(&templ, NULL);
+            }
+            else
+                res = lookup_template(&templ, NULL);
 
-            // Get identifier of atom that describes language
-            ssize_t atom = dpy->atom_id(LSP_TK_PROP_LANGUAGE);
-            if (atom < 0)
-                return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
+            // Still no template? Leave
+            if (res == STATUS_NOT_FOUND)
+                res = (sCache.set(&sText)) ? STATUS_OK : STATUS_NO_MEM; // By default output dictionary key
+            else if (res != STATUS_OK)
+                return NULL;
+            else
+                res = expr::format(&sCache, &templ, &sParams);
 
-            // Get language name from style property
-            LSPString lang;
-            status_t res = style->get_string(atom, &lang);
+            // Format the template
             if (res != STATUS_OK)
-                return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
+                return NULL;
 
-            // Perform formatting
-            return format(out, dpy->dictionary(), &lang);
+            nFlags     |= F_MATCHING;
+            return &sCache;
         }
 
-        status_t String::format(LSPString *out, Widget *widget) const
+        status_t String::format(LSPString *out, const char *lang) const
         {
-            if (widget == NULL)
-                return format(out, (i18n::IDictionary *)NULL, (const char *)NULL);
-            return format(out, widget->display(), widget->style());
+            if (out == NULL)
+                return STATUS_BAD_ARGUMENTS;
+            if (lang == NULL)
+                return fmt_internal(out, NULL);
+
+            LSPString tlang;
+            if (!tlang.set_ascii(lang))
+                return STATUS_NO_MEM;
+            return fmt_internal(out, &tlang);
+        }
+
+        status_t String::format(LSPString *out, const LSPString *lang) const
+        {
+            if (out == NULL)
+                return STATUS_BAD_ARGUMENTS;
+            return fmt_internal(out, lang);
         }
 
         status_t String::format(LSPString *out) const
         {
-            return format(out, pDict, (const char *)NULL);
+            if (out == NULL)
+                return STATUS_BAD_ARGUMENTS;
+            return fmt_internal(out, NULL);
         }
 
         void String::swap(String *dst)
@@ -401,21 +448,28 @@ namespace lsp
 
         namespace prop
         {
-            LSPString *String::edit()
+            bool String::invalidate()
             {
-                // Transform localized string to non-localized
-                if (nFlags & F_LOCALIZED)
+                // Invalidate cache to text and reset LOCALIZED flag
+                if (nFlags & F_MATCHING)
                 {
-                    LSPString tmp;
-                    status_t res = format(&tmp);
-                    if (res != STATUS_OK)
-                        return NULL;
+                    sText.swap(&sCache);
+                    sCache.truncate();
+                    nFlags  = 0;
+                }
+                else if (nFlags & F_LOCALIZED) // Make localized string as non-localized
+                {
+                    // Format value into sCache
+                    if (fmt_for_update() == NULL)
+                        return false;
 
-                    sText.swap(&tmp);
-                    nFlags &= ~F_LOCALIZED;
+                    sText.swap(&sCache);
+                    sCache.truncate();
+                    nFlags  = 0;
                 }
 
-                return &sText;
+                // This is raw string, just return
+                return true;
             }
         }
 

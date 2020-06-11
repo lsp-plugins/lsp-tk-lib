@@ -146,6 +146,7 @@ namespace lsp
                      */
                     status_t            init(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
                     status_t            init(Style *style, const ws::size_limit_t *p);
+                    status_t            init(Style *style);
             };
         }
 
