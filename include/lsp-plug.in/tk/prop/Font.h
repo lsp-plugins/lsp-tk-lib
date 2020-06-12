@@ -109,6 +109,10 @@ namespace lsp
                 bool get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const;
                 bool get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const;
 
+                bool get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const char *text) const;
+                bool get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const char *text, ssize_t first) const;
+                bool get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const char *text, ssize_t first, ssize_t last) const;
+
                 bool get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text) const;
                 bool get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const;
                 bool get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const;

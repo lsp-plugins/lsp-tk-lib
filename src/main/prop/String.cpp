@@ -402,10 +402,9 @@ namespace lsp
                 res = expr::format(&sCache, &templ, &sParams);
 
             // Format the template
-            if (res != STATUS_OK)
-                return NULL;
+            if (res == STATUS_OK)
+                nFlags     |= F_MATCHING;
 
-            nFlags     |= F_MATCHING;
             return &sCache;
         }
 
@@ -469,6 +468,7 @@ namespace lsp
                 }
 
                 // This is raw string, just return
+                sync();
                 return true;
             }
         }

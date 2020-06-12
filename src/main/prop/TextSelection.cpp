@@ -166,8 +166,8 @@ namespace lsp
             if ((nFirst == first) && (nLast == last))
                 return;
 
-            nFirst      = last;
-            nLast       = first;
+            nFirst      = first;
+            nLast       = last;
             sync();
         }
 

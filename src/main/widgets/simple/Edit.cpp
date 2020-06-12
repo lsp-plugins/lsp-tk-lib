@@ -30,8 +30,7 @@ namespace lsp
         ssize_t Edit::EditCursor::limit(ssize_t value)
         {
             LSPString *text = pEdit->sText.format();
-            ssize_t max = (text != NULL) ? 0 : text->length();
-            return lsp_limit(value, 0, max);
+            return lsp_limit(value, 0, ssize_t(text->length()));
         }
 
         void Edit::EditCursor::on_change()
@@ -179,12 +178,12 @@ namespace lsp
                 sSelection.init(sclass);
                 sFont.init(sclass);
                 sColor.init(sclass, "#ffffff");
-                sBorderColor.init(sclass, "0x000000");
-                sBorderGapColor.init(sclass, "0xcccccc");
-                sCursorColor.init(sclass, "#0x000000");
+                sBorderColor.init(sclass, "#000000");
+                sBorderGapColor.init(sclass, "#cccccc");
+                sCursorColor.init(sclass, "#000000");
                 sTextColor.init(sclass, "#000000");
                 sTextSelectedColor.init(sclass, "#ffffff");
-                sSelectionColor.init(sclass, "#0000cc");
+                sSelectionColor.init(sclass, "#00c0ff");
                 sBorderSize.init(sclass, 1);
                 sBorderGapSize.init(sclass, 1);
                 sBorderRadius.init(sclass, 4);
@@ -235,9 +234,6 @@ namespace lsp
             if (id < 0)
                 return -id;
 
-            // Initialize pointer
-//            set_cursor(MP_IBEAM);
-
             return STATUS_OK;
         }
 
@@ -263,7 +259,10 @@ namespace lsp
         void Edit::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
+            if (sVisibility.is(prop))
+                sCursor.set_visibility(sVisibility.get() && has_focus());
 
+            // Self properties
             if (sSelection.is(prop))
             {
                 // TODO: sync state
@@ -272,7 +271,8 @@ namespace lsp
 
             if (sText.is(prop))
             {
-                // TODO: sync parameters
+                LSPString *text = sText.format();
+                sSelection.set_limit(text->length());
                 query_draw();
             }
 
@@ -338,7 +338,7 @@ namespace lsp
             ssize_t radius      = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             if (border > 0)
-                border             += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+                border             += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
 
             border              = lsp_max(border, radius - truncf(M_SQRT1_2 * (radius - border)));
 
@@ -391,7 +391,7 @@ namespace lsp
                 LSPString *text = sText.format();
                 if (text != NULL)
                 {
-                    ssize_t first = sSelection.first(), last = sSelection.last();
+                    ssize_t first = sSelection.starting(), last = sSelection.ending();
                     status_t result = src->set_text(text, first, last);
                     if (result == STATUS_OK)
                         pDisplay->set_clipboard(bufid, src);
@@ -456,7 +456,7 @@ namespace lsp
                 xr.nHeight     -= border * 2;
                 radius          = lsp_max(0, radius - border);
 
-                ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+                ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
                 if (gap > 0)
                 {
                     color.copy(sBorderGapColor);
@@ -471,131 +471,139 @@ namespace lsp
                 }
             }
 
-//            font_parameters_t fp;
-//            text_parameters_t tp;
-//            ssize_t pad  = 3;
-//
-//            // Prepare palette
-//            Color bg_color(sBgColor);
-//            Color color(sColor);
-//            Color fcol(sFont.raw_color());
-//            Color sel_col(sSelColor);
-//
-//            color.scale_lightness(brightness());
-//            fcol.scale_lightness(brightness());
-//            sel_col.scale_lightness(brightness());
-//
-//            // Draw background
-//            s->clear(bg_color);
-//
-//            // Draw
-//            bool aa = s->set_antialiasing(true);
-//            s->fill_round_rect(0.5f, 0.5f, sSize.nWidth - 1, sSize.nHeight - 1, 4, SURFMASK_ALL_CORNER, color);
-//
-//            s->set_antialiasing(aa);
-//            ssize_t fw = sSize.nWidth - pad *2;
-//
-//            sFont.get_parameters(s, &fp);
-//            sFont.get_text_parameters(s, &tp, &sText, 0, sCursor.location());
-//            ssize_t tw    = /*tp.XBearing +*/ tp.XAdvance;
-//
-//            if (sCursor.visible() && sCursor.replacing() && (sCursor.position() >= ssize_t(sText.length())))
-//            {
-//                sFont.get_text_parameters(s, &tp, "_");
-//                fw         -= tp.Width;
-//            }
-//
-//            ssize_t xleft = sTextPos + tw;
-//
-//            // Adjust cursor position
-//            if (sCursor.visible())
-//            {
-//                // Make cursor visible within the range of edit
-//                if (xleft < 0)
-//                {
-//                    sTextPos    = -tw;
-//                    xleft       = 0;
-//                }
-//                else if (xleft >= ssize_t(fw))
-//                {
-//                    sTextPos    = fw - tw;
-//                    xleft       = fw;
-//                }
-//                else if ((sTextPos < 0) && (sCursor.location() == ssize_t(sText.length())))
-//                {
-//                    sTextPos   += fw - xleft;
-//                    xleft       = fw;
-//                }
-//            }
-//
-//            // Adjust text position
-//            if (sTextPos > 0)
-//            {
-//                xleft          -= sTextPos;
-//                sTextPos        = 0;
-//            }
-//
-//            if ((sSelection.valid()) && (!sSelection.is_empty()))
-//            {
-//                ssize_t first   = sSelection.starting();
-//                ssize_t last    = sSelection.ending();
-//
-//                ssize_t xpos    = sTextPos + pad;
-//
-//                if (first > 0)
-//                {
-//                    sFont.get_text_parameters(s, &tp, &sText, 0, first);
-//                    sFont.draw(s, xpos, pad + (sSize.nHeight - pad * 2 - fp.Height)*0.5f + fp.Ascent, fcol, &sText, 0, first);
-//                    xpos           += /*tp.XBearing + */ tp.XAdvance;
-//                }
-//                sFont.get_text_parameters(s, &tp, &sText, first, last);
-//                s->fill_rect(xpos, pad, tp.XBearing + tp.XAdvance, sSize.nHeight - pad*2, sel_col);
-//                sFont.draw(s, xpos, pad + (sSize.nHeight - pad * 2 - fp.Height)*0.5f + fp.Ascent, color, &sText, first, last);
-//                xpos           += /*tp.XBearing + */ tp.XAdvance;
-//
-//                if (last < ssize_t(sText.length()))
-//                {
-//                    sFont.get_text_parameters(s, &tp, &sText, last);
-//                    sFont.draw(s, xpos, pad + (sSize.nHeight - pad * 2 - fp.Height)*0.5f + fp.Ascent, fcol, &sText, last);
-//                    xpos           += /*tp.XBearing + */ tp.XAdvance;
-//                }
-//            }
-//            else
-//                sFont.draw(s, sTextPos + pad, pad + (sSize.nHeight - pad * 2 - fp.Height)*0.5f + fp.Ascent, fcol, &sText);
-//
-//            // Draw cursor if required
-//            if (sCursor.visible() && sCursor.shining())
-//            {
-//                float cleft = xleft + pad ; // + tp.XAdvance + tp.XBearing;
-//                float ctop  = pad + (sSize.nHeight - pad * 2 - fp.Height)*0.5f;
-//
-//                if (sCursor.inserting())
-//                {
-//                    if ((sSelection.valid()) && (!sSelection.is_empty()))
-//                        s->line(cleft + 0.5f, ctop, cleft, ctop + fp.Height, 1.0f, bg_color);
-//                    else
-//                        s->line(cleft + 0.5f, ctop, cleft, ctop + fp.Height, 1.0f, fcol);
-//                }
-//                else // replacing
-//                {
-//                    if (sCursor.position() >= ssize_t(sText.length()))
-//                    {
-//                        sFont.get_text_parameters(s, &tp, "_");
-//                        s->fill_rect(cleft, pad, tp.XAdvance, sSize.nHeight - pad * 2, bg_color);
-//                    }
-//                    else
-//                    {
-//                        sFont.get_text_parameters(s, &tp, &sText, sCursor.position(), sCursor.position() + 1);
-//                        ssize_t xw = (tp.XAdvance > tp.Width) ? tp.XAdvance : tp.Width + 1;
-//                        s->fill_rect(cleft + tp.XBearing - 1, pad, xw, sSize.nHeight - pad * 2, bg_color);
-//                        sFont.draw(s, cleft, ctop + fp.Ascent, color, &sText, sCursor.position(), sCursor.position() + 1);
-//                    }
-//                }
-//            }
-//
-//            s->set_antialiasing(true);
-//            s->wire_round_rect(0.5f, 0.5f, sSize.nWidth - 1, sSize.nHeight - 1, 4, SURFMASK_ALL_CORNER, 1, color);
-//
+            // Draw main background
+            color.copy(sColor);
+            color.scale_lightness(lightness);
+            s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
+
+            // Draw text
+            xr.nLeft    = sTextArea.nLeft  - sSize.nLeft;
+            xr.nTop     = sTextArea.nTop   - sSize.nTop;
+            xr.nWidth   = sTextArea.nWidth;
+            xr.nHeight  = sTextArea.nHeight;
+
+            s->clip_begin(&xr);
+
+            // Obtain text parameters
+            LSPString *text = sText.format();
+            size_t cpos     = lsp_limit(sCursor.location(), 0, ssize_t(text->length()));
+
+            sFont.get_parameters(s, scaling, &fp);
+            sFont.get_text_parameters(s, &tp, scaling, text, 0, cpos);
+
+            ssize_t textw   = tp.XAdvance;
+            if (sCursor.visible() && sCursor.replacing() && (cpos >= text->length()))
+            {
+                sFont.get_text_parameters(s, &tp, scaling, "_");
+                xr.nWidth  -= tp.Width;
+            }
+
+            // Adjust the proper text position
+            ssize_t cleft   = sTextPos + textw;
+            if (sCursor.visible())
+            {
+                // Make cursor visible within the range of edit
+                if (cleft < 0)
+                {
+                    sTextPos    = -textw;
+                    cleft       = 0;
+                }
+                else if (cleft >= ssize_t(xr.nWidth))
+                {
+                    sTextPos    = xr.nWidth - textw;
+                    cleft       = xr.nWidth;
+                }
+                else if ((sTextPos < 0) && (cpos >= text->length()))
+                {
+                    sTextPos   += xr.nWidth - cleft;
+                    cleft       = xr.nWidth;
+                }
+            }
+
+            if (sTextPos > 0)
+            {
+                cleft          -= sTextPos;
+                sTextPos        = 0;
+            }
+
+            xr.nTop         = xr.nTop + (xr.nHeight - fp.Height)*0.5f;
+            xr.nHeight      = fp.Height;
+
+            // Draw the text
+            if ((sSelection.valid()) && (!sSelection.is_empty()))
+            {
+                ssize_t first   = sSelection.starting();
+                ssize_t last    = sSelection.ending();
+                ssize_t xpos    = xr.nLeft;
+
+                lsp::Color scolor(sSelectionColor);
+                lsp::Color stcolor(sTextSelectedColor);
+                color.copy(sTextColor);
+                color.scale_lightness(lightness);
+                scolor.scale_lightness(lightness);
+                stcolor.scale_lightness(lightness);
+
+                if (first > 0)
+                {
+                    sFont.get_text_parameters(s, &tp, scaling, text, 0, first);
+                    sFont.draw(s, color, xpos, xr.nTop + fp.Ascent, scaling, text, 0, first);
+                    xpos           += tp.XAdvance;
+                }
+
+                sFont.get_text_parameters(s, &tp, scaling, text, first, last);
+                s->fill_rect(scolor, xpos, xr.nTop, tp.XAdvance, xr.nHeight);
+                sFont.draw(s, stcolor, xpos, xr.nTop + fp.Ascent, scaling, text, first, last);
+                xpos           += /*tp.XBearing + */ tp.XAdvance;
+
+                if (last < ssize_t(text->length()))
+                {
+                    sFont.get_text_parameters(s, &tp, scaling, text, last);
+                    sFont.draw(s, color, xpos, xr.nTop + fp.Ascent, scaling, text, last);
+                    xpos           += /*tp.XBearing + */ tp.XAdvance;
+                }
+            }
+            else
+            {
+                color.copy(sTextColor);
+                color.scale_lightness(lightness);
+
+                sFont.draw(s, color, xr.nLeft + sTextPos, xr.nTop + fp.Ascent, scaling, text);
+            }
+
+            xr.nLeft       += cleft;
+
+            // Draw cursor if required
+            if (sCursor.visible() && sCursor.shining())
+            {
+                color.copy(sCursorColor);
+                color.scale_lightness(lightness);
+
+                if (sCursor.inserting())
+                    s->fill_rect(color, xr.nLeft, xr.nTop, lsp_max(1.0f, scaling), xr.nHeight);
+                else // replacing
+                {
+                    if (cpos >= text->length())
+                    {
+                        sFont.get_text_parameters(s, &tp, scaling, "_");
+                        s->fill_rect(color, xr.nLeft, xr.nTop, tp.Width, xr.nHeight);
+                    }
+                    else
+                    {
+                        // Draw background
+                        lsp::Color bcolor(sBgColor);
+                        bcolor.scale_lightness(lightness);
+
+                        sFont.get_text_parameters(s, &tp, scaling, text, sCursor.position(), sCursor.position() + 1);
+                        ssize_t xw = (tp.XAdvance > tp.Width) ? tp.XAdvance : tp.Width + 1;
+                        s->fill_rect(bcolor, xr.nLeft + tp.XBearing - 1, xr.nTop, xw, xr.nHeight);
+
+                        // Draw letter
+                        sFont.draw(s, color, scaling, xr.nLeft, xr.nTop + fp.Ascent, text, sCursor.position(), sCursor.position() + 1);
+                    }
+                }
+            }
+
+            s->clip_end();
             s->set_antialiasing(aa);
         }
 
@@ -632,39 +640,60 @@ namespace lsp
 
         ssize_t Edit::mouse_to_cursor_pos(ssize_t x, ssize_t y)
         {
-            x -= sSize.nLeft;
-            if ((x < 0) || (x >= sSize.nWidth))
+            x                  -= sTextArea.nLeft;
+            if ((x < 0) || (x >= sTextArea.nWidth))
                 return -1;
 
-            LSPString *text = sText.format();
+            LSPString *text     = sText.format();
             if (text == NULL)
                 return -1;
 
-            float scaling = lsp_max(0.0f, sScaling.get());
-            ssize_t left = 0, right = text->length(), pad = 3 * scaling;
+            ssize_t tpos        = sTextPos;
+            float scaling       = lsp_max(0.0f, sScaling.get());
+
+            lsp_trace("x=%d", int(x));
+
             ws::text_parameters_t tp;
             if (sFont.get_text_parameters(pDisplay, &tp, scaling, text))
             {
-                if (x > (sTextPos + pad + tp.XAdvance))
-                    return right;
+                if (x > (tpos + tp.XAdvance))
+                    return text->length();
             }
 
+            ssize_t left = 0, right = text->length();
             while ((right - left) > 1)
             {
                 ssize_t middle = (left + right) >> 1;
-                if (!sFont.get_text_parameters(pDisplay, &tp, scaling, text, 0, middle))
+                if (!sFont.get_text_parameters(pDisplay, &tp, scaling, text, left, middle))
                     return -1;
 
-                ssize_t tx = sTextPos + pad + tp.XAdvance;
+                ssize_t tx      = tpos + tp.XAdvance;
+                lsp_trace("x=%d, tpos=%d, xadvance=%d, tx=%d, left=%d, right=%d, middle=%d",
+                        int(x), int(tpos), int(tp.XAdvance), int(tx),
+                        int(left), int(right), int(middle)
+                    );
+
                 if (tx > x)
-                    right = middle;
+                    right       = middle;
                 else if (tx < x)
-                    left = middle;
-                else // tx == x
                 {
-                    left    = middle;
-                    break;
+                    left        = middle;
+                    tpos       += tp.XAdvance;
                 }
+                else // tx == x
+                    return middle;
+            }
+
+            // Position may be somewhere in the middle of character, determine the actual position
+            if (sFont.get_text_parameters(pDisplay, &tp, scaling, text, left, right))
+            {
+                float tx        = tpos + tp.XAdvance * 0.75f;
+                lsp_trace("x=%d, tpos=%d, xadvance=%d, tx=%d, left=%d, right=%d",
+                        int(x), int(tpos), int(tp.XAdvance), int(tx),
+                        int(left), int(right)
+                    );
+
+                return (tx < x) ? right : left;
             }
 
             return left;
@@ -708,6 +737,7 @@ namespace lsp
             if (e->nCode == ws::MCB_LEFT)
             {
                 sSelection.set_all();
+                sCursor.set_position(sSelection.ending());
                 update_clipboard(ws::CBUF_PRIMARY);
             }
             return STATUS_OK;
@@ -797,6 +827,7 @@ namespace lsp
                 {
                     pos += s->length();
                     sCursor.set_location(pos);
+                    sSelection.set_limit(text->length());
                     sSelection.set(pos);
                     ++changes;
                 }
@@ -804,7 +835,10 @@ namespace lsp
 
             // Invalidate text after changes
             if (changes > 0)
+            {
+                sSelection.set_limit(text->length());
                 sText.invalidate();
+            }
         }
 
         status_t Edit::on_key_down(const ws::event_t *e)

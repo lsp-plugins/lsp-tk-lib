@@ -399,6 +399,24 @@ namespace lsp
             return s->get_text_parameters(f, tp, text, first, last);
         }
 
+        bool Font::get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const char *text) const
+        {
+            LSPString tmp;
+            return (tmp.set_utf8(text)) ? get_text_parameters(s, tp, scaling, &tmp, 0, tmp.length()) : false;
+        }
+
+        bool Font::get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const char *text, ssize_t first) const
+        {
+            LSPString tmp;
+            return (tmp.set_utf8(text)) ? get_text_parameters(s, tp, scaling, &tmp, first, tmp.length()) : false;
+        }
+
+        bool Font::get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const char *text, ssize_t first, ssize_t last) const
+        {
+            LSPString tmp;
+            return (tmp.set_utf8(text)) ? get_text_parameters(s, tp, scaling, &tmp, first, last) : false;
+        }
+
         void Font::draw(ws::ISurface *s, const lsp::Color &c, float x, float y, float scaling, const LSPString *text) const
         {
             if (text != NULL)
@@ -424,7 +442,7 @@ namespace lsp
         {
             status_t Font::init(Style *style)
             {
-                return init(style, "Sans", 10, 0);
+                return init(style, "Sans", 12.0f, 0);
             }
 
             status_t Font::init(Style *style, float size, size_t flags)

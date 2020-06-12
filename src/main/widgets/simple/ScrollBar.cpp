@@ -226,7 +226,7 @@ namespace lsp
             float scaling   = lsp_max(0.0f, sScaling.get());
             size_t border   = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             size_t radius   = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
-            size_t gap      = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get()) : 0;
+            size_t gap      = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get() * scaling) : 0;
             size_t sborder  = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
 
             size_t ssize    = lsp_max(4.0f, 4.0f * scaling);    // Minimum slider/button size
@@ -254,7 +254,7 @@ namespace lsp
 
             float scaling   = lsp_max(0.0f, sScaling.get());
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
-            ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get()) : 0;
+            ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get() * scaling) : 0;
             ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
 
             // Compute parameters of each element
@@ -773,7 +773,7 @@ namespace lsp
             float bright    = sBrightness.get();
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
-            ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get()) : 0;
+            ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get() * scaling) : 0;
             ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
 
             // Draw background

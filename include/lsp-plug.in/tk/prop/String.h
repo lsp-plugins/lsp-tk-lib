@@ -223,7 +223,7 @@ namespace lsp
 
                     /**
                      * Get formatted string for update
-                     * @return pointer to cached formatted string or NULL on error
+                     * @return pointer to cached formatted string, never NULL
                      */
                     inline LSPString   *format()                    { return tk::String::fmt_for_update();      }
                     bool                invalidate();
