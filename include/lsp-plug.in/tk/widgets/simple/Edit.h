@@ -109,7 +109,7 @@ namespace lsp
                 static status_t                     slot_popup_paste_action(Widget *sender, void *ptr, void *data);
 
             protected:
-                ssize_t                             mouse_to_cursor_pos(ssize_t x, ssize_t y);
+                ssize_t                             mouse_to_cursor_pos(ssize_t x, ssize_t y, bool range = true);
                 void                                run_scroll(ssize_t dir);
                 void                                update_scroll();
                 void                                update_clipboard(size_t bufid);

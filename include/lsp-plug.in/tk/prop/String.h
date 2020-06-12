@@ -225,7 +225,7 @@ namespace lsp
                      * Get formatted string for update
                      * @return pointer to cached formatted string, never NULL
                      */
-                    inline LSPString   *format()                    { return tk::String::fmt_for_update();      }
+                    inline LSPString   *formatted()                    { return tk::String::fmt_for_update();      }
                     bool                invalidate();
                     inline void         sync()                      { tk::String::sync();                       }
 

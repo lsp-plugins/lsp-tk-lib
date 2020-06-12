@@ -29,7 +29,7 @@ namespace lsp
 
         ssize_t Edit::EditCursor::limit(ssize_t value)
         {
-            LSPString *text = pEdit->sText.format();
+            LSPString *text = pEdit->sText.formatted();
             return lsp_limit(value, 0, ssize_t(text->length()));
         }
 
@@ -271,9 +271,10 @@ namespace lsp
 
             if (sText.is(prop))
             {
-                LSPString *text = sText.format();
+                LSPString *text = sText.formatted();
                 sSelection.set_limit(text->length());
                 query_draw();
+                sSlots.execute(SLOT_CHANGE, this);
             }
 
             if (sFont.is(prop))
@@ -322,6 +323,7 @@ namespace lsp
             ws::font_parameters_t fp;
             sFont.get_parameters(pDisplay, scaling, &fp);
             r->nMinHeight   = lsp_max(r->nMinHeight, rgap*2 + fp.Height);
+            r->nMinWidth   += lsp_max(1.0f, scaling); // Additional place for cursor
 
             r->nMaxWidth    = -1;
             r->nMaxHeight   = -1;
@@ -372,7 +374,7 @@ namespace lsp
             if (sSelection.valid())
                 sSelection.set_last(sCursor.location());
 
-            LSPString *text = sText.format();
+            LSPString *text = sText.formatted();
             ssize_t len = (text != NULL) ? text->length() : 0;
             if ((sCursor.position() <= 0) || (sCursor.position() >= len))
                 sScroll.cancel();
@@ -388,7 +390,7 @@ namespace lsp
                 src->acquire();
 
                 // Set the selection
-                LSPString *text = sText.format();
+                LSPString *text = sText.formatted();
                 if (text != NULL)
                 {
                     ssize_t first = sSelection.starting(), last = sSelection.ending();
@@ -400,26 +402,6 @@ namespace lsp
                 src->release();
             }
         }
-
-//        status_t Edit::set_text(const LSPString *text)
-//        {
-//            if (!sText.set(text))
-//                return STATUS_NO_MEM;
-//
-//            query_draw();
-//
-//            ssize_t len = sText.length();
-//            if (sCursor.location() > len)
-//                sCursor.set(len);
-//            if (sSelection.valid())
-//            {
-//                if (sSelection.first() > len)
-//                    sSelection.set_first(len);
-//                if (sSelection.last() > len)
-//                    sSelection.set_last(len);
-//            }
-//            return STATUS_OK;
-//        }
 
         void Edit::draw(ws::ISurface *s)
         {
@@ -442,6 +424,7 @@ namespace lsp
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             float aa        = s->set_antialiasing(true);
+            size_t cursize  = lsp_max(1.0f, scaling);
 
             // Draw border
             if (border > 0)
@@ -483,9 +466,10 @@ namespace lsp
             xr.nHeight  = sTextArea.nHeight;
 
             s->clip_begin(&xr);
+            xr.nWidth      -= cursize; // leave some place for cursor
 
             // Obtain text parameters
-            LSPString *text = sText.format();
+            LSPString *text = sText.formatted();
             size_t cpos     = lsp_limit(sCursor.location(), 0, ssize_t(text->length()));
 
             sFont.get_parameters(s, scaling, &fp);
@@ -534,7 +518,7 @@ namespace lsp
             {
                 ssize_t first   = sSelection.starting();
                 ssize_t last    = sSelection.ending();
-                ssize_t xpos    = xr.nLeft;
+                ssize_t xpos    = xr.nLeft + sTextPos;
 
                 lsp::Color scolor(sSelectionColor);
                 lsp::Color stcolor(sTextSelectedColor);
@@ -542,6 +526,8 @@ namespace lsp
                 color.scale_lightness(lightness);
                 scolor.scale_lightness(lightness);
                 stcolor.scale_lightness(lightness);
+
+                ssize_t xshift  = (sSelection.reverted() && sCursor.inserting()) ? cursize : 0;
 
                 if (first > 0)
                 {
@@ -551,7 +537,7 @@ namespace lsp
                 }
 
                 sFont.get_text_parameters(s, &tp, scaling, text, first, last);
-                s->fill_rect(scolor, xpos, xr.nTop, tp.XAdvance, xr.nHeight);
+                s->fill_rect(scolor, xpos + xshift, xr.nTop, tp.XAdvance, xr.nHeight);
                 sFont.draw(s, stcolor, xpos, xr.nTop + fp.Ascent, scaling, text, first, last);
                 xpos           += /*tp.XBearing + */ tp.XAdvance;
 
@@ -579,7 +565,7 @@ namespace lsp
                 color.scale_lightness(lightness);
 
                 if (sCursor.inserting())
-                    s->fill_rect(color, xr.nLeft, xr.nTop, lsp_max(1.0f, scaling), xr.nHeight);
+                    s->fill_rect(color, xr.nLeft, xr.nTop, cursize, xr.nHeight);
                 else // replacing
                 {
                     if (cpos >= text->length())
@@ -590,15 +576,15 @@ namespace lsp
                     else
                     {
                         // Draw background
-                        lsp::Color bcolor(sBgColor);
+                        lsp::Color bcolor(sColor);
                         bcolor.scale_lightness(lightness);
 
                         sFont.get_text_parameters(s, &tp, scaling, text, sCursor.position(), sCursor.position() + 1);
                         ssize_t xw = (tp.XAdvance > tp.Width) ? tp.XAdvance : tp.Width + 1;
-                        s->fill_rect(bcolor, xr.nLeft + tp.XBearing - 1, xr.nTop, xw, xr.nHeight);
+                        s->fill_rect(color, xr.nLeft + tp.XBearing - 1, xr.nTop, xw, xr.nHeight);
 
                         // Draw letter
-                        sFont.draw(s, color, scaling, xr.nLeft, xr.nTop + fp.Ascent, text, sCursor.position(), sCursor.position() + 1);
+                        sFont.draw(s, bcolor, xr.nLeft, xr.nTop + fp.Ascent, scaling, text, sCursor.position(), sCursor.position() + 1);
                     }
                 }
             }
@@ -627,7 +613,7 @@ namespace lsp
 
             if ((e->nCode == ws::MCB_LEFT) && (state == 0))
             {
-                ssize_t first = mouse_to_cursor_pos(e->nLeft, e->nTop);
+                ssize_t first = mouse_to_cursor_pos(e->nLeft, e->nTop, false);
                 if (first >= 0)
                 {
                     sSelection.set(first);
@@ -638,20 +624,20 @@ namespace lsp
             return STATUS_OK;
         }
 
-        ssize_t Edit::mouse_to_cursor_pos(ssize_t x, ssize_t y)
+        ssize_t Edit::mouse_to_cursor_pos(ssize_t x, ssize_t y, bool range)
         {
             x                  -= sTextArea.nLeft;
-            if ((x < 0) || (x >= sTextArea.nWidth))
+            if ((range) && ((x < 0) || (x >= sTextArea.nWidth)))
                 return -1;
 
-            LSPString *text     = sText.format();
+            LSPString *text     = sText.formatted();
             if (text == NULL)
                 return -1;
 
             ssize_t tpos        = sTextPos;
             float scaling       = lsp_max(0.0f, sScaling.get());
 
-            lsp_trace("x=%d", int(x));
+//            lsp_trace("x=%d", int(x));
 
             ws::text_parameters_t tp;
             if (sFont.get_text_parameters(pDisplay, &tp, scaling, text))
@@ -668,10 +654,10 @@ namespace lsp
                     return -1;
 
                 ssize_t tx      = tpos + tp.XAdvance;
-                lsp_trace("x=%d, tpos=%d, xadvance=%d, tx=%d, left=%d, right=%d, middle=%d",
-                        int(x), int(tpos), int(tp.XAdvance), int(tx),
-                        int(left), int(right), int(middle)
-                    );
+//                lsp_trace("x=%d, tpos=%d, xadvance=%d, tx=%d, left=%d, right=%d, middle=%d",
+//                        int(x), int(tpos), int(tp.XAdvance), int(tx),
+//                        int(left), int(right), int(middle)
+//                    );
 
                 if (tx > x)
                     right       = middle;
@@ -688,10 +674,10 @@ namespace lsp
             if (sFont.get_text_parameters(pDisplay, &tp, scaling, text, left, right))
             {
                 float tx        = tpos + tp.XAdvance * 0.75f;
-                lsp_trace("x=%d, tpos=%d, xadvance=%d, tx=%d, left=%d, right=%d",
-                        int(x), int(tpos), int(tp.XAdvance), int(tx),
-                        int(left), int(right)
-                    );
+//                lsp_trace("x=%d, tpos=%d, xadvance=%d, tx=%d, left=%d, right=%d",
+//                        int(x), int(tpos), int(tp.XAdvance), int(tx),
+//                        int(left), int(right)
+//                    );
 
                 return (tx < x) ? right : left;
             }
@@ -703,7 +689,7 @@ namespace lsp
         {
             if (e->nCode == ws::MCB_LEFT)
             {
-                const LSPString *text = sText.format();
+                const LSPString *text = sText.formatted();
                 if (text == NULL)
                     return STATUS_OK;
 
@@ -807,7 +793,7 @@ namespace lsp
 
         void Edit::paste_clipboard(const LSPString *s)
         {
-            LSPString *text = sText.format();
+            LSPString *text = sText.formatted();
             if (text == NULL)
                 return;
 
@@ -843,148 +829,155 @@ namespace lsp
 
         status_t Edit::on_key_down(const ws::event_t *e)
         {
-// TODO
-//            LSPString s;
-//            s.set(lsp_wchar_t(e->nCode));
-//            lsp_trace("Key code pressed=%x, symbol received=%s, modifiers=%x", int(e->nCode), s.get_native(), int(e->nState));
-//
-//            ws::code_t key = KeyboardHandler::translate_keypad(e->nCode);
-//
-//            if (ws::is_character_key(key))
-//            {
-//                if (!(e->nState & (ws::MCF_CONTROL | ws::MCF_ALT)))
-//                {
-//                    if (sSelection.valid() && sSelection.length() > 0)
-//                    {
-//                        sText.remove(sSelection.starting(), sSelection.ending());
-//                        sCursor.set_location(sSelection.starting());
-//                        sSelection.clear();
-//                        update_clipboard(CBUF_PRIMARY);
-//                    }
-//
-//                    ssize_t loc = sCursor.location();
-//                    if ((sCursor.replacing()) && (loc < ssize_t(sText.length())))
-//                        sText.set(loc, lsp_wchar_t(key));
-//                    else
-//                        sText.insert(sCursor.location(), lsp_wchar_t(key));
-//
-//                    sCursor.move(1);
-//                    return STATUS_OK;
-//                }
-//                else if (e->nState & ws::MCF_CONTROL)
-//                {
-//                    switch (e->nCode)
-//                    {
-//                        case 'C': case 'c':
-//                            if (sSelection.valid() && sSelection.non_empty())
-//                                update_clipboard(CBUF_CLIPBOARD);
-//                            break;
-//                        case 'V': case 'v':
-//                            request_clipboard(CBUF_CLIPBOARD);
-//                            break;
-//                        case 'A': case 'a':
-//                            sSelection.set(0, sText.length());
-//                            update_clipboard(CBUF_PRIMARY);
-//                            break;
-//                        case 'X': case 'x':
-//                            cut_data(CBUF_CLIPBOARD);
-//                            break;
-//                    }
-//                    return STATUS_OK;
-//                }
-//            }
-//
-//            if (e->nState & ws::MCF_SHIFT)
-//            {
-//                if (sSelection.first() < 0)
-//                    sSelection.set_first(sCursor.location());
-//            }
-//
-//            switch (key)
-//            {
-//                case ws::WSK_HOME:
-//                    if (e->nState & ws::MCF_SHIFT)
-//                        sSelection.set_last(0);
-//                    else
-//                        sSelection.clear();
-//                    sCursor.set_location(0);
-//                    break;
-//                case ws::WSK_END:
-//                    if (e->nState & ws::MCF_SHIFT)
-//                        sSelection.set_last(sText.length());
-//                    else
-//                        sSelection.clear();
-//                    sCursor.set_location(sText.length());
-//                    break;
-//                case ws::WSK_LEFT:
-//                    sCursor.move(-1);
-//                    if (e->nState & ws::MCF_SHIFT)
-//                        sSelection.set_last(sCursor.location());
-//                    else
-//                        sSelection.clear();
-//                    break;
-//                case ws::WSK_RIGHT:
-//                    sCursor.move(1);
-//                    if (e->nState & ws::MCF_SHIFT)
-//                        sSelection.set_last(sCursor.location());
-//                    else
-//                        sSelection.clear();
-//                    break;
-//                case ws::WSK_BACKSPACE:
-//                {
-//                    if (sSelection.valid() && sSelection.length() > 0)
-//                    {
-//                        sText.remove(sSelection.starting(), sSelection.ending());
-//                        sCursor.set_location(sSelection.starting());
-//                        sSelection.clear();
-//                    }
-//                    else
-//                    {
-//                        ssize_t pos = sCursor.location();
-//                        if (pos <= 0)
-//                            break;
-//                        sText.remove(pos - 1, pos);
-//                        sCursor.set_location(pos-1);
-//                    }
-//                    query_draw();
-//                    sSlots.execute(ws::LSPSLOT_CHANGE, this);
-//                    break;
-//                }
-//                case ws::WSK_DELETE:
-//                {
-//                    if (sSelection.valid() && sSelection.length() > 0)
-//                    {
-//                        sText.remove(sSelection.starting(), sSelection.ending());
-//                        sCursor.set_location(sSelection.starting());
-//                        sSelection.clear();
-//                    }
-//                    else
-//                    {
-//                        ssize_t pos = sCursor.location();
-//                        if (pos >= ssize_t(sText.length()))
-//                            break;
-//                        sText.remove(pos, pos + 1);
-//                        sCursor.set_location(pos);
-//                    }
-//                    query_draw();
-//                    sSlots.execute(LSPSLOT_CHANGE, this);
-//                    break;
-//                }
-//                case ws::WSK_INSERT:
-//                {
-//                    size_t flags = (e->nState & (ws::MCF_CONTROL | ws::MCF_SHIFT | ws::MCF_ALT));
-//                    if (flags == ws::MCF_SHIFT)
-//                        request_clipboard(ws::CBUF_CLIPBOARD);
-//                    else if (flags == ws::MCF_CONTROL)
-//                    {
-//                        if (sSelection.valid() && sSelection.non_empty())
-//                            update_clipboard(ws::CBUF_CLIPBOARD);
-//                    }
-//                    else
-//                        sCursor.toggle_mode();
-//                    break;
-//                }
-//            }
+            LSPString s;
+            s.set(lsp_wchar_t(e->nCode));
+            lsp_trace("Key code pressed=%x, symbol received=%s, modifiers=%x", int(e->nCode), s.get_native(), int(e->nState));
+
+            ws::code_t key = KeyboardHandler::translate_keypad(e->nCode);
+            LSPString *text = sText.formatted();
+
+            if (ws::is_character_key(key))
+            {
+                if (!(e->nState & (ws::MCF_CONTROL | ws::MCF_ALT)))
+                {
+                    if (sSelection.valid() && sSelection.length() > 0)
+                    {
+                        text->remove(sSelection.starting(), sSelection.ending());
+                        sCursor.set_location(sSelection.starting());
+                        sSelection.clear();
+                        update_clipboard(ws::CBUF_PRIMARY);
+                    }
+
+                    ssize_t loc = lsp_limit(sCursor.location(), 0, ssize_t(text->length()));
+                    if (sCursor.replacing())
+                    {
+                        if (loc < ssize_t(text->length()))
+                            text->set(loc, lsp_wchar_t(key));
+                        else
+                            text->append(lsp_wchar_t(key));
+                    }
+                    else
+                        text->insert(sCursor.location(), lsp_wchar_t(key));
+
+                    sCursor.move(1);
+                    sText.invalidate();
+
+                    return STATUS_OK;
+                }
+                else if (e->nState & ws::MCF_CONTROL)
+                {
+                    switch (e->nCode)
+                    {
+                        case 'C': case 'c':
+                            if (sSelection.valid() && sSelection.non_empty())
+                                update_clipboard(ws::CBUF_CLIPBOARD);
+                            break;
+                        case 'V': case 'v':
+                            request_clipboard(ws::CBUF_CLIPBOARD);
+                            break;
+                        case 'A': case 'a':
+                            sSelection.set(0, text->length());
+                            update_clipboard(ws::CBUF_PRIMARY);
+                            break;
+                        case 'X': case 'x':
+                            cut_data(ws::CBUF_CLIPBOARD);
+                            break;
+                    }
+                    return STATUS_OK;
+                }
+            }
+
+            if (e->nState & ws::MCF_SHIFT)
+            {
+                if (sSelection.first() < 0)
+                    sSelection.set_first(sCursor.location());
+            }
+
+            switch (key)
+            {
+                case ws::WSK_HOME:
+                    if (e->nState & ws::MCF_SHIFT)
+                        sSelection.set_last(0);
+                    else
+                        sSelection.clear();
+                    sCursor.set_location(0);
+                    break;
+                case ws::WSK_END:
+                    if (e->nState & ws::MCF_SHIFT)
+                        sSelection.set_last(text->length());
+                    else
+                        sSelection.clear();
+                    sCursor.set_location(text->length());
+                    break;
+                case ws::WSK_LEFT:
+                    sCursor.move(-1);
+                    if (e->nState & ws::MCF_SHIFT)
+                        sSelection.set_last(sCursor.location());
+                    else
+                        sSelection.clear();
+                    break;
+                case ws::WSK_RIGHT:
+                    sCursor.move(1);
+                    if (e->nState & ws::MCF_SHIFT)
+                        sSelection.set_last(sCursor.location());
+                    else
+                        sSelection.clear();
+                    break;
+                case ws::WSK_BACKSPACE:
+                {
+                    if (sSelection.valid() && sSelection.length() > 0)
+                    {
+                        text->remove(sSelection.starting(), sSelection.ending());
+                        sCursor.set_location(sSelection.starting());
+                        sSelection.clear();
+                    }
+                    else
+                    {
+                        ssize_t pos = lsp_limit(sCursor.location(), 0, ssize_t(text->length()));
+                        if (pos <= 0)
+                            break;
+                        text->remove(pos-1, pos);
+                        sCursor.set_location(pos-1);
+                    }
+
+                    sText.invalidate();
+                    break;
+                }
+                case ws::WSK_DELETE:
+                {
+                    if (sSelection.valid() && sSelection.length() > 0)
+                    {
+                        text->remove(sSelection.starting(), sSelection.ending());
+                        sCursor.set_location(sSelection.starting());
+                        sSelection.clear();
+                    }
+                    else
+                    {
+                        ssize_t pos = lsp_limit(sCursor.location(), 0, ssize_t(text->length()));
+                        if (pos >= ssize_t(text->length()))
+                            break;
+                        text->remove(pos, pos + 1);
+                        sCursor.set_location(pos);
+                    }
+
+                    sText.invalidate();
+                    break;
+                }
+                case ws::WSK_INSERT:
+                {
+                    size_t flags = (e->nState & (ws::MCF_CONTROL | ws::MCF_SHIFT | ws::MCF_ALT));
+                    if (flags == ws::MCF_SHIFT)
+                        request_clipboard(ws::CBUF_CLIPBOARD);
+                    else if (flags == ws::MCF_CONTROL)
+                    {
+                        if (sSelection.valid() && sSelection.non_empty())
+                            update_clipboard(ws::CBUF_CLIPBOARD);
+                    }
+                    else
+                        sCursor.toggle_mode();
+                    break;
+                }
+            }
 
             return STATUS_OK;
         }
@@ -1006,16 +999,6 @@ namespace lsp
 
             // Request clipboard contents in async mode
             pDisplay->get_clipboard(bufid, sink);
-
-//            pDisplay->get_clipboard(bufid, sink);
-//
-//            if (sSelection.valid() && sSelection.non_empty())
-//            {
-//                sText.remove(sSelection.starting(), sSelection.ending());
-//                sCursor.set_location(sSelection.starting());
-//                sSelection.clear();
-//            }
-//            pDisplay->fetch_clipboard(bufid, "UTF8_STRING", clipboard_handler, self());
         }
 
         status_t Edit::on_key_up(const ws::event_t *e)
@@ -1030,14 +1013,15 @@ namespace lsp
 
         status_t Edit::cut_data(size_t bufid)
         {
-// TODO
-//            if (sSelection.valid() && sSelection.non_empty())
-//            {
-//                update_clipboard(bufid);
-//                sText.remove(sSelection.starting(), sSelection.ending());
-//                sCursor.set_location(sSelection.starting());
-//                sSelection.clear();
-//            }
+            if (sSelection.valid() && sSelection.non_empty())
+            {
+                update_clipboard(bufid);
+                LSPString *text = sText.formatted();
+                text->remove(sSelection.starting(), sSelection.ending());
+                sCursor.set_location(sSelection.starting());
+                sSelection.clear();
+                sText.invalidate(); // Will update limit of selection
+            }
             return STATUS_OK;
         }
 

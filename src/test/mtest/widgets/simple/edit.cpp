@@ -104,6 +104,19 @@ MTEST_BEGIN("tk.widgets.simple", edit)
         return STATUS_OK;
     }
 
+    static status_t slot_change(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+
+        LSPString tmp;
+        tk::Edit *ed = tk::widget_cast<tk::Edit>(sender);
+        ed->text()->format(&tmp);
+
+        h->test->printf("CHANGE: %s = %s\n", h->label, tmp.get_utf8());
+
+        return STATUS_OK;
+    }
+
     status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label)
     {
         status_t res = w->init();
@@ -116,18 +129,23 @@ MTEST_BEGIN("tk.widgets.simple", edit)
         h->test     = this;
         h->label    = ::strdup(label);
 
-//        tk::handler_id_t hid;
-//        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
-//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
-//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
-//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
-//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
-//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
-//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
-//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
+        tk::handler_id_t hid;
+        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
 
-//        if (hid < 0)
-//            res = -hid;
+        if (tk::widget_cast<tk::Edit>(w) != NULL)
+        {
+            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_CHANGE, slot_change, h);
+        }
+
+        if (hid < 0)
+            res = -hid;
 
         return res;
     }
@@ -191,6 +209,7 @@ MTEST_BEGIN("tk.widgets.simple", edit)
         {
             // Create alignment and child widget
             LSPString id;
+            size_t col = 0;
 
             // Create edit
             MTEST_ASSERT(id.fmt_ascii("edit-0"));
@@ -202,7 +221,7 @@ MTEST_BEGIN("tk.widgets.simple", edit)
             ed->text()->set_raw("test");
 
             // Create edit
-            MTEST_ASSERT(id.fmt_ascii("edit-0"));
+            MTEST_ASSERT(id.fmt_ascii("edit-1"));
             MTEST_ASSERT(ed = new tk::Edit(dpy));
             MTEST_ASSERT(init_widget(ed, vh, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(ed));
@@ -210,6 +229,40 @@ MTEST_BEGIN("tk.widgets.simple", edit)
 
             ed->text()->set_raw("some text for test");
             ed->constraints()->set_min_height(32);
+
+            // Create with custom parameters
+            MTEST_ASSERT(id.fmt_ascii("edit-2"));
+            MTEST_ASSERT(ed = new tk::Edit(dpy));
+            MTEST_ASSERT(init_widget(ed, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ed));
+            MTEST_ASSERT(grid->add(ed) == STATUS_OK);
+
+            ed->text()->set_raw("test");
+            ed->border_radius()->set(6);
+            ed->border_color()->set_rgb24(next_color(col));
+            ed->border_gap_color()->set_rgb24(next_color(col));
+            ed->color()->set_rgb24(next_color(col));
+            ed->text_color()->set_rgb24(next_color(col));
+            ed->selection_color()->set_rgb24(next_color(col));
+            ed->cursor_color()->set_rgb24(next_color(col));
+
+            // Create with custom parameters
+            MTEST_ASSERT(id.fmt_ascii("edit-3"));
+            MTEST_ASSERT(ed = new tk::Edit(dpy));
+            MTEST_ASSERT(init_widget(ed, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ed));
+            MTEST_ASSERT(grid->add(ed) == STATUS_OK);
+
+            ed->padding()->set(2);
+            ed->text()->set_raw("LSP-style test");
+            ed->bg_color()->set_rgb24(0x1b1c22);
+            ed->border_color()->set_rgb24(0xdae0ff);
+            ed->border_gap_color()->set_rgb24(0xdae0ff);
+            ed->color()->set_rgb24(0xdae0ff);
+            ed->text_color()->set_rgb24(0x1b1c22);
+            ed->selection_color()->set_rgb24(0x00c0ff);
+            ed->text_selected_color()->set_rgb24(0x1b1c22);
+            ed->cursor_color()->set_rgb24(0x1b1c22);
         }
 
         // Show window
