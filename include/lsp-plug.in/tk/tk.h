@@ -30,39 +30,43 @@
 #include <lsp-plug.in/tk/style/IStyleInitializer.h>
 
 // Generic properties
-#include <lsp-plug.in/tk/prop/Property.h>
-#include <lsp-plug.in/tk/prop/SimpleProperty.h>
-#include <lsp-plug.in/tk/prop/MultiProperty.h>
-#include <lsp-plug.in/tk/prop/Enum.h>
-#include <lsp-plug.in/tk/prop/BitEnum.h>
-#include <lsp-plug.in/tk/prop/Flags.h>
+#include <lsp-plug.in/tk/prop/base/Property.h>
+#include <lsp-plug.in/tk/prop/base/SimpleProperty.h>
+#include <lsp-plug.in/tk/prop/base/MultiProperty.h>
+#include <lsp-plug.in/tk/prop/base/Enum.h>
+#include <lsp-plug.in/tk/prop/base/BitEnum.h>
+#include <lsp-plug.in/tk/prop/base/Flags.h>
+
+// Enumerations
+#include <lsp-plug.in/tk/prop/enum/ButtonMode.h>
+#include <lsp-plug.in/tk/prop/enum/BorderStyle.h>
+#include <lsp-plug.in/tk/prop/enum/WindowPolicy.h>
+#include <lsp-plug.in/tk/prop/enum/Pointer.h>
+#include <lsp-plug.in/tk/prop/enum/Orientation.h>
+
+// Flags
+#include <lsp-plug.in/tk/prop/flags/WindowActions.h>
 
 // Single-value properties
-#include <lsp-plug.in/tk/prop/Boolean.h>
-#include <lsp-plug.in/tk/prop/Integer.h>
-#include <lsp-plug.in/tk/prop/Float.h>
-#include <lsp-plug.in/tk/prop/String.h>
-#include <lsp-plug.in/tk/prop/BorderStyle.h>
-#include <lsp-plug.in/tk/prop/WindowPolicy.h>
-#include <lsp-plug.in/tk/prop/Pointer.h>
-#include <lsp-plug.in/tk/prop/Orientation.h>
+#include <lsp-plug.in/tk/prop/simple/Boolean.h>
+#include <lsp-plug.in/tk/prop/simple/Integer.h>
+#include <lsp-plug.in/tk/prop/simple/Float.h>
+#include <lsp-plug.in/tk/prop/simple/String.h>
 
 // Compound properties
-#include <lsp-plug.in/tk/prop/Allocation.h>
-#include <lsp-plug.in/tk/prop/ButtonMode.h>
-#include <lsp-plug.in/tk/prop/Color.h>
-#include <lsp-plug.in/tk/prop/Font.h>
-#include <lsp-plug.in/tk/prop/Layout.h>
-#include <lsp-plug.in/tk/prop/Padding.h>
-#include <lsp-plug.in/tk/prop/Position.h>
-#include <lsp-plug.in/tk/prop/RangeFloat.h>
-#include <lsp-plug.in/tk/prop/Size.h>
-#include <lsp-plug.in/tk/prop/SizeConstraints.h>
-#include <lsp-plug.in/tk/prop/SizeRange.h>
-#include <lsp-plug.in/tk/prop/StepFloat.h>
-#include <lsp-plug.in/tk/prop/TextLayout.h>
-#include <lsp-plug.in/tk/prop/TextSelection.h>
-#include <lsp-plug.in/tk/prop/WindowActions.h>
+#include <lsp-plug.in/tk/prop/multi/Allocation.h>
+#include <lsp-plug.in/tk/prop/multi/Color.h>
+#include <lsp-plug.in/tk/prop/multi/Font.h>
+#include <lsp-plug.in/tk/prop/multi/Layout.h>
+#include <lsp-plug.in/tk/prop/multi/Padding.h>
+#include <lsp-plug.in/tk/prop/multi/Position.h>
+#include <lsp-plug.in/tk/prop/multi/RangeFloat.h>
+#include <lsp-plug.in/tk/prop/multi/Size.h>
+#include <lsp-plug.in/tk/prop/multi/SizeConstraints.h>
+#include <lsp-plug.in/tk/prop/multi/SizeRange.h>
+#include <lsp-plug.in/tk/prop/multi/StepFloat.h>
+#include <lsp-plug.in/tk/prop/multi/TextLayout.h>
+#include <lsp-plug.in/tk/prop/multi/TextSelection.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>

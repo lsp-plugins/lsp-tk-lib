@@ -5,8 +5,8 @@
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_PROP_BITENUM_H_
-#define LSP_PLUG_IN_TK_PROP_BITENUM_H_
+#ifndef LSP_PLUG_IN_TK_PROP_BASE_BITENUM_H_
+#define LSP_PLUG_IN_TK_PROP_BASE_BITENUM_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
@@ -66,4 +66,4 @@ namespace lsp
 
 
 
-#endif /* LSP_PLUG_IN_TK_PROP_BITENUM_H_ */
+#endif /* LSP_PLUG_IN_TK_PROP_BASE_BITENUM_H_ */

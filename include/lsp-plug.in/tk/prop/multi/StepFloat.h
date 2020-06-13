@@ -5,8 +5,8 @@
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_PROP_STEPFLOAT_H_
-#define LSP_PLUG_IN_TK_PROP_STEPFLOAT_H_
+#ifndef LSP_PLUG_IN_TK_PROP_MULTI_STEPFLOAT_H_
+#define LSP_PLUG_IN_TK_PROP_MULTI_STEPFLOAT_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
@@ -129,4 +129,4 @@ namespace lsp
 } /* namespace lsp */
 
 
-#endif /* LSP_PLUG_IN_TK_PROP_STEPFLOAT_H_ */
+#endif /* LSP_PLUG_IN_TK_PROP_MULTI_STEPFLOAT_H_ */
