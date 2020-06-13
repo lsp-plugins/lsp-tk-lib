@@ -45,6 +45,7 @@
 #include <lsp-plug.in/tk/prop/enum/Orientation.h>
 
 // Flags
+#include <lsp-plug.in/tk/prop/flags/Allocation.h>
 #include <lsp-plug.in/tk/prop/flags/WindowActions.h>
 
 // Single-value properties
@@ -54,13 +55,13 @@
 #include <lsp-plug.in/tk/prop/simple/String.h>
 
 // Compound properties
-#include <lsp-plug.in/tk/prop/multi/Allocation.h>
 #include <lsp-plug.in/tk/prop/multi/Color.h>
 #include <lsp-plug.in/tk/prop/multi/Font.h>
 #include <lsp-plug.in/tk/prop/multi/Layout.h>
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
 #include <lsp-plug.in/tk/prop/multi/Position.h>
 #include <lsp-plug.in/tk/prop/multi/RangeFloat.h>
+#include <lsp-plug.in/tk/prop/multi/Shortcut.h>
 #include <lsp-plug.in/tk/prop/multi/Size.h>
 #include <lsp-plug.in/tk/prop/multi/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/multi/SizeRange.h>

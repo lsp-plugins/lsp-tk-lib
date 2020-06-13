@@ -55,6 +55,34 @@ namespace lsp
             WA_VALIGN   = 1 << 3
         };
 
+        /**
+         * Key modifiers for shortcuts
+         */
+        enum key_modifier_t
+        {
+            KM_LCTRL    = 1 << 0,
+            KM_RCTRL    = 1 << 1,
+            KM_LALT     = 1 << 2,
+            KM_RALT     = 1 << 3,
+            KM_LSHIFT   = 1 << 4,
+            KM_RSHIFT   = 1 << 5,
+            KM_LMETA    = 1 << 6,
+            KM_RMETA    = 1 << 7,
+            KM_LSUPER   = 1 << 8,
+            KM_RSUPER   = 1 << 9,
+            KM_LHYPER   = 1 << 10,
+            KM_RHYPER   = 1 << 11,
+
+            KM_CTRL     = KM_LCTRL | KM_RCTRL,
+            KM_ALT      = KM_LALT | KM_RALT,
+            KM_SHIFT    = KM_LSHIFT | KM_RSHIFT,
+            KM_META     = KM_LMETA | KM_RMETA,
+            KM_SUPER    = KM_LSUPER | KM_RSUPER,
+            KM_HYPER    = KM_LHYPER | KM_RHYPER,
+
+            KM_ALL      = KM_CTRL | KM_ALT | KM_SHIFT | KM_META | KM_SUPER | KM_HYPER
+        };
+
         typedef struct w_class_t
         {
             const char         *name;
