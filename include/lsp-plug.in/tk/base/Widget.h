@@ -66,7 +66,7 @@ namespace lsp
                 prop::Allocation    sAllocation;    // Widget allocation
                 prop::Float         sScaling;       // UI scaling factor
                 prop::Float         sBrightness;    // Brightness
-                prop::Padding       sPadding;
+                prop::Padding       sPadding;       // Widget padding
                 prop::Color         sBgColor;       // Widget color
                 prop::Boolean       sVisibility;    // Visibility
                 prop::Pointer       sPointer;       // Mouse pointer

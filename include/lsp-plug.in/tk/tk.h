@@ -40,6 +40,7 @@
 // Enumerations
 #include <lsp-plug.in/tk/prop/enum/ButtonMode.h>
 #include <lsp-plug.in/tk/prop/enum/BorderStyle.h>
+#include <lsp-plug.in/tk/prop/enum/MenuItemType.h>
 #include <lsp-plug.in/tk/prop/enum/WindowPolicy.h>
 #include <lsp-plug.in/tk/prop/enum/Pointer.h>
 #include <lsp-plug.in/tk/prop/enum/Orientation.h>
@@ -100,6 +101,7 @@
 #include <lsp-plug.in/tk/widgets/simple/Knob.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>
 #include <lsp-plug.in/tk/widgets/simple/Led.h>
+#include <lsp-plug.in/tk/widgets/simple/MenuItem.h>
 #include <lsp-plug.in/tk/widgets/simple/ProgressBar.h>
 #include <lsp-plug.in/tk/widgets/simple/ScrollBar.h>
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>

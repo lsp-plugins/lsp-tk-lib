@@ -83,6 +83,17 @@ namespace lsp
             KM_ALL      = KM_CTRL | KM_ALT | KM_SHIFT | KM_META | KM_SUPER | KM_HYPER
         };
 
+        /**
+         * Menu item type
+         */
+        enum menu_item_type_t
+        {
+            MI_NORMAL,      //!< MI_NORMAL normal menu, with text
+            MI_SEPARATOR,   //!< MI_SEPARATOR separator
+            MI_CHECK,       //!< MI_CHECK check box style
+            MI_RADIO        //!< MI_RADIO radio button style
+        };
+
         typedef struct w_class_t
         {
             const char         *name;
