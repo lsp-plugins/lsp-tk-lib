@@ -65,8 +65,9 @@ namespace lsp
                 void                sync();
                 void                commit(atom_t property);
                 void                parse_value(const LSPString *s);
-                void                parse_key(const LSPString *s);
-                void                parse_modifiers(const LSPString *s);
+                static ws::code_t   parse_key(const LSPString *s);
+                static size_t       parse_modifiers(const LSPString *s);
+                static size_t       parse_modifier(const LSPString *s);
 
             protected:
                 explicit Shortcut(prop::Listener *listener = NULL);
