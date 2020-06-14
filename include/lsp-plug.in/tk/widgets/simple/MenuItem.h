@@ -33,6 +33,12 @@ namespace lsp
                 prop::String                sText;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
+                prop::Color                 sBgSelectedColor;
+                prop::Color                 sTextColor;
+                prop::Color                 sTextSelectedColor;
+                prop::Color                 sCheckColor;
+                prop::Color                 sCheckBgColor;
+                prop::Color                 sCheckBorderColor;
 
             protected:
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -50,14 +56,32 @@ namespace lsp
 //                Menu                       *menu()                   { return pMenu; }
 //                const Menu                 *menu() const             { return pMenu; }
 
-                inline String              *text()                  { return &sText;        }
-                inline const String        *text() const            { return &sText;        }
+                inline String              *text()                      { return &sText;                }
+                inline const String        *text() const                { return &sText;                }
 
-                inline MenuItemType        *type()                  { return &sType;        }
-                inline const MenuItemType  *type() const            { return &sType;        }
+                inline MenuItemType        *type()                      { return &sType;                }
+                inline const MenuItemType  *type() const                { return &sType;                }
 
-                inline Boolean             *checked()               { return &sChecked;     }
-                inline const Boolean       *checked() const         { return &sChecked;     }
+                inline Boolean             *checked()                   { return &sChecked;             }
+                inline const Boolean       *checked() const             { return &sChecked;             }
+
+                inline Color               *bg_selected_color()         { return &sBgSelectedColor;     }
+                inline const Color         *bg_selected_color() const   { return &sBgSelectedColor;     }
+
+                inline Color               *text_color()                { return &sTextColor;           }
+                inline const Color         *text_color() const          { return &sTextColor;           }
+
+                inline Color               *text_selected_color()       { return &sTextSelectedColor;   }
+                inline const Color         *text_selected_color() const { return &sTextSelectedColor;   }
+
+                inline Color               *check_color()               { return &sCheckColor;          }
+                inline const Color         *check_color() const         { return &sCheckColor;          }
+
+                inline Color               *check_bg_color()            { return &sCheckBgColor;        }
+                inline const Color         *check_bg_color() const      { return &sCheckBgColor;        }
+
+                inline Color               *check_border_color()        { return &sCheckBorderColor;    }
+                inline const Color         *check_border_color() const  { return &sCheckBorderColor;    }
 
             public:
 //                status_t            set_submenu(LSPMenu *submenu);

@@ -415,6 +415,78 @@ namespace lsp
 
                 return STATUS_OK;
             }
+
+            status_t Color::override(Style *style, const char *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                else if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                lsp::Color tmp;
+                parse(&tmp, value, style);
+                return override(style, &tmp);
+            }
+
+            status_t Color::override(Style *style, const LSPString *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                else if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                lsp::Color tmp;
+                parse(&tmp, value->get_utf8(), style);
+                return override(style, &tmp);
+            }
+
+            status_t Color::override(Style *style, const lsp::Color *c)
+            {
+                if ((style == NULL) || (c == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                else if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                char buf[32];
+
+                style->begin();
+                {
+                    // R, G, B components
+                    style->override_float(vAtoms[P_R], c->red());
+                    style->override_float(vAtoms[P_G], c->green());
+                    style->override_float(vAtoms[P_B], c->blue());
+
+                    // H, S, L components
+                    style->override_float(vAtoms[P_H], c->hue());
+                    style->override_float(vAtoms[P_S], c->saturation());
+                    style->override_float(vAtoms[P_L], c->lightness());
+
+                    // Alpha component
+                    style->override_float(vAtoms[P_A], c->alpha());
+
+                    // Mixed components
+                    c->format_rgb(buf, sizeof(buf)/sizeof(char));
+                    style->override_string(vAtoms[P_RGB], buf);
+
+                    c->format_rgba(buf, sizeof(buf)/sizeof(char));
+                    style->override_string(vAtoms[P_RGBA], buf);
+
+                    c->format_hsl(buf, sizeof(buf)/sizeof(char));
+                    style->override_string(vAtoms[P_HSL], buf);
+
+                    c->format_hsla(buf, sizeof(buf)/sizeof(char));
+                    style->override_string(vAtoms[P_HSLA], buf);
+
+                    if (c->is_hsl())
+                        c->format_hsla(buf, sizeof(buf)/sizeof(char));
+                    else
+                        c->format_rgba(buf, sizeof(buf)/sizeof(char));
+                    style->override_string(vAtoms[P_VALUE], buf);
+                }
+                style->end();
+
+                return STATUS_OK;
+            }
         }
     } /* namespace tk */
 } /* namespace lsp */

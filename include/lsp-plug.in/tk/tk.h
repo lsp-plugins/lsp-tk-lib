@@ -113,10 +113,11 @@
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
 
 // Container widgets
-#include <lsp-plug.in/tk/widgets/containers/Window.h>
+#include <lsp-plug.in/tk/widgets/containers/Align.h>
 #include <lsp-plug.in/tk/widgets/containers/Box.h>
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
-#include <lsp-plug.in/tk/widgets/containers/Align.h>
+#include <lsp-plug.in/tk/widgets/containers/Menu.h>
+#include <lsp-plug.in/tk/widgets/containers/Window.h>
 
 
 namespace lsp

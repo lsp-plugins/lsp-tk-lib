@@ -17,7 +17,13 @@ namespace lsp
             Widget(dpy),
             sText(&sProperties),
             sType(&sProperties),
-            sChecked(&sProperties)
+            sChecked(&sProperties),
+            sBgSelectedColor(&sProperties),
+            sTextColor(&sProperties),
+            sTextSelectedColor(&sProperties),
+            sCheckColor(&sProperties),
+            sCheckBgColor(&sProperties),
+            sCheckBorderColor(&sProperties)
         {
 //            pMenu       = NULL;
             pClass      = &metadata;
@@ -42,12 +48,25 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sType.bind("type", &sStyle);
             sChecked.bind("checked", &sStyle);
+            sBgSelectedColor.bind("background.selected.color", &sStyle);
+            sTextColor.bind("text.color", &sStyle);
+            sTextSelectedColor.bind("text.selected.color", &sStyle);
+            sCheckColor.bind("check.color", &sStyle);
+            sCheckBgColor.bind("check.background.color", &sStyle);
+            sCheckBorderColor.bind("check.border.color", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
             {
                 sType.init(sclass, MI_NORMAL);
                 sChecked.init(sclass, false);
+
+                sBgSelectedColor.init(sclass, "#00ccff");
+                sTextColor.init(sclass, "#000000");
+                sTextSelectedColor.init(sclass, "#ffffff");
+                sCheckColor.init(sclass, "#00ccff");
+                sCheckBgColor.init(sclass, "#ffffff");
+                sCheckBorderColor.init(sclass, "#000000");
             }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
