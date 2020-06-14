@@ -67,6 +67,7 @@ namespace lsp
 
         static const key_desc_t KEY_DESC[] =
         {
+            { ' ', "Space" },
             { ws::WSK_BACKSPACE, "Backspace" },
             { ws::WSK_TAB, "Tab" },
             { ws::WSK_LINEFEED, "LF" },
@@ -393,16 +394,13 @@ namespace lsp
 
         status_t Shortcut::append_key(LSPString *s, ws::code_t key)
         {
-            if (key >= ws::WSK_FIRST)
+            for (const key_desc_t *k=KEY_DESC; k->code != ws::WSK_UNKNOWN; ++k)
             {
-                for (const key_desc_t *k=KEY_DESC; k->code != ws::WSK_UNKNOWN; ++k)
+                if (k->code == key)
                 {
-                    if (k->code == key)
-                    {
-                        if (k->desc == NULL)
-                            return STATUS_OK;
-                        return (s->append_utf8(k->desc)) ? STATUS_OK : STATUS_NO_MEM;
-                    }
+                    if (k->desc == NULL)
+                        return STATUS_OK;
+                    return (s->append_utf8(k->desc)) ? STATUS_OK : STATUS_NO_MEM;
                 }
             }
 
@@ -439,6 +437,46 @@ namespace lsp
             return res;
         }
 
+        bool Shortcut::check(ws::code_t key, size_t mod)
+        {
+            if (nKey != key)
+                return false;
+
+            size_t xmod = nMod;
+            for (size_t i=0; i<(sizeof(MOD_DESC) / sizeof(mod_desc_t)); ++i)
+            {
+                size_t mask = mod & 3;
+                switch (xmod & 3)
+                {
+                    case 0:
+                        if (mask != 0)
+                            return false;
+                        break;
+                    case 1:
+                        if (mask != 1)
+                            return false;
+                        break;
+                    case 2:
+                        if (mask != 2)
+                            return false;
+                        break;
+                    case 3:
+                        if (mask == 0)
+                            return false;
+                        break;
+                }
+
+                mod  >>= 2;
+                xmod >>= 2;
+            }
+
+            return true;
+        }
+
+        status_t Shortcut::format(LSPString *s)
+        {
+            return format_value(s, nKey, nMod);
+        }
 
     } /* namespace tk */
 } /* namespace lsp */
