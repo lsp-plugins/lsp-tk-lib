@@ -49,6 +49,7 @@ namespace lsp
         class Widget;
         class Style;
         class IStyleListener;
+        class Widget;
     }
 }
 

@@ -29,8 +29,11 @@
 #include <lsp-plug.in/tk/style/IStyleListener.h>
 #include <lsp-plug.in/tk/style/IStyleInitializer.h>
 
-// Generic properties
+// Base property definition
 #include <lsp-plug.in/tk/prop/base/Property.h>
+
+// Generic properties
+#include <lsp-plug.in/tk/prop/base/Ptr.h>
 #include <lsp-plug.in/tk/prop/base/SimpleProperty.h>
 #include <lsp-plug.in/tk/prop/base/MultiProperty.h>
 #include <lsp-plug.in/tk/prop/base/Enum.h>
@@ -54,6 +57,7 @@
 #include <lsp-plug.in/tk/prop/simple/Integer.h>
 #include <lsp-plug.in/tk/prop/simple/Float.h>
 #include <lsp-plug.in/tk/prop/simple/String.h>
+#include <lsp-plug.in/tk/prop/simple/WidgetPtr.h>
 
 // Compound properties
 #include <lsp-plug.in/tk/prop/multi/Color.h>
