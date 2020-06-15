@@ -23,12 +23,12 @@ namespace lsp
             class WidgetPtr: public Ptr
             {
                 private:
+                    WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &);
+
+                protected:
                     inline WidgetPtr<widget_t> *ccast() const       { return const_cast< WidgetPtr<widget_t> >(this);                               }
                     inline widget_t            *wcast(void *w)      { return (w != NULL) ? static_cast<widget_t*>(static_cast<Widget *>(w)) : NULL; }
-                    inline void                *vcast(Widget *w)    { return w;                         }
-
-                private:
-                    WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &);
+                    static inline void         *vcast(Widget *w)    { return w;                         }
 
                 protected:
                     const w_class_t            *pMeta;
@@ -67,7 +67,7 @@ namespace lsp
                         explicit WidgetPtr(const w_class_t *meta, prop::Listener *listener = NULL): tk::WidgetPtr<widget_t>(meta, listener) {}
 
                     public:
-                        inline void             bind(widget_t *dfl) { this->pDfl  = vcast(dfl);             }
+                        inline void             bind(widget_t *dfl) { this->pDfl  = tk::WidgetPtr<widget_t>::vcast(dfl);    }
                 };
         }
     }

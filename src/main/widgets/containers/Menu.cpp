@@ -196,12 +196,12 @@ namespace lsp
 
             vItems.flush();
 
-//            if (pWindow != NULL)
-//            {
-//                pWindow->destroy();
-//                delete pWindow;
-//                pWindow = NULL;
-//            }
+            if (pWindow != NULL)
+            {
+                pWindow->destroy();
+                delete pWindow;
+                pWindow = NULL;
+            }
         }
 
         void Menu::property_changed(Property *prop)
@@ -740,97 +740,112 @@ namespace lsp
 //            return LSPWidgetContainer::hide();
 //        }
 //
-//        bool Menu::show()
-//        {
-//            if (is_visible())
-//                return false;
-//
-//            size_t screen = pDisplay->display()->default_screen();
-//            LSPWindow *top = widget_cast<LSPWindow>(toplevel());
-//            if (top != NULL)
-//                screen = top->screen();
-//
-//            return show(screen, nPopupLeft, nPopupTop);
-//        }
-//
-//        bool Menu::show(size_t screen)
-//        {
-//            return show(screen, nPopupLeft, nPopupTop);
-//        }
-//
-//        bool Menu::show(Widget *w)
-//        {
-//            return show(w, nPopupLeft, nPopupTop);
-//        }
-//
-//        bool Menu::show(Widget *w, ssize_t x, ssize_t y)
-//        {
-//            if (is_visible())
-//                return false;
-//
-//            size_t screen = pDisplay->display()->default_screen();
-//            LSPWindow *top = widget_cast<LSPWindow>(toplevel());
-//            if (top != NULL)
-//                screen = top->screen();
-//
-//            return show(w, screen, x, y);
-//        }
-//
-//        bool Menu::show(Widget *w, const ws::event_t *ev)
-//        {
-//            if (ev == NULL)
-//                return show(w, nPopupLeft, nPopupTop);
-//
-//            ws::rectangle_t r;
-//            r.nLeft     = 0;
-//            r.nTop      = 0;
-//            r.nWidth    = 0;
-//            r.nHeight   = 0;
-//
-//            Window *parent = widget_cast<Window>(w->toplevel());
-//            if (parent != NULL)
-//                parent->get_absolute_geometry(&r);
-//
-//            return show(w, r.nLeft + ev->nLeft, r.nTop + ev->nTop);
-//        }
-//
-//        bool Menu::show(size_t screen, ssize_t left, ssize_t top)
-//        {
-//            return show(NULL, screen, left, top);
-//        }
-//
-//        bool Menu::show(Widget *w, size_t screen, ssize_t left, ssize_t top)
-//        {
-//            if (is_visible())
-//                return false;
-//
-//            // Determine what screen to use
-//            ws::IDisplay *dpy = pDisplay->display();
-//            if (screen >= dpy->screens())
-//                screen = dpy->default_screen();
-//
-//            // Now we are ready to create window
-//            if (pWindow == NULL)
-//            {
-//                // Create window
-//                pWindow = new MenuWindow(pDisplay, this, screen);
-//                if (pWindow == NULL)
-//                    return false;
-//
-//                // Initialize window
-//                status_t result = pWindow->init();
-//                if (result != STATUS_OK)
-//                {
-//                    pWindow->destroy();
-//                    delete pWindow;
-//                    pWindow = NULL;
-//                    return false;
-//                }
-//
-//                pWindow->set_border_style(BS_POPUP);
-//                pWindow->actions()->set_actions(WA_POPUP);
-//            }
-//
+        void Menu::show()
+        {
+            if (sVisibility.get())
+                return;
+
+            size_t screen = pDisplay->display()->default_screen();
+            Window *top = widget_cast<Window>(toplevel());
+            if (top != NULL)
+                screen = top->screen();
+
+            show(screen, sPosition.left(), sPosition.top());
+        }
+
+        void Menu::show(size_t screen)
+        {
+            show(screen, sPosition.left(), sPosition.top());
+        }
+
+        void Menu::show(Widget *w, ssize_t x, ssize_t y)
+        {
+            if (sVisibility.get())
+                return;
+
+            size_t screen = pDisplay->display()->default_screen();
+            Window *top = widget_cast<Window>(w->toplevel());
+            if (top == NULL)
+                top = widget_cast<Window>(toplevel());
+            if (top != NULL)
+                screen = top->screen();
+
+            return show(w, screen, x, y);
+        }
+
+        void Menu::show(Widget *w)
+        {
+            show(w, sPosition.left(), sPosition.top());
+        }
+
+        void Menu::show(Widget *w, const ws::event_t *ev)
+        {
+            if (ev == NULL)
+            {
+                show(w, sPosition.left(), sPosition.top());
+                return;
+            }
+
+            ws::rectangle_t r;
+            r.nLeft     = 0;
+            r.nTop      = 0;
+            r.nWidth    = 0;
+            r.nHeight   = 0;
+
+            Window *top = widget_cast<Window>(w->toplevel());
+            if (top == NULL)
+                top = widget_cast<Window>(toplevel());
+            if (top != NULL)
+                top->get_absolute_geometry(&r);
+
+            return show(w, r.nLeft + ev->nLeft, r.nTop + ev->nTop);
+        }
+
+        void Menu::show(size_t screen, ssize_t left, ssize_t top)
+        {
+            show(NULL, screen, left, top);
+        }
+
+        void Menu::show(Widget *w, size_t screen, ssize_t left, ssize_t top)
+        {
+            if (sVisibility.get())
+                return;
+
+            // Determine what screen to use
+            ws::IDisplay *dpy = pDisplay->display();
+            if (screen >= dpy->screens())
+                screen  = dpy->default_screen();
+
+            // Now we are ready to create window
+            if (pWindow == NULL)
+            {
+                // Create window
+                pWindow = pDisplay->display()->create_window(screen);
+                if (pWindow == NULL)
+                    return;
+
+                // Initialize window
+                status_t result = pWindow->init();
+                if (result != STATUS_OK)
+                {
+                    pWindow->destroy();
+                    delete pWindow;
+                    pWindow = NULL;
+                    return;
+                }
+
+                pWindow->set_border_style(ws::BS_POPUP);
+                pWindow->set_window_actions(ws::WA_POPUP);
+            }
+
+            // Obtain the size of window
+            ws::size_limit_t sr;
+            size_request(&sr);
+
+            sPosition.set(left, top);
+
+            WidgetContainer::show();
+
 //            // Get initial window geometry
 //            realize_t wr;
 //            pWindow->get_geometry(&wr);
@@ -874,7 +889,28 @@ namespace lsp
 //                pWindow->grab_events(GRAB_MENU);
 //
 //            return LSPWidgetContainer::show();
-//        }
+        }
+
+        void Menu::hide_widget()
+        {
+            // Destroy window
+            if (pWindow != NULL)
+            {
+                pWindow->destroy();
+                delete pWindow;
+                pWindow = NULL;
+            }
+
+            WidgetContainer::hide_widget();
+        }
+
+        void Menu::show_widget()
+        {
+            WidgetContainer::show_widget();
+
+            // TODO: sync the window position
+        }
+
 //
 //        void Menu::size_request(ws::size_limit_t *r)
 //        {

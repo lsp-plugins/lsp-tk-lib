@@ -15,6 +15,7 @@ namespace lsp
 
         MenuItem::MenuItem(Display *dpy):
             Widget(dpy),
+            sMenu(&Menu::metadata, &sProperties),
             sText(&sProperties),
             sType(&sProperties),
             sChecked(&sProperties),
@@ -24,10 +25,8 @@ namespace lsp
             sCheckColor(&sProperties),
             sCheckBgColor(&sProperties),
             sCheckBorderColor(&sProperties),
-            sShortcut(&sProperties),
-            sMenu(&sProperties)
+            sShortcut(&sProperties)
         {
-//            pMenu       = NULL;
             pClass      = &metadata;
         }
         

@@ -133,6 +133,10 @@ namespace lsp
 
                 virtual void                realize(const ws::rectangle_t *r);
 
+                virtual void                hide_widget();
+
+                virtual void                show_widget();
+
             public:
                 explicit Menu(Display *dpy);
                 virtual ~Menu();
@@ -182,26 +186,26 @@ namespace lsp
                 virtual status_t            remove(Widget *child);
 
                 virtual Widget             *get(size_t index);
+
+                virtual void                show();
+
+                virtual void                show(size_t screen);
+
+                virtual void                show(size_t screen, ssize_t left, ssize_t top);
+
+                virtual void                show(Widget *w, size_t screen, ssize_t left, ssize_t top);
+
+                virtual void                show(Widget *w);
+
+                virtual void                show(Widget *w, ssize_t left, ssize_t top);
+
+                virtual void                show(Widget *w, const ws::event_t *ev);
 //
 //                virtual void        draw(ws::ISurface *s);
 //
 //                virtual void        query_resize();
 //
-//                virtual bool        hide();
-//
-//                virtual bool        show();
-//
-//                virtual bool        show(size_t screen);
-//
-//                virtual bool        show(size_t screen, ssize_t left, ssize_t top);
-//
-//                virtual bool        show(Widget *w, size_t screen, ssize_t left, ssize_t top);
-//
-//                virtual bool        show(Widget *w);
-//
-//                virtual bool        show(Widget *w, ssize_t left, ssize_t top);
-//
-//                virtual bool        show(Widget *w, const ws::event_t *ev);
+
 //
 //                virtual status_t    on_mouse_down(const ws::event_t *e);
 //
