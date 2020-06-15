@@ -154,6 +154,9 @@ namespace lsp
                      */
                     status_t            init(Style *style, size_t left, size_t right, size_t top, size_t bottom);
                     status_t            init(Style *style, const padding_t *p);
+
+                    status_t            override(Style *style, size_t left, size_t right, size_t top, size_t bottom);
+                    status_t            override(Style *style, const padding_t *p);
             };
         }
     

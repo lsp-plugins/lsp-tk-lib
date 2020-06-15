@@ -438,15 +438,13 @@ namespace lsp
                 if (pStyle == NULL)
                     return STATUS_BAD_STATE;
 
-                style->begin();
-                {
-                    style->create_int(vAtoms[P_LEFT], left);
-                    style->create_int(vAtoms[P_RIGHT], right);
-                    style->create_int(vAtoms[P_TOP], top);
-                    style->create_int(vAtoms[P_BOTTOM], bottom);
-                }
-                style->end();
-                return STATUS_OK;
+                padding_t p;
+                p.nLeft     = left;
+                p.nRight    = right;
+                p.nTop      = top;
+                p.nBottom   = bottom;
+
+                return init(style, &p);
             }
 
             status_t Padding::init(Style *style, const padding_t *p)
@@ -468,6 +466,44 @@ namespace lsp
 
                     s.fmt_ascii("%ld %ld %ld %ld", long(p->nLeft), long(p->nRight), long(p->nTop), long(p->nBottom));
                     style->create_string(vAtoms[P_VALUE], &s);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+
+            status_t Padding::override(Style *style, size_t left, size_t right, size_t top, size_t bottom)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                padding_t p;
+                p.nLeft     = left;
+                p.nRight    = right;
+                p.nTop      = top;
+                p.nBottom   = bottom;
+
+                return override(style, &p);
+            }
+
+            status_t Padding::override(Style *style, const padding_t *p)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->override_int(vAtoms[P_LEFT], p->nLeft);
+                    style->override_int(vAtoms[P_RIGHT], p->nRight);
+                    style->override_int(vAtoms[P_TOP], p->nTop);
+                    style->override_int(vAtoms[P_BOTTOM], p->nBottom);
+
+                    // Compound objects
+                    LSPString s;
+                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nTop), long(p->nRight), long(p->nBottom), long(p->nLeft));
+                    style->override_string(vAtoms[P_CSS], &s);
+
+                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nLeft), long(p->nRight), long(p->nTop), long(p->nBottom));
+                    style->override_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;

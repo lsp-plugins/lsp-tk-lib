@@ -23,7 +23,9 @@ namespace lsp
             sTextSelectedColor(&sProperties),
             sCheckColor(&sProperties),
             sCheckBgColor(&sProperties),
-            sCheckBorderColor(&sProperties)
+            sCheckBorderColor(&sProperties),
+            sShortcut(&sProperties),
+            sMenu(&sProperties)
         {
 //            pMenu       = NULL;
             pClass      = &metadata;
@@ -54,6 +56,8 @@ namespace lsp
             sCheckColor.bind("check.color", &sStyle);
             sCheckBgColor.bind("check.background.color", &sStyle);
             sCheckBorderColor.bind("check.border.color", &sStyle);
+            sShortcut.bind("shortcut", &sStyle);
+            sMenu.bind(NULL);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -67,6 +71,7 @@ namespace lsp
                 sCheckColor.init(sclass, "#00ccff");
                 sCheckBgColor.init(sclass, "#ffffff");
                 sCheckBorderColor.init(sclass, "#000000");
+                sShortcut.init(sclass);
             }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());

@@ -24,6 +24,31 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
+                typedef struct isizes_t
+                {
+                    size_t              mc_width;   // menu caption width
+                    size_t              mc_height;  // menu caption height
+                    size_t              cb_width;   // check box / radio button width
+                    size_t              cb_height;  // check box / radio button height
+                    size_t              mr_width;   // menu reference width
+                    size_t              mr_height;  // menu reference height
+                    size_t              sc_width;   // shortcut width
+                    size_t              sc_height;  // shortcut height
+                    size_t              sp_width;   // separator width
+                    size_t              sp_height;  // separator height
+
+                    size_t              items;      // number of visible items
+                    size_t              separators; // number of visible separators
+                    size_t              width;      // overall width
+                    size_t              s_height;   // separator height
+                    size_t              m_height;   // menu item height
+                    size_t              hspacing;   // horizontal spacing
+                    size_t              vspacing;   // vertical spacing
+                    bool                ckbox;      // at least one check box is present
+                    bool                shortcut;   // at least one shortcut is present
+                    bool                submenu;    // at least one submenu is present
+                } isizes_t;
+
 //                class MenuWindow: public LSPWindow
 //                {
 //                    protected:
@@ -62,9 +87,12 @@ namespace lsp
             protected:
                 lltl::parray<MenuItem>  vItems;
 
+                ws::IWindow            *pWindow;        // Associated window
+
                 prop::Font              sFont;
                 prop::Position          sPosition;
-                prop::Integer           sSpacing;
+                prop::Integer           sHSpacing;
+                prop::Integer           sVSpacing;
                 prop::Integer           sScrolling;
                 prop::Integer           sBorder;
                 prop::Color             sBorderColor;
@@ -89,10 +117,12 @@ namespace lsp
                 static status_t             timer_handler(ws::timestamp_t time, void *arg);
 
             protected:
-                ssize_t                     find_item(ssize_t x, ssize_t y, ssize_t *ry);
-                void                        update_scroll();
-                void                        selection_changed(ssize_t sel, ssize_t ry);
-                Menu                       *check_inside_submenu(ws::event_t *e);
+                void                        estimate_sizes(isizes_t *sz);
+
+//                ssize_t                     find_item(ssize_t x, ssize_t y, ssize_t *ry);
+//                void                        update_scroll();
+//                void                        selection_changed(ssize_t sel, ssize_t ry);
+//                Menu                       *check_inside_submenu(ws::event_t *e);
 
                 void                        do_destroy();
 
@@ -117,8 +147,11 @@ namespace lsp
                 inline Position            *position()                  { return &sPosition;                }
                 inline const Position      *position() const            { return &sPosition;                }
 
-                inline Integer             *spacing()                   { return &sSpacing;                 }
-                inline const Integer       *spacing() const             { return &sSpacing;                 }
+                inline Integer             *hspacing()                  { return &sHSpacing;                }
+                inline const Integer       *hspacing() const            { return &sHSpacing;                }
+
+                inline Integer             *vspacing()                  { return &sVSpacing;                }
+                inline const Integer       *vspacing() const            { return &sVSpacing;                }
 
                 inline Integer             *scrolling()                 { return &sScrolling;               }
                 inline const Integer       *scrolling() const           { return &sScrolling;               }
@@ -142,41 +175,41 @@ namespace lsp
                 inline const Integer       *check_border_radius() const { return &sCheckBorderRadius;       }
 
             public:
-                virtual status_t    add(Widget *child);
+                virtual status_t            add(Widget *child);
 
-                virtual status_t    insert(Widget *child, size_t index);
+                virtual status_t            insert(Widget *child, size_t index);
 
-                virtual status_t    remove(Widget *child);
+                virtual status_t            remove(Widget *child);
 
-                virtual Widget     *get(size_t index);
-
-                virtual void        draw(ws::ISurface *s);
-
-                virtual void        query_resize();
-
-                virtual bool        hide();
-
-                virtual bool        show();
-
-                virtual bool        show(size_t screen);
-
-                virtual bool        show(size_t screen, ssize_t left, ssize_t top);
-
-                virtual bool        show(Widget *w, size_t screen, ssize_t left, ssize_t top);
-
-                virtual bool        show(Widget *w);
-
-                virtual bool        show(Widget *w, ssize_t left, ssize_t top);
-
-                virtual bool        show(Widget *w, const ws::event_t *ev);
-
-                virtual status_t    on_mouse_down(const ws::event_t *e);
-
-                virtual status_t    on_mouse_up(const ws::event_t *e);
-
-                virtual status_t    on_mouse_move(const ws::event_t *e);
-
-                virtual status_t    on_mouse_scroll(const ws::event_t *e);
+                virtual Widget             *get(size_t index);
+//
+//                virtual void        draw(ws::ISurface *s);
+//
+//                virtual void        query_resize();
+//
+//                virtual bool        hide();
+//
+//                virtual bool        show();
+//
+//                virtual bool        show(size_t screen);
+//
+//                virtual bool        show(size_t screen, ssize_t left, ssize_t top);
+//
+//                virtual bool        show(Widget *w, size_t screen, ssize_t left, ssize_t top);
+//
+//                virtual bool        show(Widget *w);
+//
+//                virtual bool        show(Widget *w, ssize_t left, ssize_t top);
+//
+//                virtual bool        show(Widget *w, const ws::event_t *ev);
+//
+//                virtual status_t    on_mouse_down(const ws::event_t *e);
+//
+//                virtual status_t    on_mouse_up(const ws::event_t *e);
+//
+//                virtual status_t    on_mouse_move(const ws::event_t *e);
+//
+//                virtual status_t    on_mouse_scroll(const ws::event_t *e);
         };
     
     } /* namespace tk */

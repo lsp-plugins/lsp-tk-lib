@@ -478,6 +478,34 @@ namespace lsp
             return format_value(s, nKey, nMod);
         }
 
+        namespace prop
+        {
+            status_t Shortcut::init(Style *style)
+            {
+                return init(style, ws::WSK_UNKNOWN, 0);
+            }
+
+            status_t Shortcut::init(Style *style, ws::code_t key, size_t mod)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    LSPString s;
+
+                    // Simple components
+                    if (format_value(&s, key, mod) == STATUS_OK)
+                        pStyle->set_string(vAtoms[P_VALUE], &s);
+                    if (format_modifiers(&s, mod) == STATUS_OK)
+                        pStyle->set_string(vAtoms[P_MOD], &s);
+                    if (format_key(&s, key) == STATUS_OK)
+                        pStyle->set_string(vAtoms[P_VALUE], &s);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */
 

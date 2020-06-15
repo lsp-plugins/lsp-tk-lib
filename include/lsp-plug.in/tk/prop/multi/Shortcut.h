@@ -18,7 +18,7 @@ namespace lsp
          */
         class Shortcut: public MultiProperty
         {
-            protected:
+            private:
                 Shortcut & operator = (const Shortcut &);
 
             protected:
@@ -74,37 +74,39 @@ namespace lsp
                 ~Shortcut();
 
             public:
-                inline bool         modifier(key_modifier_t v) const    { return (nMod & v) == v;       }
+                inline bool         modifier(key_modifier_t v) const    { return (nMod & v) == v;               }
 
-                inline bool         lctrl() const                       { return modifier(KM_LCTRL);    }
-                inline bool         rctrl() const                       { return modifier(KM_RCTRL);    }
-                inline bool         ctrl() const                        { return modifier(KM_CTRL);     }
+                inline bool         lctrl() const                       { return modifier(KM_LCTRL);            }
+                inline bool         rctrl() const                       { return modifier(KM_RCTRL);            }
+                inline bool         ctrl() const                        { return modifier(KM_CTRL);             }
 
-                inline bool         lalt() const                        { return modifier(KM_LALT);     }
-                inline bool         ralt() const                        { return modifier(KM_RALT);     }
-                inline bool         alt() const                         { return modifier(KM_ALT);      }
+                inline bool         lalt() const                        { return modifier(KM_LALT);             }
+                inline bool         ralt() const                        { return modifier(KM_RALT);             }
+                inline bool         alt() const                         { return modifier(KM_ALT);              }
 
-                inline bool         lshift() const                      { return modifier(KM_LSHIFT);   }
-                inline bool         rshift() const                      { return modifier(KM_RSHIFT);   }
-                inline bool         shift() const                       { return modifier(KM_SHIFT);    }
+                inline bool         lshift() const                      { return modifier(KM_LSHIFT);           }
+                inline bool         rshift() const                      { return modifier(KM_RSHIFT);           }
+                inline bool         shift() const                       { return modifier(KM_SHIFT);            }
 
-                inline bool         lmeta() const                       { return modifier(KM_LMETA);    }
-                inline bool         rmeta() const                       { return modifier(KM_RMETA);    }
-                inline bool         meta() const                        { return modifier(KM_META);     }
+                inline bool         lmeta() const                       { return modifier(KM_LMETA);            }
+                inline bool         rmeta() const                       { return modifier(KM_RMETA);            }
+                inline bool         meta() const                        { return modifier(KM_META);             }
 
-                inline bool         lsuper() const                      { return modifier(KM_LSUPER);   }
-                inline bool         rsuper() const                      { return modifier(KM_RSUPER);   }
-                inline bool         super() const                       { return modifier(KM_SUPER);    }
+                inline bool         lsuper() const                      { return modifier(KM_LSUPER);           }
+                inline bool         rsuper() const                      { return modifier(KM_RSUPER);           }
+                inline bool         super() const                       { return modifier(KM_SUPER);            }
 
-                inline bool         lhyper() const                      { return modifier(KM_LHYPER);   }
-                inline bool         rhyper() const                      { return modifier(KM_RHYPER);   }
-                inline bool         hyper() const                       { return modifier(KM_HYPER);    }
+                inline bool         lhyper() const                      { return modifier(KM_LHYPER);           }
+                inline bool         rhyper() const                      { return modifier(KM_RHYPER);           }
+                inline bool         hyper() const                       { return modifier(KM_HYPER);            }
 
-                inline ws::code_t   key() const                         { return nKey;                  }
+                inline ws::code_t   key() const                         { return nKey;                          }
+
+                inline bool         valid() const                       { return nKey != ws::WSK_UNKNOWN;       }
 
                 ws::code_t          set(ws::code_t key);
                 void                set(ws::code_t key, size_t mod);
-                inline ws::code_t   set_key(ws::code_t key)             { return set(key);              }
+                inline ws::code_t   set_key(ws::code_t key)             { return set(key);                      }
                 size_t              set_modifiers(size_t mod);
                 inline size_t       add_modifiers(size_t mod)           { return set_modifiers(nMod | mod);     }
                 inline size_t       remove_modifiers(size_t mod)        { return set_modifiers(nMod & (~mod));  }
@@ -125,6 +127,30 @@ namespace lsp
                  */
                 status_t            format(LSPString *s);
         };
+
+        namespace prop
+        {
+            class Shortcut: public tk::Shortcut
+            {
+                private:
+                    Shortcut & operator = (const Shortcut &);
+
+                public:
+                    inline Shortcut(prop::Listener *listener = NULL): tk::Shortcut(listener) {}
+                    inline ~Shortcut() {}
+
+                public:
+                    /**
+                     * Bind property with specified name to the style of linked widget
+                     */
+                    inline status_t     bind(atom_t property, Style *style)             { return tk::Shortcut::bind(property, style, vAtoms, DESC, &sListener); }
+                    inline status_t     bind(const char *property, Style *style)        { return tk::Shortcut::bind(property, style, vAtoms, DESC, &sListener); }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return tk::Shortcut::bind(property, style, vAtoms, DESC, &sListener); }
+
+                    status_t            init(Style *style, ws::code_t key, size_t mod);
+                    status_t            init(Style *style);
+            };
+        }
     }
 }
 

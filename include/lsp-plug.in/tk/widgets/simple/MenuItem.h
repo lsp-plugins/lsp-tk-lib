@@ -27,9 +27,7 @@ namespace lsp
                 friend class Menu;
 
             protected:
-// TODO
-//                Menu                       *pMenu;
-
+                prop::WidgetPtr<Menu>       sMenu;
                 prop::String                sText;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
@@ -39,6 +37,7 @@ namespace lsp
                 prop::Color                 sCheckColor;
                 prop::Color                 sCheckBgColor;
                 prop::Color                 sCheckBorderColor;
+                prop::Shortcut              sShortcut;
 
             protected:
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -53,8 +52,8 @@ namespace lsp
                 virtual status_t            init();
 
             public:
-//                Menu                       *menu()                   { return pMenu; }
-//                const Menu                 *menu() const             { return pMenu; }
+                inline WidgetPtr<Menu>         *menu()                  { return &sMenu;                }
+                inline const WidgetPtr<Menu>   *menu() const            { return &sMenu;                }
 
                 inline String              *text()                      { return &sText;                }
                 inline const String        *text() const                { return &sText;                }
@@ -83,8 +82,8 @@ namespace lsp
                 inline Color               *check_border_color()        { return &sCheckBorderColor;    }
                 inline const Color         *check_border_color() const  { return &sCheckBorderColor;    }
 
-            public:
-//                status_t            set_submenu(LSPMenu *submenu);
+                inline Shortcut            *shortcut()                  { return &sShortcut;            }
+                inline const Shortcut      *shortcut() const            { return &sShortcut;            }
 
             public:
                 virtual status_t            on_submit();
