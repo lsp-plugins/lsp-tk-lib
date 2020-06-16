@@ -25,6 +25,17 @@ namespace lsp
             O_VERTICAL          //!< O_VERTICAL vertical orientation
         };
 
+        /**
+         * Arrangement position
+         */
+        enum arrangement_pos_t
+        {
+            A_LEFT,             //!< A_LEFT arrangement at the left side of area
+            A_RIGHT,            //!< A_RIGHT arrangement at the right side of area
+            A_TOP,              //!< A_TOP arrangement at the top side of area
+            A_BOTTOM            //!< A_BOTTOM arrangement at the bottom side of area
+        };
+
         enum scrolling_t
         {
             SCROLL_NONE,        //!< SCROLL_NONE no scrolling permitted, the nested widget fully fits the area
@@ -102,11 +113,19 @@ namespace lsp
 
         typedef struct padding_t
         {
-            size_t              nLeft;
-            size_t              nRight;
-            size_t              nTop;
-            size_t              nBottom;
+            size_t              nLeft;          // Padding from left
+            size_t              nRight;         // Padding from right
+            size_t              nTop;           // Padding from top
+            size_t              nBottom;        // Padding from bottom
         } padding_t;
+
+        typedef struct arrangement_t
+        {
+            arrangement_pos_t   enPosition;     // Position relative to the area
+            float               fAlign;         // Alignment, for horizontal arrangement -1 is leftmost, +1 is rightmost
+            bool                bFlexible;      // Arrangement is flexible: prefer fAlign but may change if it does not match
+            bool                bStretch;       // Stretch parameters
+        } arrangement_t;
 
         /**
          * Atom identifier

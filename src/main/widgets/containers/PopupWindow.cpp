@@ -49,6 +49,11 @@ namespace lsp
             return STATUS_OK;
         }
 
+        bool PopupWindow::set_arrangements(const lltl::darray<arrangement_t> *list)
+        {
+            return vArrangements.set(list);
+        }
+
         status_t PopupWindow::post_init()
         {
             // Don't create native window
@@ -133,12 +138,105 @@ namespace lsp
             }
 
             // Window has been created, adjust position
-            ws::size_limit_t sr;
-            get_padded_size_limits(&sr);
+            bool arranged = false;
 
+            for (size_t i=0, n=vArrangements.size(); i<n; ++i)
+            {
+                arrangement_t *ar = vArrangements.uget(i);
+                if (arranged = arrange_window(&trg, ar))
+                    break;
+            }
+
+            if (!arranged)
+                arrange_forced(&trg);
 
             pWindow->show((actor != NULL) ? actor->native() : NULL);
             return true;
+        }
+
+        bool PopupWindow::arrange_window(const ws::rectangle_t *trg, const arrangement_t *ar)
+        {
+            ws::rectangle_t ws;
+            ws::size_limit_t sr;
+            ssize_t sw, sh, gap, end;
+            get_padded_size_limits(&sr);
+
+            // Obtain screen size
+            ws::IDisplay *dpy   = pDisplay->display();
+            size_t screen       = pWindow->screen();
+            dpy->screen_size(screen, &sw, &sh);
+
+            ws.nLeft    = trg->nLeft;
+            ws.nTop     = trg->nTop;
+//            ws.nWidth   = sr.nMinWidth;
+//            ws.nHeight  = sr.nMinHeight;
+            float align = lsp_limit(ar->fAlign + 1.0f, 0.0f, 2.0f) * 0.5f;
+
+            switch (ar->enPosition)
+            {
+                case A_BOTTOM:
+                    gap         = sh - trg->nTop;
+
+                    ws.nTop    += trg->nHeight;
+                    ws.nWidth   = sr.nMinWidth;
+                    ws.nHeight  = (sr.nMaxHeight >= 0) ? lsp_min(gap, sr.nMaxHeight) : gap;
+                    if (ws.nHeight < sr.nMinHeight)
+                        return false;
+                    if ((ar->bStretch) && (ws.nWidth < trg->nWidth))
+                        ws.nWidth   = trg->nWidth;
+
+                    if (ws.nWidth < sr.nMinWidth)
+                        return false;
+
+                    break;
+
+                case A_TOP:
+                case A_LEFT:
+                case A_RIGHT:
+
+                default:
+                    return false;
+            }
+
+            switch (ar->enPosition)
+            {
+                case A_BOTTOM:
+                case A_TOP:
+                    // Adjust horizontal positoin
+                    ws.nLeft    = (trg->nWidth - ws.nWidth) * align;
+                    end         = ws.nLeft + ws.nWidth;
+                    if (ws.nLeft < 0)
+                    {
+                        if (!ar->bFlexible)
+                            return false;
+                        ws.nLeft    = 0;
+                        end         = ws.nLeft + ws.nWidth;
+                        if (end > sw)
+                            ws.nWidth  -= (end - sw);
+                    }
+                    else if (end > sw)
+                    {
+                        if (!ar->bFlexible)
+                            return false;
+                        ws.nLeft   -= (end - sw);
+                        end         = sw;
+                        if (ws.nLeft < 0)
+                        {
+                            ws.nWidth  += ws.nLeft;
+                            ws.nLeft    = 0;
+                        }
+                    }
+                    break;
+
+                default:
+                    return false;
+            }
+
+            return true;
+        }
+
+        void PopupWindow::arrange_forced(const ws::rectangle_t *trg)
+        {
         }
     }
 }

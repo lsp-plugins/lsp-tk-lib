@@ -27,12 +27,15 @@ namespace lsp
                 prop::Rectangle                 sTrgArea;           // The restricted area where window should never appear
                 prop::WidgetPtr<Widget>         sTrgWidget;         // The widget triggered the show
                 prop::Integer                   sTrgScreen;         // The target screen to appear
+                lltl::darray<arrangement_t>     vArrangements;      // Arrangements
 
             protected:
                 virtual void                    hide_widget();
                 virtual void                    show_widget();
                 virtual status_t                post_init();
                 bool                            init_window(Window *actor);
+                bool                            arrange_window(const ws::rectangle_t *trg, const arrangement_t *ar);
+                void                            arrange_forced(const ws::rectangle_t *trg);
 
             public:
                 explicit PopupWindow(Display *dpy);
@@ -49,6 +52,9 @@ namespace lsp
 
                 WidgetPtr<Widget>              *trigger_widget()            { return &sTrgWidget;   }
                 const WidgetPtr<Widget>        *trigger_widget() const      { return &sTrgWidget;   }
+
+            public:
+                bool                            set_arrangements(const lltl::darray<arrangement_t> *list);
         };
     }
 }
