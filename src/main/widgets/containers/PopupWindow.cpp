@@ -107,7 +107,7 @@ namespace lsp
                 screen      = dpy->default_screen();
 
             // Destroy the window if it does not match requirements
-            if ((pWindow != NULL) && (pWindow->screen() != screen))
+            if ((pWindow != NULL) && (pWindow->screen() != size_t(screen)))
             {
                 pWindow->destroy();
                 delete pWindow;
@@ -139,16 +139,14 @@ namespace lsp
 
             // Window has been created, adjust position
             bool arranged = false;
-
             for (size_t i=0, n=vArrangements.size(); i<n; ++i)
             {
                 arrangement_t *ar = vArrangements.uget(i);
-                if (arranged = arrange_window(&trg, ar))
+                if ((arranged = arrange_window(&trg, ar)))
                     break;
             }
-
             if (!arranged)
-                arrange_forced(&trg);
+                return false;
 
             pWindow->show((actor != NULL) ? actor->native() : NULL);
             return true;
@@ -175,24 +173,44 @@ namespace lsp
             switch (ar->enPosition)
             {
                 case A_BOTTOM:
-                    gap         = sh - trg->nTop;
-
                     ws.nTop    += trg->nHeight;
+                    gap         = sh - ws.nTop;
+
                     ws.nWidth   = sr.nMinWidth;
+                    ws.nHeight  = (sr.nMaxHeight >= 0) ? lsp_min(gap, sr.nMaxHeight) : gap;
+                    if (ws.nHeight < sr.nMinHeight)
+                        return false;
+                    break;
+
+                case A_TOP:
+                    gap         = trg->nTop;
                     ws.nHeight  = (sr.nMaxHeight >= 0) ? lsp_min(gap, sr.nMaxHeight) : gap;
                     if (ws.nHeight < sr.nMinHeight)
                         return false;
                     if ((ar->bStretch) && (ws.nWidth < trg->nWidth))
                         ws.nWidth   = trg->nWidth;
-
-                    if (ws.nWidth < sr.nMinWidth)
-                        return false;
-
+                    ws.nTop     = trg->nTop - ws.nHeight;
                     break;
 
-                case A_TOP:
                 case A_LEFT:
+                    gap         = trg->nLeft;
+                    ws.nWidth   = (sr.nMaxWidth >= 0) ? lsp_min(gap, sr.nMaxWidth) : gap;
+                    if (ws.nWidth < sr.nMinWidth)
+                        return false;
+                    if ((ar->bStretch) && (ws.nWidth < trg->nWidth))
+                        ws.nWidth  = trg->nWidth;
+                    ws.nLeft    = trg->nLeft - ws.nWidth;
+                    break;
+
                 case A_RIGHT:
+                    ws.nLeft   += trg->nWidth;
+                    gap         = sw - ws.nLeft;
+                    ws.nWidth   = (sr.nMaxWidth >= 0) ? lsp_min(gap, sr.nMaxWidth) : gap;
+                    if (ws.nWidth < sr.nMinWidth)
+                        return false;
+                    if ((ar->bStretch) && (ws.nWidth < trg->nWidth))
+                        ws.nWidth  = trg->nWidth;
+                    break;
 
                 default:
                     return false;
@@ -200,30 +218,59 @@ namespace lsp
 
             switch (ar->enPosition)
             {
-                case A_BOTTOM:
                 case A_TOP:
-                    // Adjust horizontal positoin
-                    ws.nLeft    = (trg->nWidth - ws.nWidth) * align;
+                case A_BOTTOM:
+                    // Adjust horizontal position
+                    if ((ar->bStretch) && (ws.nWidth < trg->nWidth))
+                        ws.nWidth   = trg->nWidth;
+                    if (ws.nWidth < sr.nMinWidth)
+                        return false;
+
+                    ws.nLeft   += (trg->nWidth - ws.nWidth) * align;
                     end         = ws.nLeft + ws.nWidth;
                     if (ws.nLeft < 0)
                     {
-                        if (!ar->bFlexible)
-                            return false;
                         ws.nLeft    = 0;
                         end         = ws.nLeft + ws.nWidth;
                         if (end > sw)
-                            ws.nWidth  -= (end - sw);
+                            ws.nWidth  = sw;
                     }
                     else if (end > sw)
                     {
-                        if (!ar->bFlexible)
-                            return false;
                         ws.nLeft   -= (end - sw);
                         end         = sw;
                         if (ws.nLeft < 0)
                         {
-                            ws.nWidth  += ws.nLeft;
+                            ws.nWidth   = sw;
                             ws.nLeft    = 0;
+                        }
+                    }
+                    break;
+
+                case A_LEFT:
+                case A_RIGHT:
+                    if ((ar->bStretch) && (ws.nHeight < trg->nHeight))
+                        ws.nHeight = trg->nHeight;
+                    if (ws.nHeight < sr.nMinHeight)
+                        return false;
+
+                    ws.nTop    += (trg->nHeight - ws.nHeight) * align;
+                    end         = ws.nTop + ws.nHeight;
+                    if (ws.nTop < 0)
+                    {
+                        ws.nTop     = 0;
+                        end         = ws.nTop + ws.nHeight;
+                        if (end > sh)
+                            ws.nHeight = sh;
+                    }
+                    else if (end > sh)
+                    {
+                        ws.nTop    -= (end - sh);
+                        end         = sh;
+                        if (ws.nTop < 0)
+                        {
+                            ws.nHeight  = sh;
+                            ws.nTop     = 0;
                         }
                     }
                     break;
@@ -232,11 +279,10 @@ namespace lsp
                     return false;
             }
 
-            return true;
-        }
+            // Change geometry of the window
+            pWindow->set_geometry(&ws);
 
-        void PopupWindow::arrange_forced(const ws::rectangle_t *trg)
-        {
+            return true;
         }
     }
 }

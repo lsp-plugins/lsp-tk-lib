@@ -123,7 +123,6 @@ namespace lsp
         {
             arrangement_pos_t   enPosition;     // Position relative to the area
             float               fAlign;         // Alignment, for horizontal arrangement -1 is leftmost, +1 is rightmost
-            bool                bFlexible;      // Arrangement is flexible: prefer fAlign but may change if it does not match
             bool                bStretch;       // Stretch parameters
         } arrangement_t;
 
