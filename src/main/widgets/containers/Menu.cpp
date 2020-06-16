@@ -17,6 +17,10 @@ namespace lsp
 
         //-----------------------------------------------------------------------------
         // Menu::MenuWindow implementation
+        status_t Menu::WindowHandler::handle_event(const ws::event_t *ev)
+        {
+            return STATUS_OK;
+        }
 //        Menu::MenuWindow::MenuWindow(LSPDisplay *dpy, Menu *menu, size_t screen):
 //            LSPWindow(dpy, NULL, screen)
 //        {
@@ -93,6 +97,7 @@ namespace lsp
         // Menu implementation
         Menu::Menu(Display *dpy):
             WidgetContainer(dpy),
+            sHandler(this),
             sFont(&sProperties),
             sPosition(&sProperties),
             sHSpacing(&sProperties),
@@ -106,6 +111,9 @@ namespace lsp
             sCheckBorderRadius(&sProperties)
         {
             pWindow     = NULL;
+            pSubmenu    = NULL;
+            pTrgWidget  = NULL;
+            nTrgScreen  = -1;
 // TODO
 //            pWindow     = NULL;
 //            pParentMenu = NULL;
@@ -811,37 +819,9 @@ namespace lsp
             if (sVisibility.get())
                 return;
 
-            // Determine what screen to use
-            ws::IDisplay *dpy = pDisplay->display();
-            if (screen >= dpy->screens())
-                screen  = dpy->default_screen();
-
-            // Now we are ready to create window
-            if (pWindow == NULL)
-            {
-                // Create window
-                pWindow = pDisplay->display()->create_window(screen);
-                if (pWindow == NULL)
-                    return;
-
-                // Initialize window
-                status_t result = pWindow->init();
-                if (result != STATUS_OK)
-                {
-                    pWindow->destroy();
-                    delete pWindow;
-                    pWindow = NULL;
-                    return;
-                }
-
-                pWindow->set_border_style(ws::BS_POPUP);
-                pWindow->set_window_actions(ws::WA_POPUP);
-            }
-
-            // Obtain the size of window
-            ws::size_limit_t sr;
-            size_request(&sr);
-
+            // Show the window
+            pTrgWidget  = w;
+            nTrgScreen  = screen;
             sPosition.set(left, top);
 
             WidgetContainer::show();
@@ -891,6 +871,50 @@ namespace lsp
 //            return LSPWidgetContainer::show();
         }
 
+        bool Menu::create_window()
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+
+            // Passed argument
+            Widget *w       = pTrgWidget;
+            size_t screen   = ((nTrgScreen < 0) || (nTrgScreen >= ssize_t(dpy->screens()))) ? dpy->default_screen() : nTrgScreen;
+            pTrgWidget      = NULL;
+            nTrgScreen      = -1;
+
+            // Destroy the window if it does not match requirements
+            if ((pWindow != NULL) && (pWindow->screen() != screen))
+            {
+                pWindow->destroy();
+                delete pWindow;
+                pWindow = NULL;
+            }
+
+            // Now we are ready to create window
+            Window *wnd = pWindow;
+            if (wnd == NULL)
+            {
+                // Create window
+                wnd = new Window(pDisplay, NULL, screen);
+                if (wnd == NULL)
+                    return false;
+
+                // Initialize window
+                status_t result = pWindow->init();
+                if (result != STATUS_OK)
+                {
+                    wnd->destroy();
+                    delete wnd;
+                    return false;
+                }
+
+                wnd->border_style()->set(ws::BS_POPUP);
+                wnd->actions()->set(ws::WA_POPUP);
+                pWindow = wnd;
+            }
+
+            return true;
+        }
+
         void Menu::hide_widget()
         {
             // Destroy window
@@ -906,9 +930,18 @@ namespace lsp
 
         void Menu::show_widget()
         {
+            // Call parent class for show
             WidgetContainer::show_widget();
 
-            // TODO: sync the window position
+            // Create window
+            if (!create_window())
+            {
+                sVisibility.set(false);
+                return;
+            }
+
+            // Sync the window position and size
+            pWindow->add(this);
         }
 
 //

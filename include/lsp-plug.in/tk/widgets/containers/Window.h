@@ -100,6 +100,7 @@ namespace lsp
                 virtual void        show_widget();
                 virtual void        size_request(ws::size_limit_t *r);
                 virtual void        realize(const ws::rectangle_t *r);
+                virtual status_t    post_init();
 
                 /**
                  * Discard widget: notify window that widget has been removed from the widget tree

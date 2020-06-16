@@ -66,6 +66,7 @@
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
 #include <lsp-plug.in/tk/prop/multi/Position.h>
 #include <lsp-plug.in/tk/prop/multi/RangeFloat.h>
+#include <lsp-plug.in/tk/prop/multi/Rectangle.h>
 #include <lsp-plug.in/tk/prop/multi/Shortcut.h>
 #include <lsp-plug.in/tk/prop/multi/Size.h>
 #include <lsp-plug.in/tk/prop/multi/SizeConstraints.h>
@@ -118,6 +119,7 @@
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
 #include <lsp-plug.in/tk/widgets/containers/Menu.h>
 #include <lsp-plug.in/tk/widgets/containers/Window.h>
+#include <lsp-plug.in/tk/widgets/containers/PopupWindow.h>
 
 
 namespace lsp

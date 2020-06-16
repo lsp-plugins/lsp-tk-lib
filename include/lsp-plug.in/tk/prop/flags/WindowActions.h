@@ -35,6 +35,7 @@ namespace lsp
                 inline bool     denied(ws::window_action_t wa) const    { return !(nValue & wa);                }
                 inline bool     get(ws::window_action_t wa) const       { return nValue & wa;                   }
                 inline size_t   actions() const                         { return nValue;                        }
+                inline size_t   get_all() const                         { return nValue;                        }
                 inline bool     movable() const                         { return nValue & ws::WA_MOVE;          }
                 inline bool     resizable() const                       { return nValue & ws::WA_RESIZE;        }
                 inline bool     minimizable() const                     { return nValue & ws::WA_MINIMIZE;      }
@@ -117,7 +118,8 @@ namespace lsp
                      * @param actions set of actions
                      * @return status of operation
                      */
-                    inline status_t     init(Style *style, size_t actions)              { return tk::WindowActions::init(style, actions); }
+                    inline status_t     init(Style *style, size_t actions)              { return tk::WindowActions::init(style, actions);       }
+                    inline status_t     override(Style *style, size_t actions)          { return tk::WindowActions::override(style, actions);   }
             };
         }
     }

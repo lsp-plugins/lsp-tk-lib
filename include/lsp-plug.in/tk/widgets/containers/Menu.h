@@ -17,6 +17,7 @@ namespace lsp
     namespace tk
     {
         class MenuItem;
+        class Window;
 
         class Menu: public WidgetContainer
         {
@@ -49,6 +50,17 @@ namespace lsp
                     bool                submenu;    // at least one submenu is present
                 } isizes_t;
 
+                class WindowHandler: public IEventHandler
+                {
+                    protected:
+                        Menu           *pMenu;
+
+                    public:
+                        explicit inline WindowHandler(Menu *menu) { pMenu = menu; }
+
+                    public:
+                        virtual status_t handle_event(const ws::event_t *ev);
+                };
 //                class MenuWindow: public LSPWindow
 //                {
 //                    protected:
@@ -87,7 +99,11 @@ namespace lsp
             protected:
                 lltl::parray<MenuItem>  vItems;
 
-                ws::IWindow            *pWindow;        // Associated window
+                Window                 *pWindow;        // Associated window
+                Menu                   *pSubmenu;       // Sub-menu
+                Widget                 *pTrgWidget;     // Triggering widget
+                ssize_t                 nTrgScreen;     // Triggering screen
+                WindowHandler           sHandler;       // Window event handler
 
                 prop::Font              sFont;
                 prop::Position          sPosition;
@@ -118,6 +134,8 @@ namespace lsp
 
             protected:
                 void                        estimate_sizes(isizes_t *sz);
+
+                bool                        create_window();
 
 //                ssize_t                     find_item(ssize_t x, ssize_t y, ssize_t *ry);
 //                void                        update_scroll();

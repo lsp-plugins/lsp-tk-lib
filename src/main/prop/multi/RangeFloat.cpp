@@ -14,7 +14,7 @@ namespace lsp
     {
         const prop::desc_t RangeFloat::DESC[] =
         {
-            { "",               PT_FLOAT    },
+            { "",               PT_STRING   },
             { ".value",         PT_FLOAT    },
             { ".min",           PT_FLOAT    },
             { ".max",           PT_FLOAT    },

@@ -193,6 +193,12 @@ namespace lsp
                 inline ws::IDisplay *display()              { return pDisplay; }
 
                 /**
+                 * Obtain number of screens
+                 * @return number of screens
+                 */
+                inline size_t           screens()           { return pDisplay->screens();       }
+
+                /**
                  * Get the dictionary that contains localization data
                  * @return dictionary object
                  */

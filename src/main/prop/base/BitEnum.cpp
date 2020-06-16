@@ -99,6 +99,19 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t BitEnum::override(Style *style, size_t v)
+        {
+            if (pStyle == NULL)
+                return STATUS_BAD_STATE;
+
+            LSPString s;
+            if (!Property::fmt_bit_enums(&s, pEnum, v))
+                return STATUS_NO_MEM;
+
+            style->override_string(nAtom, &s);
+            return STATUS_OK;
+        }
+
         size_t BitEnum::xset_all(size_t v)
         {
             size_t prev = nValue;

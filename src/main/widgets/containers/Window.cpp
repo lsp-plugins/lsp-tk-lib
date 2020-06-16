@@ -62,11 +62,6 @@ namespace lsp
         {
             status_t result;
 
-            // Initialize redraw timer
-            ws::IDisplay *dpy   = pDisplay->display();
-            if (dpy == NULL)
-                return STATUS_BAD_STATE;
-
             // Initialize parent class
             if ((result = WidgetContainer::init()) != STATUS_OK)
                 return result;
@@ -105,6 +100,18 @@ namespace lsp
 
             // Cache the actual scaling factor
             fScaling    = sScaling.get();
+
+            return post_init();
+        }
+
+        status_t Window::post_init()
+        {
+            status_t result;
+
+            // Initialize display
+            ws::IDisplay *dpy   = pDisplay->display();
+            if (dpy == NULL)
+                return STATUS_BAD_STATE;
 
             // Create and initialize window
             pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();

@@ -67,6 +67,7 @@ namespace lsp
                      * @return status of operation
                      */
                     inline status_t     init(Style *style, ws::border_style_t bs)       { return tk::BorderStyle::init(style, bs);      };
+                    inline status_t     override(Style *style, ws::border_style_t bs)   { return tk::BorderStyle::override(style, bs);  };
             };
         }
     }

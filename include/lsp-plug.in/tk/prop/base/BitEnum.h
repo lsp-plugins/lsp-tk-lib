@@ -52,6 +52,7 @@ namespace lsp
                 size_t              xset(size_t v);
                 size_t              xset(size_t v, bool flag);
                 status_t            init(Style *style, size_t v);
+                status_t            override(Style *style, size_t v);
                 size_t              xunset(size_t v);
                 size_t              xtoggle(size_t v);
                 size_t              xset_all(size_t v);
