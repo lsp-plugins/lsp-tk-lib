@@ -12,6 +12,7 @@ namespace lsp
 {
     namespace tk
     {
+        const w_class_t PopupWindow::metadata       = { "PopupWindow", &Window::metadata };
 
         PopupWindow::PopupWindow(Display *dpy):
             Window(dpy, NULL, -1),
@@ -19,6 +20,8 @@ namespace lsp
             sTrgWidget(&Widget::metadata, &sProperties),
             sTrgScreen(&sProperties)
         {
+            bInitialized    = false;
+            pClass          = &metadata;
         }
 
         PopupWindow::~PopupWindow()
@@ -46,6 +49,10 @@ namespace lsp
                 sActions.override(sclass, ws::WA_POPUP);
             }
 
+            // Mark as initialized
+            bInitialized = true;
+            property_changed(&sVisibility); // Emit property change event
+
             return STATUS_OK;
         }
 
@@ -54,14 +61,46 @@ namespace lsp
             return vArrangements.set(list);
         }
 
+        bool PopupWindow::set_arrangements(const arrangement_t *list, size_t count)
+        {
+            return vArrangements.set_n(count, list);
+        }
+
+        bool PopupWindow::add_arrangement(const arrangement_t *item)
+        {
+            return vArrangements.add(item);
+        }
+
+        bool PopupWindow::add_arrangement(arrangement_pos_t pos, float align, bool stretch)
+        {
+            arrangement_t item;
+            item.enPosition     = pos;
+            item.fAlign         = align;
+            item.bStretch       = stretch;
+
+            return add_arrangement(&item);
+        }
+
         status_t PopupWindow::post_init()
         {
+            // Bind redraw handler
+            sRedraw.bind(pDisplay->display());
+            sRedraw.set_handler(tmr_redraw_request, self());
+
             // Don't create native window
+            return STATUS_OK;
+        }
+
+        status_t PopupWindow::sync_size()
+        {
             return STATUS_OK;
         }
 
         void PopupWindow::hide_widget()
         {
+            if (!bInitialized)
+                return;
+
             Window::hide_widget();
 
             // Clear restricted area
@@ -78,6 +117,9 @@ namespace lsp
 
         void PopupWindow::show_widget()
         {
+            if (!bInitialized)
+                return;
+
             // Window wont'be shown since it's NULL
             Window *actor = pActor;
             Window::show_widget();
@@ -100,7 +142,7 @@ namespace lsp
             ws::IDisplay *dpy   = pDisplay->display();
 
             // Estimate the target screen to show the window
-            Window *rwnd    = widget_cast<Window>(w->toplevel());
+            Window *rwnd    = (w != NULL) ? widget_cast<Window>(w->toplevel()) : NULL;
             if ((rwnd != NULL) && (screen < 0))
                 screen          = rwnd->screen();
             if ((screen < 0) || (screen >= ssize_t(dpy->screens())))
@@ -124,7 +166,7 @@ namespace lsp
                     return false;
 
                 // Initialize window
-                status_t result = pWindow->init();
+                status_t result = wnd->init();
                 if (result != STATUS_OK)
                 {
                     wnd->destroy();
@@ -132,6 +174,7 @@ namespace lsp
                     return false;
                 }
 
+                wnd->set_handler(this);
                 wnd->set_border_style(sBorderStyle.get());
                 wnd->set_window_actions(sActions.get_all());
                 pWindow = wnd;
@@ -142,17 +185,44 @@ namespace lsp
             for (size_t i=0, n=vArrangements.size(); i<n; ++i)
             {
                 arrangement_t *ar = vArrangements.uget(i);
-                if ((arranged = arrange_window(&trg, ar)))
+                if ((arranged = arrange_window(&trg, ar, false)))
                     break;
             }
             if (!arranged)
-                return false;
+            {
+                for (size_t i=0, n=vArrangements.size(); i<n; ++i)
+                {
+                    arrangement_t *ar = vArrangements.uget(i);
+                    if ((arranged = arrange_window(&trg, ar, true)))
+                        break;
+                }
+            }
+
+            if ((!arranged) && (vArrangements.size() > 0))
+            {
+                arrangement_t *ar = vArrangements.uget(0);
+                forced_arrange(&trg, ar);
+                arranged = true;
+            }
+
+            if (!arranged)
+            {
+                arrangement_t ar;
+                ar.enPosition   = A_BOTTOM;
+                ar.fAlign       = 0.0f;
+                ar.bStretch     = true;
+
+                trg.nWidth      = 0;
+                trg.nHeight     = 0;
+
+                forced_arrange(&trg, &ar);
+            }
 
             pWindow->show((actor != NULL) ? actor->native() : NULL);
             return true;
         }
 
-        bool PopupWindow::arrange_window(const ws::rectangle_t *trg, const arrangement_t *ar)
+        bool PopupWindow::arrange_window(const ws::rectangle_t *trg, const arrangement_t *ar, bool force)
         {
             ws::rectangle_t ws;
             ws::size_limit_t sr;
@@ -166,9 +236,9 @@ namespace lsp
 
             ws.nLeft    = trg->nLeft;
             ws.nTop     = trg->nTop;
-//            ws.nWidth   = sr.nMinWidth;
-//            ws.nHeight  = sr.nMinHeight;
-            float align = lsp_limit(ar->fAlign + 1.0f, 0.0f, 2.0f) * 0.5f;
+            ws.nWidth   = sr.nMinWidth;
+            ws.nHeight  = sr.nMinHeight;
+            float align = lsp_limit(ar->fAlign, -1.0f, 1.0f);
 
             switch (ar->enPosition)
             {
@@ -179,14 +249,23 @@ namespace lsp
                     ws.nWidth   = sr.nMinWidth;
                     ws.nHeight  = (sr.nMaxHeight >= 0) ? lsp_min(gap, sr.nMaxHeight) : gap;
                     if (ws.nHeight < sr.nMinHeight)
-                        return false;
+                    {
+                        if (!force)
+                            return false;
+                        ws.nTop    -= (sr.nMinHeight - ws.nHeight);
+                        ws.nHeight  = sr.nMinHeight;
+                    }
                     break;
 
                 case A_TOP:
                     gap         = trg->nTop;
                     ws.nHeight  = (sr.nMaxHeight >= 0) ? lsp_min(gap, sr.nMaxHeight) : gap;
                     if (ws.nHeight < sr.nMinHeight)
-                        return false;
+                    {
+                        if (!force)
+                            return false;
+                        ws.nHeight  = sr.nMinHeight;
+                    }
                     if ((ar->bStretch) && (ws.nWidth < trg->nWidth))
                         ws.nWidth   = trg->nWidth;
                     ws.nTop     = trg->nTop - ws.nHeight;
@@ -196,7 +275,11 @@ namespace lsp
                     gap         = trg->nLeft;
                     ws.nWidth   = (sr.nMaxWidth >= 0) ? lsp_min(gap, sr.nMaxWidth) : gap;
                     if (ws.nWidth < sr.nMinWidth)
-                        return false;
+                    {
+                        if (!force)
+                            return false;
+                        ws.nWidth   = sr.nMinWidth;
+                    }
                     if ((ar->bStretch) && (ws.nWidth < trg->nWidth))
                         ws.nWidth  = trg->nWidth;
                     ws.nLeft    = trg->nLeft - ws.nWidth;
@@ -207,7 +290,12 @@ namespace lsp
                     gap         = sw - ws.nLeft;
                     ws.nWidth   = (sr.nMaxWidth >= 0) ? lsp_min(gap, sr.nMaxWidth) : gap;
                     if (ws.nWidth < sr.nMinWidth)
-                        return false;
+                    {
+                        if (!force)
+                            return false;
+                        ws.nLeft   -= (sr.nMinWidth - ws.nWidth);
+                        ws.nWidth   = sr.nMinWidth;
+                    }
                     if ((ar->bStretch) && (ws.nWidth < trg->nWidth))
                         ws.nWidth  = trg->nWidth;
                     break;
@@ -215,6 +303,10 @@ namespace lsp
                 default:
                     return false;
             }
+
+            // Window should be at least of 1x1 size
+            ws.nWidth   = lsp_max(1, ws.nWidth);
+            ws.nHeight  = lsp_max(1, ws.nHeight);
 
             switch (ar->enPosition)
             {
@@ -226,7 +318,7 @@ namespace lsp
                     if (ws.nWidth < sr.nMinWidth)
                         return false;
 
-                    ws.nLeft   += (trg->nWidth - ws.nWidth) * align;
+                    ws.nLeft   += ws.nWidth * align;
                     end         = ws.nLeft + ws.nWidth;
                     if (ws.nLeft < 0)
                     {
@@ -254,7 +346,7 @@ namespace lsp
                     if (ws.nHeight < sr.nMinHeight)
                         return false;
 
-                    ws.nTop    += (trg->nHeight - ws.nHeight) * align;
+                    ws.nTop    += ws.nHeight * align;
                     end         = ws.nTop + ws.nHeight;
                     if (ws.nTop < 0)
                     {
@@ -280,9 +372,63 @@ namespace lsp
             }
 
             // Change geometry of the window
+            lsp_trace("arrange window: {%d %d %d %d}", int(ws.nLeft), int(ws.nTop), int(ws.nWidth), int(ws.nHeight));
             pWindow->set_geometry(&ws);
 
             return true;
+        }
+
+        void PopupWindow::forced_arrange(const ws::rectangle_t *trg, const arrangement_t *ar)
+        {
+            ws::rectangle_t ws;
+            ws::size_limit_t sr;
+            get_padded_size_limits(&sr);
+
+            // Obtain screen size
+            ws::IDisplay *dpy   = pDisplay->display();
+            size_t screen       = pWindow->screen();
+            ssize_t sw, sh;
+            dpy->screen_size(screen, &sw, &sh);
+
+            // Window should be at least of 1x1 size but not greater than available screen size
+            ws.nWidth   = lsp_limit(sr.nMinWidth,  1, sw);
+            ws.nHeight  = lsp_limit(sr.nMinHeight, 1, sh);
+
+            switch (ar->enPosition)
+            {
+                case A_BOTTOM:
+                    ws.nTop     = trg->nTop + trg->nHeight;
+                    ws.nLeft    = trg->nLeft;
+                    break;
+
+                case A_TOP:
+                    ws.nTop     = trg->nTop - ws.nHeight;
+                    ws.nLeft    = trg->nLeft;
+                    break;
+
+                case A_LEFT:
+                    ws.nLeft    = trg->nLeft - ws.nWidth;
+                    ws.nTop     = trg->nTop;
+                    break;
+
+                case A_RIGHT:
+                    ws.nLeft    = trg->nLeft + trg->nWidth;
+                    ws.nTop     = trg->nTop;
+                    break;
+
+                default:
+                    return;
+            }
+
+            // Apply position
+            if (ws.nLeft < 0)
+                ws.nLeft        = 0;
+            if ((ws.nLeft + ws.nWidth) > sw)
+                ws.nLeft       -= (ws.nLeft + ws.nWidth - sw);
+            if (ws.nTop < 0)
+                ws.nTop         = 0;
+            if ((ws.nTop + ws.nHeight) > sh)
+                ws.nTop        -= (ws.nTop + ws.nHeight - sh);
         }
     }
 }

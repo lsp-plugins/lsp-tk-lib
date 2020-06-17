@@ -51,7 +51,7 @@ namespace lsp
                     inline widget_t            *get_default()       { return wcast(pDfl);                   }
                     inline const widget_t      *get_default() const { return ccast()->get_default();        }
 
-                    inline widget_t            *set(widget_t *w)    { return (w->instance_of(pMeta)) ? wcast(Ptr::set(vcast(w))) : NULL; }
+                    inline widget_t            *set(widget_t *w)    { return ((w != NULL) && (w->instance_of(pMeta))) ? wcast(Ptr::set(vcast(w))) : NULL; }
                     inline widget_t            *set_default()       { return wcast(Ptr::set_default());     }
             };
 

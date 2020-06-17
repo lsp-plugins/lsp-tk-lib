@@ -53,6 +53,9 @@ namespace lsp
 
         bool Widget::instance_of(const w_class_t *wclass) const
         {
+            if (this == NULL)
+                return false;
+
             const w_class_t *wc = pClass;
             while (wc != NULL)
             {
@@ -655,6 +658,36 @@ namespace lsp
                     break;
             }
             #undef FWD_EVENT
+
+            return STATUS_OK;
+        }
+
+        status_t Widget::get_screen_rectangle(ws::rectangle_t *r)
+        {
+            *r = sSize;
+            Window *wnd = widget_cast<Window>(toplevel());
+
+            ws::rectangle_t ar;
+            if ((wnd != NULL) && (wnd->get_screen_rectangle(&ar) == STATUS_OK))
+            {
+                r->nLeft   += ar.nLeft;
+                r->nTop    += ar.nTop;
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Widget::get_padded_screen_rectangle(ws::rectangle_t *r)
+        {
+            sPadding.leave(r, &sSize, sScaling.get());
+            Window *wnd = widget_cast<Window>(toplevel());
+
+            ws::rectangle_t ar;
+            if ((wnd != NULL) && (wnd->get_screen_rectangle(&ar) == STATUS_OK))
+            {
+                r->nLeft   += ar.nLeft;
+                r->nTop    += ar.nTop;
+            }
 
             return STATUS_OK;
         }

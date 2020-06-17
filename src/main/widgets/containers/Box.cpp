@@ -197,8 +197,8 @@ namespace lsp
                             {
                                 xr.nLeft    = wc->a.nLeft;
                                 xr.nTop     = wc->a.nTop + wc->a.nHeight;
-                                xr.nWidth   = spacing;
-                                xr.nHeight  = wc->a.nHeight;
+                                xr.nWidth   = wc->a.nWidth;
+                                xr.nHeight  = spacing;
                             }
 
                             if (Size::overlap(area, &xr))

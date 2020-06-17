@@ -281,11 +281,21 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Window::get_absolute_geometry(ws::rectangle_t *r)
+        status_t Window::get_screen_rectangle(ws::rectangle_t *r)
         {
             if (pWindow == NULL)
                 return STATUS_BAD_STATE;
             return pWindow->get_absolute_geometry(r);
+        }
+
+        status_t Window::get_padded_screen_rectangle(ws::rectangle_t *r)
+        {
+            if (pWindow == NULL)
+                return STATUS_BAD_STATE;
+            status_t res = pWindow->get_absolute_geometry(r);
+            if (res == STATUS_OK)
+                sPadding.enter(r, sScaling.get());
+            return res;
         }
 
         void Window::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

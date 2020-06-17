@@ -28,13 +28,16 @@ namespace lsp
                 prop::WidgetPtr<Widget>         sTrgWidget;         // The widget triggered the show
                 prop::Integer                   sTrgScreen;         // The target screen to appear
                 lltl::darray<arrangement_t>     vArrangements;      // Arrangements
+                bool                            bInitialized;       // Initalization flag
 
             protected:
                 virtual void                    hide_widget();
                 virtual void                    show_widget();
                 virtual status_t                post_init();
+                virtual status_t                sync_size();
                 bool                            init_window(Window *actor);
-                bool                            arrange_window(const ws::rectangle_t *trg, const arrangement_t *ar);
+                bool                            arrange_window(const ws::rectangle_t *trg, const arrangement_t *ar, bool force);
+                void                            forced_arrange(const ws::rectangle_t *trg, const arrangement_t *ar);
 
             public:
                 explicit PopupWindow(Display *dpy);
@@ -54,6 +57,9 @@ namespace lsp
 
             public:
                 bool                            set_arrangements(const lltl::darray<arrangement_t> *list);
+                bool                            set_arrangements(const arrangement_t *list, size_t count);
+                bool                            add_arrangement(const arrangement_t *item);
+                bool                            add_arrangement(arrangement_pos_t pos, float align = 0.0f, bool stretch = true);
         };
     }
 }

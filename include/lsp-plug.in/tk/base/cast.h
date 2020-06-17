@@ -41,6 +41,17 @@ namespace lsp
                 const Widget *w = (src != NULL) ? static_cast<const Widget *>(src) : NULL;
                 return ((w != NULL) && (w->instance_of(&Target::metadata))) ? static_cast<const Target *>(w) : NULL;
             }
+
+        inline bool instance_of(Widget *w, const w_class_t *wc)
+        {
+            return (w != NULL) && (w->instance_of(wc));
+        }
+
+        template <class Target>
+            inline bool instance_of(Widget *w)
+            {
+                return (w != NULL) && (w->instance_of(&Target::metadata));
+            }
     }
 }
 

@@ -272,7 +272,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
 
         // Create horizontal box (3)
         MTEST_ASSERT(box = new tk::Box(dpy));
-        MTEST_ASSERT(init_widget(box, vh, "hbox2") == STATUS_OK);
+        MTEST_ASSERT(init_widget(box, vh, "hbox3") == STATUS_OK);
         MTEST_ASSERT(widgets.push(box));
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
         box->bg_color()->set_rgb(0, 0.75, 0.5);

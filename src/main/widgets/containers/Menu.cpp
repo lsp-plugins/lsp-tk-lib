@@ -804,7 +804,7 @@ namespace lsp
             if (top == NULL)
                 top = widget_cast<Window>(toplevel());
             if (top != NULL)
-                top->get_absolute_geometry(&r);
+                top->get_screen_rectangle(&r);
 
             return show(w, r.nLeft + ev->nLeft, r.nTop + ev->nTop);
         }

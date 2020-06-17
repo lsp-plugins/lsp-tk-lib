@@ -42,7 +42,7 @@ namespace lsp
             return res;
         }
 
-        void Void::render(ws::ISurface *s, bool force)
+        void Void::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             if ((sSize.nWidth > 0) && (sSize.nHeight > 0))
             {

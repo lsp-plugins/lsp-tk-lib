@@ -80,7 +80,7 @@ namespace lsp
 
                 status_t            do_render();
                 void                do_destroy();
-                status_t            sync_size();
+                virtual status_t    sync_size();
                 status_t            update_pointer();
 
                 // Mouse operations
@@ -140,7 +140,8 @@ namespace lsp
 
                 inline ssize_t                  screen()                    { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
-                status_t                        get_absolute_geometry(ws::rectangle_t *r);
+                virtual status_t                get_screen_rectangle(ws::rectangle_t *r);
+                virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r);
 
                 inline bool                     override_pointer() const    { return bOverridePointer; }
 
