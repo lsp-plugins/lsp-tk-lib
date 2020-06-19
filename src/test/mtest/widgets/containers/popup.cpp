@@ -219,6 +219,7 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(pw = new tk::PopupWindow(dpy));
                 MTEST_ASSERT(init_widget(pw, vh, NULL, id.get_ascii()) == STATUS_OK);
                 pw->add_arrangement(arr[i]);
+                pw->bg_color()->set_rgb24(next_color(col));
                 pw->size_constraints()->set(32, 128, 0, 0);
 
                 // Create void widget
@@ -235,7 +236,8 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(init_widget(vw, vh, NULL, id.get_ascii()) == STATUS_OK);
                 MTEST_ASSERT(widgets.push(vw));
                 vw->constraints()->set_min(16, 16);
-                pw->bg_color()->set_rgb24(next_color(col));
+                vw->bg_color()->set_rgb24(next_color(col));
+
                 pw->add(vw);
             }
 
@@ -247,6 +249,7 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(init_widget(pw, vh, NULL, id.get_ascii()) == STATUS_OK);
                 pw->add_arrangement(arr[i*2]);
                 pw->add_arrangement(arr[i*2+1]);
+                pw->bg_color()->set_rgb24(next_color(col));
                 pw->size_constraints()->set(32, 128, 0, 0);
 
                 // Create void widget
@@ -263,7 +266,8 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(init_widget(vw, vh, NULL, id.get_ascii()) == STATUS_OK);
                 MTEST_ASSERT(widgets.push(vw));
                 vw->constraints()->set_min(16, 16);
-                pw->bg_color()->set_rgb24(next_color(col));
+                vw->bg_color()->set_rgb24(next_color(col));
+
                 pw->add(vw);
             }
 
