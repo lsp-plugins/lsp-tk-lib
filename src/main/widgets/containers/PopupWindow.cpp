@@ -93,6 +93,27 @@ namespace lsp
 
         status_t PopupWindow::sync_size()
         {
+            ws::size_limit_t sr;
+            ws::rectangle_t xr;
+            int changes = 0;
+
+            get_padded_size_limits(&sr);
+            get_rectangle(&xr);
+
+            if ((sr.nMinWidth >= 0) && (sr.nMinWidth > xr.nWidth))
+            {
+                ++changes;
+                xr.nWidth   = sr.nMinWidth;
+            }
+            if ((sr.nMinHeight >= 0) && (sr.nMinHeight > xr.nHeight))
+            {
+                ++changes;
+                xr.nHeight  = sr.nMinHeight;
+            }
+
+            if (changes > 0)
+                pWindow->resize(xr.nWidth, xr.nHeight);
+
             return STATUS_OK;
         }
 
@@ -102,9 +123,6 @@ namespace lsp
                 return;
 
             Window::hide_widget();
-
-            // Clear restricted area
-            sTrgArea.clear();
 
             // Destroy window
             if (pWindow != NULL)
@@ -182,10 +200,11 @@ namespace lsp
 
             // Window has been created, adjust position
             bool arranged = false;
+            ws::rectangle_t wrect;
             for (size_t i=0, n=vArrangements.size(); i<n; ++i)
             {
                 arrangement_t *ar = vArrangements.uget(i);
-                if ((arranged = arrange_window(&trg, ar, false)))
+                if ((arranged = arrange_window(&wrect, &trg, ar, false)))
                     break;
             }
             if (!arranged)
@@ -193,7 +212,7 @@ namespace lsp
                 for (size_t i=0, n=vArrangements.size(); i<n; ++i)
                 {
                     arrangement_t *ar = vArrangements.uget(i);
-                    if ((arranged = arrange_window(&trg, ar, true)))
+                    if ((arranged = arrange_window(&wrect, &trg, ar, true)))
                         break;
                 }
             }
@@ -201,7 +220,7 @@ namespace lsp
             if ((!arranged) && (vArrangements.size() > 0))
             {
                 arrangement_t *ar = vArrangements.uget(0);
-                forced_arrange(&trg, ar);
+                forced_arrange(&wrect, &trg, ar);
                 arranged = true;
             }
 
@@ -215,14 +234,17 @@ namespace lsp
                 trg.nWidth      = 0;
                 trg.nHeight     = 0;
 
-                forced_arrange(&trg, &ar);
+                forced_arrange(&wrect, &trg, &ar);
             }
 
+            lsp_trace("window geometry: {%d %d %d %d}", int(wrect.nLeft), int(wrect.nTop), int(wrect.nWidth), int(wrect.nHeight));
+            pWindow->set_geometry(&wrect);
+            Window::realize(&wrect);
             pWindow->show((actor != NULL) ? actor->native() : NULL);
             return true;
         }
 
-        bool PopupWindow::arrange_window(const ws::rectangle_t *trg, const arrangement_t *ar, bool force)
+        bool PopupWindow::arrange_window(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force)
         {
             ws::rectangle_t ws;
             ws::size_limit_t sr;
@@ -371,14 +393,12 @@ namespace lsp
                     return false;
             }
 
-            // Change geometry of the window
-            lsp_trace("arrange window: {%d %d %d %d}", int(ws.nLeft), int(ws.nTop), int(ws.nWidth), int(ws.nHeight));
-            pWindow->set_geometry(&ws);
-
+            // Return geometry of the window
+            *dst = ws;
             return true;
         }
 
-        void PopupWindow::forced_arrange(const ws::rectangle_t *trg, const arrangement_t *ar)
+        void PopupWindow::forced_arrange(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar)
         {
             ws::rectangle_t ws;
             ws::size_limit_t sr;
@@ -429,6 +449,9 @@ namespace lsp
                 ws.nTop         = 0;
             if ((ws.nTop + ws.nHeight) > sh)
                 ws.nTop        -= (ws.nTop + ws.nHeight - sh);
+
+            // Return geometry of the window
+            *dst    = ws;
         }
     }
 }

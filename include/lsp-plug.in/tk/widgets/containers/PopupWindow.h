@@ -36,8 +36,8 @@ namespace lsp
                 virtual status_t                post_init();
                 virtual status_t                sync_size();
                 bool                            init_window(Window *actor);
-                bool                            arrange_window(const ws::rectangle_t *trg, const arrangement_t *ar, bool force);
-                void                            forced_arrange(const ws::rectangle_t *trg, const arrangement_t *ar);
+                bool                            arrange_window(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force);
+                void                            forced_arrange(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar);
 
             public:
                 explicit PopupWindow(Display *dpy);

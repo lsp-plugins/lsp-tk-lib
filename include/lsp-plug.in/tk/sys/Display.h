@@ -251,6 +251,15 @@ namespace lsp
                  */
                 inline status_t screen_size(size_t screen, ssize_t *w, ssize_t *h) { return pDisplay->screen_size(screen, w, h); }
 
+                /**
+                 * Get current pointer location
+                 * @param screen current screen where the pointer is located
+                 * @param left pointer to store X position
+                 * @param top pointer to store Y position
+                 * @return status of operation
+                 */
+                inline status_t get_pointer_location(size_t *screen, ssize_t *left, ssize_t *top) { return pDisplay->get_pointer_location(screen, left, top); }
+
                 /** Create surface
                  *
                  * @param width surface width

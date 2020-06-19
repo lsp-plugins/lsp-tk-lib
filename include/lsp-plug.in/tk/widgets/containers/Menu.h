@@ -17,7 +17,6 @@ namespace lsp
     namespace tk
     {
         class MenuItem;
-        class Window;
 
         class Menu: public WidgetContainer
         {
@@ -27,67 +26,28 @@ namespace lsp
             protected:
                 typedef struct isizes_t
                 {
-                    size_t              mc_width;   // menu caption width
-                    size_t              mc_height;  // menu caption height
-                    size_t              cb_width;   // check box / radio button width
-                    size_t              cb_height;  // check box / radio button height
-                    size_t              mr_width;   // menu reference width
-                    size_t              mr_height;  // menu reference height
-                    size_t              sc_width;   // shortcut width
-                    size_t              sc_height;  // shortcut height
-                    size_t              sp_width;   // separator width
-                    size_t              sp_height;  // separator height
+                    ssize_t             mc_width;   // menu caption width
+                    ssize_t             mc_height;  // menu caption height
+                    ssize_t             cb_width;   // check box / radio button width
+                    ssize_t             cb_height;  // check box / radio button height
+                    ssize_t             mr_width;   // menu reference width
+                    ssize_t             mr_height;  // menu reference height
+                    ssize_t             sc_width;   // shortcut width
+                    ssize_t             sc_height;  // shortcut height
+                    ssize_t             sp_width;   // separator width
+                    ssize_t             sp_height;  // separator height
 
                     size_t              items;      // number of visible items
                     size_t              separators; // number of visible separators
-                    size_t              width;      // overall width
-                    size_t              s_height;   // separator height
-                    size_t              m_height;   // menu item height
-                    size_t              hspacing;   // horizontal spacing
-                    size_t              vspacing;   // vertical spacing
+                    ssize_t             width;      // overall width
+                    ssize_t             s_height;   // separator height
+                    ssize_t             m_height;   // menu item height
+                    ssize_t             hspacing;   // horizontal spacing
+                    ssize_t             vspacing;   // vertical spacing
                     bool                ckbox;      // at least one check box is present
                     bool                shortcut;   // at least one shortcut is present
                     bool                submenu;    // at least one submenu is present
                 } isizes_t;
-
-                class WindowHandler: public IEventHandler
-                {
-                    protected:
-                        Menu           *pMenu;
-
-                    public:
-                        explicit inline WindowHandler(Menu *menu) { pMenu = menu; }
-
-                    public:
-                        virtual status_t handle_event(const ws::event_t *ev);
-                };
-//                class MenuWindow: public LSPWindow
-//                {
-//                    protected:
-//                        LSPMenu *pMenu;
-//
-//                    protected:
-//                        virtual LSPWidget    *find_widget(ssize_t x, ssize_t y);
-//
-//                        LSPMenu             *get_handler(ws_event_t *e);
-//
-//                    public:
-//                        MenuWindow(LSPDisplay *dpy, LSPMenu *menu, size_t screen);
-//                        virtual ~MenuWindow();
-//
-//                    public:
-//                        virtual void render(ISurface *s, bool force);
-//
-//                        virtual void size_request(size_request_t *r);
-//
-//                        virtual status_t on_mouse_down(const ws_event_t *e);
-//
-//                        virtual status_t on_mouse_up(const ws_event_t *e);
-//
-//                        virtual status_t on_mouse_scroll(const ws_event_t *e);
-//
-//                        virtual status_t on_mouse_move(const ws_event_t *e);
-//                };
 
                 enum selection_t
                 {
@@ -99,14 +59,10 @@ namespace lsp
             protected:
                 lltl::parray<MenuItem>  vItems;
 
-                Window                 *pWindow;        // Associated window
+                PopupWindow             sWindow;        // Associated popup window
                 Menu                   *pSubmenu;       // Sub-menu
-                Widget                 *pTrgWidget;     // Triggering widget
-                ssize_t                 nTrgScreen;     // Triggering screen
-                WindowHandler           sHandler;       // Window event handler
 
                 prop::Font              sFont;
-                prop::Position          sPosition;
                 prop::Integer           sHSpacing;
                 prop::Integer           sVSpacing;
                 prop::Integer           sScrolling;
@@ -135,8 +91,6 @@ namespace lsp
             protected:
                 void                        estimate_sizes(isizes_t *sz);
 
-                bool                        create_window();
-
 //                ssize_t                     find_item(ssize_t x, ssize_t y, ssize_t *ry);
 //                void                        update_scroll();
 //                void                        selection_changed(ssize_t sel, ssize_t ry);
@@ -151,8 +105,6 @@ namespace lsp
 
                 virtual void                realize(const ws::rectangle_t *r);
 
-                virtual void                hide_widget();
-
                 virtual void                show_widget();
 
             public:
@@ -165,9 +117,6 @@ namespace lsp
             public:
                 inline Font                *font()                      { return &sFont;                    }
                 inline const Font          *font() const                { return &sFont;                    }
-
-                inline Position            *position()                  { return &sPosition;                }
-                inline const Position      *position() const            { return &sPosition;                }
 
                 inline Integer             *hspacing()                  { return &sHSpacing;                }
                 inline const Integer       *hspacing() const            { return &sHSpacing;                }
@@ -196,6 +145,15 @@ namespace lsp
                 inline Integer             *check_border_radius()       { return &sCheckBorderRadius;       }
                 inline const Integer       *check_border_radius() const { return &sCheckBorderRadius;       }
 
+                Rectangle                  *trigger_area()              { return sWindow.trigger_area();    }
+                const Rectangle            *trigger_area() const        { return sWindow.trigger_area();    }
+
+                Integer                    *trigger_screen()            { return sWindow.trigger_screen();  }
+                const Integer              *trigger_screen() const      { return sWindow.trigger_screen();  }
+
+                WidgetPtr<Widget>          *trigger_widget()            { return sWindow.trigger_widget();  }
+                const WidgetPtr<Widget>    *trigger_widget() const      { return sWindow.trigger_widget();  }
+
             public:
                 virtual status_t            add(Widget *child);
 
@@ -206,19 +164,10 @@ namespace lsp
                 virtual Widget             *get(size_t index);
 
                 virtual void                show();
+                virtual void                show(Widget *w, ssize_t x, ssize_t y);
+                virtual void                show(Widget *w, ssize_t x, ssize_t y, ssize_t xw, ssize_t xh);
+                virtual void                show(Widget *w, const ws::rectangle_t *r);
 
-                virtual void                show(size_t screen);
-
-                virtual void                show(size_t screen, ssize_t left, ssize_t top);
-
-                virtual void                show(Widget *w, size_t screen, ssize_t left, ssize_t top);
-
-                virtual void                show(Widget *w);
-
-                virtual void                show(Widget *w, ssize_t left, ssize_t top);
-
-                virtual void                show(Widget *w, const ws::event_t *ev);
-//
 //                virtual void        draw(ws::ISurface *s);
 //
 //                virtual void        query_resize();

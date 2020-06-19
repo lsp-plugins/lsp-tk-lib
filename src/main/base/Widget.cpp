@@ -53,9 +53,6 @@ namespace lsp
 
         bool Widget::instance_of(const w_class_t *wclass) const
         {
-            if (this == NULL)
-                return false;
-
             const w_class_t *wc = pClass;
             while (wc != NULL)
             {

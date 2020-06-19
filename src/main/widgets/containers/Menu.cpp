@@ -16,90 +16,11 @@ namespace lsp
         const w_class_t Menu::metadata      = { "Menu", &WidgetContainer::metadata };
 
         //-----------------------------------------------------------------------------
-        // Menu::MenuWindow implementation
-        status_t Menu::WindowHandler::handle_event(const ws::event_t *ev)
-        {
-            return STATUS_OK;
-        }
-//        Menu::MenuWindow::MenuWindow(LSPDisplay *dpy, Menu *menu, size_t screen):
-//            LSPWindow(dpy, NULL, screen)
-//        {
-//            pMenu       = menu;
-//        }
-//
-//        Menu::MenuWindow::~MenuWindow()
-//        {
-//        }
-//
-//        LSPWidget *Menu::MenuWindow::find_widget(ssize_t x, ssize_t y)
-//        {
-//            return (pMenu != NULL) ? pMenu->find_widget(x, y) : NULL;
-//        }
-//
-//        void Menu::MenuWindow::render(ISurface *s, bool force)
-//        {
-//            if (pMenu != NULL)
-//                pMenu->render(s, force);
-//            else
-//                LSPWindow::render(s, force);
-//        }
-//
-//        Menu *Menu::MenuWindow::get_handler(ws_event_t *e)
-//        {
-//            Menu *handler = (pMenu != NULL) ? pMenu->check_inside_submenu(e) : NULL;
-//            if (handler == NULL)
-//                handler = pMenu;
-//            return handler;
-//        }
-//
-//        status_t Menu::MenuWindow::on_mouse_down(const ws_event_t *e)
-//        {
-//            ws_event_t xev = *e;
-//            Menu *handler = get_handler(&xev);
-//            return (handler != NULL) ? handler->on_mouse_down(&xev) : LSPWindow::on_mouse_down(&xev);
-//        }
-//
-//        status_t Menu::MenuWindow::on_mouse_up(const ws_event_t *e)
-//        {
-//            ws_event_t xev = *e;
-//            Menu *handler = get_handler(&xev);
-//            return (handler != NULL) ? handler->on_mouse_up(&xev) : LSPWindow::on_mouse_up(&xev);
-//        }
-//
-//        status_t Menu::MenuWindow::on_mouse_scroll(const ws_event_t *e)
-//        {
-//            ws_event_t xev = *e;
-//            Menu *handler = get_handler(&xev);
-//            return (handler != NULL) ? handler->on_mouse_scroll(e) : LSPWindow::on_mouse_scroll(e);
-//        }
-//
-//        status_t Menu::MenuWindow::on_mouse_move(const ws_event_t *e)
-//        {
-//            ws_event_t xev = *e;
-//            Menu *handler = get_handler(&xev);
-//            return (handler != NULL) ? handler->on_mouse_move(&xev) : LSPWindow::on_mouse_move(&xev);
-//        }
-//
-//        void Menu::MenuWindow::size_request(size_request_t *r)
-//        {
-//            if (pMenu != NULL)
-//                pMenu->size_request(r);
-//
-//            // Limit the size of window with the screen size
-//            pDisplay->display()->screen_size(screen(), &r->nMaxWidth, &r->nMaxHeight);
-//            if ((r->nMinWidth > 0) && (r->nMinWidth > r->nMaxWidth))
-//                r->nMinWidth    = r->nMaxWidth;
-//            if ((r->nMinHeight > 0) && (r->nMinHeight > r->nMaxHeight))
-//                r->nMinHeight   = r->nMaxHeight;
-//        }
-
-        //-----------------------------------------------------------------------------
         // Menu implementation
         Menu::Menu(Display *dpy):
             WidgetContainer(dpy),
-            sHandler(this),
+            sWindow(dpy),
             sFont(&sProperties),
-            sPosition(&sProperties),
             sHSpacing(&sProperties),
             sVSpacing(&sProperties),
             sScrolling(&sProperties),
@@ -110,10 +31,7 @@ namespace lsp
             sCheckBorderGap(&sProperties),
             sCheckBorderRadius(&sProperties)
         {
-            pWindow     = NULL;
             pSubmenu    = NULL;
-            pTrgWidget  = NULL;
-            nTrgScreen  = -1;
 // TODO
 //            pWindow     = NULL;
 //            pParentMenu = NULL;
@@ -144,12 +62,23 @@ namespace lsp
 
         status_t Menu::init()
         {
+            // Initialize parent widget
             status_t result = Widget::init();
             if (result != STATUS_OK)
                 return result;
 
+            // Initialize window
+            result = sWindow.init();
+            if (result != STATUS_OK)
+            {
+                sWindow.destroy();
+                return result;
+            }
+            sWindow.add_arrangement(A_RIGHT, 0.0f, false);
+            sWindow.add_arrangement(A_LEFT, 0.0f, false);
+
+            // Bind properties
             sFont.bind("font", &sStyle);
-            sPosition.bind("position", &sStyle);
             sHSpacing.bind("hspacing", &sStyle);
             sVSpacing.bind("vspacing", &sStyle);
             sScrolling.bind("scrolling", &sStyle);
@@ -164,7 +93,6 @@ namespace lsp
             if (sclass != NULL)
             {
                 sFont.init(sclass);
-                sPosition.init(sclass, 0, 0);
                 sHSpacing.init(sclass, 2);
                 sVSpacing.init(sclass, 0);
                 sScrolling.init(sclass, 0);
@@ -203,13 +131,7 @@ namespace lsp
             }
 
             vItems.flush();
-
-            if (pWindow != NULL)
-            {
-                pWindow->destroy();
-                delete pWindow;
-                pWindow = NULL;
-            }
+            sWindow.destroy();
         }
 
         void Menu::property_changed(Property *prop)
@@ -218,10 +140,6 @@ namespace lsp
 
             if (sFont.is(prop))
                 query_resize();
-            if (sPosition.is(prop))
-            {
-                // TODO: sync with window
-            }
             if (sHSpacing.is(prop))
                 query_resize();
             if (sVSpacing.is(prop))
@@ -251,7 +169,7 @@ namespace lsp
             estimate_sizes(&sz);
 
             // Compute minimum and maximum size
-            size_t spaces   = lsp_max(0, sz.items + sz.separators - 1);
+            ssize_t spaces  = lsp_max(0, ssize_t(sz.items + sz.separators) - 1);
             r->nMinWidth    = sz.width;
             r->nMinHeight   = lsp_max(sz.m_height, sz.s_height);
             r->nMaxWidth    = sz.width;
@@ -321,9 +239,6 @@ namespace lsp
             sz->cb_height   = sz->cb_width;
 
             // Size of text
-            ws::rectangle_t r_mi; // menu item
-            ws::rectangle_t r_sc; // short cut
-
             ws::font_parameters_t fp;
             sFont.get_parameters(pDisplay, scaling, &fp);
 
@@ -480,6 +395,40 @@ namespace lsp
         Widget *Menu::get(size_t index)
         {
             return vItems.get(index);
+        }
+
+        void Menu::show()
+        {
+            size_t screen;
+            ssize_t x, y;
+
+            if (pDisplay->get_pointer_location(&screen, &x, &y) != STATUS_OK)
+                return;
+
+            sWindow.trigger_screen()->set(screen);
+            sWindow.trigger_area()->set(x, y, 0, 0);
+            sWindow.show();
+        }
+
+        void Menu::show(Widget *w, ssize_t x, ssize_t y)
+        {
+            sWindow.trigger_widget()->set(w);
+            sWindow.trigger_area()->set(x, y, 0, 0);
+            sWindow.show();
+        }
+
+        void Menu::show(Widget *w, ssize_t x, ssize_t y, ssize_t xw, ssize_t xh)
+        {
+            sWindow.trigger_widget()->set(w);
+            sWindow.trigger_area()->set(x, y, xw, xh);
+            sWindow.show();
+        }
+
+        void Menu::show(Widget *w, const ws::rectangle_t *r)
+        {
+            sWindow.trigger_widget()->set(w);
+            sWindow.trigger_area()->set(r);
+            sWindow.show();
         }
 
 //        Menu *Menu::check_inside_submenu(ws_event_t *ev)
@@ -748,267 +697,20 @@ namespace lsp
 //            return LSPWidgetContainer::hide();
 //        }
 //
-        void Menu::show()
-        {
-            if (sVisibility.get())
-                return;
-
-            size_t screen = pDisplay->display()->default_screen();
-            Window *top = widget_cast<Window>(toplevel());
-            if (top != NULL)
-                screen = top->screen();
-
-            show(screen, sPosition.left(), sPosition.top());
-        }
-
-        void Menu::show(size_t screen)
-        {
-            show(screen, sPosition.left(), sPosition.top());
-        }
-
-        void Menu::show(Widget *w, ssize_t x, ssize_t y)
-        {
-            if (sVisibility.get())
-                return;
-
-            size_t screen = pDisplay->display()->default_screen();
-            Window *top = widget_cast<Window>(w->toplevel());
-            if (top == NULL)
-                top = widget_cast<Window>(toplevel());
-            if (top != NULL)
-                screen = top->screen();
-
-            return show(w, screen, x, y);
-        }
-
-        void Menu::show(Widget *w)
-        {
-            show(w, sPosition.left(), sPosition.top());
-        }
-
-        void Menu::show(Widget *w, const ws::event_t *ev)
-        {
-            if (ev == NULL)
-            {
-                show(w, sPosition.left(), sPosition.top());
-                return;
-            }
-
-            ws::rectangle_t r;
-            r.nLeft     = 0;
-            r.nTop      = 0;
-            r.nWidth    = 0;
-            r.nHeight   = 0;
-
-            Window *top = widget_cast<Window>(w->toplevel());
-            if (top == NULL)
-                top = widget_cast<Window>(toplevel());
-            if (top != NULL)
-                top->get_screen_rectangle(&r);
-
-            return show(w, r.nLeft + ev->nLeft, r.nTop + ev->nTop);
-        }
-
-        void Menu::show(size_t screen, ssize_t left, ssize_t top)
-        {
-            show(NULL, screen, left, top);
-        }
-
-        void Menu::show(Widget *w, size_t screen, ssize_t left, ssize_t top)
-        {
-            if (sVisibility.get())
-                return;
-
-            // Show the window
-            pTrgWidget  = w;
-            nTrgScreen  = screen;
-            sPosition.set(left, top);
-
-            WidgetContainer::show();
-
-//            // Get initial window geometry
-//            realize_t wr;
-//            pWindow->get_geometry(&wr);
-//            if (left >= 0)
-//                wr.nLeft        = left;
-//            else if (wr.nLeft < 0)
-//                wr.nLeft        = 0;
-//            if (top >= 0)
-//                wr.nTop         = top;
-//            else if (wr.nTop < 0)
-//                wr.nTop         = 0;
-//
-//
-//            // Now request size and adjust location
-//            size_request_t sr;
-//            pWindow->size_request(&sr);
-//
-//            ssize_t sw = 0, sh = 0;
-//            dpy->screen_size(pWindow->screen(), &sw, &sh);
-//            ssize_t xlast = wr.nLeft + sr.nMinWidth, ylast = wr.nTop + sr.nMinHeight;
-//
-//            if (xlast >  sw)
-//                wr.nLeft   -= (xlast - sw);
-//            if (ylast > sh)
-//                wr.nTop    -= (ylast - sh);
-//            wr.nWidth       = sr.nMinWidth;
-//            wr.nHeight      = sr.nMinHeight;
-//
-//            // Now we can set the geometry and show window
-//            pWindow->set_geometry(&wr);
-//            wr.nLeft        = 0;
-//            wr.nTop         = 0;
-//            realize(&wr);
-//            nSelected       = SEL_NONE;
-//
-//            pWindow->show(w);
-//
-//            // Need to perform grabbing?
-//            pParentMenu = widget_cast<Menu>(w);
-//            if (pParentMenu == NULL)
-//                pWindow->grab_events(GRAB_MENU);
-//
-//            return LSPWidgetContainer::show();
-        }
-
-        bool Menu::create_window()
-        {
-            ws::IDisplay *dpy = pDisplay->display();
-
-            // Passed argument
-            Widget *w       = pTrgWidget;
-            size_t screen   = ((nTrgScreen < 0) || (nTrgScreen >= ssize_t(dpy->screens()))) ? dpy->default_screen() : nTrgScreen;
-            pTrgWidget      = NULL;
-            nTrgScreen      = -1;
-
-            // Destroy the window if it does not match requirements
-            if ((pWindow != NULL) && (pWindow->screen() != screen))
-            {
-                pWindow->destroy();
-                delete pWindow;
-                pWindow = NULL;
-            }
-
-            // Now we are ready to create window
-            Window *wnd = pWindow;
-            if (wnd == NULL)
-            {
-                // Create window
-                wnd = new Window(pDisplay, NULL, screen);
-                if (wnd == NULL)
-                    return false;
-
-                // Initialize window
-                status_t result = pWindow->init();
-                if (result != STATUS_OK)
-                {
-                    wnd->destroy();
-                    delete wnd;
-                    return false;
-                }
-
-                wnd->border_style()->set(ws::BS_POPUP);
-                wnd->actions()->set(ws::WA_POPUP);
-                pWindow = wnd;
-            }
-
-            return true;
-        }
-
-        void Menu::hide_widget()
-        {
-            // Destroy window
-            if (pWindow != NULL)
-            {
-                pWindow->destroy();
-                delete pWindow;
-                pWindow = NULL;
-            }
-
-            WidgetContainer::hide_widget();
-        }
 
         void Menu::show_widget()
         {
             // Call parent class for show
             WidgetContainer::show_widget();
 
-            // Create window
-            if (!create_window())
+            if (pParent != &sWindow)
             {
-                sVisibility.set(false);
-                return;
+                sWindow.remove_all();
+                sWindow.add(this);
             }
-
-            // Sync the window position and size
-            pWindow->add(this);
+            sWindow.show();
         }
 
-//
-//        void Menu::size_request(ws::size_limit_t *r)
-//        {
-//            r->nMinWidth    = 0;
-//            r->nMinHeight   = 0;
-//            r->nMaxWidth    = -1;
-//            r->nMaxHeight   = -1;
-//
-//            // Create surface
-//            ws::ISurface *s = pDisplay->create_surface(1, 1);
-//            if (s == NULL)
-//                return;
-//
-//            // Estimate the size of menu
-//            font_parameters_t fp;
-//            text_parameters_t tp;
-//            sFont.get_parameters(s, &fp);
-//            size_t n = vItems.size();
-//            ssize_t separator = fp.Height * 0.5f;
-//            ssize_t subitem = 0;
-//
-//            LSPString text;
-//            for (size_t i=0; i<n; ++i)
-//            {
-//                MenuItem *mi = vItems.at(i);
-//                if ((mi == NULL) || (!mi->visible()))
-//                    continue;
-//
-//                if (mi->is_separator())
-//                {
-//                    r->nMinHeight += separator + nSpacing;
-//                    if (r->nMinWidth < fp.Height)
-//                        r->nMinWidth = fp.Height;
-//                }
-//                else
-//                {
-//                    r->nMinHeight  += fp.Height + nSpacing;
-//                    ssize_t width   = (mi->submenu() != NULL) ? separator : 0;
-//
-//                    mi->text()->format(&text);
-//                    if (!text.is_empty())
-//                    {
-//                        sFont.get_text_parameters(s, &tp, &text);
-//                        width          += tp.XAdvance;
-//                    }
-//
-//                    if ((subitem <= 0) && (mi->has_submenu()))
-//                    {
-//                        sFont.get_text_parameters(s, &tp, "►");
-//                        subitem        += tp.XAdvance + 2;
-//                    }
-//
-//                    if (r->nMinWidth < width)
-//                        r->nMinWidth        = width;
-//                }
-//            }
-//
-//            r->nMinWidth    += nBorder * 2 + subitem + sPadding.horizontal();
-//            r->nMinHeight   += nBorder * 2 + sPadding.vertical();
-//
-//            // Destroy surface
-//            s->destroy();
-//            delete s;
-//        }
-//
 //        status_t Menu::on_mouse_down(const ws::event_t *e)
 //        {
 //            if (nMBState == 0)
