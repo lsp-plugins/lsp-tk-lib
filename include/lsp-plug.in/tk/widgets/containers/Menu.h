@@ -164,6 +164,7 @@ namespace lsp
                 virtual Widget             *get(size_t index);
 
                 virtual void                show();
+                virtual void                show(Widget *w);
                 virtual void                show(Widget *w, ssize_t x, ssize_t y);
                 virtual void                show(Widget *w, ssize_t x, ssize_t y, ssize_t xw, ssize_t xh);
                 virtual void                show(Widget *w, const ws::rectangle_t *r);

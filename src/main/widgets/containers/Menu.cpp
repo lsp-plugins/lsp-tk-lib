@@ -410,6 +410,18 @@ namespace lsp
             sWindow.show();
         }
 
+        void Menu::show(Widget *w)
+        {
+            if (w == NULL)
+                return;
+
+            ws::rectangle_t r;
+            w->get_screen_rectangle(&r);
+            sWindow.trigger_widget()->set(w);
+            sWindow.trigger_area()->set(&r);
+            sWindow.show();
+        }
+
         void Menu::show(Widget *w, ssize_t x, ssize_t y)
         {
             sWindow.trigger_widget()->set(w);
