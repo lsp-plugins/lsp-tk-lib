@@ -24,6 +24,16 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
+                typedef struct item_t
+                {
+                    MenuItem           *item;       // Menu item
+                    ws::rectangle_t     area;       // Overall area allocated to menu item
+                    ws::rectangle_t     check;      // Check box/radio area
+                    ws::rectangle_t     ref;        // Reference to submenu area
+                    ws::rectangle_t     scut;       // Shortcut text area
+                    ws::rectangle_t     text;       // Menu text area
+                } item_t;
+
                 typedef struct isizes_t
                 {
                     ssize_t             mc_width;   // menu caption width
@@ -36,18 +46,28 @@ namespace lsp
                     ssize_t             sc_height;  // shortcut height
                     ssize_t             sp_width;   // separator width
                     ssize_t             sp_height;  // separator height
+                    ssize_t             sp_thick;   // separator thickness
 
                     size_t              items;      // number of visible items
                     size_t              separators; // number of visible separators
                     ssize_t             width;      // overall width
                     ssize_t             s_height;   // separator height
                     ssize_t             m_height;   // menu item height
+                    ssize_t             m_lpad;
+                    ssize_t             m_rpad;
                     ssize_t             hspacing;   // horizontal spacing
                     ssize_t             vspacing;   // vertical spacing
+                    ssize_t             max_scroll; // maximum scrolling (in pixels), available only after realize()
                     bool                ckbox;      // at least one check box is present
                     bool                shortcut;   // at least one shortcut is present
                     bool                submenu;    // at least one submenu is present
                 } isizes_t;
+
+                typedef struct ibutton_t
+                {
+                    ws::rectangle_t     sPos;       // position
+                    bool                bEnabled;   // button enabled
+                } ibutton_t;
 
                 enum selection_t
                 {
@@ -58,21 +78,26 @@ namespace lsp
 
             protected:
                 lltl::parray<MenuItem>  vItems;
+                lltl::darray<item_t>    vVisible;       // List of visible items
 
+                ssize_t                 nSelected;      // Selected menu item
                 PopupWindow             sWindow;        // Associated popup window
-                Menu                   *pSubmenu;       // Sub-menu
+                isizes_t                sISizes;        // Realized sizes
+                ibutton_t               sUp;            // Up-scroll button
+                ibutton_t               sDown;          // Down-scroll button
 
                 prop::Font              sFont;
                 prop::Integer           sHSpacing;
                 prop::Integer           sVSpacing;
-                prop::Integer           sScrolling;
-                prop::Integer           sBorder;
+                prop::Float             sScrolling;
+                prop::Integer           sBorderSize;
                 prop::Color             sBorderColor;
                 prop::Integer           sCheckSize;
                 prop::Integer           sCheckBorder;
                 prop::Integer           sCheckBorderGap;
                 prop::Integer           sCheckBorderRadius;
-
+                prop::Integer           sSeparatorWidth;
+                prop::WidgetPtr<Menu>   sSubmenu;           // Sub-menu
 
 //                MenuWindow             *pWindow;
 //                LSPMenu                *pParentMenu;
@@ -91,6 +116,8 @@ namespace lsp
             protected:
                 void                        estimate_sizes(isizes_t *sz);
 
+                void                        allocate_items(lltl::darray<item_t> *out);
+
 //                ssize_t                     find_item(ssize_t x, ssize_t y, ssize_t *ry);
 //                void                        update_scroll();
 //                void                        selection_changed(ssize_t sel, ssize_t ry);
@@ -106,6 +133,8 @@ namespace lsp
                 virtual void                realize(const ws::rectangle_t *r);
 
                 virtual void                show_widget();
+
+                virtual void                hide_widget();
 
             public:
                 explicit Menu(Display *dpy);
@@ -124,11 +153,11 @@ namespace lsp
                 inline Integer             *vspacing()                  { return &sVSpacing;                }
                 inline const Integer       *vspacing() const            { return &sVSpacing;                }
 
-                inline Integer             *scrolling()                 { return &sScrolling;               }
-                inline const Integer       *scrolling() const           { return &sScrolling;               }
+                inline Float               *scrolling()                 { return &sScrolling;               }
+                inline const Float         *scrolling() const           { return &sScrolling;               }
 
-                inline Integer             *border()                    { return &sBorder;                  }
-                inline const Integer       *border() const              { return &sBorder;                  }
+                inline Integer             *border_size()               { return &sBorderSize;              }
+                inline const Integer       *border_size() const         { return &sBorderSize;              }
 
                 inline Color               *border_color()              { return &sBorderColor;             }
                 inline const Color         *border_color() const        { return &sBorderColor;             }
@@ -144,6 +173,9 @@ namespace lsp
 
                 inline Integer             *check_border_radius()       { return &sCheckBorderRadius;       }
                 inline const Integer       *check_border_radius() const { return &sCheckBorderRadius;       }
+
+                inline Integer             *separator_width()           { return &sSeparatorWidth;          }
+                inline const Integer       *separator_width() const     { return &sSeparatorWidth;          }
 
                 Rectangle                  *trigger_area()              { return sWindow.trigger_area();    }
                 const Rectangle            *trigger_area() const        { return sWindow.trigger_area();    }
@@ -169,11 +201,7 @@ namespace lsp
                 virtual void                show(Widget *w, ssize_t x, ssize_t y, ssize_t xw, ssize_t xh);
                 virtual void                show(Widget *w, const ws::rectangle_t *r);
 
-//                virtual void        draw(ws::ISurface *s);
-//
-//                virtual void        query_resize();
-//
-
+                virtual void                draw(ws::ISurface *s);
 //
 //                virtual status_t    on_mouse_down(const ws::event_t *e);
 //

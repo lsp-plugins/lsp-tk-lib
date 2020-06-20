@@ -106,6 +106,12 @@ namespace lsp
                      */
                     status_t            init(Style *style, float value);
                     status_t            override(Style *style, float value);
+
+                    /**
+                     * Change value without notification of any listener
+                     * @param value value to set
+                     */
+                    inline void         commit(float value)                             { fValue        = value; }
             };
         }
 

@@ -24,14 +24,15 @@ namespace lsp
             sHSpacing(&sProperties),
             sVSpacing(&sProperties),
             sScrolling(&sProperties),
-            sBorder(&sProperties),
+            sBorderSize(&sProperties),
             sBorderColor(&sProperties),
             sCheckSize(&sProperties),
             sCheckBorder(&sProperties),
             sCheckBorderGap(&sProperties),
-            sCheckBorderRadius(&sProperties)
+            sCheckBorderRadius(&sProperties),
+            sSeparatorWidth(&sProperties),
+            sSubmenu(&Menu::metadata, &sProperties)
         {
-            pSubmenu    = NULL;
 // TODO
 //            pWindow     = NULL;
 //            pParentMenu = NULL;
@@ -52,7 +53,47 @@ namespace lsp
 //            sScroll.bind(pDisplay);
 //            sScroll.set_handler(timer_handler, this);
 
-            pClass      = &metadata;
+            nSelected               = -1;
+
+            sISizes.mc_width        = 0;
+            sISizes.mc_height       = 0;
+            sISizes.cb_width        = 0;
+            sISizes.cb_height       = 0;
+            sISizes.mr_width        = 0;
+            sISizes.mr_height       = 0;
+            sISizes.sc_width        = 0;
+            sISizes.sc_height       = 0;
+            sISizes.sp_width        = 0;
+            sISizes.sp_height       = 0;
+            sISizes.sp_thick        = 0;
+
+            sISizes.items           = 0;
+            sISizes.separators      = 0;
+            sISizes.width           = 0;
+            sISizes.s_height        = 0;
+            sISizes.m_height        = 0;
+            sISizes.m_lpad          = 0;
+            sISizes.m_rpad          = 0;
+            sISizes.hspacing        = 0;
+            sISizes.vspacing        = 0;
+            sISizes.max_scroll      = 0;
+            sISizes.ckbox           = false;
+            sISizes.shortcut        = false;
+            sISizes.submenu         = false;
+
+            sUp.sPos.nLeft          = 0;
+            sUp.sPos.nTop           = 0;
+            sUp.sPos.nWidth         = 0;
+            sUp.sPos.nHeight        = 0;
+            sUp.bEnabled            = false;
+
+            sDown.sPos.nLeft        = 0;
+            sDown.sPos.nTop         = 0;
+            sDown.sPos.nWidth       = 0;
+            sDown.sPos.nHeight      = 0;
+            sDown.bEnabled          = false;
+
+            pClass                  = &metadata;
         }
         
         Menu::~Menu()
@@ -76,18 +117,21 @@ namespace lsp
             }
             sWindow.add_arrangement(A_RIGHT, 0.0f, false);
             sWindow.add_arrangement(A_LEFT, 0.0f, false);
+            sWindow.layout()->set(-1.0f, -1.0f, 1.0f, 1.0f);
 
             // Bind properties
             sFont.bind("font", &sStyle);
             sHSpacing.bind("hspacing", &sStyle);
             sVSpacing.bind("vspacing", &sStyle);
             sScrolling.bind("scrolling", &sStyle);
-            sBorder.bind("border", &sStyle);
+            sBorderSize.bind("border.size", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sCheckSize.bind("check.size", &sStyle);
             sCheckBorder.bind("check.border", &sStyle);
             sCheckBorderGap.bind("check.border.gap", &sStyle);
             sCheckBorderRadius.bind("check.border.radius", &sStyle);
+            sSeparatorWidth.bind("separator.width", &sStyle);
+            sSubmenu.bind(NULL);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -95,18 +139,18 @@ namespace lsp
                 sFont.init(sclass);
                 sHSpacing.init(sclass, 2);
                 sVSpacing.init(sclass, 0);
-                sScrolling.init(sclass, 0);
-                sBorder.init(sclass, 0);
+                sScrolling.init(sclass, 0.0f);
+                sBorderSize.init(sclass, 1);
                 sBorderColor.init(sclass, "#000000");
                 sCheckSize.init(sclass, 12);
                 sCheckBorder.init(sclass, 1);
                 sCheckBorderGap.init(sclass, 1);
                 sCheckBorderRadius.init(sclass, 4);
+                sSeparatorWidth.init(sclass, 1);
 
                 // Overrides
                 sVisibility.override(sclass, false);
                 sBgColor.override(sclass, "#cccccc");
-                sPadding.override(sclass, 16, 16, 0, 0);
             }
 
             return STATUS_OK;
@@ -130,6 +174,7 @@ namespace lsp
                 unlink_widget(item);
             }
 
+            vVisible.flush();
             vItems.flush();
             sWindow.destroy();
         }
@@ -145,8 +190,8 @@ namespace lsp
             if (sVSpacing.is(prop))
                 query_resize();
             if (sScrolling.is(prop))
-                query_draw();
-            if (sBorder.is(prop))
+                query_resize();
+            if (sBorderSize.is(prop))
                 query_resize();
             if (sBorderColor.is(prop))
                 query_draw();
@@ -165,18 +210,16 @@ namespace lsp
         void Menu::size_request(ws::size_limit_t *r)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            ssize_t border  = lsp_max(0.0f, scaling * sBorderSize.get()) * 2;
             isizes_t sz;
             estimate_sizes(&sz);
 
             // Compute minimum and maximum size
             ssize_t spaces  = lsp_max(0, ssize_t(sz.items + sz.separators) - 1);
-            r->nMinWidth    = sz.width;
-            r->nMinHeight   = lsp_max(sz.m_height, sz.s_height);
-            r->nMaxWidth    = sz.width;
-            r->nMaxHeight   = sz.m_height * sz.items + sz.s_height * sz.separators + spaces * sz.vspacing;
-
-            // Add padding
-            sPadding.add(r, scaling);
+            r->nMinWidth    = sz.m_lpad + sz.m_rpad + sz.width + border;
+            r->nMinHeight   = lsp_max(sz.m_height, sz.s_height) + border;
+            r->nMaxWidth    = r->nMinWidth;
+            r->nMaxHeight   = sz.m_height * sz.items + sz.s_height * sz.separators + spaces * sz.vspacing + border;
         }
 
         void Menu::estimate_sizes(isizes_t *sz)
@@ -189,8 +232,12 @@ namespace lsp
             sz->ckbox       = false;
             sz->shortcut    = false;
             sz->submenu     = false;
+            sz->m_lpad      = 0;
+            sz->m_rpad      = 0;
 
-            // Lookup for checkbox
+            // Lookup for check box
+            padding_t pad;
+
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 MenuItem *mi = vItems.get(i);
@@ -204,6 +251,7 @@ namespace lsp
                             sz->shortcut    = true;
                         if (mi->menu()->is_set())
                             sz->submenu     = true;
+                        mi->padding()->compute(&pad, scaling);
                         ++sz->items;
                         break;
                     case MI_CHECK:
@@ -212,6 +260,7 @@ namespace lsp
                             sz->shortcut    = true;
                         if (mi->menu()->is_set())
                             sz->submenu     = true;
+                        mi->padding()->compute(&pad, scaling);
                         ++sz->items;
                         break;
                     case MI_RADIO:
@@ -220,12 +269,18 @@ namespace lsp
                             sz->shortcut    = true;
                         if (mi->menu()->is_set())
                             sz->submenu     = true;
+                        mi->padding()->compute(&pad, scaling);
                         ++sz->items;
                         break;
                     case MI_SEPARATOR:
                         ++sz->separators;
+                        pad.nLeft       = 0;
+                        pad.nTop        = 0;
                         break;
                 }
+
+                sz->m_lpad      = lsp_max(sz->m_lpad, ssize_t(pad.nLeft));
+                sz->m_rpad      = lsp_max(sz->m_rpad, ssize_t(pad.nRight));
             }
 
             // Size of checkbox/radio
@@ -264,7 +319,7 @@ namespace lsp
                 sz->mc_height   = lsp_max(sz->mc_height, tp.Height);
 
                 // Estimate size of shortcut
-                if (mi->menu()->is_set())
+                if (mi->sShortcut.valid())
                 {
                     mi->sShortcut.format(&s);
                     sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
@@ -274,10 +329,11 @@ namespace lsp
             }
 
             // Submenu reference size, separator size
+            sz->sp_thick    = lsp_max(0, sSeparatorWidth.get() * scaling);
             sz->mr_height   = lsp_max(sz->mc_height, sz->sc_height);
             sz->mr_width    = lsp_max(1.0f, ceil(sz->sc_height * M_SQRT1_2));
             sz->sp_width    = lsp_max(7, 7 * scaling);
-            sz->sp_height   = lsp_max(3, 3 * scaling);
+            sz->sp_height   = lsp_max(4, 4*scaling + sz->sp_thick);
 
             // Estimate minimum size
             sz->width       = sz->mc_width;
@@ -300,22 +356,277 @@ namespace lsp
             }
 
             sz->s_height    = sz->sp_height;
+            sz->max_scroll  = 0;
+        }
+
+        void Menu::allocate_items(lltl::darray<item_t> *out)
+        {
         }
 
         void Menu::realize(const ws::rectangle_t *r)
         {
             WidgetContainer::realize(r);
 
-//            size_request_t sr;
-//            size_request(&sr);
-//
-//            nScrollMax      = sr.nMinHeight - r->nHeight;
-//            set_scroll(nScroll);
-////            lsp_trace("scroll_max = %d, scroll = %d", int(nScrollMax), int(nScroll));
-//
-//            query_draw();
-//            if (pWindow != NULL)
-//                pWindow->query_draw();
+            padding_t pad;
+            ws::rectangle_t rr;
+            isizes_t sz;
+            estimate_sizes(&sz);
+
+            // Estimate scrolling position
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t scroll      = lsp_max(0, sScrolling.get() * scaling);
+            ssize_t border      = lsp_max(0.0f, scaling * sBorderSize.get());
+            sPadding.compute(&pad, scaling);
+
+            rr.nLeft            = border;
+            rr.nTop             = border;
+            rr.nWidth           = r->nWidth  - border * 2;
+            rr.nHeight          = r->nHeight - border * 2;
+
+            // Re-compute size limits
+            ssize_t spaces      = lsp_max(0, ssize_t(sz.items + sz.separators) - 1);
+            ssize_t max_height  = sz.m_height * sz.items + sz.s_height * sz.separators + spaces * sz.vspacing;
+            max_height         += pad.nTop + pad.nBottom;
+            sz.max_scroll       = lsp_max(0, max_height - rr.nHeight);
+
+            if ((scroll > sz.max_scroll) && (scaling > 0.0f))
+            {
+                scroll              = sz.max_scroll;
+                sScrolling.commit(scroll / scaling);
+            }
+
+            // Allocate space for buttons
+            sUp.sPos.nLeft      = rr.nLeft;
+            sUp.sPos.nTop       = rr.nTop;
+            sUp.sPos.nWidth     = rr.nWidth;
+            sUp.sPos.nHeight    = lsp_min(4, sz.m_height >> 1);
+            sUp.bEnabled        = (scroll > 0);
+
+            sDown.sPos.nWidth   = rr.nWidth;
+            sDown.sPos.nHeight  = lsp_min(4, sz.m_height >> 1);
+            sDown.sPos.nLeft    = rr.nLeft;
+            sDown.sPos.nTop     = rr.nTop + rr.nHeight - sDown.sPos.nHeight;
+            sDown.bEnabled      = (scroll < sz.max_scroll);
+
+            // Now allocate position of each visible widget
+            rr.nTop            += pad.nTop - scroll;
+
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                MenuItem *mi        = vItems.uget(i);
+                if ((mi == NULL) || (!mi->visibility()->get()))
+                    continue;
+
+                if (mi->type()->separator())
+                    rr.nHeight      = sz.s_height;
+                else
+                    rr.nHeight      = sz.m_height;
+
+                // Realize the widget
+                mi->realize(&rr);
+
+                // Update position
+                rr.nTop        += rr.nHeight + sz.vspacing;
+            }
+
+            // Remember drawing parameters
+            sISizes             = sz;
+        }
+
+        void Menu::draw(ws::ISurface *s)
+        {
+            padding_t pad;
+            ws::rectangle_t xr, r;
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+            ssize_t border      = lsp_max(0, sBorderSize.get() * scaling);
+            sPadding.compute(&pad, scaling);
+
+            xr.nLeft            = border;
+            xr.nTop             = border;
+            xr.nWidth           = sSize.nWidth  - border * 2;
+            xr.nHeight          = sSize.nHeight - border * 2;
+
+            // Draw background
+            lsp::Color color(sBgColor);
+            s->clear(color);
+
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                MenuItem *mi    = vItems.uget(i);
+                if ((mi == NULL) || (!mi->visibility()->get()))
+                    continue;
+
+                // Do not draw invisible items
+                mi->get_rectangle(&r);
+                if (!Size::overlap(&xr, &r))
+                    continue;
+
+                // Just separator?
+                if (mi->type()->separator())
+                {
+                    r.nLeft        += pad.nLeft;
+                    r.nWidth       -= pad.nLeft + pad.nRight;
+                    r.nTop         += 2 * scaling;
+                    r.nHeight       = sISizes.sp_thick;
+
+                    color.copy(mi->text_color()->color());
+                    color.scale_lightness(bright);
+                    s->fill_rect(color, &r);
+                    continue;
+                }
+
+                // More complicated element
+
+            }
+
+            /*
+            // Prepare palette
+            Color bg_color(sBgColor);
+            Color border(sBorderColor);
+            Color font(sFont.raw_color());
+            Color sel(sSelColor);
+            Color tmp;
+
+            border.scale_lightness(brightness());
+            font.scale_lightness(brightness());
+            sel.scale_lightness(brightness());
+
+
+
+            font_parameters_t fp;
+            text_parameters_t tp;
+            sFont.get_parameters(s, &fp);
+
+            ssize_t separator = fp.Height * 0.5f + nSpacing;
+            ssize_t sep_len = sSize.nWidth - (nBorder + nSpacing) * 2;
+            ssize_t hspace  = nSpacing >> 1;
+
+            fp.Height      += nSpacing;
+            ssize_t y       = sPadding.top() + nBorder - nScroll;
+            ssize_t x       = sPadding.left() + nBorder;
+            size_t n        = vItems.size();
+
+            LSPString text;
+
+            for (size_t i=0; i < n; ++i)
+            {
+                MenuItem *item = vItems.get(i);
+                if ((item == NULL) || (!item->visible()))
+                    continue;
+
+//                lsp_trace("x,y = %d, %d", int(x), int(y));
+
+                if (y >= sSize.nHeight)
+                    break;
+
+                if (item->is_separator())
+                {
+                    if (y > (-separator))
+                    {
+                        if (sep_len > 0)
+                            s->fill_rect(x - sPadding.left() + nSpacing, y + (separator >> 1), sep_len, 1, border);
+                    }
+
+                    y += separator;
+                }
+                else
+                {
+                    if (y > (-fp.Height))
+                    {
+                        item->text()->format(&text);
+                        if (nSelected == ssize_t(i))
+                        {
+                            s->fill_rect(nBorder, y, sSize.nWidth - nBorder*2, fp.Height, sel);
+                            tmp.copy(bg_color);
+                        }
+                        else
+                            tmp.copy(font);
+
+                        if (!text.is_empty())
+                            sFont.draw(s, x, y + fp.Ascent + hspace, tmp, &text);
+
+                        if (item->has_submenu())
+                        {
+                            sFont.get_text_parameters(s, &tp, "►");
+                            sFont.draw(s, sSize.nWidth - nBorder - nSpacing - tp.XAdvance - 2, y + fp.Ascent + hspace, tmp, "►");
+                        }
+                    }
+
+                    y += fp.Height;
+                }
+            }
+
+            if (nScrollMax > 0)
+            {
+                float cx = sSize.nWidth * 0.5f;
+                float aa = s->set_antialiasing(true);
+
+                // Top button
+                if (nScroll > 0)
+                {
+                    s->fill_rect(nBorder, nBorder, sSize.nWidth - nBorder * 2, separator, bg_color);
+                    if (nSelected == SEL_TOP_SCROLL)
+                    {
+                        tmp.copy(bg_color);
+                        s->fill_rect(nBorder + 1, nBorder + 1, sSize.nWidth - (nBorder + 1)* 2, separator - 1, border);
+                    }
+                    else
+                        tmp.copy(font);
+
+                    // Draw arrow up
+                    s->fill_triangle(
+                        cx, nBorder + 3,
+                        cx + separator, nBorder + separator - 2,
+                        cx - separator, nBorder + separator - 2,
+                        tmp);
+                }
+                else if (sPadding.top() > 0)
+                    s->fill_rect(nBorder, nBorder, sSize.nWidth - nBorder * 2, sPadding.top(), bg_color);
+
+                // Bottom button
+                if (nScroll < nScrollMax)
+                {
+                    s->fill_rect(nBorder, sSize.nHeight - nBorder - separator,
+                        sSize.nWidth - nBorder * 2, separator, bg_color);
+
+                    if (nSelected == SEL_BOTTOM_SCROLL)
+                    {
+                        tmp.copy(bg_color);
+                        s->fill_rect(nBorder + 1, sSize.nHeight - nBorder - separator,
+                            sSize.nWidth - (nBorder + 1) * 2, separator - 1, border);
+                    }
+                    else
+                        tmp.copy(font);
+
+                    // Draw arrow down
+                    s->fill_triangle(
+                        cx, sSize.nHeight - nBorder - 3,
+                        cx + separator, sSize.nHeight - nBorder - separator + 2,
+                        cx - separator, sSize.nHeight - nBorder - separator + 2,
+                        tmp);
+                }
+                else if (sPadding.bottom() > 0)
+                    s->fill_rect(nBorder, sSize.nHeight - nBorder - sPadding.bottom(),
+                        sSize.nWidth - nBorder * 2, sPadding.bottom(), bg_color);
+
+                // Restore anti-aliasing
+                s->set_antialiasing(aa);
+            }
+
+            */
+
+            // Draw border
+            if (border > 0)
+            {
+                color.copy(sBorderColor);
+                color.scale_lightness(bright);
+                s->fill_frame(
+                    color,
+                    0, 0, sSize.nWidth, sSize.nHeight,
+                    border, border, sSize.nWidth - border * 2, sSize.nHeight - border * 2
+                );
+            }
         }
 
 //        LSPWidget *Menu::find_widget(ssize_t x, ssize_t y)
@@ -407,7 +718,7 @@ namespace lsp
 
             sWindow.trigger_screen()->set(screen);
             sWindow.trigger_area()->set(x, y, 0, 0);
-            sWindow.show();
+            Widget::show();
         }
 
         void Menu::show(Widget *w)
@@ -419,28 +730,28 @@ namespace lsp
             w->get_screen_rectangle(&r);
             sWindow.trigger_widget()->set(w);
             sWindow.trigger_area()->set(&r);
-            sWindow.show();
+            Widget::show();
         }
 
         void Menu::show(Widget *w, ssize_t x, ssize_t y)
         {
             sWindow.trigger_widget()->set(w);
             sWindow.trigger_area()->set(x, y, 0, 0);
-            sWindow.show();
+            Widget::show();
         }
 
         void Menu::show(Widget *w, ssize_t x, ssize_t y, ssize_t xw, ssize_t xh)
         {
             sWindow.trigger_widget()->set(w);
             sWindow.trigger_area()->set(x, y, xw, xh);
-            sWindow.show();
+            Widget::show();
         }
 
         void Menu::show(Widget *w, const ws::rectangle_t *r)
         {
             sWindow.trigger_widget()->set(w);
             sWindow.trigger_area()->set(r);
-            sWindow.show();
+            Widget::show();
         }
 
 //        Menu *Menu::check_inside_submenu(ws_event_t *ev)
@@ -546,169 +857,6 @@ namespace lsp
 //            return SEL_NONE;
 //        }
 //
-//        void Menu::draw(ws::ISurface *s)
-//        {
-//            // Prepare palette
-//            Color bg_color(sBgColor);
-//            Color border(sBorderColor);
-//            Color font(sFont.raw_color());
-//            Color sel(sSelColor);
-//            Color tmp;
-//
-//            border.scale_lightness(brightness());
-//            font.scale_lightness(brightness());
-//            sel.scale_lightness(brightness());
-//
-//            // Draw background
-//            s->clear(bg_color);
-//
-//            font_parameters_t fp;
-//            text_parameters_t tp;
-//            sFont.get_parameters(s, &fp);
-//
-//            ssize_t separator = fp.Height * 0.5f + nSpacing;
-//            ssize_t sep_len = sSize.nWidth - (nBorder + nSpacing) * 2;
-//            ssize_t hspace  = nSpacing >> 1;
-//
-//            fp.Height      += nSpacing;
-//            ssize_t y       = sPadding.top() + nBorder - nScroll;
-//            ssize_t x       = sPadding.left() + nBorder;
-//            size_t n        = vItems.size();
-//
-//            LSPString text;
-//
-//            for (size_t i=0; i < n; ++i)
-//            {
-//                MenuItem *item = vItems.get(i);
-//                if ((item == NULL) || (!item->visible()))
-//                    continue;
-//
-////                lsp_trace("x,y = %d, %d", int(x), int(y));
-//
-//                if (y >= sSize.nHeight)
-//                    break;
-//
-//                if (item->is_separator())
-//                {
-//                    if (y > (-separator))
-//                    {
-//                        if (sep_len > 0)
-//                            s->fill_rect(x - sPadding.left() + nSpacing, y + (separator >> 1), sep_len, 1, border);
-//                    }
-//
-//                    y += separator;
-//                }
-//                else
-//                {
-//                    if (y > (-fp.Height))
-//                    {
-//                        item->text()->format(&text);
-//                        if (nSelected == ssize_t(i))
-//                        {
-//                            s->fill_rect(nBorder, y, sSize.nWidth - nBorder*2, fp.Height, sel);
-//                            tmp.copy(bg_color);
-//                        }
-//                        else
-//                            tmp.copy(font);
-//
-//                        if (!text.is_empty())
-//                            sFont.draw(s, x, y + fp.Ascent + hspace, tmp, &text);
-//
-//                        if (item->has_submenu())
-//                        {
-//                            sFont.get_text_parameters(s, &tp, "►");
-//                            sFont.draw(s, sSize.nWidth - nBorder - nSpacing - tp.XAdvance - 2, y + fp.Ascent + hspace, tmp, "►");
-//                        }
-//                    }
-//
-//                    y += fp.Height;
-//                }
-//            }
-//
-//            if (nScrollMax > 0)
-//            {
-//                float cx = sSize.nWidth * 0.5f;
-//                float aa = s->set_antialiasing(true);
-//
-//                // Top button
-//                if (nScroll > 0)
-//                {
-//                    s->fill_rect(nBorder, nBorder, sSize.nWidth - nBorder * 2, separator, bg_color);
-//                    if (nSelected == SEL_TOP_SCROLL)
-//                    {
-//                        tmp.copy(bg_color);
-//                        s->fill_rect(nBorder + 1, nBorder + 1, sSize.nWidth - (nBorder + 1)* 2, separator - 1, border);
-//                    }
-//                    else
-//                        tmp.copy(font);
-//
-//                    // Draw arrow up
-//                    s->fill_triangle(
-//                        cx, nBorder + 3,
-//                        cx + separator, nBorder + separator - 2,
-//                        cx - separator, nBorder + separator - 2,
-//                        tmp);
-//                }
-//                else if (sPadding.top() > 0)
-//                    s->fill_rect(nBorder, nBorder, sSize.nWidth - nBorder * 2, sPadding.top(), bg_color);
-//
-//                // Bottom button
-//                if (nScroll < nScrollMax)
-//                {
-//                    s->fill_rect(nBorder, sSize.nHeight - nBorder - separator,
-//                        sSize.nWidth - nBorder * 2, separator, bg_color);
-//
-//                    if (nSelected == SEL_BOTTOM_SCROLL)
-//                    {
-//                        tmp.copy(bg_color);
-//                        s->fill_rect(nBorder + 1, sSize.nHeight - nBorder - separator,
-//                            sSize.nWidth - (nBorder + 1) * 2, separator - 1, border);
-//                    }
-//                    else
-//                        tmp.copy(font);
-//
-//                    // Draw arrow down
-//                    s->fill_triangle(
-//                        cx, sSize.nHeight - nBorder - 3,
-//                        cx + separator, sSize.nHeight - nBorder - separator + 2,
-//                        cx - separator, sSize.nHeight - nBorder - separator + 2,
-//                        tmp);
-//                }
-//                else if (sPadding.bottom() > 0)
-//                    s->fill_rect(nBorder, sSize.nHeight - nBorder - sPadding.bottom(),
-//                        sSize.nWidth - nBorder * 2, sPadding.bottom(), bg_color);
-//
-//                // Restore anti-aliasing
-//                s->set_antialiasing(aa);
-//            }
-//
-//            if (nBorder > 0)
-//                s->fill_frame(0, 0, sSize.nWidth, sSize.nHeight,
-//                    nBorder, nBorder, sSize.nWidth - nBorder * 2, sSize.nHeight - nBorder * 2, border);
-//        }
-//
-//        bool Menu::hide()
-//        {
-//            // Forget the parent menu
-//            pParentMenu = NULL;
-//
-//            // Hide active submenu if present
-//            if (pActiveMenu != NULL)
-//            {
-//                pActiveMenu->hide();
-//                pActiveMenu = NULL;
-//            }
-//
-//            // Hide window showing menu
-//            if (pWindow != NULL)
-//                pWindow->hide();
-//
-//            if (!is_visible())
-//                return false;
-//
-//            return LSPWidgetContainer::hide();
-//        }
-//
 
         void Menu::show_widget()
         {
@@ -721,6 +869,11 @@ namespace lsp
                 sWindow.add(this);
             }
             sWindow.show();
+        }
+
+        void Menu::hide_widget()
+        {
+            sWindow.hide();
         }
 
 //        status_t Menu::on_mouse_down(const ws::event_t *e)

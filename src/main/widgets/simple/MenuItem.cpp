@@ -71,6 +71,9 @@ namespace lsp
                 sCheckBgColor.init(sclass, "#ffffff");
                 sCheckBorderColor.init(sclass, "#000000");
                 sShortcut.init(sclass);
+
+                // Override
+                sPadding.override(sclass, 16, 16, 2, 2);
             }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());

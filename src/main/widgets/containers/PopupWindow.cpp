@@ -239,9 +239,48 @@ namespace lsp
 
             lsp_trace("window geometry: {%d %d %d %d}", int(wrect.nLeft), int(wrect.nTop), int(wrect.nWidth), int(wrect.nHeight));
             pWindow->set_geometry(&wrect);
-            Window::realize(&wrect);
+            realize(&wrect);
             pWindow->show((actor != NULL) ? actor->native() : NULL);
             return true;
+        }
+
+        void PopupWindow::size_request(ws::size_limit_t *r)
+        {
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
+
+            r->nMinWidth        = border * 2;
+            r->nMinHeight       = r->nMinWidth;
+            r->nMaxWidth        = r->nMinWidth;
+            r->nMaxHeight       = r->nMinWidth;
+
+            if ((pChild != NULL) && (pChild->visibility()->get()))
+            {
+                ws::size_limit_t cr;
+                pChild->get_padded_size_limits(&cr);
+
+                if ((cr.nMaxWidth < 0) || (cr.nMaxWidth < cr.nMinWidth))
+                    cr.nMaxWidth    = cr.nMinWidth;
+                if ((cr.nMaxHeight < 0) || (cr.nMaxHeight < cr.nMinHeight))
+                    cr.nMaxHeight   = cr.nMinHeight;
+
+                r->nMinWidth       += lsp_max(0, cr.nMinWidth);
+                r->nMinHeight      += lsp_max(0, cr.nMinHeight);
+                r->nMaxWidth       += lsp_max(0, cr.nMaxWidth);
+                r->nMaxHeight      += lsp_max(0, cr.nMaxHeight);
+            }
+
+            // Window should be at least of 1x1 pixel size
+            r->nMinWidth        = lsp_max(1, r->nMinWidth);
+            r->nMinHeight       = lsp_max(1, r->nMinHeight);
+            r->nMaxWidth        = lsp_max(1, r->nMaxWidth);
+            r->nMaxHeight       = lsp_max(1, r->nMaxHeight);
+
+            // Add self padding
+            sPadding.add(r, scaling);
+
+            lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this,
+                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
         bool PopupWindow::arrange_window(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force)
@@ -258,8 +297,8 @@ namespace lsp
 
             ws.nLeft    = trg->nLeft;
             ws.nTop     = trg->nTop;
-            ws.nWidth   = sr.nMinWidth;
-            ws.nHeight  = sr.nMinHeight;
+            ws.nWidth   = (sr.nMaxWidth >= 0) ? sr.nMaxWidth : sr.nMinWidth;
+            ws.nHeight  = (sr.nMaxHeight >= 0) ? sr.nMaxHeight : sr.nMinHeight;
             float align = lsp_limit(ar->fAlign, -1.0f, 1.0f);
 
             switch (ar->enPosition)
@@ -269,7 +308,8 @@ namespace lsp
                     gap         = sh - ws.nTop;
 
                     ws.nWidth   = sr.nMinWidth;
-                    ws.nHeight  = (sr.nMaxHeight >= 0) ? lsp_min(gap, sr.nMaxHeight) : gap;
+                    if (sr.nMaxHeight >= 0)
+                        ws.nHeight  =  lsp_min(gap, sr.nMaxHeight);
                     if (ws.nHeight < sr.nMinHeight)
                     {
                         if (!force)
@@ -281,7 +321,8 @@ namespace lsp
 
                 case A_TOP:
                     gap         = trg->nTop;
-                    ws.nHeight  = (sr.nMaxHeight >= 0) ? lsp_min(gap, sr.nMaxHeight) : gap;
+                    if (sr.nMaxHeight >= 0)
+                        ws.nHeight  =  lsp_min(gap, sr.nMaxHeight);
                     if (ws.nHeight < sr.nMinHeight)
                     {
                         if (!force)
@@ -295,7 +336,8 @@ namespace lsp
 
                 case A_LEFT:
                     gap         = trg->nLeft;
-                    ws.nWidth   = (sr.nMaxWidth >= 0) ? lsp_min(gap, sr.nMaxWidth) : gap;
+                    if (sr.nMaxWidth >= 0)
+                        ws.nWidth   =  lsp_min(gap, sr.nMaxWidth);
                     if (ws.nWidth < sr.nMinWidth)
                     {
                         if (!force)
@@ -310,7 +352,8 @@ namespace lsp
                 case A_RIGHT:
                     ws.nLeft   += trg->nWidth;
                     gap         = sw - ws.nLeft;
-                    ws.nWidth   = (sr.nMaxWidth >= 0) ? lsp_min(gap, sr.nMaxWidth) : gap;
+                    if (sr.nMaxWidth >= 0)
+                        ws.nWidth   =  lsp_min(gap, sr.nMaxWidth);
                     if (ws.nWidth < sr.nMinWidth)
                     {
                         if (!force)
