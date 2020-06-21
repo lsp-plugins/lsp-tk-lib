@@ -21,8 +21,6 @@ namespace lsp
             WidgetContainer(dpy),
             sWindow(dpy),
             sFont(&sProperties),
-            sHSpacing(&sProperties),
-            sVSpacing(&sProperties),
             sScrolling(&sProperties),
             sBorderSize(&sProperties),
             sBorderColor(&sProperties),
@@ -31,6 +29,7 @@ namespace lsp
             sCheckBorderGap(&sProperties),
             sCheckBorderRadius(&sProperties),
             sSeparatorWidth(&sProperties),
+            sSpacing(&sProperties),
             sSubmenu(&Menu::metadata, &sProperties)
         {
 // TODO
@@ -55,31 +54,13 @@ namespace lsp
 
             nSelected               = -1;
 
-            sISizes.mc_width        = 0;
-            sISizes.mc_height       = 0;
-            sISizes.cb_width        = 0;
-            sISizes.cb_height       = 0;
-            sISizes.mr_width        = 0;
-            sISizes.mr_height       = 0;
-            sISizes.sc_width        = 0;
-            sISizes.sc_height       = 0;
-            sISizes.sp_width        = 0;
-            sISizes.sp_height       = 0;
-            sISizes.sp_thick        = 0;
-
-            sISizes.items           = 0;
-            sISizes.separators      = 0;
-            sISizes.width           = 0;
-            sISizes.s_height        = 0;
-            sISizes.m_height        = 0;
-            sISizes.m_lpad          = 0;
-            sISizes.m_rpad          = 0;
-            sISizes.hspacing        = 0;
-            sISizes.vspacing        = 0;
-            sISizes.max_scroll      = 0;
-            sISizes.ckbox           = false;
-            sISizes.shortcut        = false;
-            sISizes.submenu         = false;
+            sIStats.full_w          = 0;
+            sIStats.full_h          = 0;
+            sIStats.item_w          = 0;
+            sIStats.item_h          = 0;
+            sIStats.ckbox           = false;
+            sIStats.shortcut        = false;
+            sIStats.submenu         = false;
 
             sUp.sPos.nLeft          = 0;
             sUp.sPos.nTop           = 0;
@@ -121,8 +102,6 @@ namespace lsp
 
             // Bind properties
             sFont.bind("font", &sStyle);
-            sHSpacing.bind("hspacing", &sStyle);
-            sVSpacing.bind("vspacing", &sStyle);
             sScrolling.bind("scrolling", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
@@ -131,14 +110,13 @@ namespace lsp
             sCheckBorderGap.bind("check.border.gap", &sStyle);
             sCheckBorderRadius.bind("check.border.radius", &sStyle);
             sSeparatorWidth.bind("separator.width", &sStyle);
+            sSpacing.bind("spacing", &sStyle);
             sSubmenu.bind(NULL);
 
             Style *sclass = style_class();
             if (sclass != NULL)
             {
                 sFont.init(sclass);
-                sHSpacing.init(sclass, 2);
-                sVSpacing.init(sclass, 0);
                 sScrolling.init(sclass, 0.0f);
                 sBorderSize.init(sclass, 1);
                 sBorderColor.init(sclass, "#000000");
@@ -147,6 +125,7 @@ namespace lsp
                 sCheckBorderGap.init(sclass, 1);
                 sCheckBorderRadius.init(sclass, 4);
                 sSeparatorWidth.init(sclass, 1);
+                sSpacing.init(sclass, 2);
 
                 // Overrides
                 sVisibility.override(sclass, false);
@@ -185,10 +164,6 @@ namespace lsp
 
             if (sFont.is(prop))
                 query_resize();
-            if (sHSpacing.is(prop))
-                query_resize();
-            if (sVSpacing.is(prop))
-                query_resize();
             if (sScrolling.is(prop))
                 query_resize();
             if (sBorderSize.is(prop))
@@ -205,162 +180,166 @@ namespace lsp
                 query_resize();
             if (sCheckBorderRadius.is(prop))
                 query_resize();
+            if (sSpacing.is(prop))
+                query_resize();
         }
 
         void Menu::size_request(ws::size_limit_t *r)
         {
+            istats_t st;
+            lltl::darray<item_t> items;
+
             float scaling   = lsp_max(0.0f, sScaling.get());
             ssize_t border  = lsp_max(0.0f, scaling * sBorderSize.get()) * 2;
-            isizes_t sz;
-            estimate_sizes(&sz);
+
+            allocate_items(&items, &st);
 
             // Compute minimum and maximum size
-            ssize_t spaces  = lsp_max(0, ssize_t(sz.items + sz.separators) - 1);
-            r->nMinWidth    = sz.m_lpad + sz.m_rpad + sz.width + border;
-            r->nMinHeight   = lsp_max(sz.m_height, sz.s_height) + border;
+            r->nMinWidth    = st.full_w + border*2;
+            r->nMinHeight   = st.item_h + border*2;
             r->nMaxWidth    = r->nMinWidth;
-            r->nMaxHeight   = sz.m_height * sz.items + sz.s_height * sz.separators + spaces * sz.vspacing + border;
+            r->nMaxHeight   = st.full_h + border*2;
         }
 
-        void Menu::estimate_sizes(isizes_t *sz)
+        void Menu::allocate_items(lltl::darray<item_t> *out, istats_t *st)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
-            sz->hspacing    = lsp_max(0.0f, sHSpacing.get() * scaling);
-            sz->vspacing    = lsp_max(0.0f, sVSpacing.get() * scaling);
-            sz->items       = 0;
-            sz->separators  = 0;
-            sz->ckbox       = false;
-            sz->shortcut    = false;
-            sz->submenu     = false;
-            sz->m_lpad      = 0;
-            sz->m_rpad      = 0;
+            ssize_t spacing = lsp_max(0.0f, scaling * sSpacing.get());
 
-            // Lookup for check box
-            padding_t pad;
+            st->full_w      = 0;
+            st->full_h      = 0;
+            st->item_w      = 0;
+            st->item_h      = 0;
+            st->ckbox       = false;
+            st->shortcut    = false;
+            st->submenu     = false;
 
-            for (size_t i=0, n=vItems.size(); i<n; ++i)
-            {
-                MenuItem *mi = vItems.get(i);
-                if ((mi == NULL) || (!mi->visibility()->get()))
-                    continue;
+            // Size of check box/radio
+            ssize_t cb_br       = lsp_max(0, sCheckBorderRadius.get() * scaling) * 3;
+            ssize_t cb_size     = (sCheckBorder.get() > 0) ? lsp_min(1.0f, sCheckBorder.get() * scaling) : 0;
+            if (cb_size > 0)
+                cb_size            += (sCheckBorderGap.get() > 0) ? lsp_min(1.0f, sCheckBorderGap.get() * scaling) : 0;
+            cb_size            += lsp_min(2.0f, sCheckSize.get() * scaling);
+            cb_size             = lsp_max(cb_size, cb_br);
 
-                switch (mi->type()->get())
-                {
-                    case MI_NORMAL:
-                        if (mi->shortcut()->valid())
-                            sz->shortcut    = true;
-                        if (mi->menu()->is_set())
-                            sz->submenu     = true;
-                        mi->padding()->compute(&pad, scaling);
-                        ++sz->items;
-                        break;
-                    case MI_CHECK:
-                        sz->ckbox       = true;
-                        if (mi->shortcut()->valid())
-                            sz->shortcut    = true;
-                        if (mi->menu()->is_set())
-                            sz->submenu     = true;
-                        mi->padding()->compute(&pad, scaling);
-                        ++sz->items;
-                        break;
-                    case MI_RADIO:
-                        sz->ckbox       = true;
-                        if (mi->shortcut()->valid())
-                            sz->shortcut    = true;
-                        if (mi->menu()->is_set())
-                            sz->submenu     = true;
-                        mi->padding()->compute(&pad, scaling);
-                        ++sz->items;
-                        break;
-                    case MI_SEPARATOR:
-                        ++sz->separators;
-                        pad.nLeft       = 0;
-                        pad.nTop        = 0;
-                        break;
-                }
-
-                sz->m_lpad      = lsp_max(sz->m_lpad, ssize_t(pad.nLeft));
-                sz->m_rpad      = lsp_max(sz->m_rpad, ssize_t(pad.nRight));
-            }
-
-            // Size of checkbox/radio
-            ssize_t br      = lsp_max(0, sCheckBorderRadius.get() * scaling) * 3;
-
-            sz->cb_width    = (sCheckBorder.get() > 0) ? lsp_min(1.0f, sCheckBorder.get() * scaling) : 0;
-            if (sz->cb_width > 0)
-                sz->cb_height  += (sCheckBorderGap.get() > 0) ? lsp_min(1.0f, sCheckBorderGap.get() * scaling) : 0;
-            sz->cb_width   += lsp_min(2.0f, sCheckSize.get() * scaling);
-            sz->cb_width    = lsp_max(sz->cb_width, br);
-            sz->cb_height   = sz->cb_width;
-
-            // Size of text
+            // Size of text, shortcut and reference
+            LSPString s;
             ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
             sFont.get_parameters(pDisplay, scaling, &fp);
 
-            sz->mc_width    = 0;
-            sz->mc_height   = lsp_max(0, ceil(fp.Height));
-            sz->sc_width    = 0;
-            sz->sc_height   = sz->mc_height;
-
-            LSPString *text, s;
-            ws::text_parameters_t tp;
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                MenuItem *mi    = vItems.get(i);
+                // Keep only visible items
+                MenuItem *mi        = vItems.get(i);
                 if ((mi == NULL) || (!mi->visibility()->get()))
                     continue;
-                if (mi->type()->separator())
-                    continue;
+
+                // Add item to list
+                item_t *pi          = out->add();
+                if (pi == NULL)
+                    return;
+
+                // Compute padding
+                pi->item            = mi;
+                mi->padding()->compute(&pi->pad, scaling);
+
+                // Estimate type of item
+                menu_item_type_t mt = pi->item->type()->get();
+                bool xsep           = !(mt == MI_SEPARATOR);
+                bool check          = (mt == MI_CHECK) || (mt == MI_RADIO);
+
+                // Reduce padding
+                if (xsep)
+                {
+                    pi->pad.nLeft     >>= 2;
+                    pi->pad.nRight    >>= 2;
+                }
 
                 // Estimate size of caption
-                text            = mi->sText.formatted();
-                sFont.get_text_parameters(pDisplay, &tp, scaling, text);
-                sz->mc_width    = lsp_max(sz->mc_width, tp.Width);
-                sz->mc_height   = lsp_max(sz->mc_height, tp.Height);
+                pi->text.nLeft      = 0;
+                pi->text.nTop       = 0;
+                pi->area.nLeft      = 0;
+                pi->area.nTop       = 0;
+
+                if (xsep)
+                {
+                    mi->text()->format(&s);
+                    sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+
+                    pi->text.nWidth     = tp.Width;
+                    pi->text.nHeight    = lsp_max(fp.Height, tp.Height);
+                    pi->area.nWidth     = pi->text.nWidth;
+                    pi->area.nHeight    = pi->text.nHeight;
+                }
+                else
+                {
+                    pi->text.nWidth     = 0;
+                    pi->text.nHeight    = 0;
+                    pi->area.nWidth     = lsp_max(8, 8 * scaling);
+                    pi->area.nHeight    = lsp_max(0.0f, sSeparatorWidth.get() * scaling);
+                }
+
+                // Check box/radio
+                pi->check.nLeft     = 0;
+                pi->check.nTop      = 0;
+                if (check)
+                {
+                    st->ckbox           = true;
+                    pi->check.nWidth    = cb_size;
+                    pi->check.nHeight   = cb_size;
+                    pi->area.nWidth    += pi->check.nWidth + spacing;
+                    pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->check.nHeight);
+                }
+                else
+                {
+                    pi->check.nWidth    = 0;
+                    pi->check.nHeight   = 0;
+                }
 
                 // Estimate size of shortcut
-                if (mi->sShortcut.valid())
+                pi->scut.nLeft      = 0;
+                pi->scut.nTop       = 0;
+                if ((xsep) && (mi->shortcut()->valid()))
                 {
-                    mi->sShortcut.format(&s);
+                    mi->shortcut()->format(&s);
                     sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
-                    sz->sc_width    = lsp_max(sz->sc_width, tp.Width);
-                    sz->sc_height   = lsp_max(sz->sc_height, tp.Height);
+
+                    st->shortcut        = true;
+                    pi->scut.nWidth     = tp.Width;
+                    pi->scut.nHeight    = lsp_max(fp.Height, tp.Height);
+
+                    pi->area.nWidth    += pi->scut.nWidth + spacing;
+                    pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->scut.nHeight);
                 }
+                else
+                {
+                    pi->scut.nWidth     = 0;
+                    pi->scut.nHeight    = 0;
+                }
+
+                // Estimate submenu reference size
+                pi->ref.nLeft       = 0;
+                pi->ref.nTop        = 0;
+                if ((xsep) && (mi->menu()->is_set()))
+                {
+                    st->submenu         = true;
+                    pi->ref.nHeight     = fp.Height;
+                    pi->ref.nWidth      = lsp_max(2.0f, M_SQRT1_2 * fp.Height);
+
+                    pi->area.nWidth    += pi->ref.nWidth + spacing;
+                    pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->ref.nHeight);
+                }
+                else
+                {
+                    pi->ref.nWidth      = 0;
+                    pi->ref.nHeight     = 0;
+                }
+
+                // Apply padding
+                pi->area.nWidth        += pi->pad.nLeft + pi->pad.nTop;
+                pi->area.nHeight       += pi->pad.nTop  + pi->pad.nBottom;
             }
-
-            // Submenu reference size, separator size
-            sz->sp_thick    = lsp_max(0, sSeparatorWidth.get() * scaling);
-            sz->mr_height   = lsp_max(sz->mc_height, sz->sc_height);
-            sz->mr_width    = lsp_max(1.0f, ceil(sz->sc_height * M_SQRT1_2));
-            sz->sp_width    = lsp_max(7, 7 * scaling);
-            sz->sp_height   = lsp_max(4, 4*scaling + sz->sp_thick);
-
-            // Estimate minimum size
-            sz->width       = sz->mc_width;
-            sz->m_height    = sz->mc_height;
-
-            if (sz->ckbox)
-            {
-                sz->width      += sz->cb_width + sz->hspacing;
-                sz->m_height    = lsp_max(sz->m_height, sz->cb_width);
-            }
-            if (sz->shortcut)
-            {
-                sz->width      += sz->sc_width + sz->hspacing;
-                sz->m_height    = lsp_max(sz->m_height, sz->sc_width);
-            }
-            if (sz->submenu)
-            {
-                sz->width      += sz->mr_width + sz->hspacing;
-                sz->m_height    = lsp_max(sz->m_height, sz->mr_width);
-            }
-
-            sz->s_height    = sz->sp_height;
-            sz->max_scroll  = 0;
-        }
-
-        void Menu::allocate_items(lltl::darray<item_t> *out)
-        {
         }
 
         void Menu::realize(const ws::rectangle_t *r)

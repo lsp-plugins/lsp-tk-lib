@@ -27,41 +27,24 @@ namespace lsp
                 typedef struct item_t
                 {
                     MenuItem           *item;       // Menu item
+                    padding_t           pad;        // Padding
                     ws::rectangle_t     area;       // Overall area allocated to menu item
                     ws::rectangle_t     check;      // Check box/radio area
-                    ws::rectangle_t     ref;        // Reference to submenu area
-                    ws::rectangle_t     scut;       // Shortcut text area
                     ws::rectangle_t     text;       // Menu text area
+                    ws::rectangle_t     scut;       // Shortcut text area
+                    ws::rectangle_t     ref;        // Reference to submenu area
                 } item_t;
 
-                typedef struct isizes_t
+                typedef struct istats_t
                 {
-                    ssize_t             mc_width;   // menu caption width
-                    ssize_t             mc_height;  // menu caption height
-                    ssize_t             cb_width;   // check box / radio button width
-                    ssize_t             cb_height;  // check box / radio button height
-                    ssize_t             mr_width;   // menu reference width
-                    ssize_t             mr_height;  // menu reference height
-                    ssize_t             sc_width;   // shortcut width
-                    ssize_t             sc_height;  // shortcut height
-                    ssize_t             sp_width;   // separator width
-                    ssize_t             sp_height;  // separator height
-                    ssize_t             sp_thick;   // separator thickness
-
-                    size_t              items;      // number of visible items
-                    size_t              separators; // number of visible separators
-                    ssize_t             width;      // overall width
-                    ssize_t             s_height;   // separator height
-                    ssize_t             m_height;   // menu item height
-                    ssize_t             m_lpad;
-                    ssize_t             m_rpad;
-                    ssize_t             hspacing;   // horizontal spacing
-                    ssize_t             vspacing;   // vertical spacing
-                    ssize_t             max_scroll; // maximum scrolling (in pixels), available only after realize()
+                    ssize_t             full_w;     // Full width
+                    ssize_t             full_h;     // Full height
+                    ssize_t             item_w;     // Maximum item width
+                    ssize_t             item_h;     // Maximum item height
                     bool                ckbox;      // at least one check box is present
                     bool                shortcut;   // at least one shortcut is present
                     bool                submenu;    // at least one submenu is present
-                } isizes_t;
+                } istats_t;
 
                 typedef struct ibutton_t
                 {
@@ -82,13 +65,11 @@ namespace lsp
 
                 ssize_t                 nSelected;      // Selected menu item
                 PopupWindow             sWindow;        // Associated popup window
-                isizes_t                sISizes;        // Realized sizes
+                istats_t                sIStats;        // Realized statistics
                 ibutton_t               sUp;            // Up-scroll button
                 ibutton_t               sDown;          // Down-scroll button
 
                 prop::Font              sFont;
-                prop::Integer           sHSpacing;
-                prop::Integer           sVSpacing;
                 prop::Float             sScrolling;
                 prop::Integer           sBorderSize;
                 prop::Color             sBorderColor;
@@ -97,6 +78,7 @@ namespace lsp
                 prop::Integer           sCheckBorderGap;
                 prop::Integer           sCheckBorderRadius;
                 prop::Integer           sSeparatorWidth;
+                prop::Integer           sSpacing;
                 prop::WidgetPtr<Menu>   sSubmenu;           // Sub-menu
 
 //                MenuWindow             *pWindow;
@@ -114,9 +96,9 @@ namespace lsp
                 static status_t             timer_handler(ws::timestamp_t time, void *arg);
 
             protected:
-                void                        estimate_sizes(isizes_t *sz);
+//                void                        estimate_sizes(isizes_t *sz);
 
-                void                        allocate_items(lltl::darray<item_t> *out);
+                void                        allocate_items(lltl::darray<item_t> *out, istats_t *stats);
 
 //                ssize_t                     find_item(ssize_t x, ssize_t y, ssize_t *ry);
 //                void                        update_scroll();
