@@ -41,6 +41,15 @@ namespace lsp
                     ssize_t             full_h;     // Full height
                     ssize_t             item_w;     // Maximum item width
                     ssize_t             item_h;     // Maximum item height
+                    ssize_t             check_w;    // Check box width
+                    ssize_t             check_h;    // Check box height
+                    ssize_t             scut_w;     // Shortcut width
+                    ssize_t             scut_h;     // Shortcut height
+                    ssize_t             link_w;     // Link width
+                    ssize_t             link_h;     // Link height
+                    size_t              items;      // Number of items
+                    size_t              separators; // Number of separators
+                    ssize_t             max_scroll; // Maximum scroll
                     bool                ckbox;      // at least one check box is present
                     bool                shortcut;   // at least one shortcut is present
                     bool                submenu;    // at least one submenu is present
@@ -129,11 +138,8 @@ namespace lsp
                 inline Font                *font()                      { return &sFont;                    }
                 inline const Font          *font() const                { return &sFont;                    }
 
-                inline Integer             *hspacing()                  { return &sHSpacing;                }
-                inline const Integer       *hspacing() const            { return &sHSpacing;                }
-
-                inline Integer             *vspacing()                  { return &sVSpacing;                }
-                inline const Integer       *vspacing() const            { return &sVSpacing;                }
+                inline Integer             *spacing()                   { return &sSpacing;                 }
+                inline const Integer       *spacing() const             { return &sSpacing;                 }
 
                 inline Float               *scrolling()                 { return &sScrolling;               }
                 inline const Float         *scrolling() const           { return &sScrolling;               }

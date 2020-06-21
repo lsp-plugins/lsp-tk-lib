@@ -37,6 +37,7 @@ namespace lsp
                 prop::Color                 sCheckColor;
                 prop::Color                 sCheckBgColor;
                 prop::Color                 sCheckBorderColor;
+                prop::Color                 sCheckBorderGapColor;
                 prop::Shortcut              sShortcut;
 
             protected:

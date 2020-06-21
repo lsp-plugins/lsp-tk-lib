@@ -58,6 +58,15 @@ namespace lsp
             sIStats.full_h          = 0;
             sIStats.item_w          = 0;
             sIStats.item_h          = 0;
+            sIStats.check_w         = 0;
+            sIStats.check_h         = 0;
+            sIStats.scut_w          = 0;
+            sIStats.scut_h          = 0;
+            sIStats.link_w          = 0;
+            sIStats.link_h          = 0;
+            sIStats.items           = 0;
+            sIStats.separators      = 0;
+            sIStats.max_scroll      = 0;
             sIStats.ckbox           = false;
             sIStats.shortcut        = false;
             sIStats.submenu         = false;
@@ -123,9 +132,9 @@ namespace lsp
                 sCheckSize.init(sclass, 12);
                 sCheckBorder.init(sclass, 1);
                 sCheckBorderGap.init(sclass, 1);
-                sCheckBorderRadius.init(sclass, 4);
+                sCheckBorderRadius.init(sclass, 3);
                 sSeparatorWidth.init(sclass, 1);
-                sSpacing.init(sclass, 2);
+                sSpacing.init(sclass, 4);
 
                 // Overrides
                 sVisibility.override(sclass, false);
@@ -203,24 +212,33 @@ namespace lsp
 
         void Menu::allocate_items(lltl::darray<item_t> *out, istats_t *st)
         {
-            float scaling   = lsp_max(0.0f, sScaling.get());
-            ssize_t spacing = lsp_max(0.0f, scaling * sSpacing.get());
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
 
-            st->full_w      = 0;
-            st->full_h      = 0;
-            st->item_w      = 0;
-            st->item_h      = 0;
-            st->ckbox       = false;
-            st->shortcut    = false;
-            st->submenu     = false;
+            st->full_w          = 0;
+            st->full_h          = 0;
+            st->item_w          = 0;
+            st->item_h          = 0;
+            st->check_w         = 0;
+            st->check_h         = 0;
+            st->scut_w          = 0;
+            st->scut_h          = 0;
+            st->link_w          = 0;
+            st->link_h          = 0;
+            st->items           = 0;
+            st->separators      = 0;
+            st->ckbox           = false;
+            st->shortcut        = false;
+            st->submenu         = false;
 
             // Size of check box/radio
             ssize_t cb_br       = lsp_max(0, sCheckBorderRadius.get() * scaling) * 3;
-            ssize_t cb_size     = (sCheckBorder.get() > 0) ? lsp_min(1.0f, sCheckBorder.get() * scaling) : 0;
-            if (cb_size > 0)
-                cb_size            += (sCheckBorderGap.get() > 0) ? lsp_min(1.0f, sCheckBorderGap.get() * scaling) : 0;
-            cb_size            += lsp_min(2.0f, sCheckSize.get() * scaling);
-            cb_size             = lsp_max(cb_size, cb_br);
+            st->check_w         = (sCheckBorder.get() > 0) ? lsp_min(1.0f, sCheckBorder.get() * scaling) : 0;
+            if (st->check_w > 0)
+                st->check_w        += (sCheckBorderGap.get() > 0) ? lsp_min(1.0f, sCheckBorderGap.get() * scaling) : 0;
+            st->check_w        += lsp_max(2.0f, sCheckSize.get() * scaling);
+            st->check_w         = lsp_max(st->check_w, cb_br);
+            st->check_h         = st->check_w;
 
             // Size of text, shortcut and reference
             LSPString s;
@@ -245,15 +263,18 @@ namespace lsp
                 mi->padding()->compute(&pi->pad, scaling);
 
                 // Estimate type of item
-                menu_item_type_t mt = pi->item->type()->get();
-                bool xsep           = !(mt == MI_SEPARATOR);
+                menu_item_type_t mt = mi->type()->get();
+                bool xsep           = (mt != MI_SEPARATOR);
                 bool check          = (mt == MI_CHECK) || (mt == MI_RADIO);
 
                 // Reduce padding
                 if (xsep)
+                    ++st->items;
+                else
                 {
                     pi->pad.nLeft     >>= 2;
                     pi->pad.nRight    >>= 2;
+                    ++st->separators;
                 }
 
                 // Estimate size of caption
@@ -286,8 +307,8 @@ namespace lsp
                 if (check)
                 {
                     st->ckbox           = true;
-                    pi->check.nWidth    = cb_size;
-                    pi->check.nHeight   = cb_size;
+                    pi->check.nWidth    = st->check_w;
+                    pi->check.nHeight   = st->check_h;
                     pi->area.nWidth    += pi->check.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->check.nHeight);
                 }
@@ -308,6 +329,8 @@ namespace lsp
                     st->shortcut        = true;
                     pi->scut.nWidth     = tp.Width;
                     pi->scut.nHeight    = lsp_max(fp.Height, tp.Height);
+                    st->scut_w          = lsp_max(st->scut_w, pi->scut.nWidth);
+                    st->scut_h          = lsp_max(st->scut_h, pi->scut.nHeight);
 
                     pi->area.nWidth    += pi->scut.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->scut.nHeight);
@@ -327,6 +350,9 @@ namespace lsp
                     pi->ref.nHeight     = fp.Height;
                     pi->ref.nWidth      = lsp_max(2.0f, M_SQRT1_2 * fp.Height);
 
+                    st->link_w          = lsp_max(st->link_w, pi->ref.nWidth);
+                    st->link_h          = lsp_max(st->link_h, pi->ref.nHeight);
+
                     pi->area.nWidth    += pi->ref.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->ref.nHeight);
                 }
@@ -337,8 +363,14 @@ namespace lsp
                 }
 
                 // Apply padding
-                pi->area.nWidth        += pi->pad.nLeft + pi->pad.nTop;
+                pi->area.nWidth        += pi->pad.nLeft + pi->pad.nRight;
                 pi->area.nHeight       += pi->pad.nTop  + pi->pad.nBottom;
+
+                // Compute statistics
+                st->full_h             += pi->area.nHeight;
+                st->full_w              = lsp_max(st->full_w, pi->area.nWidth);
+                st->item_w              = lsp_max(st->item_w, st->full_w);
+                st->item_h              = lsp_max(st->item_h, pi->area.nHeight);
             }
         }
 
@@ -346,31 +378,27 @@ namespace lsp
         {
             WidgetContainer::realize(r);
 
-            padding_t pad;
-            ws::rectangle_t rr;
-            isizes_t sz;
-            estimate_sizes(&sz);
+            ws::rectangle_t rr, xr;
+            istats_t st;
+            lltl::darray<item_t> items;
+            allocate_items(&items, &st);
 
             // Estimate scrolling position
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t scroll      = lsp_max(0, sScrolling.get() * scaling);
             ssize_t border      = lsp_max(0.0f, scaling * sBorderSize.get());
-            sPadding.compute(&pad, scaling);
+            ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
 
             rr.nLeft            = border;
             rr.nTop             = border;
             rr.nWidth           = r->nWidth  - border * 2;
             rr.nHeight          = r->nHeight - border * 2;
 
-            // Re-compute size limits
-            ssize_t spaces      = lsp_max(0, ssize_t(sz.items + sz.separators) - 1);
-            ssize_t max_height  = sz.m_height * sz.items + sz.s_height * sz.separators + spaces * sz.vspacing;
-            max_height         += pad.nTop + pad.nBottom;
-            sz.max_scroll       = lsp_max(0, max_height - rr.nHeight);
-
-            if ((scroll > sz.max_scroll) && (scaling > 0.0f))
+            // Re-compute scrolling parameters
+            st.max_scroll       = lsp_max(0, st.full_h - rr.nHeight);
+            if ((scroll > st.max_scroll) && (scaling > 0.0f))
             {
-                scroll              = sz.max_scroll;
+                scroll              = st.max_scroll;
                 sScrolling.commit(scroll / scaling);
             }
 
@@ -378,38 +406,98 @@ namespace lsp
             sUp.sPos.nLeft      = rr.nLeft;
             sUp.sPos.nTop       = rr.nTop;
             sUp.sPos.nWidth     = rr.nWidth;
-            sUp.sPos.nHeight    = lsp_min(4, sz.m_height >> 1);
+            sUp.sPos.nHeight    = lsp_min(4, st.item_h >> 1);
             sUp.bEnabled        = (scroll > 0);
 
             sDown.sPos.nWidth   = rr.nWidth;
-            sDown.sPos.nHeight  = lsp_min(4, sz.m_height >> 1);
+            sDown.sPos.nHeight  = lsp_min(4, st.item_h >> 1);
             sDown.sPos.nLeft    = rr.nLeft;
             sDown.sPos.nTop     = rr.nTop + rr.nHeight - sDown.sPos.nHeight;
-            sDown.bEnabled      = (scroll < sz.max_scroll);
+            sDown.bEnabled      = (scroll < st.max_scroll);
 
             // Now allocate position of each visible widget
-            rr.nTop            += pad.nTop - scroll;
+            rr.nTop            -= scroll;
 
-            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            for (size_t i=0, n=items.size(); i<n; ++i)
             {
-                MenuItem *mi        = vItems.uget(i);
-                if ((mi == NULL) || (!mi->visibility()->get()))
+                item_t *pi          = items.uget(i);
+                MenuItem *mi        = pi->item;
+
+                // Estimate type of item
+                menu_item_type_t mt = mi->type()->get();
+                bool sep            = (mt == MI_SEPARATOR);
+                bool check          = (mt == MI_CHECK) || (mt == MI_RADIO);
+
+                pi->area.nLeft      = rr.nLeft;
+                pi->area.nTop       = rr.nTop;
+                pi->area.nWidth     = rr.nWidth;
+
+                // Realize menu item
+                xr                  = pi->area;
+                pi->item->realize(&xr);
+
+                // Apply padding
+                xr.nLeft           += pi->pad.nLeft;
+                xr.nTop            += pi->pad.nTop;
+                xr.nWidth          -= pi->pad.nLeft + pi->pad.nRight;
+                xr.nHeight         -= pi->pad.nTop  + pi->pad.nBottom;
+
+                // Just separator?
+                if (sep)
+                {
+                    pi->text            = xr;
+                    rr.nTop            += pi->area.nHeight;
                     continue;
+                }
 
-                if (mi->type()->separator())
-                    rr.nHeight      = sz.s_height;
-                else
-                    rr.nHeight      = sz.m_height;
+                // Do we have a check box/radio ?
+                if (st.ckbox)
+                {
+                    if (check)
+                    {
+                        pi->check.nLeft     = xr.nLeft;
+                        pi->check.nTop      = xr.nTop + ((xr.nHeight - pi->check.nHeight) >> 1);
+                    }
 
-                // Realize the widget
-                mi->realize(&rr);
+                    xr.nLeft           += st.check_w + spacing;
+                    xr.nWidth          -= st.check_w + spacing;
+                }
+
+                // Do we have a link ?
+                if (st.submenu)
+                {
+                    if (mi->menu()->is_set())
+                    {
+                        pi->ref.nLeft       = xr.nLeft + xr.nWidth - st.link_w;
+                        pi->ref.nTop        = xr.nTop + ((xr.nHeight - pi->ref.nHeight) >> 1);
+                    }
+
+                    xr.nWidth          -= st.link_w + spacing;
+                }
+
+                // Do we have a shortcut?
+                if (st.shortcut)
+                {
+                    if (mi->shortcut()->valid())
+                    {
+                        pi->scut.nLeft      = xr.nLeft + xr.nWidth - st.scut_w;
+                        pi->scut.nTop       = xr.nTop + ((xr.nHeight - pi->scut.nHeight) >> 1);
+                    }
+
+                    xr.nWidth          -= st.scut_w + spacing;
+                }
+
+                // Allocate space for text
+                pi->text.nLeft      = xr.nLeft;
+                pi->text.nTop       = xr.nTop + ((xr.nHeight - pi->text.nHeight) >> 1);
 
                 // Update position
-                rr.nTop        += rr.nHeight + sz.vspacing;
+                rr.nTop            += pi->area.nHeight;
             }
 
             // Remember drawing parameters
-            sISizes             = sz;
+            vVisible.swap(items);
+            sIStats             = st;
         }
 
         void Menu::draw(ws::ISurface *s)
@@ -430,33 +518,149 @@ namespace lsp
             lsp::Color color(sBgColor);
             s->clear(color);
 
-            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            ws::font_parameters_t fp;
+            LSPString text;
+
+            sFont.get_parameters(pDisplay, scaling, &fp);
+
+            float aa            = s->set_antialiasing(true);
+
+            for (ssize_t i=0, n=vVisible.size(); i<n; ++i)
             {
-                MenuItem *mi    = vItems.uget(i);
-                if ((mi == NULL) || (!mi->visibility()->get()))
-                    continue;
+                item_t *pi          = vVisible.uget(i);
 
                 // Do not draw invisible items
-                mi->get_rectangle(&r);
-                if (!Size::overlap(&xr, &r))
+                if (!Size::overlap(&xr, &pi->area))
                     continue;
+
+                MenuItem *mi        = pi->item;
 
                 // Just separator?
                 if (mi->type()->separator())
                 {
-                    r.nLeft        += pad.nLeft;
-                    r.nWidth       -= pad.nLeft + pad.nRight;
-                    r.nTop         += 2 * scaling;
-                    r.nHeight       = sISizes.sp_thick;
-
                     color.copy(mi->text_color()->color());
                     color.scale_lightness(bright);
-                    s->fill_rect(color, &r);
+                    s->fill_rect(color, &pi->text);
                     continue;
                 }
 
-                // More complicated element
+                // Selected element?
+                if (nSelected == i)
+                {
+                    color.copy(mi->bg_selected_color()->color());
+                    color.scale_lightness(bright);
+                    s->fill_rect(color, &pi->area);
+                }
 
+                // Draw text
+                mi->text()->format(&text);
+                if (nSelected == i)
+                    color.copy(mi->text_selected_color()->color());
+                else
+                    color.copy(mi->text_color()->color());
+                color.scale_lightness(bright);
+                sFont.draw(s, color, pi->text.nLeft, pi->text.nTop + fp.Ascent, scaling, &text);
+
+                // Draw shortcut
+                if (mi->shortcut()->valid())
+                {
+                    mi->shortcut()->format(&text);
+                    sFont.draw(s, color, pi->scut.nLeft, pi->scut.nTop + fp.Ascent, scaling, &text);
+                }
+
+                // Draw reference
+                if (mi->menu()->is_set())
+                {
+                    s->fill_triangle(
+                            pi->ref.nLeft, pi->ref.nTop,
+                            pi->ref.nLeft + pi->ref.nWidth, pi->ref.nHeight * 0.5f,
+                            pi->ref.nLeft, pi->ref.nTop + pi->ref.nHeight,
+                            color
+                        );
+                }
+
+                // Need to draw check box/radio?
+                if (mi->type()->check())
+                {
+                    ssize_t br          = lsp_max(0, sCheckBorderRadius.get() * scaling);
+                    ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
+
+                    r                   = pi->check;
+                    if (bw > 0)
+                    {
+                        color.copy(mi->check_border_color()->color());
+                        color.scale_lightness(bright);
+                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        r.nLeft            += bw;
+                        r.nTop             += bw;
+                        r.nWidth           -= bw * 2;
+                        r.nHeight          -= bw * 2;
+                        br                  = lsp_max(0, br - bw);
+
+                        color.copy(mi->check_bg_color()->color());
+                        color.scale_lightness(bright);
+                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+
+                        r.nLeft            += bw;
+                        r.nTop             += bw;
+                        r.nWidth           -= bw * 2;
+                        r.nHeight          -= bw * 2;
+                        br                  = lsp_max(0, br - bw);
+
+                        if (mi->checked()->get())
+                        {
+                            color.copy(mi->check_color()->color());
+                            color.scale_lightness(bright);
+                            s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        }
+                    }
+                    else
+                    {
+                        if (mi->checked()->get())
+                            color.copy(mi->check_color()->color());
+                        else
+                            color.copy(mi->check_bg_color()->color());
+                        color.scale_lightness(bright);
+                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                    }
+                }
+                else if (mi->type()->radio())
+                {
+                    float br            = pi->check.nWidth * 0.5f;
+                    float xc            = pi->check.nLeft + br;
+                    float yc            = pi->check.nTop  + br;
+                    ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
+
+                    if (bw > 0)
+                    {
+                        color.copy(mi->check_border_color()->color());
+                        color.scale_lightness(bright);
+                        s->fill_circle(xc, yc, br, &color);
+                        br                  = lsp_max(0.0f, br - bw);
+
+                        color.copy(mi->check_bg_color()->color());
+                        color.scale_lightness(bright);
+                        s->fill_circle(xc, yc, br, &color);
+                        br                  = lsp_max(0, br - bw);
+
+                        if (mi->checked()->get())
+                        {
+                            color.copy(mi->check_color()->color());
+                            color.scale_lightness(bright);
+                            s->fill_circle(xc, yc, br, &color);
+                        }
+                    }
+                    else
+                    {
+                        if (mi->checked()->get())
+                            color.copy(mi->check_color()->color());
+                        else
+                            color.copy(mi->check_bg_color()->color());
+                        color.scale_lightness(bright);
+                        s->fill_circle(xc, yc, br, &color);
+                    }
+
+                }
             }
 
             /*
@@ -595,6 +799,8 @@ namespace lsp
 
             */
 
+            s->set_antialiasing(false);
+
             // Draw border
             if (border > 0)
             {
@@ -606,6 +812,8 @@ namespace lsp
                     border, border, sSize.nWidth - border * 2, sSize.nHeight - border * 2
                 );
             }
+
+            s->set_antialiasing(aa);
         }
 
 //        LSPWidget *Menu::find_widget(ssize_t x, ssize_t y)
@@ -841,6 +1049,7 @@ namespace lsp
         {
             // Call parent class for show
             WidgetContainer::show_widget();
+            nSelected = -1;
 
             if (pParent != &sWindow)
             {

@@ -181,6 +181,7 @@ MTEST_BEGIN("tk.widgets.containers", menu)
         tk::Grid *grid = NULL;
         tk::Menu *mw = NULL;
         tk::Void *vw = NULL;
+        tk::MenuItem *mi = NULL;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, NULL, "window") == STATUS_OK);
@@ -227,13 +228,17 @@ MTEST_BEGIN("tk.widgets.containers", menu)
             add_item(mw, vh, miid, "Item 2", tk::MI_NORMAL);
             add_item(mw, vh, miid, "Item 3", tk::MI_NORMAL);
             add_item(mw, vh, miid, "-", tk::MI_SEPARATOR);
-            add_item(mw, vh, miid, "Check 1", tk::MI_CHECK);
+            mi = add_item(mw, vh, miid, "Check 1", tk::MI_CHECK);
+            mi->checked()->set(true);
             add_item(mw, vh, miid, "Check 2", tk::MI_CHECK);
-            add_item(mw, vh, miid, "Check 3", tk::MI_CHECK);
+            mi = add_item(mw, vh, miid, "Check 3", tk::MI_CHECK);
+            mi->checked()->set(true);
             add_item(mw, vh, miid, "-", tk::MI_SEPARATOR);
-            add_item(mw, vh, miid, "Radio 1", tk::MI_RADIO);
+            mi = add_item(mw, vh, miid, "Radio 1", tk::MI_RADIO);
+            mi->checked()->set(true);
             add_item(mw, vh, miid, "Radio 2", tk::MI_RADIO);
-            add_item(mw, vh, miid, "Radio 3", tk::MI_RADIO);
+            mi = add_item(mw, vh, miid, "Radio 3", tk::MI_RADIO);
+            mi->checked()->set(true);
 
             // Create void widget
             MTEST_ASSERT(id.fmt_ascii("void-%d", int(0)));
