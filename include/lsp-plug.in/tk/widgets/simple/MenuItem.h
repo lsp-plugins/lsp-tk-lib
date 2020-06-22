@@ -88,6 +88,8 @@ namespace lsp
 
             public:
                 virtual status_t            on_submit();
+
+                virtual status_t            on_focus_in(const ws::event_t *e);
         };
     
     } /* namespace tk */

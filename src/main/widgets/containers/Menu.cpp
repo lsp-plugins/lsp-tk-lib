@@ -17,9 +17,60 @@ namespace lsp
 
         //-----------------------------------------------------------------------------
         // Menu implementation
+        Widget *Menu::MenuWindow::sync_mouse_handler(const ws::event_t *e)
+        {
+            Widget *old     = hMouse.pWidget;
+            Widget *curr    = PopupWindow::sync_mouse_handler(e);
+
+            if (curr != old)
+                curr->take_focus();
+
+            return curr;
+        }
+
+        Widget *Menu::MenuWindow::acquire_mouse_handler(const ws::event_t *e)
+        {
+            return sync_mouse_handler(e);
+        }
+
+        Widget *Menu::MenuWindow::release_mouse_handler(const ws::event_t *e)
+        {
+            return sync_mouse_handler(e);
+        }
+
+        status_t Menu::MenuWindow::handle_event(const ws::event_t *e)
+        {
+            status_t result;
+
+            switch (e->nType)
+            {
+                //-------------------------------------------------------------
+                // Keyboard handling
+                case ws::UIE_KEY_DOWN:
+                case ws::UIE_KEY_UP:
+                {
+                    result          = pMenu->handle_event(e);
+                    break;
+                }
+
+                //-------------------------------------------------------------
+                // Other events
+                default:
+                    result      = PopupWindow::handle_event(e);
+                    break;
+            }
+
+            // Update pointer
+            update_pointer();
+
+            return result;
+        }
+
+        //-----------------------------------------------------------------------------
+        // Menu implementation
         Menu::Menu(Display *dpy):
             WidgetContainer(dpy),
-            sWindow(dpy),
+            sWindow(dpy, this),
             sFont(&sProperties),
             sScrolling(&sProperties),
             sBorderSize(&sProperties),
@@ -53,6 +104,7 @@ namespace lsp
 //            sScroll.set_handler(timer_handler, this);
 
             nSelected               = -1;
+            nKeyScroll              = 0;
 
             sIStats.full_w          = 0;
             sIStats.full_h          = 0;
@@ -109,6 +161,10 @@ namespace lsp
             sWindow.add_arrangement(A_LEFT, 0.0f, false);
             sWindow.layout()->set(-1.0f, -1.0f, 1.0f, 1.0f);
 
+            // Initialize timers
+            sKeyTimer.bind(pDisplay);
+            sKeyTimer.set_handler(keyscroll_handler, self());
+
             // Bind properties
             sFont.bind("font", &sStyle);
             sScrolling.bind("scrolling", &sStyle);
@@ -161,6 +217,9 @@ namespace lsp
 
                 unlink_widget(item);
             }
+
+            // Cancel timers
+            sKeyTimer.cancel();
 
             vVisible.flush();
             vItems.flush();
@@ -533,7 +592,11 @@ namespace lsp
                 if (!Size::overlap(&xr, &pi->area))
                     continue;
 
+                // Get child widget
                 MenuItem *mi        = pi->item;
+
+                // Commit redraw for child widget
+                mi->commit_redraw();
 
                 // Just separator?
                 if (mi->type()->separator())
@@ -1062,6 +1125,156 @@ namespace lsp
         void Menu::hide_widget()
         {
             sWindow.hide();
+        }
+
+        Widget *Menu::find_widget(ssize_t x, ssize_t y)
+        {
+            for (size_t i=0, n=vVisible.size(); i<n; ++i)
+            {
+                item_t *pi = vVisible.uget(i);
+                if (pi->item->inside(x, y))
+                    return pi->item;
+            }
+            return NULL;
+        }
+
+        void Menu::select_menu_item(MenuItem *item)
+        {
+            ssize_t sel = -1;
+            for (size_t i=0, n=vVisible.size(); i<n; ++i)
+            {
+                item_t *pi = vVisible.uget(i);
+                if (pi->item == item)
+                {
+                    sel = i;
+                    break;
+                }
+            }
+
+            if (sel != nSelected)
+                query_draw();
+
+            nSelected   = sel;
+        }
+
+        status_t Menu::on_key_down(const ws::event_t *e)
+        {
+            switch (e->nCode)
+            {
+                case ws::WSK_KEYPAD_UP:
+                case ws::WSK_UP:
+                    nKeyScroll      = -1;
+                    on_key_scroll(nKeyScroll);
+                    break;
+
+                case ws::WSK_KEYPAD_DOWN:
+                case ws::WSK_DOWN:
+                    nKeyScroll      = 1;
+                    on_key_scroll(nKeyScroll);
+                    break;
+
+                default:
+                    nKeyScroll      = 0;
+                    break;
+            }
+
+            if (nKeyScroll != 0)
+                sKeyTimer.launch(-1, 250, 1000);
+
+            return STATUS_OK;
+        }
+
+        status_t Menu::on_key_up(const ws::event_t *e)
+        {
+            switch (e->nCode)
+            {
+                case ws::WSK_KEYPAD_UP:
+                case ws::WSK_UP:
+                case ws::WSK_KEYPAD_DOWN:
+                case ws::WSK_DOWN:
+                    nKeyScroll      = 0;
+                    break;
+
+                default:
+                    nKeyScroll      = 0;
+                    break;
+            }
+
+            if (nKeyScroll == 0)
+                sKeyTimer.cancel();
+
+            return STATUS_OK;
+        }
+
+        status_t Menu::keyscroll_handler(ws::timestamp_t time, void *arg)
+        {
+            Menu *m = widget_ptrcast<Menu>(arg);
+            return (m != NULL) ? m->on_key_scroll(m->nKeyScroll) : STATUS_OK;
+        }
+
+        status_t Menu::on_key_scroll(ssize_t dir)
+        {
+            // If we have no potential items for selection - return immediately
+            ssize_t last = ssize_t(vVisible.size()) - 1;
+            if ((last < 0) || (sIStats.items <= 0) || (dir == 0))
+                return STATUS_OK;
+
+            // Lookup for next item in list
+            ssize_t pos = nSelected;
+            item_t *pi  = NULL;
+            while (true)
+            {
+                // Update position
+                pos    += dir;
+                if (pos < 0)
+                    pos     = last;
+                else if (pos > last)
+                    pos     = 0;
+
+                // Get item
+                pi  = vVisible.uget(pos);
+                if (!pi->item->type()->separator())
+                    break;
+            }
+
+            // Now we have updated position
+            if ((pos == nSelected) || (pi == NULL))
+                return STATUS_OK;
+
+            // Position has altered
+            nSelected = pos;
+            pi->item->take_focus();
+            sync_scroll(pi->item);
+            query_draw();
+
+            return STATUS_OK;
+        }
+
+        void Menu::sync_scroll(MenuItem *item)
+        {
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t scroll      = lsp_max(0, sScrolling.get() * scaling);
+            ssize_t border      = lsp_max(0.0f, scaling * sBorderSize.get());
+
+            ws::rectangle_t xr, wr;
+            xr.nLeft            = sSize.nLeft   + border;
+            xr.nTop             = sSize.nTop    + border;
+            xr.nWidth           = sSize.nWidth  - border * 2;
+            xr.nHeight          = sSize.nHeight - border * 2;
+
+            item->get_rectangle(&wr);
+
+            // The widget is over the visible area?
+            ssize_t new_scroll  = scroll;
+            if (wr.nTop < xr.nTop)
+                new_scroll         += (xr.nTop - wr.nTop);
+            else if ((wr.nTop + wr.nHeight) > (xr.nTop + xr.nHeight))
+                new_scroll         -= wr.nTop + wr.nHeight - xr.nTop - xr.nHeight;
+
+            // Limit scrolling and update
+            new_scroll          = lsp_limit(new_scroll, 0, sIStats.max_scroll);
+            if ((new_scroll != scroll) && (scaling > 0.0f))
+                sScrolling.set(new_scroll / scaling);
         }
 
 //        status_t Menu::on_mouse_down(const ws::event_t *e)

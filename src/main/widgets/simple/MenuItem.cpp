@@ -64,7 +64,7 @@ namespace lsp
                 sType.init(sclass, MI_NORMAL);
                 sChecked.init(sclass, false);
 
-                sBgSelectedColor.init(sclass, "#00ccff");
+                sBgSelectedColor.init(sclass, "#000088");
                 sTextColor.init(sclass, "#000000");
                 sTextSelectedColor.init(sclass, "#ffffff");
                 sCheckColor.init(sclass, "#00ccff");
@@ -95,6 +95,14 @@ namespace lsp
 
         status_t MenuItem::on_submit()
         {
+            return STATUS_OK;
+        }
+
+        status_t MenuItem::on_focus_in(const ws::event_t *e)
+        {
+            Menu *m = widget_cast<Menu>(parent());
+            if (m != NULL)
+                m->select_menu_item(this);
             return STATUS_OK;
         }
     

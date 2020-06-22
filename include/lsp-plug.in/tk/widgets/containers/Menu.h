@@ -24,6 +24,9 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
+                friend class MenuItem;
+
+            protected:
                 typedef struct item_t
                 {
                     MenuItem           *item;       // Menu item
@@ -68,15 +71,35 @@ namespace lsp
                     SEL_BOTTOM_SCROLL   = -1
                 };
 
+                class MenuWindow: public PopupWindow
+                {
+                    private:
+                        Menu *pMenu;
+
+                    public:
+                        explicit inline MenuWindow(Display *dpy, Menu *menu): PopupWindow(dpy) { pMenu = menu; }
+
+                    protected:
+                        virtual Widget     *sync_mouse_handler(const ws::event_t *e);
+                        virtual Widget     *acquire_mouse_handler(const ws::event_t *e);
+                        virtual Widget     *release_mouse_handler(const ws::event_t *e);
+
+                    public:
+                        virtual status_t    handle_event(const ws::event_t *e);
+                };
+
             protected:
                 lltl::parray<MenuItem>  vItems;
                 lltl::darray<item_t>    vVisible;       // List of visible items
 
                 ssize_t                 nSelected;      // Selected menu item
-                PopupWindow             sWindow;        // Associated popup window
+                ssize_t                 nKeyScroll;     // Key scroll direction
+                MenuWindow              sWindow;        // Associated popup window
                 istats_t                sIStats;        // Realized statistics
                 ibutton_t               sUp;            // Up-scroll button
                 ibutton_t               sDown;          // Down-scroll button
+
+                Timer                   sKeyTimer;      // Key scroll timer
 
                 prop::Font              sFont;
                 prop::Float             sScrolling;
@@ -102,7 +125,7 @@ namespace lsp
 //                LSPColor                sBorderColor;
 
             protected:
-                static status_t             timer_handler(ws::timestamp_t time, void *arg);
+                static status_t             keyscroll_handler(ws::timestamp_t time, void *arg);
 
             protected:
 //                void                        estimate_sizes(isizes_t *sz);
@@ -126,6 +149,12 @@ namespace lsp
                 virtual void                show_widget();
 
                 virtual void                hide_widget();
+
+                virtual void                select_menu_item(MenuItem *item);
+
+                virtual void                sync_scroll(MenuItem *item);
+
+                virtual status_t            on_key_scroll(ssize_t dir);
 
             public:
                 explicit Menu(Display *dpy);
@@ -175,6 +204,8 @@ namespace lsp
                 const WidgetPtr<Widget>    *trigger_widget() const      { return sWindow.trigger_widget();  }
 
             public:
+                virtual Widget             *find_widget(ssize_t x, ssize_t y);
+
                 virtual status_t            add(Widget *child);
 
                 virtual status_t            insert(Widget *child, size_t index);
@@ -190,6 +221,10 @@ namespace lsp
                 virtual void                show(Widget *w, const ws::rectangle_t *r);
 
                 virtual void                draw(ws::ISurface *s);
+
+                virtual status_t            on_key_down(const ws::event_t *e);
+
+                virtual status_t            on_key_up(const ws::event_t *e);
 //
 //                virtual status_t    on_mouse_down(const ws::event_t *e);
 //
