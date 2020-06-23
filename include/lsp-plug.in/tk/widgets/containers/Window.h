@@ -193,6 +193,10 @@ namespace lsp
 
                 virtual status_t        handle_event(const ws::event_t *e);
 
+                virtual bool            take_focus();
+
+                virtual bool            kill_focus();
+
             public:
                 status_t                grab_events(ws::grab_t grab);
                 status_t                ungrab_events();

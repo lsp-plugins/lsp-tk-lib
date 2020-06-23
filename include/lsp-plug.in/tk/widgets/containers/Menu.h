@@ -73,11 +73,14 @@ namespace lsp
 
                 class MenuWindow: public PopupWindow
                 {
+                    public:
+                        static const w_class_t    metadata;
+
                     private:
-                        Menu *pMenu;
+                        Menu   *pMenu;
 
                     public:
-                        explicit inline MenuWindow(Display *dpy, Menu *menu): PopupWindow(dpy) { pMenu = menu; }
+                        explicit MenuWindow(Display *dpy, Menu *menu);
 
                     protected:
                         virtual Widget     *sync_mouse_handler(const ws::event_t *e);
@@ -88,18 +91,38 @@ namespace lsp
                         virtual status_t    handle_event(const ws::event_t *e);
                 };
 
+                class MenuScroll: public Widget
+                {
+                    public:
+                        static const w_class_t    metadata;
+
+                    private:
+                        Menu      *pMenu;
+                        ssize_t    nDirection;
+
+                    public:
+                        explicit MenuScroll(Display *dpy, Menu *menu, ssize_t dir);
+
+                    public:
+                        virtual status_t        on_mouse_in(const ws::event_t *e);
+                        virtual status_t        on_mouse_out(const ws::event_t *e);
+                        virtual status_t        on_focus_out(const ws::event_t *e);
+                };
+
             protected:
                 lltl::parray<MenuItem>  vItems;
                 lltl::darray<item_t>    vVisible;       // List of visible items
 
                 ssize_t                 nSelected;      // Selected menu item
                 ssize_t                 nKeyScroll;     // Key scroll direction
+                ssize_t                 nMouseScroll;   // Mouse scroll direction
                 MenuWindow              sWindow;        // Associated popup window
                 istats_t                sIStats;        // Realized statistics
                 ibutton_t               sUp;            // Up-scroll button
                 ibutton_t               sDown;          // Down-scroll button
 
                 Timer                   sKeyTimer;      // Key scroll timer
+                Timer                   sMouseTimer;    // Mouse scroll timer
 
                 prop::Font              sFont;
                 prop::Float             sScrolling;
@@ -125,12 +148,16 @@ namespace lsp
 //                LSPColor                sBorderColor;
 
             protected:
-                static status_t             keyscroll_handler(ws::timestamp_t time, void *arg);
+                static status_t             key_scroll_handler(ws::timestamp_t time, void *arg);
+                static status_t             mouse_scroll_handler(ws::timestamp_t time, void *arg);
 
             protected:
 //                void                        estimate_sizes(isizes_t *sz);
 
                 void                        allocate_items(lltl::darray<item_t> *out, istats_t *stats);
+
+                status_t                    start_mouse_scroll(ssize_t dir);
+                status_t                    end_mouse_scroll();
 
 //                ssize_t                     find_item(ssize_t x, ssize_t y, ssize_t *ry);
 //                void                        update_scroll();
@@ -152,9 +179,13 @@ namespace lsp
 
                 virtual void                select_menu_item(MenuItem *item);
 
+                virtual void                submit_menu_item(MenuItem *item);
+
                 virtual void                sync_scroll(MenuItem *item);
 
                 virtual status_t            on_key_scroll(ssize_t dir);
+
+                virtual status_t            on_mouse_scroll(ssize_t dir);
 
             public:
                 explicit Menu(Display *dpy);

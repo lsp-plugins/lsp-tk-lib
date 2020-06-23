@@ -13,10 +13,16 @@ namespace lsp
 {
     namespace tk
     {
-        const w_class_t Menu::metadata      = { "Menu", &WidgetContainer::metadata };
-
         //-----------------------------------------------------------------------------
-        // Menu implementation
+        // Menu window implementation
+        const w_class_t Menu::MenuWindow::metadata      = { "Menu::MenuWindow", &PopupWindow::metadata };
+
+        Menu::MenuWindow::MenuWindow(Display *dpy, Menu *menu): PopupWindow(dpy)
+        {
+            pMenu = menu;
+            pClass = &metadata;
+        }
+
         Widget *Menu::MenuWindow::sync_mouse_handler(const ws::event_t *e)
         {
             Widget *old     = hMouse.pWidget;
@@ -67,7 +73,36 @@ namespace lsp
         }
 
         //-----------------------------------------------------------------------------
+        // Menu scroll implementation
+        const w_class_t Menu::MenuScroll::metadata      = { "Menu::MenuScroll", &Widget::metadata };
+
+        Menu::MenuScroll::MenuScroll(Display *dpy, Menu *menu, ssize_t dir): Widget(dpy)
+        {
+            pMenu       = menu;
+            nDirection  = dir;
+
+            pClass      = &metadata;
+        }
+
+        status_t Menu::MenuScroll::on_mouse_in(const ws::event_t *e)
+        {
+            return pMenu->start_mouse_scroll(nDirection);
+        }
+
+        status_t Menu::MenuScroll::on_mouse_out(const ws::event_t *e)
+        {
+            return pMenu->end_mouse_scroll();
+        }
+
+        status_t Menu::MenuScroll::on_focus_out(const ws::event_t *e)
+        {
+            return pMenu->end_mouse_scroll();
+        }
+
+        //-----------------------------------------------------------------------------
         // Menu implementation
+        const w_class_t Menu::metadata      = { "Menu", &WidgetContainer::metadata };
+
         Menu::Menu(Display *dpy):
             WidgetContainer(dpy),
             sWindow(dpy, this),
@@ -105,6 +140,7 @@ namespace lsp
 
             nSelected               = -1;
             nKeyScroll              = 0;
+            nMouseScroll            = 0;
 
             sIStats.full_w          = 0;
             sIStats.full_h          = 0;
@@ -163,7 +199,10 @@ namespace lsp
 
             // Initialize timers
             sKeyTimer.bind(pDisplay);
-            sKeyTimer.set_handler(keyscroll_handler, self());
+            sKeyTimer.set_handler(key_scroll_handler, self());
+
+            sMouseTimer.bind(pDisplay);
+            sMouseTimer.set_handler(mouse_scroll_handler, self());
 
             // Bind properties
             sFont.bind("font", &sStyle);
@@ -1120,6 +1159,7 @@ namespace lsp
                 sWindow.add(this);
             }
             sWindow.show();
+            sWindow.take_focus();
         }
 
         void Menu::hide_widget()
@@ -1157,6 +1197,11 @@ namespace lsp
             nSelected   = sel;
         }
 
+        void Menu::submit_menu_item(MenuItem *item)
+        {
+            hide();
+        }
+
         status_t Menu::on_key_down(const ws::event_t *e)
         {
             switch (e->nCode)
@@ -1186,6 +1231,9 @@ namespace lsp
 
         status_t Menu::on_key_up(const ws::event_t *e)
         {
+            MenuItem *submit = NULL;
+
+            // Analyze key code
             switch (e->nCode)
             {
                 case ws::WSK_KEYPAD_UP:
@@ -1195,21 +1243,45 @@ namespace lsp
                     nKeyScroll      = 0;
                     break;
 
+                case ws::WSK_RETURN:
+                case ws::WSK_KEYPAD_ENTER:
+                {
+                    item_t *pi      = (nSelected >= 0) ? vVisible.get(nSelected) : NULL;
+                    submit          = (pi != NULL) ? pi->item : NULL;
+
+                    nKeyScroll      = 0;
+                    break;
+                }
+
                 default:
                     nKeyScroll      = 0;
                     break;
             }
 
+            // Cancel scrolling timer
             if (nKeyScroll == 0)
                 sKeyTimer.cancel();
+
+            // Check if we need to trigger submit event
+            if (submit != NULL)
+            {
+                submit_menu_item(submit);
+                submit->slots()->execute(SLOT_SUBMIT, submit);
+            }
 
             return STATUS_OK;
         }
 
-        status_t Menu::keyscroll_handler(ws::timestamp_t time, void *arg)
+        status_t Menu::key_scroll_handler(ws::timestamp_t time, void *arg)
         {
             Menu *m = widget_ptrcast<Menu>(arg);
             return (m != NULL) ? m->on_key_scroll(m->nKeyScroll) : STATUS_OK;
+        }
+
+        status_t Menu::mouse_scroll_handler(ws::timestamp_t time, void *arg)
+        {
+            Menu *m = widget_ptrcast<Menu>(arg);
+            return (m != NULL) ? m->on_mouse_scroll(m->nKeyScroll) : STATUS_OK;
         }
 
         status_t Menu::on_key_scroll(ssize_t dir)
@@ -1250,6 +1322,20 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Menu::on_mouse_scroll(ssize_t dir)
+        {
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t scroll      = sScrolling.get() * scaling;
+
+            ssize_t amount      = lsp_max(1, sIStats.item_h >> 1);
+            scroll              = lsp_limit(scroll + dir * amount, 0, sIStats.max_scroll);
+
+            if (scaling > 0)
+                sScrolling.set(scroll / scaling);
+
+            return STATUS_OK;
+        }
+
         void Menu::sync_scroll(MenuItem *item)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
@@ -1275,6 +1361,16 @@ namespace lsp
             new_scroll          = lsp_limit(new_scroll, 0, sIStats.max_scroll);
             if ((new_scroll != scroll) && (scaling > 0.0f))
                 sScrolling.set(new_scroll / scaling);
+        }
+
+        status_t Menu::start_mouse_scroll(ssize_t dir)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Menu::end_mouse_scroll()
+        {
+            return STATUS_OK;
         }
 
 //        status_t Menu::on_mouse_down(const ws::event_t *e)

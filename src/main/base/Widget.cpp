@@ -371,6 +371,9 @@ namespace lsp
 
         void Widget::hide_widget()
         {
+            // Kill focus
+            kill_focus();
+
             // Drop surface to not to eat memory
             if (pSurface != NULL)
             {

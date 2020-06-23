@@ -185,8 +185,8 @@ MTEST_BEGIN("tk.widgets.containers", menu)
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, NULL, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test fader") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("fader_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test menu") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("menu_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);

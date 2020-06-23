@@ -105,6 +105,20 @@ namespace lsp
                 m->select_menu_item(this);
             return STATUS_OK;
         }
+
+        status_t MenuItem::on_mouse_up(const ws::event_t *e)
+        {
+            // Allow only left button click
+            if ((e->nCode != ws::MCB_LEFT) || (e->nState != ws::MCF_LEFT))
+                return STATUS_OK;
+
+            Menu *m = widget_cast<Menu>(parent());
+            if (m != NULL)
+                m->submit_menu_item(this);
+
+            sSlots.execute(SLOT_SUBMIT, this);
+            return STATUS_OK;
+        }
     
     } /* namespace tk */
 } /* namespace lsp */

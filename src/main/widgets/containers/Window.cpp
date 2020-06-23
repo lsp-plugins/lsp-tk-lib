@@ -597,6 +597,7 @@ namespace lsp
                     if (!bMapped)
                     {
                         bMapped     = true;
+                        pWindow->set_focus(true);
                         sRedraw.launch(-1, 40);
                         query_draw();
                     }
@@ -1032,6 +1033,20 @@ namespace lsp
             status_t res = (c != NULL) ? set_class(i, c) : STATUS_NO_MEM;
             ::free(i);
             return res;
+        }
+
+        bool Window::take_focus()
+        {
+            if (pWindow == NULL)
+                return false;
+            return pWindow->set_focus(true) == STATUS_OK;
+        }
+
+        bool Window::kill_focus()
+        {
+            if (pWindow == NULL)
+                return false;
+            return pWindow->set_focus(false) == STATUS_OK;
         }
 
     } /* namespace tk */

@@ -260,13 +260,13 @@ namespace lsp
                  * @return true if widget has been focused, false if widget already had focus or it is impossible
                  * to take the focus
                  */
-                bool                    take_focus();
+                virtual bool            take_focus();
 
                 /**
                  * Release focus previously acquired by widget
                  * @return true if focus has been released, false if widget had no focus
                  */
-                bool                    kill_focus();
+                virtual bool            kill_focus();
 
                 /**
                  * Get current mouse pointer
