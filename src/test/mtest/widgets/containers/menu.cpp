@@ -113,6 +113,28 @@ MTEST_BEGIN("tk.widgets.containers", menu)
         return STATUS_OK;
     }
 
+    static status_t slot_menu_submit(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("SUBMIT: %s\n", h->label);
+
+        tk::MenuItem *mi = tk::widget_cast<tk::MenuItem>(sender);
+        if (mi == NULL)
+            return STATUS_OK;
+
+        switch (mi->type()->get())
+        {
+            case tk::MI_CHECK:
+            case tk::MI_RADIO:
+                mi->checked()->toggle();
+                break;
+            default:
+                break;
+        }
+
+        return STATUS_OK;
+    }
+
     status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, tk::Menu *menu, const char *label)
     {
         status_t res = w->init();
@@ -163,7 +185,19 @@ MTEST_BEGIN("tk.widgets.containers", menu)
         MTEST_ASSERT(mw->add(mi) == STATUS_OK);
         mi->text()->set_raw(text);
         mi->type()->set(type);
-        return mi;
+
+        handler_t *h = new handler_t;
+        if ((h == NULL) || (!vh.add(h)))
+            return NULL;
+
+        h->test     = this;
+        h->menu     = NULL;
+        h->label    = id.clone_utf8();
+
+        tk::handler_id_t hid;
+        hid = mi->slots()->bind(tk::SLOT_SUBMIT, slot_menu_submit, h);
+
+        return (hid < 0) ? NULL : mi;
     }
 
     MTEST_MAIN
@@ -219,6 +253,7 @@ MTEST_BEGIN("tk.widgets.containers", menu)
             size_t col = 0;
             size_t miid = 0;
 
+            //-----------------------------------------------------------------
             // Create menu
             MTEST_ASSERT(id.fmt_ascii("menu-%d", int(0)));
             MTEST_ASSERT(mw = new tk::Menu(dpy));
@@ -242,6 +277,25 @@ MTEST_BEGIN("tk.widgets.containers", menu)
 
             // Create void widget
             MTEST_ASSERT(id.fmt_ascii("void-%d", int(0)));
+            MTEST_ASSERT(vw = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(vw, vh, mw, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(vw));
+            MTEST_ASSERT(grid->add(vw) == STATUS_OK);
+            vw->bg_color()->set_rgb24(next_color(col));
+
+            //-----------------------------------------------------------------
+            // Create large menu for scrolling
+            MTEST_ASSERT(id.fmt_ascii("menu-%d", int(1)));
+            MTEST_ASSERT(mw = new tk::Menu(dpy));
+            MTEST_ASSERT(init_widget(mw, vh, NULL, id.get_ascii()) == STATUS_OK);
+
+            for (size_t i=0; i<128; ++i)
+            {
+                id.fmt_ascii("Menu item %d", int(i));
+                add_item(mw, vh, miid, id.get_utf8(), tk::MI_NORMAL);
+            }
+
+            MTEST_ASSERT(id.fmt_ascii("void-%d", int(1)));
             MTEST_ASSERT(vw = new tk::Void(dpy));
             MTEST_ASSERT(init_widget(vw, vh, mw, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(vw));

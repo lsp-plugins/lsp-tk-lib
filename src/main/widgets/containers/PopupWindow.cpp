@@ -114,6 +114,8 @@ namespace lsp
             if (changes > 0)
                 pWindow->resize(xr.nWidth, xr.nHeight);
 
+            WidgetContainer::realize_widget(&xr);
+
             return STATUS_OK;
         }
 

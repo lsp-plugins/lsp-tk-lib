@@ -58,12 +58,6 @@ namespace lsp
                     bool                submenu;    // at least one submenu is present
                 } istats_t;
 
-                typedef struct ibutton_t
-                {
-                    ws::rectangle_t     sPos;       // position
-                    bool                bEnabled;   // button enabled
-                } ibutton_t;
-
                 enum selection_t
                 {
                     SEL_NONE            = -3,
@@ -97,8 +91,9 @@ namespace lsp
                         static const w_class_t    metadata;
 
                     private:
-                        Menu      *pMenu;
-                        ssize_t    nDirection;
+                        Menu       *pMenu;
+                        ssize_t     nDirection;
+                        bool        bActive;
 
                     public:
                         explicit MenuScroll(Display *dpy, Menu *menu, ssize_t dir);
@@ -107,6 +102,8 @@ namespace lsp
                         virtual status_t        on_mouse_in(const ws::event_t *e);
                         virtual status_t        on_mouse_out(const ws::event_t *e);
                         virtual status_t        on_focus_out(const ws::event_t *e);
+
+                        bool                    active() const;
                 };
 
             protected:
@@ -116,10 +113,10 @@ namespace lsp
                 ssize_t                 nSelected;      // Selected menu item
                 ssize_t                 nKeyScroll;     // Key scroll direction
                 ssize_t                 nMouseScroll;   // Mouse scroll direction
-                MenuWindow              sWindow;        // Associated popup window
                 istats_t                sIStats;        // Realized statistics
-                ibutton_t               sUp;            // Up-scroll button
-                ibutton_t               sDown;          // Down-scroll button
+                MenuWindow              sWindow;        // Associated popup window
+                MenuScroll              sUp;            // Up-scroll button
+                MenuScroll              sDown;          // Down-scroll button
 
                 Timer                   sKeyTimer;      // Key scroll timer
                 Timer                   sMouseTimer;    // Mouse scroll timer
@@ -128,6 +125,10 @@ namespace lsp
                 prop::Float             sScrolling;
                 prop::Integer           sBorderSize;
                 prop::Color             sBorderColor;
+                prop::Color             sScrollColor;
+                prop::Color             sScrollSelectedColor;
+                prop::Color             sScrollTextColor;
+                prop::Color             sScrollTextSelectedColor;
                 prop::Integer           sCheckSize;
                 prop::Integer           sCheckBorder;
                 prop::Integer           sCheckBorderGap;
@@ -136,33 +137,15 @@ namespace lsp
                 prop::Integer           sSpacing;
                 prop::WidgetPtr<Menu>   sSubmenu;           // Sub-menu
 
-//                MenuWindow             *pWindow;
-//                LSPMenu                *pParentMenu;
-//                LSPMenu                *pActiveMenu;
-//                LSPTimer                sScroll;
-//                ssize_t                 nSelected;
-//                ssize_t                 nScroll;
-//                ssize_t                 nScrollMax;
-//                size_t                  nMBState;
-//                LSPColor                sSelColor;
-//                LSPColor                sBorderColor;
-
             protected:
                 static status_t             key_scroll_handler(ws::timestamp_t time, void *arg);
                 static status_t             mouse_scroll_handler(ws::timestamp_t time, void *arg);
 
             protected:
-//                void                        estimate_sizes(isizes_t *sz);
-
                 void                        allocate_items(lltl::darray<item_t> *out, istats_t *stats);
 
                 status_t                    start_mouse_scroll(ssize_t dir);
                 status_t                    end_mouse_scroll();
-
-//                ssize_t                     find_item(ssize_t x, ssize_t y, ssize_t *ry);
-//                void                        update_scroll();
-//                void                        selection_changed(ssize_t sel, ssize_t ry);
-//                Menu                       *check_inside_submenu(ws::event_t *e);
 
                 void                        do_destroy();
 
@@ -210,6 +193,15 @@ namespace lsp
                 inline Color               *border_color()              { return &sBorderColor;             }
                 inline const Color         *border_color() const        { return &sBorderColor;             }
 
+                inline Color               *scroll_selected_color()     { return &sScrollSelectedColor;     }
+                inline const Color         *scroll_selected_color() const   { return &sScrollSelectedColor; }
+
+                inline Color               *scroll_text_color()         { return &sScrollTextColor;         }
+                inline const Color         *scroll_text_color() const   { return &sScrollTextColor;         }
+
+                inline Color               *scroll_text_selected_color()        { return &sScrollTextSelectedColor;     }
+                inline const Color         *scroll_text_selected_color() const  { return &sScrollTextSelectedColor;     }
+
                 inline Integer             *check_size()                { return &sCheckSize;               }
                 inline const Integer       *check_size() const          { return &sCheckSize;               }
 
@@ -256,14 +248,6 @@ namespace lsp
                 virtual status_t            on_key_down(const ws::event_t *e);
 
                 virtual status_t            on_key_up(const ws::event_t *e);
-//
-//                virtual status_t    on_mouse_down(const ws::event_t *e);
-//
-//                virtual status_t    on_mouse_up(const ws::event_t *e);
-//
-//                virtual status_t    on_mouse_move(const ws::event_t *e);
-//
-//                virtual status_t    on_mouse_scroll(const ws::event_t *e);
         };
     
     } /* namespace tk */
