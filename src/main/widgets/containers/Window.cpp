@@ -597,7 +597,6 @@ namespace lsp
                     if (!bMapped)
                     {
                         bMapped     = true;
-                        pWindow->set_focus(true);
                         sRedraw.launch(-1, 40);
                         query_draw();
                     }

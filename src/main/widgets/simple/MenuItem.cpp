@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -102,7 +103,16 @@ namespace lsp
         {
             Menu *m = widget_cast<Menu>(parent());
             if (m != NULL)
-                m->select_menu_item(this);
+                m->select_menu_item(this, false);
+            return STATUS_OK;
+        }
+
+        status_t MenuItem::on_mouse_in(const ws::event_t *e)
+        {
+            Menu *m = widget_cast<Menu>(parent());
+            lsp_trace("this = %p", this);
+            if (m != NULL)
+                m->select_menu_item(this, true);
             return STATUS_OK;
         }
 
@@ -114,7 +124,7 @@ namespace lsp
 
             Menu *m = widget_cast<Menu>(parent());
             if (m != NULL)
-                m->submit_menu_item(this);
+                m->submit_menu_item(this, false);
 
             sSlots.execute(SLOT_SUBMIT, this);
             return STATUS_OK;

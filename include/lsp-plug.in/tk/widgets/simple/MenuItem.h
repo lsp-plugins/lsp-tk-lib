@@ -91,6 +91,8 @@ namespace lsp
 
                 virtual status_t            on_focus_in(const ws::event_t *e);
 
+                virtual status_t            on_mouse_in(const ws::event_t *e);
+
                 virtual status_t            on_mouse_up(const ws::event_t *e);
         };
     

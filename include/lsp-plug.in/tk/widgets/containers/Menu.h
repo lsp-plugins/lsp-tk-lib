@@ -113,6 +113,8 @@ namespace lsp
                 ssize_t                 nSelected;      // Selected menu item
                 ssize_t                 nKeyScroll;     // Key scroll direction
                 ssize_t                 nMouseScroll;   // Mouse scroll direction
+                Menu                   *pParentMenu;    // Parent menu
+                Menu                   *pChildMenu;     // Child menu
                 istats_t                sIStats;        // Realized statistics
                 MenuWindow              sWindow;        // Associated popup window
                 MenuScroll              sUp;            // Up-scroll button
@@ -148,6 +150,8 @@ namespace lsp
                 status_t                    end_mouse_scroll();
 
                 void                        do_destroy();
+                void                        hide_nested_menus(Menu *parent);
+                void                        show_submenu(Menu *parent, Widget *w);
 
             protected:
                 virtual void                property_changed(Property *prop);
@@ -160,9 +164,13 @@ namespace lsp
 
                 virtual void                hide_widget();
 
-                virtual void                select_menu_item(MenuItem *item);
+                virtual void                select_menu_item(MenuItem *item, bool popup);
 
-                virtual void                submit_menu_item(MenuItem *item);
+                virtual void                select_menu_item(ssize_t index, bool popup);
+
+                virtual void                select_first_item(bool popup);
+
+                virtual void                submit_menu_item(MenuItem *item, bool focus);
 
                 virtual void                sync_scroll(MenuItem *item);
 

@@ -136,6 +136,8 @@ namespace lsp
             nSelected               = -1;
             nKeyScroll              = 0;
             nMouseScroll            = 0;
+            pParentMenu             = NULL;
+            pChildMenu              = NULL;
 
             sIStats.full_w          = 0;
             sIStats.full_h          = 0;
@@ -311,10 +313,10 @@ namespace lsp
             allocate_items(&items, &st);
 
             // Compute minimum and maximum size
-            r->nMinWidth    = st.full_w + border*2;
-            r->nMinHeight   = st.item_h + border*2;
+            r->nMinWidth    = st.full_w + border;
+            r->nMinHeight   = st.item_h + border;
             r->nMaxWidth    = r->nMinWidth;
-            r->nMaxHeight   = st.full_h + border*2;
+            r->nMaxHeight   = st.full_h + border;
         }
 
         void Menu::allocate_items(lltl::darray<item_t> *out, istats_t *st)
@@ -460,7 +462,8 @@ namespace lsp
                     st->link_w          = lsp_max(st->link_w, pi->ref.nWidth);
                     st->link_h          = lsp_max(st->link_h, pi->ref.nHeight);
 
-                    pi->area.nWidth    += pi->ref.nWidth + spacing;
+                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), pi->ref.nWidth + spacing);
+//                    pi->area.nWidth    += pi->ref.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->ref.nHeight);
                 }
                 else
@@ -577,7 +580,7 @@ namespace lsp
                 {
                     if (mi->menu()->is_set())
                     {
-                        pi->ref.nLeft       = xr.nLeft + xr.nWidth - st.link_w;
+                        pi->ref.nLeft       = xr.nLeft + xr.nWidth + pi->pad.nRight - st.link_w;
                         pi->ref.nTop        = xr.nTop + ((xr.nHeight - pi->ref.nHeight) >> 1);
                     }
 
@@ -684,10 +687,12 @@ namespace lsp
                 // Draw reference
                 if (mi->menu()->is_set())
                 {
+                    float x = pi->ref.nLeft + pi->ref.nWidth * 0.25f;
+                    float y = pi->ref.nTop  + pi->ref.nHeight * 0.25f;
                     s->fill_triangle(
-                            pi->ref.nLeft, pi->ref.nTop,
-                            pi->ref.nLeft + pi->ref.nWidth, pi->ref.nHeight * 0.5f,
-                            pi->ref.nLeft, pi->ref.nTop + pi->ref.nHeight,
+                            x, y,
+                            x + pi->ref.nWidth * 0.5f, y + pi->ref.nHeight * 0.25f,
+                            x, y + pi->ref.nHeight * 0.5f,
                             color
                         );
                 }
@@ -954,7 +959,6 @@ namespace lsp
         {
             // Call parent class for show
             WidgetContainer::show_widget();
-            nSelected = -1;
 
             if (pParent != &sWindow)
             {
@@ -962,11 +966,16 @@ namespace lsp
                 sWindow.add(this);
             }
             sWindow.show();
-            sWindow.take_focus();
+
+            // Take focus if there is no parent menu
+            if (pParentMenu == NULL)
+                sWindow.take_focus();
         }
 
         void Menu::hide_widget()
         {
+            nSelected = -1;
+            hide_nested_menus(this);
             sWindow.hide();
         }
 
@@ -987,7 +996,7 @@ namespace lsp
             return NULL;
         }
 
-        void Menu::select_menu_item(MenuItem *item)
+        void Menu::select_menu_item(MenuItem *item, bool popup)
         {
             ssize_t sel = -1;
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
@@ -1000,15 +1009,101 @@ namespace lsp
                 }
             }
 
-            if (sel != nSelected)
-                query_draw();
-
-            nSelected   = sel;
+            select_menu_item(sel, popup);
         }
 
-        void Menu::submit_menu_item(MenuItem *item)
+        void Menu::select_menu_item(ssize_t sel, bool popup)
         {
-            hide();
+            sWindow.take_focus();
+
+            lsp_trace("sel = %d, nSelected = %d", int(sel), int(nSelected));
+
+            if (sel != nSelected)
+            {
+                // Update state
+                nSelected   = sel;
+                query_draw();
+            }
+
+            // Need to check for submenu?
+            if (popup)
+            {
+                item_t *it = (sel >= 0) ? vVisible.uget(sel) : NULL;
+                MenuItem *item = it->item;
+                Menu *cmenu = (item != NULL) ? item->menu()->get() : NULL;
+                if (cmenu != NULL)
+                    show_submenu(cmenu, item);
+            }
+        }
+
+        void Menu::select_first_item(bool popup)
+        {
+            ssize_t sel = -1;
+            for (size_t i=0, n=vVisible.size(); i<n; ++i)
+            {
+                item_t *pi = vVisible.uget(i);
+                if ((pi->item != NULL) && (!pi->item->type()->separator()))
+                {
+                    sel = i;
+                    break;
+                }
+            }
+
+            select_menu_item(sel, popup);
+        }
+
+        void Menu::hide_nested_menus(Menu *parent)
+        {
+            for (Menu *pm = parent; pm != NULL; )
+            {
+                Menu *cm = pm->pChildMenu;
+                if (cm == NULL)
+                    break;
+
+                // Unlink menu
+                cm->pParentMenu = NULL;
+                pm->pChildMenu  = NULL;
+
+                // Hide menu and move forward
+                cm->hide();
+                pm  = cm;
+            }
+        }
+
+        void Menu::submit_menu_item(MenuItem *item, bool focus)
+        {
+            // Obtain child menu
+            Menu *cmenu = (item != NULL) ? item->menu()->get() : NULL;
+            if (cmenu == NULL)
+            {
+                // No child menu, just hide root menu and finish
+                Menu *root = this;
+                while (root->pParentMenu != NULL)
+                    root = root->pParentMenu;
+                root->hide();
+                return;
+            }
+
+            show_submenu(cmenu, item);
+            if (focus)
+                cmenu->select_first_item(false);
+        }
+
+        void Menu::show_submenu(Menu *menu, Widget *w)
+        {
+            // Hide all nested menus for cmenu
+            if (pChildMenu != menu)
+            {
+                if (pChildMenu != NULL)
+                    pChildMenu->hide();
+            }
+            hide_nested_menus(menu);
+
+            menu->pParentMenu   = this;
+            pChildMenu          = menu;
+
+            // Show the nested menu
+            menu->show(w);
         }
 
         status_t Menu::on_key_down(const ws::event_t *e)
@@ -1062,6 +1157,32 @@ namespace lsp
                     break;
                 }
 
+                case ws::WSK_LEFT:
+                case ws::WSK_KEYPAD_LEFT:
+                {
+                    Menu *parent = pParentMenu;
+                    if (parent != NULL)
+                    {
+                        hide();
+                        parent->sWindow.take_focus();
+                    }
+                    break;
+                }
+
+                case ws::WSK_RIGHT:
+                case ws::WSK_KEYPAD_RIGHT:
+                {
+                    item_t *item = (nSelected >= 0) ? vVisible.get(nSelected) : NULL;
+                    MenuItem *sel = (item != NULL) ? item->item : NULL;
+                    Menu *child = ((sel != NULL) && (!sel->type()->separator())) ? sel->menu()->get() : NULL;
+                    if (child != NULL)
+                    {
+                        show_submenu(child, sel);
+                        child->select_first_item(false);
+                    }
+                    break;
+                }
+
                 default:
                     nKeyScroll      = 0;
                     break;
@@ -1074,7 +1195,7 @@ namespace lsp
             // Check if we need to trigger submit event
             if (submit != NULL)
             {
-                submit_menu_item(submit);
+                submit_menu_item(submit, true);
                 submit->slots()->execute(SLOT_SUBMIT, submit);
             }
 

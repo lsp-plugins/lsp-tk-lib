@@ -149,15 +149,15 @@ MTEST_BEGIN("tk.widgets.containers", menu)
         h->label    = ::strdup(label);
 
         tk::handler_id_t hid;
-        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
+//        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
-
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
+//
         if (hid < 0)
             res = -hid;
 
@@ -252,10 +252,12 @@ MTEST_BEGIN("tk.widgets.containers", menu)
             LSPString id;
             size_t col = 0;
             size_t miid = 0;
+            size_t mid = 0;
+            size_t vid = 0;
 
             //-----------------------------------------------------------------
             // Create menu
-            MTEST_ASSERT(id.fmt_ascii("menu-%d", int(0)));
+            MTEST_ASSERT(id.fmt_ascii("menu-%d", int(mid++)));
             MTEST_ASSERT(mw = new tk::Menu(dpy));
             MTEST_ASSERT(init_widget(mw, vh, NULL, id.get_ascii()) == STATUS_OK);
 
@@ -276,7 +278,7 @@ MTEST_BEGIN("tk.widgets.containers", menu)
             mi->checked()->set(true);
 
             // Create void widget
-            MTEST_ASSERT(id.fmt_ascii("void-%d", int(0)));
+            MTEST_ASSERT(id.fmt_ascii("void-%d", int(vid++)));
             MTEST_ASSERT(vw = new tk::Void(dpy));
             MTEST_ASSERT(init_widget(vw, vh, mw, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(vw));
@@ -285,7 +287,7 @@ MTEST_BEGIN("tk.widgets.containers", menu)
 
             //-----------------------------------------------------------------
             // Create large menu for scrolling
-            MTEST_ASSERT(id.fmt_ascii("menu-%d", int(1)));
+            MTEST_ASSERT(id.fmt_ascii("menu-%d", int(mid++)));
             MTEST_ASSERT(mw = new tk::Menu(dpy));
             MTEST_ASSERT(init_widget(mw, vh, NULL, id.get_ascii()) == STATUS_OK);
 
@@ -295,7 +297,46 @@ MTEST_BEGIN("tk.widgets.containers", menu)
                 add_item(mw, vh, miid, id.get_utf8(), tk::MI_NORMAL);
             }
 
-            MTEST_ASSERT(id.fmt_ascii("void-%d", int(1)));
+            MTEST_ASSERT(id.fmt_ascii("void-%d", int(vid++)));
+            MTEST_ASSERT(vw = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(vw, vh, mw, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(vw));
+            MTEST_ASSERT(grid->add(vw) == STATUS_OK);
+            vw->bg_color()->set_rgb24(next_color(col));
+
+
+            //-----------------------------------------------------------------
+            // Create menu with submenus
+            MTEST_ASSERT(id.fmt_ascii("menu-%d", int(mid++)));
+            MTEST_ASSERT(mw = new tk::Menu(dpy));
+            MTEST_ASSERT(init_widget(mw, vh, NULL, id.get_ascii()) == STATUS_OK);
+
+            for (size_t i=0; i<4; ++i)
+            {
+                id.fmt_ascii("Level1-%d", int(i));
+                tk::MenuItem *pi    = add_item(mw, vh, miid, id.get_utf8(), tk::MI_NORMAL);
+                pi->padding()->set_right(64);
+                tk::Menu *mi        = new tk::Menu(dpy);
+                MTEST_ASSERT(init_widget(mi, vh, NULL, id.get_ascii()) == STATUS_OK);
+                pi->menu()->set(mi);
+
+                for (size_t j=0; j<4; ++j)
+                {
+                    id.fmt_ascii("Level2-%d", int(j));
+                    tk::MenuItem *pj    = add_item(mi, vh, miid, id.get_utf8(), tk::MI_NORMAL);
+                    tk::Menu *mj        = new tk::Menu(dpy);
+                    MTEST_ASSERT(init_widget(mj, vh, NULL, id.get_ascii()) == STATUS_OK);
+                    pj->menu()->set(mj);
+
+                    for (size_t k=0; k<4; ++k)
+                    {
+                        id.fmt_ascii("Level3-%d", int(k));
+                        add_item(mj, vh, miid, id.get_utf8(), tk::MI_NORMAL);
+                    }
+                }
+            }
+
+            MTEST_ASSERT(id.fmt_ascii("void-%d", int(vid++)));
             MTEST_ASSERT(vw = new tk::Void(dpy));
             MTEST_ASSERT(init_widget(vw, vh, mw, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(vw));

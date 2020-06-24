@@ -141,14 +141,13 @@ namespace lsp
                 return;
 
             // Window wont'be shown since it's NULL
-            Window *actor = pActor;
             Window::show_widget();
 
-            if (!init_window(actor))
+            if (!init_window())
                 sVisibility.set(false);
         }
 
-        bool PopupWindow::init_window(Window *actor)
+        bool PopupWindow::init_window()
         {
             // Passed argument
             ws::rectangle_t trg;
@@ -242,7 +241,7 @@ namespace lsp
             lsp_trace("window geometry: {%d %d %d %d}", int(wrect.nLeft), int(wrect.nTop), int(wrect.nWidth), int(wrect.nHeight));
             pWindow->set_geometry(&wrect);
             realize(&wrect);
-            pWindow->show((actor != NULL) ? actor->native() : NULL);
+            pWindow->show((rwnd != NULL) ? rwnd->native() : NULL);
             return true;
         }
 
