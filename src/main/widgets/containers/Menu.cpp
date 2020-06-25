@@ -1157,6 +1157,12 @@ namespace lsp
                 Menu *cmenu = (item != NULL) ? item->menu()->get() : NULL;
                 if (cmenu != NULL)
                     show_submenu(cmenu, item);
+                else if (pChildMenu != NULL)
+                {
+                    Menu *child = pChildMenu;
+                    pChildMenu = NULL;
+                    child->hide();
+                }
             }
         }
 

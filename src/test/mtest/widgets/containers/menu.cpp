@@ -342,6 +342,71 @@ MTEST_BEGIN("tk.widgets.containers", menu)
             MTEST_ASSERT(widgets.push(vw));
             MTEST_ASSERT(grid->add(vw) == STATUS_OK);
             vw->bg_color()->set_rgb24(next_color(col));
+
+            //-----------------------------------------------------------------
+            // Create menu with submenus
+            MTEST_ASSERT(id.fmt_ascii("menu-%d", int(mid++)));
+            MTEST_ASSERT(mw = new tk::Menu(dpy));
+            MTEST_ASSERT(init_widget(mw, vh, NULL, id.get_ascii()) == STATUS_OK);
+            mw->bg_color()->set_rgb24(0xdae0ff);
+            mw->border_color()->set_rgb24(0x1b1c22);
+            mw->scroll_selected_color()->set_rgb24(0x1b1c22);
+            mw->scroll_text_color()->set_rgb24(0x1b1c22);
+            mw->scroll_text_selected_color()->set_rgb24(0xdae0ff);
+
+            static const tk::menu_item_type_t mi_types[] =
+            {
+                tk::MI_NORMAL,
+                tk::MI_NORMAL,
+                tk::MI_NORMAL,
+                tk::MI_SEPARATOR,
+                tk::MI_RADIO,
+                tk::MI_RADIO,
+                tk::MI_RADIO,
+                tk::MI_SEPARATOR,
+                tk::MI_CHECK,
+                tk::MI_CHECK,
+                tk::MI_CHECK,
+                tk::MI_NORMAL
+            };
+
+            tk::MenuItem *pi;
+            for (size_t i=0; i<12; ++i)
+            {
+                id.fmt_ascii("Menu item %d", int(i));
+                pi = add_item(mw, vh, miid, id.get_utf8(), tk::MI_NORMAL);
+
+                pi->text()->set_raw(&id);
+                pi->type()->set(mi_types[i]);
+                pi->checked()->set(i & 1);
+                pi->bg_selected_color()->set_rgb24(0x00c0ff);
+                if ((i > 3) && (i < 10))
+                    pi->text_color()->set_rgb24(0x1b1c22);
+                else
+                    pi->text_color()->set_rgb24(next_color(col));
+                pi->text_selected_color()->set_rgb24(0xdae0ff);
+                pi->check_color()->set_rgb24(0x00c0ff);
+                pi->check_bg_color()->set_rgb24(0xffffff);
+                pi->check_border_color()->set_rgb24(0x1b1c22);
+            }
+
+            // Add submenu
+            tk::Menu *mi        = new tk::Menu(dpy);
+            MTEST_ASSERT(init_widget(mi, vh, NULL, id.get_ascii()) == STATUS_OK);
+            pi->menu()->set(mi);
+
+            for (size_t j=0; j<12; ++j)
+            {
+                id.fmt_ascii("Submenu item %d", int(j));
+                add_item(mi, vh, miid, id.get_utf8(), tk::MI_NORMAL);
+            }
+
+            MTEST_ASSERT(id.fmt_ascii("void-%d", int(vid++)));
+            MTEST_ASSERT(vw = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(vw, vh, mw, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(vw));
+            MTEST_ASSERT(grid->add(vw) == STATUS_OK);
+            vw->bg_color()->set_rgb24(next_color(col));
         }
 
         // Show window
