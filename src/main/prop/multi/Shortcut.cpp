@@ -298,7 +298,7 @@ namespace lsp
             LSPString tmp;
             ssize_t last = 0, split = -1;
 
-            size_t mod, xmod;
+            size_t mod = 0, xmod;
 
             while ((split = s->index_of(last, '+')) > last)
             {
