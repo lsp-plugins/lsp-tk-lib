@@ -46,7 +46,10 @@ namespace lsp
 
         status_t Menu::MenuWindow::handle_event(const ws::event_t *e)
         {
-            status_t result;
+            ws::rectangle_t xr;
+
+            status_t result = STATUS_OK;
+            ws::event_t xe  = *e;
 
             switch (e->nType)
             {
@@ -55,14 +58,76 @@ namespace lsp
                 case ws::UIE_KEY_DOWN:
                 case ws::UIE_KEY_UP:
                 {
-                    result          = pMenu->handle_event(e);
+                    // Just bypass events for non-root menu
+                    if (pMenu->pParentMenu != NULL)
+                    {
+                        result = PopupWindow::handle_event(&xe);
+                        break;
+                    }
+
+                    // We're root menu
+                    get_screen_rectangle(&xr);
+                    lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
+                    xe.nLeft       += xr.nLeft;
+                    xe.nTop        += xr.nTop;
+
+                    // Obtain keyboard handler
+                    Menu *kbd       = pMenu->pKeyboardMenu;
+                    if (kbd != NULL)
+                    {
+                        kbd->sWindow.get_screen_rectangle(&xr);
+                        xe.nLeft       -= xr.nLeft;
+                        xe.nTop        -= xr.nTop;
+                        result          = kbd->handle_event(&xe);
+                    }
+                    break;
+                }
+
+                case ws::UIE_MOUSE_CLICK:
+                case ws::UIE_MOUSE_DBL_CLICK:
+                case ws::UIE_MOUSE_TRI_CLICK:
+                case ws::UIE_MOUSE_DOWN:
+                case ws::UIE_MOUSE_UP:
+                case ws::UIE_MOUSE_MOVE:
+                {
+                    // Just bypass events for non-root menu
+                    if (pMenu->pParentMenu != NULL)
+                    {
+                        result = PopupWindow::handle_event(&xe);
+                        break;
+                    }
+
+                    // We're root menu
+                    get_screen_rectangle(&xr);
+                    lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
+                    xe.nLeft       += xr.nLeft;
+                    xe.nTop        += xr.nTop;
+
+                    // Find mouse handler
+                    Menu *m         = pMenu->find_menu(&xe, &xr);
+                    if (m == NULL)
+                    {
+                        if (e->nType != ws::UIE_MOUSE_MOVE)
+                            pMenu->hide();
+                        break;
+                    }
+
+                    // Bypass event
+                    xe.nLeft       -= xr.nLeft;
+                    xe.nTop        -= xr.nTop;
+
+                    lsp_trace("handler=%p, coords: {%d, %d}", m,
+                            int(xe.nLeft), int(xe.nTop));
+                    result          = (m != pMenu) ?
+                            m->sWindow.handle_event(&xe) :
+                            PopupWindow::handle_event(&xe);
                     break;
                 }
 
                 //-------------------------------------------------------------
                 // Other events
                 default:
-                    result      = PopupWindow::handle_event(e);
+                    result      = PopupWindow::handle_event(&xe);
                     break;
             }
 
@@ -70,6 +135,18 @@ namespace lsp
             update_pointer();
 
             return result;
+        }
+
+        bool Menu::MenuWindow::take_focus()
+        {
+            bool res = PopupWindow::take_focus();
+            if (res)
+            {
+                Menu *root              = pMenu->root_menu();
+                root->pKeyboardMenu     = pMenu;
+            }
+
+            return res;
         }
 
         //-----------------------------------------------------------------------------
@@ -138,6 +215,7 @@ namespace lsp
             nMouseScroll            = 0;
             pParentMenu             = NULL;
             pChildMenu              = NULL;
+            pKeyboardMenu           = NULL;
 
             sIStats.full_w          = 0;
             sIStats.full_h          = 0;
@@ -482,6 +560,48 @@ namespace lsp
                 st->item_w              = lsp_max(st->item_w, st->full_w);
                 st->item_h              = lsp_max(st->item_h, pi->area.nHeight);
             }
+        }
+
+        Menu *Menu::root_menu()
+        {
+            Menu *curr  = this;
+            lsp_trace("this = %p", this);
+            while ((curr->pParentMenu != NULL))
+                curr        = curr->pParentMenu;
+
+            lsp_trace("root = %p", curr);
+            return curr;
+        }
+
+        Menu *Menu::find_menu(const ws::event_t *ev, ws::rectangle_t *xr)
+        {
+            lsp_trace("this = %p", this);
+
+            // Get last child
+            Menu *curr = this;
+            while (curr->pChildMenu != NULL)
+                curr = curr->pChildMenu;
+
+            lsp_trace("last = %p", curr);
+
+            // Seek from last child to parent
+            while (curr != NULL)
+            {
+                curr->sWindow.get_screen_rectangle(xr);
+                lsp_trace("pos={%d, %d}, curr = %p, param = {%d, %d, %d, %d}",
+                        int(ev->nLeft), int(ev->nTop), curr,
+                        int(xr->nLeft), int(xr->nTop), int(xr->nWidth), int(xr->nHeight));
+                if (Position::inside(xr, ev->nLeft, ev->nTop))
+                {
+                    lsp_trace("found handler: %p", curr);
+                    return curr;
+                }
+                curr    = curr->pParentMenu;
+            }
+
+            lsp_trace("not found handler");
+
+            return NULL;
         }
 
         void Menu::realize(const ws::rectangle_t *r)
@@ -969,12 +1089,16 @@ namespace lsp
 
             // Take focus if there is no parent menu
             if (pParentMenu == NULL)
+            {
+                sWindow.grab_events(ws::GRAB_MENU);
                 sWindow.take_focus();
+            }
         }
 
         void Menu::hide_widget()
         {
             nSelected = -1;
+
             hide_nested_menus(this);
             sWindow.hide();
         }
@@ -1180,6 +1304,14 @@ namespace lsp
                         show_submenu(child, sel);
                         child->select_first_item(false);
                     }
+                    break;
+                }
+
+                case ws::WSK_ESCAPE:
+                {
+                    Menu *root      = root_menu();
+                    if (root != NULL)
+                        root->hide();
                     break;
                 }
 

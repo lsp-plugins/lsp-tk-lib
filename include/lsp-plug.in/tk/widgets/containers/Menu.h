@@ -83,6 +83,8 @@ namespace lsp
 
                     public:
                         virtual status_t    handle_event(const ws::event_t *e);
+
+                        virtual bool        take_focus();
                 };
 
                 class MenuScroll: public Widget
@@ -115,6 +117,7 @@ namespace lsp
                 ssize_t                 nMouseScroll;   // Mouse scroll direction
                 Menu                   *pParentMenu;    // Parent menu
                 Menu                   *pChildMenu;     // Child menu
+                Menu                   *pKeyboardMenu;  // Keyboard menu handler
                 istats_t                sIStats;        // Realized statistics
                 MenuWindow              sWindow;        // Associated popup window
                 MenuScroll              sUp;            // Up-scroll button
@@ -152,6 +155,8 @@ namespace lsp
                 void                        do_destroy();
                 void                        hide_nested_menus(Menu *parent);
                 void                        show_submenu(Menu *parent, Widget *w);
+                Menu                       *root_menu();
+                Menu                       *find_menu(const ws::event_t *ev, ws::rectangle_t *xr);
 
             protected:
                 virtual void                property_changed(Property *prop);
