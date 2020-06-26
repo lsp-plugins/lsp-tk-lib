@@ -217,8 +217,8 @@ namespace lsp
             if (atom < 0)
                 return false;
 
-            ordinal = 1 << ordinal;
-            size_t v = (on) ? nFlags | ordinal : nFlags & (~ordinal);
+            ordinal     = 1 << ordinal;
+            size_t v    = lsp_setflag(nFlags, ordinal, on);
             if (v == nFlags)
                 return on;
 

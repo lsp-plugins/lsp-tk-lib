@@ -23,8 +23,8 @@ namespace lsp
         void Allocation::set_fill(bool hor, bool vert)
         {
             size_t flags = nFlags;
-            flags = (hor)  ? flags | (1 << F_HFILL) : flags & (~(1 << F_HFILL));
-            flags = (vert) ? flags | (1 << F_VFILL) : flags & (~(1 << F_VFILL));
+            flags = lsp_setflag(flags, 1 << F_HFILL, hor);
+            flags = lsp_setflag(flags, 1 << F_VFILL, vert);
             if (flags == nFlags)
                 return;
 
@@ -34,8 +34,8 @@ namespace lsp
         void Allocation::set_expand(bool hor, bool vert)
         {
             size_t flags = nFlags;
-            flags = (hor)  ? flags | (1 << F_HEXPAND) : flags & (~(1 << F_HEXPAND));
-            flags = (vert) ? flags | (1 << F_VEXPAND) : flags & (~(1 << F_VEXPAND));
+            flags = lsp_setflag(flags, 1 << F_HEXPAND, hor);
+            flags = lsp_setflag(flags, 1 << F_VEXPAND, vert);
             if (flags == nFlags)
                 return;
 
@@ -45,10 +45,10 @@ namespace lsp
         void Allocation::set(bool hfill, bool vfill, bool hexpand, bool vexpand)
         {
             size_t flags = nFlags;
-            flags = (hfill)     ? flags | (1 << F_HFILL)   : flags & (~(1 << F_HFILL));
-            flags = (vfill)     ? flags | (1 << F_VFILL)   : flags & (~(1 << F_VFILL));
-            flags = (hexpand)   ? flags | (1 << F_HEXPAND) : flags & (~(1 << F_HEXPAND));
-            flags = (vexpand)   ? flags | (1 << F_VEXPAND) : flags & (~(1 << F_VEXPAND));
+            flags   = lsp_setflag(flags, 1 << F_HFILL, hfill);
+            flags   = lsp_setflag(flags, 1 << F_VFILL, vfill);
+            flags   = lsp_setflag(flags, 1 << F_HEXPAND, hexpand);
+            flags   = lsp_setflag(flags, 1 << F_VEXPAND, vexpand);
             if (flags == nFlags)
                 return;
 

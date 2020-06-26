@@ -15,6 +15,10 @@
 // Property definitions
 #define LSP_TK_PROP_LANGUAGE        "language"
 
+#define LSP_TK_PROPERTY(type, name, expr)    \
+    inline type         *name()         { return expr; } \
+    inline const type   *name() const   { return expr; }
+
 namespace lsp
 {
     namespace tk

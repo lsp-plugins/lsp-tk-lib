@@ -45,7 +45,7 @@ namespace lsp
             if (sclass != NULL)
             {
                 sTextLayout.init(sclass, 0.0f, 0.0f);
-                sFont.init(sclass, 12.0f);
+                sFont.init(sclass);
                 sColor.init(sclass, "#000000");
                 sConstraints.init(sclass, -1, -1, -1, -1);
             }

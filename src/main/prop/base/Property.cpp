@@ -31,6 +31,37 @@ namespace lsp
             return n;
         }
 
+        size_t Property::parse_bools(bool *dst, size_t max, const LSPString *s)
+        {
+            // Wrap string with sequence
+            size_t n = 0;
+            io::InStringSequence is(s);
+            expr::Tokenizer tok(&is);
+            status_t res = STATUS_OK;
+
+            while ((res = tok.get_token(expr::TF_GET)) != expr::TT_EOF)
+            {
+                if (n >= max)
+                    return 0;
+                switch (tok.current())
+                {
+                    case expr::TT_IVALUE:
+                        dst[n++] = tok.int_value() > 0;
+                        break;
+                    case expr::TT_TRUE:
+                        dst[n++] = true;
+                        break;
+                    case expr::TT_FALSE:
+                        dst[n++] = false;
+                        break;
+                    default:
+                        return 0;
+                }
+            }
+
+            return n;
+        }
+
         size_t Property::parse_floats(float *dst, size_t max, const LSPString *s)
         {
             // Wrap string with sequence

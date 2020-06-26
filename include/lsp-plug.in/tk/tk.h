@@ -61,6 +61,7 @@
 
 // Compound properties
 #include <lsp-plug.in/tk/prop/multi/Color.h>
+#include <lsp-plug.in/tk/prop/multi/Embedding.h>
 #include <lsp-plug.in/tk/prop/multi/Font.h>
 #include <lsp-plug.in/tk/prop/multi/Layout.h>
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
@@ -119,6 +120,7 @@
 #include <lsp-plug.in/tk/widgets/containers/Align.h>
 #include <lsp-plug.in/tk/widgets/containers/Box.h>
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
+#include <lsp-plug.in/tk/widgets/containers/Group.h>
 #include <lsp-plug.in/tk/widgets/containers/Menu.h>
 
 namespace lsp
