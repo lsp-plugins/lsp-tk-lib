@@ -115,11 +115,14 @@ namespace lsp
                 static void             enter(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
                 static void             leave(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
 
+                static void             add(ws::size_limit_t *dst, const ws::size_limit_t *src, const padding_t *pad);
+
                 static inline void      add(ws::rectangle_t *dst, const padding_t *pad)         { add(dst, dst, pad);       }
                 static inline void      sub(ws::rectangle_t *dst, const padding_t *pad)         { sub(dst, dst, pad);       }
                 static inline void      enter(ws::rectangle_t *dst, const padding_t *pad)       { enter(dst, dst, pad);     }
                 static inline void      leave(ws::rectangle_t *dst, const padding_t *pad)       { leave(dst, dst, pad);     }
 
+                static inline void      add(ws::size_limit_t *dst, const padding_t *pad)        { add(dst, dst, pad);       }
         };
 
         namespace prop

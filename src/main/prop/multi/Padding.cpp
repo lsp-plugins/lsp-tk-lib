@@ -431,6 +431,21 @@ namespace lsp
             dst->nHeight        = lsp_max(0, src->nHeight + ssize_t(pad->nTop  + pad->nBottom) );
         }
 
+        void Padding::add(ws::size_limit_t *dst, const ws::size_limit_t *src, const padding_t *pad)
+        {
+            ssize_t hpad        = pad->nLeft + pad->nRight;
+            ssize_t vpad        = pad->nTop  + pad->nBottom;
+            dst->nMinWidth      = (src->nMinWidth  >= 0) ? src->nMinWidth  + hpad : hpad;
+            dst->nMinHeight     = (src->nMinHeight >= 0) ? src->nMinHeight + hpad : hpad;
+            dst->nMaxWidth      = (src->nMaxWidth  >= 0) ? src->nMaxWidth  + hpad : 0;
+            dst->nMaxHeight     = (src->nMaxHeight >= 0) ? src->nMaxHeight + hpad : 0;
+
+            if ((dst->nMaxWidth >= 0) && (dst->nMinWidth >= 0) && (dst->nMaxWidth < dst->nMinWidth))
+                dst->nMaxWidth      = dst->nMinWidth;
+            if ((dst->nMaxHeight >= 0) && (dst->nMinHeight >= 0) && (dst->nMaxHeight < dst->nMinHeight))
+                dst->nMaxHeight     = dst->nMinHeight;
+        }
+
         namespace prop
         {
             status_t Padding::init(Style *style, size_t left, size_t right, size_t top, size_t bottom)

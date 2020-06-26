@@ -27,7 +27,19 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
+                typedef struct alloc_t
+                {
+                    ws::rectangle_t         text;
+                    ws::rectangle_t         area;
+                    padding_t               pad;
+                } alloc_t;
+
+            protected:
                 Widget                 *pWidget;
+
+                ws::rectangle_t         sLabel;
+                ws::rectangle_t         sArea;
+
                 prop::Font              sFont;
                 prop::Color             sColor;
                 prop::Color             sTextColor;
@@ -35,12 +47,14 @@ namespace lsp
                 prop::Boolean           sShowText;
                 prop::Layout            sLayout;
                 prop::Integer           sBorder;
+                prop::Integer           sTextBorder;
                 prop::Integer           sRadius;
                 prop::Integer           sTextRadius;
                 prop::Embedding         sEmbedding;
 
             protected:
                 void                    do_destroy();
+                void                    allocate(ws::rectangle_t *text, padding_t *pad);
 
             protected:
                 virtual Widget         *find_widget(ssize_t x, ssize_t y);
@@ -63,6 +77,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,    show_text,      &sShowText)
                 LSP_TK_PROPERTY(Layout,     layout,         &sLayout)
                 LSP_TK_PROPERTY(Integer,    border_size,    &sBorder)
+                LSP_TK_PROPERTY(Integer,    text_border,    &sTextBorder)
                 LSP_TK_PROPERTY(Integer,    border_radius,  &sRadius)
                 LSP_TK_PROPERTY(Integer,    text_radius,    &sTextRadius)
                 LSP_TK_PROPERTY(Embedding,  embedding,      &sEmbedding)

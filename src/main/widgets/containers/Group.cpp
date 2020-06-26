@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
 
 namespace lsp
@@ -23,13 +24,24 @@ namespace lsp
             sShowText(&sProperties),
             sLayout(&sProperties),
             sBorder(&sProperties),
+            sTextBorder(&sProperties),
             sRadius(&sProperties),
             sTextRadius(&sProperties),
             sEmbedding(&sProperties)
         {
-            pWidget         = NULL;
+            pWidget             = NULL;
 
-            pClass          = &metadata;
+            sLabel.nLeft        = 0;
+            sLabel.nTop         = 0;
+            sLabel.nWidth       = 0;
+            sLabel.nHeight      = 0;
+
+            sArea.nLeft         = 0;
+            sArea.nTop          = 0;
+            sArea.nWidth        = 0;
+            sArea.nHeight       = 0;
+
+            pClass              = &metadata;
         }
 
         Group::~Group()
@@ -65,6 +77,7 @@ namespace lsp
             sShowText.bind("text.show", &sStyle);
             sLayout.bind("layout", &sStyle);
             sBorder.bind("border.size", &sStyle);
+            sTextBorder.bind("text.border", &sStyle);
             sRadius.bind("border.radius", &sStyle);
             sTextRadius.bind("text.radius", &sStyle);
             sEmbedding.bind("embed", &sStyle);
@@ -78,6 +91,7 @@ namespace lsp
                 sShowText.init(sclass, true);
                 sLayout.init(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
                 sBorder.init(sclass, 2);
+                sTextBorder.init(sclass, 2);
                 sRadius.init(sclass, 8);
                 sTextRadius.init(sclass, 8);
                 sEmbedding.init(sclass, false);
@@ -119,20 +133,72 @@ namespace lsp
                 query_resize();
         }
 
+        void Group::allocate(ws::rectangle_t *text, padding_t *pad)
+        {
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+            ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
+
+            // Text allocation
+            ws::rectangle_t xr;
+            text->nLeft     = 0;
+            text->nTop      = 0;
+
+            if (sShowText.get())
+            {
+                LSPString s;
+                ws::text_parameters_t tp;
+                ws::font_parameters_t fp;
+
+                ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
+                ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
+                ssize_t rgap        = lsp_max(tborder, M_SQRT1_2 * tradius);
+                sText.format(&s);
+
+                sFont.get_parameters(pDisplay, scaling, &fp);
+                text->nLeft         = tp.Width;
+                text->nTop          = lsp_max(fp.Height, tp.Height);
+
+                xr                  = *text;
+                xr.nWidth          += tborder + rgap + radius * 3;
+                xr.nHeight         += tborder + rgap;
+            }
+            else
+            {
+                text->nWidth        = 0;
+                text->nHeight       = 0;
+                xr                  = *text;
+            }
+
+            // Compute padding
+            ssize_t xborder = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
+
+            pad->nLeft      = (sEmbedding.left())   ? border : xborder;
+            pad->nRight     = (sEmbedding.right())  ? border : xborder;
+            pad->nTop       = (sEmbedding.top())    ? border : xborder;
+            pad->nBottom    = (sEmbedding.bottom()) ? border : xborder;
+
+            pad->nTop       = lsp_max(xr.nHeight, ssize_t(pad->nTop));
+        }
+
         void Group::size_request(ws::size_limit_t *r)
         {
-            if ((pWidget == NULL) || (!pWidget->visibility()->get()))
+            ws::rectangle_t text;
+            padding_t pad;
+
+            allocate(&text, &pad);
+
+            if (pWidget == NULL)
             {
                 r->nMinWidth    = -1;
                 r->nMinHeight   = -1;
                 r->nMaxWidth    = -1;
                 r->nMaxHeight   = -1;
-                return;
             }
+            else
+                pWidget->get_padded_size_limits(r);
 
-            pWidget->get_padded_size_limits(r);
-            r->nMaxWidth    = -1;
-            r->nMaxHeight   = -1;
+            Padding::add(r, &pad);
         }
 
         void Group::realize(const ws::rectangle_t *r)
@@ -158,7 +224,7 @@ namespace lsp
             if (nFlags & REDRAW_SURFACE)
                 force = true;
 
-            // Initialize palette
+            // Clear the space
             lsp::Color bg_color(sBgColor);
 
             // Draw background if child is invisible or not present
