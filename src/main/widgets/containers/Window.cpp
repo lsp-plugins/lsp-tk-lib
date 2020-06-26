@@ -265,13 +265,17 @@ namespace lsp
             if (s == NULL)
                 return STATUS_OK;
 
+            ws::ISurface *bs = get_surface(s);
+
             ws::rectangle_t xr;
             s->begin();
                 xr.nLeft    = 0;
                 xr.nTop     = 0;
                 xr.nWidth   = sSize.nWidth;
                 xr.nHeight  = sSize.nHeight;
-                render(s, &xr, nFlags & REDRAW_SURFACE);
+                render(bs, &xr, nFlags);
+
+                s->draw(bs, 0, 0);
                 commit_redraw();
             s->end();
 
@@ -611,6 +615,7 @@ namespace lsp
                         {
                             pSurface->destroy();
                             delete pSurface;
+                            pSurface = NULL;
                         }
                         sRedraw.cancel();
                     }
