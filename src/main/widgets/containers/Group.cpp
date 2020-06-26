@@ -13,16 +13,15 @@ namespace lsp
 {
     namespace tk
     {
-        const w_class_t Group::metadata         = { "Group", &WidgetContainer::metadata };
+        const w_class_t Group::metadata         = { "Group", &Align::metadata };
 
         Group::Group(Display *dpy):
-            WidgetContainer(dpy),
+            Align(dpy),
             sFont(&sProperties),
             sColor(&sProperties),
             sTextColor(&sProperties),
             sText(&sProperties),
             sShowText(&sProperties),
-            sLayout(&sProperties),
             sBorder(&sProperties),
             sTextBorder(&sProperties),
             sRadius(&sProperties),
@@ -46,27 +45,11 @@ namespace lsp
 
         Group::~Group()
         {
-            do_destroy();
-        }
-
-        void Group::destroy()
-        {
-            do_destroy();
-            WidgetContainer::destroy();
-        }
-
-        void Group::do_destroy()
-        {
-            if (pWidget != NULL)
-            {
-                unlink_widget(pWidget);
-                pWidget = NULL;
-            }
         }
 
         status_t Group::init()
         {
-            status_t result = WidgetContainer::init();
+            status_t result = Align::init();
             if (result != STATUS_OK)
                 return result;
 
@@ -75,7 +58,6 @@ namespace lsp
             sTextColor.bind("text.color", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sShowText.bind("text.show", &sStyle);
-            sLayout.bind("layout", &sStyle);
             sBorder.bind("border.size", &sStyle);
             sTextBorder.bind("text.border", &sStyle);
             sRadius.bind("border.radius", &sStyle);
@@ -89,28 +71,22 @@ namespace lsp
                 sColor.init(sclass, "#000000");
                 sTextColor.init(sclass, "#ffffff");
                 sShowText.init(sclass, true);
-                sLayout.init(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
                 sBorder.init(sclass, 2);
                 sTextBorder.init(sclass, 2);
                 sRadius.init(sclass, 8);
                 sTextRadius.init(sclass, 8);
                 sEmbedding.init(sclass, false);
+
+                // Overrides
+                sLayout.override(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
             }
 
             return STATUS_OK;
         }
 
-        Widget *Group::find_widget(ssize_t x, ssize_t y)
-        {
-            if (pWidget == NULL)
-                return NULL;
-
-            return (pWidget->inside(x, y)) ? pWidget : NULL;
-        }
-
         void Group::property_changed(Property *prop)
         {
-            WidgetContainer::property_changed(prop);
+            Align::property_changed(prop);
             if (sFont.is(prop))
                 query_resize();
             if (sColor.is(prop))
@@ -120,8 +96,6 @@ namespace lsp
             if (sText.is(prop))
                 query_resize();
             if (sShowText.is(prop))
-                query_resize();
-            if (sLayout.is(prop))
                 query_resize();
             if (sBorder.is(prop))
                 query_resize();
@@ -133,7 +107,7 @@ namespace lsp
                 query_resize();
         }
 
-        void Group::allocate(ws::rectangle_t *text, padding_t *pad)
+        void Group::allocate(alloc_t *alloc)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
@@ -141,8 +115,8 @@ namespace lsp
 
             // Text allocation
             ws::rectangle_t xr;
-            text->nLeft     = 0;
-            text->nTop      = 0;
+            xr.nLeft        = 0;
+            xr.nTop         = 0;
 
             if (sShowText.get())
             {
@@ -156,49 +130,69 @@ namespace lsp
                 sText.format(&s);
 
                 sFont.get_parameters(pDisplay, scaling, &fp);
-                text->nLeft         = tp.Width;
-                text->nTop          = lsp_max(fp.Height, tp.Height);
+                sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                xr.nWidth           = tp.Width + tborder + rgap;
+                xr.nHeight          = lsp_max(fp.Height, tp.Height) + tborder + rgap;
+                alloc->text         = xr;
 
-                xr                  = *text;
-                xr.nWidth          += tborder + rgap + radius * 3;
-                xr.nHeight         += tborder + rgap;
+                xr.nWidth          += radius * 3;
+                alloc->rtext        = xr;
             }
             else
             {
-                text->nWidth        = 0;
-                text->nHeight       = 0;
-                xr                  = *text;
+                xr.nWidth           = 0;
+                xr.nHeight          = 0;
+                alloc->rtext        = xr;
             }
+            alloc->rtext        = xr;
 
             // Compute padding
             ssize_t xborder = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
+            padding_t pad;
 
-            pad->nLeft      = (sEmbedding.left())   ? border : xborder;
-            pad->nRight     = (sEmbedding.right())  ? border : xborder;
-            pad->nTop       = (sEmbedding.top())    ? border : xborder;
-            pad->nBottom    = (sEmbedding.bottom()) ? border : xborder;
+            pad.nLeft       = (sEmbedding.left())   ? border : xborder;
+            pad.nRight      = (sEmbedding.right())  ? border : xborder;
+            pad.nTop        = (sEmbedding.top())    ? border : xborder;
+            pad.nBottom     = (sEmbedding.bottom()) ? border : xborder;
+            pad.nTop        = lsp_max(xr.nHeight, ssize_t(pad.nTop));
 
-            pad->nTop       = lsp_max(xr.nHeight, ssize_t(pad->nTop));
+            alloc->pad      = pad;
+
+            pad.nLeft       = lsp_max(pad.nLeft, radius);
+            pad.nRight      = lsp_max(pad.nRight, radius);
+            pad.nTop        = lsp_max(pad.nTop, radius);
+            pad.nBottom     = lsp_max(pad.nBottom, radius);
+
+            alloc->xpad     = pad;
         }
 
         void Group::size_request(ws::size_limit_t *r)
         {
-            ws::rectangle_t text;
-            padding_t pad;
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            alloc_t alloc;
 
-            allocate(&text, &pad);
+            allocate(&alloc);
 
             if (pWidget == NULL)
             {
-                r->nMinWidth    = -1;
-                r->nMinHeight   = -1;
+                r->nMinWidth    = alloc.rtext.nWidth;
+                r->nMinHeight   = alloc.rtext.nHeight;
                 r->nMaxWidth    = -1;
                 r->nMaxHeight   = -1;
             }
             else
+            {
                 pWidget->get_padded_size_limits(r);
+                r->nMinWidth    = lsp_max(alloc.rtext.nWidth, r->nMinWidth);
+                r->nMaxWidth    = -1;
+                r->nMaxHeight   = -1;
+            }
 
-            Padding::add(r, &pad);
+            r->nMinWidth        = lsp_max(r->nMinWidth,  ssize_t(alloc.xpad.nLeft + alloc.xpad.nRight ));
+            r->nMinHeight       = lsp_max(r->nMinHeight, ssize_t(alloc.xpad.nTop  + alloc.xpad.nBottom));
+
+            // Apply size constraints
+            sSizeConstraints.apply(r, scaling);
         }
 
         void Group::realize(const ws::rectangle_t *r)
@@ -206,17 +200,27 @@ namespace lsp
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             WidgetContainer::realize(r);
 
-            if ((pWidget == NULL) || (!pWidget->visibility()->get()))
-                return;
+            // Compute text and widget area
+            alloc_t alloc;
+            allocate(&alloc);
+
+            sLabel          = alloc.text;
+            sLabel.nLeft   += r->nLeft;
+            sLabel.nTop    += r->nTop;
+
+            Padding::enter(&sArea, r, &alloc.pad);
 
             // Realize child widget
-            ws::rectangle_t xr;
-            ws::size_limit_t sr;
+            if ((pWidget != NULL) && (pWidget->visibility()->get()))
+            {
+                ws::rectangle_t xr;
+                ws::size_limit_t sr;
 
-            pWidget->get_padded_size_limits(&sr);
-            sLayout.apply(&xr, r, &sr);
-            pWidget->padding()->enter(&xr, pWidget->scaling()->get());
-            pWidget->realize_widget(&xr);
+                pWidget->get_padded_size_limits(&sr);
+                sLayout.apply(&xr, &sArea, &sr);
+                pWidget->padding()->enter(&xr, pWidget->scaling()->get());
+                pWidget->realize_widget(&xr);
+            }
         }
 
         void Group::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -225,66 +229,129 @@ namespace lsp
                 force = true;
 
             // Clear the space
-            lsp::Color bg_color(sBgColor);
+            lsp::Color color;
+
+            ws::rectangle_t xr;
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float bright    = lsp_max(0.0f, sBrightness.get());
+            ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+            ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
+            bool bg         = false;
+
+            bool aa         = s->set_antialiasing(false);
 
             // Draw background if child is invisible or not present
-            if ((pWidget == NULL) || (!pWidget->visibility()->get()))
+            if ((pWidget != NULL) && (pWidget->visibility()->get()))
             {
-                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
-                return;
-            }
-
-            if ((force) || (pWidget->redraw_pending()))
-            {
-                // Draw the child only if it is visible in the area
-                ws::rectangle_t xr;
-                pWidget->get_rectangle(&xr);
-                if (Size::intersection(&xr, &sSize))
-                    pWidget->render(s, &xr, force);
-
-                pWidget->commit_redraw();
-            }
-
-            if (force)
-            {
-                ws::rectangle_t cr;
-
-                pWidget->get_rectangle(&cr);
-                if (Size::overlap(area, &sSize))
+                color.copy(pWidget->bg_color()->color());
+                if (force)
                 {
-                    s->clip_begin(area);
+                    pWidget->get_rectangle(&xr);
+
+                    if (pWidget->redraw_pending())
                     {
-                        bg_color.copy(pWidget->bg_color()->color());
-                        s->fill_frame(bg_color, &sSize, &cr);
+                        // Draw the child only if it is visible in the area
+                        if (Size::intersection(&xr, &sSize))
+                            pWidget->render(s, &xr, force);
+
+                        pWidget->commit_redraw();
                     }
-                    s->clip_end();
+
+                    // Render the child background
+                    if (Size::overlap(area, &sSize))
+                    {
+                        s->clip_begin(area);
+                        {
+                            color.copy(pWidget->bg_color()->color());
+                            s->fill_frame(color, &sSize, &xr);
+                        }
+                        s->clip_end();
+                    }
                 }
             }
+            else
+            {
+                color.copy(sBgColor);
+                s->fill_rect(color, &sSize);
+                bg   = true;
+            }
+
+            // Render frame
+            if (force)
+            {
+                ssize_t ir, xg;
+
+                s->clip_begin(area);
+
+                if (Size::overlap(area, &sSize))
+                {
+                    if (!bg)
+                    {
+                        color.copy(sBgColor);
+
+                        xr          = sSize;
+                        xg          = border * 2;
+                        xr.nLeft   += border;
+                        xr.nTop    += border;
+                        xr.nWidth  -= xg;
+                        xr.nHeight -= xg;
+
+                        ssize_t ir  = lsp_max(0, radius - border);
+                        s->fill_round_frame(color, ir, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, &sSize, &xr);
+                    }
+
+                    // Draw frame
+                    color.copy(sColor);
+                    color.scale_lightness(bright);
+
+                    xr          = sSize;
+                    xg          = border >> 1;
+                    ir          = lsp_max(0, radius - xg);
+                    xr.nLeft   += xg;
+                    xr.nTop    += xg;
+                    xr.nWidth  -= (border*2 - xg);
+                    xr.nHeight -= (border*2 - xg);
+
+                    s->set_antialiasing(true);
+                    s->wire_round_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &xr, border);
+                }
+
+                // Draw text
+                if ((sShowText.get()) && (Size::overlap(area, &sLabel)))
+                {
+                    ir          = lsp_max(0.0f, sTextRadius.get() * scaling);
+
+                    // Draw text background
+                    color.copy(sColor);
+                    color.scale_lightness(bright);
+
+                    s->set_antialiasing(true);
+                    s->fill_round_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
+
+                    // Draw text
+                    LSPString text;
+                    ws::text_parameters_t tp;
+                    ws::font_parameters_t fp;
+                    color.copy(sTextColor);
+                    color.scale_lightness(bright);
+
+                    ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
+                    sText.format(&text);
+
+                    sFont.get_parameters(pDisplay, scaling, &fp);
+                    sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+
+                    sFont.draw(s, color,
+                            sLabel.nLeft + tborder - tp.XBearing, sLabel.nTop + tborder + fp.Ascent,
+                            scaling, &text);
+                }
+
+                s->clip_end();
+            }
+
+            s->set_antialiasing(aa);
         }
 
-        status_t Group::add(Widget *widget)
-        {
-            if (widget == NULL)
-                return STATUS_BAD_ARGUMENTS;
-            if (pWidget != NULL)
-                return STATUS_ALREADY_EXISTS;
-
-            widget->set_parent(this);
-            pWidget = widget;
-            query_resize();
-            return STATUS_OK;
-        }
-
-        status_t Group::remove(Widget *widget)
-        {
-            if (pWidget != widget)
-                return STATUS_NOT_FOUND;
-
-            unlink_widget(pWidget);
-            pWidget  = NULL;
-
-            return STATUS_OK;
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

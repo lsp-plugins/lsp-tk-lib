@@ -21,7 +21,7 @@ namespace lsp
          * according to the layout settings. The container ignores allocation() property
          * of the child widget.
          */
-        class Group: public WidgetContainer
+        class Group: public Align
         {
             public:
                 static const w_class_t    metadata;
@@ -30,13 +30,12 @@ namespace lsp
                 typedef struct alloc_t
                 {
                     ws::rectangle_t         text;
-                    ws::rectangle_t         area;
+                    ws::rectangle_t         rtext;
                     padding_t               pad;
+                    padding_t               xpad;
                 } alloc_t;
 
             protected:
-                Widget                 *pWidget;
-
                 ws::rectangle_t         sLabel;
                 ws::rectangle_t         sArea;
 
@@ -45,7 +44,6 @@ namespace lsp
                 prop::Color             sTextColor;
                 prop::String            sText;
                 prop::Boolean           sShowText;
-                prop::Layout            sLayout;
                 prop::Integer           sBorder;
                 prop::Integer           sTextBorder;
                 prop::Integer           sRadius;
@@ -53,11 +51,9 @@ namespace lsp
                 prop::Embedding         sEmbedding;
 
             protected:
-                void                    do_destroy();
-                void                    allocate(ws::rectangle_t *text, padding_t *pad);
+                void                    allocate(alloc_t *alloc);
 
             protected:
-                virtual Widget         *find_widget(ssize_t x, ssize_t y);
                 virtual void            property_changed(Property *prop);
                 virtual void            size_request(ws::size_limit_t *r);
                 virtual void            realize(const ws::rectangle_t *r);
@@ -67,7 +63,6 @@ namespace lsp
                 virtual ~Group();
 
                 virtual status_t        init();
-                virtual void            destroy();
 
             public:
                 LSP_TK_PROPERTY(Font,       font,           &sFont)
@@ -75,7 +70,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,      text_color,     &sTextColor)
                 LSP_TK_PROPERTY(String,     text,           &sText)
                 LSP_TK_PROPERTY(Boolean,    show_text,      &sShowText)
-                LSP_TK_PROPERTY(Layout,     layout,         &sLayout)
                 LSP_TK_PROPERTY(Integer,    border_size,    &sBorder)
                 LSP_TK_PROPERTY(Integer,    text_border,    &sTextBorder)
                 LSP_TK_PROPERTY(Integer,    border_radius,  &sRadius)
@@ -84,10 +78,6 @@ namespace lsp
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
-
-                virtual status_t        add(Widget *widget);
-
-                virtual status_t        remove(Widget *widget);
         };
 
     } /* namespace tk */

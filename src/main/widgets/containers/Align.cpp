@@ -16,9 +16,11 @@ namespace lsp
 
         Align::Align(Display *dpy):
             WidgetContainer(dpy),
-            sLayout(&sProperties)
+            sLayout(&sProperties),
+            sSizeConstraints(&sProperties)
         {
             pWidget         = NULL;
+
             pClass          = &metadata;
         }
 
@@ -34,10 +36,13 @@ namespace lsp
                 return result;
 
             sLayout.bind("layout", &sStyle);
+            sSizeConstraints.bind("size.constraints", &sStyle);
+
             Style *sclass = style_class();
             if (sclass != NULL)
             {
                 sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
+                sSizeConstraints.init(sclass);
             }
 
             return STATUS_OK;
@@ -70,6 +75,8 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
             if (sLayout.is(prop))
+                query_resize();
+            if (sSizeConstraints.is(prop))
                 query_resize();
         }
 
@@ -142,18 +149,24 @@ namespace lsp
 
         void Align::size_request(ws::size_limit_t *r)
         {
+            float scaling   = lsp_max(0.0f, sScaling.get());
+
             if ((pWidget == NULL) || (!pWidget->visibility()->get()))
             {
                 r->nMinWidth    = -1;
                 r->nMinHeight   = -1;
                 r->nMaxWidth    = -1;
                 r->nMaxHeight   = -1;
-                return;
+
+            }
+            else
+            {
+                pWidget->get_padded_size_limits(r);
+                r->nMaxWidth    = -1;
+                r->nMaxHeight   = -1;
             }
 
-            pWidget->get_padded_size_limits(r);
-            r->nMaxWidth    = -1;
-            r->nMaxHeight   = -1;
+            sSizeConstraints.apply(r, scaling);
         }
 
         void Align::realize(const ws::rectangle_t *r)

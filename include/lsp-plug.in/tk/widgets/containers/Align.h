@@ -29,6 +29,7 @@ namespace lsp
             protected:
                 Widget                 *pWidget;
                 prop::Layout            sLayout;
+                prop::SizeConstraints   sSizeConstraints;
 
             protected:
                 void                    do_destroy();
@@ -47,8 +48,8 @@ namespace lsp
                 virtual void            destroy();
 
             public:
-                inline Layout          *layout()                        { return &sLayout; }
-                inline const Layout    *layout() const                  { return &sLayout; }
+                LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
+                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sSizeConstraints)
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

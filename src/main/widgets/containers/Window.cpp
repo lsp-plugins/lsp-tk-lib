@@ -351,9 +351,9 @@ namespace lsp
                     bc.scale_lightness(sBrightness.get());
 
                     s->wire_round_rect(
+                        bc, SURFMASK_ALL_CORNER, radius,
                         bw + 0.5, bw + 0.5, sSize.nWidth - border-1, sSize.nHeight - border-1,
-                        radius, SURFMASK_ALL_CORNER, border,
-                        bc
+                        border
                     );
                     s->set_antialiasing(aa);
                 }

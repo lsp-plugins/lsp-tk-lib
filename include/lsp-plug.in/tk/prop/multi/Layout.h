@@ -132,6 +132,8 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, float halign, float valign, float hscale, float vscale);
+
+                    status_t            override(Style *style, float halign, float valign, float hscale, float vscale);
             };
         }
     

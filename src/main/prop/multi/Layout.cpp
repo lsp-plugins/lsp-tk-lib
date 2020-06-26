@@ -280,6 +280,27 @@ namespace lsp
                 style->end();
                 return STATUS_OK;
             }
+
+            status_t Layout::override(Style *style, float halign, float valign, float hscale, float vscale)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->override_float(vAtoms[P_HALIGN], halign);
+                    style->override_float(vAtoms[P_VALIGN], valign);
+                    style->override_float(vAtoms[P_HSCALE], hscale);
+                    style->override_float(vAtoms[P_VSCALE], vscale);
+
+                    // Compound objects
+                    LSPString s;
+                    s.fmt_ascii("%.4f %.4f %.4f %.4f", halign, valign, hscale, vscale);
+                    style->override_string(vAtoms[P_VALUE], &s);
+                }
+                style->end();
+                return STATUS_OK;
+            }
         }
 
     } /* namespace tk */

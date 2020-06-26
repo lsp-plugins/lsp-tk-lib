@@ -437,8 +437,8 @@ namespace lsp
             ssize_t vpad        = pad->nTop  + pad->nBottom;
             dst->nMinWidth      = (src->nMinWidth  >= 0) ? src->nMinWidth  + hpad : hpad;
             dst->nMinHeight     = (src->nMinHeight >= 0) ? src->nMinHeight + hpad : hpad;
-            dst->nMaxWidth      = (src->nMaxWidth  >= 0) ? src->nMaxWidth  + hpad : 0;
-            dst->nMaxHeight     = (src->nMaxHeight >= 0) ? src->nMaxHeight + hpad : 0;
+            dst->nMaxWidth      = (src->nMaxWidth  >= 0) ? src->nMaxWidth  + vpad : -1;
+            dst->nMaxHeight     = (src->nMaxHeight >= 0) ? src->nMaxHeight + vpad : -1;
 
             if ((dst->nMaxWidth >= 0) && (dst->nMinWidth >= 0) && (dst->nMaxWidth < dst->nMinWidth))
                 dst->nMaxWidth      = dst->nMinWidth;
