@@ -213,7 +213,7 @@ MTEST_BEGIN("tk.widgets.containers", align)
                     MTEST_ASSERT(init_widget(wv, vh, id.get_ascii()) == STATUS_OK);
                     MTEST_ASSERT(widgets.push(wv));
                     MTEST_ASSERT(align->add(wv) == STATUS_OK);
-                    wv->constraints()->set(16, 16, 16, 16);
+                    wv->size_constraints()->set(16, 16, 16, 16);
                     wv->bg_color()->set_rgb24(next_color(col));
                     wv->pointer()->set(ws::MP_HAND);
                     wv->padding()->set(4);

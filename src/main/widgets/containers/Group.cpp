@@ -73,8 +73,8 @@ namespace lsp
                 sShowText.init(sclass, true);
                 sBorder.init(sclass, 2);
                 sTextBorder.init(sclass, 2);
-                sRadius.init(sclass, 8);
-                sTextRadius.init(sclass, 8);
+                sRadius.init(sclass, 10);
+                sTextRadius.init(sclass, 10);
                 sEmbedding.init(sclass, false);
 
                 // Overrides
@@ -126,23 +126,20 @@ namespace lsp
 
                 ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
                 ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
-                ssize_t rgap        = lsp_max(tborder, M_SQRT1_2 * tradius);
                 sText.format(&s);
 
                 sFont.get_parameters(pDisplay, scaling, &fp);
                 sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
-                xr.nWidth           = tp.Width + tborder + rgap;
-                xr.nHeight          = lsp_max(fp.Height, tp.Height) + tborder + rgap;
+                xr.nWidth           = tp.Width + tborder + tradius;
+                xr.nHeight          = lsp_max(fp.Height, tp.Height) + tborder*2;
                 alloc->text         = xr;
 
-                xr.nWidth          += radius * 3;
-                alloc->rtext        = xr;
+                xr.nWidth          += radius * 1.5f;
             }
             else
             {
                 xr.nWidth           = 0;
                 xr.nHeight          = 0;
-                alloc->rtext        = xr;
             }
             alloc->rtext        = xr;
 
@@ -154,14 +151,15 @@ namespace lsp
             pad.nRight      = (sEmbedding.right())  ? border : xborder;
             pad.nTop        = (sEmbedding.top())    ? border : xborder;
             pad.nBottom     = (sEmbedding.bottom()) ? border : xborder;
-            pad.nTop        = lsp_max(xr.nHeight, ssize_t(pad.nTop));
+            if (!sEmbedding.top())
+                pad.nTop        = lsp_max(xr.nHeight, ssize_t(pad.nTop));
 
             alloc->pad      = pad;
 
-            pad.nLeft       = lsp_max(pad.nLeft, radius);
-            pad.nRight      = lsp_max(pad.nRight, radius);
-            pad.nTop        = lsp_max(pad.nTop, radius);
-            pad.nBottom     = lsp_max(pad.nBottom, radius);
+            pad.nLeft       = lsp_max(pad.nLeft,   size_t(radius));
+            pad.nRight      = lsp_max(pad.nRight,  size_t(radius));
+            pad.nTop        = lsp_max(pad.nTop,    size_t(radius));
+            pad.nBottom     = lsp_max(pad.nBottom, size_t(radius));
 
             alloc->xpad     = pad;
         }
@@ -173,23 +171,32 @@ namespace lsp
 
             allocate(&alloc);
 
+            ssize_t hpad       = alloc.pad.nLeft + alloc.pad.nRight;
+            ssize_t vpad       = alloc.pad.nTop  + alloc.pad.nBottom;
+
             if (pWidget == NULL)
             {
-                r->nMinWidth    = alloc.rtext.nWidth;
-                r->nMinHeight   = alloc.rtext.nHeight;
+                r->nMinWidth    = 0;
+                r->nMinHeight   = 0;
                 r->nMaxWidth    = -1;
                 r->nMaxHeight   = -1;
             }
             else
             {
                 pWidget->get_padded_size_limits(r);
-                r->nMinWidth    = lsp_max(alloc.rtext.nWidth, r->nMinWidth);
+                r->nMinWidth    = (r->nMinWidth  >= 0) ? r->nMinWidth  + hpad : hpad;
+                r->nMinHeight   = (r->nMinHeight >= 0) ? r->nMinHeight + vpad : vpad;
                 r->nMaxWidth    = -1;
                 r->nMaxHeight   = -1;
             }
 
-            r->nMinWidth        = lsp_max(r->nMinWidth,  ssize_t(alloc.xpad.nLeft + alloc.xpad.nRight ));
-            r->nMinHeight       = lsp_max(r->nMinHeight, ssize_t(alloc.xpad.nTop  + alloc.xpad.nBottom));
+            r->nMinWidth        = lsp_max(alloc.rtext.nWidth, r->nMinWidth);
+            r->nMinHeight       = lsp_max(alloc.rtext.nHeight, r->nMinHeight);
+
+            hpad                = alloc.xpad.nLeft + alloc.xpad.nRight;
+            vpad                = alloc.xpad.nTop  + alloc.xpad.nBottom;
+            r->nMinWidth        = lsp_max(r->nMinWidth,  hpad);
+            r->nMinHeight       = lsp_max(r->nMinHeight, vpad);
 
             // Apply size constraints
             sSizeConstraints.apply(r, scaling);

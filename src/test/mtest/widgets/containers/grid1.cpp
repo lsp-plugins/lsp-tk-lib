@@ -210,7 +210,7 @@ MTEST_BEGIN("tk.widgets.containers", grid1)
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
             wv->padding()->set(4);
-            wv->constraints()->set(64, 48, -1, -1);
+            wv->size_constraints()->set(64, 48, -1, -1);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
 
@@ -219,7 +219,7 @@ MTEST_BEGIN("tk.widgets.containers", grid1)
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
             wv->padding()->set(4);
-            wv->constraints()->set(64, 48, 64, 48);
+            wv->size_constraints()->set(64, 48, 64, 48);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
 
@@ -228,7 +228,7 @@ MTEST_BEGIN("tk.widgets.containers", grid1)
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
             wv->padding()->set(4);
-            wv->constraints()->set(32, 32, 64, 64);
+            wv->size_constraints()->set(32, 32, 64, 64);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
 
@@ -237,7 +237,7 @@ MTEST_BEGIN("tk.widgets.containers", grid1)
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
             wv->padding()->set(4);
-            wv->constraints()->set(64, 48, -1, -1);
+            wv->size_constraints()->set(64, 48, -1, -1);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
 
@@ -246,7 +246,7 @@ MTEST_BEGIN("tk.widgets.containers", grid1)
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
             wv->padding()->set(4);
-            wv->constraints()->set(64, 48, 96, 64);
+            wv->size_constraints()->set(64, 48, 96, 64);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
 
@@ -255,7 +255,7 @@ MTEST_BEGIN("tk.widgets.containers", grid1)
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(grid->add(wv) == STATUS_OK);
             wv->padding()->set(4);
-            wv->constraints()->set(48, 48, 96, 96);
+            wv->size_constraints()->set(48, 48, 96, 96);
             wv->bg_color()->set_rgb24(next_color(col));
             wv->pointer()->set(ws::MP_HAND);
         }

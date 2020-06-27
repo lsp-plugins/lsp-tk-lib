@@ -35,8 +35,7 @@ namespace lsp
                 virtual ~Void();
 
             public:
-                inline SizeConstraints         *constraints()           { return &sConstraints; }
-                inline const SizeConstraints   *constraints() const     { return &sConstraints; }
+                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sConstraints)
 
             protected:
                 virtual void        size_request(ws::size_limit_t *r);

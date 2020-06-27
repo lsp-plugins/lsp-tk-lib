@@ -95,13 +95,13 @@ namespace lsp
                 {
                     // Simple components
                     if (vAtoms[P_LEFT] >= 0)
-                        pStyle->set_int(vAtoms[P_LEFT], left());
+                        pStyle->set_bool(vAtoms[P_LEFT], left());
                     if (vAtoms[P_RIGHT] >= 0)
-                        pStyle->set_int(vAtoms[P_RIGHT], right());
+                        pStyle->set_bool(vAtoms[P_RIGHT], right());
                     if (vAtoms[P_TOP] >= 0)
-                        pStyle->set_int(vAtoms[P_TOP], top());
+                        pStyle->set_bool(vAtoms[P_TOP], top());
                     if (vAtoms[P_BOTTOM] >= 0)
-                        pStyle->set_int(vAtoms[P_BOTTOM], bottom());
+                        pStyle->set_bool(vAtoms[P_BOTTOM], bottom());
 
                     // Compound objects
                     LSPString s;
@@ -124,11 +124,11 @@ namespace lsp
 
         void Embedding::set(bool left, bool right, bool top, bool bottom)
         {
-            size_t flags = nFlags;
-            flags = (left)  ? flags | M_LEFT   : flags & (~M_LEFT);
-            flags = (right) ? flags | M_RIGHT  : flags & (~M_RIGHT);
-            flags = (top)   ? flags | M_TOP    : flags & (~M_TOP);
-            flags = (bottom)? flags | M_BOTTOM : flags & (~M_BOTTOM);
+            size_t flags    = nFlags;
+            flags = lsp_setflag(flags, M_LEFT, left);
+            flags = lsp_setflag(flags, M_RIGHT, right);
+            flags = lsp_setflag(flags, M_TOP, top);
+            flags = lsp_setflag(flags, M_BOTTOM, bottom);
 
             if (flags == nFlags)
                 return;
@@ -139,9 +139,9 @@ namespace lsp
 
         void Embedding::set(bool hor, bool vert)
         {
-            size_t flags = nFlags;
-            flags = (hor)   ? flags | M_HOR    : flags & (~M_HOR);
-            flags = (vert)  ? flags | M_VERT   : flags & (~M_VERT);
+            size_t flags    = nFlags;
+            flags = lsp_setflag(flags, M_HOR, hor);
+            flags = lsp_setflag(flags, M_VERT, vert);
             if (flags == nFlags)
                 return;
 
@@ -151,13 +151,26 @@ namespace lsp
 
         void Embedding::set(bool on)
         {
-            size_t flags = nFlags;
-            flags = (on)    ? flags | M_ALL    : flags & (~M_ALL);
+            size_t flags    = nFlags;
+            flags = lsp_setflag(flags, M_ALL, on);
             if (flags == nFlags)
                 return;
 
             nFlags  = flags;
             sync();
+        }
+
+        bool Embedding::set_flag(size_t flag, bool set)
+        {
+            bool old        = nFlags & flag;
+            size_t flags    = lsp_setflag(nFlags, flag, set);
+            if (flags == nFlags)
+                return old;
+
+            nFlags  = flags;
+            sync();
+
+            return old;
         }
 
         namespace prop

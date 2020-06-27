@@ -45,8 +45,6 @@ namespace lsp
                     F_TOP,
                     F_BOTTOM,
 
-                    F_TOTAL,
-
                     M_LEFT      = 1 << F_LEFT,
                     M_RIGHT     = 1 << F_RIGHT,
                     M_TOP       = 1 << F_TOP,
@@ -70,7 +68,7 @@ namespace lsp
                 };
 
             protected:
-                atom_t          vAtoms[F_TOTAL];    // Atoms
+                atom_t          vAtoms[P_COUNT];    // Atoms
                 size_t          nFlags;             // Flags
                 Listener        sListener;          // Listener
 
@@ -79,16 +77,15 @@ namespace lsp
                 void            sync();
                 void            commit(atom_t property);
 
-
             protected:
                 Embedding(prop::Listener *listener = NULL);
                 ~Embedding();
 
             public:
-                inline bool     left() const                    { return nFlags & F_LEFT;               }
-                inline bool     right() const                   { return nFlags & F_RIGHT;              }
-                inline bool     top() const                     { return nFlags & F_TOP;                }
-                inline bool     bottom() const                  { return nFlags & F_BOTTOM;             }
+                inline bool     left() const                    { return nFlags & M_LEFT;               }
+                inline bool     right() const                   { return nFlags & M_RIGHT;              }
+                inline bool     top() const                     { return nFlags & M_TOP;                }
+                inline bool     bottom() const                  { return nFlags & M_BOTTOM;             }
 
                 inline bool     set_left(bool set = true)       { return set_flag(F_LEFT, set);         }
                 inline bool     set_right(bool set = true)      { return set_flag(F_RIGHT, set);        }

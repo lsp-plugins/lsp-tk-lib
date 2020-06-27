@@ -46,14 +46,20 @@ namespace lsp
         {
             if ((sSize.nWidth > 0) && (sSize.nHeight > 0))
             {
-                lsp::Color bg_color(sBgColor);
-                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+                lsp::Color color(sBgColor);
+                s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+
+                // Debug bounds
+//                color.set_rgb24(0x000000);
+//                s->wire_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth-1, sSize.nHeight-1, 1);
+//                s->line(sSize.nLeft, sSize.nTop, sSize.nLeft + sSize.nWidth, sSize.nTop + sSize.nHeight, 1, color);
+//                s->line(sSize.nLeft, sSize.nTop + sSize.nHeight, sSize.nLeft + sSize.nWidth, sSize.nTop, 1, color);
 
                 // Debug padding
 //                ws::rectangle_t xr;
 //                bg_color.set_rgb24(0xcccccc);
 //                sPadding.enter(&xr, &sSize, sScaling.get());
-//                s->fill_frame(bg_color, &sSize, &xr);
+//                s->fill_frame(color, &sSize, &xr);
             }
         }
 
