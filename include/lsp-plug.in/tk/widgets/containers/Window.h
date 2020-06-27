@@ -145,26 +145,17 @@ namespace lsp
 
                 inline bool                     override_pointer() const    { return bOverridePointer; }
 
-                inline String                  *title()                     { return &sTitle; }
-                inline const String            *title() const               { return &sTitle; }
-                inline String                  *role()                      { return &sRole; }
-                inline const String            *role() const                { return &sRole; }
-                inline Color                   *border_color()              { return &sBorderColor; }
-                inline const Color             *border_color() const        { return &sBorderColor; }
-                inline BorderStyle             *border_style()              { return &sBorderStyle; }
-                inline const BorderStyle       *border_style() const        { return &sBorderStyle; }
-                inline Integer                 *border_size()               { return &sBorderSize; }
-                inline const Integer           *border_size() const         { return &sBorderSize; }
-                inline WindowActions           *actions()                   { return &sActions; }
-                inline const WindowActions     *actions() const             { return &sActions; }
-                inline Size                    *size()                      { return &sWindowSize; }
-                inline const Size              *size() const                { return &sWindowSize; }
-                inline SizeConstraints         *size_constraints()          { return &sSizeConstraints; }
-                inline const SizeConstraints   *size_constraints() const    { return &sSizeConstraints; }
-                inline Layout                  *layout()                    { return &sLayout; }
-                inline const Layout            *layout() const              { return &sLayout; }
-                inline WindowPolicy            *policy()                    { return &sPolicy; }
-                inline const WindowPolicy      *policy() const              { return &sPolicy; }
+            public:
+                LSP_TK_PROPERTY(String,             title,              &sTitle)
+                LSP_TK_PROPERTY(String,             role,               &sRole)
+                LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
+                LSP_TK_PROPERTY(BorderStyle,        border_style,       &sBorderStyle)
+                LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
+                LSP_TK_PROPERTY(WindowActions,      actions,            &sActions)
+                LSP_TK_PROPERTY(Size,               size,               &sWindowSize)
+                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sSizeConstraints)
+                LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
+                LSP_TK_PROPERTY(WindowPolicy,       policy,             &sPolicy)
 
             //---------------------------------------------------------------------------------
             // Manipulation

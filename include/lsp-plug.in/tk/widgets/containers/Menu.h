@@ -191,53 +191,23 @@ namespace lsp
                 virtual void                destroy();
 
             public:
-                inline Font                *font()                      { return &sFont;                    }
-                inline const Font          *font() const                { return &sFont;                    }
+                LSP_TK_PROPERTY(Font,               font,                       &sFont)
+                LSP_TK_PROPERTY(Integer,            spacing,                    &sSpacing)
+                LSP_TK_PROPERTY(Float,              scrolling,                  &sScrolling)
+                LSP_TK_PROPERTY(Integer,            border_size,                &sBorderSize)
+                LSP_TK_PROPERTY(Color,              border_color,               &sBorderColor)
+                LSP_TK_PROPERTY(Color,              scroll_selected_color,      &sScrollSelectedColor)
+                LSP_TK_PROPERTY(Color,              scroll_text_color,          &sScrollTextColor)
+                LSP_TK_PROPERTY(Color,              scroll_text_selected_color, &sScrollTextSelectedColor)
+                LSP_TK_PROPERTY(Integer,            check_size,                 &sCheckSize)
+                LSP_TK_PROPERTY(Integer,            check_border,               &sCheckBorder)
+                LSP_TK_PROPERTY(Integer,            check_border_gap,           &sCheckBorderGap)
+                LSP_TK_PROPERTY(Integer,            check_border_radius,        &sCheckBorderRadius)
+                LSP_TK_PROPERTY(Integer,            separator_width,            &sSeparatorWidth)
 
-                inline Integer             *spacing()                   { return &sSpacing;                 }
-                inline const Integer       *spacing() const             { return &sSpacing;                 }
-
-                inline Float               *scrolling()                 { return &sScrolling;               }
-                inline const Float         *scrolling() const           { return &sScrolling;               }
-
-                inline Integer             *border_size()               { return &sBorderSize;              }
-                inline const Integer       *border_size() const         { return &sBorderSize;              }
-
-                inline Color               *border_color()              { return &sBorderColor;             }
-                inline const Color         *border_color() const        { return &sBorderColor;             }
-
-                inline Color               *scroll_selected_color()     { return &sScrollSelectedColor;     }
-                inline const Color         *scroll_selected_color() const   { return &sScrollSelectedColor; }
-
-                inline Color               *scroll_text_color()         { return &sScrollTextColor;         }
-                inline const Color         *scroll_text_color() const   { return &sScrollTextColor;         }
-
-                inline Color               *scroll_text_selected_color()        { return &sScrollTextSelectedColor;     }
-                inline const Color         *scroll_text_selected_color() const  { return &sScrollTextSelectedColor;     }
-
-                inline Integer             *check_size()                { return &sCheckSize;               }
-                inline const Integer       *check_size() const          { return &sCheckSize;               }
-
-                inline Integer             *check_border()              { return &sCheckBorder;             }
-                inline const Integer       *check_border() const        { return &sCheckBorder;             }
-
-                inline Integer             *check_border_gap()          { return &sCheckBorderGap;          }
-                inline const Integer       *check_border_gap() const    { return &sCheckBorderGap;          }
-
-                inline Integer             *check_border_radius()       { return &sCheckBorderRadius;       }
-                inline const Integer       *check_border_radius() const { return &sCheckBorderRadius;       }
-
-                inline Integer             *separator_width()           { return &sSeparatorWidth;          }
-                inline const Integer       *separator_width() const     { return &sSeparatorWidth;          }
-
-                Rectangle                  *trigger_area()              { return sWindow.trigger_area();    }
-                const Rectangle            *trigger_area() const        { return sWindow.trigger_area();    }
-
-                Integer                    *trigger_screen()            { return sWindow.trigger_screen();  }
-                const Integer              *trigger_screen() const      { return sWindow.trigger_screen();  }
-
-                WidgetPtr<Widget>          *trigger_widget()            { return sWindow.trigger_widget();  }
-                const WidgetPtr<Widget>    *trigger_widget() const      { return sWindow.trigger_widget();  }
+                LSP_TK_PROPERTY(Rectangle,          trigger_area,               sWindow.trigger_area())
+                LSP_TK_PROPERTY(Integer,            trigger_screen,             sWindow.trigger_screen())
+                LSP_TK_PROPERTY(WidgetPtr<Widget>,  trigger_widget,             sWindow.trigger_widget())
 
             public:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);

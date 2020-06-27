@@ -120,39 +120,34 @@ namespace lsp
                  * Get number of rows
                  * @return number of rows
                  */
-                inline Integer             *rows()              { return &sRows;        }
-                inline const Integer       *rows() const        { return &sRows;        }
+                LSP_TK_PROPERTY(Integer,            rows,               &sRows)
 
                 /**
                  * Get number of columns
                  * @return number of columns
                  */
-                inline Integer             *columns()           { return &sColumns;     }
-                inline const Integer       *columns() const     { return &sColumns;     }
+                LSP_TK_PROPERTY(Integer,            columns,            &sColumns)
 
                 /**
                  * Get grid orientation: if orientation is horizontal, widgets are allocated
                  * from left to right. Otherwise, widgets are allocated from top to bottom
                  * @return orientation
                  */
-                inline Orientation         *orientation()       { return &sOrientation; }
-                inline const Orientation   *orientation() const { return &sOrientation; }
+                LSP_TK_PROPERTY(Orientation,        orientation,        &sOrientation)
 
                 /**
                  * Get horizontal spacing between cells
                  *
                  * @return horizontal spacing between cells
                  */
-                inline Integer             *hspacing()          { return &sHSpacing;    }
-                inline const Integer       *hspacing() const    { return &sHSpacing;    }
+                LSP_TK_PROPERTY(Integer,            hspacing,           &sHSpacing)
 
                 /**
                  * Get vertical spacing between cells
                  *
                  * @return vertical spacing between cells
                  */
-                inline Integer             *vspacing()          { return &sVSpacing;    }
-                inline const Integer       *vspacing() const    { return &sVSpacing;    }
+                LSP_TK_PROPERTY(Integer,            vspacing,           &sVSpacing)
 
             //---------------------------------------------------------------------------------
             // Manipulation

@@ -72,22 +72,19 @@ namespace lsp
                  * Spacing between widget allocations
                  * @return spacing property
                  */
-                inline Integer             *spacing()               { return &sSpacing;         }
-                inline const Integer       *spacing() const         { return &sSpacing;         }
+                LSP_TK_PROPERTY(Integer,            spacing,            &sSpacing)
 
                 /**
                  * Get proportional flag
                  * @return proportional flag property
                  */
-                inline Boolean             *homogeneous()           { return &sHomogeneous;    }
-                inline const Boolean       *homogeneous() const     { return &sHomogeneous;    }
+                LSP_TK_PROPERTY(Boolean,            homogeneous,        &sHomogeneous)
 
                 /**
                  * Get box orientation
                  * @return box orientation
                  */
-                inline Orientation         *orientation()           { return &sOrientation;     }
-                inline const Orientation   *orientation() const     { return &sOrientation;     }
+                LSP_TK_PROPERTY(Orientation,        orientation,        &sOrientation)
 
             //---------------------------------------------------------------------------------
             // Manipulation

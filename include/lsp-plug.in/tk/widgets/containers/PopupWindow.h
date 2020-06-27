@@ -47,14 +47,9 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                Rectangle                      *trigger_area()              { return &sTrgArea;     }
-                const Rectangle                *trigger_area() const        { return &sTrgArea;     }
-
-                Integer                        *trigger_screen()            { return &sTrgScreen;   }
-                const Integer                  *trigger_screen() const      { return &sTrgScreen;   }
-
-                WidgetPtr<Widget>              *trigger_widget()            { return &sTrgWidget;   }
-                const WidgetPtr<Widget>        *trigger_widget() const      { return &sTrgWidget;   }
+                LSP_TK_PROPERTY(Rectangle,          trigger_area,               &sTrgArea)
+                LSP_TK_PROPERTY(Integer,            trigger_screen,             &sTrgScreen)
+                LSP_TK_PROPERTY(WidgetPtr<Widget>,  trigger_widget,             &sTrgWidget)
 
             public:
                 bool                            set_arrangements(const lltl::darray<arrangement_t> *list);
