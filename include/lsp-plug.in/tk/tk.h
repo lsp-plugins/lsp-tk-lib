@@ -47,6 +47,7 @@
 #include <lsp-plug.in/tk/prop/enum/WindowPolicy.h>
 #include <lsp-plug.in/tk/prop/enum/Pointer.h>
 #include <lsp-plug.in/tk/prop/enum/Orientation.h>
+#include <lsp-plug.in/tk/prop/enum/Scrolling.h>
 
 // Flags
 #include <lsp-plug.in/tk/prop/flags/Allocation.h>
@@ -122,6 +123,7 @@
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
 #include <lsp-plug.in/tk/widgets/containers/Menu.h>
+#include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
 
 namespace lsp
 {

@@ -125,7 +125,7 @@ namespace lsp
 
         status_t Align::add(Widget *widget)
         {
-            if (widget == NULL)
+            if ((widget == NULL) || (widget == this))
                 return STATUS_BAD_ARGUMENTS;
             if (pWidget != NULL)
                 return STATUS_ALREADY_EXISTS;
