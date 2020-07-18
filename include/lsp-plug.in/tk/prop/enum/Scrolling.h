@@ -37,10 +37,10 @@ namespace lsp
                 inline bool                 always() const              { return nValue == SCROLL_ALWAYS;       }
 
 
-                inline orientation_t        set_none()                  { return set(SCROLL_NONE);              }
-                inline orientation_t        set_clip()                  { return set(SCROLL_CLIP);              }
-                inline orientation_t        set_optional()              { return set(SCROLL_OPTIONAL);          }
-                inline orientation_t        set_always()                { return set(SCROLL_ALWAYS);            }
+                inline scrolling_t          set_none()                  { return set(SCROLL_NONE);              }
+                inline scrolling_t          set_clip()                  { return set(SCROLL_CLIP);              }
+                inline scrolling_t          set_optional()              { return set(SCROLL_OPTIONAL);          }
+                inline scrolling_t          set_always()                { return set(SCROLL_ALWAYS);            }
         };
     
         namespace prop

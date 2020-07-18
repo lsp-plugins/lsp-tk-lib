@@ -22,6 +22,20 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
+                typedef struct alloc_t
+                {
+                    ws::size_limit_t        sSize;      // Overall widget size limits
+                    ws::size_limit_t        sWidget;    // Size limits of the widget
+                    ws::rectangle_t         sArea;      // Area allocated for the widget
+                    ws::rectangle_t         sHBar;      // horizontal scroll parameters
+                    ws::rectangle_t         sVBar;      // vertical scroll parameters
+                    bool                    bHBar;      // horizontal scroll enable
+                    bool                    bVBar;      // vertical scroll enable
+                    ssize_t                 wMinW;      // widget min width
+                    ssize_t                 wMinH;      // widget min height
+                } alloc_t;
+
+            protected:
                 Widget                 *pWidget;
                 ScrollBar               sHBar;
                 ScrollBar               sVBar;
@@ -33,6 +47,7 @@ namespace lsp
 
             protected:
                 void                    do_destroy();
+                void                    estimate_size(alloc_t *a, const ws::rectangle_t *xr);
 
             protected:
                 virtual Widget         *find_widget(ssize_t x, ssize_t y);

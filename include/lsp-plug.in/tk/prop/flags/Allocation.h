@@ -37,6 +37,8 @@ namespace lsp
                     F_VFILL,
                     F_HEXPAND,
                     F_VEXPAND,
+                    F_HEMBED,
+                    F_VEMBED,
 
                     F_TOTAL
                 };
@@ -52,18 +54,25 @@ namespace lsp
                 inline  bool    vfill() const                   { return Flags::get(F_VFILL);           }
                 inline  bool    hexpand() const                 { return Flags::get(F_HEXPAND);         }
                 inline  bool    vexpand() const                 { return Flags::get(F_VEXPAND);         }
+                inline  bool    hembed() const                  { return Flags::get(F_HEMBED);          }
+                inline  bool    vembed() const                  { return Flags::get(F_VEMBED);          }
 
                 inline bool     set_hfill(bool set = true)      { return Flags::set(F_HFILL, set);      }
                 inline bool     set_vfill(bool set = true)      { return Flags::set(F_VFILL, set);      }
                 inline bool     set_hexpand(bool set = true)    { return Flags::set(F_HEXPAND, set);    }
                 inline bool     set_vexpand(bool set = true)    { return Flags::set(F_VEXPAND, set);    }
+                inline bool     set_hembed(bool set = true)     { return Flags::set(F_HEXPAND, set);    }
+                inline bool     set_vembed(bool set = true)     { return Flags::set(F_VEXPAND, set);    }
 
                 void            set_fill(bool hor, bool vert);
                 void            set_expand(bool hor, bool vert);
+                void            set_embed(bool hor, bool vert);
                 void            set(bool hfill, bool vfill, bool hexpand, bool vexpand);
+                void            set(bool hfill, bool vfill, bool hexpand, bool vexpand, bool hembed, bool vembed);
 
                 inline void     set_fill(bool fill = true)      { set_fill(fill, fill);                 }
                 inline void     set_expand(bool expand = true)  { set_expand(expand, expand);           }
+                inline void     set_embed(bool embed = true)    { set_embed(embed, embed);              }
                 inline void     set(bool fill, bool expand)     { set(fill, fill, expand, expand);      }
         };
 
@@ -97,11 +106,15 @@ namespace lsp
                      * Initialize default values
                      * @return status of operation
                      */
+                    status_t            init(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand, bool hembed, bool vembed);
                     status_t            init(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand);
-                    inline status_t     init(Style *style, bool fill, bool expand)      { return init(style, fill, fill, expand, expand); }
+                    inline status_t     init(Style *style, bool fill, bool expand)              { return init(style, fill, fill, expand, expand); }
+                    inline status_t     init(Style *style, bool fill, bool expand, bool embed)  { return init(style, fill, fill, expand, expand, embed, embed); }
 
+                    status_t            override(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand, bool hembed, bool vembed);
                     status_t            override(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand);
-                    inline status_t     override(Style *style, bool fill, bool expand)  { return override(style, fill, fill, expand, expand); }
+                    inline status_t     override(Style *style, bool fill, bool expand, bool embed)  { return override(style, fill, fill, expand, expand, embed, embed); }
+                    inline status_t     override(Style *style, bool fill, bool expand)              { return override(style, fill, fill, expand, expand); }
             };
         }
     

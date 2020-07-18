@@ -474,6 +474,8 @@ namespace lsp
         {
             if (!sVisibility.get())
                 return;
+            else if (nFlags & REALIZE_ACTIVE)
+                return;
 
             // Update flags
             nFlags     |= (RESIZE_PENDING | SIZE_INVALID);
@@ -559,11 +561,13 @@ namespace lsp
 
         void Widget::realize_widget(const ws::rectangle_t *r)
         {
+            nFlags     |= REALIZE_ACTIVE;
+
             // Call for realize
             realize(r);
 
             // Reset size pending flags
-            nFlags     &= ~(SIZE_INVALID | RESIZE_PENDING);
+            nFlags     &= ~(SIZE_INVALID | RESIZE_PENDING | REALIZE_ACTIVE);
             query_draw();   // Always query redraw after realize()
         }
 

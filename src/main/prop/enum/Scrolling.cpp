@@ -12,7 +12,7 @@ namespace lsp
 {
     namespace tk
     {
-        const prop::enum_t Orientation::ENUM[] =
+        const prop::enum_t Scrolling::ENUM[] =
         {
             { "none",       SCROLL_NONE         },
             { "clip",       SCROLL_CLIP         },

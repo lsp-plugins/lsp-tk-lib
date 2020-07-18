@@ -36,6 +36,7 @@ namespace lsp
                     REDRAW_CHILD    = 1 << 1,       // Need to redraw child only
                     SIZE_INVALID    = 1 << 2,       // Size limit structure is valid
                     RESIZE_PENDING  = 1 << 3,       // The resize request is pending
+                    REALIZE_ACTIVE  = 1 << 4        // Realize is active, no need to trigger for realize
                 };
 
             protected:
