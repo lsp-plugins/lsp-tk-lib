@@ -39,15 +39,20 @@ namespace lsp
                 Widget                 *pWidget;
                 ScrollBar               sHBar;
                 ScrollBar               sVBar;
+                ws::rectangle_t         sArea;
 
                 prop::Layout            sLayout;
                 prop::SizeConstraints   sSizeConstraints;
-                prop::Scrolling         sHScroll;
-                prop::Scrolling         sVScroll;
+                prop::Scrolling         sHScrollMode;
+                prop::Scrolling         sVScrollMode;
+                prop::RangeFloat        sHScroll;
+                prop::RangeFloat        sVScroll;
 
             protected:
                 void                    do_destroy();
                 void                    estimate_size(alloc_t *a, const ws::rectangle_t *xr);
+
+                static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual Widget         *find_widget(ssize_t x, ssize_t y);
@@ -65,11 +70,11 @@ namespace lsp
             public:
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sSizeConstraints)
-                LSP_TK_PROPERTY(Scrolling,          hscroll,            &sHScroll)
-                LSP_TK_PROPERTY(Scrolling,          vscroll,            &sVScroll)
+                LSP_TK_PROPERTY(Scrolling,          hscroll_mode,       &sHScrollMode)
+                LSP_TK_PROPERTY(Scrolling,          vscroll_mode,       &sVScrollMode)
 
-                LSP_TK_PROPERTY(ScrollBar,          hbar,               &sHBar)
-                LSP_TK_PROPERTY(ScrollBar,          vbar,               &sVBar)
+                LSP_TK_PROPERTY(RangeFloat,         hscroll,            &sHScroll)
+                LSP_TK_PROPERTY(RangeFloat,         vscroll,            &sVScroll)
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

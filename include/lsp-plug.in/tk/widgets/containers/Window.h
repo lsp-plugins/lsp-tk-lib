@@ -156,6 +156,7 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sSizeConstraints)
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(WindowPolicy,       policy,             &sPolicy)
+                LSP_TK_PROPERTY(Widget,             child,              pChild)
 
             //---------------------------------------------------------------------------------
             // Manipulation

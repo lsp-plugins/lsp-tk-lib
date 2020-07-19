@@ -33,6 +33,7 @@ namespace lsp
             fMin        = 0.0f;
             fMax        = 1.0f;
             fValue      = 0.0f;
+            bRangeLocked= false;
         }
 
         RangeFloat::~RangeFloat()
@@ -49,10 +50,14 @@ namespace lsp
             float v;
             if ((property == vAtoms[P_RVALUE]) && (pStyle->get_float(vAtoms[P_RVALUE], &v) == STATUS_OK))
                 fValue          = v;
-            if ((property == vAtoms[P_MIN]) && (pStyle->get_float(vAtoms[P_MIN], &v) == STATUS_OK))
-                fMin            = v;
-            if ((property == vAtoms[P_MAX]) && (pStyle->get_float(vAtoms[P_MAX], &v) == STATUS_OK))
-                fMax            = v;
+
+            if (!bRangeLocked)
+            {
+                if ((property == vAtoms[P_MIN]) && (pStyle->get_float(vAtoms[P_MIN], &v) == STATUS_OK))
+                    fMin            = v;
+                if ((property == vAtoms[P_MAX]) && (pStyle->get_float(vAtoms[P_MAX], &v) == STATUS_OK))
+                    fMax            = v;
+            }
 
             // Compound property
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
@@ -114,7 +119,7 @@ namespace lsp
         float RangeFloat::set_min(float value)
         {
             float old = fMin;
-            if (value == old)
+            if ((bRangeLocked) || (value == old))
                 return old;
 
             fMin                = value;
@@ -125,7 +130,7 @@ namespace lsp
         float RangeFloat::set_max(float value)
         {
             float old = fMax;
-            if (value == old)
+            if ((bRangeLocked) || (value == old))
                 return old;
 
             fMax                = value;
@@ -135,6 +140,8 @@ namespace lsp
 
         void RangeFloat::set_range(float min, float max)
         {
+            if (bRangeLocked)
+                return;
             if ((min == fMin) &&
                 (max == fMax))
                 return;
@@ -142,6 +149,34 @@ namespace lsp
             fMin                = min;
             fMax                = max;
             sync();
+        }
+
+        float RangeFloat::set_all(float value, float min, float max)
+        {
+            bool need_sync = false;
+
+            if (!bRangeLocked)
+            {
+                if ((min != fMin) ||
+                    (max != fMax))
+                {
+                    fMin                = min;
+                    fMax                = max;
+                    need_sync           = true;
+                }
+            }
+
+            float old   = fValue;
+            value       = limit(value);
+            if (value != old)
+            {
+                fValue              = value;
+                need_sync           = true;
+            }
+
+            if (need_sync)
+                sync();
+            return old;
         }
 
         float RangeFloat::set(float value)
@@ -245,6 +280,79 @@ namespace lsp
 
         namespace prop
         {
+            bool RangeFloat::lock_range(bool lock)
+            {
+                bool prev       = bRangeLocked;
+                bRangeLocked    = lock;
+                return prev;
+            }
+
+            float RangeFloat::set_min(float value)
+            {
+                float old = fMin;
+                if (value == old)
+                    return old;
+
+                fMin                = value;
+                sync();
+                return old;
+            }
+
+            float RangeFloat::set_max(float value)
+            {
+                float old = fMax;
+                if (value == old)
+                    return old;
+
+                fMax                = value;
+                sync();
+                return old;
+            }
+
+            void RangeFloat::set_range(float min, float max)
+            {
+                if ((min == fMin) &&
+                    (max == fMax))
+                    return;
+
+                fMin                = min;
+                fMax                = max;
+                sync();
+            }
+
+            float RangeFloat::set_all(float value, float min, float max)
+            {
+                bool need_sync = false;
+
+                if ((min != fMin) ||
+                    (max != fMax))
+                {
+                    fMin                = min;
+                    fMax                = max;
+                    need_sync           = true;
+                }
+
+                float old   = fValue;
+                value       = limit(value);
+                if (value != old)
+                {
+                    fValue              = value;
+                    need_sync           = true;
+                }
+
+                if (need_sync)
+                    sync();
+
+                return old;
+            }
+
+            float RangeFloat::commit(float value)
+            {
+                float old   = fValue;
+                fValue      = limit(value);
+                return old;
+            }
+
             status_t RangeFloat::init(Style *style, float value, float min, float max)
             {
                 if (pStyle == NULL)

@@ -119,80 +119,35 @@ namespace lsp
                 virtual void                    destroy();
 
             public:
-                inline RangeFloat              *value()                     { return &sValue;               }
-                inline const RangeFloat        *value() const               { return &sValue;               }
+                LSP_TK_PROPERTY(RangeFloat,         value,                  &sValue)
+                LSP_TK_PROPERTY(StepFloat,          step,                   &sStep)
+                LSP_TK_PROPERTY(StepFloat,          accel_step,             &sAccelStep)
 
-                inline StepFloat               *step()                      { return &sStep;                }
-                inline const StepFloat         *step() const                { return &sStep;                }
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,            &sConstraints)
+                LSP_TK_PROPERTY(Orientation,        orientation,            &sOrientation)
 
-                inline StepFloat               *accel_step()                { return &sAccelStep;           }
-                inline const StepFloat         *accel_step() const          { return &sAccelStep;           }
+                LSP_TK_PROPERTY(Pointer,            slider_pointer,         &sSliderPointer)
+                LSP_TK_PROPERTY(Pointer,            inc_pointer,            &sIncPointer)
+                LSP_TK_PROPERTY(Pointer,            dec_pointer,            &sDecPointer)
 
-                inline SizeConstraints         *constraints()               { return &sConstraints;         }
-                inline const SizeConstraints   *constraints() const         { return &sConstraints;         }
+                LSP_TK_PROPERTY(Integer,            border_radius,          &sBorderRadius)
+                LSP_TK_PROPERTY(Integer,            border_size,            &sBorderSize)
+                LSP_TK_PROPERTY(Integer,            border_gap_size,        &sBorderGap)
+                LSP_TK_PROPERTY(Integer,            slider_border_size,     &sSliderBorderSize)
 
-                inline Orientation             *orientation()               { return &sOrientation;         }
-                inline const Orientation       *orientation() const         { return &sOrientation;         }
-
-                inline Pointer                 *slider_pointer()            { return &sSliderPointer;       }
-                inline const Pointer           *slider_pointer() const      { return &sSliderPointer;       }
-
-                inline Pointer                 *inc_pointer()               { return &sIncPointer;          }
-                inline const Pointer           *inc_pointer() const         { return &sIncPointer;          }
-
-                inline Pointer                 *dec_pointer()               { return &sDecPointer;          }
-                inline const Pointer           *dec_pointer() const         { return &sDecPointer;          }
-
-                inline Integer                 *border_radius()             { return &sBorderRadius;        }
-                inline const Integer           *border_radius() const       { return &sBorderRadius;        }
-
-                inline Integer                 *border_size()               { return &sBorderSize;          }
-                inline const Integer           *border_size() const         { return &sBorderSize;          }
-
-                inline Integer                 *border_gap_size()           { return &sBorderGap;           }
-                inline const Integer           *border_gap_size() const     { return &sBorderGap;           }
-
-                inline Integer                 *slider_border_size()        { return &sSliderBorderSize;    }
-                inline const Integer           *slider_border_size() const  { return &sSliderBorderSize;    }
-
-                inline Color                   *button_color()              { return &sButtonColor;         }
-                inline const Color             *button_color() const        { return &sButtonColor;         }
-
-                inline Color                   *button_active_color()       { return &sButtonActiveColor;   }
-                inline const Color             *button_active_color() const { return &sButtonActiveColor;   }
-
-                inline Color                   *inc_color()                 { return &sIncColor;            }
-                inline const Color             *inc_color() const           { return &sIncColor;            }
-
-                inline Color                   *inc_active_color()          { return &sIncActiveColor;      }
-                inline const Color             *inc_active_color() const    { return &sIncActiveColor;      }
-
-                inline Color                   *dec_color()                 { return &sDecColor;            }
-                inline const Color             *dec_color() const           { return &sDecColor;            }
-
-                inline Color                   *dec_active_color()          { return &sDecActiveColor;      }
-                inline const Color             *dec_active_color() const    { return &sDecActiveColor;      }
-
-                inline Color                   *slider_color()              { return &sSliderColor;         }
-                inline const Color             *slider_color() const        { return &sSliderColor;         }
-
-                inline Color                   *slider_border_color()       { return &sSliderBorderColor;   }
-                inline const Color             *slider_border_color() const { return &sSliderBorderColor;   }
-
-                inline Color                   *slider_active_color()       { return &sSliderActiveColor;   }
-                inline const Color             *slider_active_color() const { return &sSliderActiveColor;   }
-
-                inline Color                   *border_color()              { return &sBorderColor;         }
-                inline const Color             *border_color() const        { return &sBorderColor;         }
-
-                inline Color                   *border_gap_color()          { return &sBorderGapColor;      }
-                inline const Color             *border_gap_color() const    { return &sBorderGapColor;      }
-
-                inline Color                   *text_color()                { return &sTextColor;           }
-                inline const Color             *text_color() const          { return &sTextColor;           }
-
-                inline Color                   *text_active_color()         { return &sTextActiveColor;     }
-                inline const Color             *text_active_color() const   { return &sTextActiveColor;     }
+                LSP_TK_PROPERTY(Color,              button_color,           &sButtonColor)
+                LSP_TK_PROPERTY(Color,              button_active_color,    &sButtonActiveColor)
+                LSP_TK_PROPERTY(Color,              inc_color,              &sIncColor)
+                LSP_TK_PROPERTY(Color,              inc_active_color,       &sIncActiveColor)
+                LSP_TK_PROPERTY(Color,              dec_color,              &sDecColor)
+                LSP_TK_PROPERTY(Color,              dec_active_color,       &sDecActiveColor)
+                LSP_TK_PROPERTY(Color,              slider_color,           &sSliderColor)
+                LSP_TK_PROPERTY(Color,              slider_border_color,    &sSliderBorderColor)
+                LSP_TK_PROPERTY(Color,              slider_active_color,    &sSliderActiveColor)
+                LSP_TK_PROPERTY(Color,              border_color,           &sBorderColor)
+                LSP_TK_PROPERTY(Color,              border_gap_color,       &sBorderGapColor)
+                LSP_TK_PROPERTY(Color,              text_color,             &sTextColor)
+                LSP_TK_PROPERTY(Color,              text_active_color,      &sTextActiveColor)
 
             public:
                 virtual ws::mouse_pointer_t     current_pointer();

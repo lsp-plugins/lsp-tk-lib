@@ -47,7 +47,9 @@ namespace lsp
             if ((sSize.nWidth > 0) && (sSize.nHeight > 0))
             {
                 lsp::Color color(sBgColor);
+                s->clip_begin(area);
                 s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+                s->clip_end();
 
                 // Debug bounds
 //                color.set_rgb24(0x000000);

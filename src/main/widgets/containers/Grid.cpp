@@ -135,7 +135,9 @@ namespace lsp
             // No widgets to draw?
             if (sAlloc.vCells.is_empty())
             {
-                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+                s->clip_begin(area);
+                    s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+                s->clip_end();
                 return;
             }
 
@@ -160,7 +162,9 @@ namespace lsp
                     if (size_t(w->nTop  + w->nRows) < sAlloc.nRows)
                         ch         += vspacing;
 
-                    s->fill_rect(bg_color, w->a.nLeft, w->a.nTop, cw, ch);
+                    s->clip_begin(area);
+                        s->fill_rect(bg_color, w->a.nLeft, w->a.nTop, cw, ch);
+                    s->clip_end();
                     continue;
                 }
 

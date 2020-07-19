@@ -56,6 +56,7 @@ namespace lsp
                 float               fValue;
                 float               fMin;
                 float               fMax;
+                bool                bRangeLocked;       // Lock range
                 Listener            sListener;
 
             protected:
@@ -74,8 +75,10 @@ namespace lsp
                 inline float        max() const             { return fMax;                  }
                 inline float        range() const           { return fMax - fMin;           }
                 inline float        abs_range() const       { return (fMax > fMin) ? fMax - fMin : fMin - fMax; }
+                inline bool         range_locked() const    { return bRangeLocked;          }
 
                 float               set(float v);
+                float               set_all(float v, float min, float max);
                 float               set_min(float v);
                 float               set_max(float v);
                 void                set_range(float min, float max);
@@ -103,6 +106,15 @@ namespace lsp
                     explicit RangeFloat(prop::Listener *listener = NULL): tk::RangeFloat(listener) {};
 
                 public:
+                    bool                lock_range(bool lock = true);
+                    inline bool         unlock_range()                                  { return lock_range(false);     }
+                    float               set_min(float v);
+                    float               set_max(float v);
+                    void                set_range(float min, float max);
+                    float               set_all(float v, float min, float max);
+
+                    float               commit(float v);
+
                     /**
                      * Bind property with specified name to the style of linked widget
                      */

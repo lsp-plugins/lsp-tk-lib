@@ -19,6 +19,8 @@ namespace lsp
             sVBar(dpy),
             sLayout(&sProperties),
             sSizeConstraints(&sProperties),
+            sHScrollMode(&sProperties),
+            sVScrollMode(&sProperties),
             sHScroll(&sProperties),
             sVScroll(&sProperties)
         {
@@ -45,23 +47,37 @@ namespace lsp
 
             // Configure scroll bars
             sHBar.orientation()->set(O_HORIZONTAL);
-            sHBar.orientation()->set(O_VERTICAL);
+            sHBar.step()->set(1.0f, 8.0f, 0.5f);
+            sHBar.accel_step()->set(1.0f, 8.0f, 0.5f);
             sHBar.set_parent(this);
+            sHBar.slots()->bind(SLOT_CHANGE, slot_on_scroll_change, self());
+
+            sVBar.orientation()->set(O_VERTICAL);
+            sVBar.step()->set(1.0f, 8.0f, 0.5f);
+            sVBar.accel_step()->set(1.0f, 8.0f, 0.5f);
             sVBar.set_parent(this);
+            sVBar.slots()->bind(SLOT_CHANGE, slot_on_scroll_change, self());
 
             // Initialize style
             sLayout.bind("layout", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
+            sHScrollMode.bind("hscroll.mode", &sStyle);
+            sVScrollMode.bind("vscroll.mode", &sStyle);
             sHScroll.bind("hscroll", &sStyle);
             sVScroll.bind("vscroll", &sStyle);
+
+            sHScroll.lock_range();
+            sVScroll.lock_range();
 
             Style *sclass = style_class();
             if (sclass != NULL)
             {
                 sLayout.init(sclass, -1.0f, -1.0f, 0.0f, 0.0f);
                 sSizeConstraints.init(sclass);
-                sHScroll.init(sclass, SCROLL_OPTIONAL);
-                sVScroll.init(sclass, SCROLL_OPTIONAL);
+                sHScrollMode.init(sclass, SCROLL_OPTIONAL);
+                sVScrollMode.init(sclass, SCROLL_OPTIONAL);
+                sHScroll.init(sclass, 0.0f, 0.0f, 0.0f);
+                sVScroll.init(sclass, 0.0f, 0.0f, 0.0f);
             }
 
             return STATUS_OK;
@@ -75,6 +91,9 @@ namespace lsp
 
         void ScrollArea::do_destroy()
         {
+            sHBar.set_parent(NULL);
+            sVBar.set_parent(NULL);
+
             if (pWidget != NULL)
             {
                 unlink_widget(pWidget);
@@ -89,17 +108,21 @@ namespace lsp
                 query_resize();
             if (sSizeConstraints.is(prop))
                 query_resize();
+            if (sHScrollMode.is(prop))
+                query_resize();
+            if (sVScrollMode.is(prop))
+                query_resize();
             if (sHScroll.is(prop))
-                query_resize();
+                sHBar.value()->set(sHScroll.get());
             if (sVScroll.is(prop))
-                query_resize();
+                sVBar.value()->set(sVScroll.get());
         }
 
         void ScrollArea::estimate_size(alloc_t *a, const ws::rectangle_t *xr)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
-            scrolling_t hscroll = sHScroll.get();
-            scrolling_t vscroll = sVScroll.get();
+            scrolling_t hscroll = sHScrollMode.get();
+            scrolling_t vscroll = sVScrollMode.get();
 
             // Estimate size of each scroll bar
             ws::size_limit_t hb, vb, wid;
@@ -126,9 +149,11 @@ namespace lsp
 
             a->wMinW        = lsp_max(0, wid.nMinWidth);
             a->wMinH        = lsp_max(0, wid.nMinHeight);
+            a->bHBar        = false;
+            a->bVBar        = false;
 
-            ssize_t minw    = (sHScroll.clip()) ? 0 : a->wMinW;
-            ssize_t minh    = (sVScroll.clip()) ? 0 : a->wMinH;
+            ssize_t minw    = (sHScrollMode.clip()) ? 0 : a->wMinW;
+            ssize_t minh    = (sVScrollMode.clip()) ? 0 : a->wMinH;
 
             if ((hscroll == SCROLL_ALWAYS) || (hscroll == SCROLL_OPTIONAL))
             {
@@ -184,7 +209,7 @@ namespace lsp
                     a->sArea.nWidth    -= vb.nMinWidth;
 
                     a->sHBar.nWidth    -= vb.nMinWidth;
-                    a->sVBar.nHeight   -= vb.nMinHeight;
+                    a->sVBar.nHeight   -= hb.nMinHeight;
                 }
             }
             else if ((vscroll == SCROLL_ALWAYS) || ((vscroll == SCROLL_OPTIONAL) && (xr->nHeight < minh)))
@@ -221,15 +246,19 @@ namespace lsp
             if (a.bHBar)
             {
                 sHBar.realize_widget(&a.sHBar);
-                sHBar.value()->set_range(0, lsp_max(0, a.wMinW - a.sArea.nWidth));
+                sHScroll.set_range(0, lsp_max(0, a.wMinW - a.sArea.nWidth));
+                sHBar.value()->set_range(sHScroll.min(), sHScroll.max());
             }
             if (a.bVBar)
             {
                 sVBar.realize_widget(&a.sVBar);
-                sHBar.value()->set_range(0, lsp_max(0, a.wMinH - a.sArea.nHeight));
+                sVScroll.set_range(0, lsp_max(0, a.wMinH - a.sArea.nHeight));
+                sVBar.value()->set_range(sVScroll.min(), sVScroll.max());
             }
 
             // Realize child widget if present
+            sArea   = a.sArea;
+
             if ((pWidget != NULL) && (pWidget->visibility()->get()))
             {
                 ws::rectangle_t xr, rr;
@@ -241,6 +270,7 @@ namespace lsp
 
                 pWidget->get_padded_size_limits(&sr);
                 sLayout.apply(&xr, &rr, &sr);
+                sArea       = xr;
 
                 if (a.bHBar)
                     xr.nLeft   -= sHBar.value()->get();
@@ -250,6 +280,9 @@ namespace lsp
                 pWidget->padding()->enter(&xr, pWidget->scaling()->get());
                 pWidget->realize_widget(&xr);
             }
+
+            // Call parent for realize
+            WidgetContainer::realize(r);
         }
 
         void ScrollArea::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -259,7 +292,7 @@ namespace lsp
 
             lsp::Color col(sBgColor);
 
-            ws::rectangle_t h, v, xa;
+            ws::rectangle_t h, v, xa, xr;
             xa  = sSize;
 
             // Render scroll bars
@@ -275,7 +308,7 @@ namespace lsp
 
                 if (sVBar.visibility()->get())
                 {
-                    sHBar.get_padded_rectangle(&v);
+                    sVBar.get_padded_rectangle(&v);
                     xa.nWidth   -= v.nWidth;
                     if ((sVBar.redraw_pending()) || (force))
                     {
@@ -294,7 +327,7 @@ namespace lsp
             }
             else if (sVBar.visibility()->get())
             {
-                sHBar.get_padded_rectangle(&h);
+                sVBar.get_padded_rectangle(&v);
                 xa.nWidth   -= v.nWidth;
 
                 if ((sVBar.redraw_pending()) || (force))
@@ -316,7 +349,6 @@ namespace lsp
             if ((force) || (pWidget->redraw_pending()))
             {
                 // Draw the child only if it is visible in the area
-                ws::rectangle_t xr;
                 pWidget->get_rectangle(&xr);
                 if (Size::intersection(&xr, &xa))
                     pWidget->render(s, &xr, force);
@@ -326,15 +358,13 @@ namespace lsp
 
             if (force)
             {
-                ws::rectangle_t cr;
-
-                pWidget->get_rectangle(&cr);
-                if (Size::overlap(area, &xa))
+                pWidget->get_rectangle(&xr);
+                if (Size::overlap(&xr, &xa))
                 {
-                    s->clip_begin(area);
+                    s->clip_begin(&xa);
                     {
                         col.copy(pWidget->bg_color()->color());
-                        s->fill_frame(col, &xa, &cr);
+                        s->fill_frame(col, &xa, &xr);
                     }
                     s->clip_end();
                 }
@@ -375,6 +405,32 @@ namespace lsp
                 return pWidget;
 
             return NULL;
+        }
+
+        status_t ScrollArea::slot_on_scroll_change(Widget *sender, void *ptr, void *data)
+        {
+            ScrollArea *_this = widget_ptrcast<ScrollArea>(ptr);
+            if (_this == NULL)
+                return STATUS_OK;
+
+            Widget *child = _this->pWidget;
+            if (child == NULL)
+                return STATUS_OK;
+
+            if ((&_this->sHBar != sender) && (&_this->sVBar != sender))
+                return STATUS_OK;
+
+            ws::rectangle_t xr = _this->sArea;
+            if (_this->sHBar.visibility()->get())
+                xr.nLeft   -= _this->sHBar.value()->get();
+            if (_this->sVBar.visibility()->get())
+                xr.nTop    -= _this->sVBar.value()->get();
+
+            child->padding()->enter(&xr, child->scaling()->get());
+            child->realize_widget(&xr);
+            _this->query_draw();
+
+            return STATUS_OK;
         }
 
     } /* namespace tk */
