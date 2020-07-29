@@ -34,9 +34,9 @@ namespace lsp
                     const w_class_t            *pMeta;
 
                 protected:
-                    explicit WidgetPtr(const w_class_t *meta, prop::Listener *listener = NULL): Ptr(listener)
+                    explicit WidgetPtr(prop::Listener *listener = NULL): Ptr(listener)
                     {
-                        pMeta   = meta;
+                        pMeta   = &widget_t::metadata;
                     }
 
                     ~WidgetPtr()
@@ -64,7 +64,7 @@ namespace lsp
                         WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &);
 
                     public:
-                        explicit WidgetPtr(const w_class_t *meta, prop::Listener *listener = NULL): tk::WidgetPtr<widget_t>(meta, listener) {}
+                        explicit WidgetPtr(prop::Listener *listener = NULL): tk::WidgetPtr<widget_t>(listener) {}
 
                     public:
                         inline void             bind(widget_t *dfl) { this->pDfl  = tk::WidgetPtr<widget_t>::vcast(dfl);    }

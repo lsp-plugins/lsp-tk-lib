@@ -17,7 +17,7 @@ namespace lsp
         PopupWindow::PopupWindow(Display *dpy):
             Window(dpy, NULL, -1),
             sTrgArea(&sProperties),
-            sTrgWidget(&Widget::metadata, &sProperties),
+            sTrgWidget(&sProperties),
             sTrgScreen(&sProperties)
         {
             bInitialized    = false;

@@ -208,7 +208,7 @@ namespace lsp
             sCheckBorderRadius(&sProperties),
             sSeparatorWidth(&sProperties),
             sSpacing(&sProperties),
-            sSubmenu(&Menu::metadata, &sProperties)
+            sSubmenu(&sProperties)
         {
             nSelected               = -1;
             nKeyScroll              = 0;

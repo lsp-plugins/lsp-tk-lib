@@ -16,7 +16,7 @@ namespace lsp
 
         MenuItem::MenuItem(Display *dpy):
             Widget(dpy),
-            sMenu(&Menu::metadata, &sProperties),
+            sMenu(&sProperties),
             sText(&sProperties),
             sType(&sProperties),
             sChecked(&sProperties),
