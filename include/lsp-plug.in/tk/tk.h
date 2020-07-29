@@ -26,6 +26,7 @@
 
 // Interfaces
 #include <lsp-plug.in/tk/prop/Listener.h>
+#include <lsp-plug.in/tk/prop/CollectionListener.h>
 #include <lsp-plug.in/tk/style/IStyleListener.h>
 #include <lsp-plug.in/tk/style/IStyleInitializer.h>
 
@@ -58,6 +59,7 @@
 #include <lsp-plug.in/tk/prop/simple/Integer.h>
 #include <lsp-plug.in/tk/prop/simple/Float.h>
 #include <lsp-plug.in/tk/prop/simple/String.h>
+#include <lsp-plug.in/tk/prop/simple/WidgetList.h>
 #include <lsp-plug.in/tk/prop/simple/WidgetPtr.h>
 
 // Compound properties
