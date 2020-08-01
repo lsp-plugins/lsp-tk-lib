@@ -611,6 +611,16 @@ namespace lsp
         };
     }
 
+    // LLTL interface specifications for widget
+    namespace lltl
+    {
+        template <>
+            struct hash_spec<tk::Widget>: public ptr_hash_iface {};
+
+        template <>
+            struct compare_spec<tk::Widget>: public ptr_compare_iface {};
+    }
+
 } /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_BASE_WIDGET_H_ */

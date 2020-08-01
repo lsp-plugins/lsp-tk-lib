@@ -55,7 +55,6 @@ namespace lsp
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual Widget         *find_widget(ssize_t x, ssize_t y);
                 virtual void            property_changed(Property *prop);
                 virtual void            size_request(ws::size_limit_t *r);
                 virtual void            realize(const ws::rectangle_t *r);
@@ -82,6 +81,8 @@ namespace lsp
                 virtual status_t        add(Widget *widget);
 
                 virtual status_t        remove(Widget *widget);
+
+                virtual Widget         *find_widget(ssize_t x, ssize_t y);
         };
     
     } /* namespace tk */

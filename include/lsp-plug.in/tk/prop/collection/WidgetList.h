@@ -5,8 +5,8 @@
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_PROP_SIMPLE_WIDGETLIST_H_
-#define LSP_PLUG_IN_TK_PROP_SIMPLE_WIDGETLIST_H_
+#ifndef LSP_PLUG_IN_TK_PROP_COLLECTION_WIDGETLIST_H_
+#define LSP_PLUG_IN_TK_PROP_COLLECTION_WIDGETLIST_H_
 
 #include <lsp-plug.in/lltl/parray.h>
 
@@ -60,7 +60,9 @@ namespace lsp
                     inline status_t     premove(widget_t *w)                { return GenericWidgetList::premove(w);         }
                     inline status_t     insert(widget_t *w, size_t index)   { return GenericWidgetList::insert(w, index);   }
                     inline status_t     set(widget_t *w, size_t index)      { return GenericWidgetList::set(w, index);      }
-                    inline widget_t    *get(size_t index) const             { return wcast(sList.get(index));               }
+                    inline widget_t    *get(size_t index)                   { return wcast(sList.get(index));               }
+                    inline bool         contains(const widget_t *w) const   { return sList.contains(w);                     }
+                    inline ssize_t      index_of(const widget_t *w) const   { return sList.index_of(w);                     }
 
                     inline status_t     swap(WidgetList<widget_t> *lst)     { return GenericWidgetList::swap(lst);          }
                     inline status_t     swap(WidgetList<widget_t> &lst)     { return GenericWidgetList::swap(&lst);         }
@@ -81,11 +83,11 @@ namespace lsp
                     public:
                         inline void         flush()                             { this->sList.flush();                                              }
                         inline bool         unlink(Widget *w)                   { return this->sList.premove(w);                                    }
-                        inline widget_t    *uget(size_t index) const            { return tk::WidgetList<widget_t>::vcast(this->sList.get(index));   }
+                        inline widget_t    *uget(size_t index)                  { return tk::WidgetList<widget_t>::wcast(this->sList.get(index));   }
                 };
         }
     }
 
 }
 
-#endif /* LSP_PLUG_IN_TK_PROP_SIMPLE_WIDGETLIST_H_ */
+#endif /* LSP_PLUG_IN_TK_PROP_COLLECTION_WIDGETLIST_H_ */

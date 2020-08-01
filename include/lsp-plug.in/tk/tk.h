@@ -26,7 +26,7 @@
 
 // Interfaces
 #include <lsp-plug.in/tk/prop/Listener.h>
-#include <lsp-plug.in/tk/prop/CollectionListener.h>
+#include <lsp-plug.in/tk/prop/collection/CollectionListener.h>
 #include <lsp-plug.in/tk/style/IStyleListener.h>
 #include <lsp-plug.in/tk/style/IStyleInitializer.h>
 
@@ -59,8 +59,11 @@
 #include <lsp-plug.in/tk/prop/simple/Integer.h>
 #include <lsp-plug.in/tk/prop/simple/Float.h>
 #include <lsp-plug.in/tk/prop/simple/String.h>
-#include <lsp-plug.in/tk/prop/simple/WidgetList.h>
-#include <lsp-plug.in/tk/prop/simple/WidgetPtr.h>
+
+// Collections
+#include <lsp-plug.in/tk/prop/collection/WidgetList.h>
+#include <lsp-plug.in/tk/prop/collection/WidgetPtr.h>
+#include <lsp-plug.in/tk/prop/collection/WidgetSet.h>
 
 // Compound properties
 #include <lsp-plug.in/tk/prop/multi/Color.h>
@@ -110,6 +113,7 @@
 #include <lsp-plug.in/tk/widgets/simple/Knob.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>
 #include <lsp-plug.in/tk/widgets/simple/Led.h>
+#include <lsp-plug.in/tk/widgets/simple/ListBoxItem.h>
 #include <lsp-plug.in/tk/widgets/simple/MenuItem.h>
 #include <lsp-plug.in/tk/widgets/simple/ProgressBar.h>
 #include <lsp-plug.in/tk/widgets/simple/ScrollBar.h>
@@ -126,6 +130,9 @@
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
 #include <lsp-plug.in/tk/widgets/containers/Menu.h>
 #include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
+
+// Compound widgets
+#include <lsp-plug.in/tk/widgets/containers/ListBox.h>
 
 namespace lsp
 {

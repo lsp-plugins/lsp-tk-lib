@@ -81,6 +81,7 @@ namespace lsp
                 if (sclass != NULL)
                 {
                     sStyle.add_parent(sclass);
+
                     sAllocation.init(sclass, true, false);
                     sPadding.init(sclass, 0, 0, 0, 0);
                     sScaling.init(sclass, 1.0f);
@@ -409,18 +410,16 @@ namespace lsp
 
             if (pParent != NULL)
             {
-                Window *wnd = widget_cast<Window>(toplevel());
-//                sStyle.remove_parent(pParent->style()); // Unlink style
-
                 WidgetContainer *wc = widget_cast<WidgetContainer>(pParent);
                 if (wc != NULL)
                     wc->remove(this);
-                wnd->discard_widget(wc);
+
+                Window *wnd = widget_cast<Window>(toplevel());
+                if (wnd != NULL)
+                    wnd->discard_widget(wc);
             }
 
             pParent = parent;
-//            if (parent != NULL) // Inherit the style of parent widget
-//                sStyle.add_parent(parent->style());
         }
 
         Widget *Widget::toplevel()
