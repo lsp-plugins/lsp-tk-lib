@@ -11,53 +11,29 @@ namespace lsp
 {
     namespace tk
     {
-        //---------------------------------------------------------------------
-        const w_class_t ListBox::ItemList::metadata     = { "ListBox::ItemList", &WidgetContainer::metadata };
-
-        ListBox::ItemList::ItemList(Display *dpy, ListBox *box):
-            WidgetContainer(dpy)
-        {
-            pListBox    = box;
-
-            pClass      = &metadata;
-        }
-        
-        ListBox::ItemList::~ItemList()
-        {
-            pListBox    = NULL;
-        }
-
-        //---------------------------------------------------------------------
-        const w_class_t ListBox::ItemArea::metadata     = { "ListBox::ItemArea", &ScrollArea::metadata };
-
-        ListBox::ItemArea::ItemArea(Display *dpy, ListBox *box):
-            ScrollArea(dpy)
-        {
-            pListBox    = box;
-
-            pClass      = &metadata;
-        }
-
-        ListBox::ItemArea::~ItemArea()
-        {
-            pListBox    = NULL;
-        }
-
-        //---------------------------------------------------------------------
         const w_class_t ListBox::metadata               = { "ListBox", &WidgetContainer::metadata };
 
         ListBox::ListBox(Display *dpy):
             WidgetContainer(dpy),
-            sList(dpy, this),
-            sArea(dpy, this),
+            sHBar(dpy),
+            sVBar(dpy),
             vItems(&sProperties, &sIListener),
-            vSelected(&sProperties),
+            vSelected(&sProperties, &sIListener),
+            sSizeConstraints(&sProperties),
+            sHScrollMode(&sProperties),
+            sVScrollMode(&sProperties),
+            sHScroll(&sProperties),
+            sVScroll(&sProperties),
             sFont(&sProperties),
             sBorderSize(&sProperties),
             sBorderRadius(&sProperties),
             sBorderColor(&sProperties),
             sSpacing(&sProperties)
         {
+            sArea.nLeft     = 0;
+            sArea.nTop      = 0;
+            sArea.nWidth    = 0;
+            sArea.nHeight   = 0;
 
             pClass      = &metadata;
         }
@@ -89,39 +65,62 @@ namespace lsp
             vItems.flush();
 
             // Cleanup relations
-            sArea.set_parent(NULL);
-            sList.set_parent(NULL);
+            sHBar.set_parent(NULL);
+            sVBar.set_parent(NULL);
 
-            sArea.destroy();
-            sList.destroy();
+            sHBar.destroy();
+            sVBar.destroy();
         }
 
         status_t ListBox::init()
         {
-            // Initialize parent class
+            // Initialize widgets
             status_t result = WidgetContainer::init();
+            if (result == STATUS_OK)
+                result  = sHBar.init();
+            if (result == STATUS_OK)
+                result  = sVBar.init();
             if (result != STATUS_OK)
                 return result;
 
-            if ((result = sArea.init()) != STATUS_OK)
-                return result;
-            if ((result = sList.init()) != STATUS_OK)
-                return result;
+            sIListener.bind_all(this, on_add_item, on_remove_item);
 
-            // Set relations
-            sList.set_parent(&sArea);
-            sArea.set_parent(this);
+            // Configure scroll bars
+            sHBar.orientation()->set(O_HORIZONTAL);
+            sHBar.step()->set(1.0f, 8.0f, 0.5f);
+            sHBar.accel_step()->set(1.0f, 8.0f, 0.5f);
+            sHBar.set_parent(this);
+            sHBar.slots()->bind(SLOT_CHANGE, slot_on_scroll_change, self());
 
-            // Init styles
+            sVBar.orientation()->set(O_VERTICAL);
+            sVBar.step()->set(1.0f, 8.0f, 0.5f);
+            sVBar.accel_step()->set(1.0f, 8.0f, 0.5f);
+            sVBar.set_parent(this);
+            sVBar.slots()->bind(SLOT_CHANGE, slot_on_scroll_change, self());
+
+            // Init style
+            sSizeConstraints.bind("size.constraints", &sStyle);
+            sHScrollMode.bind("hscroll.mode", &sStyle);
+            sVScrollMode.bind("vscroll.mode", &sStyle);
+            sHScroll.bind("hscroll", &sStyle);
+            sVScroll.bind("vscroll", &sStyle);
             sFont.bind("font", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sSpacing.bind("spacing", &sStyle);
 
+            sHScroll.lock_range();
+            sVScroll.lock_range();
+
             Style *sclass = style_class();
             if (sclass != NULL)
             {
+                sSizeConstraints.init(sclass);
+                sHScrollMode.init(sclass, SCROLL_OPTIONAL);
+                sVScrollMode.init(sclass, SCROLL_OPTIONAL);
+                sHScroll.init(sclass, 0.0f, 0.0f, 0.0f);
+                sVScroll.init(sclass, 0.0f, 0.0f, 0.0f);
                 sFont.init(sclass);
                 sBorderSize.init(sclass, 1);
                 sBorderRadius.init(sclass, 2);
@@ -135,9 +134,56 @@ namespace lsp
             return STATUS_OK;
         }
 
+        void ListBox::property_changed(Property *prop)
+        {
+            WidgetContainer::property_changed(prop);
+            if (sSizeConstraints.is(prop))
+                query_resize();
+            if (sHScrollMode.is(prop))
+                query_resize();
+            if (sVScrollMode.is(prop))
+                query_resize();
+            if (sHScroll.is(prop))
+                sHBar.value()->set(sHScroll.get());
+            if (sVScroll.is(prop))
+                sVBar.value()->set(sVScroll.get());
+            if (sFont.is(prop))
+                query_resize();
+            if (sBorderSize.is(prop))
+                query_resize();
+            if (sBorderRadius.is(prop))
+                query_resize();
+            if (sBorderColor.is(prop))
+                query_draw();
+            if (sSpacing.is(prop))
+                query_resize();
+
+            if (vItems.is(prop))
+                query_resize();
+            if (vSelected.is(prop))
+                query_draw();
+        }
+
+        void ListBox::size_request(ws::size_limit_t *r)
+        {
+        }
+
+        void ListBox::realize(const ws::rectangle_t *r)
+        {
+        }
+
+        void ListBox::realize_children(const ws::rectangle_t *r)
+        {
+        }
+
         Widget *ListBox::find_widget(ssize_t x, ssize_t y)
         {
-            return sArea.find_widget(x, y);
+            if ((sHBar.visibility()->get()) && (sHBar.inside(x, y)))
+                return &sHBar;
+            if ((sVBar.visibility()->get()) && (sVBar.inside(x, y)))
+                return &sVBar;
+
+            return NULL;
         }
 
         status_t ListBox::add(Widget *child)
@@ -163,5 +209,53 @@ namespace lsp
             vItems.clear();
             return STATUS_OK;
         }
+
+        status_t ListBox::slot_on_scroll_change(Widget *sender, void *ptr, void *data)
+        {
+            ListBox *_this = widget_ptrcast<ListBox>(ptr);
+            if (_this == NULL)
+                return STATUS_OK;
+
+            if ((&_this->sHBar != sender) && (&_this->sVBar != sender))
+                return STATUS_OK;
+
+            ws::rectangle_t xr = _this->sArea;
+            if (_this->sHBar.visibility()->get())
+                xr.nLeft   -= _this->sHBar.value()->get();
+            if (_this->sVBar.visibility()->get())
+                xr.nTop    -= _this->sVBar.value()->get();
+
+            _this->realize_children(&xr);
+            _this->query_draw();
+
+            return STATUS_OK;
+        }
+
+        void ListBox::on_add_item(void *obj, Property *prop, Widget *w)
+        {
+            ListBoxItem *item = widget_cast<ListBoxItem>(w);
+            if (item == NULL)
+                return;
+
+            ListBox *_this = widget_ptrcast<ListBox>(obj);
+            if (_this == NULL)
+                return;
+        }
+
+        void ListBox::on_remove_item(void *obj, Property *prop, Widget *w)
+        {
+            ListBoxItem *item = widget_cast<ListBoxItem>(w);
+            if (item == NULL)
+                return;
+
+            ListBox *_this = widget_ptrcast<ListBox>(obj);
+            if (_this == NULL)
+                return;
+
+            // Remove widget from selection list
+            if (_this->vItems.is(prop))
+                _this->vSelected.remove(item);
+        }
+
     } /* namespace tk */
 } /* namespace lsp */

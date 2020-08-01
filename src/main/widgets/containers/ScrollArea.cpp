@@ -26,6 +26,11 @@ namespace lsp
         {
             pWidget     = NULL;
             
+            sArea.nLeft     = 0;
+            sArea.nTop      = 0;
+            sArea.nWidth    = 0;
+            sArea.nHeight   = 0;
+
             pClass      = &metadata;
         }
         

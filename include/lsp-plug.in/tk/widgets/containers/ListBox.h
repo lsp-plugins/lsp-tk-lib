@@ -22,40 +22,25 @@ namespace lsp
             public:
                 static const w_class_t      metadata;
 
-            private:
-                class ItemList: public WidgetContainer
+            protected:
+                typedef struct alloc_t
                 {
-                    public:
-                        static const w_class_t      metadata;
-
-                    protected:
-                        ListBox                    *pListBox;
-
-                    public:
-                        explicit ItemList(Display *dpy, ListBox *box);
-                        virtual ~ItemList();
-                };
-
-                class ItemArea: public ScrollArea
-                {
-                    public:
-                        static const w_class_t      metadata;
-
-                    protected:
-                        ListBox                    *pListBox;
-
-                    public:
-                        explicit ItemArea(Display *dpy, ListBox *box);
-                        virtual ~ItemArea();
-                };
+                } alloc_t;
 
             protected:
-                ItemList                        sList;
-                ItemArea                        sArea;
+                ScrollBar                       sHBar;
+                ScrollBar                       sVBar;
+                ws::rectangle_t                 sArea;
 
                 prop::WidgetList<ListBoxItem>   vItems;
                 prop::WidgetSet<ListBoxItem>    vSelected;
                 prop::CollectionListener        sIListener;
+
+                prop::SizeConstraints           sSizeConstraints;
+                prop::Scrolling                 sHScrollMode;
+                prop::Scrolling                 sVScrollMode;
+                prop::RangeFloat                sHScroll;
+                prop::RangeFloat                sVScroll;
 
                 prop::Font                      sFont;
                 prop::Integer                   sBorderSize;
@@ -64,7 +49,18 @@ namespace lsp
                 prop::Integer                   sSpacing;
 
             protected:
-                void                        do_destroy();
+                void                    do_destroy();
+                void                    estimate_size(alloc_t *a, const ws::rectangle_t *xr);
+                void                    realize_children(const ws::rectangle_t *r);
+
+                static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
+                static void             on_add_item(void *obj, Property *prop, Widget *w);
+                static void             on_remove_item(void *obj, Property *prop, Widget *w);
+
+            protected:
+                virtual void            property_changed(Property *prop);
+                virtual void            size_request(ws::size_limit_t *r);
+                virtual void            realize(const ws::rectangle_t *r);
 
             public:
                 explicit ListBox(Display *dpy);
@@ -74,11 +70,12 @@ namespace lsp
                 virtual void                destroy();
 
             public:
-                LSP_TK_PROPERTY(Layout,             layout,             sArea.layout())
-                LSP_TK_PROPERTY(Scrolling,          hscroll_mode,       sArea.hscroll_mode())
-                LSP_TK_PROPERTY(Scrolling,          vscroll_mode,       sArea.vscroll_mode())
-                LSP_TK_PROPERTY(RangeFloat,         hscroll,            sArea.hscroll())
-                LSP_TK_PROPERTY(RangeFloat,         vscroll,            sArea.vscroll())
+                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sSizeConstraints)
+                LSP_TK_PROPERTY(Scrolling,          hscroll_mode,       &sHScrollMode)
+                LSP_TK_PROPERTY(Scrolling,          vscroll_mode,       &sVScrollMode)
+
+                LSP_TK_PROPERTY(RangeFloat,         hscroll,            &sHScroll)
+                LSP_TK_PROPERTY(RangeFloat,         vscroll,            &sVScroll)
 
                 LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,      &vItems)
                 LSP_TK_PROPERTY(WidgetSet<ListBoxItem>,     selected,   &vSelected)
