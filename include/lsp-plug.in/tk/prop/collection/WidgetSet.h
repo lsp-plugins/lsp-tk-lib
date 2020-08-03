@@ -34,7 +34,10 @@ namespace lsp
                 void            clear();
 
                 status_t        swap(GenericWidgetSet *dst);
-                inline status_t swap(GenericWidgetSet &dst)     { return swap(&dst);            }
+                inline status_t swap(GenericWidgetSet &dst)         { return swap(&dst);                            }
+
+                inline bool     values(lltl::parray<Widget> *dst)   { return sSet.values(dst);                      }
+                inline bool     values(lltl::parray<Widget> &dst)   { return sSet.values(&dst);                     }
         };
 
         template <class widget_t>
@@ -56,8 +59,27 @@ namespace lsp
                     inline status_t     remove(widget_t *w)                 { return GenericWidgetSet::remove(w);           }
                     inline bool         contains(const widget_t *w) const   { return sSet.contains(w);                      }
 
+                    inline bool         values(lltl::parray<widget_t> *dst)
+                    {
+                        union {
+                            lltl::parray<widget_t> *wt;
+                            lltl::parray<Widget>   *wg;
+                        } x;
+                        x.wt = dst;
+                        if (!sSet.values(x.wg))
+                            return false;
+
+                        for (size_t i=0, n=dst->size(); i<n; ++i)
+                            dst->set(i, wcast(dst->uget(i)));
+
+                        return true;
+                    }
+                    inline bool         values(lltl::parray<Widget> &dst)   { return values(&dst);                          }
+
+                    using GenericWidgetSet::values;
+
                     inline status_t     swap(WidgetSet<widget_t> *lst)      { return GenericWidgetSet::swap(lst);           }
-                    inline status_t     swap(WidgetSet<widget_t> &lst)      { return GenericWidgetSet::swap(&lst);         }
+                    inline status_t     swap(WidgetSet<widget_t> &lst)      { return GenericWidgetSet::swap(&lst);          }
             };
 
         namespace prop

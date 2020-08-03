@@ -23,14 +23,33 @@ namespace lsp
                 static const w_class_t      metadata;
 
             protected:
+                typedef struct item_t
+                {
+                    ws::rectangle_t     a;          // Allocated space for widget
+                    ws::rectangle_t     r;          // Realized space for widget
+                    ListBoxItem        *item;       // Widget item contained in the cell
+                } item_t;
+
                 typedef struct alloc_t
                 {
+                    lltl::darray<item_t>    vItems;     // Items
+                    ssize_t                 wMinW;      // Minimum width
+                    ssize_t                 wMinH;      // Minimum height
+                    bool                    bHBar;      // Horizontal scroll enabled
+                    bool                    bVBar;      // Vertical scroll enabled
+                    ws::size_limit_t        sSize;      // Actual size
+                    ws::rectangle_t         sArea;      // Area to display contents
+                    ws::rectangle_t         sList;      // List to display contents
+                    ws::rectangle_t         sHBar;      // Horizontal scroll bar
+                    ws::rectangle_t         sVBar;      // Vertical scroll bar
                 } alloc_t;
 
             protected:
                 ScrollBar                       sHBar;
                 ScrollBar                       sVBar;
                 ws::rectangle_t                 sArea;
+                ws::rectangle_t                 sList;
+                lltl::darray<item_t>            vVisible;
 
                 prop::WidgetList<ListBoxItem>   vItems;
                 prop::WidgetSet<ListBoxItem>    vSelected;
@@ -44,14 +63,18 @@ namespace lsp
 
                 prop::Font                      sFont;
                 prop::Integer                   sBorderSize;
+                prop::Integer                   sBorderGap;
                 prop::Integer                   sBorderRadius;
                 prop::Color                     sBorderColor;
                 prop::Integer                   sSpacing;
+                prop::Boolean                   sMultiSelect;
 
             protected:
                 void                    do_destroy();
+                void                    allocate_items(alloc_t *alloc);
                 void                    estimate_size(alloc_t *a, const ws::rectangle_t *xr);
                 void                    realize_children(const ws::rectangle_t *r);
+                void                    keep_single_selection();
 
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
                 static void             on_add_item(void *obj, Property *prop, Widget *w);
@@ -83,8 +106,10 @@ namespace lsp
                 LSP_TK_PROPERTY(Font,               font,                       &sFont)
                 LSP_TK_PROPERTY(Integer,            spacing,                    &sSpacing)
                 LSP_TK_PROPERTY(Integer,            border_size,                &sBorderSize)
+                LSP_TK_PROPERTY(Integer,            border_gap,                 &sBorderGap)
                 LSP_TK_PROPERTY(Integer,            border_radius,              &sBorderRadius)
                 LSP_TK_PROPERTY(Color,              border_color,               &sBorderColor)
+                LSP_TK_PROPERTY(Boolean,            multi_select,               &sMultiSelect)
 
             public:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);

@@ -18,9 +18,21 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            protected:
+                prop::String                sText;
+                prop::Color                 sBgSelectedColor;
+                prop::Color                 sTextColor;
+                prop::Color                 sTextSelectedColor;
+
             public:
                 explicit ListBoxItem(Display *dpy);
                 virtual ~ListBoxItem();
+
+            public:
+                LSP_TK_PROPERTY(String,                     text,                       &sText)
+                LSP_TK_PROPERTY(Color,                      bg_selected_color,          &sBgSelectedColor)
+                LSP_TK_PROPERTY(Color,                      text_color,                 &sTextColor)
+                LSP_TK_PROPERTY(Color,                      text_selected_color,        &sTextSelectedColor)
         };
     
     } /* namespace tk */

@@ -185,7 +185,7 @@ namespace lsp
             }
 
             a->sSize.nMaxWidth  = (sAllocation.hembed()) ? lsp_max(minw, a->sSize.nMinWidth) : -1;
-            a->sSize.nMaxHeight = (sAllocation.vembed()) ? lsp_max(minw, a->sSize.nMinHeight) : -1;
+            a->sSize.nMaxHeight = (sAllocation.vembed()) ? lsp_max(minh, a->sSize.nMinHeight) : -1;
 
             // Apply size constraints
             sSizeConstraints.apply(&a->sSize, scaling);

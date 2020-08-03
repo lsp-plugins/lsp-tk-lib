@@ -53,38 +53,17 @@ namespace lsp
                 virtual status_t            init();
 
             public:
-                inline WidgetPtr<Menu>         *menu()                  { return &sMenu;                }
-                inline const WidgetPtr<Menu>   *menu() const            { return &sMenu;                }
-
-                inline String              *text()                      { return &sText;                }
-                inline const String        *text() const                { return &sText;                }
-
-                inline MenuItemType        *type()                      { return &sType;                }
-                inline const MenuItemType  *type() const                { return &sType;                }
-
-                inline Boolean             *checked()                   { return &sChecked;             }
-                inline const Boolean       *checked() const             { return &sChecked;             }
-
-                inline Color               *bg_selected_color()         { return &sBgSelectedColor;     }
-                inline const Color         *bg_selected_color() const   { return &sBgSelectedColor;     }
-
-                inline Color               *text_color()                { return &sTextColor;           }
-                inline const Color         *text_color() const          { return &sTextColor;           }
-
-                inline Color               *text_selected_color()       { return &sTextSelectedColor;   }
-                inline const Color         *text_selected_color() const { return &sTextSelectedColor;   }
-
-                inline Color               *check_color()               { return &sCheckColor;          }
-                inline const Color         *check_color() const         { return &sCheckColor;          }
-
-                inline Color               *check_bg_color()            { return &sCheckBgColor;        }
-                inline const Color         *check_bg_color() const      { return &sCheckBgColor;        }
-
-                inline Color               *check_border_color()        { return &sCheckBorderColor;    }
-                inline const Color         *check_border_color() const  { return &sCheckBorderColor;    }
-
-                inline Shortcut            *shortcut()                  { return &sShortcut;            }
-                inline const Shortcut      *shortcut() const            { return &sShortcut;            }
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,            menu,                       &sMenu)
+                LSP_TK_PROPERTY(String,                     text,                       &sText)
+                LSP_TK_PROPERTY(MenuItemType,               type,                       &sType)
+                LSP_TK_PROPERTY(Boolean,                    checked,                    &sChecked)
+                LSP_TK_PROPERTY(Color,                      bg_selected_color,          &sBgSelectedColor)
+                LSP_TK_PROPERTY(Color,                      text_color,                 &sTextColor)
+                LSP_TK_PROPERTY(Color,                      text_selected_color,        &sTextSelectedColor)
+                LSP_TK_PROPERTY(Color,                      check_color,                &sCheckColor)
+                LSP_TK_PROPERTY(Color,                      check_bg_color,             &sCheckBgColor)
+                LSP_TK_PROPERTY(Color,                      check_border_color,         &sCheckBorderColor)
+                LSP_TK_PROPERTY(Shortcut,                   shortcut,                   &sShortcut)
 
             public:
                 virtual status_t            on_submit();
