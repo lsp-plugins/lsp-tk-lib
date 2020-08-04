@@ -1,7 +1,7 @@
 /*
- * scrollarea.cpp
+ * listbox.cpp
  *
- *  Created on: 19 июл. 2020 г.
+ *  Created on: 4 авг. 2020 г.
  *      Author: sadko
  */
 
@@ -9,7 +9,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.containers", scrollarea)
+MTEST_BEGIN("tk.widgets.containers", listbox)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -31,7 +31,7 @@ MTEST_BEGIN("tk.widgets.containers", scrollarea)
         if ((wnd != NULL) && (ev != NULL) && (ev->nType == ws::UIE_KEY_UP))
         {
             _this->printf("Key up: %c (0x%x)\n", (char)ev->nCode, int(ev->nCode));
-            tk::ScrollArea *sa = tk::widget_cast<tk::ScrollArea>(wnd->child());
+            tk::ListBox *lb = tk::widget_cast<tk::ListBox>(wnd->child());
 
             switch (ev->nCode)
             {
@@ -46,37 +46,37 @@ MTEST_BEGIN("tk.widgets.containers", scrollarea)
                     break;
 
                 case 'a':
-                    if (sa != NULL)
-                        sa->hscroll_mode()->set_none();
+                    if (lb != NULL)
+                        lb->hscroll_mode()->set_none();
                     break;
                 case 's':
-                    if (sa != NULL)
-                        sa->hscroll_mode()->set_clip();
+                    if (lb != NULL)
+                        lb->hscroll_mode()->set_clip();
                     break;
                 case 'd':
-                    if (sa != NULL)
-                        sa->hscroll_mode()->set_optional();
+                    if (lb != NULL)
+                        lb->hscroll_mode()->set_optional();
                     break;
                 case 'f':
-                    if (sa != NULL)
-                        sa->hscroll_mode()->set_always();
+                    if (lb != NULL)
+                        lb->hscroll_mode()->set_always();
                     break;
 
                 case 'z':
-                    if (sa != NULL)
-                        sa->vscroll_mode()->set_none();
+                    if (lb != NULL)
+                        lb->vscroll_mode()->set_none();
                     break;
                 case 'x':
-                    if (sa != NULL)
-                        sa->vscroll_mode()->set_clip();
+                    if (lb != NULL)
+                        lb->vscroll_mode()->set_clip();
                     break;
                 case 'c':
-                    if (sa != NULL)
-                        sa->vscroll_mode()->set_optional();
+                    if (lb != NULL)
+                        lb->vscroll_mode()->set_optional();
                     break;
                 case 'v':
-                    if (sa != NULL)
-                        sa->vscroll_mode()->set_always();
+                    if (lb != NULL)
+                        lb->vscroll_mode()->set_always();
                     break;
                 default:
                     break;
@@ -199,14 +199,13 @@ MTEST_BEGIN("tk.widgets.containers", scrollarea)
         lltl::parray<tk::Widget> widgets;
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
-        tk::Void *wv = NULL;
-        tk::Grid *grid = NULL;
-        tk::ScrollArea *sa = NULL;
+        tk::ListBox *lb = NULL;
+        tk::ListBoxItem *li = NULL;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test scrollarea") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("scrollarea_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test listbox") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("listbox_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
@@ -218,43 +217,41 @@ MTEST_BEGIN("tk.widgets.containers", scrollarea)
         wnd->layout()->set(-0.5, 0.5, 0.5, 0.5);
         MTEST_ASSERT(widgets.push(wnd));
 
-        // Create scroll area
-        MTEST_ASSERT(sa = new tk::ScrollArea(dpy));
-        MTEST_ASSERT(init_widget(sa, vh, "scrollarea") == STATUS_OK);
-        MTEST_ASSERT(widgets.push(sa));
-        MTEST_ASSERT(wnd->add(sa) == STATUS_OK);
-        sa->hscroll_mode()->set(tk::SCROLL_NONE);
-        sa->vscroll_mode()->set(tk::SCROLL_NONE);
-        sa->bg_color()->set_rgb(1.0f, 1.0f, 0.0f);
+        // Create list box
+        MTEST_ASSERT(lb = new tk::ListBox(dpy));
+        MTEST_ASSERT(init_widget(lb, vh, "listbox") == STATUS_OK);
+        MTEST_ASSERT(widgets.push(lb));
+        MTEST_ASSERT(wnd->add(lb) == STATUS_OK);
+        lb->hscroll_mode()->set(tk::SCROLL_NONE);
+        lb->vscroll_mode()->set(tk::SCROLL_NONE);
 
-        // Create grid
-        MTEST_ASSERT(grid = new tk::Grid(dpy));
-        MTEST_ASSERT(init_widget(grid, vh, "grid") == STATUS_OK);
-        MTEST_ASSERT(widgets.push(grid));
-        MTEST_ASSERT(sa->add(grid) == STATUS_OK);
-        grid->padding()->set_all(4);
-        grid->hspacing()->set(8);
-        grid->vspacing()->set(4);
-        grid->bg_color()->set_rgb(1.0, 0.75, 1.0);
-        grid->rows()->set(2);
-        grid->columns()->set(2);
-
-        sa->size_constraints()->set(64, 64, 64, 64);
+        lb->size_constraints()->set(96, 96, 96, 96);
         {
             LSPString id;
             size_t wid = 0;
             size_t col = 0;
 
-            for (size_t i=0; i<4; ++i)
+            for (size_t i=0; i<32; ++i)
             {
-                MTEST_ASSERT(id.fmt_ascii("void-%d", int(wid++)));
+                MTEST_ASSERT(id.fmt_ascii("item-%d", int(wid++)));
+                MTEST_ASSERT(li = new tk::ListBoxItem(dpy));
+                MTEST_ASSERT(init_widget(li, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(li));
+                MTEST_ASSERT(lb->items()->add(li) == STATUS_OK);
 
-                MTEST_ASSERT(wv = new tk::Void(dpy));
-                MTEST_ASSERT(init_widget(wv, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(wv));
-                MTEST_ASSERT(grid->add(wv) == STATUS_OK);
-                wv->size_constraints()->set_min(64, 64);
-                wv->bg_color()->set_rgb24(next_color(col));
+                MTEST_ASSERT(id.fmt_ascii("%s %d",
+                        (i % 6 == 0) ? "Item with long text" : "Item",
+                        int(i)
+                    ));
+                li->text()->set_raw(&id);
+
+                if (i > 16)
+                {
+                    li->text_color()->set_rgb24(next_color(col));
+                    li->text_selected_color()->set_rgb24(next_color(col));
+                    li->bg_color()->set_rgb24(next_color(col));
+                    li->bg_selected_color()->set_rgb24(next_color(col));
+                }
             }
         }
 
@@ -275,5 +272,8 @@ MTEST_BEGIN("tk.widgets.containers", scrollarea)
     }
 
 MTEST_END
+
+
+
 
 

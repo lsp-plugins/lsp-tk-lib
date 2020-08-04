@@ -30,8 +30,11 @@ namespace lsp
             sBorderGap(&sProperties),
             sBorderRadius(&sProperties),
             sBorderColor(&sProperties),
+            sListBgColor(&sProperties),
             sSpacing(&sProperties),
-            sMultiSelect(&sProperties)
+            sMultiSelect(&sProperties),
+            sHScrollSpacing(&sProperties),
+            sVScrollSpacing(&sProperties)
         {
             sArea.nLeft     = 0;
             sArea.nTop      = 0;
@@ -119,8 +122,11 @@ namespace lsp
             sBorderGap.bind("border.gap", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
+            sListBgColor.bind("list.bg.color", &sStyle);
             sSpacing.bind("spacing", &sStyle);
             sMultiSelect.bind("multiselect", &sStyle);
+            sHScrollSpacing.bind("hscroll.spacing", &sStyle);
+            sVScrollSpacing.bind("vscroll.spacing", &sStyle);
 
             sHScroll.lock_range();
             sVScroll.lock_range();
@@ -138,11 +144,11 @@ namespace lsp
                 sBorderGap.init(sclass, 1);
                 sBorderRadius.init(sclass, 2);
                 sBorderColor.init(sclass, "#000000");
+                sListBgColor.init(sclass, "#ffffff");
                 sSpacing.init(sclass, 0);
                 sMultiSelect.init(sclass, false);
-
-                // Overrides
-                sBgColor.override(sclass, "#ffffff");
+                sHScrollSpacing.init(sclass, 1);
+                sVScrollSpacing.init(sclass, 1);
             }
 
             return STATUS_OK;
@@ -169,6 +175,8 @@ namespace lsp
                 query_resize();
             if (sBorderColor.is(prop))
                 query_draw();
+            if (sListBgColor.is(prop))
+                query_draw();
             if (sSpacing.is(prop))
                 query_resize();
             if (sMultiSelect.is(prop))
@@ -188,7 +196,7 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
 
-            lltl::darray<alloc_t> *v    = &alloc->vItems;
+            lltl::darray<item_t> *v    = &alloc->vItems;
 
             alloc->wMinW        = 0;
             alloc->wMinH        = 0;
@@ -263,6 +271,8 @@ namespace lsp
                 border             += (sBorderGap.get() > 0) ? lsp_max(0.0f, sBorderGap.get() * scaling) : 0;
             ssize_t radius      = lsp_max(0.0f, sBorderRadius.get() * scaling);
             size_t rgap         = radius - lsp_max(0.0f, truncf(M_SQRT1_2 * (radius - border)));
+            ssize_t hsspacing   = lsp_max(0.0f, sHScrollSpacing.get() * scaling);
+            ssize_t vsspacing   = lsp_max(0.0f, sVScrollSpacing.get() * scaling);
 
             // Estimate size of each scroll bar
             ws::size_limit_t hb, vb;
@@ -274,30 +284,28 @@ namespace lsp
             vb.nMinWidth    = lsp_max(rgap * 2, vb.nMinWidth);
             vb.nMinHeight   = lsp_max(rgap * 2, vb.nMinHeight);
 
-            a->sArea        = *xr;
-
             a->bHBar        = false;
             a->bVBar        = false;
 
-            ssize_t minw    = (sHScrollMode.clip()) ? 0 : a->wMinW;
-            ssize_t minh    = (sVScrollMode.clip()) ? 0 : a->wMinH;
+            ssize_t minw    = (sHScrollMode.clip()) ? 0 : a->wMinW + rgap * 2;
+            ssize_t minh    = (sVScrollMode.clip()) ? 0 : a->wMinH + rgap * 2;
 
             if ((hscroll == SCROLL_ALWAYS) || (hscroll == SCROLL_OPTIONAL))
             {
                 if ((vscroll == SCROLL_ALWAYS) || (vscroll == SCROLL_OPTIONAL))
                 {
-                    a->sSize.nMinWidth  = hb.nMinWidth  + vb.nMinWidth;
-                    a->sSize.nMinHeight = hb.nMinHeight + vb.nMinHeight;
+                    a->sSize.nMinWidth  = hb.nMinWidth  + vb.nMinWidth  + vsspacing;
+                    a->sSize.nMinHeight = hb.nMinHeight + vb.nMinHeight + hsspacing;
                 }
                 else
                 {
                     a->sSize.nMinWidth  = hb.nMinWidth;
-                    a->sSize.nMinHeight = hb.nMinHeight + minh;
+                    a->sSize.nMinHeight = hb.nMinHeight + minh + hsspacing;
                 }
             }
             else if ((vscroll == SCROLL_ALWAYS) || (vscroll == SCROLL_OPTIONAL))
             {
-                a->sSize.nMinWidth  = vb.nMinWidth  + minw;
+                a->sSize.nMinWidth  = vb.nMinWidth  + minw + vsspacing;
                 a->sSize.nMinHeight = vb.nMinHeight;
             }
             else
@@ -328,12 +336,12 @@ namespace lsp
             if ((hscroll == SCROLL_ALWAYS) || ((hscroll == SCROLL_OPTIONAL) && (xr->nWidth < minw)))
             {
                 a->bHBar            = true;
-                a->sArea.nHeight   -= hb.nMinHeight;
+                a->sArea.nHeight   -= hb.nMinHeight + hsspacing;
 
                 if ((vscroll == SCROLL_ALWAYS) || ((vscroll == SCROLL_OPTIONAL) && (xr->nHeight < minh)))
                 {
                     a->bVBar            = true;
-                    a->sArea.nWidth    -= vb.nMinWidth;
+                    a->sArea.nWidth    -= vb.nMinWidth + vsspacing;
 
                     a->sHBar.nWidth    -= vb.nMinWidth;
                     a->sVBar.nHeight   -= hb.nMinHeight;
@@ -342,7 +350,7 @@ namespace lsp
             else if ((vscroll == SCROLL_ALWAYS) || ((vscroll == SCROLL_OPTIONAL) && (xr->nHeight < minh)))
             {
                 a->bVBar            = true;
-                a->sArea.nWidth    -= vb.nMinWidth;
+                a->sArea.nWidth    -= vb.nMinWidth + vsspacing;
             }
 
             a->sList.nLeft      = a->sArea.nLeft    + rgap;
@@ -354,6 +362,7 @@ namespace lsp
         void ListBox::realize(const ws::rectangle_t *r)
         {
             alloc_t a;
+            allocate_items(&a);
             estimate_size(&a, r);
 
             // Tune scroll bars
@@ -377,6 +386,8 @@ namespace lsp
             sArea   = a.sArea;
             sList   = a.sList;
             vVisible.swap(&a.vItems);
+
+            realize_children(&sList);
 
             // Call parent for realize
             WidgetContainer::realize(r);
@@ -415,6 +426,160 @@ namespace lsp
 
             // Mark for redraw
             query_draw();
+        }
+
+        void ListBox::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
+        {
+            if (nFlags & REDRAW_SURFACE)
+                force = true;
+
+            bool aa;
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            ssize_t radius      = lsp_max(0.0f, sBorderRadius.get() * scaling);
+            ssize_t hsspacing   = lsp_max(0.0f, sHScrollSpacing.get() * scaling);
+            ssize_t vsspacing   = lsp_max(0.0f, sVScrollSpacing.get() * scaling);
+            lsp::Color col(sBgColor);
+
+            ws::rectangle_t h, v, xa, xr;
+            xa  = sSize;
+
+            // Render scroll bars
+            if (sHBar.visibility()->get())
+            {
+                sHBar.get_padded_rectangle(&h);
+                xa.nHeight  -= h.nHeight;
+                if ((sHBar.redraw_pending()) || (force))
+                {
+                    sHBar.render(s, area, force);
+                    sHBar.commit_redraw();
+                }
+
+                if (sVBar.visibility()->get())
+                {
+                    sVBar.get_padded_rectangle(&v);
+                    xa.nWidth   -= v.nWidth;
+                    if ((sVBar.redraw_pending()) || (force))
+                    {
+                        sVBar.render(s, area, force);
+                        sVBar.commit_redraw();
+                    }
+
+                    // Draw the padding
+                    if (force)
+                    {
+                        s->clip_begin(area);
+                        s->fill_rect(col, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
+                        s->fill_rect(col, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight + hsspacing);
+                        s->fill_rect(col, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
+                        s->clip_end();
+                    }
+                }
+                else
+                {
+                    // Draw the padding
+                    if (force)
+                    {
+                        s->clip_begin(area);
+                        s->fill_rect(col, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
+                        s->fill_rect(col, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
+                        s->clip_end();
+                    }
+                }
+            }
+            else if (sVBar.visibility()->get())
+            {
+                sVBar.get_padded_rectangle(&v);
+                xa.nWidth   -= v.nWidth;
+
+                if ((sVBar.redraw_pending()) || (force))
+                {
+                    sVBar.render(s, area, force);
+                    sVBar.commit_redraw();
+                }
+
+                if (force)
+                {
+                    s->clip_begin(area);
+                    s->fill_rect(col, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight);
+                    s->clip_end();
+                }
+            }
+
+            // Draw the list contents
+            if (force)
+            {
+                if (Size::intersection(&xa, &sArea, area))
+                {
+                    // Draw the frame around
+                    s->clip_begin(area);
+                        s->fill_frame(col, &sArea, &sList);
+
+                        aa = s->set_antialiasing(true);
+                            col.copy(sBorderColor);
+                            xr = sArea;
+                            s->fill_round_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
+
+                            col.copy(sListBgColor);
+                            xr.nLeft       += border;
+                            xr.nTop        += border;
+                            xr.nWidth      -= border * 2;
+                            xr.nHeight     -= border * 2;
+                            s->fill_round_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
+
+                        s->set_antialiasing(aa);
+                    s->clip_end();
+                }
+
+                if (Size::intersection(&xa, &sList, area))
+                {
+                    // Perform rendering of list
+                    LSPString text;
+                    ws::font_parameters_t fp;
+                    ws::text_parameters_t tp;
+                    sFont.get_parameters(pDisplay, scaling, &fp);
+
+                    s->clip_begin(&xa);
+                    for (size_t i=0, n=vVisible.size(); i<n; ++i)
+                    {
+                        item_t *it = vVisible.get(i);
+                        if (it == NULL)
+                            continue;
+                        ListBoxItem *li = it->item;
+                        if (li == NULL)
+                            continue;
+
+                        li->commit_redraw();
+                        if (!Size::overlap(&xa, &it->r)) // Do not draw invisible items
+                            continue;
+
+                        text.clear();
+                        li->text()->format(&text);
+                        bool selected = vSelected.contains(li);
+                        sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+
+                        if (selected)
+                        {
+                            col.copy(li->bg_selected_color()->color());
+                            s->fill_rect(col, &it->r);
+                            col.copy(li->text_selected_color()->color());
+                        }
+                        else
+                        {
+                            col.copy(li->bg_color()->color());
+                            s->fill_rect(col, &it->r);
+                            col.copy(li->text_color()->color());
+                        }
+
+                        li->padding()->enter(&xr, &it->r, scaling);
+                        sFont.draw(s, col,
+                                xr.nLeft,
+                                xr.nTop  + ((it->r.nHeight - fp.Height) * 0.5f) + fp.Ascent,
+                                scaling, &text);
+                    }
+                    s->clip_end();
+                }
+            }
         }
 
         void ListBox::keep_single_selection()

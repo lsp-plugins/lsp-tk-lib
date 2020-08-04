@@ -66,8 +66,11 @@ namespace lsp
                 prop::Integer                   sBorderGap;
                 prop::Integer                   sBorderRadius;
                 prop::Color                     sBorderColor;
+                prop::Color                     sListBgColor;
                 prop::Integer                   sSpacing;
                 prop::Boolean                   sMultiSelect;
+                prop::Integer                   sHScrollSpacing;
+                prop::Integer                   sVScrollSpacing;
 
             protected:
                 void                    do_destroy();
@@ -109,7 +112,11 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_gap,                 &sBorderGap)
                 LSP_TK_PROPERTY(Integer,            border_radius,              &sBorderRadius)
                 LSP_TK_PROPERTY(Color,              border_color,               &sBorderColor)
+                LSP_TK_PROPERTY(Color,              list_bg_color,              &sListBgColor)
                 LSP_TK_PROPERTY(Boolean,            multi_select,               &sMultiSelect)
+
+                LSP_TK_PROPERTY(Integer,            hscroll_spacing,            &sHScrollSpacing)
+                LSP_TK_PROPERTY(Integer,            vscroll_spacing,            &sVScrollSpacing)
 
             public:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);
@@ -119,6 +126,8 @@ namespace lsp
                 virtual status_t            remove(Widget *child);
 
                 virtual status_t            remove_all();
+
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
     
     } /* namespace tk */

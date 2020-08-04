@@ -265,6 +265,7 @@ namespace lsp
             if (s == NULL)
                 return STATUS_OK;
 
+            size_t flags = nFlags;
             ws::ISurface *bs = get_surface(s);
 
             ws::rectangle_t xr;
@@ -273,7 +274,7 @@ namespace lsp
                 xr.nTop     = 0;
                 xr.nWidth   = sSize.nWidth;
                 xr.nHeight  = sSize.nHeight;
-                render(bs, &xr, nFlags);
+                render(bs, &xr, flags);
 
                 s->draw(bs, 0, 0);
                 commit_redraw();
@@ -306,6 +307,8 @@ namespace lsp
         {
             if (!bMapped)
                 return;
+
+            lsp_trace("render force=%d", int(force));
 
             lsp::Color bg_color(sBgColor);
 
@@ -602,7 +605,7 @@ namespace lsp
                     {
                         bMapped     = true;
                         sRedraw.launch(-1, 40);
-                        query_draw();
+                        query_draw(REDRAW_SURFACE);
                     }
                     break;
 

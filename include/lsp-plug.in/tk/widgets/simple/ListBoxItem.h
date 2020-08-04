@@ -24,15 +24,21 @@ namespace lsp
                 prop::Color                 sTextColor;
                 prop::Color                 sTextSelectedColor;
 
+            protected:
+                virtual void                property_changed(Property *prop);
+
             public:
                 explicit ListBoxItem(Display *dpy);
                 virtual ~ListBoxItem();
 
             public:
-                LSP_TK_PROPERTY(String,                     text,                       &sText)
-                LSP_TK_PROPERTY(Color,                      bg_selected_color,          &sBgSelectedColor)
-                LSP_TK_PROPERTY(Color,                      text_color,                 &sTextColor)
-                LSP_TK_PROPERTY(Color,                      text_selected_color,        &sTextSelectedColor)
+                LSP_TK_PROPERTY(String,     text,                       &sText)
+                LSP_TK_PROPERTY(Color,      bg_selected_color,          &sBgSelectedColor)
+                LSP_TK_PROPERTY(Color,      text_color,                 &sTextColor)
+                LSP_TK_PROPERTY(Color,      text_selected_color,        &sTextSelectedColor)
+
+            public:
+                virtual status_t            init();
         };
     
     } /* namespace tk */

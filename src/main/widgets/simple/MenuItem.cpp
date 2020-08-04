@@ -50,11 +50,11 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sType.bind("type", &sStyle);
             sChecked.bind("checked", &sStyle);
-            sBgSelectedColor.bind("background.selected.color", &sStyle);
+            sBgSelectedColor.bind("bg.selected.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sTextSelectedColor.bind("text.selected.color", &sStyle);
             sCheckColor.bind("check.color", &sStyle);
-            sCheckBgColor.bind("check.background.color", &sStyle);
+            sCheckBgColor.bind("check.bg.color", &sStyle);
             sCheckBorderColor.bind("check.border.color", &sStyle);
             sShortcut.bind("shortcut", &sStyle);
             sMenu.bind(NULL);
