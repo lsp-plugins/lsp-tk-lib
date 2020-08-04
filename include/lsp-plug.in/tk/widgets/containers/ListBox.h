@@ -27,6 +27,7 @@ namespace lsp
                 {
                     ws::rectangle_t     a;          // Allocated space for widget
                     ws::rectangle_t     r;          // Realized space for widget
+                    size_t              index;      // Index of the widget
                     ListBoxItem        *item;       // Widget item contained in the cell
                 } item_t;
 
@@ -45,6 +46,11 @@ namespace lsp
                 } alloc_t;
 
             protected:
+                size_t                          nBMask;
+                bool                            bSelActive;
+                ssize_t                         nCurrIndex;
+                ssize_t                         nLastIndex;
+
                 ScrollBar                       sHBar;
                 ScrollBar                       sVBar;
                 ws::rectangle_t                 sArea;
@@ -78,6 +84,9 @@ namespace lsp
                 void                    estimate_size(alloc_t *a, const ws::rectangle_t *xr);
                 void                    realize_children(const ws::rectangle_t *r);
                 void                    keep_single_selection();
+                item_t                 *find_item(ssize_t x, ssize_t y);
+                void                    select_range(ssize_t first, ssize_t last, bool add);
+                void                    select_single(ssize_t index, bool add);
 
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
                 static void             on_add_item(void *obj, Property *prop, Widget *w);
@@ -128,6 +137,14 @@ namespace lsp
                 virtual status_t            remove_all();
 
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+
+                virtual status_t            on_mouse_down(const ws::event_t *e);
+
+                virtual status_t            on_mouse_up(const ws::event_t *e);
+
+                virtual status_t            on_mouse_move(const ws::event_t *e);
+
+                virtual status_t            on_mouse_scroll(const ws::event_t *e);
         };
     
     } /* namespace tk */

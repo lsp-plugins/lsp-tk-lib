@@ -48,6 +48,29 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t GenericWidgetSet::toggle(Widget *w)
+        {
+            if (w == NULL)
+                return STATUS_BAD_ARGUMENTS;
+            if (!w->instance_of(pMeta))
+                return STATUS_BAD_TYPE;
+            if (!sSet.toggle(w))
+                return STATUS_NO_MEM;
+
+            // Notify listeners
+            if (pCListener != NULL)
+            {
+                if (sSet.contains(w))
+                    pCListener->add(this, w);
+                else
+                    pCListener->remove(this, w);
+            }
+            if (pListener != NULL)
+                pListener->notify(this);
+
+            return STATUS_OK;
+        }
+
         status_t GenericWidgetSet::remove(Widget *w)
         {
             if (w == NULL)

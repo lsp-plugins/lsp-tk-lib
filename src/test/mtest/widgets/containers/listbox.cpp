@@ -78,6 +78,10 @@ MTEST_BEGIN("tk.widgets.containers", listbox)
                     if (lb != NULL)
                         lb->vscroll_mode()->set_always();
                     break;
+                case 'm':
+                    if (lb != NULL)
+                        lb->multi_select()->toggle();
+                    break;
                 default:
                     break;
             }
@@ -224,6 +228,7 @@ MTEST_BEGIN("tk.widgets.containers", listbox)
         MTEST_ASSERT(wnd->add(lb) == STATUS_OK);
         lb->hscroll_mode()->set(tk::SCROLL_NONE);
         lb->vscroll_mode()->set(tk::SCROLL_NONE);
+        lb->multi_select()->set(true);
 
         lb->size_constraints()->set(96, 96, 96, 96);
         {

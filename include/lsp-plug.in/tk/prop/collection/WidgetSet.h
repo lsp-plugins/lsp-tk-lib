@@ -31,6 +31,7 @@ namespace lsp
             public:
                 status_t        add(Widget *w);
                 status_t        remove(Widget *w);
+                status_t        toggle(Widget *w);
                 void            clear();
 
                 status_t        swap(GenericWidgetSet *dst);
@@ -58,6 +59,7 @@ namespace lsp
                     inline status_t     add(widget_t *w)                    { return GenericWidgetSet::add(w);              }
                     inline status_t     remove(widget_t *w)                 { return GenericWidgetSet::remove(w);           }
                     inline bool         contains(const widget_t *w) const   { return sSet.contains(w);                      }
+                    inline status_t     toggle(widget_t *w)                 { return GenericWidgetSet::toggle(w);           }
 
                     inline bool         values(lltl::parray<widget_t> *dst)
                     {

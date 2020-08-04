@@ -36,6 +36,11 @@ namespace lsp
             sHScrollSpacing(&sProperties),
             sVScrollSpacing(&sProperties)
         {
+            nBMask          = 0;
+            bSelActive      = false;
+            nCurrIndex      = 0;
+            nLastIndex      = 0;
+
             sArea.nLeft     = 0;
             sArea.nTop      = 0;
             sArea.nWidth    = 0;
@@ -124,7 +129,7 @@ namespace lsp
             sBorderColor.bind("border.color", &sStyle);
             sListBgColor.bind("list.bg.color", &sStyle);
             sSpacing.bind("spacing", &sStyle);
-            sMultiSelect.bind("multiselect", &sStyle);
+            sMultiSelect.bind("selection.multiple", &sStyle);
             sHScrollSpacing.bind("hscroll.spacing", &sStyle);
             sVScrollSpacing.bind("vscroll.spacing", &sStyle);
 
@@ -218,6 +223,7 @@ namespace lsp
                 if  (!ai)
                     return;
                 ai->item        = li;
+                ai->index       = i;
 
                 // Obtain the text of item and it's parameters
                 s.clear();
@@ -676,6 +682,156 @@ namespace lsp
             // Remove widget from selection list
             if (_this->vItems.is(prop))
                 _this->vSelected.remove(item);
+        }
+
+        status_t ListBox::on_mouse_down(const ws::event_t *e)
+        {
+            if ((nBMask == 0) && (e->nCode == ws::MCB_LEFT))
+            {
+                nLastIndex      = nCurrIndex;
+                bSelActive      = Position::inside(&sList, e->nLeft, e->nTop);
+            }
+            nBMask     |= 1 << e->nCode;
+
+            ws::event_t xe  = *e;
+            xe.nType        = ws::UIE_MOUSE_MOVE;
+
+            return on_mouse_move(&xe);
+        }
+
+        status_t ListBox::on_mouse_up(const ws::event_t *e)
+        {
+            nBMask     &= ~(1 << e->nCode);
+            return STATUS_OK;
+        }
+
+        status_t ListBox::on_mouse_move(const ws::event_t *e)
+        {
+            if (nBMask != ws::MCF_LEFT)
+                return STATUS_OK;
+
+            item_t *it  = find_item(e->nLeft, e->nTop);
+            if (it != NULL)
+            {
+                ssize_t index   = it->index;
+                nCurrIndex      = index;
+                if (e->nState & ws::MCF_SHIFT)
+                    select_range(nLastIndex, index, e->nState & ws::MCF_CONTROL);
+                else
+                    select_single(index, e->nState & ws::MCF_CONTROL);
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t ListBox::on_mouse_scroll(const ws::event_t *e)
+        {
+            ws::event_t xe = *e; // Copy the event
+
+            switch (xe.nCode)
+            {
+                case ws::MCD_UP:
+                case ws::MCD_DOWN:
+                    if (xe.nState & ws::MCF_SHIFT)
+                    {
+                        if (!sHBar.visibility()->get())
+                            break;
+                        xe.nState &= ~ws::MCF_SHIFT; // Shift may be modifier, reset this flag
+                        sHBar.handle_event(e);
+                    }
+                    else
+                    {
+                        if (!sVBar.visibility()->get())
+                            break;
+                        sVBar.handle_event(e);
+                    }
+                    break;
+
+                case ws::MCD_LEFT:
+                case ws::MCD_RIGHT:
+                    if (xe.nState & ws::MCF_SHIFT)
+                    {
+                        if (!sVBar.visibility()->get())
+                            break;
+                        xe.nState &= ~ws::MCF_SHIFT; // Shift may be modifier, reset this flag
+                        sVBar.handle_event(e);
+                    }
+                    else
+                    {
+                        if (!sHBar.visibility()->get())
+                            break;
+                        sHBar.handle_event(e);
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+
+
+            return STATUS_OK;
+        }
+
+        ListBox::item_t *ListBox::find_item(ssize_t x, ssize_t y)
+        {
+            if (vVisible.is_empty())
+                return NULL;
+
+            // Since all items have sorted order from top to bottom, perform binary search
+            ssize_t first = 0, last = vVisible.size() - 1, middle;
+            item_t *it;
+
+            while (first <= last)
+            {
+                middle          = (first + last) >> 1;
+                it              = vVisible.uget(middle);
+
+                if (y < it->r.nTop)
+                    last  = middle - 1;
+                else if (y >= (it->r.nTop + it->r.nHeight))
+                    first = middle + 1;
+                else
+                {
+                    first       = middle;
+                    break;
+                }
+            }
+
+            it  = vVisible.uget(first);
+            return (Position::inside(&it->r, x, y)) ? it : NULL;
+        }
+
+        void ListBox::select_range(ssize_t first, ssize_t last, bool add)
+        {
+            if (!sMultiSelect.get())
+            {
+                select_single(last, add);
+                return;
+            }
+
+            if (!add)
+                vSelected.clear();
+
+            if (last < first)
+                swap(first, last);
+
+            for (; first <= last; ++first)
+            {
+                ListBoxItem *li = vItems.get(first);
+                if ((li == NULL) || (!li->visibility()->get()))
+                    continue;
+
+                vSelected.add(li);
+            }
+        }
+
+        void ListBox::select_single(ssize_t index, bool add)
+        {
+            if ((!add) || (!sMultiSelect.get()))
+                vSelected.clear();
+            ListBoxItem *it = vItems.get(index);
+            if (it != NULL)
+                vSelected.toggle(it);
         }
 
     } /* namespace tk */
