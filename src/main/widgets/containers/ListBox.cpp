@@ -40,6 +40,7 @@ namespace lsp
             bSelActive      = false;
             nCurrIndex      = 0;
             nLastIndex      = 0;
+            nKeyScroll      = SCR_NONE;
 
             sArea.nLeft     = 0;
             sArea.nTop      = 0;
@@ -102,6 +103,8 @@ namespace lsp
                 return result;
 
             sIListener.bind_all(this, on_add_item, on_remove_item);
+            sKeyTimer.bind(pDisplay);
+            sKeyTimer.set_handler(key_scroll_handler, self());
 
             // Configure scroll bars
             sHBar.orientation()->set(O_HORIZONTAL);
@@ -371,6 +374,11 @@ namespace lsp
             allocate_items(&a);
             estimate_size(&a, r);
 
+            // Update internal state
+            sArea   = a.sArea;
+            sList   = a.sList;
+            vVisible.swap(&a.vItems);
+
             // Tune scroll bars
             sHBar.visibility()->set(a.bHBar);
             sVBar.visibility()->set(a.bVBar);
@@ -378,32 +386,43 @@ namespace lsp
             if (a.bHBar)
             {
                 sHBar.realize_widget(&a.sHBar);
-                sHScroll.set_range(0, lsp_max(0, a.wMinW - a.sArea.nWidth));
+                sHScroll.set_range(0, lsp_max(0, a.wMinW - a.sList.nWidth));
                 sHBar.value()->set_range(sHScroll.min(), sHScroll.max());
             }
             if (a.bVBar)
             {
                 sVBar.realize_widget(&a.sVBar);
-                sVScroll.set_range(0, lsp_max(0, a.wMinH - a.sArea.nHeight));
+                sVScroll.set_range(0, lsp_max(0, a.wMinH - a.sList.nHeight));
                 sVBar.value()->set_range(sVScroll.min(), sVScroll.max());
             }
 
-            // Realize child widget if present
-            sArea   = a.sArea;
-            sList   = a.sList;
-            vVisible.swap(&a.vItems);
+            // Realize children
+            realize_children();
 
-            realize_children(&sList);
+            // Update scrolling
+            item_t *curr    = find_by_index(nCurrIndex);
+            ssize_t start   = vVisible.index_of(curr);
+            if (start >= 0)
+            {
+                if (scroll_to_item(start))
+                    realize_children();
+            }
 
             // Call parent for realize
             WidgetContainer::realize(r);
         }
 
-        void ListBox::realize_children(const ws::rectangle_t *r)
+        void ListBox::realize_children()
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
             ssize_t max_w       = sList.nWidth;
+
+            ws::rectangle_t xr  = sList;
+            if (sHBar.visibility()->get())
+                xr.nLeft   -= sHBar.value()->get();
+            if (sVBar.visibility()->get())
+                xr.nTop    -= sVBar.value()->get();
 
             // Estimate maximum width
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
@@ -413,8 +432,6 @@ namespace lsp
             }
 
             // Realize widgets
-            ws::rectangle_t xr  = *r;
-
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 item_t *it  = vVisible.uget(i);
@@ -646,13 +663,7 @@ namespace lsp
             if ((&_this->sHBar != sender) && (&_this->sVBar != sender))
                 return STATUS_OK;
 
-            ws::rectangle_t xr = _this->sList;
-            if (_this->sHBar.visibility()->get())
-                xr.nLeft   -= _this->sHBar.value()->get();
-            if (_this->sVBar.visibility()->get())
-                xr.nTop    -= _this->sVBar.value()->get();
-
-            _this->realize_children(&xr);
+            _this->realize_children();
             _this->query_draw();
 
             return STATUS_OK;
@@ -713,12 +724,11 @@ namespace lsp
             item_t *it  = find_item(e->nLeft, e->nTop);
             if (it != NULL)
             {
-                ssize_t index   = it->index;
-                nCurrIndex      = index;
+                nCurrIndex      = it->index;
                 if (e->nState & ws::MCF_SHIFT)
-                    select_range(nLastIndex, index, e->nState & ws::MCF_CONTROL);
+                    select_range(nLastIndex, nCurrIndex, e->nState & ws::MCF_CONTROL);
                 else
-                    select_single(index, e->nState & ws::MCF_CONTROL);
+                    select_single(nCurrIndex, e->nState & ws::MCF_CONTROL);
             }
 
             return STATUS_OK;
@@ -801,6 +811,34 @@ namespace lsp
             return (Position::inside(&it->r, x, y)) ? it : NULL;
         }
 
+        ListBox::item_t *ListBox::find_by_index(ssize_t index)
+        {
+            if (vVisible.is_empty())
+                return NULL;
+
+            // Since all items have sorted order from top to bottom, perform binary search
+            ssize_t first = 0, last = vVisible.size() - 1, middle;
+            item_t *it;
+
+            while (first <= last)
+            {
+                middle          = (first + last) >> 1;
+                it              = vVisible.uget(middle);
+
+                if (index < ssize_t(it->index))
+                    last  = middle - 1;
+                else if (index > ssize_t(it->index))
+                    first = middle + 1;
+                else
+                {
+                    first       = middle;
+                    break;
+                }
+            }
+
+            return vVisible.get(first);
+        }
+
         void ListBox::select_range(ssize_t first, ssize_t last, bool add)
         {
             if (!sMultiSelect.get())
@@ -832,6 +870,202 @@ namespace lsp
             ListBoxItem *it = vItems.get(index);
             if (it != NULL)
                 vSelected.toggle(it);
+        }
+
+        status_t ListBox::on_key_down(const ws::event_t *e)
+        {
+            size_t scroll   = nKeyScroll;
+
+            nKeyScroll  = lsp_setflag(nKeyScroll, SCR_SHIFT, e->nState & ws::MCF_SHIFT);
+            nKeyScroll  = lsp_setflag(nKeyScroll, SCR_CTRL, e->nState & ws::MCF_CONTROL);
+
+            switch (e->nCode)
+            {
+                case ws::WSK_KEYPAD_UP:         nKeyScroll |= SCR_KP_UP;        break;
+                case ws::WSK_KEYPAD_PAGE_UP:    nKeyScroll |= SCR_KP_PGUP;      break;
+                case ws::WSK_KEYPAD_DOWN:       nKeyScroll |= SCR_KP_DOWN;      break;
+                case ws::WSK_KEYPAD_PAGE_DOWN:  nKeyScroll |= SCR_KP_PGDOWN;    break;
+                case ws::WSK_KEYPAD_LEFT:       nKeyScroll |= SCR_KP_LEFT;      break;
+                case ws::WSK_KEYPAD_RIGHT:      nKeyScroll |= SCR_KP_RIGHT;     break;
+
+                case ws::WSK_UP:                nKeyScroll |= SCR_UP;           break;
+                case ws::WSK_PAGE_UP:           nKeyScroll |= SCR_PGUP;         break;
+                case ws::WSK_DOWN:              nKeyScroll |= SCR_DOWN;         break;
+                case ws::WSK_PAGE_DOWN:         nKeyScroll |= SCR_PGDOWN;       break;
+                case ws::WSK_LEFT:              nKeyScroll |= SCR_LEFT;         break;
+                case ws::WSK_RIGHT:             nKeyScroll |= SCR_RIGHT;        break;
+                    break;
+
+                case ws::WSK_HOME:
+                case ws::WSK_KEYPAD_HOME:
+                {
+                    item_t *it  = vVisible.first();
+                    if (it != NULL)
+                    {
+                        nCurrIndex  = it->index;
+                        select_single(nCurrIndex, false);
+                        scroll_to_item(vVisible.index_of(it));
+                    }
+                    break;
+                }
+
+                case ws::WSK_END:
+                case ws::WSK_KEYPAD_END:
+                {
+                    item_t *it  = vVisible.last();
+                    if (it != NULL)
+                    {
+                        nCurrIndex  = it->index;
+                        select_single(nCurrIndex, false);
+                        scroll_to_item(vVisible.index_of(it));
+                    }
+                    break;
+                }
+
+                default:
+                    break;
+            }
+
+            if ((scroll ^ nKeyScroll) & SCR_KEYMASK)
+            {
+                on_key_scroll();
+                if (scroll == 0)
+                    sKeyTimer.launch(-1, 250, 1000);
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t ListBox::on_key_up(const ws::event_t *e)
+        {
+            nKeyScroll  = lsp_setflag(nKeyScroll, SCR_SHIFT, e->nState & ws::MCF_SHIFT);
+            nKeyScroll  = lsp_setflag(nKeyScroll, SCR_CTRL, e->nState & ws::MCF_CONTROL);
+
+            switch (e->nCode)
+            {
+                case ws::WSK_KEYPAD_UP:         nKeyScroll &= ~SCR_KP_UP;       break;
+                case ws::WSK_KEYPAD_PAGE_UP:    nKeyScroll &= ~SCR_KP_PGUP;     break;
+                case ws::WSK_KEYPAD_DOWN:       nKeyScroll &= ~SCR_KP_DOWN;     break;
+                case ws::WSK_KEYPAD_PAGE_DOWN:  nKeyScroll &= ~SCR_KP_PGDOWN;   break;
+                case ws::WSK_KEYPAD_LEFT:       nKeyScroll &= ~SCR_KP_LEFT;     break;
+                case ws::WSK_KEYPAD_RIGHT:      nKeyScroll &= ~SCR_KP_RIGHT;    break;
+
+                case ws::WSK_UP:                nKeyScroll &= ~SCR_UP;          break;
+                case ws::WSK_PAGE_UP:           nKeyScroll &= ~SCR_PGUP;        break;
+                case ws::WSK_DOWN:              nKeyScroll &= ~SCR_DOWN;        break;
+                case ws::WSK_PAGE_DOWN:         nKeyScroll &= ~SCR_PGDOWN;      break;
+                case ws::WSK_LEFT:              nKeyScroll &= ~SCR_LEFT;        break;
+                case ws::WSK_RIGHT:             nKeyScroll &= ~SCR_RIGHT;       break;
+
+                default:
+                    break;
+            }
+
+            if (!(nKeyScroll & SCR_KEYMASK))
+                sKeyTimer.cancel();
+
+            return STATUS_OK;
+        }
+
+        status_t ListBox::key_scroll_handler(ws::timestamp_t time, void *arg)
+        {
+            ListBox *_this = widget_ptrcast<ListBox>(arg);
+            return (_this != NULL) ? _this->on_key_scroll() : STATUS_OK;
+        }
+
+        status_t ListBox::on_key_scroll()
+        {
+            size_t k1 = nKeyScroll & SCR_KEYMASK1;
+            size_t k2 = nKeyScroll & SCR_KEYMASK2;
+            size_t mask = k1 ^ (k2 >> 1); // UP key cancels DOWN etc
+            if (mask == 0)
+                return STATUS_OK;
+
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            item_t *curr    = find_by_index(nCurrIndex);
+            ssize_t start   = lsp_max(-1, vVisible.index_of(curr));
+            ssize_t last    = vVisible.size() - 1;
+            ssize_t vindex  = start;
+
+            // Vertical scrolling
+            if (mask & (SCR_PGUP | SCR_KP_PGUP))
+            {
+                ssize_t amount  = sList.nHeight - curr->r.nHeight;
+
+                // Perform PG_UP and PG_DOWN scroll
+                if (nKeyScroll & (SCR_PGUP | SCR_KP_PGUP))
+                {
+                    while (vindex > 0)
+                    {
+                        curr        = vVisible.get(--vindex);
+                        amount     -= curr->r.nHeight;
+                        if (amount <= 0)
+                            break;
+                    }
+                }
+                else
+                {
+                    while (vindex < last)
+                    {
+                        curr        = vVisible.get(++vindex);
+                        amount     -= curr->r.nHeight;
+                        if (amount <= 0)
+                            break;
+                    }
+                }
+            }
+            else if ((mask & SCR_UP) | (mask & SCR_KP_UP))
+            {
+                if (nKeyScroll & (SCR_UP | SCR_KP_UP))
+                {
+                    if (vindex > 0)
+                        --vindex;
+                }
+                else
+                {
+                    if (vindex < last)
+                        ++vindex;
+                }
+            }
+
+            if (vindex != start)
+            {
+                curr        = vVisible.uget(vindex);
+                nCurrIndex  = curr->index;
+                select_single(nCurrIndex, false);
+                scroll_to_item(vindex);
+            }
+
+            // Horizontal scrolling
+            if ((mask & (SCR_LEFT | SCR_KP_LEFT)) && (sHBar.visibility()->get()))
+            {
+                float amount    = sHBar.accel_step()->get(nKeyScroll & SCR_CTRL, nKeyScroll & SCR_SHIFT);
+                amount          = lsp_max(1.0f, amount * scaling);
+                if (nKeyScroll & (SCR_LEFT | SCR_KP_LEFT))
+                    amount         = -amount;
+                sHBar.value()->add(amount);
+            }
+
+            return STATUS_OK;
+        }
+
+        bool ListBox::scroll_to_item(ssize_t vindex)
+        {
+            if (!sVBar.visibility()->get())
+                return false;
+
+            item_t *curr    = vVisible.get(vindex);
+            if (curr == NULL)
+                return false;
+
+            if (curr->r.nTop < sList.nTop)
+                sVBar.value()->sub(sList.nTop - curr->r.nTop);
+            else if ((curr->r.nTop + curr->r.nHeight) > (sList.nTop + sList.nHeight))
+                sVBar.value()->add(curr->r.nTop + curr->r.nHeight - sList.nTop - sList.nHeight);
+            else
+                return false;
+
+            return true;
         }
 
     } /* namespace tk */

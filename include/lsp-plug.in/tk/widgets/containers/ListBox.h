@@ -45,12 +45,39 @@ namespace lsp
                     ws::rectangle_t         sVBar;      // Vertical scroll bar
                 } alloc_t;
 
+                enum scroll_t
+                {
+                    SCR_NONE            = 0,
+                    SCR_UP              = 1 << 0,
+                    SCR_DOWN            = 1 << 1,
+                    SCR_KP_UP           = 1 << 2,
+                    SCR_KP_DOWN         = 1 << 3,
+                    SCR_PGUP            = 1 << 4,
+                    SCR_PGDOWN          = 1 << 5,
+                    SCR_KP_PGUP         = 1 << 6,
+                    SCR_KP_PGDOWN       = 1 << 7,
+
+                    SCR_LEFT            = 1 << 8,
+                    SCR_RIGHT           = 1 << 9,
+                    SCR_KP_LEFT         = 1 << 10,
+                    SCR_KP_RIGHT        = 1 << 11,
+
+                    SCR_SHIFT           = 1 << 12,
+                    SCR_CTRL            = 1 << 13,
+
+                    SCR_KEYMASK         = 0xfff,
+                    SCR_KEYMASK1        = 0x555,
+                    SCR_KEYMASK2        = 0xaaa
+                };
+
             protected:
                 size_t                          nBMask;
                 bool                            bSelActive;
                 ssize_t                         nCurrIndex;
                 ssize_t                         nLastIndex;
+                size_t                          nKeyScroll;     // Key scroll direction
 
+                Timer                           sKeyTimer;      // Key scroll timer
                 ScrollBar                       sHBar;
                 ScrollBar                       sVBar;
                 ws::rectangle_t                 sArea;
@@ -82,15 +109,19 @@ namespace lsp
                 void                    do_destroy();
                 void                    allocate_items(alloc_t *alloc);
                 void                    estimate_size(alloc_t *a, const ws::rectangle_t *xr);
-                void                    realize_children(const ws::rectangle_t *r);
+                void                    realize_children();
                 void                    keep_single_selection();
                 item_t                 *find_item(ssize_t x, ssize_t y);
+                item_t                 *find_by_index(ssize_t index);
                 void                    select_range(ssize_t first, ssize_t last, bool add);
                 void                    select_single(ssize_t index, bool add);
+                status_t                on_key_scroll();
+                bool                    scroll_to_item(ssize_t vindex);
 
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
                 static void             on_add_item(void *obj, Property *prop, Widget *w);
                 static void             on_remove_item(void *obj, Property *prop, Widget *w);
+                static status_t         key_scroll_handler(ws::timestamp_t time, void *arg);
 
             protected:
                 virtual void            property_changed(Property *prop);
@@ -145,6 +176,10 @@ namespace lsp
                 virtual status_t            on_mouse_move(const ws::event_t *e);
 
                 virtual status_t            on_mouse_scroll(const ws::event_t *e);
+
+                virtual status_t            on_key_down(const ws::event_t *e);
+
+                virtual status_t            on_key_up(const ws::event_t *e);
         };
     
     } /* namespace tk */

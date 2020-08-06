@@ -159,6 +159,14 @@ namespace lsp
             return old;
         }
 
+        float StepFloat::get(bool accel, bool decel) const
+        {
+            if (accel != decel)
+                return (accel) ? fStep * fAccel : fStep * fDecel;
+
+            return fStep;
+        }
+
         namespace prop
         {
             status_t StepFloat::init(Style *style, float step, float accel, float decel)

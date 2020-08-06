@@ -78,6 +78,7 @@ namespace lsp
                 inline float        step() const            { return fStep;                             }
                 inline float        step_accel() const      { return fStep * fAccel;                    }
                 inline float        step_decel() const      { return fStep * fDecel;                    }
+                float               get(bool accel, bool decel = false) const;
 
                 float               set(float v);
                 void                set(float v, float accel, float decel);
