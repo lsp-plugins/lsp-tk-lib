@@ -2142,7 +2142,8 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/ListBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ListBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ListBox.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/PopupWindow.o: \
  main/widgets/containers/PopupWindow.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -12266,6 +12267,147 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/led.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid3.o: \
  test/mtest/widgets/containers/grid3.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Menu.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ListBox.h \
+ $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
+$(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/listbox.o: \
+ test/mtest/widgets/containers/listbox.cpp \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
