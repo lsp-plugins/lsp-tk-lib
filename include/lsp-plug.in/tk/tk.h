@@ -133,6 +133,7 @@
 // Compound widgets
 #include <lsp-plug.in/tk/widgets/compound/Menu.h>
 #include <lsp-plug.in/tk/widgets/compound/ListBox.h>
+#include <lsp-plug.in/tk/widgets/compound/ComboBox.h>
 
 namespace lsp
 {

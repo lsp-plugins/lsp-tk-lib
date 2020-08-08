@@ -132,46 +132,20 @@ namespace lsp
                 virtual void                        destroy();
 
             public:
-                inline String                      *text()                      { return &sText;                }
-
-                inline TextSelection               *selection()                 { return &sSelection;           }
-                inline const TextSelection         *selection() const           { return &sSelection;           }
-
-                inline Font                        *font()                      { return &sFont;                }
-                inline const Font                  *font() const                { return &sFont;                }
-
-                inline Color                       *color()                     { return &sColor;               }
-                inline const Color                 *color() const               { return &sColor;               }
-
-                inline Color                       *border_color()              { return &sBorderColor;         }
-                inline const Color                 *border_color() const        { return &sBorderColor;         }
-
-                inline Color                       *border_gap_color()          { return &sBorderGapColor;      }
-                inline const Color                 *border_gap_color() const    { return &sBorderGapColor;      }
-
-                inline Color                       *cursor_color()              { return &sCursorColor;         }
-                inline const Color                 *cursor_color() const        { return &sCursorColor;         }
-
-                inline Color                       *text_color()                { return &sTextColor;           }
-                inline const Color                 *text_color() const          { return &sTextColor;           }
-
-                inline Color                       *text_selected_color()       { return &sTextSelectedColor;   }
-                inline const Color                 *text_selected_color() const { return &sTextSelectedColor;   }
-
-                inline Color                       *selection_color()           { return &sSelectionColor;      }
-                inline const Color                 *selection_color() const     { return &sSelectionColor;      }
-
-                inline Integer                     *border_size()               { return &sBorderSize;          }
-                inline const Integer               *border_size() const         { return &sBorderSize;          }
-
-                inline Integer                     *border_gap_size()           { return &sBorderGapSize;       }
-                inline const Integer               *border_gap_size() const     { return &sBorderGapSize;       }
-
-                inline Integer                     *border_radius()             { return &sBorderRadius;        }
-                inline const Integer               *border_radius() const       { return &sBorderRadius;        }
-
-                inline SizeConstraints             *constraints()               { return &sConstraints;         }
-                inline const SizeConstraints       *constraints() const         { return &sConstraints;         }
+                LSP_TK_PROPERTY(String,             text,                           &sText)
+                LSP_TK_PROPERTY(TextSelection,      selection,                      &sSelection)
+                LSP_TK_PROPERTY(Font,               font,                           &sFont)
+                LSP_TK_PROPERTY(Color,              color,                          &sColor)
+                LSP_TK_PROPERTY(Color,              border_color,                   &sBorderColor)
+                LSP_TK_PROPERTY(Color,              border_gap_color,               &sBorderGapColor)
+                LSP_TK_PROPERTY(Color,              cursor_color,                   &sCursorColor)
+                LSP_TK_PROPERTY(Color,              text_color,                     &sTextColor)
+                LSP_TK_PROPERTY(Color,              text_selected_color,            &sTextSelectedColor)
+                LSP_TK_PROPERTY(Color,              selection_color,                &sSelectionColor)
+                LSP_TK_PROPERTY(Integer,            border_size,                    &sBorderSize)
+                LSP_TK_PROPERTY(Integer,            border_gap_size,                &sBorderGapSize)
+                LSP_TK_PROPERTY(Integer,            border_radius,                  &sBorderRadius)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,                    &sConstraints)
 
 //                inline Menu                        *get_popup()             { return pPopup;            }
 
