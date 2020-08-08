@@ -27,7 +27,7 @@ namespace lsp
                 static const w_class_t      metadata;
 
             protected:
-                ListBox                     sList;
+                ListBox                     sLBox;
 
                 prop::Integer               sBorderSize;
                 prop::Integer               sBorderGap;
@@ -35,7 +35,19 @@ namespace lsp
                 prop::Integer               sSpinSize;
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
+                prop::Color                 sBorderColor;
+                prop::Color                 sBorderGapColor;
+                prop::Color                 sSpinColor;
                 prop::Boolean               sOpened;
+                prop::Boolean               sTextFit;
+
+            protected:
+                void                    do_destroy();
+
+            protected:
+                virtual void            property_changed(Property *prop);
+                virtual void            size_request(ws::size_limit_t *r);
+                virtual void            realize(const ws::rectangle_t *r);
 
             public:
                 explicit ComboBox(Display *dpy);
@@ -51,14 +63,16 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                    spin_size,              &sSpinSize)
                 LSP_TK_PROPERTY(Color,                      color,                  &sColor)
                 LSP_TK_PROPERTY(Color,                      text_color,             &sTextColor)
+                LSP_TK_PROPERTY(Color,                      border_color,           &sBorderColor)
+                LSP_TK_PROPERTY(Color,                      border_gap_color,       &sBorderGapColor)
+                LSP_TK_PROPERTY(Color,                      spin_color,             &sSpinColor)
                 LSP_TK_PROPERTY(Boolean,                    opened,                 &sOpened)
+                LSP_TK_PROPERTY(Boolean,                    text_fit,               &sTextFit)
 
-                LSP_TK_PROPERTY(Font,                       font,                   sList.font())
-                LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,                  sList.items())
+                LSP_TK_PROPERTY(Font,                       font,                   sLBox.font())
+                LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,                  sLBox.items())
 
             public:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
-
                 virtual status_t            add(Widget *child);
 
                 virtual status_t            remove(Widget *child);
