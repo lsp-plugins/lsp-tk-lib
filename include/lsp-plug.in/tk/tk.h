@@ -128,11 +128,11 @@
 #include <lsp-plug.in/tk/widgets/containers/Box.h>
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
-#include <lsp-plug.in/tk/widgets/containers/Menu.h>
 #include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
 
 // Compound widgets
-#include <lsp-plug.in/tk/widgets/containers/ListBox.h>
+#include <lsp-plug.in/tk/widgets/compound/Menu.h>
+#include <lsp-plug.in/tk/widgets/compound/ListBox.h>
 
 namespace lsp
 {

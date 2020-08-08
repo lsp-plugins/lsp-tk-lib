@@ -5,8 +5,8 @@
  *      Author: sadko
  */
 
-#ifndef LSP_PLUG_IN_TK_WIDGETS_CONTAINERS_LISTBOX_H_
-#define LSP_PLUG_IN_TK_WIDGETS_CONTAINERS_LISTBOX_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_COMPOUND_LISTBOX_H_
+#define LSP_PLUG_IN_TK_WIDGETS_COMPOUND_LISTBOX_H_
 
 namespace lsp
 {
@@ -185,4 +185,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* LSP_PLUG_IN_TK_WIDGETS_CONTAINERS_LISTBOX_H_ */
+#endif /* LSP_PLUG_IN_TK_WIDGETS_COMPOUND_LISTBOX_H_ */
