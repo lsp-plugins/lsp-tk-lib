@@ -314,68 +314,60 @@ namespace lsp
                  * @return pointer to slot or NULL
                  */
                 inline Slot            *slot(slot_t id)         { return sSlots.slot(id); }
-                
-                /**
-                 * Return widget's style
-                 * @return widget's style
-                 */
-                inline Style           *style()                 { return &sStyle;       }
-                inline const Style     *style() const           { return &sStyle;       }
 
                 /**
                  * Get style class of this widget
                  * @return style clas of this widget
                  */
                 Style                  *style_class() const;
+                
+                /**
+                 * Return widget's style
+                 * @return widget's style
+                 */
+                LSP_TK_PROPERTY(Style,              style,              &sStyle)
 
                 /** Get widget padding. All widgets should properly handle this parameter
                  *
                  * @return widget padding
                  */
-                inline Padding         *padding()               { return &sPadding;     }
-                inline const Padding   *padding() const         { return &sPadding;     }
+                LSP_TK_PROPERTY(Padding,            padding,            &sPadding)
 
                 /**
                  * Get background color of the widget
                  * @return background color of the widget
                  */
-                inline Color           *bg_color()              { return &sBgColor;     }
-                inline const Color     *bg_color() const        { return &sBgColor;     }
+                LSP_TK_PROPERTY(Color,              bg_color,           &sBgColor)
 
                 /**
                  * Get brightness property
                  * @return brightness property
                  */
-                inline Float           *brightness()            { return &sBrightness;  }
-                inline const Float     *brightness() const      { return &sBrightness;  }
+                LSP_TK_PROPERTY(Float,              brightness,         &sBrightness)
 
                 /**
                  * Get brightness property
                  * @return brightness property
                  */
-                inline Float           *scaling()               { return &sScaling;     }
-                inline const Float     *scaling() const         { return &sScaling;     }
+                LSP_TK_PROPERTY(Float,              scaling,            &sScaling)
 
                 /**
                  * Widget allocation flags
                  * @return widget allocation flags
                  */
-                inline Allocation      *allocation()            { return &sAllocation;  }
-                inline const Allocation*allocation() const      { return &sAllocation;  }
+                LSP_TK_PROPERTY(Allocation,         allocation,         &sAllocation)
 
                 /**
                  * Visibility of the widget
                  * @return visibility of the widget
                  */
-                inline Boolean         *visibility()            { return &sVisibility;  }
-                inline const Boolean   *visibility() const      { return &sVisibility;  }
+                LSP_TK_PROPERTY(Boolean,            visibility,         &sVisibility)
 
                 /**
                  * Style of mouse pointer
                  * @return mouse pointer style
                  */
-                inline Pointer         *pointer()               { return &sPointer;     }
-                inline const Pointer   *pointer() const         { return &sPointer;     }
+                LSP_TK_PROPERTY(Pointer,            pointer,            &sPointer)
 
             //---------------------------------------------------------------------------------
             // Manipulation

@@ -39,20 +39,11 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline TextLayout              *text_layout()       { return &sTextLayout;  }
-                inline const TextLayout        *text_layout() const { return &sTextLayout;  }
-
-                inline Font                    *font()              { return &sFont;        }
-                inline const Font              *font() const        { return &sFont;        }
-
-                inline Color                   *color()             { return &sColor;       }
-                inline const Color             *color() const       { return &sColor;       }
-
-                inline String                  *text()              { return &sText;        }
-                inline const String            *text() const        { return &sText;        }
-
-                inline SizeConstraints         *constraints()       { return &sConstraints; }
-                inline const SizeConstraints   *constraints() const { return &sConstraints; }
+                LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
+                LSP_TK_PROPERTY(Font,               font,               &sFont)
+                LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(String,             text,               &sText)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
 
             public:
                 virtual void                    draw(ws::ISurface *s);

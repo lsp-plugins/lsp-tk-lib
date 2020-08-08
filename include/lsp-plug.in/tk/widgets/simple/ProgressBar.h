@@ -56,50 +56,21 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline RangeFloat              *value()                 { return &sValue;           }
-                inline const RangeFloat        *value() const           { return &sValue;           }
-
-                inline SizeConstraints         *constraints()           { return &sConstraints;     }
-                inline const SizeConstraints   *constraints() const     { return &sConstraints;     }
-
-                inline String                  *text()                  { return &sText;            }
-                inline const String            *text() const            { return &sText;            }
-
-                inline TextLayout              *text_layout()           { return &sTextLayout;      }
-                inline const TextLayout        *text_layout() const     { return &sTextLayout;      }
-
-                inline Boolean                 *show_text()             { return &sShowText;        }
-                inline const Boolean           *show_text() const       { return &sShowText;        }
-
-                inline Font                    *font()                  { return &sFont;            }
-                inline const Font              *font() const            { return &sFont;            }
-
-                inline Color                   *border_color()          { return &sBorderColor;     }
-                inline const Color             *border_color() const    { return &sBorderColor;     }
-
-                inline Color                   *border_gap_color()      { return &sBorderGapColor;  }
-                inline const Color             *border_gap_color() const{ return &sBorderGapColor;  }
-
-                inline Integer                 *border_size()           { return &sBorderSize;      }
-                inline const Integer           *border_size() const     { return &sBorderSize;      }
-
-                inline Integer                 *border_gap_size()       { return &sBorderGapSize;   }
-                inline const Integer           *border_gap_size() const { return &sBorderGapSize;   }
-
-                inline Integer                 *border_radius()         { return &sBorderRadius;    }
-                inline const Integer           *border_radius() const   { return &sBorderRadius;    }
-
-                inline Color                   *color()                 { return &sColor;           }
-                inline const Color             *color() const           { return &sColor;           }
-
-                inline Color                   *text_color()            { return &sTextColor;       }
-                inline const Color             *text_color() const      { return &sTextColor;       }
-
-                inline Color                   *inv_color()             { return &sInvColor;        }
-                inline const Color             *inv_color() const       { return &sInvColor;        }
-
-                inline Color                   *inv_text_color()        { return &sInvTextColor;    }
-                inline const Color             *inv_text_color() const  { return &sInvTextColor;    }
+                LSP_TK_PROPERTY(RangeFloat,         value,                      &sValue)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,                &sConstraints)
+                LSP_TK_PROPERTY(String,             text,                       &sText)
+                LSP_TK_PROPERTY(TextLayout,         text_layout,                &sTextLayout)
+                LSP_TK_PROPERTY(Boolean,            show_text,                  &sShowText)
+                LSP_TK_PROPERTY(Font,               font,                       &sFont)
+                LSP_TK_PROPERTY(Color,              border_color,               &sBorderColor)
+                LSP_TK_PROPERTY(Color,              border_gap_color,           &sBorderGapColor)
+                LSP_TK_PROPERTY(Integer,            border_size,                &sBorderSize)
+                LSP_TK_PROPERTY(Integer,            border_gap_size,            &sBorderGapSize)
+                LSP_TK_PROPERTY(Integer,            border_radius,              &sBorderRadius)
+                LSP_TK_PROPERTY(Color,              color,                      &sColor)
+                LSP_TK_PROPERTY(Color,              text_color,                 &sTextColor)
+                LSP_TK_PROPERTY(Color,              inv_color,                  &sInvColor)
+                LSP_TK_PROPERTY(Color,              inv_text_color,             &sInvTextColor)
 
             public:
                 virtual void                    draw(ws::ISurface *s);

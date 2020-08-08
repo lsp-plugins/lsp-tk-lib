@@ -41,26 +41,13 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline Color                   *color()             { return &sColor;       }
-                inline const Color             *color() const       { return &sColor;       }
-
-                inline Color                   *hole_color()        { return &sHoleColor;   }
-                inline const Color             *hole_color() const  { return &sHoleColor;   }
-
-                inline Color                   *led_color()         { return &sLightColor;  }
-                inline const Color             *led_color() const   { return &sLightColor;  }
-
-                inline SizeRange               *size()              { return &sSizeRange;   }
-                inline const SizeRange         *size() const        { return &sSizeRange;   }
-
-                inline Boolean                 *on()                { return &sOn;          }
-                inline const Boolean           *on() const          { return &sOn;          }
-
-                inline Boolean                 *hole()              { return &sHole;        }
-                inline const Boolean           *hole() const        { return &sHole;        }
-
-                inline Integer                 *led()               { return &sLed;         }
-                inline const Integer           *led() const         { return &sLed;         }
+                LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
+                LSP_TK_PROPERTY(Color,              led_color,          &sLightColor)
+                LSP_TK_PROPERTY(SizeRange,          size,               &sSizeRange)
+                LSP_TK_PROPERTY(Boolean,            on,                 &sOn)
+                LSP_TK_PROPERTY(Boolean,            hole,               &sHole)
+                LSP_TK_PROPERTY(Integer,            led,                &sLed)
 
             public:
                 virtual void                    draw(ws::ISurface *s);

@@ -41,17 +41,10 @@ namespace lsp
                 virtual status_t init();
 
             public:
-                inline Color               *color()                 { return &sColor;       }
-                inline const Color         *color() const           { return &sColor;       }
-
-                inline Orientation         *orientation()           { return &sOrientation; }
-                inline const Orientation   *orientation() const     { return &sOrientation; }
-
-                inline SizeRange           *size()                  { return &sSizeRange;   }
-                inline const SizeRange     *size() const            { return &sSizeRange;   }
-
-                inline Integer             *thickness()             { return &sThickness;   }
-                inline const Integer       *thickness() const       { return &sThickness;   }
+                LSP_TK_PROPERTY(Color,              color,                      &sColor)
+                LSP_TK_PROPERTY(Orientation,        orientation,                &sOrientation)
+                LSP_TK_PROPERTY(SizeRange,          size,                       &sSizeRange)
+                LSP_TK_PROPERTY(Integer,            thickness,                  &sThickness)
 
             public:
                 virtual void render(ws::ISurface *s, bool force);

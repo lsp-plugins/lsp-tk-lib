@@ -65,36 +65,16 @@ namespace lsp
                 virtual status_t            init();
 
             public:
-                inline Color               *color()                 { return &sColor;       }
-                inline const Color         *color() const           { return &sColor;       }
-
-                inline Color               *text_color()            { return &sTextColor;   }
-                inline const Color         *text_color() const      { return &sTextColor;   }
-
-                inline Color               *border_color()          { return &sBorderColor; }
-                inline const Color         *border_color() const    { return &sBorderColor; }
-
-                inline Color               *hole_color()            { return &sHoleColor;   }
-                inline const Color         *hole_color() const      { return &sHoleColor;   }
-
-                inline SizeRange           *size()                  { return &sSizeRange;   }
-                inline const SizeRange     *size() const            { return &sSizeRange;   }
-
-                inline Integer             *border()                { return &sBorder;      }
-                inline const Integer       *border() const          { return &sBorder;      }
-
-                inline Float               *aspect()                { return &sAspect;      }
-                inline const Float         *aspect() const          { return &sAspect;      }
-
-                inline Integer             *angle()                 { return &sAngle;       }
-                inline const Integer       *angle() const           { return &sAngle;       }
-
-                inline Boolean             *down()                  { return &sDown;        }
-                inline const Boolean       *down() const            { return &sDown;        }
-
-                inline Pointer             *button_pointer()        { return &sButtonPointer;}
-                inline const Pointer       *button_pointer() const  { return &sButtonPointer;}
-
+                LSP_TK_PROPERTY(Color,              color,                      &sColor)
+                LSP_TK_PROPERTY(Color,              text_color,                 &sTextColor)
+                LSP_TK_PROPERTY(Color,              border_color,               &sBorderColor)
+                LSP_TK_PROPERTY(Color,              hole_color,                 &sHoleColor)
+                LSP_TK_PROPERTY(SizeRange,          size,                       &sSizeRange)
+                LSP_TK_PROPERTY(Integer,            border,                     &sBorder)
+                LSP_TK_PROPERTY(Float,              aspect,                     &sAspect)
+                LSP_TK_PROPERTY(Integer,            angle,                      &sAngle)
+                LSP_TK_PROPERTY(Boolean,            down,                       &sDown)
+                LSP_TK_PROPERTY(Pointer,            button_pointer,             &sButtonPointer)
 
             public:
                 virtual ws::mouse_pointer_t     current_pointer();

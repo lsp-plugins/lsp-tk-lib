@@ -65,35 +65,16 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline Color                   *color()                 { return &sColor;       }
-                inline const Color             *color() const           { return &sColor;       }
-
-                inline Color                   *scale_color()           { return &sScaleColor;  }
-                inline const Color             *scale_color() const     { return &sScaleColor;  }
-
-                inline Color                   *hole_color()            { return &sHoleColor;   }
-                inline const Color             *hole_color() const      { return &sHoleColor;   }
-
-                inline Color                   *tip_color()             { return &sTipColor;    }
-                inline const Color             *tip_color() const       { return &sTipColor;    }
-
-                inline SizeRange               *size()                  { return &sSizeRange;   }
-                inline const SizeRange         *size() const            { return &sSizeRange;   }
-
-                inline Float                   *scale()                 { return &sScale;       }
-                inline const Float             *scale() const           { return &sScale;       }
-
-                inline RangeFloat              *value()                 { return &sValue;       }
-                inline const RangeFloat        *value() const           { return &sValue;       }
-
-                inline StepFloat               *step()                  { return &sStep;        }
-                inline const StepFloat         *step() const            { return &sStep;        }
-
-                inline Float                   *balance()               { return &sBalance;     }
-                inline const Float             *balance() const         { return &sBalance;     }
-
-                inline Boolean                 *cycling()               { return &sCycling;     }
-                inline const Boolean           *cycling() const         { return &sCycling;     }
+                LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(Color,              scale_color,        &sScaleColor)
+                LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
+                LSP_TK_PROPERTY(Color,              tip_color,          &sTipColor)
+                LSP_TK_PROPERTY(SizeRange,          size,               &sSizeRange)
+                LSP_TK_PROPERTY(Float,              scale,              &sScale)
+                LSP_TK_PROPERTY(RangeFloat,         value,              &sValue)
+                LSP_TK_PROPERTY(StepFloat,          step,               &sStep)
+                LSP_TK_PROPERTY(Float,              balance,            &sBalance)
+                LSP_TK_PROPERTY(Boolean,            cycling,            &sCycling)
 
             public:
                 virtual status_t                on_mouse_down(const ws::event_t *e);

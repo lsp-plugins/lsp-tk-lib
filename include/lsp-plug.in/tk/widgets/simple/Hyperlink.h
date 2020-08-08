@@ -62,29 +62,14 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline TextLayout              *text_layout()       { return &sTextLayout;  }
-                inline const TextLayout        *text_layout() const { return &sTextLayout;  }
-
-                inline Font                    *font()              { return &sFont;        }
-                inline const Font              *font() const        { return &sFont;        }
-
-                inline Color                   *color()             { return &sColor;       }
-                inline const Color             *color() const       { return &sColor;       }
-
-                inline Color                   *hover_color()       { return &sHoverColor;  }
-                inline const Color             *hover_color() const { return &sHoverColor;  }
-
-                inline String                  *text()              { return &sText;        }
-                inline const String            *text() const        { return &sText;        }
-
-                inline SizeConstraints         *constraints()       { return &sConstraints; }
-                inline const SizeConstraints   *constraints() const { return &sConstraints; }
-
-                inline Boolean                 *follow()            { return &sFollow;      }
-                inline const Boolean           *follow() const      { return &sFollow;      }
-
-                inline String                  *url()               { return &sUrl;         }
-                inline const String            *url() const         { return &sUrl;         }
+                LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
+                LSP_TK_PROPERTY(Font,               font,               &sFont)
+                LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)
+                LSP_TK_PROPERTY(String,             text,               &sText)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
+                LSP_TK_PROPERTY(Boolean,            follow,             &sFollow)
+                LSP_TK_PROPERTY(String,             url,                &sUrl)
 
             public:
                 status_t                        copy_url(ws::clipboard_id_t cb);

@@ -46,29 +46,14 @@ namespace lsp
                 virtual status_t    init();
 
             public:
-                inline Color                   *color()             { return &sColor;       }
-                inline const Color             *color() const       { return &sColor;       }
-
-                inline Color                   *text_color()        { return &sTextColor;   }
-                inline const Color             *text_color() const  { return &sTextColor;   }
-
-                inline Integer                 *rows()              { return &sRows;        }
-                inline const Integer           *rows() const        { return &sRows;        }
-
-                inline Integer                 *columns()           { return &sColumns;     }
-                inline const Integer           *columns() const     { return &sColumns;     }
-
-                inline Integer                 *text_shift()        { return &sShift;       }
-                inline const Integer           *text_shift() const  { return &sShift;       }
-
-                inline Integer                 *text_gap()          { return &sTextGap;     }
-                inline const Integer           *text_gap() const    { return &sTextGap;     }
-
-                inline Boolean                 *text_loop()         { return &sLoop;        }
-                inline const Boolean           *text_loop() const   { return &sLoop;        }
-
-                inline String                  *text()              { return &sText;        }
-                inline const String            *text() const        { return &sText;        }
+                LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(Color,              text_color,         &sTextColor)
+                LSP_TK_PROPERTY(Integer,            rows,               &sRows)
+                LSP_TK_PROPERTY(Integer,            columns,            &sColumns)
+                LSP_TK_PROPERTY(Integer,            text_shift,         &sShift)
+                LSP_TK_PROPERTY(Integer,            text_gap,           &sTextGap)
+                LSP_TK_PROPERTY(Boolean,            text_loop,          &sLoop)
+                LSP_TK_PROPERTY(String,             text,               &sText)
 
             public:
                 virtual void        draw(ws::ISurface *s);

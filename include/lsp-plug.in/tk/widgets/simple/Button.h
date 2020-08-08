@@ -82,56 +82,23 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline Color                   *color()                     { return &sColor;       }
-                inline const Color             *color() const               { return &sColor;       }
-
-                inline Color                   *led_color()                 { return &sLightColor;  }
-                inline const Color             *led_color() const           { return &sLightColor;  }
-
-                inline Color                   *text_color()                { return &sTextColor;   }
-                inline const Color             *text_color() const          { return &sTextColor;   }
-
-                inline Color                   *led_text_color()            { return &sLTextColor;  }
-                inline const Color             *led_text_color() const      { return &sLTextColor;  }
-
-                inline Color                   *hole_color()                { return &sHoleColor;   }
-                inline const Color             *hole_color() const          { return &sHoleColor;   }
-
-                inline Font                    *font()                      { return &sFont;        }
-                inline const Font              *font() const                { return &sFont;        }
-
-                inline String                  *text()                      { return &sText;        }
-                inline const String            *text() const                { return &sText;        }
-
-                inline SizeConstraints         *constraints()               { return &sConstraints; }
-                inline const SizeConstraints   *constraints() const         { return &sConstraints; }
-
-                inline ButtonMode              *mode()                      { return &sMode;        }
-                inline const ButtonMode        *mode() const                { return &sMode;        }
-
-                inline Boolean                 *down()                      { return &sDown;        }
-                inline const Boolean           *down() const                { return &sDown;        }
-
-                inline Integer                 *led()                       { return &sLed;         }
-                inline const Integer           *led() const                 { return &sLed;         }
-
-                inline Boolean                 *editable()                  { return &sEditable;    }
-                inline const Boolean           *editable() const            { return &sEditable;    }
-
-                inline Boolean                 *hole()                      { return &sHole;        }
-                inline const Boolean           *hole() const                { return &sHole;        }
-
-                inline Boolean                 *flat()                      { return &sFlat;        }
-                inline const Boolean           *flat() const                { return &sFlat;        }
-
-                inline TextLayout              *text_layout()               { return &sTextLayout;  }
-                inline const TextLayout        *text_layout() const         { return &sTextLayout;  }
-
-                inline Boolean                 *text_clip()                 { return &sTextClip;    }
-                inline const Boolean           *text_clip() const           { return &sTextClip;    }
-
-                inline Padding                 *text_padding()              { return &sTextPadding; }
-                inline const Padding           *text_padding() const        { return &sTextPadding; }
+                LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(Color,              led_color,          &sLightColor)
+                LSP_TK_PROPERTY(Color,              text_color,         &sTextColor)
+                LSP_TK_PROPERTY(Color,              led_text_color,     &sLTextColor)
+                LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
+                LSP_TK_PROPERTY(Font,               font,               &sFont)
+                LSP_TK_PROPERTY(String,             text,               &sText)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
+                LSP_TK_PROPERTY(ButtonMode,         mode,               &sMode)
+                LSP_TK_PROPERTY(Boolean,            down,               &sDown)
+                LSP_TK_PROPERTY(Integer,            led,                &sLed)
+                LSP_TK_PROPERTY(Boolean,            editable,           &sEditable)
+                LSP_TK_PROPERTY(Boolean,            hole,               &sHole)
+                LSP_TK_PROPERTY(Boolean,            flat,               &sFlat)
+                LSP_TK_PROPERTY(TextLayout,         text_layouts,       &sTextLayout)
+                LSP_TK_PROPERTY(Boolean,            text_clip,          &sTextClip)
+                LSP_TK_PROPERTY(Padding,            text_padding,       &sTextPadding)
 
             public:
                 virtual void        draw(ws::ISurface *s);
