@@ -79,6 +79,7 @@
 #include <lsp-plug.in/tk/prop/multi/SizeConstraints.h>
 #include <lsp-plug.in/tk/prop/multi/SizeRange.h>
 #include <lsp-plug.in/tk/prop/multi/StepFloat.h>
+#include <lsp-plug.in/tk/prop/multi/TextFitness.h>
 #include <lsp-plug.in/tk/prop/multi/TextLayout.h>
 #include <lsp-plug.in/tk/prop/multi/TextSelection.h>
 

@@ -1,7 +1,7 @@
 /*
- * listbox.cpp
+ * combobox.cpp
  *
- *  Created on: 4 авг. 2020 г.
+ *  Created on: 12 авг. 2020 г.
  *      Author: sadko
  */
 
@@ -9,7 +9,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.containers", listbox)
+MTEST_BEGIN("tk.widgets.compound", combobox)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -31,60 +31,11 @@ MTEST_BEGIN("tk.widgets.containers", listbox)
         if ((wnd != NULL) && (ev != NULL) && (ev->nType == ws::UIE_KEY_UP))
         {
             _this->printf("Key up: %c (0x%x)\n", (char)ev->nCode, int(ev->nCode));
-            tk::ListBox *lb = tk::widget_cast<tk::ListBox>(wnd->child());
 
-            switch (ev->nCode)
-            {
-                case '+':
-                case ws::WSK_KEYPAD_ADD:
-                    wnd->style()->schema()->scaling()->add(0.25f);
-                    break;
-
-                case '-':
-                case ws::WSK_KEYPAD_SUBTRACT:
-                    wnd->style()->schema()->scaling()->sub(0.25f);
-                    break;
-
-                case 'a':
-                    if (lb != NULL)
-                        lb->hscroll_mode()->set_none();
-                    break;
-                case 's':
-                    if (lb != NULL)
-                        lb->hscroll_mode()->set_clip();
-                    break;
-                case 'd':
-                    if (lb != NULL)
-                        lb->hscroll_mode()->set_optional();
-                    break;
-                case 'f':
-                    if (lb != NULL)
-                        lb->hscroll_mode()->set_always();
-                    break;
-
-                case 'z':
-                    if (lb != NULL)
-                        lb->vscroll_mode()->set_none();
-                    break;
-                case 'x':
-                    if (lb != NULL)
-                        lb->vscroll_mode()->set_clip();
-                    break;
-                case 'c':
-                    if (lb != NULL)
-                        lb->vscroll_mode()->set_optional();
-                    break;
-                case 'v':
-                    if (lb != NULL)
-                        lb->vscroll_mode()->set_always();
-                    break;
-                case 'm':
-                    if (lb != NULL)
-                        lb->multi_select()->toggle();
-                    break;
-                default:
-                    break;
-            }
+            if ((ev->nCode == '+') || (ev->nCode == ws::WSK_KEYPAD_ADD))
+                wnd->style()->schema()->scaling()->add(0.25f);
+            else if ((ev->nCode == '-') || (ev->nCode == ws::WSK_KEYPAD_SUBTRACT))
+                wnd->style()->schema()->scaling()->sub(0.25f);
         }
         return STATUS_OK;
     }
@@ -153,14 +104,17 @@ MTEST_BEGIN("tk.widgets.containers", listbox)
         return STATUS_OK;
     }
 
-    static void destroy_handlers(lltl::parray<handler_t> &vh)
+    static status_t slot_change(tk::Widget *sender, void *ptr, void *data)
     {
-        for (size_t i=0, n=vh.size(); i<n; ++i)
-        {
-            handler_t *h = vh.uget(i);
-            ::free(h->label);
-            delete h;
-        }
+        handler_t *h = static_cast<handler_t *>(ptr);
+
+        LSPString tmp;
+        tk::Edit *ed = tk::widget_cast<tk::Edit>(sender);
+        ed->text()->format(&tmp);
+
+        h->test->printf("CHANGE: %s = %s\n", h->label, tmp.get_utf8());
+
+        return STATUS_OK;
     }
 
     status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label)
@@ -185,10 +139,43 @@ MTEST_BEGIN("tk.widgets.containers", listbox)
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
 
+        if (tk::widget_cast<tk::Edit>(w) != NULL)
+        {
+            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_CHANGE, slot_change, h);
+        }
+
         if (hid < 0)
             res = -hid;
 
         return res;
+    }
+
+    static void destroy_handlers(lltl::parray<handler_t> &vh)
+    {
+        for (size_t i=0, n=vh.size(); i<n; ++i)
+        {
+            handler_t *h = vh.uget(i);
+            ::free(h->label);
+            delete h;
+        }
+    }
+
+    void add_items(tk::ComboBox *cb, lltl::parray<handler_t> &vh, lltl::parray<tk::Widget> &widgets, size_t &vid, size_t count)
+    {
+        tk::ListBoxItem *li;
+        LSPString text, id;
+
+        for (size_t i=0; i<count; ++i)
+        {
+            text.fmt_ascii("ListBox Item #%d", int(i));
+            id.fmt_ascii("listboxitem-%d", int(vid++));
+            MTEST_ASSERT(li = new tk::ListBoxItem(cb->display()));
+            MTEST_ASSERT(init_widget(li, vh, id.get_ascii()) == STATUS_OK);
+
+            MTEST_ASSERT(li->text()->set_raw(&text) == STATUS_OK);
+            MTEST_ASSERT(cb->add(li) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(li));
+        }
     }
 
     MTEST_MAIN
@@ -203,61 +190,58 @@ MTEST_BEGIN("tk.widgets.containers", listbox)
         lltl::parray<tk::Widget> widgets;
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
-        tk::ListBox *lb = NULL;
-        tk::ListBoxItem *li = NULL;
+        tk::Grid *grid = NULL;
+        tk::ComboBox *cb = NULL;
+        size_t vid = 0;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test listbox") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("listbox_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test combobox") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("combobox_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
+//        wnd->border_size()->set(2);
+        wnd->border_color()->set_rgb(1.0f, 1.0f, 0.0f);
         wnd->size_constraints()->set(160, 100, 640, 400);
         wnd->size()->set(320, 200);
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
         wnd->pointer()->set(ws::MP_TABLE_CELL);
         wnd->layout()->set(-0.5, 0.5, 0.5, 0.5);
+//        wnd->padding()->set_all(16);
         MTEST_ASSERT(widgets.push(wnd));
 
-        // Create list box
-        MTEST_ASSERT(lb = new tk::ListBox(dpy));
-        MTEST_ASSERT(init_widget(lb, vh, "listbox") == STATUS_OK);
-        MTEST_ASSERT(widgets.push(lb));
-        MTEST_ASSERT(wnd->add(lb) == STATUS_OK);
-        lb->hscroll_mode()->set(tk::SCROLL_NONE);
-        lb->vscroll_mode()->set(tk::SCROLL_NONE);
-        lb->multi_select()->set(true);
+        // Create Grid
+        MTEST_ASSERT(grid = new tk::Grid(dpy));
+        MTEST_ASSERT(init_widget(grid, vh, "grid") == STATUS_OK);
+        MTEST_ASSERT(widgets.push(grid));
+        MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
+        grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
+        grid->padding()->set(8);
+        grid->rows()->set(4);
+        grid->columns()->set(1);
+        grid->orientation()->set_horizontal();
+        grid->hspacing()->set(2);
+        grid->vspacing()->set(2);
 
-        lb->size_constraints()->set(96, 96, 96, 96);
         {
+            // Create alignment and child widget
             LSPString id;
-            size_t wid = 0;
-            size_t col = 0;
+//            size_t col = 0;
 
-            for (size_t i=0; i<32; ++i)
-            {
-                MTEST_ASSERT(id.fmt_ascii("item-%d", int(wid++)));
-                MTEST_ASSERT(li = new tk::ListBoxItem(dpy));
-                MTEST_ASSERT(init_widget(li, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(li));
-                MTEST_ASSERT(lb->items()->add(li) == STATUS_OK);
+            // Create combo box
+            MTEST_ASSERT(id.fmt_ascii("combobox-0"));
+            MTEST_ASSERT(cb = new tk::ComboBox(dpy));
+            MTEST_ASSERT(init_widget(cb, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(cb));
+            MTEST_ASSERT(grid->add(cb) == STATUS_OK);
 
-                MTEST_ASSERT(id.fmt_ascii("%s %d",
-                        (i % 6 == 0) ? "Item with long text" : "Item",
-                        int(i)
-                    ));
-                li->text()->set_raw(&id);
-
-                if (i > 16)
-                {
-                    li->text_color()->set_rgb24(next_color(col));
-                    li->text_selected_color()->set_rgb24(next_color(col));
-                    li->bg_color()->set_rgb24(next_color(col));
-                    li->bg_selected_color()->set_rgb24(next_color(col));
-                }
-            }
+            add_items(cb, vh, widgets, vid, 16);
+            cb->empty_text()->set_raw("<No Data>");
+            cb->spin_color()->set_rgb24(0x00ff00);
+            cb->spin_text_color()->set_rgb24(0xff0000);
+            cb->text_layout()->set_halign(0.0f);
         }
 
         // Show window
@@ -277,8 +261,5 @@ MTEST_BEGIN("tk.widgets.containers", listbox)
     }
 
 MTEST_END
-
-
-
 
 

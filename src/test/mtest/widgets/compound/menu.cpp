@@ -9,7 +9,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.containers", menu)
+MTEST_BEGIN("tk.widgets.compound", menu)
     typedef struct handler_t
     {
         test_type_t        *test;

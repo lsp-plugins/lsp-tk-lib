@@ -19,6 +19,8 @@ namespace lsp
         /**
          * Text TextLayout property.
          * Allows to align text placed on the widget
+         * The value -1.0f means leftmost/topmost alignment,
+         * the value 1.0f means rightmost/bottommost alignment
          */
         class TextLayout: public MultiProperty
         {
