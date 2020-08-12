@@ -71,6 +71,8 @@ namespace lsp
 
         status_t ComboBox::init()
         {
+            handler_id_t id;
+
             // Initialize widgets
             status_t result = WidgetContainer::init();
             if (result == STATUS_OK)
@@ -121,6 +123,11 @@ namespace lsp
                 sTextLayout.init(sclass, -1.0f, 0.0f);
             }
 
+            // Bind slots
+            id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id < 0)
+                return -id;
+
             return STATUS_OK;
         }
 
@@ -165,7 +172,18 @@ namespace lsp
             if (sEmptyText.is(prop))
                 query_resize();
             if (sSelected.is(prop))
-                query_draw();
+            {
+                ListBoxItem *it = sSelected.get();
+                if (sLBox.items()->contains(it))
+                {
+                    sLBox.selected()->clear();
+                    sLBox.selected()->add(it);
+                    query_draw();
+                }
+                else
+                    sSelected.set(NULL);
+                sSlots.execute(SLOT_CHANGE, this, NULL);
+            }
         }
 
         void ComboBox::estimate_parameters(alloc_t *alloc, float scaling)
@@ -465,6 +483,12 @@ namespace lsp
             return sLBox.remove_all();
         }
 
+        status_t ComboBox::slot_on_change(Widget *sender, void *ptr, void *data)
+        {
+            ComboBox *_this = widget_ptrcast<ComboBox>(ptr);
+            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+        }
+
         status_t ComboBox::on_mouse_down(const ws::event_t *e)
         {
             return STATUS_OK;
@@ -480,17 +504,78 @@ namespace lsp
             return STATUS_OK;
         }
 
+        void ComboBox::scroll_item(ssize_t direction, size_t count)
+        {
+            WidgetList<ListBoxItem> *wl = sLBox.items();
+            ListBoxItem *ci = sSelected.get();
+            ssize_t curr = (ci != NULL) ? wl->index_of(ci) : -1;
+            ssize_t last = wl->size() - 1;
+            ci  = NULL;
+
+            if (direction < 0)
+            {
+                while (curr > 0)
+                {
+                    ci = wl->get(--curr);
+                    if ((ci == NULL) || (!ci->visibility()->get()))
+                        continue;
+                    if ((--count) <= 0)
+                        break;
+                }
+            }
+            else
+            {
+                while (curr < last)
+                {
+                    ci = wl->get(++curr);
+                    if ((ci == NULL) || (!ci->visibility()->get()))
+                        continue;
+                    if ((--count) <= 0)
+                        break;
+                }
+            }
+
+            if (ci != NULL)
+                sSelected.set(ci);
+        }
+
         status_t ComboBox::on_mouse_scroll(const ws::event_t *e)
         {
+            if (e->nCode == ws::MCD_UP)
+                scroll_item(-1, 1);
+            else if (e->nCode == ws::MCD_DOWN)
+                scroll_item(1, 1);
+
             return STATUS_OK;
         }
 
         status_t ComboBox::on_key_down(const ws::event_t *e)
         {
+            switch (e->nCode)
+            {
+                case ws::WSK_UP:
+                case ws::WSK_KEYPAD_UP:
+                    scroll_item(-1, 1);
+                    break;
+
+                case ws::WSK_DOWN:
+                case ws::WSK_KEYPAD_DOWN:
+                    scroll_item(1, 1);
+                    break;
+
+                default:
+                    break;
+            }
+
             return STATUS_OK;
         }
 
         status_t ComboBox::on_key_up(const ws::event_t *e)
+        {
+            return STATUS_OK;
+        }
+
+        status_t ComboBox::on_change()
         {
             return STATUS_OK;
         }

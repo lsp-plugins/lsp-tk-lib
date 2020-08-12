@@ -68,6 +68,9 @@ namespace lsp
             protected:
                 void                    do_destroy();
                 void                    estimate_parameters(alloc_t *alloc, float scaling);
+                void                    scroll_item(ssize_t direction, size_t count);
+
+                static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual void            property_changed(Property *prop);
@@ -124,6 +127,8 @@ namespace lsp
                 virtual status_t            on_key_down(const ws::event_t *e);
 
                 virtual status_t            on_key_up(const ws::event_t *e);
+
+                virtual status_t            on_change();
         };
     }
 }
