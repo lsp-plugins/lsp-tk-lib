@@ -279,7 +279,7 @@ namespace lsp
             if (border > 0)
                 border             += (sBorderGap.get() > 0) ? lsp_max(0.0f, sBorderGap.get() * scaling) : 0;
             ssize_t radius      = lsp_max(0.0f, sBorderRadius.get() * scaling);
-            size_t rgap         = radius - lsp_max(0.0f, truncf(M_SQRT1_2 * (radius - border)));
+            ssize_t rgap        = radius - lsp_max(0.0f, truncf(M_SQRT1_2 * (radius - border)));
             ssize_t hsspacing   = lsp_max(0.0f, sHScrollSpacing.get() * scaling);
             ssize_t vsspacing   = lsp_max(0.0f, sVScrollSpacing.get() * scaling);
 
