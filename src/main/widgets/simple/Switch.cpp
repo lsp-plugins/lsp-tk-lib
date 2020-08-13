@@ -345,6 +345,8 @@ namespace lsp
             r->nMinHeight       = scaling * r->nMinHeight + x_space * 2;
             r->nMaxWidth        = (r->nMaxWidth >= 0) ? scaling * r->nMaxWidth  + x_space * 2 : -1;
             r->nMaxHeight       = (r->nMaxHeight >= 0) ? scaling * r->nMaxHeight + x_space * 2 : -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
         }
 
         void Switch::realize(const ws::rectangle_t *r)

@@ -176,18 +176,22 @@ namespace lsp
 
             if (pWidget == NULL)
             {
-                r->nMinWidth    = 0;
-                r->nMinHeight   = 0;
-                r->nMaxWidth    = -1;
-                r->nMaxHeight   = -1;
+                r->nMinWidth        = 0;
+                r->nMinHeight       = 0;
+                r->nMaxWidth        = -1;
+                r->nMaxHeight       = -1;
+                r->nPreWidth        = -1;
+                r->nPreHeight       = -1;
             }
             else
             {
                 pWidget->get_padded_size_limits(r);
-                r->nMinWidth    = (r->nMinWidth  >= 0) ? r->nMinWidth  + hpad : hpad;
-                r->nMinHeight   = (r->nMinHeight >= 0) ? r->nMinHeight + vpad : vpad;
-                r->nMaxWidth    = -1;
-                r->nMaxHeight   = -1;
+                r->nMinWidth        = (r->nMinWidth  >= 0) ? r->nMinWidth  + hpad : hpad;
+                r->nMinHeight       = (r->nMinHeight >= 0) ? r->nMinHeight + vpad : vpad;
+                r->nMaxWidth        = -1;
+                r->nMaxHeight       = -1;
+                r->nPreWidth        = -1;
+                r->nPreHeight       = -1;
             }
 
             r->nMinWidth        = lsp_max(alloc.rtext.nWidth, r->nMinWidth);

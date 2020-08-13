@@ -122,6 +122,8 @@ namespace lsp
 
             r->nMinWidth    = ceil(tp.Width);
             r->nMinHeight   = ceil(lsp_max(tp.Height, fp.Height));
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
 
             // Apply size constraints
             sConstraints.apply(r, scaling);

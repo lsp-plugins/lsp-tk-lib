@@ -12,11 +12,25 @@ namespace lsp
 {
     namespace tk
     {
+        //-----------------------------------------------------------------------------
+        // ComboBox popup window implementation
+        const w_class_t ComboBox::Window::metadata      = { "ComboBox::Window", &PopupWindow::metadata };
+
+        ComboBox::Window::Window(Display *dpy, ComboBox *cbox):
+            PopupWindow(dpy)
+        {
+            pCBox           = cbox;
+            pClass          = &metadata;
+        }
+
+        //-----------------------------------------------------------------------------
+        // ComboBox implementation
         const w_class_t ComboBox::metadata              = { "ComboBox", &WidgetContainer::metadata };
 
         ComboBox::ComboBox(Display *dpy):
             WidgetContainer(dpy),
             sLBox(dpy),
+            sWindow(dpy, this),
             sBorderSize(&sProperties),
             sBorderGap(&sProperties),
             sBorderRadius(&sProperties),
@@ -51,6 +65,8 @@ namespace lsp
             sVArea.nWidth   = 0;
             sVArea.nHeight  = 0;
 
+            nMBState        = 0;
+
             pClass          = &metadata;
         }
 
@@ -67,6 +83,9 @@ namespace lsp
 
         void ComboBox::do_destroy()
         {
+            sLBox.set_parent(NULL);
+            sLBox.destroy();
+            sWindow.destroy();
         }
 
         status_t ComboBox::init()
@@ -76,13 +95,17 @@ namespace lsp
             // Initialize widgets
             status_t result = WidgetContainer::init();
             if (result == STATUS_OK)
+                result  = sWindow.init();
+            if (result == STATUS_OK)
                 result  = sLBox.init();
             if (result != STATUS_OK)
                 return result;
 
-            // Configure ListBox
-            sLBox.allocation()->set_embed(true);
-            sLBox.set_parent(this);
+            // Configure Window
+            sWindow.add(&sLBox);
+            sWindow.add_arrangement(A_BOTTOM, 0, true);
+            sWindow.add_arrangement(A_TOP, 0, true);
+            sWindow.layout()->set_scale(1.0f);
 
             sBorderSize.bind("border.size", &sStyle);
             sBorderGap.bind("border.gap", &sStyle);
@@ -491,11 +514,33 @@ namespace lsp
 
         status_t ComboBox::on_mouse_down(const ws::event_t *e)
         {
+            nMBState       |= 1 << e->nCode;
             return STATUS_OK;
         }
 
         status_t ComboBox::on_mouse_up(const ws::event_t *e)
         {
+            size_t mask     = 1 << e->nCode;
+            size_t prev     = nMBState;
+            nMBState       &= (~mask);
+
+            if (prev == mask)
+            {
+                if (e->nCode == ws::MCB_LEFT)
+                {
+                    if (sWindow.visibility()->get())
+                        sWindow.hide();
+                    else
+                    {
+                        ws::rectangle_t r;
+                        this->get_screen_rectangle(&r);
+                        sWindow.trigger_area()->set(&r);
+                        sWindow.trigger_widget()->set(this);
+                        sWindow.show(this);
+                    }
+                }
+            }
+
             return STATUS_OK;
         }
 

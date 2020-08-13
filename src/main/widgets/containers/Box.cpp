@@ -587,6 +587,8 @@ namespace lsp
             r->nMinHeight   = -1;
             r->nMaxWidth    = -1;
             r->nMaxHeight   = -1;
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
 
             // Create copy of current state
             lltl::darray<cell_t>    items;

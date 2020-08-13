@@ -489,6 +489,8 @@ namespace lsp
             r->nMinHeight       = sc.nMinHeight + (chamfer + outer) * 2;
             r->nMaxWidth        = (sc.nMaxWidth  >= 0) ? lsp_max(r->nMinWidth,  r->nMaxWidth ) : -1;
             r->nMaxHeight       = (sc.nMaxHeight >= 0) ? lsp_max(r->nMinHeight, r->nMaxHeight) : -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
         }
 
         void Button::realize(const ws::rectangle_t *r)

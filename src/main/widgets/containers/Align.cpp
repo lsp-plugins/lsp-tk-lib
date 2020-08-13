@@ -168,6 +168,9 @@ namespace lsp
                 r->nMaxHeight   = -1;
             }
 
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
+
             sSizeConstraints.apply(r, scaling);
         }
 

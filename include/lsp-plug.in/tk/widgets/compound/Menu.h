@@ -65,7 +65,7 @@ namespace lsp
                     SEL_BOTTOM_SCROLL   = -1
                 };
 
-                class MenuWindow: public PopupWindow
+                class Window: public PopupWindow
                 {
                     public:
                         static const w_class_t    metadata;
@@ -74,7 +74,7 @@ namespace lsp
                         Menu   *pMenu;
 
                     public:
-                        explicit MenuWindow(Display *dpy, Menu *menu);
+                        explicit Window(Display *dpy, Menu *menu);
 
                     protected:
                         virtual Widget     *sync_mouse_handler(const ws::event_t *e);
@@ -119,7 +119,7 @@ namespace lsp
                 Menu                   *pChildMenu;     // Child menu
                 Menu                   *pKeyboardMenu;  // Keyboard menu handler
                 istats_t                sIStats;        // Realized statistics
-                MenuWindow              sWindow;        // Associated popup window
+                Window                  sWindow;        // Associated popup window
                 MenuScroll              sUp;            // Up-scroll button
                 MenuScroll              sDown;          // Down-scroll button
 

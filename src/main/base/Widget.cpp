@@ -39,6 +39,9 @@ namespace lsp
             sLimit.nMinHeight       = -1;
             sLimit.nMaxWidth        = -1;
             sLimit.nMaxHeight       = -1;
+            sLimit.nPreWidth        = -1;
+            sLimit.nPreHeight       = -1;
+
             sSize.nLeft             = 0;
             sSize.nTop              = 0;
             sSize.nWidth            = 0;
@@ -604,6 +607,8 @@ namespace lsp
             r->nMinHeight   = -1;
             r->nMaxWidth    = -1;
             r->nMaxHeight   = -1;
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
         }
 
         bool Widget::has_focus() const

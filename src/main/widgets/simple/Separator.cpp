@@ -100,6 +100,9 @@ namespace lsp
                 r->nMinHeight   = lsp_max(0, min);
                 r->nMaxHeight   = (max >= 0) ? lsp_max(r->nMinHeight, max) : -1;
             };
+
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
         }
     
     } /* namespace tk */

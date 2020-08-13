@@ -162,6 +162,9 @@ namespace lsp
                 r->nMinWidth        = lsp_max(smin, bmin * 3);
                 r->nMaxWidth        = (smax >= 0) ? lsp_max(smax, bmin) : -1;
             }
+
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
         }
 
         void Fader::realize(const ws::rectangle_t *r)

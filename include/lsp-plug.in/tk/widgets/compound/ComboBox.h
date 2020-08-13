@@ -39,8 +39,21 @@ namespace lsp
                     ssize_t             spad;       // Padding to not to cross round corner
                 } alloc_t;
 
+                class Window: public PopupWindow
+                {
+                    public:
+                        static const w_class_t    metadata;
+
+                    private:
+                        ComboBox   *pCBox;
+
+                    public:
+                        explicit Window(Display *dpy, ComboBox *cbox);
+                };
+
             protected:
-                ListBox                     sLBox;
+                ListBox                     sLBox;          // List box
+                Window                      sWindow;        // Popup window
 
                 prop::Integer               sBorderSize;
                 prop::Integer               sBorderGap;
@@ -61,9 +74,10 @@ namespace lsp
                 prop::String                sEmptyText;
                 prop::WidgetPtr<ListBoxItem> sSelected;
 
-                ws::rectangle_t             sTArea;     // Text area
-                ws::rectangle_t             sSArea;     // Spin area
-                ws::rectangle_t             sVArea;     // Splitter area
+                ws::rectangle_t             sTArea;         // Text area
+                ws::rectangle_t             sSArea;         // Spin area
+                ws::rectangle_t             sVArea;         // Splitter area
+                size_t                      nMBState;       // Mouse button state
 
             protected:
                 void                    do_destroy();

@@ -217,6 +217,8 @@ namespace lsp
 
             r->nMinHeight       = r->nMinWidth;
             r->nMaxHeight       = r->nMaxWidth;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
         }
 
         status_t Knob::on_mouse_down(const ws::event_t *e)

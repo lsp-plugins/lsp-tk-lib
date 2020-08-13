@@ -70,6 +70,10 @@ namespace lsp
             // Add external size constraints
             float scaling = lsp_max(0.0f, sScaling.get());
             sConstraints.compute(r, scaling);
+
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
+
             lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this, int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 

@@ -15,15 +15,15 @@ namespace lsp
     {
         //-----------------------------------------------------------------------------
         // Menu window implementation
-        const w_class_t Menu::MenuWindow::metadata      = { "Menu::MenuWindow", &PopupWindow::metadata };
+        const w_class_t Menu::Window::metadata      = { "Menu::Window", &PopupWindow::metadata };
 
-        Menu::MenuWindow::MenuWindow(Display *dpy, Menu *menu): PopupWindow(dpy)
+        Menu::Window::Window(Display *dpy, Menu *menu): PopupWindow(dpy)
         {
             pMenu = menu;
             pClass = &metadata;
         }
 
-        Widget *Menu::MenuWindow::sync_mouse_handler(const ws::event_t *e)
+        Widget *Menu::Window::sync_mouse_handler(const ws::event_t *e)
         {
             Widget *old     = hMouse.pWidget;
             Widget *curr    = PopupWindow::sync_mouse_handler(e);
@@ -34,17 +34,17 @@ namespace lsp
             return curr;
         }
 
-        Widget *Menu::MenuWindow::acquire_mouse_handler(const ws::event_t *e)
+        Widget *Menu::Window::acquire_mouse_handler(const ws::event_t *e)
         {
             return sync_mouse_handler(e);
         }
 
-        Widget *Menu::MenuWindow::release_mouse_handler(const ws::event_t *e)
+        Widget *Menu::Window::release_mouse_handler(const ws::event_t *e)
         {
             return sync_mouse_handler(e);
         }
 
-        status_t Menu::MenuWindow::handle_event(const ws::event_t *e)
+        status_t Menu::Window::handle_event(const ws::event_t *e)
         {
             ws::rectangle_t xr;
 
@@ -137,7 +137,7 @@ namespace lsp
             return result;
         }
 
-        bool Menu::MenuWindow::take_focus()
+        bool Menu::Window::take_focus()
         {
             bool res = PopupWindow::take_focus();
             if (res)
@@ -395,6 +395,8 @@ namespace lsp
             r->nMinHeight   = st.item_h + border;
             r->nMaxWidth    = r->nMinWidth;
             r->nMaxHeight   = st.full_h + border;
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
         }
 
         void Menu::allocate_items(lltl::darray<item_t> *out, istats_t *st)

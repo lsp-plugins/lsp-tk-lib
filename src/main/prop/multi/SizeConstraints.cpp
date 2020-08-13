@@ -14,10 +14,10 @@ namespace lsp
         const prop::desc_t SizeConstraints::DESC[] =
         {
             { "",               PT_STRING   },
-            { ".min_width",     PT_INT      },
-            { ".min_height",    PT_INT      },
-            { ".max_width",     PT_INT      },
-            { ".max_height",    PT_INT      },
+            { ".width.min",     PT_INT      },
+            { ".height.min",    PT_INT      },
+            { ".width.max",     PT_INT      },
+            { ".height.max",    PT_INT      },
             { NULL,             PT_UNKNOWN  }
         };
 
@@ -34,6 +34,8 @@ namespace lsp
             sValue.nMinHeight   = -1;
             sValue.nMaxWidth    = -1;
             sValue.nMaxHeight   = -1;
+            sValue.nPreWidth    = -1;
+            sValue.nPreHeight   = -1;
         }
 
         SizeConstraints::~SizeConstraints()
@@ -330,6 +332,22 @@ namespace lsp
             // Maximum height should not be less than minimum height
             if ((dst->nMinHeight >= 0) && (dst->nMaxHeight >= 0))
                 dst->nMaxHeight = lsp_max(dst->nMinHeight, dst->nMaxHeight);
+
+            // Preferred width and height adjustments
+            if (src->nPreWidth >= 0)
+            {
+                if (src->nMaxWidth >= 0)
+                    dst->nPreWidth   = lsp_min(src->nPreWidth, src->nMaxWidth);
+                if (src->nMinWidth >= 0)
+                    dst->nPreWidth   = lsp_max(src->nPreWidth, src->nMinWidth);
+            }
+            if (src->nPreHeight >= 0)
+            {
+                if (src->nMaxHeight >= 0)
+                    dst->nPreHeight  = lsp_min(src->nPreHeight, src->nMaxHeight);
+                if (src->nMinHeight >= 0)
+                    dst->nPreHeight  = lsp_max(src->nPreHeight, src->nMinHeight);
+            }
         }
 
         void SizeConstraints::apply(ws::rectangle_t *rect, float scale)

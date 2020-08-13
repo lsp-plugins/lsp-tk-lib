@@ -353,6 +353,10 @@ namespace lsp
                 dst->nMaxWidth     += hor;
             if (dst->nMaxHeight >= 0)
                 dst->nMaxHeight    += vert;
+            if (dst->nPreWidth >= 0)
+                dst->nPreWidth     += hor;
+            if (dst->nPreHeight >= 0)
+                dst->nPreHeight    += vert;
         }
 
         void Padding::add(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale)

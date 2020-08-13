@@ -94,6 +94,8 @@ namespace lsp
                 r->nMaxWidth       += extra * 2;
             if (r->nMaxHeight >= 0)
                 r->nMaxHeight      += extra * 2;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
         }
 
         void Led::draw(ws::ISurface *s)

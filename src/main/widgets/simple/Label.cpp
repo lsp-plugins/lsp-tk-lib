@@ -156,6 +156,8 @@ namespace lsp
             r->nMinHeight   = 0;
             r->nMaxWidth    = -1;
             r->nMaxHeight   = -1;
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
 
             // Form the text string
             LSPString text;

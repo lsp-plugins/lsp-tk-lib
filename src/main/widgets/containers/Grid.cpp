@@ -347,6 +347,8 @@ namespace lsp
             r->nMinHeight       = estimate_size(&a.vRows, 0, a.nRows);
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
 
             lsp_trace("w={%d, %d}, h={%d, %d}",
                     int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight)

@@ -236,6 +236,8 @@ namespace lsp
             r->nMinHeight   = lsp_max(radius * 2, ssize*5 + gap*4 + (border + sborder)*2);
             r->nMaxWidth    = -1;
             r->nMaxHeight   = -1;
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
 
             // Apply constraints to the vertical scroll bar parameters
             sConstraints.apply(r, scaling);

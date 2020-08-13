@@ -162,6 +162,8 @@ namespace lsp
             r->nMinHeight   = ceilf((20 * rows + 2) * scaling);
             r->nMaxWidth    = r->nMinWidth;
             r->nMaxHeight   = r->nMinHeight;
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
         }
 
         uint8_t Indicator::get_char(const LSPString *str, size_t index)
