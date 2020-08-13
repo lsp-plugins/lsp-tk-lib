@@ -51,8 +51,25 @@ namespace lsp
                         explicit Window(Display *dpy, ComboBox *cbox);
                 };
 
+                class List: public ListBox
+                {
+                    public:
+                        static const w_class_t    metadata;
+
+                    private:
+                        ComboBox   *pCBox;
+
+                    public:
+                        explicit List(Display *dpy, ComboBox *cbox);
+
+                    public:
+                        virtual status_t    on_submit();
+
+                        virtual status_t    on_change();
+                };
+
             protected:
-                ListBox                     sLBox;          // List box
+                List                        sLBox;          // List box
                 Window                      sWindow;        // Popup window
 
                 prop::Integer               sBorderSize;
@@ -82,9 +99,10 @@ namespace lsp
             protected:
                 void                    do_destroy();
                 void                    estimate_parameters(alloc_t *alloc, float scaling);
-                void                    scroll_item(ssize_t direction, size_t count);
+                bool                    scroll_item(ssize_t direction, size_t count);
 
                 static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual void            property_changed(Property *prop);
@@ -143,6 +161,8 @@ namespace lsp
                 virtual status_t            on_key_up(const ws::event_t *e);
 
                 virtual status_t            on_change();
+
+                virtual status_t            on_submit();
         };
     }
 }

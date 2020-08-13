@@ -74,9 +74,16 @@ namespace lsp
                     SCR_KEYMASK2        = 0xaaa
                 };
 
+                enum flags_t
+                {
+                    F_SEL_ACTIVE        = 1 << 0,
+                    F_SUBMIT            = 1 << 1,
+                    F_CHANGED           = 1 << 2
+                };
+
             protected:
                 size_t                          nBMask;
-                bool                            bSelActive;
+                size_t                          nXFlags;
                 ssize_t                         nCurrIndex;
                 ssize_t                         nLastIndex;
                 size_t                          nKeyScroll;     // Key scroll direction
@@ -122,7 +129,11 @@ namespace lsp
                 status_t                on_key_scroll();
                 bool                    scroll_to_item(ssize_t vindex);
 
+            protected:
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
+
                 static void             on_add_item(void *obj, Property *prop, Widget *w);
                 static void             on_remove_item(void *obj, Property *prop, Widget *w);
                 static status_t         key_scroll_handler(ws::timestamp_t time, void *arg);
@@ -184,6 +195,10 @@ namespace lsp
                 virtual status_t            on_key_down(const ws::event_t *e);
 
                 virtual status_t            on_key_up(const ws::event_t *e);
+
+                virtual status_t            on_change();
+
+                virtual status_t            on_submit();
         };
     
     } /* namespace tk */

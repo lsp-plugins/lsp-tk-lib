@@ -24,12 +24,40 @@ namespace lsp
         }
 
         //-----------------------------------------------------------------------------
+        // ListBox popup implementation
+        const w_class_t ComboBox::List::metadata        = { "ComboBox::List", &ListBox::metadata };
+
+        ComboBox::List::List(Display *dpy, ComboBox *cbox):
+            ListBox(dpy)
+        {
+            pCBox           = cbox;
+            pClass          = &metadata;
+        }
+
+        status_t ComboBox::List::on_submit()
+        {
+            pCBox->sOpened.set(false);
+            return pCBox->sSlots.execute(SLOT_SUBMIT, pCBox, NULL);
+        }
+
+        status_t ComboBox::List::on_change()
+        {
+            ListBoxItem *it  = vSelected.any();
+            ListBoxItem *old = pCBox->sSelected.set(it);
+
+            if (old != it)
+                pCBox->sSlots.execute(SLOT_CHANGE, pCBox, NULL);
+
+            return STATUS_OK;
+        }
+
+        //-----------------------------------------------------------------------------
         // ComboBox implementation
         const w_class_t ComboBox::metadata              = { "ComboBox", &WidgetContainer::metadata };
 
         ComboBox::ComboBox(Display *dpy):
             WidgetContainer(dpy),
-            sLBox(dpy),
+            sLBox(dpy, this),
             sWindow(dpy, this),
             sBorderSize(&sProperties),
             sBorderGap(&sProperties),
@@ -182,7 +210,22 @@ namespace lsp
                 query_draw();
             if (sOpened.is(prop))
             {
-                // TODO
+                bool visible = sWindow.visibility()->get();
+                if (sOpened.get() != visible)
+                {
+                    if (!visible)
+                    {
+                        ws::rectangle_t r;
+                        this->get_screen_rectangle(&r);
+                        sWindow.trigger_area()->set(&r);
+                        sWindow.trigger_widget()->set(this);
+                        sWindow.show(this);
+                        sWindow.take_focus();
+                        sLBox.take_focus();
+                    }
+                    else
+                        sWindow.hide();
+                }
             }
             if (sTextFit.is(prop))
                 query_resize();
@@ -205,7 +248,6 @@ namespace lsp
                 }
                 else
                     sSelected.set(NULL);
-                sSlots.execute(SLOT_CHANGE, this, NULL);
             }
         }
 
@@ -512,6 +554,12 @@ namespace lsp
             return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
+        status_t ComboBox::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            ComboBox *_this = widget_ptrcast<ComboBox>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
         status_t ComboBox::on_mouse_down(const ws::event_t *e)
         {
             nMBState       |= 1 << e->nCode;
@@ -527,18 +575,7 @@ namespace lsp
             if (prev == mask)
             {
                 if (e->nCode == ws::MCB_LEFT)
-                {
-                    if (sWindow.visibility()->get())
-                        sWindow.hide();
-                    else
-                    {
-                        ws::rectangle_t r;
-                        this->get_screen_rectangle(&r);
-                        sWindow.trigger_area()->set(&r);
-                        sWindow.trigger_widget()->set(this);
-                        sWindow.show(this);
-                    }
-                }
+                    sOpened.toggle();
             }
 
             return STATUS_OK;
@@ -549,20 +586,20 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void ComboBox::scroll_item(ssize_t direction, size_t count)
+        bool ComboBox::scroll_item(ssize_t direction, size_t count)
         {
             WidgetList<ListBoxItem> *wl = sLBox.items();
-            ListBoxItem *ci = sSelected.get();
+            ListBoxItem *ci  = sSelected.get();
+            ListBoxItem *xci = NULL;
             ssize_t curr = (ci != NULL) ? wl->index_of(ci) : -1;
             ssize_t last = wl->size() - 1;
-            ci  = NULL;
 
             if (direction < 0)
             {
                 while (curr > 0)
                 {
-                    ci = wl->get(--curr);
-                    if ((ci == NULL) || (!ci->visibility()->get()))
+                    xci = wl->get(--curr);
+                    if ((xci == NULL) || (!xci->visibility()->get()))
                         continue;
                     if ((--count) <= 0)
                         break;
@@ -572,24 +609,36 @@ namespace lsp
             {
                 while (curr < last)
                 {
-                    ci = wl->get(++curr);
-                    if ((ci == NULL) || (!ci->visibility()->get()))
+                    xci = wl->get(++curr);
+                    if ((xci == NULL) || (!xci->visibility()->get()))
                         continue;
                     if ((--count) <= 0)
                         break;
                 }
             }
 
-            if (ci != NULL)
-                sSelected.set(ci);
+            if ((xci != NULL) && (xci != ci))
+            {
+                sSelected.set(xci);
+                sSlots.execute(SLOT_CHANGE, this, NULL);
+                return true;
+            }
+
+            return false;
         }
 
         status_t ComboBox::on_mouse_scroll(const ws::event_t *e)
         {
             if (e->nCode == ws::MCD_UP)
-                scroll_item(-1, 1);
+            {
+                if (scroll_item(-1, 1))
+                    sSlots.execute(SLOT_SUBMIT, this, NULL);
+            }
             else if (e->nCode == ws::MCD_DOWN)
-                scroll_item(1, 1);
+            {
+                if (scroll_item(1, 1))
+                    sSlots.execute(SLOT_SUBMIT, this, NULL);
+            }
 
             return STATUS_OK;
         }
@@ -600,12 +649,21 @@ namespace lsp
             {
                 case ws::WSK_UP:
                 case ws::WSK_KEYPAD_UP:
-                    scroll_item(-1, 1);
+                    if (scroll_item(-1, 1))
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
                     break;
 
                 case ws::WSK_DOWN:
                 case ws::WSK_KEYPAD_DOWN:
-                    scroll_item(1, 1);
+                    if (scroll_item(1, 1))
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
+                    break;
+
+                case ws::WSK_KEYPAD_ENTER:
+                case ws::WSK_RETURN:
+                case ws::WSK_KEYPAD_SPACE:
+                case ' ':
+                    sOpened.toggle();
                     break;
 
                 default:
@@ -621,6 +679,11 @@ namespace lsp
         }
 
         status_t ComboBox::on_change()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ComboBox::on_submit()
         {
             return STATUS_OK;
         }

@@ -60,6 +60,7 @@ namespace lsp
                     inline status_t     remove(widget_t *w)                 { return GenericWidgetSet::remove(w);           }
                     inline bool         contains(const widget_t *w) const   { return sSet.contains(w);                      }
                     inline status_t     toggle(widget_t *w)                 { return GenericWidgetSet::toggle(w);           }
+                    inline widget_t    *any()                               { return wcast(sSet.any());                     }
 
                     inline bool         values(lltl::parray<widget_t> *dst)
                     {

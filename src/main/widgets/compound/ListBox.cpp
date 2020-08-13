@@ -37,9 +37,9 @@ namespace lsp
             sVScrollSpacing(&sProperties)
         {
             nBMask          = 0;
-            bSelActive      = false;
-            nCurrIndex      = 0;
-            nLastIndex      = 0;
+            nXFlags         = 0;
+            nCurrIndex      = -1;
+            nLastIndex      = -1;
             nKeyScroll      = SCR_NONE;
 
             sArea.nLeft     = 0;
@@ -93,6 +93,8 @@ namespace lsp
 
         status_t ListBox::init()
         {
+            handler_id_t id;
+
             // Initialize widgets
             status_t result = WidgetContainer::init();
             if (result == STATUS_OK)
@@ -159,7 +161,11 @@ namespace lsp
                 sVScrollSpacing.init(sclass, 1);
             }
 
-            return STATUS_OK;
+            // Bind slots
+            id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+
+            return (id >= 0) ? STATUS_OK : -id;
         }
 
         void ListBox::property_changed(Property *prop)
@@ -671,6 +677,18 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t ListBox::slot_on_change(Widget *sender, void *ptr, void *data)
+        {
+            ListBox *_this = widget_ptrcast<ListBox>(ptr);
+            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ListBox::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            ListBox *_this = widget_ptrcast<ListBox>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
         void ListBox::on_add_item(void *obj, Property *prop, Widget *w)
         {
             ListBoxItem *item = widget_cast<ListBoxItem>(w);
@@ -699,12 +717,17 @@ namespace lsp
 
         status_t ListBox::on_mouse_down(const ws::event_t *e)
         {
-            if ((nBMask == 0) && (e->nCode == ws::MCB_LEFT))
+            if (nBMask == 0)
             {
-                nLastIndex      = nCurrIndex;
-                bSelActive      = Position::inside(&sList, e->nLeft, e->nTop);
+                nXFlags        &= nXFlags &= ~(F_SUBMIT | F_CHANGED);
+                if (e->nCode == ws::MCB_LEFT)
+                {
+                    nLastIndex      = nCurrIndex;
+                    nXFlags         = lsp_setflag(nXFlags, F_SEL_ACTIVE, Position::inside(&sList, e->nLeft, e->nTop));
+                }
             }
-            nBMask     |= 1 << e->nCode;
+            nBMask         |= 1 << e->nCode;
+            nXFlags         = lsp_setflag(nXFlags, F_SUBMIT, nBMask == ws::MCF_LEFT);
 
             ws::event_t xe  = *e;
             xe.nType        = ws::UIE_MOUSE_MOVE;
@@ -715,6 +738,14 @@ namespace lsp
         status_t ListBox::on_mouse_up(const ws::event_t *e)
         {
             nBMask     &= ~(1 << e->nCode);
+            if (nBMask == 0)
+            {
+                if ((nXFlags & (F_SUBMIT | F_CHANGED)) == (F_SUBMIT | F_CHANGED))
+                {
+                    nXFlags &= ~(F_SUBMIT | F_CHANGED);
+                    sSlots.execute(SLOT_SUBMIT, this, NULL);
+                }
+            }
             return STATUS_OK;
         }
 
@@ -822,6 +853,9 @@ namespace lsp
             ssize_t first = 0, last = vVisible.size() - 1, middle;
             item_t *it;
 
+            if ((index < first) || (index > last))
+                return NULL;
+
             while (first <= last)
             {
                 middle          = (first + last) >> 1;
@@ -849,8 +883,13 @@ namespace lsp
                 return;
             }
 
+            bool changed = false;
+
             if (!add)
+            {
                 vSelected.clear();
+                changed = true;
+            }
 
             if (last < first)
                 swap(first, last);
@@ -862,16 +901,38 @@ namespace lsp
                     continue;
 
                 vSelected.add(li);
+                changed = true;
+            }
+
+            // Execute change
+            if (changed)
+            {
+                nXFlags  |= F_CHANGED;
+                sSlots.execute(SLOT_CHANGE, this, NULL);
             }
         }
 
         void ListBox::select_single(ssize_t index, bool add)
         {
+            bool changed = false;
             if ((!add) || (!sMultiSelect.get()))
+            {
                 vSelected.clear();
+                changed = true;
+            }
             ListBoxItem *it = vItems.get(index);
             if (it != NULL)
+            {
                 vSelected.toggle(it);
+                changed = true;
+            }
+
+            // Execute change
+            if (changed)
+            {
+                nXFlags  |= F_CHANGED;
+                sSlots.execute(SLOT_CHANGE, this, NULL);
+            }
         }
 
         status_t ListBox::on_key_down(const ws::event_t *e)
@@ -923,6 +984,12 @@ namespace lsp
                     }
                     break;
                 }
+
+                case ws::WSK_KEYPAD_ENTER:
+                case ws::WSK_RETURN:
+                    select_single(nCurrIndex, false);
+                    sSlots.execute(SLOT_SUBMIT, this, NULL);
+                    break;
 
                 default:
                     break;
@@ -1068,6 +1135,16 @@ namespace lsp
                 return false;
 
             return true;
+        }
+
+        status_t ListBox::on_change()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ListBox::on_submit()
+        {
+            return STATUS_OK;
         }
 
     } /* namespace tk */
