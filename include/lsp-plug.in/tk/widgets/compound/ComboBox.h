@@ -49,6 +49,10 @@ namespace lsp
 
                     public:
                         explicit Window(Display *dpy, ComboBox *cbox);
+
+                        virtual status_t        on_hide();
+
+                        virtual status_t        on_show();
                 };
 
                 class List: public ListBox

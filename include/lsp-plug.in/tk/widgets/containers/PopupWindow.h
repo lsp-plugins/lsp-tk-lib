@@ -27,6 +27,7 @@ namespace lsp
                 prop::Rectangle                 sTrgArea;           // The restricted area where window should never appear
                 prop::WidgetPtr<Widget>         sTrgWidget;         // The widget triggered the show
                 prop::Integer                   sTrgScreen;         // The target screen to appear
+                prop::Boolean                   sAutoClose;         // Automatically close when the pointer delivers event ouside the window
                 lltl::darray<arrangement_t>     vArrangements;      // Arrangements
                 bool                            bInitialized;       // Initalization flag
 
@@ -51,12 +52,16 @@ namespace lsp
                 LSP_TK_PROPERTY(Rectangle,          trigger_area,               &sTrgArea)
                 LSP_TK_PROPERTY(Integer,            trigger_screen,             &sTrgScreen)
                 LSP_TK_PROPERTY(WidgetPtr<Widget>,  trigger_widget,             &sTrgWidget)
+                LSP_TK_PROPERTY(Boolean,            auto_close,                 &sAutoClose)
 
             public:
                 bool                            set_arrangements(const lltl::darray<arrangement_t> *list);
                 bool                            set_arrangements(const arrangement_t *list, size_t count);
                 bool                            add_arrangement(const arrangement_t *item);
                 bool                            add_arrangement(arrangement_pos_t pos, float align = 0.0f, bool stretch = true);
+
+            public:
+                virtual status_t                handle_event(const ws::event_t *e);
         };
     }
 }

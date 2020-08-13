@@ -258,6 +258,7 @@ namespace lsp
             sWindow.add_arrangement(A_RIGHT, 0.0f, false);
             sWindow.add_arrangement(A_LEFT, 0.0f, false);
             sWindow.layout()->set(-1.0f, -1.0f, 1.0f, 1.0f);
+            sWindow.auto_close()->set(false);
 
             if ((result = sUp.init()) != STATUS_OK)
                 return result;

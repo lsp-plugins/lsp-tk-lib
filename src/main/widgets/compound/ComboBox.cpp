@@ -23,6 +23,18 @@ namespace lsp
             pClass          = &metadata;
         }
 
+        status_t ComboBox::Window::on_hide()
+        {
+            pCBox->sOpened.set(false);
+            return STATUS_OK;
+        }
+
+        status_t ComboBox::Window::on_show()
+        {
+            pCBox->sOpened.set(true);
+            return STATUS_OK;
+        }
+
         //-----------------------------------------------------------------------------
         // ListBox popup implementation
         const w_class_t ComboBox::List::metadata        = { "ComboBox::List", &ListBox::metadata };
@@ -220,6 +232,8 @@ namespace lsp
                         sWindow.trigger_area()->set(&r);
                         sWindow.trigger_widget()->set(this);
                         sWindow.show(this);
+
+                        sWindow.grab_events(ws::GRAB_DROPDOWN);
                         sWindow.take_focus();
                         sLBox.take_focus();
                     }

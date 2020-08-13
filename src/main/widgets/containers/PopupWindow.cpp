@@ -18,7 +18,8 @@ namespace lsp
             Window(dpy, NULL, -1),
             sTrgArea(&sProperties),
             sTrgWidget(&sProperties),
-            sTrgScreen(&sProperties)
+            sTrgScreen(&sProperties),
+            sAutoClose(&sProperties)
         {
             bInitialized    = false;
             pClass          = &metadata;
@@ -37,12 +38,14 @@ namespace lsp
             sTrgArea.bind("trigger.area", &sStyle);
             sTrgWidget.bind(NULL);
             sTrgScreen.bind("trigger.screen", &sStyle);
+            sAutoClose.bind("close.auto", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
             {
                 sTrgArea.init(sclass);
                 sTrgScreen.set(-1);
+                sAutoClose.init(sclass, true);
 
                 // Overrides
                 sBorderStyle.override(sclass, ws::BS_POPUP);
@@ -679,6 +682,14 @@ namespace lsp
 
             // Return geometry of the window
             *dst    = ws;
+        }
+
+        status_t PopupWindow::handle_event(const ws::event_t *e)
+        {
+            if ((e->nType == ws::UIE_MOUSE_DOWN) && (!(e->nState & ws::MCF_BTN_MASK)) && (sAutoClose.get()))
+                sVisibility.set(false);
+
+            return Window::handle_event(e);
         }
     }
 }
