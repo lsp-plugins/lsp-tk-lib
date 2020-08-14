@@ -258,10 +258,10 @@ namespace lsp
                 {
                     sLBox.selected()->clear();
                     sLBox.selected()->add(it);
-                    query_draw();
                 }
                 else
                     sSelected.set(NULL);
+                query_draw();
             }
         }
 
