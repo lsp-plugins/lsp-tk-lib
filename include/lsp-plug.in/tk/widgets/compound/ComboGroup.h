@@ -77,12 +77,14 @@ namespace lsp
 
                 ws::rectangle_t             sLabel;
                 ws::rectangle_t             sArea;
+                size_t                      nMBState;       // Mouse button state
+                bool                        bInside;
 
                 prop::Font                  sFont;
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sSpinColor;
-                prop::String                sText;
+                prop::String                sEmptyText;
                 prop::Boolean               sOpened;
                 prop::Integer               sBorder;
                 prop::Integer               sTextBorder;
@@ -94,11 +96,19 @@ namespace lsp
                 prop::SizeConstraints       sSizeConstraints;
                 prop::WidgetList<Widget>    vWidgets;
                 prop::WidgetPtr<ListBoxItem> sSelected;
+                prop::CollectionListener    sIListener;
 
             protected:
                 void                        allocate(alloc_t *alloc);
                 void                        do_destroy();
                 Widget                     *current_widget();
+                ListBoxItem                *current_item();
+                bool                        scroll_item(ssize_t direction, size_t count);
+
+                static void                 on_add_widget(void *obj, Property *prop, Widget *w);
+                static void                 on_remove_widget(void *obj, Property *prop, Widget *w);
+                static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);
@@ -117,8 +127,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,      color,              &sColor)
                 LSP_TK_PROPERTY(Color,      text_color,         &sTextColor)
                 LSP_TK_PROPERTY(Color,      spin_color,         &sSpinColor)
-                LSP_TK_PROPERTY(String,     text,               &sText)
-                LSP_TK_PROPERTY(String,     opened,             &sOpened)
+                LSP_TK_PROPERTY(String,     empty_text,         &sEmptyText)
+                LSP_TK_PROPERTY(Boolean,    opened,             &sOpened)
                 LSP_TK_PROPERTY(Integer,    border_size,        &sBorder)
                 LSP_TK_PROPERTY(Integer,    text_border,        &sTextBorder)
                 LSP_TK_PROPERTY(Integer,    border_radius,      &sRadius)
@@ -141,6 +151,20 @@ namespace lsp
                 virtual status_t            remove(Widget *child);
 
                 virtual status_t            remove_all();
+
+                virtual status_t            on_change();
+
+                virtual status_t            on_submit();
+
+                virtual status_t            on_mouse_down(const ws::event_t *e);
+
+                virtual status_t            on_mouse_up(const ws::event_t *e);
+
+                virtual status_t            on_mouse_move(const ws::event_t *e);
+
+                virtual status_t            on_mouse_scroll(const ws::event_t *e);
+
+                virtual status_t            on_key_down(const ws::event_t *e);
         };
 
     } /* namespace tk */

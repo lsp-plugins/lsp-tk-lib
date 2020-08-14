@@ -687,11 +687,6 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t ComboBox::on_key_up(const ws::event_t *e)
-        {
-            return STATUS_OK;
-        }
-
         status_t ComboBox::on_change()
         {
             return STATUS_OK;

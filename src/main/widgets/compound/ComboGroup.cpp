@@ -15,7 +15,7 @@ namespace lsp
     {
         //-----------------------------------------------------------------------------
         // ComboBox popup window implementation
-        const w_class_t ComboBox::Window::metadata      = { "ComboGroup::Window", &PopupWindow::metadata };
+        const w_class_t ComboGroup::Window::metadata    = { "ComboGroup::Window", &PopupWindow::metadata };
 
         ComboGroup::Window::Window(Display *dpy, ComboGroup *cgroup):
             PopupWindow(dpy)
@@ -66,22 +66,27 @@ namespace lsp
 
         //-----------------------------------------------------------------------------
         // ComboGroup implementation
-        const w_class_t Group::metadata         = { "ComboGroup", &WidgetContainer::metadata };
+        const w_class_t ComboGroup::metadata        = { "ComboGroup", &WidgetContainer::metadata };
 
         ComboGroup::ComboGroup(Display *dpy):
-            Align(dpy),
+            WidgetContainer(dpy),
+            sLBox(dpy, this),
+            sWindow(dpy, this),
             sFont(&sProperties),
             sColor(&sProperties),
             sTextColor(&sProperties),
-            sText(&sProperties),
+            sSpinColor(&sProperties),
+            sEmptyText(&sProperties),
             sOpened(&sProperties),
             sBorder(&sProperties),
             sTextBorder(&sProperties),
             sRadius(&sProperties),
             sTextRadius(&sProperties),
+            sSpinSize(&sProperties),
             sEmbedding(&sProperties),
             sLayout(&sProperties),
-            sSizeConstraints(&sProperties)
+            sSizeConstraints(&sProperties),
+            vWidgets(&sProperties, &sIListener)
         {
             sLabel.nLeft        = 0;
             sLabel.nTop         = 0;
@@ -92,6 +97,9 @@ namespace lsp
             sArea.nTop          = 0;
             sArea.nWidth        = 0;
             sArea.nHeight       = 0;
+
+            nMBState            = 0;
+            bInside             = 0;
 
             pClass              = &metadata;
         }
@@ -111,6 +119,8 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
+            sIListener.bind_all(this, on_add_widget, on_remove_widget);
+
             // Configure Window
             sWindow.add(&sLBox);
             sWindow.add_arrangement(A_BOTTOM, 0, true);
@@ -120,12 +130,14 @@ namespace lsp
             sFont.bind("font", &sStyle);
             sColor.bind("color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
-            sText.bind(&sStyle, pDisplay->dictionary());
+            sSpinColor.bind("spin.color", &sStyle);
+            sEmptyText.bind(&sStyle, pDisplay->dictionary());
             sOpened.bind("opened", &sStyle);
             sBorder.bind("border.size", &sStyle);
             sTextBorder.bind("text.border", &sStyle);
             sRadius.bind("border.radius", &sStyle);
             sTextRadius.bind("text.radius", &sStyle);
+            sSpinSize.bind("spin.size", &sStyle);
             sEmbedding.bind("embed", &sStyle);
             sLayout.bind("layout", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -136,11 +148,13 @@ namespace lsp
                 sFont.init(sclass);
                 sColor.init(sclass, "#000000");
                 sTextColor.init(sclass, "#ffffff");
+                sSpinColor.init(sclass, "#ffffff");
                 sOpened.init(sclass, false);
                 sBorder.init(sclass, 2);
                 sTextBorder.init(sclass, 2);
                 sRadius.init(sclass, 10);
                 sTextRadius.init(sclass, 10);
+                sSpinSize.init(sclass, 10);
                 sEmbedding.init(sclass, false);
                 sLayout.init(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
                 sSizeConstraints.init(sclass);
@@ -158,7 +172,7 @@ namespace lsp
                 query_draw();
             if (sTextColor.is(prop))
                 query_draw();
-            if (sText.is(prop))
+            if (sEmptyText.is(prop))
                 query_resize();
             if (sOpened.is(prop))
             {
@@ -207,6 +221,32 @@ namespace lsp
             }
         }
 
+        void ComboGroup::on_add_widget(void *obj, Property *prop, Widget *w)
+        {
+            ListBoxItem *item = widget_cast<ListBoxItem>(w);
+            if (item == NULL)
+                return;
+
+            ComboGroup *_this = widget_ptrcast<ComboGroup>(obj);
+            if (_this == NULL)
+                return;
+
+            _this->query_resize();
+        }
+
+        void ComboGroup::on_remove_widget(void *obj, Property *prop, Widget *w)
+        {
+            ListBoxItem *item = widget_cast<ListBoxItem>(w);
+            if (item == NULL)
+                return;
+
+            ComboGroup *_this = widget_ptrcast<ComboGroup>(obj);
+            if (_this == NULL)
+                return;
+
+            _this->query_resize();
+        }
+
         void ComboGroup::allocate(alloc_t *alloc)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -222,10 +262,14 @@ namespace lsp
             LSPString s;
             ws::text_parameters_t tp;
             ws::font_parameters_t fp;
+            ListBoxItem *it     = current_item();
 
             ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
             ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
-            sText.format(&s);
+            if (it != NULL)
+                it->text()->format(&s);
+            else
+                sEmptyText.format(&s);
 
             sFont.get_parameters(pDisplay, scaling, &fp);
             sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
@@ -333,8 +377,15 @@ namespace lsp
         Widget *ComboGroup::current_widget()
         {
             ListBoxItem *it = sSelected.get();
-            ssize_t index   = (it != NULL) ? sLBox.items()->index_of(it) : NULL;
+            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : NULL;
             return vWidgets.get(index);
+        }
+
+        ListBoxItem *ComboGroup::current_item()
+        {
+            ListBoxItem *it = sSelected.get();
+            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : NULL;
+            return (index >= 0) ? it : NULL;
         }
 
         void ComboGroup::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -435,7 +486,8 @@ namespace lsp
                 // Draw text
                 if (Size::overlap(area, &sLabel))
                 {
-                    ir          = lsp_max(0.0f, sTextRadius.get() * scaling);
+                    ListBoxItem *it     = current_item();
+                    ir                  = lsp_max(0.0f, sTextRadius.get() * scaling);
 
                     // Draw text background
                     color.copy(sColor);
@@ -452,7 +504,10 @@ namespace lsp
                     color.scale_lightness(bright);
 
                     ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
-                    sText.format(&text);
+                    if (it != NULL)
+                        it->text()->format(&text);
+                    else
+                        sEmptyText.format(&text);
 
                     sFont.get_parameters(pDisplay, scaling, &fp);
                     sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
@@ -468,6 +523,173 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
+        status_t ComboGroup::add(Widget *child)
+        {
+            return vWidgets.add(child);
+        }
+
+        status_t ComboGroup::remove(Widget *child)
+        {
+            return vWidgets.premove(child);
+        }
+
+        status_t ComboGroup::remove_all()
+        {
+            vWidgets.clear();
+            return STATUS_OK;
+        }
+
+        Widget *ComboGroup::find_widget(ssize_t x, ssize_t y)
+        {
+            Widget *widget  = current_widget();
+            if (widget->inside(x, y))
+                return widget;
+
+            return NULL;
+        }
+
+        status_t ComboGroup::slot_on_change(Widget *sender, void *ptr, void *data)
+        {
+            ComboGroup *_this = widget_ptrcast<ComboGroup>(ptr);
+            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ComboGroup::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            ComboGroup *_this = widget_ptrcast<ComboGroup>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ComboGroup::on_change()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ComboGroup::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ComboGroup::on_mouse_down(const ws::event_t *e)
+        {
+            if (nMBState == 0)
+                bInside = Position::inside(&sLabel, e->nLeft, e->nTop);
+
+            return STATUS_OK;
+        }
+
+        status_t ComboGroup::on_mouse_up(const ws::event_t *e)
+        {
+            size_t mask     = 1 << e->nCode;
+            size_t prev     = nMBState;
+            nMBState       &= (~mask);
+
+            if (prev == mask)
+            {
+                if ((e->nCode == ws::MCB_LEFT) && (bInside))
+                    sOpened.toggle();
+            }
+
+            if (nMBState == 0)
+                bInside         = false;
+
+            return STATUS_OK;
+        }
+
+        status_t ComboGroup::on_mouse_move(const ws::event_t *e)
+        {
+            return STATUS_OK;
+        }
+
+        bool ComboGroup::scroll_item(ssize_t direction, size_t count)
+        {
+            WidgetList<ListBoxItem> *wl = sLBox.items();
+            ListBoxItem *ci  = sSelected.get();
+            ListBoxItem *xci = NULL;
+            ssize_t curr = (ci != NULL) ? wl->index_of(ci) : -1;
+            ssize_t last = wl->size() - 1;
+
+            if (direction < 0)
+            {
+                while (curr > 0)
+                {
+                    xci = wl->get(--curr);
+                    if ((xci == NULL) || (!xci->visibility()->get()))
+                        continue;
+                    if ((--count) <= 0)
+                        break;
+                }
+            }
+            else
+            {
+                while (curr < last)
+                {
+                    xci = wl->get(++curr);
+                    if ((xci == NULL) || (!xci->visibility()->get()))
+                        continue;
+                    if ((--count) <= 0)
+                        break;
+                }
+            }
+
+            if ((xci != NULL) && (xci != ci))
+            {
+                sSelected.set(xci);
+                sSlots.execute(SLOT_CHANGE, this, NULL);
+                return true;
+            }
+
+            return false;
+        }
+
+        status_t ComboGroup::on_mouse_scroll(const ws::event_t *e)
+        {
+            if (Position::inside(&sLabel, e->nLeft, e->nTop))
+            {
+                if (e->nCode == ws::MCD_UP)
+                {
+                    if (scroll_item(-1, 1))
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
+                }
+                else if (e->nCode == ws::MCD_DOWN)
+                {
+                    if (scroll_item(1, 1))
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t ComboGroup::on_key_down(const ws::event_t *e)
+        {
+            switch (e->nCode)
+            {
+                case ws::WSK_UP:
+                case ws::WSK_KEYPAD_UP:
+                    if (scroll_item(-1, 1))
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
+                    break;
+
+                case ws::WSK_DOWN:
+                case ws::WSK_KEYPAD_DOWN:
+                    if (scroll_item(1, 1))
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
+                    break;
+
+                case ws::WSK_KEYPAD_ENTER:
+                case ws::WSK_RETURN:
+                case ws::WSK_KEYPAD_SPACE:
+                case ' ':
+                    sOpened.toggle();
+                    break;
+
+                default:
+                    break;
+            }
+
+            return STATUS_OK;
+        }
     } /* namespace tk */
 } /* namespace lsp */
 
