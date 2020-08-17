@@ -293,6 +293,23 @@ namespace lsp
             return pWindow->get_absolute_geometry(r);
         }
 
+        status_t Window::get_screen_rectangle(ws::rectangle_t *r, ws::rectangle_t *sr)
+        {
+            *r = *sr;
+            if (pWindow == NULL)
+                return STATUS_OK;
+
+            ws::rectangle_t wr;
+            status_t res = pWindow->get_absolute_geometry(&wr);
+            if (res == STATUS_OK)
+            {
+                r->nLeft       += wr.nLeft;
+                r->nTop        += wr.nTop;
+            }
+
+            return res;
+        }
+
         status_t Window::get_padded_screen_rectangle(ws::rectangle_t *r)
         {
             if (pWindow == NULL)
@@ -300,6 +317,23 @@ namespace lsp
             status_t res = pWindow->get_absolute_geometry(r);
             if (res == STATUS_OK)
                 sPadding.enter(r, sScaling.get());
+            return res;
+        }
+
+        status_t Window::get_padded_screen_rectangle(ws::rectangle_t *r, ws::rectangle_t *sr)
+        {
+            *r = *sr;
+            if (pWindow == NULL)
+                return STATUS_OK;
+
+            ws::rectangle_t wr;
+            status_t res = pWindow->get_absolute_geometry(&wr);
+            if (res == STATUS_OK)
+            {
+                sPadding.enter(r, sScaling.get());
+                r->nLeft       += wr.nLeft;
+                r->nTop        += wr.nTop;
+            }
             return res;
         }
 

@@ -209,13 +209,6 @@ namespace lsp
                  */
                 inline void             get_rectangle(ws::rectangle_t *r)           { *r = sSize;                       }
 
-                /**
-                 * Get position of the widget relative to the screen
-                 * @param r pointer to store result
-                 * @return status of operation
-                 */
-                virtual status_t        get_screen_rectangle(ws::rectangle_t *r);
-
                 /** Get actual widget dimensions with padding applied
                  *
                  * @param r real widget dimensions
@@ -223,10 +216,20 @@ namespace lsp
                 inline void             get_padded_rectangle(ws::rectangle_t *r)    { sPadding.leave(r, &sSize, sScaling.get()); }
 
                 /**
+                 * Get position of the widget relative to the screen
+                 * @param r pointer to store result
+                 * @param sr source rectangle that belongs to the widget
+                 * @return status of operation
+                 */
+                virtual status_t        get_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr);
+                virtual status_t        get_screen_rectangle(ws::rectangle_t *r);
+
+                /**
                  * Get position of the widget relative to the screen with applied padding
                  * @param r pointer to store result
                  * @return status of operation
                  */
+                virtual status_t        get_padded_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr);
                 virtual status_t        get_padded_screen_rectangle(ws::rectangle_t *r);
 
                 /** Request widget for it's minimum and maximum size.

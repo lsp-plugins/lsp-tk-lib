@@ -140,7 +140,9 @@ namespace lsp
 
                 inline ssize_t                  screen()                    { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
+                virtual status_t                get_screen_rectangle(ws::rectangle_t *r, ws::rectangle_t *sr);
                 virtual status_t                get_screen_rectangle(ws::rectangle_t *r);
+                virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r, ws::rectangle_t *sr);
                 virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r);
 
                 inline bool                     override_pointer() const    { return bOverridePointer; }

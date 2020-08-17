@@ -687,7 +687,13 @@ namespace lsp
         status_t PopupWindow::handle_event(const ws::event_t *e)
         {
             if ((e->nType == ws::UIE_MOUSE_DOWN) && (!(e->nState & ws::MCF_BTN_MASK)) && (sAutoClose.get()))
-                sVisibility.set(false);
+            {
+                if ((e->nLeft < 0) ||
+                    (e->nTop < 0) ||
+                    (e->nLeft >= sSize.nWidth) ||
+                    (e->nTop >= sSize.nHeight))
+                    sVisibility.set(false);
+            }
 
             return Window::handle_event(e);
         }

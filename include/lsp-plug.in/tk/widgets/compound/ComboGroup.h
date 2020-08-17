@@ -65,10 +65,11 @@ namespace lsp
                     public:
                         explicit List(Display *dpy, ComboGroup *cbox);
 
+                    protected:
+                        virtual void        property_changed(Property *prop);
+
                     public:
                         virtual status_t    on_submit();
-
-                        virtual status_t    on_change();
                 };
 
             protected:
@@ -151,6 +152,12 @@ namespace lsp
                 virtual status_t            remove(Widget *child);
 
                 virtual status_t            remove_all();
+
+                virtual status_t            add_item(ListBoxItem *child);
+
+                virtual status_t            remove_item(ListBoxItem *child);
+
+                virtual status_t            remove_all_items();
 
                 virtual status_t            on_change();
 

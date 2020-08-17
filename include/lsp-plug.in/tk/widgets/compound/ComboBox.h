@@ -66,6 +66,9 @@ namespace lsp
                     public:
                         explicit List(Display *dpy, ComboBox *cbox);
 
+                    protected:
+                        virtual void        property_changed(Property *prop);
+
                     public:
                         virtual status_t    on_submit();
 

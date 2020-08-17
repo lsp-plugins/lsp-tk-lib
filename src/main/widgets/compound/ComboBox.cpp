@@ -46,6 +46,13 @@ namespace lsp
             pClass          = &metadata;
         }
 
+        void ComboBox::List::property_changed(Property *prop)
+        {
+            ListBox::property_changed(prop);
+            if (vItems.is(prop))
+                pCBox->query_resize();
+        }
+
         status_t ComboBox::List::on_submit()
         {
             pCBox->sOpened.set(false);
@@ -228,7 +235,7 @@ namespace lsp
                     if (!visible)
                     {
                         ws::rectangle_t r;
-                        this->get_screen_rectangle(&r);
+                        this->get_padded_screen_rectangle(&r);
                         sWindow.trigger_area()->set(&r);
                         sWindow.trigger_widget()->set(this);
                         sWindow.show(this);
