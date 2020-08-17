@@ -85,6 +85,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Void.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -132,6 +133,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Void.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Switch.o: \
  main/widgets/simple/Switch.cpp \
@@ -220,6 +222,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Switch.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -267,6 +270,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Switch.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Separator.o: \
@@ -356,6 +360,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Separator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -402,7 +407,8 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Separator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/ScrollBar.o: \
  main/widgets/simple/ScrollBar.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -490,6 +496,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ScrollBar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -537,6 +544,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ScrollBar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/ProgressBar.o: \
@@ -626,6 +634,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ProgressBar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -673,6 +682,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ProgressBar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/MenuItem.o: \
  main/widgets/simple/MenuItem.cpp \
@@ -761,6 +771,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/MenuItem.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -808,6 +819,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/MenuItem.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/ListBoxItem.o: \
  main/widgets/simple/ListBoxItem.cpp \
@@ -896,6 +908,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ListBoxItem.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -942,7 +955,8 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ListBoxItem.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Led.o: main/widgets/simple/Led.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -1029,6 +1043,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Led.o: main/widgets/simple/Led.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -1075,7 +1090,8 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Led.o: main/widgets/simple/Led.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Label.o: \
  main/widgets/simple/Label.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -1163,6 +1179,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Label.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -1210,6 +1227,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Label.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Knob.o: \
  main/widgets/simple/Knob.cpp \
@@ -1298,6 +1316,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Knob.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -1345,6 +1364,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Knob.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Indicator.o: \
@@ -1434,6 +1454,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Indicator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -1481,6 +1502,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Indicator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Hyperlink.o: \
  main/widgets/simple/Hyperlink.cpp \
@@ -1569,6 +1591,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Hyperlink.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -1616,6 +1639,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Hyperlink.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Process.h
@@ -1706,6 +1730,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Fader.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -1753,6 +1778,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Fader.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Edit.o: \
  main/widgets/simple/Edit.cpp \
@@ -1841,6 +1867,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Edit.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -1888,6 +1915,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Edit.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Button.o: \
@@ -1977,6 +2005,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Button.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -2024,6 +2053,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Button.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/Window.o: \
  main/widgets/containers/Window.cpp \
@@ -2112,6 +2142,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Window.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -2159,6 +2190,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Window.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/ScrollArea.o: \
  main/widgets/containers/ScrollArea.cpp \
@@ -2247,6 +2279,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/ScrollArea.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -2293,7 +2326,8 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/ScrollArea.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/PopupWindow.o: \
  main/widgets/containers/PopupWindow.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -2381,6 +2415,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/PopupWindow.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -2428,6 +2463,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/PopupWindow.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/Group.o: \
  main/widgets/containers/Group.cpp \
@@ -2516,6 +2552,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Group.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -2563,6 +2600,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Group.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/Grid.o: \
@@ -2652,6 +2690,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Grid.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -2699,6 +2738,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Grid.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/Box.o: \
  main/widgets/containers/Box.cpp \
@@ -2787,6 +2827,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Box.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -2834,6 +2875,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Box.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/Align.o: \
  main/widgets/containers/Align.cpp \
@@ -2922,6 +2964,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Align.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -2969,6 +3012,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Align.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/compound/Menu.o: \
  main/widgets/compound/Menu.cpp \
@@ -3057,6 +3101,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/Menu.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -3104,6 +3149,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/Menu.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/compound/ListBox.o: \
@@ -3193,6 +3239,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ListBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -3240,7 +3287,146 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ListBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
+$(LSP_TK_LIB_BIN)/main/widgets/compound/ComboGroup.o: \
+ main/widgets/compound/ComboGroup.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/widgets/compound/ComboBox.o: \
  main/widgets/compound/ComboBox.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -3328,6 +3514,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ComboBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -3374,7 +3561,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ComboBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/util/TextDataSource.o: \
  main/util/TextDataSource.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -3462,6 +3651,7 @@ $(LSP_TK_LIB_BIN)/main/util/TextDataSource.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -3509,6 +3699,7 @@ $(LSP_TK_LIB_BIN)/main/util/TextDataSource.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InMemoryStream.h
 $(LSP_TK_LIB_BIN)/main/util/TextDataSink.o: main/util/TextDataSink.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -3596,6 +3787,7 @@ $(LSP_TK_LIB_BIN)/main/util/TextDataSink.o: main/util/TextDataSink.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -3643,6 +3835,7 @@ $(LSP_TK_LIB_BIN)/main/util/TextDataSink.o: main/util/TextDataSink.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/util/TextCursor.o: main/util/TextCursor.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -3730,6 +3923,7 @@ $(LSP_TK_LIB_BIN)/main/util/TextCursor.o: main/util/TextCursor.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -3776,7 +3970,8 @@ $(LSP_TK_LIB_BIN)/main/util/TextCursor.o: main/util/TextCursor.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/util/KeyboardHandler.o: \
  main/util/KeyboardHandler.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -3864,6 +4059,7 @@ $(LSP_TK_LIB_BIN)/main/util/KeyboardHandler.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -3911,6 +4107,7 @@ $(LSP_TK_LIB_BIN)/main/util/KeyboardHandler.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -3998,6 +4195,7 @@ $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -4045,6 +4243,7 @@ $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/dsp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/version.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/types.h \
@@ -4173,6 +4372,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Timer.o: main/sys/Timer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -4219,7 +4419,8 @@ $(LSP_TK_LIB_BIN)/main/sys/Timer.o: main/sys/Timer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -4306,6 +4507,7 @@ $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -4352,7 +4554,8 @@ $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -4439,6 +4642,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -4485,7 +4689,8 @@ $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -4572,6 +4777,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -4619,6 +4825,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/Dictionary.h
 $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
@@ -4707,6 +4914,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -4753,7 +4961,8 @@ $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -4840,6 +5049,7 @@ $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -4886,7 +5096,8 @@ $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -4973,6 +5184,7 @@ $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -5020,6 +5232,7 @@ $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InStringSequence.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Tokenizer.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/token.h
@@ -5110,6 +5323,7 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleListener.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -5156,7 +5370,8 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleListener.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/style/IStyleInitializer.o: \
  main/style/IStyleInitializer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -5244,6 +5459,7 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleInitializer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -5290,7 +5506,8 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleInitializer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/simple/String.o: main/prop/simple/String.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -5377,6 +5594,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/String.o: main/prop/simple/String.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -5424,6 +5642,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/String.o: main/prop/simple/String.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/format.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
 $(LSP_TK_LIB_BIN)/main/prop/simple/Integer.o: \
@@ -5513,6 +5732,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Integer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -5559,7 +5779,8 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Integer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/simple/Float.o: main/prop/simple/Float.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -5646,6 +5867,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Float.o: main/prop/simple/Float.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -5692,7 +5914,8 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Float.o: main/prop/simple/Float.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/simple/Boolean.o: \
  main/prop/simple/Boolean.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -5780,6 +6003,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Boolean.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -5826,7 +6050,8 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Boolean.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/TextSelection.o: \
  main/prop/multi/TextSelection.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -5914,6 +6139,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextSelection.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -5960,7 +6186,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextSelection.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/TextLayout.o: \
  main/prop/multi/TextLayout.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -6048,6 +6275,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextLayout.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -6094,7 +6322,144 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextLayout.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
+$(LSP_TK_LIB_BIN)/main/prop/multi/TextFitness.o: \
+ main/prop/multi/TextFitness.cpp \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/StepFloat.o: \
  main/prop/multi/StepFloat.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -6182,6 +6547,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/StepFloat.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -6228,7 +6594,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/StepFloat.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/SizeRange.o: \
  main/prop/multi/SizeRange.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -6316,6 +6683,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/SizeRange.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -6362,7 +6730,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/SizeRange.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Size.o: main/prop/multi/Size.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -6449,6 +6818,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Size.o: main/prop/multi/Size.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -6495,7 +6865,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Size.o: main/prop/multi/Size.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/SizeConstraints.o: \
  main/prop/multi/SizeConstraints.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -6583,6 +6954,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/SizeConstraints.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -6629,7 +7001,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/SizeConstraints.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Shortcut.o: \
  main/prop/multi/Shortcut.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -6717,6 +7090,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Shortcut.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -6763,7 +7137,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Shortcut.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Rectangle.o: \
  main/prop/multi/Rectangle.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -6851,6 +7226,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Rectangle.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -6897,7 +7273,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Rectangle.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/RangeFloat.o: \
  main/prop/multi/RangeFloat.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -6985,6 +7362,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/RangeFloat.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -7032,6 +7410,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/RangeFloat.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Position.o: \
  main/prop/multi/Position.cpp \
@@ -7120,6 +7499,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Position.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -7166,7 +7546,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Position.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Padding.o: main/prop/multi/Padding.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -7253,6 +7634,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Padding.o: main/prop/multi/Padding.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -7300,6 +7682,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Padding.o: main/prop/multi/Padding.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Layout.o: main/prop/multi/Layout.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -7387,6 +7770,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Layout.o: main/prop/multi/Layout.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -7434,6 +7818,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Layout.o: main/prop/multi/Layout.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Font.o: main/prop/multi/Font.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -7521,6 +7906,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Font.o: main/prop/multi/Font.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -7567,7 +7953,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Font.o: main/prop/multi/Font.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Embedding.o: \
  main/prop/multi/Embedding.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -7655,6 +8042,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Embedding.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -7701,7 +8089,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Embedding.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/multi/Color.o: main/prop/multi/Color.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -7788,6 +8177,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Color.o: main/prop/multi/Color.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -7834,7 +8224,8 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Color.o: main/prop/multi/Color.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -7921,6 +8312,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -7967,7 +8359,8 @@ $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/flags/WindowActions.o: \
  main/prop/flags/WindowActions.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -8055,6 +8448,7 @@ $(LSP_TK_LIB_BIN)/main/prop/flags/WindowActions.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -8101,7 +8495,8 @@ $(LSP_TK_LIB_BIN)/main/prop/flags/WindowActions.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/flags/Allocation.o: \
  main/prop/flags/Allocation.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -8189,6 +8584,7 @@ $(LSP_TK_LIB_BIN)/main/prop/flags/Allocation.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -8235,7 +8631,8 @@ $(LSP_TK_LIB_BIN)/main/prop/flags/Allocation.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/enum/WindowPolicy.o: \
  main/prop/enum/WindowPolicy.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -8323,6 +8720,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/WindowPolicy.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -8369,7 +8767,8 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/WindowPolicy.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/enum/Scrolling.o: \
  main/prop/enum/Scrolling.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -8457,6 +8856,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Scrolling.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -8503,7 +8903,8 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Scrolling.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/enum/Pointer.o: main/prop/enum/Pointer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -8590,6 +8991,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Pointer.o: main/prop/enum/Pointer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -8636,7 +9038,8 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Pointer.o: main/prop/enum/Pointer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/enum/Orientation.o: \
  main/prop/enum/Orientation.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -8724,6 +9127,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Orientation.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -8770,7 +9174,8 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Orientation.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/enum/MenuItemType.o: \
  main/prop/enum/MenuItemType.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -8858,6 +9263,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/MenuItemType.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -8904,7 +9310,8 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/MenuItemType.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/enum/ButtonMode.o: \
  main/prop/enum/ButtonMode.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -8992,6 +9399,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/ButtonMode.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -9038,7 +9446,8 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/ButtonMode.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/enum/BorderStyle.o: \
  main/prop/enum/BorderStyle.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -9126,6 +9535,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/BorderStyle.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -9172,7 +9582,8 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/BorderStyle.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetSet.o: \
  main/prop/collection/WidgetSet.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -9260,6 +9671,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetSet.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -9306,7 +9718,8 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetSet.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetList.o: \
  main/prop/collection/WidgetList.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -9394,6 +9807,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetList.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -9440,7 +9854,8 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetList.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/collection/CollectionListener.o: \
  main/prop/collection/CollectionListener.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -9528,6 +9943,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/CollectionListener.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -9574,7 +9990,8 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/CollectionListener.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/base/SimpleProperty.o: \
  main/prop/base/SimpleProperty.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -9662,6 +10079,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/SimpleProperty.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -9708,7 +10126,8 @@ $(LSP_TK_LIB_BIN)/main/prop/base/SimpleProperty.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/base/Ptr.o: main/prop/base/Ptr.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -9795,6 +10214,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Ptr.o: main/prop/base/Ptr.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -9842,6 +10262,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Ptr.o: main/prop/base/Ptr.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InStringSequence.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Tokenizer.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/token.h
@@ -9931,6 +10352,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Property.o: main/prop/base/Property.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -9978,6 +10400,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Property.o: main/prop/base/Property.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InStringSequence.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Tokenizer.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/token.h
@@ -10068,6 +10491,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/MultiProperty.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -10114,7 +10538,8 @@ $(LSP_TK_LIB_BIN)/main/prop/base/MultiProperty.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/base/Flags.o: main/prop/base/Flags.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -10201,6 +10626,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Flags.o: main/prop/base/Flags.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -10247,7 +10673,8 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Flags.o: main/prop/base/Flags.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/base/Enum.o: main/prop/base/Enum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -10334,6 +10761,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Enum.o: main/prop/base/Enum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -10380,7 +10808,8 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Enum.o: main/prop/base/Enum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/prop/base/BitEnum.o: main/prop/base/BitEnum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -10467,6 +10896,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/BitEnum.o: main/prop/base/BitEnum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -10513,7 +10943,8 @@ $(LSP_TK_LIB_BIN)/main/prop/base/BitEnum.o: main/prop/base/BitEnum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/main/base/Widget.o: main/base/Widget.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
@@ -10600,6 +11031,7 @@ $(LSP_TK_LIB_BIN)/main/base/Widget.o: main/base/Widget.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -10647,6 +11079,7 @@ $(LSP_TK_LIB_BIN)/main/base/Widget.o: main/base/Widget.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/base/WidgetContainer.o: \
  main/base/WidgetContainer.cpp \
@@ -10735,6 +11168,7 @@ $(LSP_TK_LIB_BIN)/main/base/WidgetContainer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -10781,7 +11215,8 @@ $(LSP_TK_LIB_BIN)/main/base/WidgetContainer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  test/utest/tk/style/style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -10869,6 +11304,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -10916,6 +11352,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/utest.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
@@ -11020,6 +11457,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/schema.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -11066,7 +11504,8 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/schema.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/switch.o: \
  test/mtest/widgets/simple/switch.cpp \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
@@ -11161,6 +11600,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/switch.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -11208,6 +11648,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/switch.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/separator.o: \
  test/mtest/widgets/simple/separator.cpp \
@@ -11303,6 +11744,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/separator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -11350,6 +11792,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/separator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/scrollbar.o: \
  test/mtest/widgets/simple/scrollbar.cpp \
@@ -11445,6 +11888,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/scrollbar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -11492,6 +11936,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/scrollbar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/progressbar.o: \
  test/mtest/widgets/simple/progressbar.cpp \
@@ -11587,6 +12032,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/progressbar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -11634,6 +12080,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/progressbar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/led.o: \
  test/mtest/widgets/simple/led.cpp \
@@ -11729,6 +12176,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/led.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -11776,6 +12224,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/led.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/label.o: \
  test/mtest/widgets/simple/label.cpp \
@@ -11871,6 +12320,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/label.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -11918,6 +12368,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/label.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/knob.o: \
  test/mtest/widgets/simple/knob.cpp \
@@ -12013,6 +12464,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/knob.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -12060,6 +12512,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/knob.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/indicator.o: \
  test/mtest/widgets/simple/indicator.cpp \
@@ -12155,6 +12608,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/indicator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -12202,6 +12656,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/indicator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/hyperlink.o: \
  test/mtest/widgets/simple/hyperlink.cpp \
@@ -12297,6 +12752,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/hyperlink.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -12344,6 +12800,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/hyperlink.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/fader.o: \
  test/mtest/widgets/simple/fader.cpp \
@@ -12439,6 +12896,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/fader.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -12486,6 +12944,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/fader.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/edit.o: \
  test/mtest/widgets/simple/edit.cpp \
@@ -12581,6 +13040,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/edit.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -12628,6 +13088,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/edit.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/button.o: \
  test/mtest/widgets/simple/button.cpp \
@@ -12723,6 +13184,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/button.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -12770,6 +13232,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/button.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/scrollarea.o: \
  test/mtest/widgets/containers/scrollarea.cpp \
@@ -12865,6 +13328,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/scrollarea.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -12912,6 +13376,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/scrollarea.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/popup.o: \
  test/mtest/widgets/containers/popup.cpp \
@@ -13007,6 +13472,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/popup.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -13054,290 +13520,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/popup.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
- $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
-$(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/menu.o: \
- test/mtest/widgets/containers/menu.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
- $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
-$(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/listbox.o: \
- test/mtest/widgets/containers/listbox.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
- $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
- $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
- $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/group.o: \
  test/mtest/widgets/containers/group.cpp \
@@ -13433,6 +13616,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/group.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -13480,6 +13664,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/group.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid4.o: \
  test/mtest/widgets/containers/grid4.cpp \
@@ -13575,6 +13760,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid4.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -13622,6 +13808,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid4.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid3.o: \
  test/mtest/widgets/containers/grid3.cpp \
@@ -13717,6 +13904,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid3.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -13764,6 +13952,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid3.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid2.o: \
  test/mtest/widgets/containers/grid2.cpp \
@@ -13859,6 +14048,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid2.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -13906,6 +14096,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid2.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid1.o: \
  test/mtest/widgets/containers/grid1.cpp \
@@ -14001,6 +14192,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid1.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -14048,6 +14240,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid1.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/box.o: \
  test/mtest/widgets/containers/box.cpp \
@@ -14143,6 +14336,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/box.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -14189,7 +14383,8 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/box.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/align.o: \
  test/mtest/widgets/containers/align.cpp \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
@@ -14284,6 +14479,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/align.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -14331,6 +14527,583 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/align.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
+ $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
+$(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/menu.o: \
+ test/mtest/widgets/compound/menu.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
+ $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
+$(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/listbox.o: \
+ test/mtest/widgets/compound/listbox.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
+ $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
+$(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combogroup.o: \
+ test/mtest/widgets/compound/combogroup.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
+ $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
+$(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combobox.o: \
+ test/mtest/widgets/compound/combobox.cpp \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
+ $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/types.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ws.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/version.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/keycodes.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/Font.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IGradient.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/Color.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/LSPString.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/string.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/ISurface.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDisplay.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Library.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Path.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/backend.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/version.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/types.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/factory.h \
+ $(LSP_R3D_BASE_LIB_INC)/lsp-plug.in/r3d/base.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/darray.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/parray.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IWindow.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IR3DBackend.h \
+ $(LSP_WS_LIB_INC)/lsp-plug.in/ws/factory.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/Listener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/CollectionListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleListener.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/IStyleInitializer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Property.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Ptr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/SimpleProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/MultiProperty.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Enum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/BitEnum.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/base/Flags.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/ButtonMode.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/BorderStyle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/MenuItemType.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/WindowPolicy.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Pointer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Orientation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/enum/Scrolling.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/Allocation.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/flags/WindowActions.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Boolean.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Integer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/Float.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/simple/String.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Parameters.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/Resolver.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/expr/types.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/IDictionary.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetList.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetPtr.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/WidgetSet.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/phashset.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Color.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Embedding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Font.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Layout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Padding.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Position.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/RangeFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Rectangle.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Shortcut.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Size.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Schema.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/pphash.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/PullParser.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/xml/const.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Atoms.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Slot.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSource.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/Widget.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/WidgetContainer.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/base/cast.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Button.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Edit.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Fader.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Hyperlink.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Indicator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Knob.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Label.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Led.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ListBoxItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/MenuItem.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ProgressBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/ScrollBar.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Separator.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Switch.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/simple/Void.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Window.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/PopupWindow.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Align.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Box.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Grid.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/Group.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/tk/common.o: test/mtest/tk/common.cpp \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h \
@@ -14429,6 +15202,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/sys/display.o: test/mtest/sys/display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -14475,7 +15249,8 @@ $(LSP_TK_LIB_BIN)/test/mtest/sys/display.o: test/mtest/sys/display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
 $(LSP_TK_LIB_BIN)/test/main.o: test/main.cpp \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main.h \
  $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
@@ -14573,6 +15348,7 @@ $(LSP_TK_LIB_BIN)/test/init/init.o: test/init/init.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeConstraints.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/SizeRange.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/StepFloat.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextFitness.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/Style.h \
@@ -14619,4 +15395,5 @@ $(LSP_TK_LIB_BIN)/test/init/init.o: test/init/init.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/containers/ScrollArea.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/Menu.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ListBox.h \
- $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboBox.h \
+ $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/compound/ComboGroup.h
