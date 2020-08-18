@@ -32,6 +32,15 @@ namespace lsp
                     NONE_CLICK      = 1 << 2
                 };
 
+                typedef struct alloc_t
+                {
+                    ws::rectangle_t sNum;
+                    ws::rectangle_t sDen;
+                    ws::rectangle_t sSize;
+                    float           dx;
+                    float           dy;
+                } alloc_t;
+
                 class Combo;
 
                 class Window: public PopupWindow
@@ -109,6 +118,8 @@ namespace lsp
             protected:
                 void                        do_destroy();
                 void                        set_visibility(Combo *cb, bool visible);
+                ssize_t                     estimate_size(Combo *cb, ws::rectangle_t *r);
+                void                        allocate(alloc_t *a);
 
                 static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);

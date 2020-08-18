@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
 {
@@ -223,10 +224,10 @@ namespace lsp
             if (sclass != NULL)
             {
                 sColor.init(sclass, "#000000");
-                sFont.init(sclass);
+                sFont.init(sclass, 14.0f);
                 sAngle.init(sclass, 60.0f);
-                sTextPad.init(sclass, 2);
-                sThick.init(sclass, 2);
+                sTextPad.init(sclass, 0);
+                sThick.init(sclass, 1);
             }
 
             // Bind slots
@@ -257,18 +258,204 @@ namespace lsp
                 query_resize();
         }
 
+        ssize_t Fraction::estimate_size(Combo *cb, ws::rectangle_t *r)
+        {
+            // Get font parameters
+            ws::text_parameters_t tp;
+            float scaling = lsp_max(0.0f, sScaling.get());
+
+            // Estimate empty text size
+            LSPString s;
+            cb->sText.format(&s);
+            sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+            r->nWidth  = tp.Width;
+            r->nHeight = tp.Height;
+
+            // Estimate all visible items size
+            WidgetList<ListBoxItem> *wl = cb->sList.items();
+            ssize_t width       = 0;
+
+            // Estimate the maximum width of the list box
+            for (size_t i=0, n=wl->size(); i<n; ++i)
+            {
+                ListBoxItem *it = wl->get(i);
+                if ((it == NULL) || (!it->visibility()->get()))
+                    continue;
+                it->text()->format(&s);
+                if (s.is_empty())
+                    continue;
+
+                // Get text parameters
+                sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                r->nWidth       = lsp_max(r->nWidth, tp.Width);
+                r->nHeight      = lsp_max(r->nHeight, tp.Width);
+            }
+
+            return width;
+        }
+
+        void Fraction::allocate(alloc_t *a)
+        {
+            ws::font_parameters_t fp;
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float angle     = sAngle.get() * M_PI / 180.0f;
+            float tpad      = (sTextPad.get() + sThick.get()) * scaling;
+
+            sFont.get_parameters(pDisplay, scaling, &fp);
+            estimate_size(&sNum, &a->sNum);
+            estimate_size(&sDen, &a->sDen);
+
+            a->sNum.nHeight = lsp_max(fp.Height, a->sNum.nHeight);
+            a->sDen.nHeight = lsp_max(fp.Height, a->sDen.nHeight);
+
+            // Fraction rotation
+            float dx        = cosf(angle);
+            float dy        = sinf(angle);
+            a->dx           = dx;
+            a->dy           = dy;
+
+            a->sNum.nLeft   = -dy * (a->sNum.nHeight + tpad) * 0.5f;
+            a->sNum.nTop    = -dx * (a->sNum.nHeight + tpad) * 0.5f;
+            a->sDen.nLeft   = dy * (a->sDen.nHeight + tpad) * 0.5f;
+            a->sDen.nTop    = dx * (a->sDen.nHeight + tpad) * 0.5f;
+
+            ssize_t dx1     = (a->sNum.nLeft - a->sNum.nWidth)  - (a->sDen.nLeft + a->sDen.nWidth);
+            ssize_t dx2     = (a->sNum.nLeft + a->sNum.nWidth)  - (a->sDen.nLeft - a->sDen.nWidth);
+            ssize_t dy1     = (a->sNum.nTop  - a->sNum.nHeight) - (a->sDen.nTop  + a->sDen.nHeight);
+            ssize_t dy2     = (a->sNum.nTop  + a->sNum.nHeight) - (a->sDen.nTop  - a->sDen.nHeight);
+
+            a->sSize.nLeft  = 0;
+            a->sSize.nTop   = 0;
+            a->sSize.nWidth = lsp_max(lsp_abs(dx1), lsp_abs(dx2));
+            a->sSize.nHeight= lsp_max(lsp_abs(dy1), lsp_abs(dy2));
+
+            ssize_t cx      = a->sSize.nWidth >> 1;
+            ssize_t cy      = a->sSize.nHeight >> 1;
+
+            a->sNum.nLeft  += cx;
+            a->sNum.nTop   += cy;
+            a->sDen.nLeft  += cx;
+            a->sDen.nTop   += cy;
+        }
+
         void Fraction::size_request(ws::size_limit_t *r)
         {
-            // TODO
+            alloc_t a;
+            allocate(&a);
+
+            r->nMinWidth    = a.sSize.nWidth;
+            r->nMinHeight   = a.sSize.nHeight;
+            r->nMaxWidth    = a.sSize.nWidth;
+            r->nMaxHeight   = a.sSize.nHeight;
+            r->nPreWidth    = r->nMinWidth;
+            r->nPreHeight   = r->nMinHeight;
         }
 
         void Fraction::realize(const ws::rectangle_t *r)
         {
-            // TODO
+            alloc_t a;
+            allocate(&a);
+
+            sNum.sArea      = a.sNum;
+            sDen.sArea      = a.sDen;
+
+            Widget::realize(r);
         }
 
         void Fraction::draw(ws::ISurface *s)
         {
+            LSPString num, den;
+
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp, bp;
+
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float bright    = sBrightness.get();
+            float angle     = sAngle.get() * M_PI / 180.0f;
+            float lw        = lsp_max(1.0f, sThick.get() * scaling * ((sFont.bold()) ? 2.0f : 1.0f));
+
+            // Prepare palette
+            lsp::Color bg_color(sBgColor);
+            lsp::Color color(sColor);
+            lsp::Color tc(sNum.sColor);
+            lsp::Color bc(sNum.sColor);
+
+            color.scale_lightness(bright);
+            tc.scale_lightness(bright);
+            bc.scale_lightness(bright);
+
+            // Clear
+            s->clear(bg_color);
+
+            // Get numerator text
+            ListBoxItem *sel = sNum.sSelected.get();
+            if (sel != NULL)
+            {
+                if (!sNum.sList.items()->contains(sel))
+                    sel     = NULL;
+                else if (!sel->visibility()->get())
+                    sel     = NULL;
+            }
+
+            if (sel != NULL)
+                sel->text()->format(&num);
+            else
+                sNum.sText.format(&num);
+
+            // Get denominator text
+            sel = sDen.sSelected.get();
+            if (sel != NULL)
+            {
+                if (!sDen.sList.items()->contains(sel))
+                    sel     = NULL;
+                else if (!sel->visibility()->get())
+                    sel     = NULL;
+            }
+
+            if (sel != NULL)
+                sel->text()->format(&den);
+            else
+                sDen.sText.format(&den);
+
+            // Get font parameters
+            sFont.get_parameters(s, scaling, &fp);
+            sFont.get_text_parameters(s, &tp, scaling, &num);
+            sFont.get_text_parameters(s, &bp, scaling, &den);
+
+            // Draw line
+            float dx        = fp.Height * cosf(angle);
+            float dy        = fp.Height * sinf(angle);
+            ssize_t cx      = sSize.nWidth >> 1;
+            ssize_t cy      = sSize.nHeight >> 1;
+            bool aa         = s->set_antialiasing(true);
+            s->line(cx + dx, cy - dy, cx - dx, cy + dy, lw, color);
+
+            // Output numerator and denominator
+//            s->fill_rect(&tc, sNum.sArea.nLeft, sNum.sArea.nTop, 1, 1);
+//            s->wire_rect(&tc,
+//                    sNum.sArea.nLeft - sNum.sArea.nWidth*0.5f, sNum.sArea.nTop  - sNum.sArea.nHeight*0.5f,
+//                    sNum.sArea.nWidth, sNum.sArea.nHeight, 1.0f
+//                );
+//            s->fill_rect(&bc, sDen.sArea.nLeft, sDen.sArea.nTop, 1, 1);
+//            s->wire_rect(&bc,
+//                    sDen.sArea.nLeft - sDen.sArea.nWidth*0.5f, sDen.sArea.nTop  - sDen.sArea.nHeight*0.5f,
+//                    sDen.sArea.nWidth, sDen.sArea.nHeight, 1.0f
+//                );
+
+            sFont.draw(
+                s, tc,
+                sNum.sArea.nLeft - (tp.Width*0.5f),
+                sNum.sArea.nTop  + fp.Ascent  - fp.Height*0.5f,
+                scaling, &num
+            );
+            sFont.draw(
+                s, bc,
+                sDen.sArea.nLeft - (bp.Width*0.5f),
+                sDen.sArea.nTop  + fp.Ascent  - fp.Height*0.5f,
+                scaling, &den
+            );
+
+            s->set_antialiasing(aa);
         }
 
         status_t Fraction::slot_on_change(Widget *sender, void *ptr, void *data)
