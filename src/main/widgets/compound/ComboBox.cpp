@@ -36,7 +36,7 @@ namespace lsp
         }
 
         //-----------------------------------------------------------------------------
-        // ListBox popup implementation
+        // ComboBox list implementation
         const w_class_t ComboBox::List::metadata        = { "ComboBox::List", &ListBox::metadata };
 
         ComboBox::List::List(Display *dpy, ComboBox *cbox):
@@ -195,6 +195,7 @@ namespace lsp
 
             // Bind slots
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_change, self());
             if (id < 0)
                 return -id;
 

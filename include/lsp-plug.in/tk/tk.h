@@ -137,6 +137,9 @@
 #include <lsp-plug.in/tk/widgets/compound/ComboBox.h>
 #include <lsp-plug.in/tk/widgets/compound/ComboGroup.h>
 
+// Specific widgets
+#include <lsp-plug.in/tk/widgets/specific/Fraction.h>
+
 namespace lsp
 {
     namespace tk
