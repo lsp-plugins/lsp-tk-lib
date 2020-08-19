@@ -101,11 +101,12 @@ namespace lsp
 
                     public:
                         void                property_changed(Property *prop);
+                        bool                scroll_item(ssize_t direction, size_t count);
                 };
 
             protected:
                 Combo                       sNum;           // Numerator combo
-                Combo                       sDen;         // Denominator combo
+                Combo                       sDen;           // Denominator combo
 
                 prop::Color                 sColor;         // Fraction color
                 prop::Font                  sFont;          // Font
@@ -114,6 +115,7 @@ namespace lsp
                 prop::Integer               sThick;         // Thickness
 
                 size_t                      nMBState;       // Mouse button state
+                mstate_t                    enTrgState;     // Trigger state
 
             protected:
                 void                        do_destroy();
@@ -123,6 +125,7 @@ namespace lsp
 
                 static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
+                bool                        check_mouse_over(const ws::rectangle_t *area, const ws::event_t *ev);
 
             protected:
                 virtual void                property_changed(Property *prop);

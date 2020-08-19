@@ -136,9 +136,61 @@ namespace lsp
             if (sText.is(prop))
                 pFrac->query_resize();
             if (sSelected.is(prop))
+            {
+                ListBoxItem *it = sSelected.get();
+                if (sList.items()->contains(it))
+                {
+                    sList.selected()->clear();
+                    sList.selected()->add(it);
+                }
+                else
+                    sSelected.set(NULL);
+
                 pFrac->query_resize();
+            }
             if (sOpened.is(prop))
                 pFrac->set_visibility(this, sOpened.get());
+        }
+
+        bool Fraction::Combo::scroll_item(ssize_t direction, size_t count)
+        {
+            WidgetList<ListBoxItem> *wl = sList.items();
+            ListBoxItem *ci  = sSelected.get();
+            ListBoxItem *xci = NULL;
+            ssize_t curr = (ci != NULL) ? wl->index_of(ci) : -1;
+            ssize_t last = wl->size() - 1;
+
+            if (direction < 0)
+            {
+                while (curr > 0)
+                {
+                    xci = wl->get(--curr);
+                    if ((xci == NULL) || (!xci->visibility()->get()))
+                        continue;
+                    if ((--count) <= 0)
+                        break;
+                }
+            }
+            else
+            {
+                while (curr < last)
+                {
+                    xci = wl->get(++curr);
+                    if ((xci == NULL) || (!xci->visibility()->get()))
+                        continue;
+                    if ((--count) <= 0)
+                        break;
+                }
+            }
+
+            if ((xci != NULL) && (xci != ci))
+            {
+                sSelected.set(xci);
+                pFrac->sSlots.execute(SLOT_CHANGE, pFrac, NULL);
+                return true;
+            }
+
+            return false;
         }
 
         //-----------------------------------------------------------------------------
@@ -156,6 +208,7 @@ namespace lsp
             sThick(&sProperties)
         {
             nMBState        = 0;
+            enTrgState      = NONE_CLICK;
 
             pClass          = &metadata;
         }
@@ -194,7 +247,9 @@ namespace lsp
                 sNum.sOpened.set(false);
 
             ws::rectangle_t r;
-            this->get_padded_screen_rectangle(&r, &cb->sArea);
+            this->get_padded_screen_rectangle(&r);
+            r.nLeft    += cb->sArea.nLeft - (cb->sArea.nWidth  >> 1);
+            r.nTop     += cb->sArea.nTop  - (cb->sArea.nHeight >> 1) - r.nHeight;
 
             cb->sWindow.trigger_area()->set(&r);
             cb->sWindow.trigger_widget()->set(this);
@@ -226,7 +281,7 @@ namespace lsp
                 sColor.init(sclass, "#000000");
                 sFont.init(sclass, 14.0f);
                 sAngle.init(sclass, 60.0f);
-                sTextPad.init(sclass, 0);
+                sTextPad.init(sclass, 6);
                 sThick.init(sclass, 1);
             }
 
@@ -319,17 +374,22 @@ namespace lsp
             a->sDen.nLeft   = dy * (a->sDen.nHeight + tpad) * 0.5f;
             a->sDen.nTop    = dx * (a->sDen.nHeight + tpad) * 0.5f;
 
-            ssize_t dx1     = (a->sNum.nLeft - a->sNum.nWidth)  - (a->sDen.nLeft + a->sDen.nWidth);
-            ssize_t dx2     = (a->sNum.nLeft + a->sNum.nWidth)  - (a->sDen.nLeft - a->sDen.nWidth);
-            ssize_t dy1     = (a->sNum.nTop  - a->sNum.nHeight) - (a->sDen.nTop  + a->sDen.nHeight);
-            ssize_t dy2     = (a->sNum.nTop  + a->sNum.nHeight) - (a->sDen.nTop  - a->sDen.nHeight);
+            ssize_t nwh     = a->sNum.nWidth  >> 1;
+            ssize_t nhh     = a->sNum.nHeight >> 1;
+            ssize_t dwh     = a->sDen.nWidth  >> 1;
+            ssize_t dhh     = a->sDen.nHeight >> 1;
+
+            ssize_t dx1     = (a->sNum.nLeft - nwh) - (a->sDen.nLeft + dwh);
+            ssize_t dx2     = (a->sNum.nLeft + nwh) - (a->sDen.nLeft - dwh);
+            ssize_t dy1     = (a->sNum.nTop  - nhh) - (a->sDen.nTop  + dhh);
+            ssize_t dy2     = (a->sNum.nTop  + nhh) - (a->sDen.nTop  - dhh);
 
             a->sSize.nLeft  = 0;
             a->sSize.nTop   = 0;
             a->sSize.nWidth = lsp_max(lsp_abs(dx1), lsp_abs(dx2));
             a->sSize.nHeight= lsp_max(lsp_abs(dy1), lsp_abs(dy2));
 
-            ssize_t cx      = a->sSize.nWidth >> 1;
+            ssize_t cx      = a->sSize.nWidth  >> 1;
             ssize_t cy      = a->sSize.nHeight >> 1;
 
             a->sNum.nLeft  += cx;
@@ -378,7 +438,7 @@ namespace lsp
             lsp::Color bg_color(sBgColor);
             lsp::Color color(sColor);
             lsp::Color tc(sNum.sColor);
-            lsp::Color bc(sNum.sColor);
+            lsp::Color bc(sDen.sColor);
 
             color.scale_lightness(bright);
             tc.scale_lightness(bright);
@@ -444,13 +504,13 @@ namespace lsp
 
             sFont.draw(
                 s, tc,
-                sNum.sArea.nLeft - (tp.Width*0.5f),
+                sNum.sArea.nLeft - (tp.Width*0.5f) - tp.XBearing,
                 sNum.sArea.nTop  + fp.Ascent  - fp.Height*0.5f,
                 scaling, &num
             );
             sFont.draw(
                 s, bc,
-                sDen.sArea.nLeft - (bp.Width*0.5f),
+                sDen.sArea.nLeft - (bp.Width*0.5f) - bp.XBearing,
                 sDen.sArea.nTop  + fp.Ascent  - fp.Height*0.5f,
                 scaling, &den
             );
@@ -470,27 +530,67 @@ namespace lsp
             return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
         }
 
+        bool Fraction::check_mouse_over(const ws::rectangle_t *area, const ws::event_t *ev)
+        {
+            ssize_t x = ev->nLeft - sSize.nLeft + (area->nWidth >> 1);
+            ssize_t y = ev->nTop  - sSize.nTop  + (area->nHeight >> 1);
+
+            return Position::inside(area, x, y);
+        }
+
         status_t Fraction::on_mouse_down(const ws::event_t *e)
         {
-            // TODO
+            if (nMBState == 0)
+            {
+                if (check_mouse_over(&sNum.sArea, e))
+                    enTrgState  = NUM_CLICK;
+                else if (check_mouse_over(&sDen.sArea, e))
+                    enTrgState  = DENOM_CLICK;
+                else
+                    enTrgState  = NONE_CLICK;
+            }
+
+            nMBState |= (1 << e->nCode);
+
             return STATUS_OK;
         }
 
         status_t Fraction::on_mouse_up(const ws::event_t *e)
         {
-            // TODO
+            size_t mask = 1 << e->nCode;
+
+            if ((nMBState == mask) && (mask == ws::MCF_LEFT))
+            {
+                if ((enTrgState == NUM_CLICK) && (check_mouse_over(&sNum.sArea, e)))
+                    sNum.sOpened.set(true);
+                else if ((enTrgState == DENOM_CLICK) && (check_mouse_over(&sDen.sArea, e)))
+                    sDen.sOpened.set(true);
+
+                enTrgState  = NONE_CLICK;
+            }
+
+            nMBState &= ~mask;
+
             return STATUS_OK;
         }
 
         status_t Fraction::on_mouse_scroll(const ws::event_t *e)
         {
-            // TODO
+            ssize_t dir = (e->nCode == ws::MCD_UP) ? -1 :
+                          (e->nCode == ws::MCD_DOWN) ? 1 : 0;
+            if (dir == 0)
+                return STATUS_OK;
+
+            if (check_mouse_over(&sNum.sArea, e))
+                return sNum.scroll_item(dir, 1);
+            else if (check_mouse_over(&sDen.sArea, e))
+                return sDen.scroll_item(dir, 1);
+
             return STATUS_OK;
         }
 
         status_t Fraction::on_change()
         {
-            // TODO
             return STATUS_OK;
         }
 

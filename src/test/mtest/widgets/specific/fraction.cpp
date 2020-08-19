@@ -263,6 +263,7 @@ MTEST_BEGIN("tk.widgets.specific", fraction)
                 f->den_color()->set_rgb24(next_color(col));
                 f->color()->set_rgb24(next_color(col));
                 f->bg_color()->set_rgb24(next_color(col));
+                f->angle()->add(i * 45);
                 if (i%2)
                     f->font()->set_bold(true);
             }
