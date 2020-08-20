@@ -140,6 +140,10 @@
 // Specific widgets
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
 
+// Graph widgets
+#include <lsp-plug.in/tk/widgets/graph/GraphItem.h>
+#include <lsp-plug.in/tk/widgets/graph/Graph.h>
+
 namespace lsp
 {
     namespace tk
