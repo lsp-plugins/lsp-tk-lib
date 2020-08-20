@@ -15,8 +15,21 @@ namespace lsp
 
         Graph::Graph(Display *dpy):
             WidgetContainer(dpy),
-            vItems(&sProperties, &sIListener)
+            vItems(&sProperties, &sIListener),
+            sConstraints(&sProperties),
+            sBorder(&sProperties),
+            sBorderRadius(&sProperties),
+            sGlass(&sProperties),
+            sColor(&sProperties),
+            sBorderColor(&sProperties),
+            sGlassColor(&sProperties)
         {
+            pGlass              = NULL;
+            sCanvas.nLeft       = 0;
+            sCanvas.nTop        = 0;
+            sCanvas.nWidth      = 0;
+            sCanvas.nHeight     = 0;
+
             pClass              = &metadata;
         }
 
@@ -57,12 +70,24 @@ namespace lsp
             sIListener.bind_all(this, on_add_item, on_remove_item);
 
             // Init style
-            // TODO
+            sConstraints.bind("size.constraints", &sStyle);
+            sBorder.bind("border.size", &sStyle);
+            sBorderRadius.bind("border.radius", &sStyle);
+            sGlass.bind("glass.visibility", &sStyle);
+            sColor.bind("color", &sStyle);
+            sBorderColor.bind("border.color", &sStyle);
+            sGlassColor.bind("glass.color", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
             {
-                // TODO
+                sConstraints.init(sclass);
+                sBorder.init(sclass, 4);
+                sBorderRadius.init(sclass, 12);
+                sGlass.init(sclass, true);
+                sColor.init(sclass, "#000000");
+                sBorderColor.init(sclass, "#cccccc");
+                sGlassColor.init(sclass, "#ffffff");
             }
 
             return STATUS_OK;
@@ -73,6 +98,19 @@ namespace lsp
             WidgetContainer::property_changed(prop);
             if (vItems.is(prop))
                 query_draw();
+        }
+
+        void Graph::size_request(ws::size_limit_t *r)
+        {
+        }
+
+        void Graph::realize(const ws::rectangle_t *r)
+        {
+        }
+
+        Widget *Graph::find_widget(ssize_t x, ssize_t y)
+        {
+            return NULL;
         }
 
         void Graph::on_add_item(void *obj, Property *prop, Widget *w)

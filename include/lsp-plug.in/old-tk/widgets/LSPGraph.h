@@ -46,8 +46,8 @@ namespace lsp
                 lltl::parray<LSPCenter>     vCenters;
 
                 #ifdef LSP_TRACE
-                struct timespec sClock;
-                size_t          nFrames;
+                struct timespec             sClock;
+                size_t                      nFrames;
                 #endif /* LSP_TRACE */
 
             protected:
