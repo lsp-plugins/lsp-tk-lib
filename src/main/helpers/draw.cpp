@@ -96,8 +96,6 @@ namespace lsp
             if ((*g) == NULL)
                 return NULL;
 
-            (*g)->clear_rgba(0);
-
             // Draw glass effect
             size_t pr   = sqrtf(float(width)*float(width) + float(height)*float(height));
 
@@ -140,8 +138,6 @@ namespace lsp
             *g          = s->create(width, height);
             if ((*g) == NULL)
                 return NULL;
-
-            (*g)->clear_rgba(0);
 
             // Pre-calculate params
             ws::IGradient *gr = NULL;
