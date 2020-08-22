@@ -425,20 +425,19 @@ namespace lsp
 
             if ((widget != NULL) && (widget->visibility()->get()))
             {
-                color.copy(widget->bg_color()->color());
+                widget->get_rectangle(&xr);
+
+                if (widget->redraw_pending())
+                {
+                    // Draw the child only if it is visible in the area
+                    if (Size::intersection(&xr, &sSize))
+                        widget->render(s, &xr, force);
+
+                    widget->commit_redraw();
+                }
+
                 if (force)
                 {
-                    widget->get_rectangle(&xr);
-
-                    if (widget->redraw_pending())
-                    {
-                        // Draw the child only if it is visible in the area
-                        if (Size::intersection(&xr, &sSize))
-                            widget->render(s, &xr, force);
-
-                        widget->commit_redraw();
-                    }
-
                     // Render the child background
                     if (Size::overlap(area, &sSize))
                     {

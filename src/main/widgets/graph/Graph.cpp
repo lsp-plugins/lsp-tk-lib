@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
 {
@@ -25,6 +26,7 @@ namespace lsp
             sGlassColor(&sProperties)
         {
             pGlass              = NULL;
+
             sCanvas.nLeft       = 0;
             sCanvas.nTop        = 0;
             sCanvas.nWidth      = 0;
@@ -102,14 +104,103 @@ namespace lsp
 
         void Graph::size_request(ws::size_limit_t *r)
         {
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            sConstraints.compute(r, scaling);
+
+            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+            float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
+            float ir        = lsp_max(0.0f, xr - bw);                       // internal radius
+            float bp        = (1.0f - M_SQRT1_2) * ir;                      // padding to not to cross internal radius
+            ssize_t padding = ceilf(bp + bw);
+            ssize_t wh      = lsp_max(padding * 2, xr * 2);                 // minimum possible width and height
+
+            // Append padding to the size limit
+            r->nMinWidth    = (r->nMinWidth  >= 0) ? r->nMinWidth  + padding * 2 : padding * 2;
+            r->nMinHeight   = (r->nMinHeight >= 0) ? r->nMinHeight + padding * 2 : padding * 2;
+            r->nMaxWidth    = (r->nMaxWidth  >= 0) ? r->nMaxWidth  + padding * 2 : -1;
+            r->nMaxHeight   = (r->nMaxHeight >= 0) ? r->nMaxHeight + padding * 2 : -1;
+
+            // Apply radius settings
+            r->nMinWidth    = (r->nMinWidth  >= 0) ? lsp_max(r->nMinWidth,  wh)  : wh;
+            r->nMinHeight   = (r->nMinHeight >= 0) ? lsp_max(r->nMinHeight, wh)  : wh;
+            if ((r->nMaxWidth  >= 0) && (r->nMaxWidth  < r->nMinWidth))
+                r->nMaxWidth    = r->nMinWidth;
+            if ((r->nMaxHeight >= 0) && (r->nMaxHeight < r->nMinHeight))
+                r->nMaxHeight   = r->nMinHeight;
         }
 
         void Graph::realize(const ws::rectangle_t *r)
         {
+            // Call parent class to realize
+            WidgetContainer::realize(r);
+
+            // Compute the size of area
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+            float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
+            float ir        = lsp_max(0.0f, xr - bw);                       // internal radius
+            ssize_t padding = (1.0f - M_SQRT1_2) * ir + bw;                 // padding of internal area
+
+            sCanvas.nLeft   = r->nLeft   + padding;
+            sCanvas.nTop    = r->nTop    + padding;
+            sCanvas.nWidth  = r->nWidth  - padding*2;
+            sCanvas.nHeight = r->nHeight - padding*2;
+        }
+
+        void Graph::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
+        {
+            if (nFlags & REDRAW_SURFACE)
+                force = true;
+
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+            float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
+            float ir        = lsp_max(0.0f, xr - bw);                       // internal radius
+            float bright    = sBrightness.get();
+
+            // Prepare palette
+            lsp::Color color(sColor);
+            lsp::Color bg_color(sBgColor);
+            color.scale_lightness(bright);
+
+            // Draw background
+            if (xr > 0)
+            {
+                ws::rectangle_t ir = sSize;
+                ir.nLeft   += xr;
+                ir.nTop    += xr;
+                ir.nWidth  -= xr*2;
+                ir.nHeight -= xr*2;
+                s->fill_frame(bg_color, &sSize, &ir);
+            }
+
+            bool aa = s->set_antialiasing(true);
+            s->fill_round_rect(color, SURFMASK_ALL_CORNER, ir, &sSize);
+
+//            // Draw the internals
+//            ws::ISurface *cv = get_canvas(s, fCanvasWidth, fCanvasHeight, color);
+//            if (cv != NULL)
+//                s->draw(cv, bs, bs);
+//
+//            // Draw the glass and the border
+//            cv = create_border_glass(s, &pGlass, sSize.nWidth, sSize.nHeight, nRadius, nBorder, SURFMASK_ALL_CORNER, color);
+//            if (cv != NULL)
+//                s->draw(cv, 0, 0);
+
+            s->set_antialiasing(aa);
         }
 
         Widget *Graph::find_widget(ssize_t x, ssize_t y)
         {
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                GraphItem *gi = vItems.get(i);
+                if ((gi == NULL) || (!gi->visibility()->get()))
+                    continue;
+
+                if (gi->inside(x, y))
+                    return gi;
+            }
             return NULL;
         }
 

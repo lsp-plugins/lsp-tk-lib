@@ -254,20 +254,19 @@ namespace lsp
             // Draw background if child is invisible or not present
             if ((pWidget != NULL) && (pWidget->visibility()->get()))
             {
-                color.copy(pWidget->bg_color()->color());
+                pWidget->get_rectangle(&xr);
+
+                if (pWidget->redraw_pending())
+                {
+                    // Draw the child only if it is visible in the area
+                    if (Size::intersection(&xr, &sSize))
+                        pWidget->render(s, &xr, force);
+
+                    pWidget->commit_redraw();
+                }
+
                 if (force)
                 {
-                    pWidget->get_rectangle(&xr);
-
-                    if (pWidget->redraw_pending())
-                    {
-                        // Draw the child only if it is visible in the area
-                        if (Size::intersection(&xr, &sSize))
-                            pWidget->render(s, &xr, force);
-
-                        pWidget->commit_redraw();
-                    }
-
                     // Render the child background
                     if (Size::overlap(area, &sSize))
                     {
@@ -282,9 +281,13 @@ namespace lsp
             }
             else
             {
-                color.copy(sBgColor);
-                s->fill_rect(color, &sSize);
-                bg   = true;
+                s->clip_begin(area);
+                {
+                    color.copy(sBgColor);
+                    s->fill_rect(color, &sSize);
+                    bg   = true;
+                }
+                s->clip_end();
             }
 
             // Render frame

@@ -85,6 +85,8 @@ namespace lsp
                 virtual status_t            remove(Widget *child);
 
                 virtual status_t            remove_all();
+
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
     }
 }
