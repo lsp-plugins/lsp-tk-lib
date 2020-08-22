@@ -46,10 +46,21 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         {
             _this->printf("Key up: %c (0x%x)\n", (char)ev->nCode, int(ev->nCode));
 
-            if ((ev->nCode == '+') || (ev->nCode == ws::WSK_KEYPAD_ADD))
-                wnd->scaling()->set(wnd->scaling()->get() + 0.25f);
-            else if ((ev->nCode == '-') || (ev->nCode == ws::WSK_KEYPAD_SUBTRACT))
-                wnd->scaling()->set(wnd->scaling()->get() - 0.25f);
+            switch (ev->nCode)
+            {
+                case '+':
+                case ws::WSK_KEYPAD_ADD:
+                    wnd->style()->schema()->scaling()->add(0.25f);
+                    break;
+
+                case '-':
+                case ws::WSK_KEYPAD_SUBTRACT:
+                    wnd->style()->schema()->scaling()->sub(0.25f);
+                    break;
+
+                default:
+                    break;
+            }
         }
         return STATUS_OK;
     }
@@ -130,18 +141,18 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         h->test     = this;
         h->label    = ::strdup(label);
 
-        tk::handler_id_t hid;
-        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
-        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
-
-        if (hid < 0)
-            res = -hid;
+//        tk::handler_id_t hid;
+//        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
+//        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
+//
+//        if (hid < 0)
+//            res = -hid;
 
         return res;
     }
@@ -168,7 +179,6 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         lltl::parray<tk::Widget> widgets;
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
-        tk::Grid *grid = NULL;
         tk::Graph *gr = NULL;
 
         // Initialize window

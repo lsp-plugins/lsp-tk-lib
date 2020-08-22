@@ -46,17 +46,17 @@ namespace lsp
                 g->add_color(0.0f, l);
                 g->add_color(1.0f, c);
                 s->wire_round_rect(
-                        g, mask, 1.0f,
-                        left + i, top + i,
+                        g, mask, iradius - i,
+                        left + i + 0.5f, top + i + 0.5f,
                         width - (i << 1) - 1, height - (i << 1) - 1,
-                        iradius - i
+                        1.0f
                 );
                 delete g;
             }
 
             s->fill_round_rect(
                     c, mask, iradius - thick,
-                    left + thick, top + thick,
+                    left + thick + 0.5f, top + thick + 0.5f,
                     width - (thick << 1) - 1, height - (thick << 1) - 1);
             s->set_antialiasing(aa);
         }
@@ -95,6 +95,8 @@ namespace lsp
             *g          = s->create(width, height);
             if ((*g) == NULL)
                 return NULL;
+
+            (*g)->clear_rgba(0);
 
             // Draw glass effect
             size_t pr   = sqrtf(float(width)*float(width) + float(height)*float(height));
@@ -139,6 +141,8 @@ namespace lsp
             if ((*g) == NULL)
                 return NULL;
 
+            (*g)->clear_rgba(0);
+
             // Pre-calculate params
             ws::IGradient *gr = NULL;
             bool aa = (*g)->set_antialiasing(true);
@@ -150,23 +154,24 @@ namespace lsp
                 float bright = float(thick - i) / thick;
                 lsp::Color l(1.0f, 1.0f, 1.0f);
                 l.blend(bc, bright);
+                ssize_t xrr = lsp_max(0, radius - i);
 
                 gr = (*g)->radial_gradient(0, height, i, 0, height, pr * 1.5f);
                 gr->add_color(0.0f, l);
                 gr->add_color(1.0f, bc);
                 (*g)->wire_round_rect(
-                        gr, mask, 1.0f,
-                        i, i, width - (i << 1) - 1, height - (i << 1) - 1,
-                        radius - i
+                        gr, mask, xrr,
+                        i + 0.5f, i + 0.5f, width - (i << 1) - 1, height - (i << 1) - 1,
+                        1.0f
                     );
                 delete gr;
             }
 
-            s->wire_round_rect(
-                    bc, mask, 1.0f,
+            (*g)->wire_round_rect(
+                    bc, mask, lsp_max(0, radius - thick),
                     thick + 0.5f, thick + 0.5f,
                     width - (thick << 1) - 1, height - (thick << 1) - 1,
-                    radius - thick
+                    1.0f
                 );
 
             // Draw glass effect
@@ -175,7 +180,7 @@ namespace lsp
             gr->add_color(1.0f, gc, 1.0f);
 
             (*g)->fill_round_rect(
-                    gr, mask, radius - thick,
+                    gr, mask, lsp_max(0, radius - thick),
                     thick, thick,
                     width - (thick << 1), height - (thick << 1)
                 );

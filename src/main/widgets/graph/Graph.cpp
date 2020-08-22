@@ -7,6 +7,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -59,6 +60,14 @@ namespace lsp
                 unlink_widget(item);
             }
 
+            // Destroy glass
+            if (pGlass != NULL)
+            {
+                pGlass->destroy();
+                delete pGlass;
+                pGlass = NULL;
+            }
+
             vItems.flush();
         }
 
@@ -88,7 +97,7 @@ namespace lsp
                 sBorderRadius.init(sclass, 12);
                 sGlass.init(sclass, true);
                 sColor.init(sclass, "#000000");
-                sBorderColor.init(sclass, "#cccccc");
+                sBorderColor.init(sclass, "#000000");
                 sGlassColor.init(sclass, "#ffffff");
             }
 
@@ -158,36 +167,46 @@ namespace lsp
             float ir        = lsp_max(0.0f, xr - bw);                       // internal radius
             float bright    = sBrightness.get();
 
+            lsp_trace("xr = %f, size={%d, %d, %d, %d}", xr,
+                    int(sSize.nLeft), int(sSize.nTop), int(sSize.nWidth), int(sSize.nHeight)
+                );
+
             // Prepare palette
+            ws::ISurface *cv;
             lsp::Color color(sColor);
             lsp::Color bg_color(sBgColor);
             color.scale_lightness(bright);
 
-            // Draw background
-            if (xr > 0)
+            s->clip_begin(area);
             {
-                ws::rectangle_t ir = sSize;
-                ir.nLeft   += xr;
-                ir.nTop    += xr;
-                ir.nWidth  -= xr*2;
-                ir.nHeight -= xr*2;
-                s->fill_frame(bg_color, &sSize, &ir);
+                // Draw widget background
+                s->fill_rect(bg_color, &sSize);
+
+                bool aa = s->set_antialiasing(true);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
+
+                // Get surface of widget
+                cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);
+                if (cv != NULL)
+                    s->draw(cv, sSize.nLeft + ir, sSize.nTop + ir);
+
+                // Draw the glass and the border
+                color.copy(sGlassColor);
+                bg_color.copy(sColor);
+                color.scale_lightness(bright);
+                bg_color.scale_lightness(bright);
+
+                cv = create_border_glass(&pGlass, s,
+                        color, bg_color,
+                        SURFMASK_ALL_CORNER, bw, xr,
+                        sSize.nWidth, sSize.nHeight
+                    );
+                if (cv != NULL)
+                    s->draw(cv, sSize.nLeft, sSize.nTop);
+
+                s->set_antialiasing(aa);
             }
-
-            bool aa = s->set_antialiasing(true);
-            s->fill_round_rect(color, SURFMASK_ALL_CORNER, ir, &sSize);
-
-//            // Draw the internals
-//            ws::ISurface *cv = get_canvas(s, fCanvasWidth, fCanvasHeight, color);
-//            if (cv != NULL)
-//                s->draw(cv, bs, bs);
-//
-//            // Draw the glass and the border
-//            cv = create_border_glass(s, &pGlass, sSize.nWidth, sSize.nHeight, nRadius, nBorder, SURFMASK_ALL_CORNER, color);
-//            if (cv != NULL)
-//                s->draw(cv, 0, 0);
-
-            s->set_antialiasing(aa);
+            s->clip_end();
         }
 
         Widget *Graph::find_widget(ssize_t x, ssize_t y)
