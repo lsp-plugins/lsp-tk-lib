@@ -264,7 +264,8 @@ namespace lsp
             if (_this == NULL)
                 return;
 
-            // TODO
+            item->set_parent(_this);
+            _this->query_draw();
         }
 
         void Graph::on_remove_item(void *obj, Property *prop, Widget *w)
@@ -277,7 +278,8 @@ namespace lsp
             if (_this == NULL)
                 return;
 
-            // TODO
+            _this->unlink_widget(item);
+            _this->query_draw();
         }
 
         bool Graph::origin(size_t index, float *x, float *y)

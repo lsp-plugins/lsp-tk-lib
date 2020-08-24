@@ -206,6 +206,29 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         MTEST_ASSERT(wnd->add(gr) == STATUS_OK);
         gr->constraints()->set_min(160, 100);
 
+        {
+            int wid = 0;
+            size_t col = 0;
+            LSPString id;
+
+            // Create Origins
+            tk::GraphOrigin *go;
+            static const float coords[] = { 0, 0, -1, 1, 1, 1, 1, -1, -1, -1 };
+            for (size_t i=0; i<5; ++i)
+            {
+                MTEST_ASSERT(go = new tk::GraphOrigin(dpy));
+                MTEST_ASSERT(id.fmt_ascii("origin_%d", wid++));
+                MTEST_ASSERT(init_widget(go, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(go));
+                MTEST_ASSERT(gr->add(go) == STATUS_OK);
+                go->left()->set(coords[i*2]);
+                go->top()->set(coords[i*2+1]);
+                go->color()->set_rgb24(next_color(col));
+                go->radius()->set(4 + i*2);
+                go->smooth()->set(true);
+            }
+        }
+
         // Show window
         wnd->visibility()->set(true);
 

@@ -1020,7 +1020,12 @@ namespace lsp
                 if (item == child)
                 {
                     query_resize();
-                    return (vItems.remove(i)) ? STATUS_OK : STATUS_UNKNOWN_ERR;
+
+                    status_t res = (vItems.remove(i)) ? STATUS_OK : STATUS_UNKNOWN_ERR;
+                    if (res == STATUS_OK)
+                        unlink_widget(item);
+
+                    return res;
                 }
             }
 

@@ -698,6 +698,8 @@ namespace lsp
             ListBox *_this = widget_ptrcast<ListBox>(obj);
             if (_this == NULL)
                 return;
+
+            item->set_parent(_this);
         }
 
         void ListBox::on_remove_item(void *obj, Property *prop, Widget *w)
@@ -713,6 +715,8 @@ namespace lsp
             // Remove widget from selection list
             if (_this->vItems.is(prop))
                 _this->vSelected.remove(item);
+
+            _this->unlink_widget(item);
         }
 
         status_t ListBox::on_mouse_down(const ws::event_t *e)

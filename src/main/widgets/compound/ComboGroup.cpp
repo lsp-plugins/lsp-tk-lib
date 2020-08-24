@@ -245,6 +245,7 @@ namespace lsp
             if (_this == NULL)
                 return;
 
+            item->set_parent(_this);
             _this->query_resize();
         }
 
@@ -258,6 +259,7 @@ namespace lsp
             if (_this == NULL)
                 return;
 
+            _this->unlink_widget(item);
             _this->query_resize();
         }
 
