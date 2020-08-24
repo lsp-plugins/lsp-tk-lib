@@ -50,6 +50,8 @@ namespace lsp
                  */
                 Graph              *graph();
 
+                virtual void        query_draw(size_t flags = REDRAW_SURFACE);
+
                 /**
                  * Check whether mouse pointer is inside of the graph item
                  * @param x horizontal position of mouse pointer

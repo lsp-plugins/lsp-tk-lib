@@ -24,7 +24,8 @@ namespace lsp
             sGlass(&sProperties),
             sColor(&sProperties),
             sBorderColor(&sProperties),
-            sGlassColor(&sProperties)
+            sGlassColor(&sProperties),
+            sIPadding(&sProperties)
         {
             pGlass              = NULL;
 
@@ -88,6 +89,7 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sGlassColor.bind("glass.color", &sStyle);
+            sIPadding.bind("padding.internal", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -99,6 +101,7 @@ namespace lsp
                 sColor.init(sclass, "#000000");
                 sBorderColor.init(sclass, "#000000");
                 sGlassColor.init(sclass, "#ffffff");
+                sIPadding.init(sclass, 1);
             }
 
             return STATUS_OK;
@@ -115,6 +118,7 @@ namespace lsp
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
             sConstraints.compute(r, scaling);
+            sIPadding.add(r, scaling);
 
             float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
             float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
@@ -154,6 +158,7 @@ namespace lsp
             sCanvas.nTop    = r->nTop    + padding;
             sCanvas.nWidth  = r->nWidth  - padding*2;
             sCanvas.nHeight = r->nHeight - padding*2;
+            sIPadding.enter(&sCanvas, scaling);
         }
 
         void Graph::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -209,6 +214,32 @@ namespace lsp
             s->clip_end();
         }
 
+        void Graph::draw(ws::ISurface *s)
+        {
+            // Clear canvas
+            lsp::Color c(sColor);
+            c.scale_lightness(sBrightness.get());
+            s->clear(&c);
+
+            // Draw all objects
+            ws::rectangle_t r;
+            r.nLeft   = 0;
+            r.nTop    = 0;
+            r.nWidth  = s->width();
+            r.nHeight = s->height();
+
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                GraphItem *gi = vItems.get(i);
+                if ((gi == NULL) || (!gi->visibility()->get()))
+                    continue;
+
+                gi->render(s, &r, true);
+                gi->commit_redraw();
+            }
+
+        }
+
         Widget *Graph::find_widget(ssize_t x, ssize_t y)
         {
             for (size_t i=0, n=vItems.size(); i<n; ++i)
@@ -247,6 +278,29 @@ namespace lsp
                 return;
 
             // TODO
+        }
+
+        bool Graph::origin(size_t index, float *x, float *y)
+        {
+            return origin(vOrigins.get(index), x, y);
+        }
+
+        bool Graph::origin(GraphOrigin *o, float *x, float *y)
+        {
+            if (o == NULL)
+            {
+                *x      = 0.0f;
+                *y      = 0.0f;
+                return false;
+            }
+
+            float c_width   = sCanvas.nWidth;
+            float c_height  = sCanvas.nHeight;
+
+            *x  = float(sIPadding.left()) + (1.0f + o->left()->get()) * c_width  * 0.5f;
+            *y  = float(sIPadding.top())  + (1.0f - o->top()->get() ) * c_height * 0.5f;
+
+            return true;
         }
 
         status_t Graph::add(Widget *child)

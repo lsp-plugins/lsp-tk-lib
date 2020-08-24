@@ -63,6 +63,21 @@ namespace lsp
         {
             return false;
         }
+
+        void GraphItem::query_draw(size_t flags)
+        {
+            Widget::query_draw(flags);
+            if (!sVisibility.get())
+                return;
+
+            // Force graph to redraw it's surface
+            if (flags & (REDRAW_SURFACE | REDRAW_CHILD))
+            {
+                Graph *gr = graph();
+                if (gr != NULL)
+                    gr->query_draw(REDRAW_SURFACE);
+            }
+        }
     }
 }
 

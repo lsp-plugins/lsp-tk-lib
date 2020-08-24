@@ -25,6 +25,12 @@ namespace lsp
                 GraphOrigin & operator = (const GraphOrigin &);
 
             protected:
+                prop::RangeFloat            sLeft;
+                prop::RangeFloat            sTop;
+                prop::Integer               sRadius;
+                prop::Color                 sColor;
+
+            protected:
                 virtual void                property_changed(Property *prop);
 
             public:
@@ -33,6 +39,12 @@ namespace lsp
 
                 virtual status_t            init();
                 virtual void                destroy();
+
+            public:
+                LSP_TK_PROPERTY(RangeFloat,                 left,               &sLeft);
+                LSP_TK_PROPERTY(RangeFloat,                 top,                &sTop);
+                LSP_TK_PROPERTY(Integer,                    radius,             &sRadius);
+                LSP_TK_PROPERTY(Color,                      color,              &sColor);
 
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

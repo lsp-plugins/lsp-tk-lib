@@ -45,6 +45,7 @@ namespace lsp
                 prop::Color                     sColor;         // Graph color
                 prop::Color                     sBorderColor;   // Color of the border
                 prop::Color                     sGlassColor;    // Color of the glass
+                prop::Padding                   sIPadding;      // Internal padding
 
                 ws::ISurface                   *pGlass;         // Cached glass gradient
                 ws::rectangle_t                 sCanvas;        // Actual dimensions of the drawing area
@@ -78,6 +79,11 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                      color,              &sColor);
                 LSP_TK_PROPERTY(Color,                      border_color,       &sBorderColor);
                 LSP_TK_PROPERTY(Color,                      glass_color,        &sGlassColor);
+                LSP_TK_PROPERTY(Padding,                    internal_padding,   &sIPadding);
+
+            public:
+                bool                        origin(size_t index, float *x, float *y);
+                bool                        origin(GraphOrigin *o, float *x, float *y);
 
             public:
                 virtual status_t            add(Widget *child);
@@ -87,6 +93,8 @@ namespace lsp
                 virtual status_t            remove_all();
 
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+
+                virtual void                draw(ws::ISurface *s);
         };
     }
 }
