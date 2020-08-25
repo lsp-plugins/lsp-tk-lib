@@ -82,6 +82,7 @@
 #include <lsp-plug.in/tk/prop/multi/TextFitness.h>
 #include <lsp-plug.in/tk/prop/multi/TextLayout.h>
 #include <lsp-plug.in/tk/prop/multi/TextSelection.h>
+#include <lsp-plug.in/tk/prop/multi/Vector2D.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>
