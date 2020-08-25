@@ -48,6 +48,7 @@ namespace lsp
 
         void GraphBasis::property_changed(Property *prop)
         {
+            GraphItem::property_changed(prop);
         }
 
         void GraphBasis::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

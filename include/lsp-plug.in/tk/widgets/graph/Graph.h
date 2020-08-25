@@ -48,7 +48,8 @@ namespace lsp
                 prop::Padding                   sIPadding;      // Internal padding
 
                 ws::ISurface                   *pGlass;         // Cached glass gradient
-                ws::rectangle_t                 sCanvas;        // Actual dimensions of the drawing area
+                ws::rectangle_t                 sCanvas;        // Actual dimensions of the drawing area (with padding)
+                ws::rectangle_t                 sICanvas;       // Actual dimensions of the drawing area (without padding)
 
             protected:
                 void                        do_destroy();
@@ -84,6 +85,13 @@ namespace lsp
             public:
                 bool                        origin(size_t index, float *x, float *y);
                 bool                        origin(GraphOrigin *o, float *x, float *y);
+
+                inline ssize_t              canvas_left() const         { return sICanvas.nLeft;        }
+                inline ssize_t              canvas_top() const          { return sICanvas.nTop;         }
+                inline ssize_t              canvas_width() const        { return sICanvas.nWidth;       }
+                inline ssize_t              canvas_height() const       { return sICanvas.nHeight;      }
+                inline ssize_t              canvas_right() const        { return sICanvas.nLeft + sICanvas.nWidth;  }
+                inline ssize_t              canvas_bottom() const       { return sICanvas.nTop + sICanvas.nHeight;  }
 
             public:
                 virtual status_t            add(Widget *child);

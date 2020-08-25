@@ -33,6 +33,10 @@ namespace lsp
             sCanvas.nTop        = 0;
             sCanvas.nWidth      = 0;
             sCanvas.nHeight     = 0;
+            sICanvas.nLeft      = 0;
+            sICanvas.nTop       = 0;
+            sICanvas.nWidth     = 0;
+            sICanvas.nHeight    = 0;
 
             pClass              = &metadata;
         }
@@ -158,7 +162,10 @@ namespace lsp
             sCanvas.nTop    = r->nTop    + padding;
             sCanvas.nWidth  = r->nWidth  - padding*2;
             sCanvas.nHeight = r->nHeight - padding*2;
-            sIPadding.enter(&sCanvas, scaling);
+
+            sIPadding.enter(&sICanvas, scaling);
+            sICanvas.nLeft -= r->nLeft;
+            sICanvas.nTop  -= r->nTop;
         }
 
         void Graph::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -296,11 +303,8 @@ namespace lsp
                 return false;
             }
 
-            float c_width   = sCanvas.nWidth;
-            float c_height  = sCanvas.nHeight;
-
-            *x  = float(sIPadding.left()) + (1.0f + o->left()->get()) * c_width  * 0.5f;
-            *y  = float(sIPadding.top())  + (1.0f - o->top()->get() ) * c_height * 0.5f;
+            *x  = sICanvas.nLeft + sICanvas.nWidth  * (1.0f + o->left()->get()) * 0.5f;
+            *y  = sICanvas.nTop  + sICanvas.nHeight * (1.0f - o->top()->get() ) * 0.5f;
 
             return true;
         }

@@ -48,6 +48,7 @@ namespace lsp
 
         void GraphMarker::property_changed(Property *prop)
         {
+            GraphItem::property_changed(prop);
         }
 
         void GraphMarker::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
