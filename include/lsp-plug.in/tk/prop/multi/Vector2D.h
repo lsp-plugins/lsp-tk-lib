@@ -81,7 +81,7 @@ namespace lsp
                 void                sync();
                 void                commit(atom_t property);
 
-                static void         calc_decart(float *dx, float *dy, float rho, float phi);
+                static void         calc_cart  (float *dx, float *dy, float rho, float phi);
                 static void         calc_polar (float *rho, float *phi, float dx, float dy);
                 static bool         parse(float *dx, float *dy, float *rho, float *phi, const LSPString *s);
 
@@ -111,7 +111,7 @@ namespace lsp
                 inline float        set_rangle(float v)         { return set_rphi(v);           }
                 inline float        set_dangle(float v)         { return set_dphi(v);           }
 
-                void                set_decart(float dx, float dy);
+                void                set_cart(float dx, float dy);
                 void                set_rpolar(float rho, float phi);
                 inline void         set_dpolar(float rho, float phi){ set_rpolar(rho, phi * (M_PI / 180.0f));   }
                 inline void         set_polar(float rho, float phi) { set_rpolar(rho, phi);                     }
@@ -153,7 +153,7 @@ namespace lsp
                      * @param style style
                      * @return status of operation
                      */
-                    status_t            init_decart(Style *style, float dx, float dy);
+                    status_t            init_cart(Style *style, float dx, float dy);
                     status_t            init_rpolar(Style *style, float rho, float phi);
                     inline status_t     init_dpolar(Style *style, float rho, float phi)  { return init_rpolar(style, rho, phi * (M_PI / 180.0f));   }
                     inline status_t     init_polar(Style *style, float rho, float phi)   { return init_rpolar(style, rho, phi);                     }

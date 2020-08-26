@@ -80,22 +80,22 @@ namespace lsp
             if ((property == vAtoms[P_RHO]) && (pStyle->get_float(vAtoms[P_RHO], &v) == STATUS_OK))
             {
                 fRho             = v;
-                calc_decart(&fDX, &fDY, fRho, fPhi);
+                calc_cart(&fDX, &fDY, fRho, fPhi);
             }
             if ((property == vAtoms[P_PHI]) && (pStyle->get_float(vAtoms[P_PHI], &v) == STATUS_OK))
             {
                 fPhi             = v;
-                calc_decart(&fDX, &fDY, fRho, fPhi);
+                calc_cart(&fDX, &fDY, fRho, fPhi);
             }
             if ((property == vAtoms[P_RPHI]) && (pStyle->get_float(vAtoms[P_RPHI], &v) == STATUS_OK))
             {
                 fPhi             = v;
-                calc_decart(&fDX, &fDY, fRho, fPhi);
+                calc_cart(&fDX, &fDY, fRho, fPhi);
             }
             if ((property == vAtoms[P_DPHI]) && (pStyle->get_float(vAtoms[P_DPHI], &v) == STATUS_OK))
             {
                 fPhi             = v * (M_PI / 180.0f);
-                calc_decart(&fDX, &fDY, fRho, fPhi);
+                calc_cart(&fDX, &fDY, fRho, fPhi);
             }
 
             // Compound property
@@ -139,7 +139,7 @@ namespace lsp
                 pListener->notify(this);
         }
 
-        void Vector2D::calc_decart(float *dx, float *dy, float rho, float phi)
+        void Vector2D::calc_cart(float *dx, float *dy, float rho, float phi)
         {
             *dx     = cosf(phi) * rho;
             *dy     = sinf(phi) * rho;
@@ -244,13 +244,13 @@ namespace lsp
             {
                 *rho    = v[0];
                 *phi    = v[1];
-                calc_decart(dx, dy, *rho, *phi);
+                calc_cart(dx, dy, *rho, *phi);
             }
             else if (brace == expr::TT_RQBRACE) // Polar (degrees)
             {
                 *rho    = v[0];
                 *phi    = v[1] * (M_PI / 180.0f);
-                calc_decart(dx, dy, *rho, *phi);
+                calc_cart(dx, dy, *rho, *phi);
             }
             else // Decart
             {
@@ -295,7 +295,7 @@ namespace lsp
                 return old;
 
             fRho     = v;
-            calc_decart(&fDX, &fDY, fRho, fPhi);
+            calc_cart(&fDX, &fDY, fRho, fPhi);
             sync();
 
             return old;
@@ -308,7 +308,7 @@ namespace lsp
                 return old;
 
             fPhi     = v;
-            calc_decart(&fDX, &fDY, fRho, fPhi);
+            calc_cart(&fDX, &fDY, fRho, fPhi);
             sync();
 
             return old;
@@ -321,13 +321,13 @@ namespace lsp
                 return old;
 
             fPhi     = v * (M_PI / 180.0f);
-            calc_decart(&fDX, &fDY, fRho, fPhi);
+            calc_cart(&fDX, &fDY, fRho, fPhi);
             sync();
 
             return old;
         }
 
-        void Vector2D::set_decart(float dx, float dy)
+        void Vector2D::set_cart(float dx, float dy)
         {
             if ((fDX == dx) && (fDY == dy))
                 return;
@@ -345,7 +345,7 @@ namespace lsp
 
             fRho    = rho;
             fPhi    = phi;
-            calc_decart(&fDX, &fDY, fRho, fPhi);
+            calc_cart(&fDX, &fDY, fRho, fPhi);
             sync();
         }
 
@@ -387,7 +387,7 @@ namespace lsp
                 return STATUS_OK;
             }
 
-            status_t Vector2D::init_decart(Style *style, float dx, float dy)
+            status_t Vector2D::init_cart(Style *style, float dx, float dy)
             {
                 float rho, phi;
                 calc_polar(&rho, &phi, dx, dy);
@@ -397,7 +397,7 @@ namespace lsp
             status_t Vector2D::init_rpolar(Style *style, float rho, float phi)
             {
                 float dx, dy;
-                calc_decart(&dx, &dy, rho, phi);
+                calc_cart(&dx, &dy, rho, phi);
                 return init(style, dx, dy, rho, phi);
             }
         }

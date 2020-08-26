@@ -57,7 +57,7 @@ namespace lsp
             Style *sclass = style_class();
             if (sclass != NULL)
             {
-                sDirection.init_decart(sclass, 1.0f, 0.0f);
+                sDirection.init_cart(sclass, 1.0f, 0.0f);
                 sMin.init(sclass, -1.0f);
                 sMax.init(sclass, 1.0f);
                 sLogScale.init(sclass, false);
