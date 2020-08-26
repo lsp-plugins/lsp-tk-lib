@@ -34,10 +34,6 @@ namespace lsp
         {
         }
 
-        void GraphAxis::destroy()
-        {
-        }
-
         status_t GraphAxis::init()
         {
             status_t res        = GraphItem::init();

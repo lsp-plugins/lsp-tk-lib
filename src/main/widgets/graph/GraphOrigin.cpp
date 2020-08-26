@@ -27,10 +27,6 @@ namespace lsp
         {
         }
 
-        void GraphOrigin::destroy()
-        {
-        }
-
         status_t GraphOrigin::init()
         {
             status_t res        = GraphItem::init();

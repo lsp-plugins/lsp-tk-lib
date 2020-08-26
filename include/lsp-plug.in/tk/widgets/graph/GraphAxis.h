@@ -43,7 +43,6 @@ namespace lsp
                 virtual ~GraphAxis();
 
                 virtual status_t            init();
-                virtual void                destroy();
 
             public:
                 LSP_TK_PROPERTY(Vector2D,           direction,              &sDirection);
