@@ -22,9 +22,7 @@
 #ifndef LSP_PLUG_IN_TK_HELPERS_DRAW_H_
 #define LSP_PLUG_IN_TK_HELPERS_DRAW_H_
 
-#ifndef LSP_PLUG_IN_TK_IMPL
-    #error "use <lsp-plug.in/tk/tk.h>"
-#endif
+#include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {

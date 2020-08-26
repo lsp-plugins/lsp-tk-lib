@@ -185,7 +185,7 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
         MTEST_ASSERT(wnd->title()->set_raw("Test graph") == STATUS_OK);
         MTEST_ASSERT(wnd->role()->set_raw("graph_test") == STATUS_OK);
-        wnd->bg_color()->set_rgb(0, 0.75, 1.0);
+        wnd->bg_color()->set_rgb24(0x1b1c22);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
 //        wnd->border_size()->set(2);
@@ -205,6 +205,7 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         MTEST_ASSERT(widgets.push(gr));
         MTEST_ASSERT(wnd->add(gr) == STATUS_OK);
         gr->constraints()->set_min(160, 100);
+        gr->bg_color()->set_rgb24(0x1b1c22);
 
         {
             int wid = 0;

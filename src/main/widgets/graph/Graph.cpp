@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
 
@@ -156,16 +157,19 @@ namespace lsp
             float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
             float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
             float ir        = lsp_max(0.0f, xr - bw);                       // internal radius
-            ssize_t padding = (1.0f - M_SQRT1_2) * ir + bw;                 // padding of internal area
+            ssize_t padding = ceilf((1.0f - M_SQRT1_2) * ir) + bw;          // padding of internal area
 
             sCanvas.nLeft   = r->nLeft   + padding;
             sCanvas.nTop    = r->nTop    + padding;
             sCanvas.nWidth  = r->nWidth  - padding*2;
             sCanvas.nHeight = r->nHeight - padding*2;
 
+            sICanvas.nLeft  = 0;
+            sICanvas.nTop   = 0;
+            sICanvas.nWidth = sCanvas.nWidth;
+            sICanvas.nHeight= sCanvas.nHeight;
+
             sIPadding.enter(&sICanvas, scaling);
-            sICanvas.nLeft -= r->nLeft;
-            sICanvas.nTop  -= r->nTop;
         }
 
         void Graph::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -198,7 +202,7 @@ namespace lsp
                 s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
                 // Get surface of widget
-                cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);
+                cv  = get_surface(s, sICanvas.nWidth, sICanvas.nHeight);
                 if (cv != NULL)
                     s->draw(cv, sSize.nLeft + ir, sSize.nTop + ir);
 

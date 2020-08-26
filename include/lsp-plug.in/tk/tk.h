@@ -153,9 +153,6 @@
 #include <lsp-plug.in/tk/widgets/graph/GraphOrigin.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphText.h>
 
-// Misc helping functions
-#include <lsp-plug.in/tk/helpers/draw.h>
-
 namespace lsp
 {
     namespace tk

@@ -19,7 +19,7 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp

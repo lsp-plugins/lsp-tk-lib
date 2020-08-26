@@ -6,6 +6,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/graphics.h>
 #include <lsp-plug.in/dsp/dsp.h>
 
 namespace lsp
@@ -143,7 +144,7 @@ namespace lsp
             {
                 float la, lb, lc;
 
-                if (!locate_line2d(dx, dy, cx, cy, la, lb, lc))
+                if (!locate_line2d(fdx, fdy, cx, cy, la, lb, lc))
                     return false;
 
                 float x1, y1, x2, y2;
@@ -220,7 +221,7 @@ namespace lsp
             {
                 // Now prepare the image of the line
                 float la, lb, lc;
-                if (!locate_line2d(fDX, fDY, cx, cy, la, lb, lc))
+                if (!locate_line2d(fdx, fdy, cx, cy, la, lb, lc))
                     return false;
 
                 float x1, y1, x2, y2;
