@@ -214,7 +214,7 @@ MTEST_BEGIN("tk.widgets.graph", graph)
 
             // Create Origins
             tk::GraphOrigin *go;
-            static const float coords[] = { 0, 0, -1, 1, 1, 1, 1, -1, -1, -1 };
+            static const float coords[] = { -1, -1, 0, 0, -1, 1, 1, 1, 1, -1 };
             for (size_t i=0; i<5; ++i)
             {
                 MTEST_ASSERT(go = new tk::GraphOrigin(dpy));
@@ -228,6 +228,33 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 go->radius()->set(4 + i*2);
                 go->smooth()->set(true);
             }
+
+            // Create axes
+            tk::GraphAxis *ga;
+
+            // Horizontal
+            MTEST_ASSERT(ga = new tk::GraphAxis(dpy));
+            MTEST_ASSERT(id.fmt_ascii("axis_%d", wid++));
+            MTEST_ASSERT(init_widget(ga, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ga));
+            MTEST_ASSERT(gr->add(ga) == STATUS_OK);
+            ga->min()->set(0);
+            ga->max()->set(5);
+            ga->direction()->set_dangle(0);
+            ga->origin()->set(0);
+            ga->color()->set_rgb24(0xffffff);
+
+            // Vertical
+            MTEST_ASSERT(ga = new tk::GraphAxis(dpy));
+            MTEST_ASSERT(id.fmt_ascii("axis_%d", wid++));
+            MTEST_ASSERT(init_widget(ga, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ga));
+            MTEST_ASSERT(gr->add(ga) == STATUS_OK);
+            ga->min()->set(1e-4f); // -80 dB
+            ga->max()->set(1e+1f); // +20 dB
+            ga->direction()->set_dangle(90);
+            ga->origin()->set(0);
+            ga->color()->set_rgb24(0xffffff);
         }
 
         // Show window

@@ -77,15 +77,16 @@ namespace lsp
                 return;
 
             // Generate palette
-            float scaling = lsp_max(0.0f, sScaling.get());
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            ssize_t radius  = (sRadius.get() > 0) ? lsp_max(1.0f, sRadius.get() * scaling) : 0;
             lsp::Color color(sColor);
             color.scale_lightness(sBrightness.get());
 
             // Draw circle
-            float x=0.0, y=0.0;
+            float x=0.0f, y=0.0f;
             cv->origin(this, &x, &y);
             bool aa = s->set_antialiasing(sSmooth.get());
-            s->fill_circle(x, y, sRadius.get() * scaling, color);
+            s->fill_circle(x, y, radius, color);
             s->set_antialiasing(aa);
         }
     }

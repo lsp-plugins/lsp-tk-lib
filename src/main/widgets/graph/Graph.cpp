@@ -75,6 +75,9 @@ namespace lsp
             }
 
             vItems.flush();
+            vAxis.flush();
+            vBasis.flush();
+            vOrigins.flush();
         }
 
         status_t Graph::init()
@@ -154,10 +157,10 @@ namespace lsp
 
             // Compute the size of area
             float scaling   = lsp_max(0.0f, sScaling.get());
-            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
-            float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
-            float ir        = lsp_max(0.0f, xr - bw);                       // internal radius
-            ssize_t padding = ceilf((1.0f - M_SQRT1_2) * ir) + bw;          // padding of internal area
+            float xr        = lsp_max(0.0f, ceilf(sBorderRadius.get() * scaling));  // external radius
+            float bw        = lsp_max(0.0f, ceilf(sBorder.get() * scaling));        // border size
+            float ir        = lsp_max(0.0f, xr - bw);                               // internal radius
+            ssize_t padding = ceilf((1.0f - M_SQRT1_2) * ir + bw);                  // padding of internal area
 
             sCanvas.nLeft   = r->nLeft   + padding;
             sCanvas.nTop    = r->nTop    + padding;
@@ -180,7 +183,6 @@ namespace lsp
             float scaling   = lsp_max(0.0f, sScaling.get());
             float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
             float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
-            float ir        = lsp_max(0.0f, xr - bw);                       // internal radius
             float bright    = sBrightness.get();
 
             lsp_trace("xr = %f, size={%d, %d, %d, %d}", xr,
@@ -202,9 +204,9 @@ namespace lsp
                 s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
                 // Get surface of widget
-                cv  = get_surface(s, sICanvas.nWidth, sICanvas.nHeight);
+                cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);
                 if (cv != NULL)
-                    s->draw(cv, sSize.nLeft + ir, sSize.nTop + ir);
+                    s->draw(cv, sCanvas.nLeft, sCanvas.nTop);
 
                 // Draw the glass and the border
                 color.copy(sGlassColor);
@@ -229,23 +231,37 @@ namespace lsp
         {
             // Clear canvas
             lsp::Color c(sColor);
+            // c.set_rgb24(0x888888);
             c.scale_lightness(sBrightness.get());
             s->clear(&c);
 
-            // Draw all objects
-            ws::rectangle_t r;
-            r.nLeft   = 0;
-            r.nTop    = 0;
-            r.nWidth  = s->width();
-            r.nHeight = s->height();
+            // Sync internal lists of axes and origins
+            vAxis.clear();
+            vBasis.clear();
+            vOrigins.clear();
 
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                GraphItem *gi = vItems.get(i);
+                if (gi == NULL)
+                    continue;
+
+                GraphOrigin *go = widget_cast<GraphOrigin>(gi);
+                if (go != NULL)
+                    vOrigins.add(go);
+                GraphAxis *ga = widget_cast<GraphAxis>(gi);
+                if (ga != NULL)
+                    vAxis.add(ga);
+            }
+
+            // Draw all objects
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 GraphItem *gi = vItems.get(i);
                 if ((gi == NULL) || (!gi->visibility()->get()))
                     continue;
 
-                gi->render(s, &r, true);
+                gi->render(s, &sICanvas, true);
                 gi->commit_redraw();
             }
 
@@ -289,6 +305,7 @@ namespace lsp
             if (_this == NULL)
                 return;
 
+            // Remove widget from supplementary structures
             _this->unlink_widget(item);
             _this->query_draw();
         }
