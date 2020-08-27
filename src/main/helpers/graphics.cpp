@@ -26,6 +26,12 @@ namespace lsp
 {
     namespace tk
     {
+        typedef struct point2d_t
+        {
+            float x;
+            float y;
+        } point2d_t;
+
         bool line2d_equation
         (
             float x1, float y1,
@@ -146,53 +152,106 @@ namespace lsp
             return clip_line2d(a, b, c, lc, rc, tc, bc, cx1, cy1, cx2, cy2);
         }
 
+        bool vclip_line2d(
+            float a, float b, float c,                      // Line equation
+            float x,                                        // X coordinate of vertical line
+            float tc, float bc,                             // Vertical clip corners
+            float &cx, float &cy                            // Results
+        )
+        {
+            if (b == 0.0f)
+                return false;
+
+            float v = -(c + a*x) / b;
+            if ((v < bc) || (v > tc))
+                return false;
+
+            cx = x;
+            cy = v;
+
+            return true;
+        }
+
+        bool hclip_line2d(
+            float a, float b, float c,                      // Line equation
+            float y,                                        // Y coordinate of horizontal line
+            float lc, float rc,                             // Horizontal clip corners
+            float &cx, float &cy                            // Results
+        )
+        {
+            if (a == 0.0f)
+                return false;
+
+            float v = -(c + b*y)/a;
+            if ((v < lc) || (v > rc))
+                return false;
+
+            cx = v;
+            cy = y;
+
+            return true;
+        }
+
         bool clip_line2d(
             float a, float b, float c,
             float lc, float rc, float tc, float bc,
             float &cx1, float &cy1, float &cx2, float &cy2
         )
         {
-            float rx[4], ry[4];
+            point2d_t p[4];
             int n = 0;
-            // Left corner
-            if (line2d_intersection(a, b, c, -1.0, 0.0, lc, rx[n], ry[n]))
+
+            // Add some precision error gap
+            float xlc = lc - 1e-2f;
+            float xrc = rc + 1e-2f;
+            float xtc = tc + 1e-2f;
+            float xbc = bc - 1e-2f;
+
+            if (fabs(b) > fabs(a))
             {
-                if (clip2d(rx[n], ry[n], lc, rc, tc, bc))
-                    n++;
+                // Left corner
+                if (vclip_line2d(a, b, c, lc, xtc, xbc, p[n].x, p[n].y))
+                    ++n;
+                // Right corner
+                if (vclip_line2d(a, b, c, rc, xtc, xbc, p[n].x, p[n].y))
+                    ++n;
+                // Top corner
+                if (hclip_line2d(a, b, c, tc, xlc, xrc, p[n].x, p[n].y))
+                    ++n;
+                // Bottom corner
+                if (hclip_line2d(a, b, c, bc, xlc, xrc, p[n].x, p[n].y))
+                    ++n;
             }
-            // Right corner
-            if (line2d_intersection(a, b, c, -1.0, 0.0, rc, rx[n], ry[n]))
+            else
             {
-                if (clip2d(rx[n], ry[n], lc, rc, tc, bc))
-                    n++;
-            }
-            // Top corner
-            if (line2d_intersection(a, b, c, 0.0, -1.0, tc, rx[n], ry[n]))
-            {
-                if (clip2d(rx[n], ry[n], lc, rc, tc, bc))
-                    n++;
-            }
-            // Bottom corner
-            if (line2d_intersection(a, b, c, 0.0, -1.0, bc, rx[n], ry[n]))
-            {
-                if (clip2d(rx[n], ry[n], lc, rc, tc, bc))
-                    n++;
+                // Top corner
+                if (hclip_line2d(a, b, c, tc, xlc, xrc, p[n].x, p[n].y))
+                    ++n;
+                // Bottom corner
+                if (hclip_line2d(a, b, c, bc, xlc, xrc, p[n].x, p[n].y))
+                    ++n;
+                // Left corner
+                if (vclip_line2d(a, b, c, lc, xtc, xbc, p[n].x, p[n].y))
+                    ++n;
+                // Right corner
+                if (vclip_line2d(a, b, c, rc, xtc, xbc, p[n].x, p[n].y))
+                    ++n;
             }
 
             if (n <= 0)
                 return false;
 
-            cx1 = rx[0];
-            cy1 = ry[0];
+            cx1 = p[0].x;
+            cy1 = p[0].y;
             if (n < 2)
             {
-                cx2 = rx[0];
-                cy2 = ry[0];
+                cx2 = p[0].x;
+                cy2 = p[0].y;
             }
             else
             {
-                cx2 = rx[1];
-                cy2 = ry[1];
+                cx2 = p[1].x;
+                cy2 = p[1].y;
             }
 
             return true;

@@ -251,7 +251,11 @@ namespace lsp
                     vOrigins.add(go);
                 GraphAxis *ga = widget_cast<GraphAxis>(gi);
                 if (ga != NULL)
+                {
                     vAxis.add(ga);
+                    if (ga->basis()->get())
+                        vBasis.add(ga);
+                }
             }
 
             // Draw all objects
@@ -265,6 +269,10 @@ namespace lsp
                 gi->commit_redraw();
             }
 
+            // Clear lists
+            vAxis.clear();
+            vBasis.clear();
+            vOrigins.clear();
         }
 
         Widget *Graph::find_widget(ssize_t x, ssize_t y)

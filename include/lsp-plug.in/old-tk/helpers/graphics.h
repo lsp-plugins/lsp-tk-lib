@@ -47,6 +47,20 @@ namespace lsp
             float x, float y    // Coordinates of dot
         );
 
+        bool vclip_line2d(
+            float a, float b, float c,                      // Line equation
+            float x,                                        // X coordinate of vertical line
+            float tc, float bc,                             // Vertical clip corners
+            float &cx, float &cy                            // Results
+        );
+
+        bool hclip_line2d(
+            float a, float b, float c,                      // Line equation
+            float y,                                        // Y coordinate of horizontal line
+            float lc, float rc,                             // Horizontal clip corners
+            float &cx, float &cy                            // Results
+        );
+
         bool clip_line2d(
             float dx, float dy,                             // Line equation
             float lc, float rc, float tc, float bc,         // Corners from left, right, top, bottom

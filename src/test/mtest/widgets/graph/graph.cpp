@@ -167,6 +167,12 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         }
     }
 
+    typedef struct marker_t
+    {
+        float       value;
+        uint32_t    color;
+    } marker_t;
+
     MTEST_MAIN
     {
         lltl::parray<handler_t> vh;
@@ -229,6 +235,92 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 go->smooth()->set(true);
             }
 
+            // Add markers
+            tk::GraphMarker *gm;
+
+            // Vertical markers
+            static const marker_t vmarkers[] =
+            {
+                { 20.0f, 0x888800 },
+                { 30.0f, 0x888800 },
+                { 40.0f, 0x888800 },
+                { 50.0f, 0x888800 },
+                { 60.0f, 0x888800 },
+                { 70.0f, 0x888800 },
+                { 80.0f, 0x888800 },
+                { 90.0f, 0x888800 },
+                { 100.0f, 0x888888 },
+                { 200.0f, 0x888800 },
+                { 300.0f, 0x888800 },
+                { 400.0f, 0x888800 },
+                { 500.0f, 0x888800 },
+                { 600.0f, 0x888800 },
+                { 700.0f, 0x888800 },
+                { 800.0f, 0x888800 },
+                { 900.0f, 0x888800 },
+                { 1000.0f, 0x888888 },
+                { 2000.0f, 0x888800 },
+                { 3000.0f, 0x888800 },
+                { 4000.0f, 0x888800 },
+                { 5000.0f, 0x888800 },
+                { 6000.0f, 0x888800 },
+                { 7000.0f, 0x888800 },
+                { 8000.0f, 0x888800 },
+                { 9000.0f, 0x888800 },
+                { 10000.0f, 0x888888 },
+                { 20000.0f, 0x888800 },
+                { 24000.0f, 0xcccccc }
+            };
+
+            for (size_t i=0; i<sizeof(vmarkers)/sizeof(marker_t); ++i)
+            {
+                MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
+                MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
+                MTEST_ASSERT(init_widget(gm, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(gm));
+                MTEST_ASSERT(gr->add(gm) == STATUS_OK);
+
+                gm->origin()->set(0);
+                gm->basis()->set(0);
+                gm->parallel()->set(1);
+
+                const marker_t *m = &vmarkers[i];
+                gm->color()->set_rgb24(m->color);
+                gm->value()->set(m->value);
+            }
+
+            // Horizontal markers
+            static const marker_t hmarkers[] =
+            {
+                { 12,    0x888800 },
+                { 24,    0x888888 },
+                { 36,    0x888800 },
+                { 48,    0x888888 },
+                { 60,    0x888800 },
+                { 72,    0x888888 },
+                { 84,    0x888800 },
+                { 96,    0xcccccc },
+                { 108,   0x888800 },
+                { 120,   0xcccccc }
+            };
+
+            for (size_t i=0; i<sizeof(hmarkers)/sizeof(marker_t); ++i)
+            {
+                MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
+                MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
+                MTEST_ASSERT(init_widget(gm, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(gm));
+                MTEST_ASSERT(gr->add(gm) == STATUS_OK);
+
+                gm->origin()->set(0);
+                gm->basis()->set(1);
+                gm->parallel()->set(0);
+
+                const marker_t *m = &hmarkers[i];
+                gm->color()->set_rgb24(m->color);
+                gm->value()->set(m->value);
+            }
+
             // Create axes
             tk::GraphAxis *ga;
 
@@ -238,11 +330,12 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             MTEST_ASSERT(init_widget(ga, vh, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(ga));
             MTEST_ASSERT(gr->add(ga) == STATUS_OK);
-            ga->min()->set(0);
-            ga->max()->set(5);
+            ga->min()->set(10);
+            ga->max()->set(24000);
+            ga->log_scale()->set(true);
             ga->direction()->set_dangle(0);
             ga->origin()->set(0);
-            ga->color()->set_rgb24(0xffffff);
+            ga->color()->set_rgb24(0xcccccc);
 
             // Vertical
             MTEST_ASSERT(ga = new tk::GraphAxis(dpy));
@@ -250,11 +343,12 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             MTEST_ASSERT(init_widget(ga, vh, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(ga));
             MTEST_ASSERT(gr->add(ga) == STATUS_OK);
-            ga->min()->set(1e-4f); // -80 dB
-            ga->max()->set(1e+1f); // +20 dB
+            ga->min()->set(0); // -96 dB
+            ga->max()->set(120); // +24 dB
+            ga->log_scale()->set(false);
             ga->direction()->set_dangle(90);
             ga->origin()->set(0);
-            ga->color()->set_rgb24(0xffffff);
+            ga->color()->set_rgb24(0xcccccc);
         }
 
         // Show window

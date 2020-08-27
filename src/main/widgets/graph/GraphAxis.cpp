@@ -112,7 +112,7 @@ namespace lsp
             cv->origin(sOrigin.get(), &cx, &cy);
 
             float la, lb, lc;
-            if (!locate_line2d(sDirection.dx(), sDirection.dy(), cx, cy, la, lb, lc))
+            if (!locate_line2d(sDirection.dx(), -sDirection.dy(), cx, cy, la, lb, lc))
                 return;
 
             bool aa = s->set_antialiasing(sSmooth.get());
@@ -132,7 +132,7 @@ namespace lsp
                 return false;
 
             float cx    = 0.0f, cy = 0.0f;
-            float fdx   = sDirection.dx(), fdy = sDirection.dy();
+            float fdx   = sDirection.dx(), fdy = -sDirection.dy();
             cv->origin(sOrigin.get(), &cx, &cy);
 
             float d     = sLength.get();
@@ -155,8 +155,8 @@ namespace lsp
                 float d2    = distance2d(cx, cy, x2, y2);
                 d           = (d1 > d2) ? d1 : d2;
             }
-            if (d > 1.0f)
-                d          -= 0.5f; // Fix rounding errors
+//            if (d > 1.0f)
+//                d          -= 0.5f; // Fix rounding errors
 
             // Normalize value according to minimum and maximum visible values of the axis
             float a_min = fabsf(sMin.get()), a_max = fabsf(sMax.get());
@@ -205,7 +205,7 @@ namespace lsp
 
             // Get the center of coordinates
             float cx    = 0.0f, cy = 0.0f;
-            float fdx   = sDirection.dx(), fdy = sDirection.dy();
+            float fdx   = sDirection.dx(), fdy = -sDirection.dy();
             cv->origin(sOrigin.get(), &cx, &cy);
 
             // Calculate the difference relative to the center and the projection vector length
@@ -264,14 +264,14 @@ namespace lsp
 
         bool GraphAxis::parallel(float x, float y, float &a, float &b, float &c)
         {
-            float fdx   = sDirection.dx(), fdy = sDirection.dy();
+            float fdx   = sDirection.dx(), fdy = -sDirection.dy();
             return locate_line2d(fdx, fdy, x, y, a, b, c);
         }
 
         void GraphAxis::ortogonal_shift(float x, float y, float shift, float &nx, float &ny)
         {
             // When rotating 90 degrees left, we get: dy' = dx, dx' = -dy
-            float fdx   = sDirection.dx(), fdy = sDirection.dy();
+            float fdx   = sDirection.dx(), fdy = -sDirection.dy();
             nx               = x + shift * fdx;
             ny               = y - shift * fdy;
         }
@@ -279,7 +279,7 @@ namespace lsp
         bool GraphAxis::angle(float x, float y, float angle, float &a, float &b, float &c)
         {
             float fdx       = sDirection.dx();
-            float fdy       = sDirection.dy();
+            float fdy       = -sDirection.dy();
             float c_sin     = sinf(angle);
             float c_cos     = cosf(angle);
             float dx        = fdx*c_cos - fdy*c_sin;
@@ -291,7 +291,7 @@ namespace lsp
         void GraphAxis::rotate_shift(float x, float y, float angle, float shift, float &nx, float &ny)
         {
             float fdx       = sDirection.dx();
-            float fdy       = sDirection.dy();
+            float fdy       = -sDirection.dy();
             float c_sin     = sinf(angle);
             float c_cos     = cosf(angle);
             float dx        = fdx*c_cos - fdy*c_sin;

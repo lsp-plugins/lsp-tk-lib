@@ -83,15 +83,39 @@ namespace lsp
                 LSP_TK_PROPERTY(Padding,                    internal_padding,   &sIPadding);
 
             public:
+                /**
+                 * Get axis by index, valid only at render time
+                 *
+                 * @param index index of the axis
+                 * @return axis or NULL
+                 */
+                GraphAxis                  *axis(size_t index)          { return vAxis.get(index);      }
+
+                /**
+                 * Get basis by index, valid only at render time
+                 *
+                 * @param index index of the basis
+                 * @return basis or NULL
+                 */
+                GraphAxis                  *basis(size_t index)         { return vBasis.get(index);     }
+
+                /**
+                 * Get origin by index, valid only at render time
+                 *
+                 * @param index index of the origin
+                 * @return origin or NULL
+                 */
+                GraphOrigin                *origin(size_t index)        { return vOrigins.get(index);   }
+
                 bool                        origin(size_t index, float *x, float *y);
                 bool                        origin(GraphOrigin *o, float *x, float *y);
 
                 inline ssize_t              canvas_left() const         { return sICanvas.nLeft;        }
-                inline ssize_t              canvas_top() const          { return sICanvas.nTop;         }
+                inline ssize_t              canvas_top() const          { return sICanvas.nTop + sICanvas.nHeight;  }
                 inline ssize_t              canvas_width() const        { return sICanvas.nWidth;       }
                 inline ssize_t              canvas_height() const       { return sICanvas.nHeight;      }
                 inline ssize_t              canvas_right() const        { return sICanvas.nLeft + sICanvas.nWidth;  }
-                inline ssize_t              canvas_bottom() const       { return sICanvas.nTop + sICanvas.nHeight;  }
+                inline ssize_t              canvas_bottom() const       { return sICanvas.nTop;         }
 
             public:
                 virtual status_t            add(Widget *child);
