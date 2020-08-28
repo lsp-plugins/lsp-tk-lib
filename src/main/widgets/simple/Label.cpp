@@ -80,8 +80,8 @@ namespace lsp
             ws::text_parameters_t tp;
             ws::rectangle_t r;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+            sFont.get_parameters(s, scaling, &fp);
+            sFont.get_multitext_parameters(s, &tp, scaling, &text);
 
             // Estimate drawing area
             tp.Height       = lsp_max(tp.Height, fp.Height);
