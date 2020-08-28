@@ -331,9 +331,7 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             gm->origin()->set(0);
             gm->basis()->set(0);
             gm->parallel()->set(1);
-            gm->value()->set(1000);
-            gm->min()->set(10);
-            gm->max()->set(24000);
+            gm->value()->set_all(1000, 10, 24000);
             gm->pointer()->set(ws::MP_HSIZE);
             gm->editable()->set(true);
             gm->left_border()->set(20);
@@ -359,9 +357,7 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             gm->origin()->set(0);
             gm->basis()->set(1);
             gm->parallel()->set(0);
-            gm->value()->set(60);
-            gm->min()->set(0);
-            gm->max()->set(120);
+            gm->value()->set_all(60, 0, 120);
             gm->pointer()->set(ws::MP_VSIZE);
             gm->editable()->set(true);
             gm->left_border()->set(20);

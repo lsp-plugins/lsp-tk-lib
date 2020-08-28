@@ -33,7 +33,7 @@ namespace lsp
             fMin        = 0.0f;
             fMax        = 1.0f;
             fValue      = 0.0f;
-            bRangeLocked= false;
+            nFlags      = F_AUTO_LIMIT;
         }
 
         RangeFloat::~RangeFloat()
@@ -51,7 +51,7 @@ namespace lsp
             if ((property == vAtoms[P_RVALUE]) && (pStyle->get_float(vAtoms[P_RVALUE], &v) == STATUS_OK))
                 fValue          = v;
 
-            if (!bRangeLocked)
+            if (!(nFlags & F_RANGE_LOCK))
             {
                 if ((property == vAtoms[P_MIN]) && (pStyle->get_float(vAtoms[P_MIN], &v) == STATUS_OK))
                     fMin            = v;
@@ -119,7 +119,7 @@ namespace lsp
         float RangeFloat::set_min(float value)
         {
             float old = fMin;
-            if ((bRangeLocked) || (value == old))
+            if ((nFlags & F_RANGE_LOCK) || (value == old))
                 return old;
 
             fMin                = value;
@@ -130,7 +130,7 @@ namespace lsp
         float RangeFloat::set_max(float value)
         {
             float old = fMax;
-            if ((bRangeLocked) || (value == old))
+            if ((nFlags & F_RANGE_LOCK) || (value == old))
                 return old;
 
             fMax                = value;
@@ -140,7 +140,7 @@ namespace lsp
 
         void RangeFloat::set_range(float min, float max)
         {
-            if (bRangeLocked)
+            if (nFlags & F_RANGE_LOCK)
                 return;
             if ((min == fMin) &&
                 (max == fMax))
@@ -155,7 +155,7 @@ namespace lsp
         {
             bool need_sync = false;
 
-            if (!bRangeLocked)
+            if (!(nFlags & F_RANGE_LOCK))
             {
                 if ((min != fMin) ||
                     (max != fMax))
@@ -167,7 +167,7 @@ namespace lsp
             }
 
             float old   = fValue;
-            value       = limit(value);
+            value       = do_limit(value);
             if (value != old)
             {
                 fValue              = value;
@@ -182,7 +182,7 @@ namespace lsp
         float RangeFloat::set(float value)
         {
             float old   = fValue;
-            value       = limit(value);
+            value       = do_limit(value);
             if (value == old)
                 return old;
 
@@ -196,7 +196,7 @@ namespace lsp
             if (fMin == fMax)
                 return 0.0f;
 
-            float v         = limit(value);
+            float v         = do_limit(value);
             return (v - fMin) / (fMax - fMin);
         }
 
@@ -205,7 +205,9 @@ namespace lsp
             float old   = fValue;
             if (cyclic)
                 value       = value - truncf(value);
-            value       = fMin + (fMax - fMin) * lsp_limit(value, 0.0f, 1.0f);
+            if (nFlags & F_AUTO_LIMIT)
+                value       = lsp_limit(value, 0.0f, 1.0f);
+            value       = fMin + (fMax - fMin) * value;
             if (value == old)
                 return old;
 
@@ -214,15 +216,18 @@ namespace lsp
             return old;
         }
 
-        float RangeFloat::limit(float value) const
+        float RangeFloat::do_limit(float value) const
         {
-            return (fMin > fMax) ?
-                lsp_limit(value, fMax, fMin) :
-                lsp_limit(value, fMin, fMax);
+            return (nFlags & F_AUTO_LIMIT) ?
+                limit(value, fMin, fMax) :
+                value;
         }
 
         float RangeFloat::climited(float value) const
         {
+            if (!(nFlags & F_AUTO_LIMIT))
+                return value;
+
             float delta = fMax - fMin;
             if (delta > 0)
             {
@@ -242,7 +247,7 @@ namespace lsp
             return value;
         }
 
-        float RangeFloat::limit_value(float value, float min, float max)
+        float RangeFloat::limit(float value, float min, float max)
         {
             return (min > max) ?
                 lsp_limit(value, max, min) :
@@ -252,7 +257,7 @@ namespace lsp
         float RangeFloat::change(float k, float step)
         {
             float old   = fValue;
-            float v     = limit(old + k*step);
+            float v     = do_limit(old + k*step);
             if (old == v)
                 return old;
 
@@ -264,7 +269,7 @@ namespace lsp
         float RangeFloat::add(float v, bool cyclic)
         {
             float old   = fValue;
-            v           = (cyclic) ? climited(old + v) : limit(old + v);
+            v           = (cyclic) ? climited(old + v) : do_limit(old + v);
             if (old == v)
                 return old;
 
@@ -276,7 +281,7 @@ namespace lsp
         float RangeFloat::sub(float v, bool cyclic)
         {
             float old   = fValue;
-            v           = (cyclic) ? climited(old - v) : limit(old - v);
+            v           = (cyclic) ? climited(old - v) : do_limit(old - v);
             if (old == v)
                 return old;
 
@@ -289,8 +294,15 @@ namespace lsp
         {
             bool RangeFloat::lock_range(bool lock)
             {
-                bool prev       = bRangeLocked;
-                bRangeLocked    = lock;
+                bool prev       = nFlags & F_RANGE_LOCK;
+                nFlags          = lsp_setflag(nFlags, F_AUTO_LIMIT, lock);
+                return prev;
+            }
+
+            bool RangeFloat::set_auto_limit(bool enable)
+            {
+                bool prev       = nFlags & F_AUTO_LIMIT;
+                nFlags          = lsp_setflag(nFlags, F_AUTO_LIMIT, enable);
                 return prev;
             }
 

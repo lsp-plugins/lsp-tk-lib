@@ -35,6 +35,11 @@ namespace lsp
                     P_COUNT
                 };
 
+                enum flags_t
+                {
+                    F_RANGE_LOCK    = 1 << 0,
+                    F_AUTO_LIMIT    = 1 << 1
+                };
 
                 class Listener: public IStyleListener
                 {
@@ -56,7 +61,7 @@ namespace lsp
                 float               fValue;
                 float               fMin;
                 float               fMax;
-                bool                bRangeLocked;       // Lock range
+                size_t              nFlags;
                 Listener            sListener;
 
             protected:
@@ -64,18 +69,20 @@ namespace lsp
                 void                commit(atom_t property);
                 float               climited(float v) const;
                 float               change(float k, float step);
+                float               do_limit(float v) const;
 
             protected:
                 explicit RangeFloat(prop::Listener *listener = NULL);
                 ~RangeFloat();
 
             public:
-                inline float        get() const             { return limit(fValue);         }
+                inline float        get() const             { return do_limit(fValue);      }
                 inline float        min() const             { return fMin;                  }
                 inline float        max() const             { return fMax;                  }
                 inline float        range() const           { return fMax - fMin;           }
                 inline float        abs_range() const       { return (fMax > fMin) ? fMax - fMin : fMin - fMax; }
-                inline bool         range_locked() const    { return bRangeLocked;          }
+                inline bool         range_locked() const    { return nFlags & F_RANGE_LOCK; }
+                inline bool         auto_limit() const      { return nFlags & F_AUTO_LIMIT; }
 
                 float               set(float v);
                 float               set_all(float v, float min, float max);
@@ -89,9 +96,9 @@ namespace lsp
                 float               get_normalized(float value) const;
                 inline float        get_normalized() const  { return get_normalized(fValue); }
                 float               set_normalized(float value, bool cyclic = false);
-                float               limit(float v) const;
 
-                static float        limit_value(float value, float min, float max);
+                static float        limit(float value, float min, float max);
+                inline float        limit(float v) const    { return limit(v, fMin, fMax);  }
         };
 
         namespace prop
@@ -110,6 +117,7 @@ namespace lsp
                 public:
                     bool                lock_range(bool lock = true);
                     inline bool         unlock_range()                                  { return lock_range(false);     }
+                    bool                set_auto_limit(bool enable = true);
                     float               set_min(float v);
                     float               set_max(float v);
                     void                set_range(float min, float max);

@@ -22,8 +22,6 @@ namespace lsp
             sParallel(&sProperties),
             sValue(&sProperties),
             sStep(&sProperties),
-            sMin(&sProperties),
-            sMax(&sProperties),
             sDirection(&sProperties),
             sWidth(&sProperties),
             sHWidth(&sProperties),
@@ -59,14 +57,15 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
+            // Disable automatic limitation of value
+            sValue.set_auto_limit(false);
+
             // Init style
             sOrigin.bind("origin", &sStyle);
             sBasis.bind("basis", &sStyle);
             sParallel.bind("parallel", &sStyle);
             sValue.bind("value", &sStyle);
             sStep.bind("step", &sStyle);
-            sMin.bind("min", &sStyle);
-            sMax.bind("max", &sStyle);
             sDirection.bind("direction", &sStyle);
             sWidth.bind("width", &sStyle);
             sHWidth.bind("hover.width", &sStyle);
@@ -88,10 +87,8 @@ namespace lsp
                 sOrigin.init(sclass, 0);
                 sBasis.init(sclass, 0);
                 sParallel.init(sclass, 1);
-                sValue.init(sclass, 0.0f);
+                sValue.init(sclass, 0.0f, -1.0f, 1.0f);
                 sStep.init(sclass, 1.0f, 10.0f, 0.1f);
-                sMin.init(sclass, -1.0f);
-                sMax.init(sclass, 1.0f);
                 sDirection.init_cart(sclass, 1.0f, 0.0f);
                 sWidth.init(sclass, 1);
                 sHWidth.init(sclass, 3);
@@ -130,10 +127,6 @@ namespace lsp
             if (sValue.is(prop))
                 query_draw();
             if (sStep.is(prop))
-                {/* nothing */}
-            if (sMin.is(prop))
-                {/* nothing */}
-            if (sMax.is(prop))
                 {/* nothing */}
             if (sDirection.is(prop))
                 {/* nothing */}
@@ -481,7 +474,7 @@ namespace lsp
                 nvalue          = fLastValue;
             else if (basis != NULL)
                 nvalue          = basis->project(rx, ry);
-            nvalue          = RangeFloat::limit_value(nvalue, sMin.get(), sMax.get());
+            nvalue          = sValue.limit(nvalue);
 
             // Query widget for redraw
             if (nvalue != old)
