@@ -236,6 +236,22 @@ namespace lsp
             s->clear(&c);
 
             // Sync internal lists of axes and origins
+            sync_lists();
+
+            // Draw all objects
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                GraphItem *gi = vItems.get(i);
+                if ((gi == NULL) || (!gi->visibility()->get()))
+                    continue;
+
+                gi->render(s, &sICanvas, true);
+                gi->commit_redraw();
+            }
+        }
+
+        void Graph::sync_lists()
+        {
             vAxis.clear();
             vBasis.clear();
             vOrigins.clear();
@@ -257,26 +273,22 @@ namespace lsp
                         vBasis.add(ga);
                 }
             }
-
-            // Draw all objects
-            for (size_t i=0, n=vItems.size(); i<n; ++i)
-            {
-                GraphItem *gi = vItems.get(i);
-                if ((gi == NULL) || (!gi->visibility()->get()))
-                    continue;
-
-                gi->render(s, &sICanvas, true);
-                gi->commit_redraw();
-            }
-
-            // Clear lists
-            vAxis.clear();
-            vBasis.clear();
-            vOrigins.clear();
         }
 
         Widget *Graph::find_widget(ssize_t x, ssize_t y)
         {
+            // Check that we are within allowed area
+            ssize_t tx = x - (sCanvas.nLeft + sICanvas.nLeft);
+            ssize_t ty = y - (sCanvas.nTop  + sICanvas.nTop);
+            if ((tx < 0) || (ty < 0))
+                return NULL;
+            if ((tx > sICanvas.nWidth) || (ty > sICanvas.nHeight))
+                return NULL;
+
+            // Sync internal lists of axes and origins
+            sync_lists();
+
+            // Lookup widgets
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 GraphItem *gi = vItems.get(i);

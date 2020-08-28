@@ -63,6 +63,8 @@ namespace lsp
                 virtual void                property_changed(Property *prop);
                 virtual void                realize(const ws::rectangle_t *r);
 
+                void                        sync_lists();
+
             public:
                 explicit Graph(Display *dpy);
                 virtual ~Graph();
@@ -110,12 +112,17 @@ namespace lsp
                 bool                        origin(size_t index, float *x, float *y);
                 bool                        origin(GraphOrigin *o, float *x, float *y);
 
-                inline ssize_t              canvas_left() const         { return sICanvas.nLeft;        }
-                inline ssize_t              canvas_top() const          { return sICanvas.nTop + sICanvas.nHeight;  }
-                inline ssize_t              canvas_width() const        { return sICanvas.nWidth;       }
-                inline ssize_t              canvas_height() const       { return sICanvas.nHeight;      }
+                inline ssize_t              canvas_left() const         { return sICanvas.nLeft;                    }
+                inline ssize_t              canvas_top() const          { return sICanvas.nTop;                     }
+                inline ssize_t              canvas_width() const        { return sICanvas.nWidth;                   }
+                inline ssize_t              canvas_height() const       { return sICanvas.nHeight;                  }
                 inline ssize_t              canvas_right() const        { return sICanvas.nLeft + sICanvas.nWidth;  }
-                inline ssize_t              canvas_bottom() const       { return sICanvas.nTop;         }
+                inline ssize_t              canvas_bottom() const       { return sICanvas.nTop + sICanvas.nHeight;  }
+
+                inline ssize_t              canvas_aleft() const        { return sCanvas.nLeft + sICanvas.nLeft;                    }
+                inline ssize_t              canvas_atop() const         { return sCanvas.nTop + sICanvas.nTop;                      }
+                inline ssize_t              canvas_aright() const       { return sCanvas.nLeft + sICanvas.nLeft + sICanvas.nWidth;  }
+                inline ssize_t              canvas_abottom() const      { return sCanvas.nTop + sICanvas.nTop + sICanvas.nHeight;   }
 
             public:
                 virtual status_t            add(Widget *child);

@@ -118,7 +118,7 @@ namespace lsp
             bool aa = s->set_antialiasing(sSmooth.get());
             s->parametric_line(
                     la, lb, lc,
-                    cv->canvas_left(), cv->canvas_right(), cv->canvas_top(), cv->canvas_bottom(),
+                    cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
                     width, color
                 );
             s->set_antialiasing(aa);
@@ -145,7 +145,7 @@ namespace lsp
 
                 float x1, y1, x2, y2;
                 if (!clip_line2d(la, lb, lc,
-                        cv->canvas_left(), cv->canvas_right(), cv->canvas_top(), cv->canvas_bottom(),
+                        cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
                         x1, y1, x2, y2
                         )
                     )
@@ -222,7 +222,7 @@ namespace lsp
 
                 float x1, y1, x2, y2;
                 if (!clip_line2d(la, lb, lc,
-                        cv->canvas_left(), cv->canvas_right(), cv->canvas_top(), cv->canvas_bottom(),
+                        cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
                         x1, y1, x2, y2)
                     )
                     return false;
@@ -272,8 +272,8 @@ namespace lsp
         {
             // When rotating 90 degrees left, we get: dy' = dx, dx' = -dy
             float fdx   = sDirection.dx(), fdy = -sDirection.dy();
-            nx               = x + shift * fdx;
-            ny               = y - shift * fdy;
+            nx               = x + shift * fdy;
+            ny               = y - shift * fdx;
         }
 
         bool GraphAxis::angle(float x, float y, float angle, float &a, float &b, float &c)

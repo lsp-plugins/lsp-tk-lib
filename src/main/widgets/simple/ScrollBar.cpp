@@ -125,8 +125,8 @@ namespace lsp
             if (sclass != NULL)
             {
                 sValue.init(sclass, 0.5f);
-                sStep.init(sclass, 0.01);
-                sAccelStep.init(sclass, 0.05);
+                sStep.init(sclass, 0.01f);
+                sAccelStep.init(sclass, 0.05f);
                 sConstraints.init(sclass, 16, -1, 16, -1);
                 sOrientation.init(sclass, O_HORIZONTAL);
                 sSliderPointer.init(sclass, ws::MP_DEFAULT);

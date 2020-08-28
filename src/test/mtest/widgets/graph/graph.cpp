@@ -321,6 +321,62 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 gm->value()->set(m->value);
             }
 
+            // Create Editable vertical marker
+            MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
+            MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
+            MTEST_ASSERT(init_widget(gm, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(gm));
+            MTEST_ASSERT(gr->add(gm) == STATUS_OK);
+
+            gm->origin()->set(0);
+            gm->basis()->set(0);
+            gm->parallel()->set(1);
+            gm->value()->set(1000);
+            gm->min()->set(10);
+            gm->max()->set(24000);
+            gm->pointer()->set(ws::MP_HSIZE);
+            gm->editable()->set(true);
+            gm->left_border()->set(20);
+            gm->right_border()->set(20);
+            gm->hover_left_border()->set(32);
+            gm->hover_right_border()->set(32);
+            gm->color()->set_rgb24(0x00cc00);
+            gm->width()->set(2);
+            gm->hover_width()->set(3);
+            gm->hover_color()->set_rgb24(0x00ff00);
+            gm->border_left_color()->set_rgba32(0x44cc8800);
+            gm->border_right_color()->set_rgba32(0x4488cc00);
+            gm->hover_border_left_color()->set_rgba32(0x44ffcc00);
+            gm->hover_border_right_color()->set_rgba32(0x44ccff00);
+
+            // Create Editable horizontal marker
+            MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
+            MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
+            MTEST_ASSERT(init_widget(gm, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(gm));
+            MTEST_ASSERT(gr->add(gm) == STATUS_OK);
+
+            gm->origin()->set(0);
+            gm->basis()->set(1);
+            gm->parallel()->set(0);
+            gm->value()->set(60);
+            gm->min()->set(0);
+            gm->max()->set(120);
+            gm->pointer()->set(ws::MP_VSIZE);
+            gm->editable()->set(true);
+            gm->left_border()->set(20);
+            gm->right_border()->set(20);
+            gm->hover_left_border()->set(32);
+            gm->hover_right_border()->set(32);
+            gm->color()->set_rgb24(0x0000cc);
+            gm->width()->set(2);
+            gm->hover_width()->set(3);
+            gm->hover_color()->set_rgb24(0x0000ff);
+            gm->border_left_color()->set_rgba32(0x440088cc);
+            gm->border_right_color()->set_rgba32(0x4400cc88);
+            gm->hover_border_left_color()->set_rgba32(0x4400ccff);
+            gm->hover_border_right_color()->set_rgba32(0x4400ffcc);
+
             // Create axes
             tk::GraphAxis *ga;
 
