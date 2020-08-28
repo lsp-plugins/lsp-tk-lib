@@ -39,8 +39,12 @@ namespace lsp
             sHLBorderColor(&sProperties),
             sHRBorderColor(&sProperties)
         {
-            fOffset             = 0.0f;
+//            fOffset             = 0.0f;
             nXFlags             = 0;
+            nMBState            = 0;
+            nMouseX             = 0;
+            nMouseY             = 0;
+            fLastValue          = 0.0f;
 
             pClass              = &metadata;
         }
@@ -85,7 +89,7 @@ namespace lsp
                 sBasis.init(sclass, 0);
                 sParallel.init(sclass, 1);
                 sValue.init(sclass, 0.0f);
-                sStep.init(sclass, 0.01f);
+                sStep.init(sclass, 1.0f, 10.0f, 0.1f);
                 sMin.init(sclass, -1.0f);
                 sMax.init(sclass, 1.0f);
                 sDirection.init_cart(sclass, 1.0f, 0.0f);
@@ -103,6 +107,12 @@ namespace lsp
                 sHLBorderColor.init(sclass, "#ffffff");
                 sHRBorderColor.init(sclass, "#ffffff");
             }
+
+            // Add handler
+            handler_id_t id = 0;
+            id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id < 0)
+                return -id;
 
             return STATUS_OK;
         }
@@ -200,11 +210,11 @@ namespace lsp
 
             if (!basis->apply(&x, &y, &fvalue, 1))
                 return;
-            if (fOffset != 0.0f)
-            {
-                if (!parallel->apply(&x, &y, &fOffset, 1))
-                    return;
-            }
+//            if (fOffset != 0.0f)
+//            {
+//                if (!parallel->apply(&x, &y, &fOffset, 1))
+//                    return;
+//            }
 
             // Get equation of the line that contains calculated point
             float ll[3], bl[3], br[3];
@@ -310,8 +320,8 @@ namespace lsp
             if (cv == NULL)
                 return false;
 
-            mx     -= cv->canvas_aleft();
-            my      = (cv->canvas_height()) - (my - cv->canvas_atop());
+            mx      = mx - cv->canvas_aleft();
+            my      = my - cv->canvas_atop();
 
             lsp_trace("mx = %d, my = %d", int(mx), int(my));
 
@@ -330,11 +340,11 @@ namespace lsp
             // Translate point and get the coordinates of point that lays on the target line
             if (!basis->apply(&x, &y, &fvalue, 1))
                 return false;
-            if (fOffset != 0.0f)
-            {
-                if (!parallel->apply(&x, &y, &fOffset, 1))
-                    return false;
-            }
+//            if (fOffset != 0.0f)
+//            {
+//                if (!parallel->apply(&x, &y, &fOffset, 1))
+//                    return false;
+//            }
 
             // Get equation of the line that contains calculated point
             float a1, b1, c1;
@@ -378,6 +388,120 @@ namespace lsp
             query_draw();
 
             return GraphItem::on_mouse_out(e);
+        }
+
+        status_t GraphMarker::on_mouse_down(const ws::event_t *e)
+        {
+            size_t state = nMBState;
+            nMBState    |= 1 << e->nCode;
+
+            if (state == 0)
+            {
+                nMouseX     = e->nLeft;
+                nMouseY     = e->nTop;
+                fLastValue  = sValue.get();
+                nXFlags    |= F_EDITING;
+
+                if (e->nCode == ws::MCB_RIGHT)
+                    nXFlags    |= F_FINE_TUNE;
+            }
+
+            apply_motion(e->nLeft, e->nTop, e->nState);
+
+            return STATUS_OK;
+        }
+
+        status_t GraphMarker::on_mouse_up(const ws::event_t *e)
+        {
+            if ((!(nXFlags & F_EDITING)) || (nMBState == 0))
+                return STATUS_OK;
+
+            apply_motion(e->nLeft, e->nTop, e->nState);
+
+            nMBState       &= ~(1 << e->nCode);
+            if (nMBState == 0)
+                nXFlags    &= ~(F_FINE_TUNE | F_EDITING);
+
+            return STATUS_OK;
+        }
+
+        status_t GraphMarker::on_mouse_move(const ws::event_t *e)
+        {
+            if (nMBState == 0)
+                return STATUS_OK;
+
+            apply_motion(e->nLeft, e->nTop, e->nState);
+
+            return STATUS_OK;
+        }
+
+        void GraphMarker::apply_motion(ssize_t x, ssize_t y, size_t flags)
+        {
+            // Check that mouse button state matches
+            size_t bflag    = (nXFlags & F_FINE_TUNE) ? ws::MCF_RIGHT : ws::MCF_LEFT;
+            if (nMBState != bflag)
+            {
+                x       = nMouseX;
+                y       = nMouseY;
+            }
+
+            // Get graph
+            Graph *cv = graph();
+            if (cv == NULL)
+                return;
+
+            // Ignore canvas coordinates
+
+            // Get axises
+            GraphAxis *basis    = cv->axis(sBasis.get());
+            if (basis == NULL)
+                return;
+            GraphAxis *parallel = cv->axis(sParallel.get());
+            if (parallel == NULL)
+                return;
+
+            // Update the difference relative to the sensitivity
+            lsp_trace("xy=(%d, %d), mxy=(%d, %d)",
+                    int(x), int(y), int(nMouseX), int(nMouseY));
+
+            float step = (nXFlags & F_FINE_TUNE) ?
+                sStep.get(flags & ws::MCF_CONTROL, !(flags & ws::MCF_SHIFT)) :
+                sStep.get(flags & ws::MCF_CONTROL, flags & ws::MCF_SHIFT);
+
+            float dx = x - nMouseX, dy = y - nMouseY;
+            float rx = nMouseX - cv->canvas_aleft() + step * dx;
+            float ry = nMouseY - cv->canvas_atop() + step * dy;
+
+            lsp_trace("rxy=(%f, %f)", rx, ry);
+
+            // Modify the value according to X coordinate
+            float old       = sValue.get();
+            float nvalue    = fLastValue;
+            if ((nMouseX == x) && (nMouseY == y))
+                nvalue          = fLastValue;
+            else if (basis != NULL)
+                nvalue          = basis->project(rx, ry);
+            nvalue          = RangeFloat::limit_value(nvalue, sMin.get(), sMax.get());
+
+            // Query widget for redraw
+            if (nvalue != old)
+            {
+                sValue.set(nvalue);
+                sSlots.execute(SLOT_CHANGE, this);
+            }
+            query_draw();
+        }
+
+        status_t GraphMarker::slot_on_change(Widget *sender, void *ptr, void *data)
+        {
+            GraphMarker *_this = widget_ptrcast<GraphMarker>(ptr);
+            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t GraphMarker::on_change()
+        {
+            lsp_trace("value = %f", sValue.get());
+            return STATUS_OK;
         }
     }
 }

@@ -57,6 +57,15 @@ namespace lsp
 
                 float                       fOffset;        // Offset
                 size_t                      nXFlags;        // Extra flags
+                size_t                      nMBState;       // Mouse button state
+                ssize_t                     nMouseX;        // Mouse initial X position
+                ssize_t                     nMouseY;        // Mouse initial Y position
+                float                       fLastValue;     // Last value used before editing started
+
+            protected:
+                void                        apply_motion(ssize_t x, ssize_t y, size_t flags);
+
+                static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual void                property_changed(Property *prop);
@@ -98,6 +107,14 @@ namespace lsp
                 virtual status_t            on_mouse_in(const ws::event_t *e);
 
                 virtual status_t            on_mouse_out(const ws::event_t *e);
+
+                virtual status_t            on_mouse_down(const ws::event_t *e);
+
+                virtual status_t            on_mouse_up(const ws::event_t *e);
+
+                virtual status_t            on_mouse_move(const ws::event_t *e);
+
+                virtual status_t            on_change();
         };
     }
 }

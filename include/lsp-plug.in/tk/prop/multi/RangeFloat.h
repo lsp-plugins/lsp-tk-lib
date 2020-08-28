@@ -90,6 +90,8 @@ namespace lsp
                 inline float        get_normalized() const  { return get_normalized(fValue); }
                 float               set_normalized(float value, bool cyclic = false);
                 float               limit(float v) const;
+
+                static float        limit_value(float value, float min, float max);
         };
 
         namespace prop

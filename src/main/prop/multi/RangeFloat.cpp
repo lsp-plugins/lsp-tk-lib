@@ -216,9 +216,9 @@ namespace lsp
 
         float RangeFloat::limit(float value) const
         {
-            if (fMin > fMax)
-                return lsp_limit(value, fMax, fMin);
-            return lsp_limit(value, fMin, fMax);
+            return (fMin > fMax) ?
+                lsp_limit(value, fMax, fMin) :
+                lsp_limit(value, fMin, fMax);
         }
 
         float RangeFloat::climited(float value) const
@@ -240,6 +240,13 @@ namespace lsp
             }
 
             return value;
+        }
+
+        float RangeFloat::limit_value(float value, float min, float max)
+        {
+            return (min > max) ?
+                lsp_limit(value, max, min) :
+                lsp_limit(value, min, max);
         }
 
         float RangeFloat::change(float k, float step)
