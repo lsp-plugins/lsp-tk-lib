@@ -173,6 +173,15 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         uint32_t    color;
     } marker_t;
 
+    typedef struct text_t
+    {
+        float       x;
+        float       y;
+        const char *text;
+        float       halign;
+        float       valign;
+    } text_t;
+
     MTEST_MAIN
     {
         lltl::parray<handler_t> vh;
@@ -372,6 +381,46 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             gm->border_right_color()->set_rgba32(0x4400cc88);
             gm->hover_border_left_color()->set_rgba32(0x4400ccff);
             gm->hover_border_right_color()->set_rgba32(0x4400ffcc);
+
+            // Create text
+            tk::GraphText *gt;
+
+            static const text_t texts[] =
+            {
+                { 10.0f, 0.0f, "Hz", 1.0f, 1.0f },
+                { 100.0f, 0.0f, "100", 1.0f, 1.0f },
+                { 1000.0f, 0.0f, "1K", 1.0f, 1.0f },
+                { 10000.0f, 0.0f, "10K", 1.0f, 1.0f },
+                { 10.0f, 120.0f, "dB", 1.0f, -1.0f },
+                { 10.0f, 12.0f, "-84", 1.0f, 1.0f },
+                { 10.0f, 24.0f, "-72", 1.0f, 1.0f },
+                { 10.0f, 36.0f, "-60", 1.0f, 1.0f },
+                { 10.0f, 48.0f, "-48", 1.0f, 1.0f },
+                { 10.0f, 60.0f, "-36", 1.0f, 1.0f },
+                { 10.0f, 72.0f, "-24", 1.0f, 1.0f },
+                { 10.0f, 84.0f, "-12", 1.0f, 1.0f },
+                { 10.0f, 96.0f, "0", 1.0f, 1.0f },
+            };
+
+            for (size_t i=0; i<sizeof(texts)/sizeof(text_t); ++i)
+            {
+                MTEST_ASSERT(gt = new tk::GraphText(dpy));
+                MTEST_ASSERT(id.fmt_ascii("text_%d", wid++));
+                MTEST_ASSERT(init_widget(gt, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(gt));
+                MTEST_ASSERT(gr->add(gt) == STATUS_OK);
+
+                gt->origin()->set(0);
+                gt->haxis()->set(0);
+                gt->vaxis()->set(1);
+
+                const text_t *t = &texts[i];
+                gt->hvalue()->set(t->x);
+                gt->vvalue()->set(t->y);
+                gt->color()->set_rgb24(0xcccccc);
+                gt->text()->set_raw(t->text);
+                gt->layout()->set_align(t->halign, t->valign);
+            }
 
             // Create axes
             tk::GraphAxis *ga;

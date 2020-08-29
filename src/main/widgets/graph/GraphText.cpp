@@ -58,7 +58,7 @@ namespace lsp
             Style *sclass = style_class();
             if (sclass != NULL)
             {
-                sFont.init(sclass);
+                sFont.init(sclass, 10.0f);
                 sColor.init(sclass, "#ffffff");
                 sLayout.init(sclass, 1.0f, 1.0f, 0.0f, 0.0f);
                 sTextLayout.init(sclass, 0.5f, 0.5f);
@@ -146,16 +146,20 @@ namespace lsp
 
             // Allocate position
             ws::rectangle_t r;
-            r.nLeft         = 0;
-            r.nTop          = 0;
+            r.nLeft         = x;
+            r.nTop          = y;
             r.nWidth        = tp.Width;
             r.nHeight       = tp.Height;
             sPadding.add(&r, scaling);
 
             float lhalign   = (sLayout.halign() - 1.0f) * 0.5f;
-            float lvalign   = (1.0f - sLayout.valign()) * 0.5f;
+            float lvalign   = (1.0f + sLayout.valign()) * 0.5f;
             r.nLeft        += lhalign * r.nWidth;
-            r.nTop         += lvalign * r.nHeight;
+            r.nTop         -= lvalign * r.nHeight;
+
+//            lsp::Color tmp;
+//            tmp.set_rgb24(0x880000);
+//            s->fill_rect(tmp, &r);
 
             // Center point
             float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
