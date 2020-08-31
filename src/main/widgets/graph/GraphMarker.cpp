@@ -316,8 +316,6 @@ namespace lsp
             mx      = mx - cv->canvas_aleft();
             my      = my - cv->canvas_atop();
 
-            lsp_trace("mx = %d, my = %d", int(mx), int(my));
-
             // Get basis
             GraphAxis *basis        = cv->axis(sBasis.get());
             if (basis == NULL)
@@ -420,24 +418,14 @@ namespace lsp
 
         status_t GraphMarker::on_mouse_move(const ws::event_t *e)
         {
-            if (nMBState == 0)
-                return STATUS_OK;
-
-            apply_motion(e->nLeft, e->nTop, e->nState);
+            if (nMBState != 0)
+                apply_motion(e->nLeft, e->nTop, e->nState);
 
             return STATUS_OK;
         }
 
         void GraphMarker::apply_motion(ssize_t x, ssize_t y, size_t flags)
         {
-            // Check that mouse button state matches
-            size_t bflag    = (nXFlags & F_FINE_TUNE) ? ws::MCF_RIGHT : ws::MCF_LEFT;
-            if (nMBState != bflag)
-            {
-                x       = nMouseX;
-                y       = nMouseY;
-            }
-
             // Get graph
             Graph *cv = graph();
             if (cv == NULL)
@@ -452,6 +440,14 @@ namespace lsp
             GraphAxis *parallel = cv->axis(sParallel.get());
             if (parallel == NULL)
                 return;
+
+            // Check that mouse button state matches
+            size_t bflag    = (nXFlags & F_FINE_TUNE) ? ws::MCF_RIGHT : ws::MCF_LEFT;
+            if (nMBState != bflag)
+            {
+                x       = nMouseX;
+                y       = nMouseY;
+            }
 
             // Update the difference relative to the sensitivity
             lsp_trace("xy=(%d, %d), mxy=(%d, %d)",

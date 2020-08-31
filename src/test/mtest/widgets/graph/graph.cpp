@@ -129,6 +129,22 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         return STATUS_OK;
     }
 
+    static status_t slot_dot_change(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("DOT changed: %s\n", h->label);
+
+        tk::GraphDot *gd = tk::widget_cast<tk::GraphDot>(sender);
+        if (gd != NULL)
+        {
+            float size = 0.12f * (100.0f + gd->zvalue()->get());
+            gd->border_size()->set(size);
+            gd->hover_border_size()->set(size);
+        }
+
+        return STATUS_OK;
+    }
+
     status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label)
     {
         status_t res = w->init();
@@ -141,7 +157,7 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         h->test     = this;
         h->label    = ::strdup(label);
 
-//        tk::handler_id_t hid;
+        tk::handler_id_t hid = 0;
 //        hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
 //        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
 //        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
@@ -150,9 +166,15 @@ MTEST_BEGIN("tk.widgets.graph", graph)
 //        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
 //        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
 //        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
-//
-//        if (hid < 0)
-//            res = -hid;
+
+        tk::GraphDot *gd = tk::widget_cast<tk::GraphDot>(w);
+        if (gd != NULL)
+        {
+            if (hid >= 0) hid = gd->slots()->bind(tk::SLOT_CHANGE, slot_dot_change, h);
+        }
+
+        if (hid < 0)
+            res = -hid;
 
         return res;
     }
@@ -421,6 +443,42 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 gt->text()->set_raw(t->text);
                 gt->layout()->set_align(t->halign, t->valign);
             }
+
+            // Add dot
+            tk::GraphDot *gd;
+
+            MTEST_ASSERT(gd = new tk::GraphDot(dpy));
+            MTEST_ASSERT(id.fmt_ascii("dot_%d", wid++));
+            MTEST_ASSERT(init_widget(gd, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(gd));
+            MTEST_ASSERT(gr->add(gd) == STATUS_OK);
+
+            gd->origin()->set(0);
+
+            gd->hvalue()->set_min(10.0f);
+            gd->hvalue()->set_max(24000.0f);
+            gd->hvalue()->set(100.0f);
+            gd->heditable()->set(true);
+            gd->haxis()->set(0);
+
+            gd->vvalue()->set_min(0.0f);
+            gd->vvalue()->set_max(120.0f);
+            gd->vvalue()->set(60.0f);
+            gd->veditable()->set(true);
+            gd->vaxis()->set(1);
+
+            gd->zvalue()->set_min(-100.0f);
+            gd->zvalue()->set_max(100.0f);
+            gd->zvalue()->set(0.0f);
+            gd->zstep()->set(10.0f);
+            gd->zeditable()->set(true);
+
+            gd->color()->set_rgb24(0x00ccff);
+            gd->hover_color()->set_rgb24(0xffcc00);
+            gd->border_color()->set_rgb24(0x00cc00);
+            gd->hover_border_color()->set_rgb24(0xccff00);
+            gd->border_size()->set(12);
+            gd->smooth()->set(true);
 
             // Create axes
             tk::GraphAxis *ga;

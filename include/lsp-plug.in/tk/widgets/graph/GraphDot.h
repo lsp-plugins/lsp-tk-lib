@@ -63,11 +63,15 @@ namespace lsp
                 prop::Color                 sHoverColor;        // Color of the dot (when hover)
                 prop::Color                 sBorderColor;       // Color of the border
                 prop::Color                 sHoverBorderColor;  // Color of the border (when hover)
+                prop::Color                 sGapColor;          // Gap color
+                prop::Color                 sHoverGapColor;     // Hover gap color
 
                 size_t                      nXFlags;            // Extra flags
                 size_t                      nMBState;           // Mouse button state
                 ssize_t                     nMouseX;            // Mouse initial X position
                 ssize_t                     nMouseY;            // Mouse initial Y position
+                float                       fLastX;             // Last X value
+                float                       fLastY;             // Last Y value
 
             protected:
                 void                        apply_motion(ssize_t x, ssize_t y, size_t flags);
@@ -106,6 +110,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)
                 LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
                 LSP_TK_PROPERTY(Color,              hover_border_color, &sHoverBorderColor)
+                LSP_TK_PROPERTY(Color,              gap_color,          &sGapColor)
+                LSP_TK_PROPERTY(Color,              hover_gap_color,    &sHoverGapColor)
 
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
@@ -121,6 +127,8 @@ namespace lsp
                 virtual status_t            on_mouse_up(const ws::event_t *e);
 
                 virtual status_t            on_mouse_move(const ws::event_t *e);
+
+                virtual status_t            on_mouse_scroll(const ws::event_t *e);
 
                 virtual status_t            on_change();
         };

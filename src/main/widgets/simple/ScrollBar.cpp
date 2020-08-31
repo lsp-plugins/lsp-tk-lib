@@ -182,10 +182,7 @@ namespace lsp
             Widget::property_changed(prop);
 
             if (sValue.is(prop))
-            {
                 update_slider();
-                sSlots.execute(SLOT_CHANGE, this);
-            }
             if (sConstraints.is(prop))
                 query_resize();
             if (sOrientation.is(prop))
@@ -480,7 +477,12 @@ namespace lsp
                 }
 
                 // Update value
-                sValue.set(value);
+                value = sValue.limit(value);
+                if (value != sValue.get())
+                {
+                    sValue.set(value);
+                    sSlots.execute(SLOT_CHANGE, this);
+                }
             }
 
             if (launched)
@@ -619,7 +621,12 @@ namespace lsp
             if (nButtons == 0)
                 update_cursor_state(e->nLeft, e->nTop, false);
 
-            sValue.set(value);
+            value = sValue.limit(value);
+            if (value != sValue.get())
+            {
+                sValue.set(value);
+                sSlots.execute(SLOT_CHANGE, this);
+            }
             query_draw();
 
             return STATUS_OK;
@@ -663,9 +670,13 @@ namespace lsp
                             1.0f;
                 }
 
-                result        = result + delta*accel;
-                fCurrValue  = result;
-                sValue.set(result);
+                result      = sValue.limit(result + delta*accel);
+                if (result != sValue.get())
+                {
+                    fCurrValue  = result;
+                    sValue.set(result);
+                    sSlots.execute(SLOT_CHANGE, this);
+                }
             }
             else
             {
@@ -723,12 +734,13 @@ namespace lsp
             if (nXFlags & F_ALL_ACTIVITY_MASK)
                 return STATUS_OK;
 
-            float step      = (e->nState & ws::MCF_SHIFT) ? sStep.step_decel() :
-                              (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
-                              sStep.get();
+            float step      = sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
             float delta     = (e->nCode == ws::MCD_UP) ? -step : step;
 
+            float old       = sValue.get();
             sValue.add(delta);
+            if (old != sValue.get())
+                sSlots.execute(SLOT_CHANGE, this);
 
             return STATUS_OK;
         }
@@ -765,8 +777,13 @@ namespace lsp
                     break;
             }
 
-            sValue.set(value + delta);
-            fCurrValue = sValue.get();
+            value = sValue.limit(value + delta);
+            if (value != sValue.get())
+            {
+                fCurrValue = value;
+                sValue.set(value);
+                sSlots.execute(SLOT_CHANGE, this);
+            }
         }
 
         void ScrollBar::draw(ws::ISurface *s)
