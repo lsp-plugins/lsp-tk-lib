@@ -39,12 +39,26 @@ DEPENDENCIES = \
   LSP_DSP_LIB \
   LSP_WS_LIB
 
+LINUX_DEPENDENCIES = \
+  LIBSNDFILE \
+  XLIB \
+  CAIRO
+  
+BSD_DEPENDENCIES = \
+  LIBSNDFILE XLIB CAIRO
+
 # For Linux-based systems, use libsndfile and xlib
 ifeq ($(PLATFORM),Linux)
-  DEPENDENCIES             += LIBSNDFILE XLIB CAIRO
+  DEPENDENCIES             += $(LINUX_DEPENDENCIES)
 endif
 
 # For BSD-based systems, use libsndfile and xlib
 ifeq ($(PLATFORM),BSD)
-  DEPENDENCIES             += LIBSNDFILE XLIB CAIRO
+  DEPENDENCIES             += $(LINUX_DEPENDENCIES)
 endif
+
+ALL_DEPENDENCIES = \
+  $(DEPENDENCIES) \
+  $(TEST_DEPENDENCIES) \
+  $(LINUX_DEPENDENCIES) \
+  $(BSD_DEPENDENCIES)

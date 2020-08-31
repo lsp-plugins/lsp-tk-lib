@@ -25,12 +25,19 @@ include $(CURDIR)/../project.mk
 
 rwildcard               = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
 
-CXX_SRCMAIN             = $(call rwildcard, main, *.cpp)
+CXX_SRCMAIN             = 
+CXX_SRCEXT              =
+CXX_SRCALL              = $(call rwildcard, main, *.cpp)
 CXX_SRCTEST             = $(call rwildcard, test, *.cpp)
 CXX_SRC                 = $(CXX_SRCMAIN)
+
 CXX_OBJ                 = $(patsubst %.cpp, $($(ARTIFACT_VARS)_BIN)/%.o, $(CXX_SRC))
+CXX_OBJEXT              = $(patsubst %.cpp, $($(ARTIFACT_VARS)_BIN)/%.o, $(CXX_SRCEXT))
+
+ALL_HEADERS             = $(call rwildcard, $($(ARTIFACT_VARS)_INC), *.h)
 CXX_FILE                = $(patsubst $($(ARTIFACT_VARS)_BIN)/%.o,%.cpp, $(@))
-CXX_HEADERS             = $(foreach hdr,$(ARTIFACT_HEADERS),$(call rwildcard, $($(ARTIFACT_VARS)_INC)/$(hdr), *.h))
+CXX_HDR_PATHS           = $(foreach hdr,$(ARTIFACT_HEADERS),$($(ARTIFACT_VARS)_INC)/$(hdr))
+CXX_HEADERS             = $(foreach path,$(CXX_HDR_PATHS),$(call rwildcard, $(path), *.h))
 CXX_INSTHEADERS         = $(patsubst $($(ARTIFACT_VARS)_INC)/%,$(DESTDIR)$(INCDIR)/%,$(CXX_HEADERS))
 
 ARTIFACT_BIN            = $($(ARTIFACT_VARS)_BIN)
@@ -61,7 +68,7 @@ ifeq ($(NO_DEPENDENCIES),1)
   BUILD_DEPS              =
 endif
 
-CXX_DEPS                = $(foreach src,$(CXX_SRCMAIN) $(CXX_SRCTEST),$(patsubst %.cpp,$(ARTIFACT_BIN)/%.d,$(src)))
+CXX_DEPS                = $(foreach src,$(CXX_SRCALL) $(CXX_SRCTEST),$(patsubst %.cpp,$(ARTIFACT_BIN)/%.d,$(src)))
 CXX_DEPFILE             = $(patsubst $(ARTIFACT_BIN)/%.d,%.cpp,$(@))
 CXX_DEPTARGET           = $(patsubst $(ARTIFACT_BIN)/%.d,%.o,$(@))
 
@@ -95,9 +102,9 @@ $(BUILD_DEPS):
 	@echo "make $(notdir $($(@)_OBJ))"
 	@$(MAKE) -s -C "$($(@)_PATH)" compile CONFIG="$(CONFIG)" NO_DEPENDENCIES="1" DEMO_TEST="0"
 
-$(ARTIFACT_OBJ): $(BUILD_DEPS) $(CXX_OBJ)
+$(ARTIFACT_OBJ): $(BUILD_DEPS) $(CXX_OBJ) $(CXX_OBJEXT)
 	@echo "  $(LD)   [$(ARTIFACT_NAME)] $(notdir $(ARTIFACT_OBJ))"
-	@$(LD) -o $(ARTIFACT_OBJ) -r $(CXX_OBJ)
+	@$(LD) -o $(ARTIFACT_OBJ) -r $(CXX_OBJ) $(CXX_OBJEXT)
 
 $(ARTIFACT_LIB): $(ARTIFACT_OBJ)
 	@echo "  $(CXX)  [$(ARTIFACT_NAME)] $(notdir $(ARTIFACT_LIB))"
@@ -111,10 +118,10 @@ $(ARTIFACT_TESTBIN): $(ARTIFACT_OBJ)
 	@echo "  $(CXX)  [$(ARTIFACT_NAME)] $(notdir $(ARTIFACT_TESTBIN))"
 	@$(CXX) -o $(ARTIFACT_TESTBIN) $(LINKER_OBJS) $(ARTIFACT_OBJ) $(EXE_FLAGS) $(LINKER_DEPS)
 
-$(CXX_OBJ):
+$(CXX_OBJ) $(CXX_OBJEXT):
 	@echo "  $(CXX)  [$(ARTIFACT_NAME)] $(CXX_FILE)"
 	@mkdir -p $(dir $@)
-	@$(CXX) -o $(@) -c $(CXX_FILE) -fPIC $(CXXFLAGS) $(ARTIFACT_MFLAGS) $(INCLUDE) $(CFLAGS_DEPS)
+	@$(CXX) -o $(@) -c $(CXX_FILE) -fPIC $(CXXFLAGS) $(ARTIFACT_MFLAGS) $(EXT_FLAGS) $(INCLUDE) $(CFLAGS_DEPS)
 
 $(ARTIFACT_PC):
 	@echo "prefix=$(PREFIX)" > "$(ARTIFACT_PC)"
@@ -132,10 +139,12 @@ install: all
 	@echo "Installing $($(ARTIFACT_VARS)_NAME)"
 	@mkdir -p "$(DESTDIR)$(INCDIR)"
 	@mkdir -p "$(DESTDIR)$(LIBDIR)/pkgconfig"
-	@cp -r $($(ARTIFACT_VARS)_INC)/* "$(DESTDIR)$(INCDIR)/"
+	@cp -r "$(CXX_HDR_PATHS)" "$(DESTDIR)$(INCDIR)/"
 	@cp $(ARTIFACT_PC) "$(DESTDIR)$(LIBDIR)/pkgconfig/"
-	@echo $(INSTALL) $(ARTIFACT_LIB) $(ARTIFACT_SLIB) -t "$(DESTDIR)$(LIBDIR)"
-	@$(INSTALL) $(ARTIFACT_LIB) $(ARTIFACT_SLIB) -t "$(DESTDIR)$(LIBDIR)"
+	@echo $(INSTALL) $(ARTIFACT_LIB) -t "$(DESTDIR)$(LIBDIR)"
+	@$(INSTALL) $(ARTIFACT_LIB) -t "$(DESTDIR)$(LIBDIR)"
+	@echo cp $(ARTIFACT_SLIB) -t "$(DESTDIR)$(LIBDIR)"
+	@cp $(ARTIFACT_SLIB) -t "$(DESTDIR)$(LIBDIR)"
 	@ln -sf $(notdir $(ARTIFACT_LIB)) "$(DESTDIR)$(LIBDIR)/$(ARTIFACT_LIBLINK)"
 	@ln -sf $(notdir $(ARTIFACT_SLIB)) "$(DESTDIR)$(LIBDIR)/$(ARTIFACT_SLIBLINK)"
 	@echo "Install OK"
@@ -143,10 +152,10 @@ install: all
 uninstall:
 	@echo "Uninstalling $($(ARTIFACT_VARS)_NAME)"
 	@-rm -f "$(DESTDIR)$(LIBDIR)/$(notdir $(ARTIFACT_LIB))"
+	@-rm -f "$(DESTDIR)$(LIBDIR)/$(notdir $(ARTIFACT_SLIB))"
 	@-rm -f "$(DESTDIR)$(LIBDIR)/$(ARTIFACT_LIBLINK)"
 	@-rm -f "$(DESTDIR)$(LIBDIR)/$(ARTIFACT_SLIBLINK)"
 	@-rm -f "$(DESTDIR)$(LIBDIR)/pkgconfig/$(notdir $(ARTIFACT_PC))"
-	@echo rm -f $(CXX_INSTHEADERS)
 	@-rm -f $(CXX_INSTHEADERS)
 	@echo "Uninstall OK"
 
