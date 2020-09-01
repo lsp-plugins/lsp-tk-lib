@@ -480,6 +480,29 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             gd->border_size()->set(12);
             gd->smooth()->set(true);
 
+            // Add mesh
+            tk::GraphMesh *gms;
+
+            static const float graph_x[] = { 100, 200, 2000, 1000, 100 };
+            static const float graph_y[] = { 30, 90, 90, 30, 30 };
+
+            MTEST_ASSERT(gms = new tk::GraphMesh(dpy));
+            MTEST_ASSERT(id.fmt_ascii("mesh_%d", wid++));
+            MTEST_ASSERT(init_widget(gms, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(gms));
+            MTEST_ASSERT(gr->add(gms) == STATUS_OK);
+
+            gms->color()->set_rgb24(0x00ccff);
+            gms->fill_color()->set_rgba32(0x88ffcc00);
+            gms->fill()->set(true);
+            gms->origin()->set(0);
+            gms->haxis()->set(0);
+            gms->vaxis()->set(1);
+            gms->data()->set_x(graph_x, sizeof(graph_x)/sizeof(float));
+            gms->data()->set_y(graph_y, sizeof(graph_y)/sizeof(float));
+            gms->smooth()->set(true);
+
+
             // Create axes
             tk::GraphAxis *ga;
 

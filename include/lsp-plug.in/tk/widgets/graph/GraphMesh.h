@@ -34,6 +34,9 @@ namespace lsp
                 prop::Color                 sFillColor;     // Fill color
                 prop::GraphMeshData         sData;          // Graph mesh data
 
+                float                      *vBuffer;        // Temporary buffer
+                size_t                      nCapacity;      // Capacity of the temporary buffer
+
             protected:
                 virtual void                property_changed(Property *prop);
 

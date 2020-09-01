@@ -6,6 +6,9 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/alloc.h>
+#include <lsp-plug.in/dsp/dsp.h>
+#include <stdlib.h>
 
 namespace lsp
 {
@@ -24,6 +27,9 @@ namespace lsp
             sFillColor(&sProperties),
             sData(&sProperties)
         {
+            vBuffer             = NULL;
+            nCapacity           = 0;
+
             pClass              = &metadata;
         }
 
@@ -34,6 +40,12 @@ namespace lsp
 
         void GraphMesh::do_destroy()
         {
+            if (vBuffer != NULL)
+            {
+                ::free(vBuffer);
+                vBuffer         = NULL;
+            }
+            nCapacity       = 0;
         }
 
         void GraphMesh::destroy()
@@ -95,6 +107,62 @@ namespace lsp
 
         void GraphMesh::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
+            // Get graph
+            Graph *cv = graph();
+            if (cv == NULL)
+                return;
+
+            if ((!sData.valid()) || (sData.size() < 0))
+                return;
+
+            // Prepare palette
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float width     = (sWidth.get() > 0) ? lsp_max(1.0f, sWidth.get() * scaling) : 0.0f;
+            float bright    = sBrightness.get();
+            lsp::Color line(sColor), fill(sFillColor);
+            line.scale_lightness(bright);
+            fill.scale_lightness(bright);
+
+            float cx = 0.0f, cy = 0.0f;
+            cv->origin(sOrigin.get(), &cx, &cy);
+
+            // Ensure that we have enough buffer size
+            size_t cap_size     = align_size(sData.size() * 2, DEFAULT_ALIGN);
+            if (nCapacity < cap_size)
+            {
+                float *buf          = static_cast<float *>(realloc(vBuffer, cap_size * sizeof(float)));
+                if (buf == NULL)
+                    return;
+                vBuffer             = buf;
+                nCapacity           = cap_size;
+            }
+
+            // Initialize dimensions as zeros
+            size_t vec_size     = sData.size();
+            float *x_vec        = &vBuffer[0];
+            float *y_vec        = &x_vec[vec_size];
+            dsp::fill(x_vec, cx, vec_size);
+            dsp::fill(y_vec, cy, vec_size);
+
+            // Calculate coordinates for each dot
+            GraphAxis *xaxis    = cv->axis(sXAxis.get());
+            GraphAxis *yaxis    = cv->axis(sYAxis.get());
+            if ((xaxis == NULL) || (yaxis == NULL))
+                return;
+
+            if (!xaxis->apply(x_vec, y_vec, sData.x(), vec_size))
+                return;
+            if (!yaxis->apply(x_vec, y_vec, sData.y(), vec_size))
+                return;
+
+            // Now we have dots in x_vec[] and y_vec[]
+            bool aa = s->set_antialiasing(sSmooth.get());
+            if (sFill.get())
+                s->draw_poly(x_vec, y_vec, vec_size, width, fill, line);
+            else if (width > 0)
+                s->wire_poly(x_vec, y_vec, vec_size, width, line);
+
+            s->set_antialiasing(aa);
         }
     }
 }
