@@ -86,7 +86,6 @@ namespace lsp
                 virtual ~GraphDot();
 
                 virtual status_t            init();
-                virtual void                destroy();
 
             public:
                 LSP_TK_PROPERTY(RangeFloat,         hvalue,             &sHValue.sValue)

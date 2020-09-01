@@ -84,6 +84,9 @@
 #include <lsp-plug.in/tk/prop/multi/TextSelection.h>
 #include <lsp-plug.in/tk/prop/multi/Vector2D.h>
 
+// Specific properties
+#include <lsp-plug.in/tk/prop/specific/GraphMeshData.h>
+
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>
 #include <lsp-plug.in/tk/style/Schema.h>

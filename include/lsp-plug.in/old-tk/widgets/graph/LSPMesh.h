@@ -21,8 +21,7 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
-                cstorage<ssize_t>   sBasis;
-                size_t              nWidth;
+                size_t              nWidth;         // Width of the line
                 size_t              nCenter;
                 size_t              nDimensions;
                 size_t              nPoints;
@@ -31,6 +30,9 @@ namespace lsp
                 float              *vBuffer;
                 size_t              nBufSize;
                 LSPColor            sColor;
+
+                float              *vData;          // Buffer to store actual point data
+                size_t              nItems;         // Number of items in buffer
 
             protected:
                 void        drop_data();
@@ -60,8 +62,6 @@ namespace lsp
 
             public:
                 virtual void render(ISurface *s, bool force);
-
-                virtual void add(LSPWidget *widget);
         };
     
     } /* namespace tk */

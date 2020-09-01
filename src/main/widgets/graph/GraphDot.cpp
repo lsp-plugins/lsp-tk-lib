@@ -98,10 +98,6 @@ namespace lsp
         {
         }
 
-        void GraphDot::destroy()
-        {
-        }
-
         status_t GraphDot::init()
         {
             status_t res        = GraphItem::init();
