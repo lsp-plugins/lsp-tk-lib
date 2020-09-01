@@ -145,7 +145,6 @@
 #include <lsp-plug.in/tk/widgets/graph/GraphItem.h>
 #include <lsp-plug.in/tk/widgets/graph/Graph.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphAxis.h>
-#include <lsp-plug.in/tk/widgets/graph/GraphBasis.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphDot.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphFrameBuffer.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphMarker.h>
