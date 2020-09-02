@@ -96,6 +96,10 @@ namespace lsp
 
         bool GraphMeshData::resize_buffer(size_t size)
         {
+            // Did not even changed?
+            if (nSize == size)
+                return true;
+
             // Need to re-allocate?
             size_t stride   = lsp::align_size(size*sizeof(float), DATA_ALIGNMENT) / sizeof(float);
 

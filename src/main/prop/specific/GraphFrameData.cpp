@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/alloc.h>
+#include <lsp-plug.in/common/bits.h>
 #include <lsp-plug.in/dsp/dsp.h>
 
 #define DATA_ALIGNMENT          0x40
@@ -33,10 +34,10 @@ namespace lsp
         {
             { ".rows",          PT_INT      },
             { ".columns",       PT_INT      },
-            { ".size",          PT_STRING   },
             { ".min",           PT_FLOAT    },
             { ".max",           PT_FLOAT    },
             { ".default",       PT_FLOAT    },
+            { ".size",          PT_STRING   },
             NULL
         };
 
@@ -82,18 +83,154 @@ namespace lsp
             pPtr        = NULL;
         }
 
-        void GraphFrameData::sync()
-        {
-        }
 
         void GraphFrameData::commit(atom_t property)
         {
+            if ((pStyle == NULL) || (property < 0))
+                return;
+
+            float fv;
+            ssize_t iv;
+            LSPString s;
+
+            if ((property == vAtoms[P_ROWS]) && (pStyle->get_int(vAtoms[P_ROWS], &iv) == STATUS_OK))
+                resize_buffer(lsp_max(0, iv), nCols);
+            if ((property == vAtoms[P_COLS]) && (pStyle->get_int(vAtoms[P_COLS], &iv) == STATUS_OK))
+                resize_buffer(nRows, lsp_max(0, iv));
+            if ((property == vAtoms[P_MIN]) && (pStyle->get_float(vAtoms[P_MIN], &fv) == STATUS_OK))
+                fMin = fv;
+            if ((property == vAtoms[P_MAX]) && (pStyle->get_float(vAtoms[P_MAX], &fv) == STATUS_OK))
+                fMax = fv;
+            if ((property == vAtoms[P_DFL]) && (pStyle->get_float(vAtoms[P_DFL], &fv) == STATUS_OK))
+                fDfl = fv;
+
+            if ((property == vAtoms[P_SIZE]) && (pStyle->get_string(vAtoms[P_SIZE], &s) == STATUS_OK))
+            {
+                ssize_t xv[2];
+
+                size_t n = Property::parse_ints(xv, 2, &s);
+                switch (n)
+                {
+                    case 1:
+                        xv[0]       = lsp_max(0, xv[0]);
+                        resize_buffer(xv[0], xv[0]);
+                        break;
+                    case 2:
+                        xv[0]       = lsp_max(0, xv[0]);
+                        xv[1]       = lsp_max(0, xv[1]);
+                        resize_buffer(xv[0], xv[1]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            if (pListener != NULL)
+                pListener->notify(this);
+        }
+
+        void GraphFrameData::sync()
+        {
+            if (pStyle != NULL)
+            {
+                pStyle->begin(&sListener);
+                {
+                    if (vAtoms[P_ROWS] >= 0)
+                        pStyle->set_int(vAtoms[P_ROWS], nRows);
+                    if (vAtoms[P_COLS] >= 0)
+                        pStyle->set_int(vAtoms[P_COLS], nCols);
+                    if (vAtoms[P_MIN] >= 0)
+                        pStyle->set_float(vAtoms[P_MIN], fMin);
+                    if (vAtoms[P_MAX] >= 0)
+                        pStyle->set_float(vAtoms[P_MAX], fMax);
+                    if (vAtoms[P_DFL] >= 0)
+                        pStyle->set_float(vAtoms[P_DFL], fDfl);
+
+                    // Mixed components
+                    LSPString s;
+                    if (vAtoms[P_SIZE] >= 0)
+                    {
+                        s.fmt_ascii("%d %d", int(nRows), int(nCols));
+                        pStyle->set_string(vAtoms[P_SIZE], &s);
+                    }
+                }
+                pStyle->end();
+            }
+
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         bool GraphFrameData::resize_buffer(size_t rows, size_t cols)
         {
-            // TODO
-            return false;
+            // Did not even changed?
+            if ((nRows == rows) && (nCols == cols))
+                return true;
+
+            size_t stride   = lsp::align_size(cols*sizeof(float), DATA_ALIGNMENT) / sizeof(float);
+            size_t cap      = (rows > 0) ? (1 << lsp::int_log2(rows)) : 0;
+
+            float min       = lsp_min(fMin, fMax);
+            float max       = lsp_max(fMin, fMax);
+            float dfl       = lsp_limit(fDfl, min, max);
+
+            if ((cap != nCapacity) || (stride != nStride))
+            {
+                uint8_t *ptr = NULL;
+                float *data  = lsp::alloc_aligned<float>(ptr, cap * stride, DATA_ALIGNMENT);
+                if (data == NULL)
+                    return false;
+
+                dsp::fill(data, dfl, cap * stride); // Clean up the buffer
+                if (vData != NULL)
+                {
+                    size_t count = lsp_min(nCols, cols);
+                    if (count > 0)
+                    {
+                        // Copy rows
+                        for (size_t i=0, row=nPendingId - nRows; i<nRows; ++i)
+                        {
+                            size_t idx          = (row + i) & (cap - 1);
+                            dsp::limit2(&data[idx * stride], &vData[idx * nStride], min, max, count);
+                        }
+                    }
+
+                    // Free previously allocated data
+                    lsp::free_aligned(pPtr);
+                }
+
+                pPtr        = ptr;
+                vData       = data;
+                nStride     = stride;
+                nCapacity   = cap;
+            }
+            else
+            {
+                // Empty set of rows (if necessary)
+                ssize_t rclear = rows - nRows;
+                if (rclear > 0)
+                {
+                    for (size_t i=0, n=rclear, row=nPendingId - nRows; i<n; ++i)
+                    {
+                        size_t idx          = (row + i) & (cap - 1);
+                        dsp::fill(&vData[idx * nStride], dfl, nStride);
+                    }
+                }
+
+                // Empty set of column tails (if necessary)
+                ssize_t cclear = cols - nCols;
+                for (size_t i=0, n=rows, row=nPendingId - rows; i<n; ++i)
+                {
+                    size_t idx          = (row + i) & (cap - 1);
+                    dsp::fill(&vData[idx * nStride + cols], dfl, cclear);
+                }
+            }
+
+            nRows   = rows;
+            nCols   = cols;
+            nRowId  = nPendingId - rows;
+
+            return true;
         }
 
         ssize_t GraphFrameData::row_index(uint32_t id) const
@@ -122,7 +259,7 @@ namespace lsp
             return true;
         }
 
-        float GraphFrameData::dfl() const
+        float GraphFrameData::get_default() const
         {
             return (fMin <= fMax) ?
                     lsp_limit(fDfl, fMin, fMax) :
@@ -145,18 +282,70 @@ namespace lsp
 
             if (vData != NULL)
             {
+                float min = lsp_min(fMin, fMax);
+                float max = lsp_max(fMin, fMax);
+                float dfl = lsp_limit(fDfl, min, max);
                 float *dst = &vData[rowid * nStride];
-                dsp::copy(dst, data, columns);
-                dsp::fill(&dst[columns], dfl(), count);
+
+                dsp::limit2(dst, data, min, max, columns);
+                dsp::fill(&dst[columns], dfl, count);
             }
 
             sync();
             return true;
         }
 
+        float GraphFrameData::set_min(float v)
+        {
+            float old = fMin;
+            if (old == v)
+                return old;
+
+            fMin        = v;
+            sync();
+
+            return old;
+        }
+
+        float GraphFrameData::set_max(float v)
+        {
+            float old = fMax;
+            if (old == v)
+                return old;
+
+            fMax        = v;
+            sync();
+
+            return old;
+        }
+
+        float GraphFrameData::set_default(float v)
+        {
+            float old = fDfl;
+            if (old == v)
+                return old;
+
+            fDfl        = v;
+            sync();
+
+            return old;
+        }
+
+        void GraphFrameData::set_range(float min, float max, float dfl)
+        {
+            if ((min == fMin) && (max == fMax) && (dfl == fDfl))
+                return;
+
+            fMin        = min;
+            fMax        = max;
+            fDfl        = dfl;
+
+            sync();
+        }
+
         void GraphFrameData::clear()
         {
-            dsp::fill(vData, dfl(), nCapacity * nStride);
+            dsp::fill(vData, get_default(), nCapacity * nStride);
             nRowId      = nPendingId - nRows;
 
             if (pListener != NULL)
@@ -173,13 +362,49 @@ namespace lsp
             {
             }
 
-            status_t GraphFrameData::init(Style *style, size_t rows, size_t cols)
+            status_t GraphFrameData::init(Style *style, size_t rows, size_t cols, float min, float max, float dfl)
             {
+                if (style == NULL)
+                    return STATUS_BAD_ARGUMENTS;
+                else if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->create_int(vAtoms[P_ROWS], rows);
+                    style->create_int(vAtoms[P_COLS], cols);
+                    style->create_float(vAtoms[P_MIN], min);
+                    style->create_float(vAtoms[P_MAX], max);
+                    style->create_float(vAtoms[P_DFL], dfl);
+
+                    LSPString s;
+                    s.fmt_ascii("%d %d", int(rows), int(cols));
+                    style->create_string(vAtoms[P_SIZE], &s);
+                }
+                style->end();
+
                 return STATUS_OK;
             }
 
-            status_t GraphFrameData::override(Style *style, size_t rows, size_t cols)
+            status_t GraphFrameData::override(Style *style, size_t rows, size_t cols, float min, float max, float dfl)
             {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->override_int(vAtoms[P_ROWS], rows);
+                    style->override_int(vAtoms[P_COLS], cols);
+                    style->override_float(vAtoms[P_MIN], min);
+                    style->override_float(vAtoms[P_MAX], max);
+                    style->override_float(vAtoms[P_DFL], dfl);
+
+                    LSPString s;
+                    s.fmt_ascii("%d %d", int(rows), int(cols));
+                    style->override_string(vAtoms[P_SIZE], &s);
+                }
+                style->end();
+
                 return STATUS_OK;
             }
         }

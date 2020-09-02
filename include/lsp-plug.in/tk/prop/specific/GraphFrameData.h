@@ -41,11 +41,11 @@ namespace lsp
                 enum property_t
                 {
                     P_ROWS,
-                    P_COLUMNS,
-                    P_SIZE,
+                    P_COLS,
                     P_MIN,
                     P_MAX,
                     P_DFL,
+                    P_SIZE,
 
                     P_COUNT
                 };
@@ -98,10 +98,16 @@ namespace lsp
                 inline size_t   changes() const             { return lsp_min(nRows, nPendingId - nRowId);   }
                 inline float    min() const                 { return fMin;                      }
                 inline float    max() const                 { return fMax;                      }
-                float           dfl() const;
+                inline bool     valid() const               { return vData != NULL;             }
+                float           get_default() const;
                 const float    *row(uint32_t id) const;
 
                 bool            set_size(size_t rows, size_t cols);
+                float           set_min(float v);
+                float           set_max(float v);
+                float           set_default(float v);
+                void            set_range(float min, float max, float dfl);
+                inline void     set_range(float min, float max)         { set_range(min, max, fDfl);        }
                 inline bool     set_rows(size_t rows)       { return set_size(rows, nCols);     }
                 inline bool     set_columns(size_t cols)    { return set_size(nRows, cols);     }
                 bool            set_row(uint32_t id, const float *data, size_t columns);
@@ -127,8 +133,13 @@ namespace lsp
                     inline status_t     bind(const char *property, Style *style)        { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
 
-                    status_t            init(Style *style, size_t rows, size_t cols);
-                    status_t            override(Style *style, size_t rows, size_t cols);
+                    status_t            init(Style *style, size_t rows, size_t cols, float min, float max, float dfl);
+                    inline status_t     init(Style *style, size_t rows, size_t cols) { return init(style, rows, cols, 0.0f, 1.0f, 0.0f);   }
+                    inline status_t     init(Style *style, size_t rows, float min, float max, float dfl) { return init(style, 0, 0, min, max, dfl); }
+
+                    status_t            override(Style *style, size_t rows, size_t cols, float min, float max, float dfl);
+                    inline status_t     override(Style *style, float min, float max, float dfl)  { return override(style, 0, 0, min, max, dfl);     }
+                    inline status_t     override(Style *style, size_t rows, size_t cols) { return override(style, rows, cols, 0.0f, 1.0f, 0.0f);    }
             };
         };
     }
