@@ -103,6 +103,8 @@ namespace lsp
                 sRBorderColor.init(sclass, "#ffffff");
                 sHLBorderColor.init(sclass, "#ffffff");
                 sHRBorderColor.init(sclass, "#ffffff");
+
+                sSmooth.override(sclass, false);
             }
 
             // Add handler

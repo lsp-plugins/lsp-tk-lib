@@ -13,3 +13,4 @@
 **/*.gmon
 *.core
 /.config.mk
+**/vgcore*

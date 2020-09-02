@@ -295,6 +295,8 @@ namespace lsp
             limit->nMinHeight   = (sValue.nMinHeight >= 0) ? sValue.nMinHeight * scale : -1;
             limit->nMaxWidth    = (sValue.nMaxWidth >= 0) ? sValue.nMaxWidth * scale : -1;
             limit->nMaxHeight   = (sValue.nMaxHeight >= 0) ? sValue.nMaxHeight * scale : -1;
+            limit->nPreWidth    = -1;
+            limit->nPreHeight   = -1;
         }
 
         void SizeConstraints::apply(ws::size_limit_t *dst, const ws::size_limit_t *src, float scale)

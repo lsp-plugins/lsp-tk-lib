@@ -64,7 +64,7 @@ namespace lsp
                 size_t count    = (stride < nStride) ? size : nSize;
                 size_t n        = stride - size;
                 uint8_t *ptr    = NULL;
-                float *xp       = lsp::alloc_aligned<float>(ptr, stride, DATA_ALIGNMENT);
+                float *xp       = lsp::alloc_aligned<float>(ptr, stride*2, DATA_ALIGNMENT);
                 if (xp == NULL)
                     return false;
 

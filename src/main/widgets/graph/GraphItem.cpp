@@ -35,7 +35,7 @@ namespace lsp
             Style *sclass = style_class();
             if (sclass != NULL)
             {
-                sSmooth.init(sclass, false);
+                sSmooth.init(sclass, true);
             }
 
             return STATUS_OK;

@@ -54,11 +54,11 @@ namespace lsp
             Style *sclass = pDot->style_class();
             if (sclass != NULL)
             {
-                id.fmt_ascii("%s.editable");
+                id.fmt_ascii("%s.editable", prefix);
                 sEditable.init(sclass, false);
-                id.fmt_ascii("%s.value");
+                id.fmt_ascii("%s.value", prefix);
                 sValue.init(sclass, 0.0f, -1.0f, 1.0f);
-                id.fmt_ascii("%s.step");
+                id.fmt_ascii("%s.step", prefix);
                 sStep.init(sclass, 1.0f, 10.0f, 0.1f);
             }
         }

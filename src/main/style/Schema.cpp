@@ -36,6 +36,9 @@ namespace lsp
         
         Schema::~Schema()
         {
+            // Manually unbind all properties before destroying context
+            sScaling.unbind();
+
             destroy_context(&sCtx);
         }
 
