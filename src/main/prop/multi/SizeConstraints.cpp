@@ -27,7 +27,7 @@ namespace lsp
         }
 
         SizeConstraints::SizeConstraints(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             sValue.nMinWidth    = -1;

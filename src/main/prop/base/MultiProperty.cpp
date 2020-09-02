@@ -11,6 +11,13 @@ namespace lsp
 {
     namespace tk
     {
+        MultiProperty::MultiProperty(atom_t *atoms, size_t size, prop::Listener *listener):
+                Property(listener)
+        {
+            for (size_t i=0; i<size; ++i)
+                atoms[i]    = -1;   // By default, atom is not bound
+        }
+
         status_t MultiProperty::unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener)
         {
             if (pStyle == NULL)

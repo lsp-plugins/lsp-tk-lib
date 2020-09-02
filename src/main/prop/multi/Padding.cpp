@@ -29,7 +29,7 @@ namespace lsp
         }
 
         Padding::Padding(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             sValue.nLeft      = 0;

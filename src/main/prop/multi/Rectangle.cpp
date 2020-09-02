@@ -27,7 +27,7 @@ namespace lsp
         }
 
         Rectangle::Rectangle(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             sRect.nLeft     = 0;

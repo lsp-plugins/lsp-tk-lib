@@ -25,11 +25,11 @@ namespace lsp
         }
 
         Position::Position(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
-            nLeft              = 0;
-            nTop             = 0;
+            nLeft           = 0;
+            nTop            = 0;
         }
 
         Position::~Position()

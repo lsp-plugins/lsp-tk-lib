@@ -25,7 +25,7 @@ namespace lsp
         }
 
         Size::Size(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             nWidth              = 0;

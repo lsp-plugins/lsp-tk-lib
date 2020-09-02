@@ -16,7 +16,6 @@ namespace lsp
         GraphFrameBuffer::GraphFrameBuffer(Display *dpy):
             GraphItem(dpy)
         {
-
             pClass              = &metadata;
         }
 

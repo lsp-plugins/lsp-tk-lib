@@ -25,7 +25,7 @@ namespace lsp
         }
 
         SizeRange::SizeRange(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             nMin            = -1;

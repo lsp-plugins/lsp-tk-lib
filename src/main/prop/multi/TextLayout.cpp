@@ -25,7 +25,7 @@ namespace lsp
         }
 
         TextLayout::TextLayout(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             hAlign      = 0.0f;

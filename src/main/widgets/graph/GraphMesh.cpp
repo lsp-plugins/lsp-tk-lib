@@ -67,6 +67,7 @@ namespace lsp
             sFill.bind("fill", &sStyle);
             sColor.bind("color", &sStyle);
             sFillColor.bind("fill.color", &sStyle);
+            sData.bind("data", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -78,6 +79,7 @@ namespace lsp
                 sFill.init(sclass, false);
                 sColor.init(sclass, "#00ff00");
                 sFillColor.init(sclass, "#8800ff00");
+                sData.init(sclass, 0);
             }
 
             return STATUS_OK;

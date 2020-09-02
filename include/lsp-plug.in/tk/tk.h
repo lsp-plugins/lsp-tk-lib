@@ -86,6 +86,7 @@
 
 // Specific properties
 #include <lsp-plug.in/tk/prop/specific/GraphMeshData.h>
+#include <lsp-plug.in/tk/prop/specific/GraphFrameData.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>

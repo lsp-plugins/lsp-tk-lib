@@ -27,7 +27,7 @@ namespace lsp
         }
 
         RangeFloat::RangeFloat(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             fMin        = 0.0f;

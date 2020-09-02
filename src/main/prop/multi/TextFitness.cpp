@@ -25,7 +25,7 @@ namespace lsp
         }
 
         TextFitness::TextFitness(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             hFit        = 1.0f;

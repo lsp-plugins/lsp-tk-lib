@@ -22,14 +22,40 @@
 #ifndef LSP_PLUG_IN_TK_PROP_SPECIFIC_GRAPHMESHDATA_H_
 #define LSP_PLUG_IN_TK_PROP_SPECIFIC_GRAPHMESHDATA_H_
 
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 namespace lsp
 {
     namespace tk
     {
-        class GraphMeshData: public Property
+        class GraphMeshData: public MultiProperty
         {
             private:
                 GraphMeshData &operator = (const GraphMeshData &);
+
+            protected:
+                static const prop::desc_t   DESC[];
+
+                enum property_t
+                {
+                    P_SIZE,
+
+                    P_COUNT
+                };
+
+                class Listener: public IStyleListener
+                {
+                    private:
+                        GraphMeshData  *pValue;
+
+                    public:
+                        inline Listener(GraphMeshData *color)   { pValue = color; };
+
+                    public:
+                        virtual void    notify(atom_t property);
+                };
 
             protected:
                 float          *vData;
@@ -37,8 +63,14 @@ namespace lsp
                 size_t          nStride;
                 uint8_t        *pPtr;
 
+                atom_t          vAtoms[P_COUNT];    // Atoms
+                Listener        sListener;          // Listener
+
             protected:
                 void            copy_data(float *dst, const float *src, size_t n);
+                void            sync();
+                void            commit(atom_t property);
+                bool            resize_buffer(size_t size);
 
             public:
                 explicit GraphMeshData(prop::Listener *listener);
@@ -56,6 +88,7 @@ namespace lsp
                 inline bool         set_x(const float *v)       { return set_x(v, nSize);       }
                 bool                set_y(const float *v, size_t size);
                 inline bool         set_y(const float *v)       { return set_y(v, nSize);       }
+                bool                set(const float *x, const float *y, size_t size);
         };
 
         namespace prop
@@ -67,6 +100,15 @@ namespace lsp
 
                 public:
                     explicit inline GraphMeshData(prop::Listener *listener): tk::GraphMeshData(listener) {}
+
+                public:
+                    inline status_t     bind(atom_t property, Style *style)             { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
+                    inline status_t     bind(const char *property, Style *style)        { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
+
+                    status_t            init(Style *style, size_t size);
+
+                    status_t            override(Style *style, size_t size);
             };
         };
     }

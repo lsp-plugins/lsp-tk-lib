@@ -34,11 +34,9 @@ namespace lsp
         }
 
         Color::Color(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
-            for (size_t i=0; i<P_COUNT; ++i)
-                vAtoms[i]   = -1;
         }
 
         Color::~Color()

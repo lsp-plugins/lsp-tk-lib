@@ -46,7 +46,7 @@ namespace lsp
         }
 
         Vector2D::Vector2D(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             fDX             = 1.0f;

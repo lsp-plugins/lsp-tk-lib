@@ -36,7 +36,7 @@ namespace lsp
                 void            set_default(atom_t *atoms, const prop::desc_t *desc);
 
             protected:
-                inline MultiProperty(prop::Listener *listener = NULL): Property(listener) {};
+                explicit MultiProperty(atom_t *atoms, size_t size, prop::Listener *listener = NULL);
         };
 
     }

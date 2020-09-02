@@ -25,7 +25,7 @@ namespace lsp
         }
 
         TextSelection::TextSelection(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             nFirst      = -1;

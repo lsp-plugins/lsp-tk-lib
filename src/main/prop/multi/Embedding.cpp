@@ -27,7 +27,7 @@ namespace lsp
         }
 
         Embedding::Embedding(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             nFlags      = 0;

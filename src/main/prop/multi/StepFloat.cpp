@@ -26,7 +26,7 @@ namespace lsp
         }
 
         StepFloat::StepFloat(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             fStep       = 0.01f;

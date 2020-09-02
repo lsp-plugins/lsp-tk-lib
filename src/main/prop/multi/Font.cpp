@@ -38,7 +38,7 @@ namespace lsp
         }
 
         Font::Font(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
         }

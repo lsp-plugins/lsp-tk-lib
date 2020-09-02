@@ -30,8 +30,20 @@ namespace lsp
 {
     namespace tk
     {
+        const prop::desc_t GraphMeshData::DESC[] =
+        {
+            { ".size",      PT_INT      },
+            NULL
+        };
+
+        void GraphMeshData::Listener::notify(atom_t property)
+        {
+            pValue->commit(property);
+        }
+
         GraphMeshData::GraphMeshData(prop::Listener *listener):
-            Property(listener)
+            MultiProperty(vAtoms, P_COUNT, listener),
+            sListener(this)
         {
             vData       = NULL;
             nSize       = 0;
@@ -41,6 +53,8 @@ namespace lsp
 
         GraphMeshData::~GraphMeshData()
         {
+            MultiProperty::unbind(vAtoms, DESC, &sListener);
+
             if (pPtr != NULL)
                 lsp::free_aligned(pPtr);
 
@@ -50,12 +64,38 @@ namespace lsp
             pPtr        = NULL;
         }
 
-        bool GraphMeshData::set_size(size_t size)
+        void GraphMeshData::commit(atom_t property)
         {
-            // Size does not change?
-            if (size == nSize)
-                return true;
+            if ((pStyle == NULL) || (property < 0))
+                return;
 
+            ssize_t v;
+            if ((property == vAtoms[P_SIZE]) && (pStyle->get_int(vAtoms[P_SIZE], &v) == STATUS_OK))
+                resize_buffer(v);
+
+            if (pListener != NULL)
+                pListener->notify(this);
+        }
+
+        void GraphMeshData::sync()
+        {
+            // Update settings
+            if (pStyle != NULL)
+            {
+                pStyle->begin(&sListener);
+                {
+                    if (vAtoms[P_SIZE] >= 0)
+                        pStyle->set_int(vAtoms[P_SIZE], nSize);
+                }
+            }
+
+            // Notify about property change
+            if (pListener != NULL)
+                pListener->notify(this);
+        }
+
+        bool GraphMeshData::resize_buffer(size_t size)
+        {
             // Need to re-allocate?
             size_t stride   = lsp::align_size(size*sizeof(float), DATA_ALIGNMENT) / sizeof(float);
 
@@ -95,12 +135,21 @@ namespace lsp
 
             // Update size
             nSize       = size;
-
-            // Notify about property change
-            if (pListener != NULL)
-                pListener->notify(this);
-
             return true;
+        }
+
+        bool GraphMeshData::set_size(size_t size)
+        {
+            // Size does not change?
+            if (size == nSize)
+                return true;
+
+            // Try to resize the buffer
+            bool res = resize_buffer(size);
+            if (res)
+                sync();
+
+            return res;
         }
 
         void GraphMeshData::copy_data(float *dst, const float *src, size_t n)
@@ -116,24 +165,70 @@ namespace lsp
 
         bool GraphMeshData::set_x(const float *v, size_t size)
         {
-            if (!set_size(size))
-                return false;
-            if (vData == NULL)
+            if (!resize_buffer(size))
                 return false;
 
-            copy_data(&vData[0], v, size);
+            if (vData != NULL)
+                copy_data(&vData[0], v, size);
+            sync();
+
             return true;
         }
 
         bool GraphMeshData::set_y(const float *v, size_t size)
         {
-            if (!set_size(size))
-                return false;
-            if (vData == NULL)
+            if (!resize_buffer(size))
                 return false;
 
-            copy_data(&vData[nStride], v, size);
+            if (vData != NULL)
+                copy_data(&vData[nStride], v, size);
+            sync();
+
             return true;
+        }
+
+        bool GraphMeshData::set(const float *x, const float *y, size_t size)
+        {
+            if (!resize_buffer(size))
+                return false;
+
+            if (vData != NULL)
+            {
+                copy_data(&vData[0], x, size);
+                copy_data(&vData[nStride], y, size);
+            }
+            sync();
+
+            return true;
+        }
+
+        namespace prop
+        {
+            status_t GraphMeshData::init(Style *style, size_t size)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->create_int(vAtoms[P_SIZE], size);
+                }
+                style->end();
+                return STATUS_OK;
+            }
+
+            status_t GraphMeshData::override(Style *style, size_t size)
+            {
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->override_int(vAtoms[P_SIZE], size);
+                }
+                style->end();
+                return STATUS_OK;
+            }
         }
     }
 }

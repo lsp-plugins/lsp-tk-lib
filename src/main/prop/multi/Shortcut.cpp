@@ -197,7 +197,7 @@ namespace lsp
         }
 
         Shortcut::Shortcut(prop::Listener *listener):
-            MultiProperty(listener),
+            MultiProperty(vAtoms, P_COUNT, listener),
             sListener(this)
         {
             nMod        = 0;
