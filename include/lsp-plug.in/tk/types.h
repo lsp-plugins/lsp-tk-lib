@@ -119,6 +119,20 @@ namespace lsp
             MI_RADIO        //!< MI_RADIO radio button style
         };
 
+        /**
+         * Function for rendering framebuffer
+         */
+        enum graph_frame_function_t
+        {
+            GFF_RAINBOW,                //!< GFF_RAINBOW
+            GFF_FOG,              //!< GFF_FOG_COLOR
+            GFF_COLOR,                  //!< GFF_COLOR
+            GFF_LIGHTNESS,              //!< GFF_LIGHTNESS
+            GFF_LIGHTNESS2,             //!< GFF_LIGHTNESS2
+
+            GFF_DEFAULT = GFF_RAINBOW   //!< GFF_DEFAULT default function
+        };
+
         typedef struct w_class_t
         {
             const char         *name;
