@@ -51,6 +51,7 @@ namespace lsp
                 prop::Integer               sBasis;         // Index of basis axis
                 prop::Integer               sParallel;      // Index of parallel axis
                 prop::RangeFloat            sValue;         // Actual value
+                prop::Float                 sOffset;        // Offset
                 prop::StepFloat             sStep;          // Stepping value
                 prop::Vector2D              sDirection;     // Direction
                 prop::Integer               sWidth;         // Thickness
@@ -67,7 +68,6 @@ namespace lsp
                 prop::Color                 sHLBorderColor; // Border Hover Color
                 prop::Color                 sHRBorderColor; // Border Hover Color
 
-//                float                       fOffset;        // Offset
                 size_t                      nXFlags;        // Extra flags
                 size_t                      nMBState;       // Mouse button state
                 ssize_t                     nMouseX;        // Mouse initial X position
@@ -93,6 +93,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            basis,                  &sBasis);
                 LSP_TK_PROPERTY(Integer,            parallel,               &sParallel);
                 LSP_TK_PROPERTY(RangeFloat,         value,                  &sValue);
+                LSP_TK_PROPERTY(Float,              offset,                 &sOffset);
                 LSP_TK_PROPERTY(StepFloat,          step,                   &sStep);
                 LSP_TK_PROPERTY(Vector2D,           direction,              &sDirection);
                 LSP_TK_PROPERTY(Integer,            width,                  &sWidth);

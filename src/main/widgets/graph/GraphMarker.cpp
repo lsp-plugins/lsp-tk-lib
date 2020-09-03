@@ -35,6 +35,7 @@ namespace lsp
             sBasis(&sProperties),
             sParallel(&sProperties),
             sValue(&sProperties),
+            sOffset(&sProperties),
             sStep(&sProperties),
             sDirection(&sProperties),
             sWidth(&sProperties),
@@ -51,7 +52,6 @@ namespace lsp
             sHLBorderColor(&sProperties),
             sHRBorderColor(&sProperties)
         {
-//            fOffset             = 0.0f;
             nXFlags             = 0;
             nMBState            = 0;
             nMouseX             = 0;
@@ -79,6 +79,7 @@ namespace lsp
             sBasis.bind("basis", &sStyle);
             sParallel.bind("parallel", &sStyle);
             sValue.bind("value", &sStyle);
+            sOffset.bind("value.offset", &sStyle);
             sStep.bind("step", &sStyle);
             sDirection.bind("direction", &sStyle);
             sWidth.bind("width", &sStyle);
@@ -102,6 +103,7 @@ namespace lsp
                 sBasis.init(sclass, 0);
                 sParallel.init(sclass, 1);
                 sValue.init(sclass, 0.0f, -1.0f, 1.0f);
+                sOffset.init(sclass, 0.0f);
                 sStep.init(sclass, 1.0f, 10.0f, 0.1f);
                 sDirection.init_cart(sclass, 1.0f, 0.0f);
                 sWidth.init(sclass, 1);
@@ -141,6 +143,8 @@ namespace lsp
             if (sParallel.is(prop))
                 query_draw();
             if (sValue.is(prop))
+                query_draw();
+            if (sOffset.is(prop))
                 query_draw();
             if (sStep.is(prop))
                 {/* nothing */}
@@ -219,11 +223,12 @@ namespace lsp
 
             if (!basis->apply(&x, &y, &fvalue, 1))
                 return;
-//            if (fOffset != 0.0f)
-//            {
-//                if (!parallel->apply(&x, &y, &fOffset, 1))
-//                    return;
-//            }
+            float off = sOffset.get();
+            if (off != 0.0f)
+            {
+                if (!parallel->apply(&x, &y, &off, 1))
+                    return;
+            }
 
             // Get equation of the line that contains calculated point
             float ll[3], bl[3], br[3];
@@ -347,11 +352,12 @@ namespace lsp
             // Translate point and get the coordinates of point that lays on the target line
             if (!basis->apply(&x, &y, &fvalue, 1))
                 return false;
-//            if (fOffset != 0.0f)
-//            {
-//                if (!parallel->apply(&x, &y, &fOffset, 1))
-//                    return false;
-//            }
+            float off = sOffset.get();
+            if (off != 0.0f)
+            {
+                if (!parallel->apply(&x, &y, &off, 1))
+                    return false;
+            }
 
             // Get equation of the line that contains calculated point
             float a1, b1, c1;
