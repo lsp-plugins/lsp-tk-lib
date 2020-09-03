@@ -66,8 +66,8 @@ namespace lsp
                 float          *vData;              // Data buffer
                 size_t          nRows;              // Number of rows
                 size_t          nCols;              // Number of columns
+                uint32_t        nChanges;           // Number of changes
                 uint32_t        nRowId;             // Current row number
-                uint32_t        nPendingId;         // Pending row number
                 size_t          nStride;            // Stride between rows
                 size_t          nCapacity;          // The real capacity, should be 2^n
                 float           fMin;               // Minimum allowed value
@@ -82,7 +82,7 @@ namespace lsp
                 void            sync();
                 void            commit(atom_t property);
                 bool            resize_buffer(size_t rows, size_t cols);
-                ssize_t         row_index(uint32_t id) const;
+                ssize_t         row_index(uint32_t id, size_t range) const;
 
             public:
                 explicit GraphFrameData(prop::Listener *listener);
@@ -91,11 +91,15 @@ namespace lsp
             public:
                 size_t          rows() const                { return nRows;                     }
                 size_t          columns() const             { return nCols;                     }
-                size_t          current() const             { return nRowId;                    }
-                size_t          pending() const             { return nPendingId;                }
+                uint32_t        bottom() const              { return nRowId - nCapacity;        }
+                uint32_t        first() const               { return nRowId - nRows;            }
+                uint32_t        last() const                { return nRowId;                    }
+                uint32_t        top() const                 { return nRowId;                    }
+                uint32_t        pending() const             { return nRowId - nChanges;         }
                 size_t          capacity() const            { return nCapacity;                 }
-                inline bool     changed() const             { return nPendingId != nRowId;      }
-                inline size_t   changes() const             { return lsp_min(nRows, nPendingId - nRowId);   }
+                size_t          stride() const              { return nStride;                   }
+                inline bool     changed() const             { return nChanges > 0;              }
+                inline size_t   changes() const             { return nChanges;                  }
                 inline float    min() const                 { return fMin;                      }
                 inline float    max() const                 { return fMax;                      }
                 inline bool     valid() const               { return vData != NULL;             }
@@ -107,12 +111,13 @@ namespace lsp
                 float           set_max(float v);
                 float           set_default(float v);
                 void            set_range(float min, float max, float dfl);
-                inline void     set_range(float min, float max)         { set_range(min, max, fDfl);        }
-                inline bool     set_rows(size_t rows)       { return set_size(rows, nCols);     }
-                inline bool     set_columns(size_t cols)    { return set_size(nRows, cols);     }
+                inline void     set_range(float min, float max)             { set_range(min, max, fDfl);        }
+                inline bool     set_rows(size_t rows)                       { return set_size(rows, nCols);     }
+                inline bool     set_columns(size_t cols)                    { return set_size(nRows, cols);     }
                 bool            set_row(uint32_t id, const float *data, size_t columns);
-                inline bool     set_row(uint32_t id, const float *data)         { return set_row(id, data, nCols); }
+                inline bool     set_row(uint32_t id, const float *data)     { return set_row(id, data, nCols);  }
                 void            clear();
+                void            advance();
         };
 
         namespace prop
@@ -123,12 +128,9 @@ namespace lsp
                     GraphFrameData &operator = (const GraphFrameData &);
 
                 public:
-                    explicit inline GraphFrameData(prop::Listener *listener): tk::GraphFrameData(listener) {}
+                    explicit inline GraphFrameData(prop::Listener *listener = NULL): tk::GraphFrameData(listener) {}
 
                 public:
-                    void                advance();
-                    void                advance(size_t rows);
-
                     inline status_t     bind(atom_t property, Style *style)             { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const char *property, Style *style)        { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }

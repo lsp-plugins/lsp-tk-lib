@@ -53,8 +53,8 @@ namespace lsp
             vData       = NULL;
             nRows       = 0;
             nCols       = 0;
+            nChanges    = 0;
             nRowId      = 0;
-            nPendingId  = 0;
             nStride     = 0;
             nCapacity   = 0;
             fMin        = 0.0f;
@@ -73,8 +73,8 @@ namespace lsp
             vData       = NULL;
             nRows       = 0;
             nCols       = 0;
+            nChanges    = 0;
             nRowId      = 0;
-            nPendingId  = 0;
             nStride     = 0;
             nCapacity   = 0;
             fMin        = 0.0f;
@@ -169,11 +169,14 @@ namespace lsp
 
             size_t stride   = lsp::align_size(cols*sizeof(float), DATA_ALIGNMENT) / sizeof(float);
             size_t cap      = (rows > 0) ? (1 << lsp::int_log2(rows)) : 0;
+            if (cap < rows)
+                cap            <<= 1;
 
             float min       = lsp_min(fMin, fMax);
             float max       = lsp_max(fMin, fMax);
             float dfl       = lsp_limit(fDfl, min, max);
 
+            // Need to re-allocate data?
             if ((cap != nCapacity) || (stride != nStride))
             {
                 uint8_t *ptr = NULL;
@@ -184,14 +187,17 @@ namespace lsp
                 dsp::fill(data, dfl, cap * stride); // Clean up the buffer
                 if (vData != NULL)
                 {
-                    size_t count = lsp_min(nCols, cols);
-                    if (count > 0)
+                    size_t ncols = lsp_min(nCols, cols);
+                    size_t nrows = lsp_min(nRows, rows);
+
+                    if (ncols > 0)
                     {
                         // Copy rows
-                        for (size_t i=0, row=nPendingId - nRows; i<nRows; ++i)
+                        for (size_t i=0, row=nRowId - nrows; i<nrows; ++i)
                         {
-                            size_t idx          = (row + i) & (cap - 1);
-                            dsp::limit2(&data[idx * stride], &vData[idx * nStride], min, max, count);
+                            size_t didx         = (row + i) & (cap - 1);
+                            size_t sidx         = (row + i) & (nCapacity - 1);
+                            dsp::limit2(&data[didx * stride], &vData[sidx * nStride], min, max, ncols);
                         }
                     }
 
@@ -199,54 +205,44 @@ namespace lsp
                     lsp::free_aligned(pPtr);
                 }
 
+                // Update pointers
                 pPtr        = ptr;
                 vData       = data;
                 nStride     = stride;
                 nCapacity   = cap;
             }
-            else
-            {
-                // Empty set of rows (if necessary)
-                ssize_t rclear = rows - nRows;
-                if (rclear > 0)
-                {
-                    for (size_t i=0, n=rclear, row=nPendingId - nRows; i<n; ++i)
-                    {
-                        size_t idx          = (row + i) & (cap - 1);
-                        dsp::fill(&vData[idx * nStride], dfl, nStride);
-                    }
-                }
-
-                // Empty set of column tails (if necessary)
-                ssize_t cclear = cols - nCols;
-                for (size_t i=0, n=rows, row=nPendingId - rows; i<n; ++i)
-                {
-                    size_t idx          = (row + i) & (cap - 1);
-                    dsp::fill(&vData[idx * nStride + cols], dfl, cclear);
-                }
-            }
 
             nRows   = rows;
             nCols   = cols;
-            nRowId  = nPendingId - rows;
+            nChanges= nRows;
 
             return true;
         }
 
-        ssize_t GraphFrameData::row_index(uint32_t id) const
+        ssize_t GraphFrameData::row_index(uint32_t id, size_t range) const
         {
-            if ((vData == NULL) || (id > nPendingId))
+            if (vData == NULL)
                 return -1;
 
-            uint32_t delta  = (nPendingId >= nRowId) ? nRows : -nRows;
-            uint32_t first  = nPendingId - delta;
+            uint32_t first = nRowId - range;
 
-            return (id > first) ? id & (nCapacity - 1) : -1;
+            if (first < nRowId)
+            {
+                if ((id < first) || (id >= nRowId))
+                    return -1;
+            }
+            else
+            {
+                if ((id < first) && (id >= nRowId))
+                    return -1;
+            }
+
+            return id & (nCapacity - 1);
         }
 
         const float *GraphFrameData::row(uint32_t id) const
         {
-            ssize_t rowid   = row_index(id);
+            ssize_t rowid   = row_index(id, nCapacity);
             return (rowid >= 0) ? &vData[rowid * nStride] : NULL;
         }
 
@@ -268,28 +264,54 @@ namespace lsp
 
         bool GraphFrameData::set_row(uint32_t id, const float *data, size_t columns)
         {
-            ssize_t rowid   = row_index(id);
-            if (rowid < 0)
+            if (vData == NULL)
                 return false;
 
-            ssize_t count = nCols - columns;
-            if (count < 0)
+            // Check that we need to extend number of columns for the buffer
+            if (columns > nCols)
             {
                 if (!resize_buffer(nRows, columns))
                     return false;
-                count = 0;
             }
 
-            if (vData != NULL)
+            // Estimate the minimum, maximum and default values
+            float min       = lsp_min(fMin, fMax);
+            float max       = lsp_max(fMin, fMax);
+            float dfl       = lsp_limit(fDfl, min, max);
+
+            // Check that row is outside of the allowed range
+            ssize_t index   = row_index(id, nCapacity);
+            if (index < 0) // Row is outside of the range and we need to append data?
             {
-                float min = lsp_min(fMin, fMax);
-                float max = lsp_max(fMin, fMax);
-                float dfl = lsp_limit(fDfl, min, max);
-                float *dst = &vData[rowid * nStride];
+                // Need to append some row?
+                uint32_t delta  = (id > nRowId) ? nRowId : -nRowId;
+                uint32_t offset = id - delta;
 
-                dsp::limit2(dst, data, min, max, columns);
-                dsp::fill(&dst[columns], dfl, count);
+                if (offset < nCapacity)
+                {
+                    // Need to fill the buffer with empty data
+                    for (size_t i=0; i<offset; ++i)
+                    {
+                        index           = (nRowId + i) & (nCapacity - 1);
+                        dsp::fill(&vData[index * nStride], dfl, nStride);
+                    }
+                    nChanges        = lsp_min(nChanges + offset + 1, nRows);
+                }
+                else // Clear the buffer since we've already out of it
+                {
+                    dsp::fill(vData, get_default(), nCapacity * nStride);
+                    nChanges        = nRows;
+                }
+
+                index           = id & (nCapacity - 1);
+                nRowId          = id+1;
             }
+
+            // Copy data to the destination row
+            float *dst      = &vData[index * nStride];
+
+            dsp::limit2(dst, data, min, max, columns);
+            dsp::fill(&dst[columns], dfl, nStride - columns);
 
             sync();
             return true;
@@ -346,22 +368,19 @@ namespace lsp
         void GraphFrameData::clear()
         {
             dsp::fill(vData, get_default(), nCapacity * nStride);
-            nRowId      = nPendingId - nRows;
+            nChanges    = 0;
 
             if (pListener != NULL)
                 pListener->notify(this);
         }
 
+        void GraphFrameData::advance()
+        {
+            nChanges    = 0;
+        }
+
         namespace prop
         {
-            void GraphFrameData::advance()
-            {
-            }
-
-            void GraphFrameData::advance(size_t rows)
-            {
-            }
-
             status_t GraphFrameData::init(Style *style, size_t rows, size_t cols, float min, float max, float dfl)
             {
                 if (style == NULL)
