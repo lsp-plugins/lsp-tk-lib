@@ -454,6 +454,7 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             MTEST_ASSERT(gr->add(gd) == STATUS_OK);
 
             gd->origin()->set(0);
+            gd->pointer()->set(ws::MP_DRAG);
 
             gd->hvalue()->set_min(10.0f);
             gd->hvalue()->set_max(24000.0f);
