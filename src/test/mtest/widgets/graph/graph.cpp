@@ -21,14 +21,97 @@
 
 #include <lsp-plug.in/test-fw/mtest.h>
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/dsp/dsp.h>
 #include <private/mtest/tk/common.h>
 
+#define FRM_BUFFER_SIZE         256
+
 MTEST_BEGIN("tk.widgets.graph", graph)
+
+
     typedef struct handler_t
     {
         test_type_t    *test;
         char           *label;
     } handler_t;
+
+    typedef struct osc_t
+    {
+        float       A0; // Initial amplitude
+        float       X0; // Initial location
+        float       W0; // Frequency
+        float       P0; // Initial phase
+        float       R0; // Reduction/Decay
+    } osc_t;
+
+    class Drawer: public tk::Timer
+    {
+        protected:
+            size_t                  nPhase;
+            osc_t                   vOsc[3];
+            tk::GraphFrameBuffer   *pFB;
+            float                   vBuffer[FRM_BUFFER_SIZE];
+            test_type_t            *pTest;
+
+        public:
+            explicit Drawer(test_type_t *test, tk::GraphFrameBuffer *fb): Timer()
+            {
+                nPhase          = 0;
+
+                vOsc[0].A0      = 0.25f;
+                vOsc[0].X0      = 64;
+                vOsc[0].W0      = 2.0f;
+                vOsc[0].P0      = 0.0f;
+                vOsc[0].R0      = 0.01f;
+
+                vOsc[1].A0      = 0.25f;
+                vOsc[1].X0      = 128;
+                vOsc[1].W0      = 6.5f;
+                vOsc[1].P0      = 1.0f;
+                vOsc[1].R0      = 0.1f;
+
+                vOsc[2].A0      = 0.15f;
+                vOsc[2].X0      = 192;
+                vOsc[2].W0      = 1.33f;
+                vOsc[2].P0      = 0.5f;
+                vOsc[2].R0      = 0.05f;
+
+                pFB             = fb;
+                pTest           = test;
+            }
+
+        protected:
+            void oscillate(float *dst, const osc_t *osc, float t, ssize_t n)
+            {
+                float P = 2.0f * M_PI * osc->W0 * t + osc->P0;
+
+                for (ssize_t x=0; x < n; ++x)
+                {
+                    float dx = -0.05f * fabs(osc->X0 - x);
+                    dst[x] += osc->A0 * cosf(P + dx) * expf(osc->R0 * dx);
+                }
+            }
+
+        public:
+            virtual status_t run(ws::timestamp_t time, void *args)
+            {
+                for (size_t n=0; n<8; ++n)
+                {
+                    float t      = float(nPhase) / 0x800;
+
+                    dsp::fill(vBuffer, 0.5f, FRM_BUFFER_SIZE);
+                    for (size_t i=0; i<3; ++i)
+                        oscillate(vBuffer, &vOsc[i], t, FRM_BUFFER_SIZE);
+
+                    if (pFB != NULL)
+                        pFB->data()->set_row(pFB->data()->top(), vBuffer);
+
+                    ++nPhase;
+                }
+
+                return STATUS_OK;
+            }
+    };
 
     static status_t slot_close(tk::Widget *sender, void *ptr, void *data)
     {
@@ -244,6 +327,8 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         gr->constraints()->set_min(160, 100);
         gr->bg_color()->set_rgb24(0x1b1c22);
 
+        tk::GraphFrameBuffer *fb    = NULL;
+
         {
             int wid = 0;
             size_t col = 0;
@@ -351,6 +436,20 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 gm->color()->set_rgb24(m->color);
                 gm->value()->set(m->value);
             }
+
+            // Add frame buffer
+            MTEST_ASSERT(fb = new tk::GraphFrameBuffer(dpy));
+            MTEST_ASSERT(id.fmt_ascii("framebuffer_%d", wid++));
+            MTEST_ASSERT(init_widget(fb, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(fb));
+            MTEST_ASSERT(gr->add(fb) == STATUS_OK);
+
+            fb->data()->set_size(FRM_BUFFER_SIZE * 0.625, FRM_BUFFER_SIZE);
+            fb->hpos()->set(-1);
+            fb->vpos()->set(1);
+            fb->hscale()->set(1);
+            fb->vscale()->set(1);
+            fb->transparency()->set(0.5f);
 
             // Create Editable vertical marker
             MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
@@ -534,11 +633,20 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             ga->color()->set_rgb24(0xcccccc);
         }
 
+        // Init and run osillator
+        Drawer drawer(this, fb);
+        drawer.bind(dpy);
+        drawer.launch(-1, 1000 / 25); // Launch at 25 Hz rate
+
         // Show window
         wnd->visibility()->set(true);
 
         MTEST_ASSERT(dpy->main() == STATUS_OK);
 
+        // Cancel timer
+        drawer.cancel();
+
+        // Destroy all stuff
         while ((w = widgets.pop()) != NULL)
         {
             w->destroy();

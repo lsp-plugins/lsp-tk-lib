@@ -201,10 +201,6 @@ namespace lsp
             float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
             float bright    = sBrightness.get();
 
-            lsp_trace("xr = %f, size={%d, %d, %d, %d}", xr,
-                    int(sSize.nLeft), int(sSize.nTop), int(sSize.nWidth), int(sSize.nHeight)
-                );
-
             // Prepare palette
             ws::ISurface *cv;
             lsp::Color color(sColor);

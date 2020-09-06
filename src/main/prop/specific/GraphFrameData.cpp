@@ -284,7 +284,7 @@ namespace lsp
             if (index < 0) // Row is outside of the range and we need to append data?
             {
                 // Need to append some row?
-                uint32_t delta  = (id > nRowId) ? nRowId : -nRowId;
+                uint32_t delta  = (id >= nRowId) ? nRowId : -nRowId;
                 uint32_t offset = id - delta;
 
                 if (offset < nCapacity)

@@ -93,7 +93,7 @@ namespace lsp
             if (sclass != NULL)
             {
                 sData.init(sclass, 0, 0, 0.0f, 1.0f, 0.0f);
-                sTransparency.init(sclass, 1.0f);
+                sTransparency.init(sclass, 0.5f);
                 sAngle.init(sclass, 0);
                 sHPos.init(sclass, -1.0f);
                 sVPos.init(sclass, 1.0f);
@@ -194,11 +194,11 @@ namespace lsp
             ::memmove(&xp[stride * changes], xp, (sData.rows() - changes) * stride);
 
             // Draw dots
-            uint32_t row    = sData.last() - changes;
+            uint32_t row    = sData.last();
 
-            for (size_t i=0; i<changes; ++i, xp += stride)
+            for (size_t i=1; i<=changes; ++i, xp += stride)
             {
-                const float *p = sData.row(row + i);
+                const float *p = sData.row(row - i);
                 if (p == NULL)
                     continue;
 

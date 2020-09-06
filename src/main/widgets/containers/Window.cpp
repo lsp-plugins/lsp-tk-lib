@@ -356,8 +356,6 @@ namespace lsp
             if (!bMapped)
                 return;
 
-            lsp_trace("render force=%d", int(force));
-
             lsp::Color bg_color(sBgColor);
 
             if ((pChild == NULL) || (!pChild->visibility()->get()))
