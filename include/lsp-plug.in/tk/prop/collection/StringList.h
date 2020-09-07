@@ -160,6 +160,12 @@ namespace lsp
                  * @return status of operation
                  */
                 status_t            swap(size_t i1, size_t i2);
+
+                /**
+                 * Get size of the list
+                 * @return size of the list
+                 */
+                inline size_t       size() const                        { return vItems.size();     }
         };
 
         namespace prop

@@ -22,6 +22,10 @@
 #ifndef LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_FILEBUTTON_H_
 #define LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_FILEBUTTON_H_
 
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 namespace lsp
 {
     namespace tk
@@ -40,13 +44,25 @@ namespace lsp
                 prop::StringList        sTextList;          // Possible text values used for size estimation
                 prop::Font              sFont;              // Font parameters
                 prop::TextLayout        sTextLayout;        // Text layout
+                prop::Padding           sTextPadding;       // Text padding
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Color             sColor;             // Color
                 prop::Color             sInvColor;          // Progress color
+                prop::Color             sTextColor;         // Text color
+                prop::Color             sInvTextColor;      // Progress color for text
 
                 size_t                  nBMask;             // Mouse button state
                 ws::rectangle_t         sButton;            // Area for button
                 ws::rectangle_t         sLabel;             // Area for text
+
+            protected:
+                static status_t     slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t     slot_on_submit(Widget *sender, void *ptr, void *data);
+
+            protected:
+                virtual void        size_request(ws::size_limit_t *r);
+                virtual void        realize(const ws::rectangle_t *r);
+                virtual void        property_changed(Property *prop);
 
             public:
                 explicit FileButton(Display *dpy);
@@ -61,9 +77,12 @@ namespace lsp
                 LSP_TK_PROPERTY(StringList,             text_list,          &sTextList);
                 LSP_TK_PROPERTY(Font,                   font,               &sFont);
                 LSP_TK_PROPERTY(TextLayout,             text_layout,        &sTextLayout);
+                LSP_TK_PROPERTY(Padding,                text_padding,       &sTextPadding);
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,        &sConstraints);
                 LSP_TK_PROPERTY(Color,                  color,              &sColor);
                 LSP_TK_PROPERTY(Color,                  inv_color,          &sInvColor);
+                LSP_TK_PROPERTY(Color,                  text_color,         &sTextColor);
+                LSP_TK_PROPERTY(Color,                  inv_text_color,     &sInvTextColor);
 
             public:
                 virtual void        draw(ws::ISurface *s);
