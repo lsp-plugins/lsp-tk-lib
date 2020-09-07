@@ -22,6 +22,10 @@
 #ifndef LSP_PLUG_IN_TK_PROP_COLLECTION_WIDGETLIST_H_
 #define LSP_PLUG_IN_TK_PROP_COLLECTION_WIDGETLIST_H_
 
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
 #include <lsp-plug.in/lltl/parray.h>
 
 namespace lsp

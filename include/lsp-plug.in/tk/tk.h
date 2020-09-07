@@ -76,6 +76,7 @@
 #include <lsp-plug.in/tk/prop/simple/String.h>
 
 // Collections
+#include <lsp-plug.in/tk/prop/collection/StringList.h>
 #include <lsp-plug.in/tk/prop/collection/WidgetList.h>
 #include <lsp-plug.in/tk/prop/collection/WidgetPtr.h>
 #include <lsp-plug.in/tk/prop/collection/WidgetSet.h>
@@ -158,6 +159,7 @@
 #include <lsp-plug.in/tk/widgets/compound/ComboGroup.h>
 
 // Specific widgets
+#include <lsp-plug.in/tk/widgets/specific/FileButton.h>
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
 
 // Graph widgets

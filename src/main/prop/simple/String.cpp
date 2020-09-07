@@ -28,20 +28,18 @@ namespace lsp
     {
         void String::Params::modified()
         {
-            pString->sCache.truncate();
-            pString->nFlags &= ~F_MATCHING;
-
             pString->sync();
         }
 
-        void String::Params::notify(atom_t property)
+        void String::Listener::notify(atom_t property)
         {
             pString->commit(property);
         }
 
         String::String(prop::Listener *listener):
             SimpleProperty(listener),
-            sParams(this)
+            sParams(this),
+            sListener(this)
         {
             pDict       = NULL;
             nFlags      = 0;
@@ -49,7 +47,7 @@ namespace lsp
         
         String::~String()
         {
-            SimpleProperty::unbind(&sParams);
+            SimpleProperty::unbind(&sListener);
         }
 
         status_t String::bind(atom_t property, Style *style, i18n::IDictionary *dict)
@@ -61,7 +59,7 @@ namespace lsp
             status_t res;
             if ((pStyle != NULL) && (nAtom >= 0))
             {
-                res = pStyle->unbind(nAtom, &sParams);
+                res = pStyle->unbind(nAtom, &sListener);
                 if (res != STATUS_OK)
                     return res;
                 pStyle      = NULL;
@@ -71,7 +69,7 @@ namespace lsp
             // Bind to new handler
             style->begin();
             {
-                res = style->bind(property, PT_STRING, &sParams);
+                res = style->bind(property, PT_STRING, &sListener);
                 if (res == STATUS_OK)
                 {
                     pDict       = dict;
@@ -105,7 +103,7 @@ namespace lsp
 
         status_t String::unbind()
         {
-            status_t res = SimpleProperty::unbind(&sParams);
+            status_t res = SimpleProperty::unbind(&sListener);
             if (res == STATUS_OK)
                 pDict       = NULL;
 
@@ -118,18 +116,23 @@ namespace lsp
             {
                 const char *lang;
                 if ((property == nAtom) && (pStyle->get_string(property, &lang) == STATUS_OK))
-                {
-                    sCache.truncate();
-                    nFlags &= ~F_MATCHING;
-                }
+                    invalidate();
             }
 
             if (pListener != NULL)
                 pListener->notify(this);
         }
 
+        void String::invalidate()
+        {
+            sCache.truncate();
+            nFlags &= ~F_MATCHING;
+        }
+
         void String::sync()
         {
+            invalidate();
+
             if (pListener != NULL)
                 pListener->notify(this);
         }

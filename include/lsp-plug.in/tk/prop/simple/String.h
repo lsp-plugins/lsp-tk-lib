@@ -46,16 +46,27 @@ namespace lsp
                 };
 
             protected:
-                class Params: public expr::Parameters, public IStyleListener
+                class Params: public expr::Parameters
                 {
                     private:
                         String  *pString;
 
                     public:
-                        inline Params(String *ps) { pString = ps; }
+                        explicit inline Params(String *ps) { pString = ps; }
 
                     protected:
                         virtual void        modified();
+                };
+
+                class Listener: public IStyleListener
+                {
+                    private:
+                        String  *pString;
+
+                    public:
+                        explicit inline Listener(String *ps) { pString = ps; }
+
+                    protected:
                         virtual void        notify(atom_t property);
                 };
 
@@ -63,6 +74,7 @@ namespace lsp
                 LSPString           sText;      // Text used for rendering
                 mutable LSPString   sCache;     // Cache
                 Params              sParams;    // Parameters
+                Listener            sListener;  // Style listener
                 mutable size_t      nFlags;     // Different flags
                 i18n::IDictionary  *pDict;      // Related dictionary
 
@@ -77,6 +89,7 @@ namespace lsp
                 status_t            bind(const LSPString *property, Style *style, i18n::IDictionary *dict);
                 status_t            unbind();
                 void                sync();
+                void                invalidate();
                 void                commit(atom_t property);
 
             protected:
