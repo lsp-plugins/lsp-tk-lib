@@ -45,7 +45,9 @@ LINUX_DEPENDENCIES = \
   CAIRO
   
 BSD_DEPENDENCIES = \
-  LIBSNDFILE XLIB CAIRO
+  LIBSNDFILE \
+  XLIB \
+  CAIRO
 
 # For Linux-based systems, use libsndfile and xlib
 ifeq ($(PLATFORM),Linux)
