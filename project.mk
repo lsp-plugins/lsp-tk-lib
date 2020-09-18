@@ -56,7 +56,7 @@ endif
 
 # For BSD-based systems, use libsndfile and xlib
 ifeq ($(PLATFORM),BSD)
-  DEPENDENCIES             += $(LINUX_DEPENDENCIES)
+  DEPENDENCIES             += $(BSD_DEPENDENCIES)
 endif
 
 ALL_DEPENDENCIES = \
