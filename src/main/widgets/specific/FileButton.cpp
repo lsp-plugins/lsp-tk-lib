@@ -33,6 +33,7 @@ namespace lsp
             sFont(&sProperties),
             sTextLayout(&sProperties),
             sTextPadding(&sProperties),
+            sTextBorder(&sProperties),
             sConstraints(&sProperties),
             sColor(&sProperties),
             sInvColor(&sProperties),
@@ -72,6 +73,7 @@ namespace lsp
             sFont.bind("font", &sStyle);
             sTextLayout.bind("text.layout", &sStyle);
             sTextPadding.bind("text.padding", &sStyle);
+            sTextBorder.bind("text.border", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sColor.bind("color", &sStyle);
             sInvColor.bind("inv.color", &sStyle);
@@ -85,6 +87,7 @@ namespace lsp
                 sFont.init(sclass, 10.0f);
                 sTextLayout.init(sclass, 0.0f, 0.0f);
                 sTextPadding.init(sclass, 2, 2, 2, 2);
+                sTextBorder.init(sclass, 1);
                 sConstraints.init(sclass);
                 sColor.init(sclass, "#cccccc");
                 sInvColor.init(sclass, "#00cc00");
@@ -102,12 +105,81 @@ namespace lsp
 
         void FileButton::property_changed(Property *prop)
         {
-            // TODO
+            Widget::property_changed(prop);
+
+            if (sValue.is(prop))
+                query_draw();
+            if (sText.is(prop))
+                query_resize();
+            if (sTextList.is(prop))
+                query_resize();
+            if (sFont.is(prop))
+                query_resize();
+            if (sTextLayout.is(prop))
+                query_resize();
+            if (sTextPadding.is(prop))
+                query_resize();
+            if (sTextBorder.is(prop))
+                query_resize();
+            if (sConstraints.is(prop))
+                query_resize();
+            if (sColor.is(prop))
+                query_draw();
+            if (sInvColor.is(prop))
+                query_draw();
+            if (sTextColor.is(prop))
+                query_draw();
+            if (sInvTextColor.is(prop))
+                query_draw();
         }
 
         void FileButton::size_request(ws::size_limit_t *r)
         {
-            // TODO
+            float scaling           = lsp_max(0.0f, sScaling.get());
+
+            // Estimate maximum size of text field
+            LSPString s;
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+            ws::rectangle_t xr;
+            size_t tborder  = (sTextBorder.get() > 0) ? lsp_max(1.0f, sTextBorder.get() * scaling) : 0.0f;
+
+            xr.nLeft        = 0;
+            xr.nTop         = 0;
+            xr.nWidth       = 0;
+            xr.nHeight      = 0;
+
+            sFont.get_parameters(pDisplay, scaling, &fp);
+
+            for (size_t i=0,n=sTextList.size(); i<n; ++i)
+            {
+                String *si      = sTextList.get(i);
+                si->format(&s);
+                sFont.get_multitext_parameters(pDisplay, &tp, scaling, &s);
+
+                xr.nWidth       = lsp_max(xr.nWidth,  tp.Width );
+                xr.nHeight      = lsp_max(xr.nHeight, tp.Height);
+            }
+
+            sText.format(&s);
+            sFont.get_multitext_parameters(pDisplay, &tp, scaling, &s);
+
+            xr.nWidth       = lsp_max(xr.nWidth,  tp.Width );
+            xr.nHeight      = lsp_max(xr.nHeight, tp.Height);
+
+            // Align size so width should be 1/2 of the height
+            if (xr.nWidth < (xr.nHeight << 1))
+                xr.nWidth       = xr.nHeight << 1;
+            else
+                xr.nHeight      = xr.nWidth >> 1;
+
+            // Apply padding and border
+            sTextPadding.add(&xr, scaling);
+            xr.nWidth      += tborder << 1;
+            xr.nHeight     += tborder << 1;
+
+            // Compute external button size
+            xr.nHeight     <<= 1;
         }
 
         void FileButton::realize(const ws::rectangle_t *r)

@@ -45,6 +45,7 @@ namespace lsp
                 prop::Font              sFont;              // Font parameters
                 prop::TextLayout        sTextLayout;        // Text layout
                 prop::Padding           sTextPadding;       // Text padding
+                prop::Integer           sTextBorder;        // Text border
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Color             sColor;             // Color
                 prop::Color             sInvColor;          // Progress color
@@ -78,6 +79,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Font,                   font,               &sFont);
                 LSP_TK_PROPERTY(TextLayout,             text_layout,        &sTextLayout);
                 LSP_TK_PROPERTY(Padding,                text_padding,       &sTextPadding);
+                LSP_TK_PROPERTY(Integer,                text_border,        &sTextBorder);
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,        &sConstraints);
                 LSP_TK_PROPERTY(Color,                  color,              &sColor);
                 LSP_TK_PROPERTY(Color,                  inv_color,          &sInvColor);
