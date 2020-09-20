@@ -357,6 +357,9 @@ namespace lsp
                 if (src->nMinWidth >= 0)
                     dst->nPreWidth   = lsp_max(src->nPreWidth, src->nMinWidth);
             }
+            else
+                dst->nPreWidth      = -1;
+
             if (src->nPreHeight >= 0)
             {
                 if (src->nMaxHeight >= 0)
@@ -364,6 +367,8 @@ namespace lsp
                 if (src->nMinHeight >= 0)
                     dst->nPreHeight  = lsp_max(src->nPreHeight, src->nMinHeight);
             }
+            else
+                dst->nPreHeight     = -1;
         }
 
         void SizeConstraints::apply(ws::rectangle_t *rect, float scale)

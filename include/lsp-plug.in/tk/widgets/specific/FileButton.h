@@ -39,13 +39,20 @@ namespace lsp
                 FileButton & operator = (const FileButton &);
 
             protected:
+                enum flags_t
+                {
+                    FB_LBUTTON      = 1 << 0,
+                    FB_RBUTTON      = 1 << 1,
+                    FB_DOWN         = 1 << 2
+                };
+
+            protected:
                 prop::RangeFloat        sValue;             // The actual progress value
                 prop::String            sText;              // Text to display
                 prop::StringList        sTextList;          // Possible text values used for size estimation
                 prop::Font              sFont;              // Font parameters
                 prop::TextLayout        sTextLayout;        // Text layout
                 prop::Padding           sTextPadding;       // Text padding
-                prop::Integer           sTextBorder;        // Text border
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Color             sColor;             // Color
                 prop::Color             sInvColor;          // Progress color
@@ -53,13 +60,13 @@ namespace lsp
                 prop::Color             sInvLineColor;      // Inverse color of lines
                 prop::Color             sTextColor;         // Text color
                 prop::Color             sInvTextColor;      // Progress color for text
+                prop::WidgetPtr<Menu>   sPopup;             // Popup Menu
 
                 size_t                  nBMask;             // Mouse button state
-                bool                    bPressed;           // Button is currently pressed
+                size_t                  nXFlags;            // Button flags
                 ws::rectangle_t         sButton;            // Area for button
 
             protected:
-                static status_t     slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t     slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
@@ -67,7 +74,8 @@ namespace lsp
                 virtual void        realize(const ws::rectangle_t *r);
                 virtual void        property_changed(Property *prop);
 
-                void                draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color & line);
+                void                draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color & line);\
+                status_t            handle_mouse_move(const ws::event_t *ev);
 
             public:
                 explicit FileButton(Display *dpy);
@@ -83,7 +91,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Font,                   font,               &sFont);
                 LSP_TK_PROPERTY(TextLayout,             text_layout,        &sTextLayout);
                 LSP_TK_PROPERTY(Padding,                text_padding,       &sTextPadding);
-                LSP_TK_PROPERTY(Integer,                text_border,        &sTextBorder);
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,        &sConstraints);
                 LSP_TK_PROPERTY(Color,                  color,              &sColor);
                 LSP_TK_PROPERTY(Color,                  inv_color,          &sInvColor);
@@ -91,6 +98,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                  inv_line_color,     &sInvLineColor);
                 LSP_TK_PROPERTY(Color,                  text_color,         &sTextColor);
                 LSP_TK_PROPERTY(Color,                  inv_text_color,     &sInvTextColor);
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,        popup,              &sPopup);
 
             public:
                 virtual void        draw(ws::ISurface *s);
@@ -100,8 +108,6 @@ namespace lsp
                 virtual status_t    on_mouse_up(const ws::event_t *e);
 
                 virtual status_t    on_mouse_move(const ws::event_t *e);
-
-                virtual status_t    on_change();
 
                 virtual status_t    on_submit();
         };
