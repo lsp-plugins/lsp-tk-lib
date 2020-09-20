@@ -37,20 +37,18 @@ namespace lsp
             sConstraints(&sProperties),
             sColor(&sProperties),
             sInvColor(&sProperties),
+            sLineColor(&sProperties),
+            sInvLineColor(&sProperties),
             sTextColor(&sProperties),
             sInvTextColor(&sProperties)
         {
             nBMask              = 0;
+            bPressed            = false;
 
             sButton.nLeft       = 0;
             sButton.nTop        = 0;
             sButton.nWidth      = 0;
             sButton.nHeight     = 0;
-
-            sLabel.nLeft        = 0;
-            sLabel.nTop         = 0;
-            sLabel.nWidth       = 0;
-            sLabel.nHeight      = 0;
         }
 
         FileButton::~FileButton()
@@ -77,6 +75,8 @@ namespace lsp
             sConstraints.bind("size.constraints", &sStyle);
             sColor.bind("color", &sStyle);
             sInvColor.bind("inv.color", &sStyle);
+            sLineColor.bind("line.color", &sStyle);
+            sInvLineColor.bind("line.inv.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sInvTextColor.bind("text.inv.color", &sStyle);
 
@@ -91,6 +91,8 @@ namespace lsp
                 sConstraints.init(sclass);
                 sColor.init(sclass, "#cccccc");
                 sInvColor.init(sclass, "#00cc00");
+                sLineColor.init(sclass, "#000000");
+                sInvLineColor.init(sclass, "#000000");
                 sTextColor.init(sclass, "#cccccc");
                 sInvTextColor.init(sclass, "#00cc00");
             }
@@ -126,6 +128,10 @@ namespace lsp
             if (sColor.is(prop))
                 query_draw();
             if (sInvColor.is(prop))
+                query_draw();
+            if (sLineColor.is(prop))
+                query_draw();
+            if (sInvLineColor.is(prop))
                 query_draw();
             if (sTextColor.is(prop))
                 query_draw();
@@ -179,15 +185,83 @@ namespace lsp
             xr.nHeight     += tborder << 1;
 
             // Compute external button size
-            xr.nHeight     <<= 1;
+            xr.nHeight        <<= 1;
+            size_t max_chamfer  = lsp_max(1.0f, scaling * 3.0f);
+
+            xr.nWidth          += max_chamfer << 1;
+            xr.nHeight         += max_chamfer << 1;
+
+            // Form the size
+            r->nMinWidth        = xr.nWidth;
+            r->nMinHeight       = xr.nHeight;
+            r->nMaxWidth        = -1;
+            r->nMaxHeight       = -1;
+            r->nPreWidth        = xr.nWidth;
+            r->nPreHeight       = xr.nHeight;
+
+            // Apply size constraints
+            sConstraints.apply(r, scaling);
         }
 
         void FileButton::realize(const ws::rectangle_t *r)
         {
-            // TODO
+            // Realize
+            Widget::realize(r);
+
+            // Initialize position of elements
+            float scaling           = lsp_max(0.0f, sScaling.get());
+            size_t max_chamfer      = lsp_max(1.0f, scaling * 3.0f);
+            size_t min_chamfer      = lsp_max(1.0f, scaling * 2.0f);
+            size_t chamfer          = (bPressed) ? min_chamfer : max_chamfer;
+
+            // Button is always of the squared form
+            sButton.nWidth          = lsp_min(r->nWidth, r->nHeight);
+            sButton.nHeight         = sButton.nWidth;
+            sButton.nLeft           = r->nLeft + ((r->nWidth  - sButton.nWidth ) >> 1);
+            sButton.nTop            = r->nTop  + ((r->nHeight - sButton.nHeight) >> 1);
         }
 
         void FileButton::draw(ws::ISurface *s)
+        {
+            float v                 = sValue.get_normalized();
+            float bright            = sBrightness.get();
+            lsp::Color bg(&sBgColor);
+            s->clear(bg);
+
+            ws::rectangle_t clip    = sButton;
+            clip.nWidth             = v * sButton.nWidth;
+            if (clip.nWidth > 0)
+            {
+                lsp::Color col(&sColor);
+                lsp::Color text(&sTextColor);
+                lsp::Color line(&sLineColor);
+                col.scale_lightness(bright);
+                text.scale_lightness(bright);
+                line.scale_lightness(bright);
+
+                s->clip_begin(&clip);
+                    draw_button(s, col, text, line);
+                s->clip_end();
+            }
+
+            clip.nLeft             += clip.nWidth;
+            clip.nWidth             = sButton.nWidth - clip.nWidth;
+            if (clip.nWidth > 0)
+            {
+                lsp::Color col(&sInvColor);
+                lsp::Color text(&sInvTextColor);
+                lsp::Color line(&sInvLineColor);
+                col.scale_lightness(bright);
+                text.scale_lightness(bright);
+                line.scale_lightness(bright);
+
+                s->clip_begin(&clip);
+                    draw_button(s, col, text, line);
+                s->clip_end();
+            }
+        }
+
+        void FileButton::draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color & line)
         {
             // TODO
         }

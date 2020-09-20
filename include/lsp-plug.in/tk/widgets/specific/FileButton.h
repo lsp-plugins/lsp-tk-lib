@@ -49,12 +49,14 @@ namespace lsp
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Color             sColor;             // Color
                 prop::Color             sInvColor;          // Progress color
+                prop::Color             sLineColor;         // Color of lines
+                prop::Color             sInvLineColor;      // Inverse color of lines
                 prop::Color             sTextColor;         // Text color
                 prop::Color             sInvTextColor;      // Progress color for text
 
                 size_t                  nBMask;             // Mouse button state
+                bool                    bPressed;           // Button is currently pressed
                 ws::rectangle_t         sButton;            // Area for button
-                ws::rectangle_t         sLabel;             // Area for text
 
             protected:
                 static status_t     slot_on_change(Widget *sender, void *ptr, void *data);
@@ -64,6 +66,8 @@ namespace lsp
                 virtual void        size_request(ws::size_limit_t *r);
                 virtual void        realize(const ws::rectangle_t *r);
                 virtual void        property_changed(Property *prop);
+
+                void                draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color & line);
 
             public:
                 explicit FileButton(Display *dpy);
@@ -83,6 +87,8 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,        &sConstraints);
                 LSP_TK_PROPERTY(Color,                  color,              &sColor);
                 LSP_TK_PROPERTY(Color,                  inv_color,          &sInvColor);
+                LSP_TK_PROPERTY(Color,                  line_color,         &sLineColor);
+                LSP_TK_PROPERTY(Color,                  inv_line_color,     &sInvLineColor);
                 LSP_TK_PROPERTY(Color,                  text_color,         &sTextColor);
                 LSP_TK_PROPERTY(Color,                  inv_text_color,     &sInvTextColor);
 
