@@ -30,6 +30,8 @@ namespace lsp
 {
     namespace tk
     {
+        class ColorRange;
+
         /**
          * Color property interface
          */
@@ -106,10 +108,10 @@ namespace lsp
                 inline uint32_t hsla32() const  { return sColor.hsla32();       }
 
             public:
-                void red(float r);
-                void green(float g);
-                void blue(float b);
-                void alpha(float a);
+                float red(float r);
+                float green(float g);
+                float blue(float b);
+                float alpha(float a);
 
                 void set_rgb(float r, float g, float b);
                 void set_rgba(float r, float g, float b, float a);
@@ -118,15 +120,16 @@ namespace lsp
                 void set_hsl24(uint32_t v);
                 void set_hsla32(uint32_t v);
 
-                void hue(float h);
-                void saturation(float s);
-                void lightness(float l);
+                float hue(float h);
+                float saturation(float s);
+                float lightness(float l);
 
                 void set_hsl(float h, float s, float l);
                 void set_hsla(float h, float s, float l, float a);
                 void set(const char *text);
                 void set(const LSPString *text);
                 void set(const Color *src);
+                void set(const ColorRange *src);
 
             public:
                 void blend(const lsp::Color &c, float alpha)                { sColor.blend(c, alpha); sync(); }

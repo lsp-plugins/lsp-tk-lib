@@ -113,8 +113,8 @@ namespace lsp
 
                 static inline float limit(float value, float min, float max)    { return Property::limit(value, min, max);          }
                 inline float        limit(float v) const                        { return Property::limit(v, fMin, fMax);            }
-                static inline bool  matches(float v, float min, float max)      { return Property::matches(v, min, max);    }
-                inline bool         matches(float v) const                      { return Property::matches(v, fMin, fMax);  }
+                static inline bool  matches(float v, float min, float max)      { return Property::matches(v, min, max);            }
+                inline bool         matches(float v) const                      { return Property::matches(v, fMin, fMax);          }
         };
 
         namespace prop

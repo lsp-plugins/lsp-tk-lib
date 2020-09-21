@@ -177,60 +177,81 @@ namespace lsp
                 pListener->notify(this);
         }
 
-        void Color::red(float r)
+        float Color::red(float r)
         {
-            if (sColor.red() == r)
-                return;
+            float old = sColor.red();
+            if (old == r)
+                return old;
+
             sColor.red(r);
             sync();
+            return old;
         };
 
-        void Color::green(float g)
+        float Color::green(float g)
         {
-            if (sColor.green() == g)
-                return;
+            float old = sColor.green();
+            if (old == g)
+                return old;
+
             sColor.green(g);
             sync();
+            return old;
         };
 
-        void Color::blue(float b)
+        float Color::blue(float b)
         {
-            if (sColor.blue() == b)
-                return;
+            float old = sColor.blue();
+            if (old == b)
+                return old;
+
             sColor.blue(b);
             sync();
+            return old;
         };
 
-        void Color::hue(float h)
+        float Color::hue(float h)
         {
-            if (sColor.hue() == h)
-                return;
+            float old = sColor.hue();
+            if (old == h)
+                return old;
+
             sColor.hue(h);
             sync();
+            return old;
         };
 
-        void Color::saturation(float s)
+        float Color::saturation(float s)
         {
-            if (sColor.saturation() == s)
-                return;
+            float old = sColor.saturation();
+            if (old == s)
+                return old;
+
             sColor.saturation(s);
             sync();
+            return old;
         };
 
-        void Color::lightness(float l)
+        float Color::lightness(float l)
         {
-            if (sColor.lightness() == l)
-                return;
+            float old = sColor.lightness();
+            if (old == l)
+                return old;
+
             sColor.lightness(l);
             sync();
+            return old;
         };
 
-        void Color::alpha(float a)
+        float Color::alpha(float a)
         {
-            if (sColor.alpha() == a)
-                return;
+            float old = sColor.alpha();
+            if (old == a)
+                return old;
+
             sColor.alpha(a);
             sync();
+            return old;
         };
 
         void Color::set_rgb(float r, float g, float b)
@@ -351,6 +372,12 @@ namespace lsp
         void Color::set(const Color *src)
         {
             sColor.copy(&src->sColor);
+            sync();
+        }
+
+        void Color::set(const ColorRange *src)
+        {
+            sColor.copy(src->color());
             sync();
         }
 

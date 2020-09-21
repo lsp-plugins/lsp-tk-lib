@@ -32,6 +32,9 @@ namespace lsp
 {
     namespace tk
     {
+        /**
+         * Color with attached range
+         */
         class ColorRange: public MultiProperty
         {
             private:
@@ -41,28 +44,15 @@ namespace lsp
                 enum property_t
                 {
                     P_VALUE,
-                    P_MIN,
-                    P_MAX,
+                    P_R, P_G, P_B,
+                    P_H, P_S, P_L,
+                    P_A,
+                    P_RGB, P_RGBA,
+                    P_HSL, P_HSLA,
+
+                    P_MIN, P_MAX,
 
                     P_COUNT
-                };
-
-                enum flags_t
-                {
-                    F_LOCK_EVENT    = 1 << 0,
-                    F_CHANGED       = 1 << 1
-                };
-
-                class ColorListener: public prop::Listener
-                {
-                    protected:
-                        ColorRange     *pValue;
-
-                    public:
-                        explicit inline ColorListener(ColorRange *ptr)  { pValue   = ptr;       }
-
-                    public:
-                        virtual void    notify(Property *prop);
                 };
 
                 class Listener: public IStyleListener
@@ -82,30 +72,78 @@ namespace lsp
 
             protected:
                 atom_t                  vAtoms[P_COUNT];    // Atom bindings
-                prop::Color             sColor;             // Actual color
+                lsp::Color              sColor;             // Actual color
                 float                   fMin;               // Minimum value
                 float                   fMax;               // Maximum value
                 size_t                  nFlags;             // Flags
-                ColorListener           sColorListener;     // Listener
                 Listener                sListener;
 
             protected:
                 void                    sync();
                 void                    commit(atom_t property);
-                void                    color_changed();
-                status_t                do_parse(expr::Tokenizer *t);
+                status_t                parse_elements(ColorRange *range, expr::Tokenizer *t);
+                status_t                parse_value(ColorRange *range, io::IInSequence *s);
+                static bool             parse_color(lsp::Color *c, const char *text, Style *style);
 
             public:
                 explicit ColorRange(prop::Listener *listener = NULL);
                 ~ColorRange();
 
             public:
-                inline Color           *color()             { return &sColor;       }
-                inline const Color     *color() const       { return &sColor;       }
-                inline float            min() const         { return fMin;          }
-                inline float            max() const         { return fMax;          }
+                inline float            min() const         { return fMin;                  }
+                inline float            max() const         { return fMax;                  }
                 inline float            range() const       { return fMax - fMin;           }
                 inline float            abs_range() const   { return (fMax > fMin) ? fMax - fMin : fMin - fMax; }
+
+                inline float            red() const         { return sColor.red();          }
+                inline float            green() const       { return sColor.green();        }
+                inline float            blue() const        { return sColor.blue();         }
+                inline float            alpha() const       { return sColor.alpha();        }
+
+                inline void             get_rgb(float &r, float &g, float &b) const             { sColor.get_rgb(r, g, b); }
+                inline void             get_rgba(float &r, float &g, float &b, float &a) const  { sColor.get_rgba(r, g, b, a); }
+
+                inline float            hue() const         { return sColor.hue();          }
+                inline float            saturation() const  { return sColor.saturation();   }
+                inline float            lightness() const   { return sColor.lightness();    }
+
+                inline void             get_hsl(float &h, float &s, float &l) const             { sColor.get_hsl(h, s, l); }
+                inline void             get_hsla(float &h, float &s, float &l, float &a) const  { sColor.get_hsla(h, s, l, a); }
+
+                inline uint32_t         rgb24() const       { return sColor.rgb24();        }
+                inline uint32_t         rgba32() const      { return sColor.rgba32();       }
+
+                inline uint32_t         hsl24() const       { return sColor.hsl24();        }
+                inline uint32_t         hsla32() const      { return sColor.hsla32();       }
+
+            public:
+                inline const lsp::Color *color() const       { return &sColor; }
+
+                operator const lsp::Color *() const          { return &sColor; }
+
+            public:
+                float                   red(float r);
+                float                   green(float g);
+                float                   blue(float b);
+                float                   alpha(float a);
+
+                void                    set_rgb(float r, float g, float b);
+                void                    set_rgba(float r, float g, float b, float a);
+                void                    set_rgb24(uint32_t v);
+                void                    set_rgba32(uint32_t v);
+                void                    set_hsl24(uint32_t v);
+                void                    set_hsla32(uint32_t v);
+
+                float                   hue(float h);
+                float                   saturation(float s);
+                float                   lightness(float l);
+
+                void                    set_hsl(float h, float s, float l);
+                void                    set_hsla(float h, float s, float l, float a);
+                void                    set_color(const char *text);
+                void                    set_color(const LSPString *text);
+                void                    set(const Color *src);
+                void                    set(const ColorRange *src);
 
                 float                   set_min(float v);
                 float                   set_max(float v);
@@ -113,11 +151,60 @@ namespace lsp
                 status_t                set(const char *s);
                 status_t                set(const LSPString *s);
 
+            public:
                 static inline float     limit(float v, float min, float max)        { return Property::limit(v, min, max);      }
                 inline float            limit(float v) const                        { return Property::limit(v, fMin, fMax);    }
                 static inline bool      matches(float v, float min, float max)      { return Property::matches(v, min, max);    }
                 inline bool             matches(float v) const                      { return Property::matches(v, fMin, fMax);  }
         };
+
+        namespace prop
+        {
+            /**
+             * Color property implementation
+             */
+            class ColorRange: public tk::ColorRange
+            {
+                private:
+                    ColorRange & operator = (const ColorRange &);
+
+                public:
+                    explicit inline ColorRange(prop::Listener *listener = NULL): tk::ColorRange(listener) {};
+
+                public:
+                    /**
+                     * Bind property with specified name to the style of linked widget
+                     */
+                    inline status_t     bind(atom_t property, Style *style)             { return tk::ColorRange::bind(property, style, vAtoms, DESC, &sListener);   }
+                    inline status_t     bind(const char *property, Style *style)        { return tk::ColorRange::bind(property, style, vAtoms, DESC, &sListener);   }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return tk::ColorRange::bind(property, style, vAtoms, DESC, &sListener);   }
+
+                    /**
+                     * Unbind property
+                     */
+                    inline status_t     unbind()                                        { return tk::ColorRange::unbind(vAtoms, DESC, &sListener);                  };
+
+                    /**
+                     * Initialize style with default values
+                     * @param style style to initialize
+                     * @param value default value
+                     * @return status of operation
+                     */
+                    status_t            init(Style *style, const char *value);
+                    status_t            init(Style *style, const LSPString *value);
+                    status_t            init(Style *style, const lsp::Color *value);
+                    status_t            init(Style *style, float min, float max, const char *c);
+                    status_t            init(Style *style, float min, float max, const LSPString *c);
+                    status_t            init(Style *style, float min, float max, const lsp::Color *c);
+
+                    status_t            override(Style *style, const char *value);
+                    status_t            override(Style *style, const LSPString *value);
+                    status_t            override(Style *style, const lsp::Color *value);
+                    status_t            override(Style *style, float min, float max, const char *c);
+                    status_t            override(Style *style, float min, float max, const LSPString *c);
+                    status_t            override(Style *style, float min, float max, const lsp::Color *c);
+            };
+        }
     }
 }
 
