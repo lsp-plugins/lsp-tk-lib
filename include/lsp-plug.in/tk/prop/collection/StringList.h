@@ -36,7 +36,7 @@ namespace lsp
         class StringList: public SimpleProperty
         {
             private:
-                StringList & operator = (const String &);
+                StringList & operator = (const StringList &);
 
             protected:
                 // Wrapper around the string

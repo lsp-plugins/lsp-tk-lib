@@ -75,14 +75,9 @@
 #include <lsp-plug.in/tk/prop/simple/Float.h>
 #include <lsp-plug.in/tk/prop/simple/String.h>
 
-// Collections
-#include <lsp-plug.in/tk/prop/collection/StringList.h>
-#include <lsp-plug.in/tk/prop/collection/WidgetList.h>
-#include <lsp-plug.in/tk/prop/collection/WidgetPtr.h>
-#include <lsp-plug.in/tk/prop/collection/WidgetSet.h>
-
 // Compound properties
 #include <lsp-plug.in/tk/prop/multi/Color.h>
+#include <lsp-plug.in/tk/prop/multi/ColorRange.h>
 #include <lsp-plug.in/tk/prop/multi/Embedding.h>
 #include <lsp-plug.in/tk/prop/multi/Font.h>
 #include <lsp-plug.in/tk/prop/multi/Layout.h>
@@ -99,6 +94,13 @@
 #include <lsp-plug.in/tk/prop/multi/TextLayout.h>
 #include <lsp-plug.in/tk/prop/multi/TextSelection.h>
 #include <lsp-plug.in/tk/prop/multi/Vector2D.h>
+
+// Collections
+#include <lsp-plug.in/tk/prop/collection/ColorList.h>
+#include <lsp-plug.in/tk/prop/collection/StringList.h>
+#include <lsp-plug.in/tk/prop/collection/WidgetList.h>
+#include <lsp-plug.in/tk/prop/collection/WidgetPtr.h>
+#include <lsp-plug.in/tk/prop/collection/WidgetSet.h>
 
 // Specific properties
 #include <lsp-plug.in/tk/prop/specific/GraphMeshData.h>

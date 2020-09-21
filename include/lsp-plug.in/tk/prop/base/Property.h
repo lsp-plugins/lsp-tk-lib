@@ -69,6 +69,10 @@ namespace lsp
 
                 static bool         fmt_bit_enums(LSPString *dst, const prop::enum_t *xe, size_t v);
 
+                static float        limit(float value, float min, float max);
+                static float        normalized(float value, float min, float max);
+                static bool         matches(float value, float min, float max);
+
             public:
                 /**
                  * Check that property matches another property

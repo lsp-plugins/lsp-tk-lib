@@ -205,15 +205,6 @@ namespace lsp
             return old;
         }
 
-        float RangeFloat::get_normalized(float value) const
-        {
-            if (fMin == fMax)
-                return 0.0f;
-
-            float v         = do_limit(value);
-            return (v - fMin) / (fMax - fMin);
-        }
-
         float RangeFloat::set_normalized(float value, bool cyclic)
         {
             float old   = fValue;
@@ -233,7 +224,7 @@ namespace lsp
         float RangeFloat::do_limit(float value) const
         {
             return (nFlags & F_AUTO_LIMIT) ?
-                limit(value, fMin, fMax) :
+                Property::limit(value, fMin, fMax) :
                 value;
         }
 
@@ -259,13 +250,6 @@ namespace lsp
             }
 
             return value;
-        }
-
-        float RangeFloat::limit(float value, float min, float max)
-        {
-            return (min > max) ?
-                lsp_limit(value, max, min) :
-                lsp_limit(value, min, max);
         }
 
         float RangeFloat::change(float k, float step)

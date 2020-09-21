@@ -317,5 +317,42 @@ namespace lsp
 
             return success;
         }
+
+        float Property::limit(float value, float min, float max)
+        {
+            return (min > max) ?
+                lsp_limit(value, max, min) :
+                lsp_limit(value, min, max);
+        }
+
+        float Property::normalized(float v, float min, float max)
+        {
+            if (min < max)
+            {
+                if (v <= min)
+                    return 0.0f;
+                else if (v >= max)
+                    return 1.0f;
+            }
+            else if (min > max)
+            {
+                if (v <= min)
+                    return 1.0f;
+                else if (v >= max)
+                    return 0.0f;
+            }
+            else // if (min == max)
+                return 0.0f;
+
+            return (v - min) / (max - min);
+        }
+
+        bool Property::matches(float v, float min, float max)
+        {
+            return (min < max) ?
+                    (v >= min) && (v <= max) :
+                    (v <= min) && (v >= max);
+        }
+
     }
 }

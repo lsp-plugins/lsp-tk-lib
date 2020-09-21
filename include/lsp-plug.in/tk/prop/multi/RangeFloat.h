@@ -107,12 +107,14 @@ namespace lsp
                 float               add(float value, bool cyclic = false);
                 float               sub(float value, bool cyclic = false);
 
-                float               get_normalized(float value) const;
-                inline float        get_normalized() const  { return get_normalized(fValue); }
+                float               get_normalized(float value) const           { return Property::normalized(value, fMin, fMax);   }
+                inline float        get_normalized() const                      { return Property::normalized(fValue, fMin, fMax);  }
                 float               set_normalized(float value, bool cyclic = false);
 
-                static float        limit(float value, float min, float max);
-                inline float        limit(float v) const    { return limit(v, fMin, fMax);  }
+                static inline float limit(float value, float min, float max)    { return Property::limit(value, min, max);          }
+                inline float        limit(float v) const                        { return Property::limit(v, fMin, fMax);            }
+                static inline bool  matches(float v, float min, float max)      { return Property::matches(v, min, max);    }
+                inline bool         matches(float v) const                      { return Property::matches(v, fMin, fMax);  }
         };
 
         namespace prop
