@@ -188,7 +188,7 @@ namespace lsp
 
                 if ((res = is.wrap(s)) == STATUS_OK)
                 {
-                    if ((res = parse_value(&color, &is)) == STATUS_OK)
+                    if ((res = parse_range(&color, &is)) == STATUS_OK)
                     {
                         fMin        = color.fMin;
                         fMax        = color.fMax;
@@ -233,12 +233,12 @@ namespace lsp
             sync();
         }
 
-        status_t ColorRange::parse_value(ColorRange *range, io::IInSequence *is)
+        status_t ColorRange::parse_range(ColorRange *range, io::IInSequence *is)
         {
             status_t res, res2;
             expr::Tokenizer t(is);
 
-            if ((res = parse_elements(range, &t)) == STATUS_OK)
+            if ((res = parse(range, &t, pStyle)) == STATUS_OK)
             {
                 res = t.get_token(expr::TF_GET);
                 res = (res != expr::TT_EOF) ? STATUS_BAD_FORMAT : STATUS_OK;
@@ -256,7 +256,7 @@ namespace lsp
             if ((res = is.wrap(s)) != STATUS_OK)
                 return res;
 
-            if ((res = parse_value(&color, &is)) == STATUS_OK)
+            if ((res = parse_range(&color, &is)) == STATUS_OK)
             {
                 fMin        = color.fMin;
                 fMax        = color.fMax;
@@ -275,7 +275,7 @@ namespace lsp
             if ((res = is.wrap(s)) != STATUS_OK)
                 return res;
 
-            if ((res = parse_value(&color, &is)) == STATUS_OK)
+            if ((res = parse_range(&color, &is)) == STATUS_OK)
             {
                 fMin        = color.fMin;
                 fMax        = color.fMax;
@@ -286,34 +286,15 @@ namespace lsp
             return res;
         }
 
-        bool ColorRange::parse_color(lsp::Color *c, const char *s, Style *style)
-        {
-            // Try to parse color
-            status_t res = c->parse4(s);
-            if (res != STATUS_OK)
-                res = c->parse3(s);
-            if ((res != STATUS_OK) && (style != NULL))
-            {
-                const lsp::Color *col = style->schema()->color(s);
-                if (col != NULL)
-                {
-                    c->copy(col);
-                    res = STATUS_OK;
-                }
-            }
-
-            return res == STATUS_OK;
-        }
-
         void ColorRange::set_color(const char *s)
         {
-            if (parse_color(&sColor, s, pStyle))
+            if (Color::parse(&sColor, s, pStyle))
                 sync();
         }
 
         void ColorRange::set_color(const LSPString *s)
         {
-            if (parse_color(&sColor, s->get_utf8(), pStyle))
+            if (Color::parse(&sColor, s->get_utf8(), pStyle))
                 sync();
         }
 
@@ -493,7 +474,7 @@ namespace lsp
             sync();
         }
 
-        status_t ColorRange::parse_elements(ColorRange *range, expr::Tokenizer *t)
+        status_t ColorRange::parse(ColorRange *range, expr::Tokenizer *t, Style *style)
         {
             // Minimum
             switch (t->get_token(expr::TF_GET))
@@ -534,7 +515,7 @@ namespace lsp
 
                 case expr::TT_BAREWORD:
                 {
-                    const lsp::Color *col = (pStyle != NULL) ? pStyle->schema()->color(t->text_value()) : NULL;
+                    const lsp::Color *col = (style != NULL) ? style->schema()->color(t->text_value()) : NULL;
                     if (col != NULL)
                         range->sColor.copy(col);
                     break;
@@ -545,6 +526,16 @@ namespace lsp
             }
 
             return STATUS_OK;
+        }
+
+        void ColorRange::swap(ColorRange *src)
+        {
+            lsp::swap(fMin, src->fMin);
+            lsp::swap(fMax, src->fMax);
+            sColor.swap(&src->sColor);
+
+            sync();
+            src->sync();
         }
 
         namespace prop
@@ -586,7 +577,7 @@ namespace lsp
                     return STATUS_BAD_STATE;
 
                 lsp::Color tmp;
-                parse_color(&tmp, c, style);
+                Color::parse(&tmp, c, style);
                 return init(style, min, max, &tmp);
             }
 
@@ -598,7 +589,7 @@ namespace lsp
                     return STATUS_BAD_STATE;
 
                 lsp::Color tmp;
-                parse_color(&tmp, c->get_utf8(), style);
+                Color::parse(&tmp, c->get_utf8(), style);
                 return init(style, min, max, &tmp);
             }
 
@@ -691,7 +682,7 @@ namespace lsp
                     return STATUS_BAD_STATE;
 
                 lsp::Color tmp;
-                parse_color(&tmp, c, style);
+                Color::parse(&tmp, c, style);
                 return override(style, min, max, &tmp);
             }
 
@@ -703,7 +694,7 @@ namespace lsp
                     return STATUS_BAD_STATE;
 
                 lsp::Color tmp;
-                parse_color(&tmp, c->get_utf8(), style);
+                Color::parse(&tmp, c->get_utf8(), style);
                 return override(style, min, max, &tmp);
             }
 

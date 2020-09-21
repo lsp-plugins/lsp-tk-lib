@@ -81,9 +81,7 @@ namespace lsp
             protected:
                 void                    sync();
                 void                    commit(atom_t property);
-                status_t                parse_elements(ColorRange *range, expr::Tokenizer *t);
-                status_t                parse_value(ColorRange *range, io::IInSequence *s);
-                static bool             parse_color(lsp::Color *c, const char *text, Style *style);
+                status_t                parse_range(ColorRange *range, io::IInSequence *s);
 
             public:
                 explicit ColorRange(prop::Listener *listener = NULL);
@@ -156,6 +154,12 @@ namespace lsp
                 inline float            limit(float v) const                        { return Property::limit(v, fMin, fMax);    }
                 static inline bool      matches(float v, float min, float max)      { return Property::matches(v, min, max);    }
                 inline bool             matches(float v) const                      { return Property::matches(v, fMin, fMax);  }
+
+                void                    swap(ColorRange *src);
+
+
+            public:
+                static status_t         parse(ColorRange *range, expr::Tokenizer *t, Style *style);
         };
 
         namespace prop

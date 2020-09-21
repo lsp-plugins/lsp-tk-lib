@@ -76,7 +76,6 @@ namespace lsp
             protected:
                 void                sync();
                 void                commit(atom_t property);
-                static bool         parse(lsp::Color *c, const char *text, Style *style);
 
             protected:
                 explicit Color(prop::Listener *listener = NULL);
@@ -167,6 +166,11 @@ namespace lsp
                 inline const lsp::Color *color() const       { return &sColor; }
 
                 operator const lsp::Color *() const          { return &sColor; }
+
+            public:
+                static bool             parse(lsp::Color *c, const char *text, Style *style);
+
+                void                    swap(Color *c);
         };
 
         namespace prop

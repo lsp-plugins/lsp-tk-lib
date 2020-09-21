@@ -96,7 +96,7 @@
 #include <lsp-plug.in/tk/prop/multi/Vector2D.h>
 
 // Collections
-#include <lsp-plug.in/tk/prop/collection/ColorList.h>
+#include <lsp-plug.in/tk/prop/collection/ColorRanges.h>
 #include <lsp-plug.in/tk/prop/collection/StringList.h>
 #include <lsp-plug.in/tk/prop/collection/WidgetList.h>
 #include <lsp-plug.in/tk/prop/collection/WidgetPtr.h>
@@ -163,6 +163,7 @@
 // Specific widgets
 #include <lsp-plug.in/tk/widgets/specific/FileButton.h>
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
+#include <lsp-plug.in/tk/widgets/specific/MeterChannel.h>
 
 // Graph widgets
 #include <lsp-plug.in/tk/widgets/graph/GraphItem.h>

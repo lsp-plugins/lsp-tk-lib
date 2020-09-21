@@ -19,8 +19,8 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LSP_PLUG_IN_TK_PROP_COLLECTION_COLORRANGES_H_
-#define LSP_PLUG_IN_TK_PROP_COLLECTION_COLORRANGES_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_METERCHANNEL_H_
+#define LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_METERCHANNEL_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
@@ -30,15 +30,7 @@ namespace lsp
 {
     namespace tk
     {
-        /**
-         * String list: list containing string properties
-         */
-        class ColorList: public SimpleProperty
-        {
-            private:
-                ColorList & operator = (const ColorList &);
-        };
     }
 }
 
-#endif /* LSP_PLUG_IN_TK_PROP_COLLECTION_COLORRANGES_H_ */
+#endif /* LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_METERCHANNEL_H_ */

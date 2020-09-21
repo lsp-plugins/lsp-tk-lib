@@ -381,6 +381,13 @@ namespace lsp
             sync();
         }
 
+        void Color::swap(Color *c)
+        {
+            sColor.swap(&c->sColor);
+            sync();
+            c->sync();
+        }
+
         namespace prop
         {
             status_t Color::init(Style *style, const char *value)
