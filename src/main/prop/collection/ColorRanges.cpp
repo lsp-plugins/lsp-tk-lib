@@ -309,5 +309,51 @@ namespace lsp
             return STATUS_OK;
         }
 
+        namespace prop
+        {
+            status_t ColorRanges::init(Style *style, const char *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->create_string(nAtom, value);
+                return STATUS_OK;
+            }
+
+            status_t ColorRanges::init(Style *style, const LSPString *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->create_string(nAtom, value);
+                return STATUS_OK;
+            }
+
+            status_t ColorRanges::override(Style *style, const char *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->override_string(nAtom, value);
+                return STATUS_OK;
+            }
+
+            status_t ColorRanges::override(Style *style, const LSPString *value)
+            {
+                if ((style == NULL) || (value == NULL))
+                    return STATUS_BAD_ARGUMENTS;
+                if (pStyle == NULL)
+                    return STATUS_BAD_STATE;
+
+                style->override_string(nAtom, value);
+                return STATUS_OK;
+            }
+        }
     }
 }

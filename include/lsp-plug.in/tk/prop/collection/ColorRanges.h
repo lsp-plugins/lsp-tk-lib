@@ -150,6 +150,43 @@ namespace lsp
                  */
                 inline size_t       size() const                        { return vItems.size();     }
         };
+
+        namespace prop
+        {
+            class ColorRanges: public tk::ColorRanges
+            {
+                private:
+                    ColorRanges & operator = (const ColorRanges &);
+
+                public:
+                    explicit ColorRanges(prop::Listener *listener = NULL): tk::ColorRanges(listener) {};
+
+                public:
+                    /**
+                     * Bind property with specified name to the style of linked widget
+                     */
+                    inline status_t     bind(atom_t property, Style *style)             { return tk::ColorRanges::bind(property, style, PT_STRING, &sListener); }
+                    inline status_t     bind(const char *property, Style *style)        { return tk::ColorRanges::bind(property, style, PT_STRING, &sListener); }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return tk::ColorRanges::bind(property, style, PT_STRING, &sListener); }
+
+                    /**
+                     * Unbind property
+                     */
+                    inline status_t     unbind()                                        { return tk::ColorRanges::unbind(&sListener); };
+
+                    /**
+                     * Init default value
+                     * @param style style
+                     * @param value default value
+                     * @return status of operation
+                     */
+                    status_t            init(Style *style, const char *value);
+                    status_t            init(Style *style, const LSPString *value);
+
+                    status_t            override(Style *style, const char *value);
+                    status_t            override(Style *style, const LSPString *value);
+            };
+        }
     }
 }
 
