@@ -64,20 +64,26 @@ namespace lsp
 
             public:
                 /**
-                 * Get value of the float property
-                 * @return value of the float property
+                 * Get value of the boolean property
+                 * @return value of the boolean property
                  */
                 inline bool         get() const             { return bValue;                }
 
                 /**
-                 * Set value of the float property
-                 * @param v value of the float property
+                 * Get inverse value of the boolean property
+                 * @return inverse value of the boolean property
+                 */
+                inline bool         iget() const            { return !bValue;               }
+
+                /**
+                 * Set value of the boolean property
+                 * @param v value of the boolean property
                  * @return previous value
                  */
                 bool                set(bool v = true);
 
                 /**
-                 * Invert the value of the property
+                 * Invert the value of the boolean property
                  * @return previous value
                  */
                 inline bool         toggle()                { return set(!bValue);          }

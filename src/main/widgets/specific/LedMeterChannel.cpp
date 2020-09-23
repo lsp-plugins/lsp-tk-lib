@@ -310,8 +310,7 @@ namespace lsp
                 {
                     xr.nTop        += (gap >> 1);
 
-                    sAAll.nLeft     = xr.nLeft;
-                    sAAll.nTop      = xr.nTop;
+                    sAAll.nTop     += (gap >> 1);
                     sAAll.nHeight  -= gap;
 
                     sAMeter.nLeft   = xr.nLeft;
@@ -328,8 +327,7 @@ namespace lsp
                 {
                     xr.nTop        += (gap >> 1);
 
-                    sAAll.nLeft     = xr.nLeft;
-                    sAAll.nTop      = xr.nTop;
+                    sAAll.nTop     += (gap >> 1);
                     sAAll.nHeight  -= gap;
 
                     sAMeter.nLeft   = xr.nLeft;
@@ -346,8 +344,7 @@ namespace lsp
                 {
                     xr.nLeft       += (gap >> 1);
 
-                    sAAll.nLeft     = xr.nLeft;
-                    sAAll.nTop      = xr.nTop;
+                    sAAll.nLeft    += (gap >> 1);
                     sAAll.nWidth   -= gap;
 
                     sAMeter.nLeft   = xr.nLeft;
@@ -365,8 +362,7 @@ namespace lsp
                 {
                     xr.nLeft       += (gap >> 1);
 
-                    sAAll.nLeft     = xr.nLeft;
-                    sAAll.nTop      = xr.nTop;
+                    sAAll.nLeft    += (gap >> 1);
                     sAAll.nWidth   -= gap;
 
                     sAMeter.nLeft   = xr.nLeft + sAText.nWidth + border;
@@ -381,9 +377,107 @@ namespace lsp
             }
         }
 
-        void LedMeterChannel::draw_meter(ws::ISurface *s, const ws::rectangle_t *r, float scaling)
+        void LedMeterChannel::draw_meter(ws::ISurface *s, const ws::rectangle_t *r, ssize_t angle, float scaling)
         {
-            // TODO
+            float bright        = sBrightness.get();
+            float seg_size      = 4.0f * scaling;
+            float range         = sValue.range();
+            ssize_t segments    = (angle & 1) ? (r->nHeight / seg_size) : (r->nWidth / seg_size);
+            float step          = range / segments;
+            lsp::Color fc, bc;
+            const lsp::Color *lc;
+
+            float bx            = ((angle & 3) == 2) ? r->nLeft + r->nWidth  - seg_size : r->nLeft;
+            float by            = ((angle & 3) == 1) ? r->nTop  + r->nHeight - seg_size : r->nTop;
+            float bw            = (angle & 1) ? r->nWidth : seg_size;
+            float bh            = (angle & 1) ? seg_size : r->nHeight;
+
+            float fx            = bx + scaling;
+            float fy            = by + scaling;
+            float fw            = lsp_max(0.0f, bw - scaling * 2.0f);
+            float fh            = lsp_max(0.0f, bh - scaling * 2.0f);
+
+            float dx            = ((angle & 1)) ? 0.0f : ((angle & 2) ? -seg_size : seg_size);
+            float dy            = ((angle & 1)) ? ((angle & 2) ? seg_size : -seg_size) : 0.0f;
+
+            bool has_balance    = sBalanceVisible.get();
+            bool has_peak       = sPeakVisible.get();
+            bool active         = sActive.get();
+            bool reversive      = sReversive.get();
+            float balance       = sBalance.get();
+            float peak          = sPeak.get();
+            float value         = sValue.get();
+
+            float first         = sValue.min();
+            float vmin          = sValue.min();
+
+            float aa            = s->set_antialiasing(true);
+
+            s->clip_begin(r);
+                for (ssize_t i=1; i<=segments; ++i)
+                {
+                    float vmax          = (i < segments) ? first + step * i : sValue.max();
+
+                    // Estimate the segment color (special values for peak and balance
+                    if ((has_balance) && (balance >= vmin) && (balance < vmax))
+                        lc                  = sBalanceColor.color();
+                    else if ((has_peak) && (peak >= vmin) && (peak < vmax))
+                        lc                  = get_color(peak,  &sPeakRanges, &sPeakColor);
+                    else
+                        lc                  = get_color(value, &sValueRanges, &sValueColor);
+
+                    // Now determine if we need to darken the color
+                    bool matched = false;
+
+                    if (active)
+                    {
+                        if (has_balance)
+                        {
+                            matched     = (balance < value) ?
+                                ((vmax > balance) && (vmin <= value))
+                                : ((vmax > value) && (vmin <= balance));
+
+                            if ((!matched) && (has_peak))
+                                matched     = (peak >= vmin) && (peak < vmax);
+                        }
+                        else
+                        {
+                            matched     = (vmin < value);
+                            if ((!matched) && (has_peak))
+                                matched     = (peak > vmin) && (peak <= vmax);
+                        }
+
+                        matched    ^= reversive;
+                    }
+
+                    // Compute color of the segment
+                    fc.copy(lc);
+                    bc.copy(lc);
+                    fc.scale_lightness(bright);
+                    bc.scale_lightness(bright);
+
+                    if (matched)
+                        bc.alpha(0.5f);
+                    else
+                    {
+                        bc.alpha(0.975f);
+                        fc.alpha(0.95f);
+                    }
+
+                    // Draw the bar
+                    s->fill_rect(bc, bx, by, bw, bh);
+                    s->fill_rect(fc, fx, fy, fw, fh);
+
+                    // Update coordinates and value
+                    vmin                = vmax;
+                    bx                 += dx;
+                    by                 += dy;
+                    fx                 += dx;
+                    fy                 += dy;
+                }
+            s->clip_end();
+
+            s->set_antialiasing(aa);
         }
 
         const lsp::Color *LedMeterChannel::get_color(float value, const ColorRanges *ranges, const Color *dfl)
@@ -415,9 +509,11 @@ namespace lsp
             ssize_t fy  = r->nTop  + ((r->nHeight - fp.Height) * 0.5f) + fp.Ascent;
 
             const lsp::Color *col   = get_color(sValue.get(), &sTextRanges, &sTextColor);
+            lsp::Color xcol(*col);
+            xcol.scale_lightness(sBrightness.get());
 
-            s->clip_begin(&sAText);
-                sFont.draw(s, *col, fx, fy, scaling, &text);
+            s->clip_begin(r);
+                sFont.draw(s, xcol, fx, fy, scaling, &text);
             s->clip_end();
         }
 
@@ -430,7 +526,7 @@ namespace lsp
             col.copy(sColor);
             s->fill_rect(col, &sAAll);
 
-            draw_meter(s, &sAMeter, scaling);
+            draw_meter(s, &sAMeter, sAngle.get(), scaling);
 
             if (sTextVisible.get())
                 draw_label(s, &sAText, &sFont, scaling);
