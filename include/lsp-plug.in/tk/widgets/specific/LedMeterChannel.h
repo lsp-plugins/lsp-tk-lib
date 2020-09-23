@@ -62,9 +62,15 @@ namespace lsp
                 prop::SizeConstraints   sConstraints;
                 prop::Font              sFont;
                 prop::Integer           sBorder;
+                prop::Integer           sAngle;
 
+                ws::rectangle_t         sAAll;              // All drawing area
                 ws::rectangle_t         sAMeter;            // Meter drawing area
                 ws::rectangle_t         sAText;             // Text drawing area
+
+            protected:
+                void        draw_meter(const ws::rectangle_t *r, float scaling);
+                void        draw_label(const ws::rectangle_t *r, const Font *f, float scaling);
 
             public:
                 explicit LedMeterChannel(Display *dpy);
@@ -100,6 +106,7 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(Integer,            border,             &sBorder)
+                LSP_TK_PROPERTY(Integer,            angle,              &sAngle)
 
             public:
                 virtual void                draw(ws::ISurface *s);

@@ -119,12 +119,24 @@ namespace lsp
 
                 void        compute(ws::size_limit_t *limit, float scale);
 
+                static void apply(ws::size_limit_t *dst, const ws::size_limit_t *src, const ws::size_limit_t *rule);
+
                 void        apply(ws::size_limit_t *dst, const ws::size_limit_t *src, float scale);
                 inline void apply(ws::size_limit_t *dst, float scale)           { apply(dst, dst, scale);   }
 
                 void        apply(ws::rectangle_t *sc, float scale);
                 static void apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc);
                 static void apply(ws::rectangle_t *dst, const ws::size_limit_t *sc);
+
+                // Transposed versions with swapped roles of Width and Height
+                void        tcompute(ws::size_limit_t *limit, float scale);
+
+                void        tapply(ws::size_limit_t *dst, const ws::size_limit_t *src, float scale);
+                inline void tapply(ws::size_limit_t *dst, float scale)          { tapply(dst, dst, scale);   }
+
+                void        tapply(ws::rectangle_t *sc, float scale);
+                static void tapply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc);
+                static void tapply(ws::rectangle_t *dst, const ws::size_limit_t *sc);
         };
 
         namespace prop

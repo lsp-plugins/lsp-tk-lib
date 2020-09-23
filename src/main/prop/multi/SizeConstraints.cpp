@@ -305,41 +305,48 @@ namespace lsp
         void SizeConstraints::compute(ws::size_limit_t *limit, float scale)
         {
             scale               = lsp_max(scale, 0.0f);
-            limit->nMinWidth    = (sValue.nMinWidth >= 0) ? sValue.nMinWidth * scale : -1;
+            limit->nMinWidth    = (sValue.nMinWidth  >= 0) ? sValue.nMinWidth  * scale : -1;
             limit->nMinHeight   = (sValue.nMinHeight >= 0) ? sValue.nMinHeight * scale : -1;
-            limit->nMaxWidth    = (sValue.nMaxWidth >= 0) ? sValue.nMaxWidth * scale : -1;
+            limit->nMaxWidth    = (sValue.nMaxWidth  >= 0) ? sValue.nMaxWidth  * scale : -1;
             limit->nMaxHeight   = (sValue.nMaxHeight >= 0) ? sValue.nMaxHeight * scale : -1;
             limit->nPreWidth    = -1;
             limit->nPreHeight   = -1;
         }
 
-        void SizeConstraints::apply(ws::size_limit_t *dst, const ws::size_limit_t *src, float scale)
+        void SizeConstraints::tcompute(ws::size_limit_t *limit, float scale)
         {
-            // Compute self parameters
-            ws::size_limit_t l;
-            compute(&l, scale);
+            scale               = lsp_max(scale, 0.0f);
+            limit->nMinWidth    = (sValue.nMinHeight >= 0) ? sValue.nMinHeight * scale : -1;
+            limit->nMinHeight   = (sValue.nMinWidth  >= 0) ? sValue.nMinWidth  * scale : -1;
+            limit->nMaxWidth    = (sValue.nMaxHeight >= 0) ? sValue.nMaxHeight * scale : -1;
+            limit->nMaxHeight   = (sValue.nMaxWidth  >= 0) ? sValue.nMaxWidth  * scale : -1;
+            limit->nPreWidth    = -1;
+            limit->nPreHeight   = -1;
+        }
 
+        void SizeConstraints::apply(ws::size_limit_t *dst, const ws::size_limit_t *src, const ws::size_limit_t *rule)
+        {
             // Compute maximum width & height
             if (src->nMaxWidth >= 0)
-                dst->nMaxWidth  = (l.nMaxWidth >= 0) ? lsp_min(src->nMaxWidth, l.nMaxWidth) : src->nMaxWidth;
+                dst->nMaxWidth  = (rule->nMaxWidth >= 0) ? lsp_min(src->nMaxWidth, rule->nMaxWidth) : src->nMaxWidth;
             else
-                dst->nMaxWidth  = l.nMaxWidth;
+                dst->nMaxWidth  = rule->nMaxWidth;
 
             if (src->nMaxHeight >= 0)
-                dst->nMaxHeight = (l.nMaxHeight >= 0) ? lsp_min(src->nMaxHeight, l.nMaxHeight) : src->nMaxHeight;
+                dst->nMaxHeight = (rule->nMaxHeight >= 0) ? lsp_min(src->nMaxHeight, rule->nMaxHeight) : src->nMaxHeight;
             else
-                dst->nMaxHeight = l.nMaxHeight;
+                dst->nMaxHeight = rule->nMaxHeight;
 
             // Compute minimum width & height
             if (src->nMinWidth >= 0)
-                dst->nMinWidth  = (l.nMinWidth >= 0) ? lsp_max(src->nMinWidth, l.nMinWidth) : src->nMinWidth;
+                dst->nMinWidth  = (rule->nMinWidth >= 0) ? lsp_max(src->nMinWidth, rule->nMinWidth) : src->nMinWidth;
             else
-                dst->nMinWidth  = l.nMinWidth;
+                dst->nMinWidth  = rule->nMinWidth;
 
             if (src->nMinHeight >= 0)
-                dst->nMinHeight = (l.nMinHeight >= 0) ? lsp_max(src->nMinHeight, l.nMinHeight) : src->nMinHeight;
+                dst->nMinHeight = (rule->nMinHeight >= 0) ? lsp_max(src->nMinHeight, rule->nMinHeight) : src->nMinHeight;
             else
-                dst->nMinHeight = l.nMinHeight;
+                dst->nMinHeight = rule->nMinHeight;
 
             // Maximum width should not be less than minimum width
             if ((dst->nMinWidth >= 0) && (dst->nMaxWidth >= 0))
@@ -371,42 +378,84 @@ namespace lsp
                 dst->nPreHeight     = -1;
         }
 
+        void SizeConstraints::apply(ws::size_limit_t *dst, const ws::size_limit_t *src, float scale)
+        {
+            // Compute self parameters
+            ws::size_limit_t l;
+            compute(&l, scale);
+            apply(dst, src, &l);
+        }
+
+        void SizeConstraints::tapply(ws::size_limit_t *dst, const ws::size_limit_t *src, float scale)
+        {
+            // Compute self parameters
+            ws::size_limit_t l;
+            tcompute(&l, scale);
+            apply(dst, src, &l);
+        }
+
         void SizeConstraints::apply(ws::rectangle_t *rect, float scale)
         {
-            scale   = lsp_max(0.0f, scale);
-
             ws::size_limit_t l;
-            l.nMinWidth     = (sValue.nMinWidth >= 0)  ? sValue.nMinWidth  * scale : -1;
-            l.nMinHeight    = (sValue.nMinHeight >= 0) ? sValue.nMinHeight * scale : -1;
-            l.nMaxWidth     = (sValue.nMaxWidth >= 0)  ? sValue.nMaxWidth  * scale : -1;
-            l.nMaxHeight    = (sValue.nMaxHeight >= 0) ? sValue.nMaxHeight * scale : -1;
-
+            compute(&l, lsp_max(0.0f, scale));
             apply(rect, &l);
+        }
+
+        void SizeConstraints::tapply(ws::rectangle_t *rect, float scale)
+        {
+            ws::size_limit_t l;
+            compute(&l, lsp_max(0.0f, scale));
+            tapply(rect, &l);
         }
 
         void SizeConstraints::apply(ws::rectangle_t *dst, const ws::size_limit_t *sc)
         {
-            if ((sc->nMaxWidth >= 0) && (dst->nWidth > sc->nMaxWidth))
+            if ((sc->nMaxWidth  >= 0) && (dst->nWidth  > sc->nMaxWidth))
                 dst->nWidth     = sc->nMaxWidth;
             if ((sc->nMaxHeight >= 0) && (dst->nHeight > sc->nMaxHeight))
                 dst->nHeight    = sc->nMaxHeight;
-            if ((sc->nMinWidth >= 0) && (dst->nWidth < sc->nMinWidth))
+            if ((sc->nMinWidth  >= 0) && (dst->nWidth  < sc->nMinWidth))
                 dst->nWidth     = sc->nMinWidth;
             if ((sc->nMinHeight >= 0) && (dst->nHeight < sc->nMinHeight))
                 dst->nHeight    = sc->nMinHeight;
+        }
+
+        void SizeConstraints::tapply(ws::rectangle_t *dst, const ws::size_limit_t *sc)
+        {
+            if ((sc->nMaxHeight >= 0) && (dst->nWidth  > sc->nMaxHeight))
+                dst->nWidth     = sc->nMaxHeight;
+            if ((sc->nMaxWidth  >= 0) && (dst->nHeight > sc->nMaxWidth ))
+                dst->nHeight    = sc->nMaxWidth;
+            if ((sc->nMinHeight >= 0) && (dst->nWidth  < sc->nMinHeight))
+                dst->nWidth     = sc->nMinHeight;
+            if ((sc->nMinWidth  >= 0) && (dst->nHeight < sc->nMinWidth ))
+                dst->nHeight    = sc->nMinWidth;
         }
 
         void SizeConstraints::apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc)
         {
             dst->nLeft      = src->nLeft;
             dst->nTop       = src->nTop;
-            dst->nWidth     = ((sc->nMaxWidth >= 0) && (src->nWidth > sc->nMaxWidth))    ? sc->nMaxWidth  : src->nWidth;
+            dst->nWidth     = ((sc->nMaxWidth  >= 0) && (src->nWidth  > sc->nMaxWidth))  ? sc->nMaxWidth  : src->nWidth;
             dst->nHeight    = ((sc->nMaxHeight >= 0) && (src->nHeight > sc->nMaxHeight)) ? sc->nMaxHeight : src->nHeight;
 
-            if ((sc->nMinWidth >= 0) && (dst->nWidth < sc->nMinWidth))
+            if ((sc->nMinWidth  >= 0) && (dst->nWidth  < sc->nMinWidth ))
                 dst->nWidth     = sc->nMinWidth;
             if ((sc->nMinHeight >= 0) && (dst->nHeight < sc->nMinHeight))
                 dst->nHeight    = sc->nMinHeight;
+        }
+
+        void SizeConstraints::tapply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc)
+        {
+            dst->nLeft      = src->nLeft;
+            dst->nTop       = src->nTop;
+            dst->nWidth     = ((sc->nMaxHeight >= 0) && (src->nWidth  > sc->nMaxHeight)) ? sc->nMaxHeight : src->nWidth;
+            dst->nHeight    = ((sc->nMaxWidth  >= 0) && (src->nHeight > sc->nMaxWidth )) ? sc->nMaxWidth  : src->nHeight;
+
+            if ((sc->nMinHeight >= 0) && (dst->nWidth  < sc->nMinHeight))
+                dst->nWidth     = sc->nMinHeight;
+            if ((sc->nMinWidth  >= 0) && (dst->nHeight < sc->nMinWidth ))
+                dst->nHeight    = sc->nMinWidth;
         }
 
         namespace prop

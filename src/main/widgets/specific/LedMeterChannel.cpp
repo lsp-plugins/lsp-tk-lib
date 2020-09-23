@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
 {
@@ -121,7 +122,7 @@ namespace lsp
                 sReversive.init(sclass, false);
                 sActive.init(sclass, false);
                 sMinSegments.init(sclass, 12);
-                sConstraints.init(sclass);
+                sConstraints.init(sclass, -1, -1, 16, -1);
                 sFont.init(sclass, 9);
                 sBorder.init(sclass, 2);
 
@@ -177,14 +178,216 @@ namespace lsp
 
         void LedMeterChannel::size_request(ws::size_limit_t *r)
         {
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float seg_size  = 4.0f * scaling;
+            ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+            ssize_t angle   = sAngle.get();
+            bool has_text   = sTextVisible.get();
+
+            ws::text_parameters_t tp;
+            ws::font_parameters_t fp;
+
+            if (has_text)
+            {
+                LSPString text;
+                sEstText.format(&text);
+                sFont.get_parameters(pDisplay, scaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+            }
+
+            if (angle & 1)
+            {
+                // Vertical
+                r->nMinWidth        = ceilf(seg_size);
+                r->nMinHeight       = ceilf(seg_size * lsp_min(0, sMinSegments.get()));
+
+                if (has_text)
+                {
+                    r->nMinHeight      += border + lsp_max(tp.Height, fp.Height);
+                    r->nMinWidth        = lsp_max(r->nMinWidth, tp.Width);
+                }
+            }
+            else
+            {
+                // Horizontal
+                r->nMinWidth        = ceilf(seg_size * lsp_min(0, sMinSegments.get()));
+                r->nMinHeight       = ceilf(seg_size);
+
+                if (has_text)
+                {
+                    r->nMinWidth       += border + tp.Width;
+                    r->nMinHeight       = lsp_max(r->nMinHeight, tp.Height);
+                }
+            }
+
+            r->nMinWidth       += border * 2;
+            r->nMinHeight      += border * 2;
+            r->nMaxWidth        = -1;
+            r->nMaxHeight       = -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
+
+            // Apply size constraints
+            if (angle & 1)
+                sConstraints.apply(r, scaling);  // Apply non-transposed size constraints
+            else
+                sConstraints.tapply(r, scaling); // Apply transposed size constraints
         }
 
         void LedMeterChannel::realize(const ws::rectangle_t *r)
         {
+            Widget::realize(r);
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float seg_size      = 4.0f * scaling;
+            ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+            ssize_t angle       = sAngle.get();
+            bool has_text       = sTextVisible.get();
+
+            ws::text_parameters_t tp;
+            ws::font_parameters_t fp;
+            ws::rectangle_t xr;
+
+            sAAll.nLeft         = 0;
+            sAAll.nTop          = 0;
+            sAAll.nWidth        = r->nWidth;
+            sAAll.nHeight       = r->nHeight;
+
+            xr.nLeft            = border;
+            xr.nTop             = border;
+            xr.nWidth           = r->nWidth  - border*2;
+            xr.nHeight          = r->nHeight - border*2;
+
+            sAText.nLeft        = 0;
+            sAText.nTop         = 0;
+            sAText.nWidth       = 0;
+            sAText.nHeight      = 0;
+
+            sAMeter.nLeft       = 0;
+            sAMeter.nTop        = 0;
+            sAMeter.nWidth      = 0;
+            sAMeter.nHeight     = 0;
+
+            // Compute the amount of space used for text
+            ssize_t led_size    = (angle & 1) ? r->nHeight : r->nWidth;
+
+            if (has_text)
+            {
+                LSPString text;
+                sEstText.format(&text);
+                sFont.get_parameters(pDisplay, scaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+
+                if (angle & 1) // Vertical
+                {
+                    sAText.nLeft    = xr.nLeft;
+                    sAText.nWidth   = xr.nWidth;
+                    sAText.nHeight  = lsp_max(tp.Height, fp.Height);
+                    led_size       -= border + sAText.nHeight;
+                }
+                else // Horizontal
+                {
+                    sAText.nTop     = xr.nTop;
+                    sAText.nWidth   = tp.Width;
+                    sAText.nHeight  = xr.nHeight;
+                    led_size       -= border + sAText.nWidth;
+                }
+            }
+
+            // Compute overall areas
+            ssize_t segments    = led_size / seg_size;
+            ssize_t gap         = led_size - ceilf(segments * seg_size);
+            led_size            = segments - gap;
+
+            switch (size_t(angle & 3))
+            {
+                case 1: // Bottom to top
+                {
+                    xr.nTop        += (gap >> 1);
+
+                    sAAll.nLeft     = xr.nLeft;
+                    sAAll.nTop      = xr.nTop;
+
+                    sAMeter.nLeft   = xr.nLeft;
+                    sAMeter.nTop    = xr.nTop;
+                    sAMeter.nWidth  = xr.nWidth;
+                    sAMeter.nHeight = led_size;
+
+                    sAText.nTop     = xr.nTop + sAMeter.nHeight+ border;
+
+                    break;
+                }
+
+                case 3: // Top to bottom
+                {
+                    xr.nTop        += (gap >> 1);
+
+                    sAAll.nLeft     = xr.nLeft;
+                    sAAll.nTop      = xr.nTop;
+
+                    sAMeter.nLeft   = xr.nLeft;
+                    sAMeter.nTop    = xr.nTop + sAText.nHeight + border;
+                    sAMeter.nWidth  = xr.nWidth;
+                    sAMeter.nHeight = led_size;
+
+                    sAText.nTop     = xr.nTop + border;
+
+                    break;
+                }
+
+                case 2: // Right to left
+                {
+                    xr.nLeft       += (gap >> 1);
+
+                    sAAll.nLeft     = xr.nLeft;
+                    sAAll.nTop      = xr.nTop;
+
+                    sAMeter.nLeft   = xr.nLeft;
+                    sAMeter.nTop    = xr.nTop;
+                    sAMeter.nWidth  = led_size;
+                    sAMeter.nHeight = xr.nHeight;
+
+                    sAText.nLeft    = xr.nLeft + sAMeter.nWidth + border;
+
+                    break;
+                }
+
+                case 0: // Left to right
+                default:
+                {
+                    xr.nLeft       += (gap >> 1);
+
+                    sAAll.nLeft     = xr.nLeft;
+                    sAAll.nTop      = xr.nTop;
+
+                    sAMeter.nLeft   = xr.nLeft + sAText.nWidth + border;
+                    sAMeter.nTop    = xr.nTop;
+                    sAMeter.nWidth  = led_size;
+                    sAMeter.nHeight = xr.nHeight;
+
+                    sAText.nLeft    = xr.nLeft;
+
+                    break;
+                }
+            }
+        }
+
+        void LedMeterChannel::draw_meter(const ws::rectangle_t *r, float scaling)
+        {
+            // TODO
+        }
+
+        void LedMeterChannel::draw_label(const ws::rectangle_t *r, const Font *f, float scaling)
+        {
+            // TODO
         }
 
         void LedMeterChannel::draw(ws::ISurface *s)
         {
+            float scaling       = lsp_max(0.0f, sScaling.get());
+
+            draw_meter(&sAMeter, scaling);
+            draw_label(&sAText, &sFont, scaling);
         }
     }
 }
