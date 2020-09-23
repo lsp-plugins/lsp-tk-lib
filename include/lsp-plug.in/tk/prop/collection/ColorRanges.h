@@ -135,6 +135,7 @@ namespace lsp
                  * @return string object or NULL
                  */
                 inline ColorRange  *get(size_t index)                   { return vItems.get(index); }
+                inline const ColorRange  *get(size_t index) const       { return vItems.get(index); }
 
                 /**
                  * Swap two color ranges

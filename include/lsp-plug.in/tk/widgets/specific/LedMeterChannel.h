@@ -44,6 +44,7 @@ namespace lsp
                 prop::RangeFloat        sValue;
                 prop::Float             sPeak;
                 prop::Float             sBalance;
+                prop::Color             sColor;
                 prop::Color             sValueColor;
                 prop::ColorRanges       sValueRanges;
                 prop::Color             sPeakColor;
@@ -69,8 +70,9 @@ namespace lsp
                 ws::rectangle_t         sAText;             // Text drawing area
 
             protected:
-                void        draw_meter(const ws::rectangle_t *r, float scaling);
-                void        draw_label(const ws::rectangle_t *r, const Font *f, float scaling);
+                void                        draw_meter(ws::ISurface *s, const ws::rectangle_t *r, float scaling);
+                void                        draw_label(ws::ISurface *s, const ws::rectangle_t *r, const Font *f, float scaling);
+                const lsp::Color           *get_color(float value, const ColorRanges *ranges, const Color *dfl);
 
             public:
                 explicit LedMeterChannel(Display *dpy);
@@ -88,6 +90,7 @@ namespace lsp
                 LSP_TK_PROPERTY(RangeFloat,         value,              &sValue)
                 LSP_TK_PROPERTY(Float,              peak,               &sPeak)
                 LSP_TK_PROPERTY(Float,              balance,            &sBalance)
+                LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Color,              value_color,        &sValueColor)
                 LSP_TK_PROPERTY(ColorRanges,        value_ranges,       &sValueRanges)
                 LSP_TK_PROPERTY(Color,              peak_color,         &sPeakColor)

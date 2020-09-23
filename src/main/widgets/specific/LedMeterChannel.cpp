@@ -33,6 +33,7 @@ namespace lsp
             sValue(&sProperties),
             sPeak(&sProperties),
             sBalance(&sProperties),
+            sColor(&sProperties),
             sValueColor(&sProperties),
             sValueRanges(&sProperties),
             sPeakColor(&sProperties),
@@ -83,6 +84,7 @@ namespace lsp
             sValue.bind("value", &sStyle);
             sPeak.bind("peak", &sStyle);
             sBalance.bind("balance", &sStyle);
+            sColor.bind("color", &sStyle);
             sValueColor.bind("value.color", &sStyle);
             sValueRanges.bind("value.ranges", &sStyle);
             sPeakColor.bind("peak.color", &sStyle);
@@ -108,6 +110,7 @@ namespace lsp
                 sValue.init(sclass, 0.0f, 0.0f, 1.0f);
                 sPeak.init(sclass, 0.0f);
                 sBalance.init(sclass, 0.5f);
+                sColor.init(sclass, "#000000");
                 sValueColor.init(sclass, "#00ff00");
                 sValueRanges.init(sclass, "");
                 sPeakColor.init(sclass, "#ff0000");
@@ -120,9 +123,9 @@ namespace lsp
                 sBalanceVisible.init(sclass, false);
                 sTextVisible.init(sclass, false);
                 sReversive.init(sclass, false);
-                sActive.init(sclass, false);
+                sActive.init(sclass, true);
                 sMinSegments.init(sclass, 12);
-                sConstraints.init(sclass, -1, -1, 16, -1);
+                sConstraints.init(sclass, -1, -1, 20, -1);
                 sFont.init(sclass, 9);
                 sBorder.init(sclass, 2);
 
@@ -141,6 +144,8 @@ namespace lsp
             if (sPeak.is(prop) && (sPeakVisible.get()))
                 query_draw();
             if (sBalance.is(prop) && (sBalanceVisible.get()))
+                query_draw();
+            if (sColor.is(prop))
                 query_draw();
             if (sValueColor.is(prop))
                 query_draw();
@@ -297,7 +302,7 @@ namespace lsp
             // Compute overall areas
             ssize_t segments    = led_size / seg_size;
             ssize_t gap         = led_size - ceilf(segments * seg_size);
-            led_size            = segments - gap;
+            led_size            = led_size - gap;
 
             switch (size_t(angle & 3))
             {
@@ -307,6 +312,7 @@ namespace lsp
 
                     sAAll.nLeft     = xr.nLeft;
                     sAAll.nTop      = xr.nTop;
+                    sAAll.nHeight  -= gap;
 
                     sAMeter.nLeft   = xr.nLeft;
                     sAMeter.nTop    = xr.nTop;
@@ -324,6 +330,7 @@ namespace lsp
 
                     sAAll.nLeft     = xr.nLeft;
                     sAAll.nTop      = xr.nTop;
+                    sAAll.nHeight  -= gap;
 
                     sAMeter.nLeft   = xr.nLeft;
                     sAMeter.nTop    = xr.nTop + sAText.nHeight + border;
@@ -341,6 +348,7 @@ namespace lsp
 
                     sAAll.nLeft     = xr.nLeft;
                     sAAll.nTop      = xr.nTop;
+                    sAAll.nWidth   -= gap;
 
                     sAMeter.nLeft   = xr.nLeft;
                     sAMeter.nTop    = xr.nTop;
@@ -359,6 +367,7 @@ namespace lsp
 
                     sAAll.nLeft     = xr.nLeft;
                     sAAll.nTop      = xr.nTop;
+                    sAAll.nWidth   -= gap;
 
                     sAMeter.nLeft   = xr.nLeft + sAText.nWidth + border;
                     sAMeter.nTop    = xr.nTop;
@@ -372,22 +381,59 @@ namespace lsp
             }
         }
 
-        void LedMeterChannel::draw_meter(const ws::rectangle_t *r, float scaling)
+        void LedMeterChannel::draw_meter(ws::ISurface *s, const ws::rectangle_t *r, float scaling)
         {
             // TODO
         }
 
-        void LedMeterChannel::draw_label(const ws::rectangle_t *r, const Font *f, float scaling)
+        const lsp::Color *LedMeterChannel::get_color(float value, const ColorRanges *ranges, const Color *dfl)
         {
-            // TODO
+            for (size_t i=0, n=ranges->size(); i<n; ++i)
+            {
+                const ColorRange *r = ranges->get(i);
+                if (r->matches(value))
+                    return r->color();
+            }
+
+            return dfl->color();
+        }
+
+        void LedMeterChannel::draw_label(ws::ISurface *s, const ws::rectangle_t *r, const Font *f, float scaling)
+        {
+            if (!sActive.get())
+                return;
+
+            ws::font_parameters_t   fp;
+            ws::text_parameters_t   tp;
+
+            LSPString text;
+            sText.format(&text);
+            sFont.get_parameters(s, scaling, &fp);
+            sFont.get_text_parameters(s, &tp, scaling, &text);
+
+            ssize_t fx  = r->nLeft + ((r->nWidth  - tp.Width ) * 0.5f) + tp.XBearing;
+            ssize_t fy  = r->nTop  + ((r->nHeight - fp.Height) * 0.5f) + fp.Ascent;
+
+            const lsp::Color *col   = get_color(sValue.get(), &sTextRanges, &sTextColor);
+
+            s->clip_begin(&sAText);
+                sFont.draw(s, *col, fx, fy, scaling, &text);
+            s->clip_end();
         }
 
         void LedMeterChannel::draw(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
 
-            draw_meter(&sAMeter, scaling);
-            draw_label(&sAText, &sFont, scaling);
+            lsp::Color col(sBgColor);
+            s->clear(col);
+            col.copy(sColor);
+            s->fill_rect(col, &sAAll);
+
+            draw_meter(s, &sAMeter, scaling);
+
+            if (sTextVisible.get())
+                draw_label(s, &sAText, &sFont, scaling);
         }
     }
 }
