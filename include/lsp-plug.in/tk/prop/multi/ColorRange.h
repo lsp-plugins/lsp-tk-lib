@@ -140,6 +140,7 @@ namespace lsp
                 void                    set_hsla(float h, float s, float l, float a);
                 void                    set_color(const char *text);
                 void                    set_color(const LSPString *text);
+                void                    set_color(lsp::Color *c);
                 void                    set(const Color *src);
                 void                    set(const ColorRange *src);
 

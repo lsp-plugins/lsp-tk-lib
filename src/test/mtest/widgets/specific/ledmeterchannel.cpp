@@ -94,6 +94,45 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
         return STATUS_OK;
     }
 
+    static void sync_text(tk::LedMeterChannel *lm)
+    {
+        LSPString tmp;
+        tmp.fmt_ascii("%.1f", lm->value()->get());
+        lm->text()->set_raw(&tmp);
+    }
+
+    static status_t slot_mouse_scroll(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("MOUSE_SCROLL: %s\n", h->label);
+
+        tk::LedMeterChannel *lm = tk::widget_cast<tk::LedMeterChannel>(sender);
+        if (lm == NULL)
+            return STATUS_OK;
+
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+
+        float delta = 0.0f;
+
+        if (ev->nCode == ws::MCD_UP)
+            delta = 0.05f;
+        else if (ev->nCode == ws::MCD_DOWN)
+            delta = -0.05f;
+
+        if (ev->nState & (ws::MCF_CONTROL | ws::MCF_ALT))
+            delta *= 10.0f;
+
+        if (ev->nState & ws::MCF_SHIFT)
+            lm->peak()->add(delta);
+        else
+        {
+            lm->value()->add(delta, false);
+            sync_text(lm);
+        }
+
+        return STATUS_OK;
+    }
+
     static status_t slot_mouse_click(tk::Widget *sender, void *ptr, void *data)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
@@ -148,6 +187,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DOWN, slot_mouse_down, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_MOVE, slot_mouse_move, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_UP, slot_mouse_up, h);
+        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_SCROLL, slot_mouse_scroll, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_CLICK, slot_mouse_click, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
@@ -261,16 +301,112 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
             LSPString id;
 
             // Create fraction
-            MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
-            MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
-            MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(lm));
-            MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
+//            MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
+//            MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
+//            MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
+//            MTEST_ASSERT(widgets.push(lm));
+//            MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
+//
+//            lm->text_visible()->set(true);
+//            lm->value()->set(0.5f);
+//            lm->angle()->set(0);
+//            sync_text(lm);
 
-            lm->text_visible()->set(true);
-            lm->value()->set(0.5f);
-            lm->text()->set_raw("0.5");
-            lm->angle()->set(0);
+            // Create stereo channel
+            for (size_t i=0; i<2; ++i)
+            {
+                MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
+                MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
+                MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(lm));
+                MTEST_ASSERT(grid->add(lm) == STATUS_OK);
+
+                lm->text_visible()->set(true);
+                lm->peak_visible()->set(true);
+                lm->value()->set_all(0.0f, -72.0f, 24.0f);
+                lm->peak()->set(0.0f);
+                lm->angle()->set(1 + i*2);
+                lm->constraints()->set_min_height(128);
+
+                lsp::Color c;
+                tk::ColorRange *cr;
+                c.set_rgb24(0xff0000);
+                c.hue(i * 0.5f);
+
+                // Color ranges
+                cr = lm->value_ranges()->append();
+                cr->set_range(0.0f, 24.0f);
+                cr->set_color("#ff0000");
+
+                cr = lm->value_ranges()->append();
+                cr->set_range(-6.0f, 0.0f);
+                cr->set_color("#ffff00");
+
+                cr = lm->value_ranges()->append();
+                cr->set_range(-24.0f, 0.0f);
+                c.lightness(0.5f);
+                cr->set_color(&c);
+
+                cr = lm->value_ranges()->append();
+                cr->set_range(-48.0f, -24.0f);
+                c.lightness(0.75f * 0.5f);
+                cr->set_color(&c);
+
+                cr = lm->value_ranges()->append();
+                cr->set_range(-72.0f, -48.0f);
+                c.lightness(0.5f * 0.5f);
+                cr->set_color(&c);
+
+                // Peak ranges
+                cr = lm->peak_ranges()->append();
+                cr->set_range(0.0f, 24.0f);
+                cr->set_color("#ff0000");
+
+                cr = lm->peak_ranges()->append();
+                cr->set_range(-6.0f, 0.0f);
+                cr->set_color("#ffff00");
+
+                cr = lm->peak_ranges()->append();
+                cr->set_range(-24.0f, 0.0f);
+                c.lightness(0.5f);
+                cr->set_color(&c);
+
+                cr = lm->peak_ranges()->append();
+                cr->set_range(-48.0f, -24.0f);
+                c.lightness(0.75f * 0.5f);
+                cr->set_color(&c);
+
+                cr = lm->peak_ranges()->append();
+                cr->set_range(-72.0f, -48.0f);
+                c.lightness(0.5f * 0.5f);
+                cr->set_color(&c);
+
+                // Text ranges
+                cr = lm->text_ranges()->append();
+                cr->set_range(0.0f, 24.0f);
+                cr->set_color("#ff0000");
+
+                cr = lm->text_ranges()->append();
+                cr->set_range(-6.0f, 0.0f);
+                cr->set_color("#ffff00");
+
+                cr = lm->text_ranges()->append();
+                cr->set_range(-24.0f, 0.0f);
+                c.lightness(0.5f);
+                cr->set_color(&c);
+
+                cr = lm->text_ranges()->append();
+                cr->set_range(-48.0f, -24.0f);
+                c.lightness(0.75f * 0.5f);
+                cr->set_color(&c);
+
+                cr = lm->text_ranges()->append();
+                cr->set_range(-72.0f, -48.0f);
+                c.lightness(0.5f * 0.5f);
+                cr->set_color(&c);
+
+                sync_text(lm);
+            }
         }
 
         // Show window

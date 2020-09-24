@@ -104,6 +104,9 @@ namespace lsp
             sFont.bind("font", &sStyle);
             sBorder.bind("border", &sStyle);
 
+            // Disable automatic limit apply
+            sValue.set_auto_limit(false);
+
             Style *sclass = style_class();
             if (sclass != NULL)
             {
@@ -125,7 +128,7 @@ namespace lsp
                 sReversive.init(sclass, false);
                 sActive.init(sclass, true);
                 sMinSegments.init(sclass, 12);
-                sConstraints.init(sclass, -1, -1, 20, -1);
+                sConstraints.init(sclass, 20, -1, 20, -1);
                 sFont.init(sclass, 9);
                 sBorder.init(sclass, 2);
 
@@ -274,7 +277,7 @@ namespace lsp
             sAMeter.nHeight     = 0;
 
             // Compute the amount of space used for text
-            ssize_t led_size    = (angle & 1) ? r->nHeight : r->nWidth;
+            ssize_t led_size    = (angle & 1) ? xr.nHeight : xr.nWidth;
 
             if (has_text)
             {
@@ -318,7 +321,7 @@ namespace lsp
                     sAMeter.nWidth  = xr.nWidth;
                     sAMeter.nHeight = led_size;
 
-                    sAText.nTop     = xr.nTop + sAMeter.nHeight+ border;
+                    sAText.nTop     = xr.nTop + sAMeter.nHeight + border;
 
                     break;
                 }
@@ -335,7 +338,7 @@ namespace lsp
                     sAMeter.nWidth  = xr.nWidth;
                     sAMeter.nHeight = led_size;
 
-                    sAText.nTop     = xr.nTop + border;
+                    sAText.nTop     = xr.nTop;
 
                     break;
                 }
@@ -419,12 +422,12 @@ namespace lsp
                     float vmax          = (i < segments) ? first + step * i : sValue.max();
 
                     // Estimate the segment color (special values for peak and balance
-                    if ((has_balance) && (balance >= vmin) && (balance < vmax))
+                    if ((has_balance) && (vmin <= balance) && (balance < vmax))
                         lc                  = sBalanceColor.color();
-                    else if ((has_peak) && (peak >= vmin) && (peak < vmax))
+                    else if ((has_peak) && (vmin <= peak) && (peak < vmax))
                         lc                  = get_color(peak,  &sPeakRanges, &sPeakColor);
                     else
-                        lc                  = get_color(value, &sValueRanges, &sValueColor);
+                        lc                  = get_color(0.5f * (vmin + vmax), &sValueRanges, &sValueColor);
 
                     // Now determine if we need to darken the color
                     bool matched = false;
@@ -460,8 +463,8 @@ namespace lsp
                         bc.alpha(0.5f);
                     else
                     {
-                        bc.alpha(0.975f);
-                        fc.alpha(0.95f);
+                        bc.alpha(0.95f);
+                        fc.alpha(0.9f);
                     }
 
                     // Draw the bar

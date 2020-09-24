@@ -298,6 +298,12 @@ namespace lsp
                 sync();
         }
 
+        void ColorRange::set_color(lsp::Color *c)
+        {
+            sColor.copy(c);
+            sync();
+        }
+
         void ColorRange::set(const Color *src)
         {
             sColor.copy(src->color());
