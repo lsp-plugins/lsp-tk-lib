@@ -334,7 +334,7 @@ namespace lsp
                     sAAll.nHeight  -= gap;
 
                     sAMeter.nLeft   = xr.nLeft;
-                    sAMeter.nTop    = xr.nTop + sAText.nHeight + border;
+                    sAMeter.nTop    = xr.nTop + ((has_text) ? sAText.nHeight + border : 0);
                     sAMeter.nWidth  = xr.nWidth;
                     sAMeter.nHeight = led_size;
 
@@ -368,7 +368,7 @@ namespace lsp
                     sAAll.nLeft    += (gap >> 1);
                     sAAll.nWidth   -= gap;
 
-                    sAMeter.nLeft   = xr.nLeft + sAText.nWidth + border;
+                    sAMeter.nLeft   = xr.nLeft + ((has_text) ? sAText.nWidth + border : 0);
                     sAMeter.nTop    = xr.nTop;
                     sAMeter.nWidth  = led_size;
                     sAMeter.nHeight = xr.nHeight;
@@ -427,7 +427,7 @@ namespace lsp
                     else if ((has_peak) && (vmin <= peak) && (peak < vmax))
                         lc                  = get_color(peak,  &sPeakRanges, &sPeakColor);
                     else
-                        lc                  = get_color(0.5f * (vmin + vmax), &sValueRanges, &sValueColor);
+                        lc                  = get_color(vmin, &sValueRanges, &sValueColor);
 
                     // Now determine if we need to darken the color
                     bool matched = false;
@@ -440,7 +440,9 @@ namespace lsp
                                 ((vmax > balance) && (vmin <= value))
                                 : ((vmax > value) && (vmin <= balance));
 
-                            if ((!matched) && (has_peak))
+                            if ((has_balance) && (vmin <= balance) && (balance < vmax))
+                                matched     = !reversive;
+                            else if ((!matched) && (has_peak))
                                 matched     = (peak >= vmin) && (peak < vmax);
                         }
                         else

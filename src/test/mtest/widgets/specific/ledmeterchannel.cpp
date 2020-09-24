@@ -290,7 +290,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(3);
+        grid->rows()->set(5);
         grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -300,17 +300,20 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
             // Create meter channels
             LSPString id;
 
-            // Create fraction
-//            MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
-//            MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
-//            MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
-//            MTEST_ASSERT(widgets.push(lm));
-//            MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
-//
-//            lm->text_visible()->set(true);
-//            lm->value()->set(0.5f);
-//            lm->angle()->set(0);
-//            sync_text(lm);
+            // Create horizontal meter (left to right)
+            for (size_t i=0; i<2; ++i)
+            {
+                MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
+                MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
+                MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(lm));
+                MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
+
+                lm->text_visible()->set(true);
+                lm->value()->set(0.5f);
+                lm->angle()->set(i*2);
+                sync_text(lm);
+            }
 
             // Create stereo channel
             for (size_t i=0; i<2; ++i)
@@ -405,6 +408,40 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
                 c.lightness(0.5f * 0.5f);
                 cr->set_color(&c);
 
+                sync_text(lm);
+            }
+
+            // Create balanced meters
+            for (size_t i=0; i<2; ++i)
+            {
+                MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
+                MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
+                MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(lm));
+                MTEST_ASSERT(grid->add(lm) == STATUS_OK);
+
+                lm->text_visible()->set(true);
+                lm->balance_visible()->set(true);
+                lm->balance()->set(0.5f);
+                lm->angle()->set(1 + i*2);
+                lm->constraints()->set_min_height(128);
+                lm->reversive()->set(i > 0);
+                sync_text(lm);
+            }
+
+            // Create horizontal meter (left to right)
+            for (size_t i=0; i<2; ++i)
+            {
+                MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
+                MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
+                MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(lm));
+                MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
+
+                lm->text_visible()->set(false);
+                lm->value()->set(0.5f);
+                lm->angle()->set(i*2);
+                lm->reversive()->set(true);
                 sync_text(lm);
             }
         }
