@@ -70,8 +70,7 @@ namespace lsp
         void Graph::do_destroy()
         {
             // Unlink all items
-            size_t n            = vItems.size();
-            for (size_t i=0; i<n; ++i)
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 GraphItem *item     = vItems.uget(i);
                 if (item == NULL)

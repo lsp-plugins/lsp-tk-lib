@@ -163,6 +163,7 @@
 // Specific widgets
 #include <lsp-plug.in/tk/widgets/specific/FileButton.h>
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
+#include <lsp-plug.in/tk/widgets/specific/LedMeter.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeterChannel.h>
 
 // Graph widgets

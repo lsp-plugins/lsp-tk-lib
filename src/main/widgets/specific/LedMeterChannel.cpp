@@ -51,7 +51,8 @@ namespace lsp
             sMinSegments(&sProperties),
             sConstraints(&sProperties),
             sFont(&sProperties),
-            sBorder(&sProperties)
+            sBorder(&sProperties),
+            sAngle(&sProperties)
         {
             sAMeter.nLeft   = 0;
             sAMeter.nTop    = 0;
@@ -62,6 +63,11 @@ namespace lsp
             sAText.nTop     = 0;
             sAText.nWidth   = 0;
             sAText.nHeight  = 0;
+
+            sAAll.nLeft     = 0;
+            sAAll.nTop      = 0;
+            sAAll.nWidth    = 0;
+            sAAll.nHeight   = 0;
 
             pClass          = &metadata;
         }
@@ -103,6 +109,7 @@ namespace lsp
             sConstraints.bind("constraints", &sStyle);
             sFont.bind("font", &sStyle);
             sBorder.bind("border", &sStyle);
+            sAngle.bind("angle", &sStyle);
 
             // Disable automatic limit apply
             sValue.set_auto_limit(false);
@@ -131,6 +138,7 @@ namespace lsp
                 sConstraints.init(sclass, 20, -1, 20, -1);
                 sFont.init(sclass, 9);
                 sBorder.init(sclass, 2);
+                sAngle.init(sclass, 0);
 
                 sEstText.set_raw("+99.9");
             }
@@ -181,6 +189,8 @@ namespace lsp
             if (sFont.is(prop) && (sTextVisible.get()))
                 query_resize();
             if (sBorder.is(prop))
+                query_resize();
+            if (sAngle.is(prop))
                 query_resize();
         }
 
