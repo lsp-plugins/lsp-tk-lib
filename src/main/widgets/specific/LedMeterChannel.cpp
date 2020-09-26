@@ -211,6 +211,7 @@ namespace lsp
                 sEstText.format(&text);
                 sFont.get_parameters(pDisplay, scaling, &fp);
                 sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                tp.Height           = lsp_max(tp.Height, fp.Height);
             }
 
             if (angle & 1)
@@ -221,7 +222,7 @@ namespace lsp
 
                 if (has_text)
                 {
-                    r->nMinHeight      += border + lsp_max(tp.Height, fp.Height);
+                    r->nMinHeight      += border + tp.Height;
                     r->nMinWidth        = lsp_max(r->nMinWidth, tp.Width);
                 }
             }

@@ -71,6 +71,8 @@ namespace lsp
                 virtual void                realize(const ws::rectangle_t *r);
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);
 
+                void                        get_visible_items(lltl::parray<LedMeterChannel> *dst);
+
                 static void                 on_add_item(void *obj, Property *prop, Widget *w);
                 static void                 on_remove_item(void *obj, Property *prop, Widget *w);
 

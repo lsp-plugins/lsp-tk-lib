@@ -127,9 +127,106 @@ namespace lsp
                 query_draw();
         }
 
+        void LedMeter::get_visible_items(lltl::parray<LedMeterChannel> *dst)
+        {
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                LedMeterChannel *c = vItems.get(i);
+                if ((c == NULL) || (!c->visibility()->get()))
+                    continue;
+                if (!dst->add(c))
+                    return;
+            }
+        }
+
         void LedMeter::size_request(ws::size_limit_t *r)
         {
-            // TODO
+            lltl::parray<LedMeterChannel> list;
+            get_visible_items(&list);
+
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float seg_size  = 4.0f * scaling;
+            ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+            ssize_t angle   = sAngle.get();
+            bool has_text   = sTextVisible.get();
+            bool pack       = (sSGroups.get()) && (list.size() >= 2);
+
+            ws::text_parameters_t tp;
+            ws::font_parameters_t fp;
+
+            if (has_text)
+            {
+                LSPString text;
+                sEstText.format(&text);
+                sFont.get_parameters(pDisplay, scaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                tp.Height           = lsp_max(tp.Height, fp.Height);
+            }
+
+            if (angle & 1)
+            {
+                // Vertical
+                r->nMinWidth        = ceilf(seg_size);
+                r->nMinHeight       = 0;
+
+                // Estimate the minimum height
+                for (size_t i=0, n=list.size(); i<n; ++i)
+                {
+                    LedMeterChannel *c  = list.uget(i);
+                    r->nMinHeight       = lsp_max(r->nMinHeight, ceilf(seg_size * lsp_min(0, c->min_segments()->get())));
+                }
+
+                // Estimate place for text
+                if (has_text)
+                {
+                    r->nMinHeight      += border + tp.Height;
+                    r->nMinWidth        = lsp_max(r->nMinWidth, tp.Width);
+                    if (pack)
+                    {
+                        r->nMinHeight      += tp.Height;
+                        r->nMinWidth        = lsp_min(r->nMinWidth, seg_size * 2);
+                    }
+                }
+            }
+            else
+            {
+                // Horizontal
+                r->nMinWidth        = 0;
+                r->nMinHeight       = ceilf(seg_size);
+
+                // Estimate the minimum width
+                for (size_t i=0, n=list.size(); i<n; ++i)
+                {
+                    LedMeterChannel *c  = list.uget(i);
+                    r->nMinWidth        = lsp_max(r->nMinWidth, ceilf(seg_size * lsp_min(0, c->min_segments()->get())));
+                }
+
+                // Estimate place for text
+                if (has_text)
+                {
+                    r->nMinWidth       += border + tp.Width;
+                    r->nMinHeight       = lsp_max(r->nMinHeight, tp.Height);
+
+                    if (pack)
+                    {
+                        r->nMinHeight       = lsp_max(r->nMinHeight, tp.Height * 2);
+                        r->nMinHeight       = lsp_max(r->nMinHeight, seg_size  * 2);
+                    }
+                }
+            }
+
+            r->nMinWidth       += border * 2;
+            r->nMinHeight      += border * 2;
+            r->nMaxWidth        = -1;
+            r->nMaxHeight       = -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
+
+            // Apply size constraints
+            if (angle & 1)
+                sConstraints.apply(r, scaling);  // Apply non-transposed size constraints
+            else
+                sConstraints.tapply(r, scaling); // Apply transposed size constraints
         }
 
         void LedMeter::realize(const ws::rectangle_t *r)
