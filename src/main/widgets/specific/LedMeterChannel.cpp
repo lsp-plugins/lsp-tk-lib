@@ -391,20 +391,19 @@ namespace lsp
             }
         }
 
-        void LedMeterChannel::draw_meter(ws::ISurface *s, const ws::rectangle_t *r, ssize_t angle, float scaling)
+        void LedMeterChannel::draw_meter(ws::ISurface *s, ssize_t angle, float scaling, float bright)
         {
-            float bright        = sBrightness.get();
             float seg_size      = 4.0f * scaling;
             float range         = sValue.range();
-            ssize_t segments    = (angle & 1) ? (r->nHeight / seg_size) : (r->nWidth / seg_size);
+            ssize_t segments    = (angle & 1) ? (sAMeter.nHeight / seg_size) : (sAMeter.nWidth / seg_size);
             float step          = range / segments;
             lsp::Color fc, bc;
             const lsp::Color *lc;
 
-            float bx            = ((angle & 3) == 2) ? r->nLeft + r->nWidth  - seg_size : r->nLeft;
-            float by            = ((angle & 3) == 1) ? r->nTop  + r->nHeight - seg_size : r->nTop;
-            float bw            = (angle & 1) ? r->nWidth : seg_size;
-            float bh            = (angle & 1) ? seg_size : r->nHeight;
+            float bx            = ((angle & 3) == 2) ? sAMeter.nLeft + sAMeter.nWidth  - seg_size : sAMeter.nLeft;
+            float by            = ((angle & 3) == 1) ? sAMeter.nTop  + sAMeter.nHeight - seg_size : sAMeter.nTop;
+            float bw            = (angle & 1) ? sAMeter.nWidth : seg_size;
+            float bh            = (angle & 1) ? seg_size : sAMeter.nHeight;
 
             float fx            = bx + scaling;
             float fy            = by + scaling;
@@ -427,7 +426,7 @@ namespace lsp
 
             float aa            = s->set_antialiasing(true);
 
-            s->clip_begin(r);
+            s->clip_begin(&sAMeter);
                 for (ssize_t i=1; i<=segments; ++i)
                 {
                     float vmax          = (i < segments) ? first + step * i : sValue.max();
@@ -508,7 +507,7 @@ namespace lsp
             return dfl->color();
         }
 
-        void LedMeterChannel::draw_label(ws::ISurface *s, const ws::rectangle_t *r, const Font *f, float scaling)
+        void LedMeterChannel::draw_label(ws::ISurface *s, const Font *f, float scaling, float bright)
         {
             if (!sActive.get())
                 return;
@@ -521,14 +520,14 @@ namespace lsp
             sFont.get_parameters(s, scaling, &fp);
             sFont.get_text_parameters(s, &tp, scaling, &text);
 
-            ssize_t fx  = r->nLeft + ((r->nWidth  - tp.Width ) * 0.5f) + tp.XBearing;
-            ssize_t fy  = r->nTop  + ((r->nHeight - fp.Height) * 0.5f) + fp.Ascent;
+            ssize_t fx  = sAText.nLeft + ((sAText.nWidth  - tp.Width ) * 0.5f) + tp.XBearing;
+            ssize_t fy  = sAText.nTop  + ((sAText.nHeight - fp.Height) * 0.5f) + fp.Ascent;
 
             const lsp::Color *col   = get_color(sValue.get(), &sTextRanges, &sTextColor);
             lsp::Color xcol(*col);
-            xcol.scale_lightness(sBrightness.get());
+            xcol.scale_lightness(bright);
 
-            s->clip_begin(r);
+            s->clip_begin(&sAText);
                 sFont.draw(s, xcol, fx, fy, scaling, &text);
             s->clip_end();
         }
@@ -536,16 +535,17 @@ namespace lsp
         void LedMeterChannel::draw(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
 
             lsp::Color col(sBgColor);
             s->clear(col);
             col.copy(sColor);
             s->fill_rect(col, &sAAll);
 
-            draw_meter(s, &sAMeter, sAngle.get(), scaling);
+            draw_meter(s, sAngle.get(), scaling, bright);
 
             if (sTextVisible.get())
-                draw_label(s, &sAText, &sFont, scaling);
+                draw_label(s, &sFont, scaling, bright);
         }
     }
 }

@@ -70,8 +70,8 @@ namespace lsp
                 ws::rectangle_t         sAText;             // Text drawing area
 
             protected:
-                void                        draw_meter(ws::ISurface *s, const ws::rectangle_t *r, ssize_t angle, float scaling);
-                void                        draw_label(ws::ISurface *s, const ws::rectangle_t *r, const Font *f, float scaling);
+                void                        draw_meter(ws::ISurface *s, ssize_t angle, float scaling, float bright);
+                void                        draw_label(ws::ISurface *s, const Font *f, float scaling, float bright);
                 const lsp::Color           *get_color(float value, const ColorRanges *ranges, const Color *dfl);
 
             public:

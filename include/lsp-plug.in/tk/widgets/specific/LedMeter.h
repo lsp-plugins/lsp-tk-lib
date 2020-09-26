@@ -52,6 +52,7 @@ namespace lsp
                 prop::String                        sEstText;
                 prop::Boolean                       sSGroups;
                 prop::Boolean                       sTextVisible;
+                prop::Color                         sColor;
 
                 ws::rectangle_t                     sAAll;
 
@@ -88,6 +89,7 @@ namespace lsp
                 LSP_TK_PROPERTY(String,                         estimation_text,    &sEstText)
                 LSP_TK_PROPERTY(Boolean,                        stereo_groups,      &sSGroups)
                 LSP_TK_PROPERTY(Boolean,                        text_visible,       &sTextVisible)
+                LSP_TK_PROPERTY(Color,                          color,              &sColor)
 
             public:
                 virtual void                draw(ws::ISurface *s);

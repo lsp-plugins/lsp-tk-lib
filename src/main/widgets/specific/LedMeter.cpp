@@ -37,7 +37,8 @@ namespace lsp
             sAngle(&sProperties),
             sEstText(&sProperties),
             sSGroups(&sProperties),
-            sTextVisible(&sProperties)
+            sTextVisible(&sProperties),
+            sColor(&sProperties)
         {
             sAAll.nLeft     = 0;
             sAAll.nTop      = 0;
@@ -92,6 +93,7 @@ namespace lsp
             sEstText.bind(&sStyle, pDisplay->dictionary());
             sSGroups.bind("stereo_groups", &sStyle);
             sTextVisible.bind("text.visible", &sStyle);
+            sColor.bind("color", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -102,6 +104,7 @@ namespace lsp
                 sAngle.init(sclass, 0);
                 sSGroups.init(sclass, true);
                 sTextVisible.init(sclass, false);
+                sColor.init(sclass, "#000000");
 
                 sEstText.set_raw("+99.9");
             }
@@ -181,12 +184,18 @@ namespace lsp
                 {
                     r->nMinHeight      += border + tp.Height;
                     r->nMinWidth        = lsp_max(r->nMinWidth, tp.Width);
-                    if (pack)
+                    if ((pack) && (list.size() >= 2))
                     {
                         r->nMinHeight      += tp.Height;
                         r->nMinWidth        = lsp_min(r->nMinWidth, seg_size * 2);
                     }
                 }
+
+                // Multiply the width by number of channels
+                if (pack)
+                    r->nMinWidth       *= ((list.size() + 1) >> 2);
+                else
+                    r->nMinWidth       *= list.size();
             }
             else
             {
@@ -207,12 +216,18 @@ namespace lsp
                     r->nMinWidth       += border + tp.Width;
                     r->nMinHeight       = lsp_max(r->nMinHeight, tp.Height);
 
-                    if (pack)
+                    if ((pack) && (list.size() >= 2))
                     {
                         r->nMinHeight       = lsp_max(r->nMinHeight, tp.Height * 2);
                         r->nMinHeight       = lsp_max(r->nMinHeight, seg_size  * 2);
                     }
                 }
+
+                // Multiply the height by number of channels
+                if (pack)
+                    r->nMinHeight      *= ((list.size() + 1) >> 2);
+                else
+                    r->nMinHeight      *= list.size();
             }
 
             r->nMinWidth       += border * 2;
@@ -231,12 +246,240 @@ namespace lsp
 
         void LedMeter::realize(const ws::rectangle_t *r)
         {
-            // TODO
+            // Realize the parent class
+            Widget::realize(r);
+
+            // Get list of visible items
+            lltl::parray<LedMeterChannel> list;
+            get_visible_items(&list);
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float seg_size      = 4.0f * scaling;
+            ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+            ssize_t angle       = sAngle.get();
+            bool has_text       = sTextVisible.get();
+            bool pack           = (sSGroups.get()) && (list.size() >= 2);
+
+            ws::text_parameters_t tp;
+            ws::font_parameters_t fp;
+            ws::rectangle_t xr, xtext;
+
+            sAAll.nLeft         = 0;
+            sAAll.nTop          = 0;
+            sAAll.nWidth        = r->nWidth;
+            sAAll.nHeight       = r->nHeight;
+
+            xr.nLeft            = border;
+            xr.nTop             = border;
+            xr.nWidth           = r->nWidth  - border*2;
+            xr.nHeight          = r->nHeight - border*2;
+
+            xtext.nLeft         = 0;
+            xtext.nTop          = 0;
+            xtext.nWidth        = 0;
+            xtext.nHeight       = 0;
+
+            // Compute the amount of space used for text
+            ssize_t led_size    = (angle & 1) ? xr.nHeight : xr.nWidth;
+
+            if (has_text)
+            {
+                LSPString text;
+                sEstText.format(&text);
+                sFont.get_parameters(pDisplay, scaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                tp.Height           = lsp_max(tp.Height, fp.Height);
+
+                if (angle & 1) // Vertical
+                {
+                    xtext.nHeight       = tp.Height;
+                    if ((pack) && (list.size() >= 2))
+                        xtext.nHeight      += tp.Height;
+
+                    led_size           -= border + xtext.nHeight;
+                }
+                else // Horizontal
+                {
+                    xtext.nWidth        = xr.nWidth;
+                    led_size           -= border + xtext.nWidth;
+                }
+            }
+
+            // Compute overall areas
+            ssize_t segments    = led_size / seg_size;
+            ssize_t vgap        = led_size - ceilf(segments * seg_size);
+            led_size            = led_size - vgap;
+            ssize_t hitems      = (pack && has_text) ? ((list.size() + 1) >> 2) : list.size();
+            size_t hlimit       = (pack && has_text) ? hitems : list.size() & (~1);
+            ssize_t hsegsize    = ((angle & 1) ? xr.nWidth : xr.nHeight) / hitems;
+            ssize_t hgap        = ((angle & 1) ? xr.nWidth : xr.nHeight) - (hsegsize * hitems);
+
+            // Allocate meters
+            switch (size_t(angle & 3))
+            {
+                case 1: // Bottom to top
+                {
+                    sAAll.nLeft    += (hgap >> 1);
+                    sAAll.nTop     += (vgap >> 1);
+                    sAAll.nWidth   -= hgap;
+                    sAAll.nHeight  -= vgap;
+
+                    xr.nLeft        = sAAll.nLeft + border;
+                    xr.nTop         = sAAll.nTop  + border;
+                    xr.nWidth       = hsegsize;
+                    xr.nHeight      = sAAll.nHeight - xr.nTop - border - ((has_text) ? xtext.nHeight + border : 0);
+
+                    xtext.nTop      = xr.nTop + xr.nHeight + border;
+                    xtext.nLeft     = xr.nLeft;
+                    xtext.nWidth    = (pack) ? hsegsize * 2 : hsegsize;
+
+                    break;
+                }
+
+                case 3: // Top to bottom
+                {
+                    sAAll.nLeft    += (hgap >> 1);
+                    sAAll.nTop     += (vgap >> 1);
+                    sAAll.nWidth   -= hgap;
+                    sAAll.nHeight  -= vgap;
+
+                    xtext.nLeft     = sAAll.nLeft + border;
+                    xtext.nTop      = sAAll.nTop  + border;
+                    xtext.nWidth    = (pack) ? hsegsize * 2 : hsegsize;
+
+                    xr.nLeft        = xtext.nLeft;
+                    xr.nTop         = xtext.nTop  + ((has_text) ? xtext.nHeight + border : 0);
+                    xr.nWidth       = hsegsize;
+                    xr.nHeight      = sAAll.nHeight - xr.nTop - border;
+
+                    break;
+                }
+
+                case 2: // Right to left
+                {
+                    sAAll.nLeft    += (vgap >> 1);
+                    sAAll.nTop     += (hgap >> 1);
+                    sAAll.nWidth   -= vgap;
+                    sAAll.nHeight  -= hgap;
+
+                    xr.nLeft        = xtext.nLeft;
+                    xr.nTop         = xtext.nTop;
+                    xr.nWidth       = sAAll.nWidth - xr.nLeft - border - ((has_text) ? xtext.nWidth + border : 0);
+                    xr.nHeight      = hsegsize;
+
+                    xtext.nLeft     = xr.nLeft + xr.nWidth + border;
+                    xtext.nTop      = xr.nTop;
+                    xtext.nHeight   = hsegsize;
+
+                    break;
+                }
+
+                case 0: // Left to right
+                default:
+                {
+                    sAAll.nLeft    += (vgap >> 1);
+                    sAAll.nTop     += (hgap >> 1);
+                    sAAll.nWidth   -= vgap;
+                    sAAll.nHeight  -= hgap;
+
+                    xtext.nLeft     = sAAll.nLeft + border;
+                    xtext.nTop      = sAAll.nTop  + border;
+                    xtext.nHeight   = hsegsize;
+
+                    xr.nLeft        = xtext.nLeft + ((has_text) ? xtext.nWidth + border : 0);
+                    xr.nTop         = xtext.nTop;
+                    xr.nWidth       = sAAll.nWidth - xr.nLeft - border;
+                    xr.nHeight      = hsegsize;
+
+                    break;
+                }
+            }
+
+            // Realize each meter channel
+            if (angle & 1)
+            {
+                if (pack)
+                {
+                    for (size_t i=0, n=list.size(); i<n; ++i)
+                    {
+                        LedMeterChannel *c = list.uget(i);
+
+                        if (i >= hlimit)
+                            xr.nWidth       = xtext.nWidth;
+
+                        // Update position of meter and text
+                        c->sAMeter      = xr;
+                        c->sAText       = xtext;
+
+                        xr.nLeft       += hsegsize;
+                        if (i & 1)
+                        {
+                            xtext.nLeft    += hsegsize << 1;
+                            xtext.nTop     -= tp.Height;
+                        }
+                        else
+                            xtext.nTop     += tp.Height;
+                    }
+                }
+                else
+                {
+                    for (size_t i=0, n=list.size(); i<n; ++i)
+                    {
+                        LedMeterChannel *c = list.uget(i);
+
+                        // Update position of meter and text
+                        c->sAMeter      = xr;
+                        c->sAText       = xtext;
+
+                        xr.nLeft       += hsegsize;
+                        xtext.nLeft    += hsegsize;
+                    }
+                }
+            }
+            else
+            {
+                for (size_t i=0, n=list.size(); i<n; ++i)
+                {
+                    LedMeterChannel *c = list.uget(i);
+                    if (i >= hlimit)
+                    {
+                        xtext.nHeight   = hsegsize << 1;
+                        xr.nHeight      = xtext.nHeight;
+                    }
+
+                    // Update position of meter and text
+                    c->sAMeter      = xr;
+                    c->sAText       = xtext;
+
+                    xr.nTop        += hsegsize;
+                    xtext.nTop     += hsegsize;
+                }
+            }
+
+            // Update visible items
+            vVisible.swap(&list);
         }
 
         void LedMeter::draw(ws::ISurface *s)
         {
-            // TODO
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+            bool has_text       = sTextVisible.get();
+            ssize_t angle       = sAngle.get();
+
+            lsp::Color col(sBgColor);
+            s->clear(col);
+            col.copy(sColor);
+            s->fill_rect(col, &sAAll);
+
+            for (size_t i=0, n=vVisible.size(); i<n; ++i)
+            {
+                LedMeterChannel *c = vVisible.uget(i);
+
+                c->draw_meter(s, angle, scaling, bright);
+                if (has_text)
+                    c->draw_label(s, &sFont, scaling, bright);
+            }
         }
 
         void LedMeter::on_add_item(void *obj, Property *prop, Widget *w)
