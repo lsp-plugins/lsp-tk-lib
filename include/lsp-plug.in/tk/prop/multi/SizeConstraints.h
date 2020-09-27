@@ -110,6 +110,9 @@ namespace lsp
                 void        set_width(ssize_t min, ssize_t max);
                 void        set_height(ssize_t min, ssize_t max);
 
+                inline void set_width(ssize_t value)                        { set_width(value, value);              }
+                inline void set_height(ssize_t value)                       { set_height(value, value);             }
+
                 void        set(ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
                 void        set(const ws::size_limit_t *p);
                 void        set(const SizeConstraints *p);

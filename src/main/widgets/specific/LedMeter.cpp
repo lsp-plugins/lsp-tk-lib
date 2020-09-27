@@ -30,7 +30,7 @@ namespace lsp
 
         LedMeter::LedMeter(Display *dpy):
             Widget(dpy),
-            vItems(&sProperties),
+            vItems(&sProperties, &sIListener),
             sConstraints(&sProperties),
             sFont(&sProperties),
             sBorder(&sProperties),
@@ -38,7 +38,8 @@ namespace lsp
             sEstText(&sProperties),
             sSGroups(&sProperties),
             sTextVisible(&sProperties),
-            sColor(&sProperties)
+            sColor(&sProperties),
+            sMinChannelWidth(&sProperties)
         {
             sAAll.nLeft     = 0;
             sAAll.nTop      = 0;
@@ -94,6 +95,7 @@ namespace lsp
             sSGroups.bind("stereo_groups", &sStyle);
             sTextVisible.bind("text.visible", &sStyle);
             sColor.bind("color", &sStyle);
+            sMinChannelWidth.bind("channel.width.min", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -105,6 +107,7 @@ namespace lsp
                 sSGroups.init(sclass, true);
                 sTextVisible.init(sclass, false);
                 sColor.init(sclass, "#000000");
+                sMinChannelWidth.init(sclass, 16);
 
                 sEstText.set_raw("+99.9");
             }
@@ -116,6 +119,8 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
+            if (vItems.is(prop))
+                query_draw();
             if (sConstraints.is(prop))
                 query_resize();
             if (sFont.is(prop) && (sTextVisible.get()))
@@ -127,7 +132,9 @@ namespace lsp
             if (sEstText.is(prop) && (sTextVisible.get()))
                 query_resize();
             if (sTextVisible.is(prop))
-                query_draw();
+                query_resize();
+            if (sMinChannelWidth.is(prop))
+                query_resize();
         }
 
         void LedMeter::get_visible_items(lltl::parray<LedMeterChannel> *dst)
@@ -147,12 +154,13 @@ namespace lsp
             lltl::parray<LedMeterChannel> list;
             get_visible_items(&list);
 
+            bool pack       = (sSGroups.get()) && (list.size() >= 2);
             float scaling   = lsp_max(0.0f, sScaling.get());
             float seg_size  = 4.0f * scaling;
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle   = sAngle.get();
+            ssize_t minw    = lsp_max(ceilf(seg_size)*2, sMinChannelWidth.get() * scaling);
             bool has_text   = sTextVisible.get();
-            bool pack       = (sSGroups.get()) && (list.size() >= 2);
 
             ws::text_parameters_t tp;
             ws::font_parameters_t fp;
@@ -169,14 +177,14 @@ namespace lsp
             if (angle & 1)
             {
                 // Vertical
-                r->nMinWidth        = ceilf(seg_size);
+                r->nMinWidth        = minw;
                 r->nMinHeight       = 0;
 
                 // Estimate the minimum height
                 for (size_t i=0, n=list.size(); i<n; ++i)
                 {
                     LedMeterChannel *c  = list.uget(i);
-                    r->nMinHeight       = lsp_max(r->nMinHeight, ceilf(seg_size * lsp_min(0, c->min_segments()->get())));
+                    r->nMinHeight       = lsp_max(r->nMinHeight, ceilf(seg_size * lsp_max(0, c->min_segments()->get())));
                 }
 
                 // Estimate place for text
@@ -187,13 +195,13 @@ namespace lsp
                     if ((pack) && (list.size() >= 2))
                     {
                         r->nMinHeight      += tp.Height;
-                        r->nMinWidth        = lsp_min(r->nMinWidth, seg_size * 2);
+                        r->nMinWidth        = lsp_max(r->nMinWidth, seg_size * 2);
                     }
                 }
 
                 // Multiply the width by number of channels
                 if (pack)
-                    r->nMinWidth       *= ((list.size() + 1) >> 2);
+                    r->nMinWidth       *= ((list.size() + 1) >> 1);
                 else
                     r->nMinWidth       *= list.size();
             }
@@ -201,13 +209,13 @@ namespace lsp
             {
                 // Horizontal
                 r->nMinWidth        = 0;
-                r->nMinHeight       = ceilf(seg_size);
+                r->nMinHeight       = minw;
 
                 // Estimate the minimum width
                 for (size_t i=0, n=list.size(); i<n; ++i)
                 {
                     LedMeterChannel *c  = list.uget(i);
-                    r->nMinWidth        = lsp_max(r->nMinWidth, ceilf(seg_size * lsp_min(0, c->min_segments()->get())));
+                    r->nMinWidth        = lsp_max(r->nMinWidth, ceilf(seg_size * lsp_max(0, c->min_segments()->get())));
                 }
 
                 // Estimate place for text
@@ -225,7 +233,7 @@ namespace lsp
 
                 // Multiply the height by number of channels
                 if (pack)
-                    r->nMinHeight      *= ((list.size() + 1) >> 2);
+                    r->nMinHeight      *= ((list.size() + 1) >> 1);
                 else
                     r->nMinHeight      *= list.size();
             }
@@ -296,12 +304,12 @@ namespace lsp
                     if ((pack) && (list.size() >= 2))
                         xtext.nHeight      += tp.Height;
 
-                    led_size           -= border + xtext.nHeight;
+                    led_size           -= (border + xtext.nHeight);
                 }
                 else // Horizontal
                 {
-                    xtext.nWidth        = xr.nWidth;
-                    led_size           -= border + xtext.nWidth;
+                    xtext.nWidth        = tp.Width;
+                    led_size           -= (border + xtext.nWidth);
                 }
             }
 
@@ -309,10 +317,11 @@ namespace lsp
             ssize_t segments    = led_size / seg_size;
             ssize_t vgap        = led_size - ceilf(segments * seg_size);
             led_size            = led_size - vgap;
-            ssize_t hitems      = (pack && has_text) ? ((list.size() + 1) >> 2) : list.size();
-            size_t hlimit       = (pack && has_text) ? hitems : list.size() & (~1);
-            ssize_t hsegsize    = ((angle & 1) ? xr.nWidth : xr.nHeight) / hitems;
-            ssize_t hgap        = ((angle & 1) ? xr.nWidth : xr.nHeight) - (hsegsize * hitems);
+            ssize_t hitems      = (pack && has_text) ? ((list.size() + 1) >> 1) : list.size();
+            size_t hlimit       = (pack && has_text) ? list.size() & (~1) : hitems;
+            ssize_t payload     = (pack && has_text) ? (hitems << 1) : hitems;
+            ssize_t hsegsize    = ((angle & 1) ? xr.nWidth : xr.nHeight) / payload;
+            ssize_t hgap        = ((angle & 1) ? xr.nWidth : xr.nHeight) - (hsegsize * payload);
 
             // Allocate meters
             switch (size_t(angle & 3))
@@ -327,7 +336,7 @@ namespace lsp
                     xr.nLeft        = sAAll.nLeft + border;
                     xr.nTop         = sAAll.nTop  + border;
                     xr.nWidth       = hsegsize;
-                    xr.nHeight      = sAAll.nHeight - xr.nTop - border - ((has_text) ? xtext.nHeight + border : 0);
+                    xr.nHeight      = sAAll.nTop + sAAll.nHeight - xr.nTop - border - ((has_text) ? xtext.nHeight + border : 0);
 
                     xtext.nTop      = xr.nTop + xr.nHeight + border;
                     xtext.nLeft     = xr.nLeft;
@@ -350,7 +359,7 @@ namespace lsp
                     xr.nLeft        = xtext.nLeft;
                     xr.nTop         = xtext.nTop  + ((has_text) ? xtext.nHeight + border : 0);
                     xr.nWidth       = hsegsize;
-                    xr.nHeight      = sAAll.nHeight - xr.nTop - border;
+                    xr.nHeight      = sAAll.nTop + sAAll.nHeight - xr.nTop - border;
 
                     break;
                 }
@@ -362,9 +371,9 @@ namespace lsp
                     sAAll.nWidth   -= vgap;
                     sAAll.nHeight  -= hgap;
 
-                    xr.nLeft        = xtext.nLeft;
-                    xr.nTop         = xtext.nTop;
-                    xr.nWidth       = sAAll.nWidth - xr.nLeft - border - ((has_text) ? xtext.nWidth + border : 0);
+                    xr.nLeft        = sAAll.nLeft + border;
+                    xr.nTop         = sAAll.nTop  + border;
+                    xr.nWidth       = sAAll.nLeft + sAAll.nWidth - xr.nLeft - border - ((has_text) ? xtext.nWidth + border : 0);
                     xr.nHeight      = hsegsize;
 
                     xtext.nLeft     = xr.nLeft + xr.nWidth + border;
@@ -388,7 +397,7 @@ namespace lsp
 
                     xr.nLeft        = xtext.nLeft + ((has_text) ? xtext.nWidth + border : 0);
                     xr.nTop         = xtext.nTop;
-                    xr.nWidth       = sAAll.nWidth - xr.nLeft - border;
+                    xr.nWidth       = sAAll.nLeft + sAAll.nWidth - xr.nLeft - border;
                     xr.nHeight      = hsegsize;
 
                     break;
@@ -406,6 +415,7 @@ namespace lsp
 
                         if (i >= hlimit)
                             xr.nWidth       = xtext.nWidth;
+                        xtext.nHeight   = tp.Height;
 
                         // Update position of meter and text
                         c->sAMeter      = xr;
@@ -428,6 +438,8 @@ namespace lsp
                         LedMeterChannel *c = list.uget(i);
 
                         // Update position of meter and text
+                        xtext.nHeight   = tp.Height;
+
                         c->sAMeter      = xr;
                         c->sAText       = xtext;
 
@@ -479,6 +491,9 @@ namespace lsp
                 c->draw_meter(s, angle, scaling, bright);
                 if (has_text)
                     c->draw_label(s, &sFont, scaling, bright);
+
+                // Commit pending redraw request
+                c->commit_redraw();
             }
         }
 

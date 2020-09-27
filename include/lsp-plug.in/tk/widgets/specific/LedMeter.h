@@ -53,6 +53,7 @@ namespace lsp
                 prop::Boolean                       sSGroups;
                 prop::Boolean                       sTextVisible;
                 prop::Color                         sColor;
+                prop::Integer                       sMinChannelWidth;
 
                 ws::rectangle_t                     sAAll;
 
@@ -90,6 +91,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                        stereo_groups,      &sSGroups)
                 LSP_TK_PROPERTY(Boolean,                        text_visible,       &sTextVisible)
                 LSP_TK_PROPERTY(Color,                          color,              &sColor)
+                LSP_TK_PROPERTY(Integer,                        min_channel_width,  &sMinChannelWidth)
 
             public:
                 virtual void                draw(ws::ISurface *s);
