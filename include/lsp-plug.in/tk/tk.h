@@ -97,6 +97,7 @@
 
 // Collections
 #include <lsp-plug.in/tk/prop/collection/ColorRanges.h>
+#include <lsp-plug.in/tk/prop/collection/FloatArray.h>
 #include <lsp-plug.in/tk/prop/collection/StringList.h>
 #include <lsp-plug.in/tk/prop/collection/WidgetList.h>
 #include <lsp-plug.in/tk/prop/collection/WidgetPtr.h>
@@ -161,6 +162,8 @@
 #include <lsp-plug.in/tk/widgets/compound/ComboGroup.h>
 
 // Specific widgets
+#include <lsp-plug.in/tk/widgets/specific/AudioChannel.h>
+#include <lsp-plug.in/tk/widgets/specific/AudioSample.h>
 #include <lsp-plug.in/tk/widgets/specific/FileButton.h>
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeter.h>

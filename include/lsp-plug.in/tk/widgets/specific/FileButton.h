@@ -35,6 +35,9 @@ namespace lsp
          */
         class FileButton: public Widget
         {
+            public:
+                static const w_class_t    metadata;
+
             private:
                 FileButton & operator = (const FileButton &);
 
@@ -74,7 +77,7 @@ namespace lsp
                 virtual void        realize(const ws::rectangle_t *r);
                 virtual void        property_changed(Property *prop);
 
-                void                draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color & line);\
+                void                draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color & line);
                 status_t            handle_mouse_move(const ws::event_t *ev);
 
             public:

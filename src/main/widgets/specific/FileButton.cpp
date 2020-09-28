@@ -23,12 +23,14 @@
 
 namespace lsp
 {
-    #define NPOINTS 9
-    static const float xx[NPOINTS] = { 0.5f, 7.0f, 8.0f, 8.0f, 7.5f, 0.5f, 0.0f, 0.0f, 0.5f };
-    static const float yy[NPOINTS] = { 0.0f, 0.0f, 1.0f, 7.5f, 8.0f, 8.0f, 7.5f, 0.5f, 0.0f };
-
     namespace tk
     {
+        #define NPOINTS 9
+        static const float xx[NPOINTS] = { 0.5f, 7.0f, 8.0f, 8.0f, 7.5f, 0.5f, 0.0f, 0.0f, 0.5f };
+        static const float yy[NPOINTS] = { 0.0f, 0.0f, 1.0f, 7.5f, 8.0f, 8.0f, 7.5f, 0.5f, 0.0f };
+
+        const w_class_t FileButton::metadata            = { "FileButton", &Widget::metadata };
+
         FileButton::FileButton(Display *dpy):
             Widget(dpy),
             sValue(&sProperties),
@@ -52,6 +54,8 @@ namespace lsp
             sButton.nTop        = 0;
             sButton.nWidth      = 0;
             sButton.nHeight     = 0;
+
+            pClass              = &metadata;
         }
 
         FileButton::~FileButton()
