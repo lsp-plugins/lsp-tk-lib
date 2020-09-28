@@ -163,6 +163,42 @@ namespace lsp
             return true;
         }
 
+        bool Position::rinside(const ws::rectangle_t *r, ssize_t x, ssize_t y, ssize_t radius)
+        {
+            if (!inside(r, x, y))
+                return false;
+
+            // Check special case: corners
+            if (x < radius)
+            {
+                if (y < radius)
+                {
+                    float dx = radius - x, dy = radius - y;
+                    return (dx*dx + dy*dy) <= radius * radius;
+                }
+                else if (y > (r->nHeight - radius))
+                {
+                    float dx = radius - x, dy = y - r->nHeight + radius;
+                    return (dx*dx + dy*dy) <= radius * radius;
+                }
+            }
+            else if (x > (r->nWidth + radius))
+            {
+                if (y < radius)
+                {
+                    float dx = x - r->nWidth + radius, dy = radius - y;
+                    return (dx*dx + dy*dy) <= radius * radius;
+                }
+                else if (y > (r->nHeight - radius))
+                {
+                    float dx = x - r->nWidth + radius, dy = y - r->nHeight + radius;
+                    return (dx*dx + dy*dy) <= radius * radius;
+                }
+            }
+
+            return true;
+        }
+
         namespace prop
         {
             status_t Position::init(Style *style, ssize_t left, ssize_t top)

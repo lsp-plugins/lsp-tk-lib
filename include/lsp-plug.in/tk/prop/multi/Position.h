@@ -80,15 +80,15 @@ namespace lsp
                 ~Position();
 
             public:
-                inline void         set_default()       { MultiProperty::set_default(vAtoms, DESC); };
+                inline void         set_default()                   { MultiProperty::set_default(vAtoms, DESC);     }
 
             public:
-                inline ssize_t left() const             { return nLeft;                        }
-                inline ssize_t top() const              { return nTop;                       }
+                inline ssize_t left() const                         { return nLeft;                                 }
+                inline ssize_t top() const                          { return nTop;                                  }
 
-                inline void get(ssize_t *left, ssize_t *top) const  { *left = nLeft; *top = nTop;               }
-                inline void get(ssize_t &left, ssize_t &top) const  { left = nLeft; top = nTop;                 }
-                inline void get(ws::rectangle_t *rect) const        { rect->nLeft = nLeft; rect->nTop = nTop;   }
+                inline void get(ssize_t *left, ssize_t *top) const  { *left = nLeft; *top = nTop;                   }
+                inline void get(ssize_t &left, ssize_t &top) const  { left = nLeft; top = nTop;                     }
+                inline void get(ws::rectangle_t *rect) const        { rect->nLeft = nLeft; rect->nTop = nTop;       }
 
                 ssize_t         set_left(ssize_t value);
                 ssize_t         set_top(ssize_t value);
@@ -96,7 +96,10 @@ namespace lsp
                 void            set(const Position *p);
 
                 static bool     inside(const ws::rectangle_t *rect, ssize_t left, ssize_t top);
-                inline bool     inside(const ws::rectangle_t *rect) { return inside(rect, nLeft, nTop);         }
+                inline bool     inside(const ws::rectangle_t *rect) { return inside(rect, nLeft, nTop);             }
+
+                static bool     rinside(const ws::rectangle_t *rect, ssize_t left, ssize_t top, ssize_t radius);
+                inline bool     rinside(const ws::rectangle_t *rect, ssize_t radius) { return rinside(rect, nLeft, nTop, radius);   }
         };
 
         namespace prop
