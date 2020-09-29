@@ -45,32 +45,29 @@ namespace lsp
                 friend class AudioSample;
 
             protected:
-                enum
-                {
-                    DMASK_RIGHT     = 0 << 0,
-                    DMASK_LEFT      = 1 << 0,
-                    DMASK_UP        = 0 << 1,
-                    DMASK_DOWN      = 1 << 0
-                };
-
-            protected:
                 prop::FloatArray        vSamples;
 
-                prop::Integer           sFadeIn;        // Number of samples for fade-in
-                prop::Integer           sFadeOut;       // Number of samples for fade-out
-                prop::Integer           sLineWidth;     // Line width
-                prop::Color             sColor;         // Color of the audio channel
-                prop::Color             sFadeInColor;   // Color of fade-in
-                prop::Color             sFadeOutColor;  // Fade-out color
-                prop::Color             sLineColor;     // Line color
-                prop::SizeConstraints   sConstraints;   // Size constraints
+                prop::Integer           sFadeIn;            // Number of samples for fade-in
+                prop::Integer           sFadeOut;           // Number of samples for fade-out
+                prop::Integer           sWaveBorder;        // Wave border
+                prop::Integer           sFadeInBorder;      // Fade in border
+                prop::Integer           sFadeOutBorder;     // Fade out border
+                prop::Integer           sLineWidth;         // Line width
+                prop::Color             sColor;             // Color of the audio channel
+                prop::Color             sLineColor;         // Line color
+                prop::Color             sWaveBorderColor;   // Color of the wave border
+                prop::Color             sFadeInColor;       // Color of fade-in
+                prop::Color             sFadeOutColor;      // Fade-out color
+                prop::Color             sFadeInBorderColor; // Color of fade-in
+                prop::Color             sFadeOutBorderColor;// Fade-out color
+                prop::SizeConstraints   sConstraints;       // Size constraints
 
             protected:
                 virtual void            size_request(ws::size_limit_t *r);
                 virtual void            property_changed(Property *prop);
 
-                void                    draw_samples(const ws::rectangle_t *r, ws::ISurface *s, lsp::Color &col, size_t dmask);
-                void                    draw_fades(const ws::rectangle_t *r, ws::ISurface *s, lsp::Color &fin, lsp::Color &fout, size_t dmask);
+                void                    draw_samples(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
+                void                    draw_fades(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
 
             public:
                 explicit AudioChannel(Display *dpy);
@@ -79,14 +76,20 @@ namespace lsp
                 virtual status_t            init();
                 virtual void                destroy();
 
-            protected:
+            public:
                 LSP_TK_PROPERTY(FloatArray,             samples,                &vSamples);
                 LSP_TK_PROPERTY(Integer,                fade_in,                &sFadeIn);
                 LSP_TK_PROPERTY(Integer,                fade_out,               &sFadeOut);
+                LSP_TK_PROPERTY(Integer,                wave_border,            &sWaveBorder);
+                LSP_TK_PROPERTY(Integer,                fade_in_border,         &sFadeInBorder);
+                LSP_TK_PROPERTY(Integer,                fade_out_border,        &sFadeOutBorder);
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth);
                 LSP_TK_PROPERTY(Color,                  color,                  &sColor);
+                LSP_TK_PROPERTY(Color,                  wave_border_color,      &sWaveBorderColor);
                 LSP_TK_PROPERTY(Color,                  fade_in_color,          &sFadeInColor);
                 LSP_TK_PROPERTY(Color,                  fade_out_color,         &sFadeOutColor);
+                LSP_TK_PROPERTY(Color,                  fade_in_border_color,   &sFadeInColor);
+                LSP_TK_PROPERTY(Color,                  fade_out_border_color,  &sFadeOutColor);
                 LSP_TK_PROPERTY(Color,                  line_color,             &sLineColor);
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints);
 

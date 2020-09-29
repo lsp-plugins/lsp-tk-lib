@@ -3,7 +3,7 @@
  *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 24 сент. 2020 г.
+ * Created on: 29 сент. 2020 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
 
-MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
+MTEST_BEGIN("tk.widgets.specific", audiochannel)
     typedef struct handler_t
     {
         test_type_t    *test;
@@ -106,30 +106,6 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_SCROLL: %s\n", h->label);
 
-        tk::LedMeterChannel *lm = tk::widget_cast<tk::LedMeterChannel>(sender);
-        if (lm == NULL)
-            return STATUS_OK;
-
-        ws::event_t *ev = static_cast<ws::event_t *>(data);
-
-        float delta = 0.0f;
-
-        if (ev->nCode == ws::MCD_UP)
-            delta = 0.05f;
-        else if (ev->nCode == ws::MCD_DOWN)
-            delta = -0.05f;
-
-        if (ev->nState & (ws::MCF_CONTROL | ws::MCF_ALT))
-            delta *= 10.0f;
-
-        if (ev->nState & ws::MCF_SHIFT)
-            lm->peak()->add(delta);
-        else
-        {
-            lm->value()->add(delta, false);
-            sync_text(lm);
-        }
-
         return STATUS_OK;
     }
 
@@ -196,39 +172,13 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
         }
     }
 
-    void add_items(tk::Fraction *f, lltl::parray<handler_t> &vh, lltl::parray<tk::Widget> &widgets, size_t &vid, size_t count)
+    void init_values(tk::AudioChannel *ac)
     {
-        tk::ListBoxItem *li;
-        LSPString text, id;
-
-        for (size_t i=0; i<count; ++i)
-        {
-            text.fmt_ascii("%d", int(i));
-            id.fmt_ascii("fraction-%d", int(vid++));
-            MTEST_ASSERT(li = new tk::ListBoxItem(f->display()));
-            MTEST_ASSERT(init_widget(li, vh, id.get_ascii()) == STATUS_OK);
-
-            MTEST_ASSERT(li->text()->set_raw(&text) == STATUS_OK);
-            MTEST_ASSERT(f->num_items()->add(li) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(li));
-
-            if (i == 0)
-                f->num_selected()->set(li);
-        }
-
-        for (size_t i=1; i<=count; ++i)
-        {
-            text.fmt_ascii("%d", int(i));
-            id.fmt_ascii("fraction-%d", int(vid++));
-            MTEST_ASSERT(li = new tk::ListBoxItem(f->display()));
-            MTEST_ASSERT(init_widget(li, vh, id.get_ascii()) == STATUS_OK);
-
-            MTEST_ASSERT(li->text()->set_raw(&text) == STATUS_OK);
-            MTEST_ASSERT(f->den_items()->add(li) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(li));
-            if (i == 1)
-                f->den_selected()->set(li);
-        }
+        tk::FloatArray *fa = ac->samples();
+        MTEST_ASSERT(fa->resize(256) == STATUS_OK);
+        float kf = 8.0f * M_PI / fa->size();
+        for (size_t i=0; i<fa->size(); ++i)
+            fa->set(i, sinf(i * kf));
     }
 
     MTEST_MAIN
@@ -244,13 +194,13 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
         tk::Grid *grid = NULL;
-        tk::LedMeterChannel *lm = NULL;
+        tk::AudioChannel *ac = NULL;
         size_t vid = 0;
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test led meter channel") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("ledmeterchannel_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test audio channel") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("audiochannel_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
@@ -272,8 +222,8 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(5);
-        grid->columns()->set(4);
+        grid->rows()->set(2);
+        grid->columns()->set(1);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
         grid->vspacing()->set(2);
@@ -282,150 +232,30 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
             // Create meter channels
             LSPString id;
 
-            // Create horizontal meter (left to right)
-            for (size_t i=0; i<2; ++i)
-            {
-                MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
-                MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
-                MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(lm));
-                MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
+            // Create audio channel
+            MTEST_ASSERT(id.fmt_ascii("audiochannel-%d", int(vid++)));
+            MTEST_ASSERT(ac = new tk::AudioChannel(dpy));
+            MTEST_ASSERT(init_widget(ac, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ac));
+            MTEST_ASSERT(grid->add(ac) == STATUS_OK);
 
-                lm->text_visible()->set(true);
-                lm->value()->set(0.5f);
-                lm->angle()->set(i*2);
-                sync_text(lm);
-            }
+            init_values(ac);
 
-            // Create stereo channel
-            for (size_t i=0; i<2; ++i)
-            {
-                MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
-                MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
-                MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(lm));
-                MTEST_ASSERT(grid->add(lm) == STATUS_OK);
+            // Create audio channel with fades
+            MTEST_ASSERT(id.fmt_ascii("audiochannel-%d", int(vid++)));
+            MTEST_ASSERT(ac = new tk::AudioChannel(dpy));
+            MTEST_ASSERT(init_widget(ac, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ac));
+            MTEST_ASSERT(grid->add(ac) == STATUS_OK);
 
-                lm->text_visible()->set(true);
-                lm->peak_visible()->set(true);
-                lm->value()->set_all(0.0f, -72.0f, 24.0f);
-                lm->peak()->set(0.0f);
-                lm->angle()->set(1 + i*2);
-                lm->constraints()->set_min_height(128);
+            init_values(ac);
+            ac->fade_in()->set(32);
+            ac->fade_in_color()->set_rgba32(0x88ffff00);
+            ac->fade_in_border_color()->set_rgb24(0xffff00);
 
-                lsp::Color c;
-                tk::ColorRange *cr;
-                c.set_rgb24(0xff0000);
-                c.hue(i * 0.5f);
-
-                // Color ranges
-                cr = lm->value_ranges()->append();
-                cr->set_range(0.0f, 24.0f);
-                cr->set_color("#ff0000");
-
-                cr = lm->value_ranges()->append();
-                cr->set_range(-6.0f, 0.0f);
-                cr->set_color("#ffff00");
-
-                cr = lm->value_ranges()->append();
-                cr->set_range(-24.0f, 0.0f);
-                c.lightness(0.5f);
-                cr->set_color(&c);
-
-                cr = lm->value_ranges()->append();
-                cr->set_range(-48.0f, -24.0f);
-                c.lightness(0.75f * 0.5f);
-                cr->set_color(&c);
-
-                cr = lm->value_ranges()->append();
-                cr->set_range(-72.0f, -48.0f);
-                c.lightness(0.5f * 0.5f);
-                cr->set_color(&c);
-
-                // Peak ranges
-                cr = lm->peak_ranges()->append();
-                cr->set_range(0.0f, 24.0f);
-                cr->set_color("#ff0000");
-
-                cr = lm->peak_ranges()->append();
-                cr->set_range(-6.0f, 0.0f);
-                cr->set_color("#ffff00");
-
-                cr = lm->peak_ranges()->append();
-                cr->set_range(-24.0f, 0.0f);
-                c.lightness(0.5f);
-                cr->set_color(&c);
-
-                cr = lm->peak_ranges()->append();
-                cr->set_range(-48.0f, -24.0f);
-                c.lightness(0.75f * 0.5f);
-                cr->set_color(&c);
-
-                cr = lm->peak_ranges()->append();
-                cr->set_range(-72.0f, -48.0f);
-                c.lightness(0.5f * 0.5f);
-                cr->set_color(&c);
-
-                // Text ranges
-                cr = lm->text_ranges()->append();
-                cr->set_range(0.0f, 24.0f);
-                cr->set_color("#ff0000");
-
-                cr = lm->text_ranges()->append();
-                cr->set_range(-6.0f, 0.0f);
-                cr->set_color("#ffff00");
-
-                cr = lm->text_ranges()->append();
-                cr->set_range(-24.0f, 0.0f);
-                c.lightness(0.5f);
-                cr->set_color(&c);
-
-                cr = lm->text_ranges()->append();
-                cr->set_range(-48.0f, -24.0f);
-                c.lightness(0.75f * 0.5f);
-                cr->set_color(&c);
-
-                cr = lm->text_ranges()->append();
-                cr->set_range(-72.0f, -48.0f);
-                c.lightness(0.5f * 0.5f);
-                cr->set_color(&c);
-
-                sync_text(lm);
-            }
-
-            // Create balanced meters
-            for (size_t i=0; i<2; ++i)
-            {
-                MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
-                MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
-                MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(lm));
-                MTEST_ASSERT(grid->add(lm) == STATUS_OK);
-
-                lm->text_visible()->set(true);
-                lm->balance_visible()->set(true);
-                lm->balance()->set(0.5f);
-                lm->angle()->set(1 + i*2);
-                lm->constraints()->set_min_height(128);
-                lm->reversive()->set(i > 0);
-                sync_text(lm);
-            }
-
-            // Create horizontal meter (left to right)
-            for (size_t i=0; i<2; ++i)
-            {
-                MTEST_ASSERT(id.fmt_ascii("meterchannel-%d", int(vid++)));
-                MTEST_ASSERT(lm = new tk::LedMeterChannel(dpy));
-                MTEST_ASSERT(init_widget(lm, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(lm));
-                MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
-
-                lm->text_visible()->set(false);
-                lm->value()->set(0.5f);
-                lm->angle()->set(i*2);
-                lm->reversive()->set(true);
-                sync_text(lm);
-            }
+            ac->fade_out()->set(128);
+            ac->fade_out_color()->set_rgba32(0x88ff8800);
+            ac->fade_out_border_color()->set_rgb24(0xff8800);
         }
 
         // Show window

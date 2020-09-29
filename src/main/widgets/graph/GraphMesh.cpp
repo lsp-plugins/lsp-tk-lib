@@ -174,9 +174,9 @@ namespace lsp
             // Now we have dots in x_vec[] and y_vec[]
             bool aa = s->set_antialiasing(sSmooth.get());
             if (sFill.get())
-                s->draw_poly(x_vec, y_vec, vec_size, width, fill, line);
+                s->draw_poly(fill, line, width, x_vec, y_vec, vec_size);
             else if (width > 0)
-                s->wire_poly(x_vec, y_vec, vec_size, width, line);
+                s->wire_poly(line, width, x_vec, y_vec, vec_size);
 
             s->set_antialiasing(aa);
         }

@@ -172,19 +172,6 @@ MTEST_BEGIN("tk.widgets.specific", ledmeter)
         return STATUS_OK;
     }
 
-    static status_t slot_change(tk::Widget *sender, void *ptr, void *data)
-    {
-        handler_t *h = static_cast<handler_t *>(ptr);
-
-        LSPString tmp;
-        tk::Edit *ed = tk::widget_cast<tk::Edit>(sender);
-        ed->text()->format(&tmp);
-
-        h->test->printf("CHANGE: %s = %s\n", h->label, tmp.get_utf8());
-
-        return STATUS_OK;
-    }
-
     status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label)
     {
         status_t res = w->init();
@@ -207,11 +194,6 @@ MTEST_BEGIN("tk.widgets.specific", ledmeter)
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
-
-        if (tk::widget_cast<tk::Edit>(w) != NULL)
-        {
-            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_CHANGE, slot_change, h);
-        }
 
         if (hid < 0)
             res = -hid;

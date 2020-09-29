@@ -296,7 +296,7 @@ namespace lsp
                     ya[j] = b.nTop  + yy[j] * k;
                 }
 
-                s->fill_poly(xa, ya, NPOINTS, gr);
+                s->fill_poly(gr, xa, ya, NPOINTS);
                 delete gr; // Delete gradient!
 
                 b.nLeft        += 1;
@@ -317,7 +317,7 @@ namespace lsp
                 xa[i] = b.nLeft + xx[i] * k;
                 ya[i] = b.nTop  + yy[i] * k;
             }
-            s->wire_poly(xa, ya, NPOINTS, line_width, line);
+            s->wire_poly(line, line_width, xa, ya, NPOINTS);
 
             // Output text
             b.nLeft    += 0.5*k;
