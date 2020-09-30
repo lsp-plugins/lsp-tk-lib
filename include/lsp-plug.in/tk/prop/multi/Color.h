@@ -212,6 +212,8 @@ namespace lsp
                     status_t            override(Style *style, const char *value);
                     status_t            override(Style *style, const LSPString *value);
                     status_t            override(Style *style, const lsp::Color *value);
+
+                    inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
         }
 

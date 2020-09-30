@@ -32,7 +32,7 @@ namespace lsp
     {
         class LedMeterChannel;
 
-        class LedMeter: public Widget
+        class LedMeter: public WidgetContainer
         {
             public:
                 static const w_class_t    metadata;

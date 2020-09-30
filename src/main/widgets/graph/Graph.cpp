@@ -133,6 +133,21 @@ namespace lsp
             WidgetContainer::property_changed(prop);
             if (vItems.is(prop))
                 query_draw();
+
+            if (sBorder.is(prop))
+                query_resize();
+            if (sBorderRadius.is(prop))
+                query_resize();
+            if (sGlass.is(prop))
+                query_draw();
+            if (sColor.is(prop))
+                query_draw();
+            if (sBorderColor.is(prop))
+                query_draw();
+            if (sGlassColor.is(prop))
+                query_draw();
+            if (sIPadding.is(prop))
+                query_resize();
         }
 
         void Graph::size_request(ws::size_limit_t *r)
@@ -225,13 +240,22 @@ namespace lsp
                 color.scale_lightness(bright);
                 bg_color.scale_lightness(bright);
 
-                cv = create_border_glass(&pGlass, s,
-                        color, bg_color,
-                        SURFMASK_ALL_CORNER, bw, xr,
-                        sSize.nWidth, sSize.nHeight
-                    );
-                if (cv != NULL)
-                    s->draw(cv, sSize.nLeft, sSize.nTop);
+                if (sGlass.get())
+                {
+                    cv = create_border_glass(&pGlass, s,
+                            color, bg_color,
+                            SURFMASK_ALL_CORNER, bw, xr,
+                            sSize.nWidth, sSize.nHeight
+                        );
+                    if (cv != NULL)
+                        s->draw(cv, sSize.nLeft, sSize.nTop);
+                }
+                else if (pGlass != NULL)
+                {
+                    pGlass->destroy();
+                    delete pGlass;
+                    pGlass      = NULL;
+                }
 
                 s->set_antialiasing(aa);
             }

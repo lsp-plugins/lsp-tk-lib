@@ -121,6 +121,8 @@ namespace lsp
                      */
                     status_t            init(Style *style, ssize_t value);
                     status_t            override(Style *style, ssize_t value);
+
+                    inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
         }
     

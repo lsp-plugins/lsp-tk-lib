@@ -144,6 +144,8 @@ namespace lsp
                      * @return previous value
                      */
                     bool                commit(bool value);
+
+                    inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
         }
 

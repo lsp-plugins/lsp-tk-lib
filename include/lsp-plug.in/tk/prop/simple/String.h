@@ -252,9 +252,9 @@ namespace lsp
                      * Get formatted string for update
                      * @return pointer to cached formatted string, never NULL
                      */
-                    inline LSPString   *formatted()                    { return tk::String::fmt_for_update();      }
+                    inline LSPString   *formatted()                         { return tk::String::fmt_for_update();      }
                     bool                invalidate();
-                    inline void         sync()                      { tk::String::sync();                       }
+                    inline void         sync()                              { tk::String::sync();                       }
 
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -267,7 +267,9 @@ namespace lsp
                     /**
                      * Unbind property
                      */
-                    inline status_t     unbind()                    { return tk::String::unbind(); };
+                    inline status_t     unbind()                            { return tk::String::unbind();              }
+
+                    inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
         }
     

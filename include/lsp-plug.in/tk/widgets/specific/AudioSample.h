@@ -30,14 +30,116 @@ namespace lsp
 {
     namespace tk
     {
-        class AudioSample: public Widget
+        class AudioSample: public WidgetContainer
         {
             public:
                 static const w_class_t    metadata;
 
+                static const size_t LABELS      = 5;
+
             private:
                 AudioSample & operator = (const AudioSample &);
 
+            protected:
+                prop::WidgetList<AudioChannel>  vChannels;          // List of audio channels
+                lltl::parray<AudioChannel>      vVisible;           // List of visible audio channels
+                prop::CollectionListener        sIListener;         // Listener to trigger vItems content change
+
+                prop::Integer           sWaveBorder;                // Wave border
+                prop::Integer           sFadeInBorder;              // Fade in border
+                prop::Integer           sFadeOutBorder;             // Fade out border
+                prop::Integer           sLineWidth;                 // Line width
+                prop::Color             sLineColor;                 // Line color
+                prop::SizeConstraints   sConstraints;               // Size constraints
+                prop::Boolean           sActive;                    // Active, allow button press
+                prop::Boolean           sSGroups;                   // Stereo groups enable
+
+                prop::String            sMainText;                  // Main text
+                prop::TextLayout        sMainLayout;                // Layout of main text
+                prop::Font              sMainFont;                  // Main font
+                prop::Color             sMainColor;                 // Main font color
+                prop::Boolean           sMainVisibility;            // Show main text
+                prop::String            sLabel[LABELS];             // Label
+                prop::Color             sLabelColor[LABELS];        // Label text color
+                prop::TextLayout        sLabelLayout[LABELS];       // Layout of each label
+                prop::Font              sLabelFont;                 // Font of label
+                prop::Color             sLabelBgColor;              // Background color of label
+                prop::Integer           sLabelRadius;               // Label radius
+                prop::Boolean           sLabelVisibility[LABELS];   // Visibility of label
+
+                prop::Integer           sBorder;                    // Border size
+                prop::Integer           sBorderRadius;              // Border radius
+                prop::Boolean           sGlass;                     // Draw glass
+                prop::Color             sColor;                     // Graph color
+                prop::Color             sBorderColor;               // Color of the border
+                prop::Color             sGlassColor;                // Color of the glass
+                prop::Padding           sIPadding;                  // Internal padding
+
+                ws::rectangle_t         sGraph;                     // Area for sample rendering
+
+            public:
+                virtual void            size_request(ws::size_limit_t *r);
+                virtual void            property_changed(Property *prop);
+
+                void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright);
+                void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright);
+
+                void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright);
+                void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright);
+
+                static void             on_add_item(void *obj, Property *prop, Widget *w);
+                static void             on_remove_item(void *obj, Property *prop, Widget *w);
+
+                void                    do_destroy();
+
+            public:
+                explicit AudioSample(Display *dpy);
+                virtual ~AudioSample();
+
+                virtual status_t            init();
+                virtual void                destroy();
+
+            public:
+                LSP_TK_PROPERTY(WidgetList<AudioChannel>,   channels,           &vChannels)
+
+                LSP_TK_PROPERTY(Integer,                wave_border,            &sWaveBorder)
+                LSP_TK_PROPERTY(Integer,                fade_in_border,         &sFadeInBorder)
+                LSP_TK_PROPERTY(Integer,                fade_out_border,        &sFadeOutBorder)
+                LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth)
+                LSP_TK_PROPERTY(Color,                  line_color,             &sLineColor)
+                LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints)
+                LSP_TK_PROPERTY(Boolean,                active,                 &sActive)
+                LSP_TK_PROPERTY(Boolean,                stereo_groups,          &sSGroups)
+
+                LSP_TK_PROPERTY(String,                 main_text,              &sMainText)
+                LSP_TK_PROPERTY(TextLayout,             main_layout,            &sMainLayout)
+                LSP_TK_PROPERTY(Font,                   main_font,              &sMainFont)
+                LSP_TK_PROPERTY(Color,                  main_color,             &sMainColor)
+                LSP_TK_PROPERTY(Boolean,                main_visibility,        &sMainVisibility)
+                LSP_TK_IPROPERTY(String,                label,                  &sLabel[index], LABELS)
+                LSP_TK_IPROPERTY(Color,                 label_color,            &sLabelColor[index], LABELS)
+                LSP_TK_IPROPERTY(TextLayout,            label_layout,           &sLabelLayout[index], LABELS)
+                LSP_TK_PROPERTY(Font,                   label_font,             &sLabelFont)
+                LSP_TK_PROPERTY(Color,                  label_bg_color,         &sLabelBgColor)
+                LSP_TK_PROPERTY(Integer,                label_radius,           &sLabelRadius)
+                LSP_TK_IPROPERTY(Boolean,               label_visibility,       &sLabelVisibility[index], LABELS)
+
+                LSP_TK_PROPERTY(Integer,                border_size,            &sBorder);
+                LSP_TK_PROPERTY(Integer,                border_radius,          &sBorderRadius);
+                LSP_TK_PROPERTY(Boolean,                glass,                  &sGlass);
+                LSP_TK_PROPERTY(Color,                  color,                  &sColor)
+                LSP_TK_PROPERTY(Color,                  border_color,           &sBorderColor);
+                LSP_TK_PROPERTY(Color,                  glass_color,            &sGlassColor);
+                LSP_TK_PROPERTY(Padding,                internal_padding,       &sIPadding);
+
+            public:
+                virtual void                draw(ws::ISurface *s);
+
+                virtual status_t            add(Widget *widget);
+
+                virtual status_t            remove(Widget *child);
+
+                virtual status_t            remove_all();
         };
     }
 }

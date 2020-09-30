@@ -26,10 +26,10 @@ namespace lsp
 {
     namespace tk
     {
-        const w_class_t LedMeter::metadata              = { "LedMeter", &Widget::metadata };
+        const w_class_t LedMeter::metadata              = { "LedMeter", &WidgetContainer::metadata };
 
         LedMeter::LedMeter(Display *dpy):
-            Widget(dpy),
+            WidgetContainer(dpy),
             vItems(&sProperties, &sIListener),
             sConstraints(&sProperties),
             sFont(&sProperties),
@@ -56,7 +56,7 @@ namespace lsp
 
         void LedMeter::destroy()
         {
-            Widget::destroy();
+            WidgetContainer::destroy();
             do_destroy();
         }
 
@@ -79,7 +79,7 @@ namespace lsp
 
         status_t LedMeter::init()
         {
-            status_t res = Widget::init();
+            status_t res = WidgetContainer::init();
             if (res != STATUS_OK)
                 return res;
 
@@ -117,7 +117,7 @@ namespace lsp
 
         void LedMeter::property_changed(Property *prop)
         {
-            Widget::property_changed(prop);
+            WidgetContainer::property_changed(prop);
 
             if (vItems.is(prop))
                 query_draw();
@@ -255,7 +255,7 @@ namespace lsp
         void LedMeter::realize(const ws::rectangle_t *r)
         {
             // Realize the parent class
-            Widget::realize(r);
+            WidgetContainer::realize(r);
 
             // Get list of visible items
             lltl::parray<LedMeterChannel> list;
@@ -551,7 +551,7 @@ namespace lsp
 
         void LedMeter::query_draw(size_t flags)
         {
-            Widget::query_draw(flags | REDRAW_SURFACE);
+            WidgetContainer::query_draw(flags | REDRAW_SURFACE);
         }
 
         status_t LedMeter::add(Widget *widget)

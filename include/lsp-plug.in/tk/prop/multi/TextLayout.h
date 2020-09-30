@@ -124,6 +124,8 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, float halign, float valign);
+
+                    inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
         }
 

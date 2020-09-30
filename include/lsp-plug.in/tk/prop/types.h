@@ -30,8 +30,12 @@
 #define LSP_TK_PROP_LANGUAGE        "language"
 
 #define LSP_TK_PROPERTY(type, name, expr)    \
-    inline type         *name()         { return expr; } \
-    inline const type   *name() const   { return expr; }
+    inline type         *name()         { return (expr); } \
+    inline const type   *name() const   { return (expr); }
+
+#define LSP_TK_IPROPERTY(type, name, expr, count)    \
+    inline type         *name(size_t index)         { return (index < count) ? (expr) : NULL; } \
+    inline const type   *name(size_t index) const   { return (index < count) ? (expr) : NULL; }
 
 namespace lsp
 {
