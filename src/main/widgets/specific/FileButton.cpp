@@ -436,9 +436,11 @@ namespace lsp
         {
             if (nXFlags & FB_LBUTTON)
             {
+                bool pressed= (nBMask & ws::MCF_LEFT) && (Position::inside(&sButton, e->nLeft, e->nTop));
+
                 size_t old  = nXFlags;
-                bool pressed= (nXFlags & ws::MCF_LEFT) && (Position::inside(&sButton, e->nLeft, e->nTop));
                 nXFlags     = lsp_setflag(nXFlags, FB_DOWN, pressed);
+
                 if (old != nXFlags)
                     query_draw();
             }

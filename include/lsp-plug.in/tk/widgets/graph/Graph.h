@@ -76,8 +76,10 @@ namespace lsp
                 virtual void                size_request(ws::size_limit_t *r);
                 virtual void                property_changed(Property *prop);
                 virtual void                realize(const ws::rectangle_t *r);
+                virtual void                hide_widget();
 
                 void                        sync_lists();
+                void                        drop_glass();
 
             public:
                 explicit Graph(Display *dpy);

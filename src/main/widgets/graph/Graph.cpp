@@ -80,17 +80,22 @@ namespace lsp
             }
 
             // Destroy glass
+            drop_glass();
+
+            vItems.flush();
+            vAxis.flush();
+            vBasis.flush();
+            vOrigins.flush();
+        }
+
+        void Graph::drop_glass()
+        {
             if (pGlass != NULL)
             {
                 pGlass->destroy();
                 delete pGlass;
                 pGlass = NULL;
             }
-
-            vItems.flush();
-            vAxis.flush();
-            vBasis.flush();
-            vOrigins.flush();
         }
 
         status_t Graph::init()
@@ -205,6 +210,12 @@ namespace lsp
             sIPadding.enter(&sICanvas, scaling);
         }
 
+        void Graph::hide_widget()
+        {
+            WidgetContainer::hide_widget();
+            drop_glass();
+        }
+
         void Graph::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             if (nFlags & REDRAW_SURFACE)
@@ -250,11 +261,10 @@ namespace lsp
                     if (cv != NULL)
                         s->draw(cv, sSize.nLeft, sSize.nTop);
                 }
-                else if (pGlass != NULL)
+                else
                 {
-                    pGlass->destroy();
-                    delete pGlass;
-                    pGlass      = NULL;
+                    drop_glass();
+                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize);
                 }
 
                 s->set_antialiasing(aa);

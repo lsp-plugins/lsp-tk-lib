@@ -20,6 +20,8 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -61,10 +63,15 @@ namespace lsp
                 sLabelVisibility[i].listener(&sProperties);
             }
 
+            nBMask              = 0;
+            nXFlags             = 0;
+
             sGraph.nLeft        = 0;
             sGraph.nTop         = 0;
             sGraph.nWidth       = 0;
             sGraph.nHeight      = 0;
+
+            pGlass              = NULL;
 
             pClass              = &metadata;
         }
@@ -80,6 +87,16 @@ namespace lsp
             do_destroy();
         }
 
+        void AudioSample::drop_glass()
+        {
+            if (pGlass != NULL)
+            {
+                pGlass->destroy();
+                delete pGlass;
+                pGlass      = NULL;
+            }
+        }
+
         void AudioSample::do_destroy()
         {
             // Unlink all items
@@ -91,6 +108,9 @@ namespace lsp
 
                 unlink_widget(item);
             }
+
+            // Drop glass
+            drop_glass();
 
             // Flush containers
             vChannels.flush();
@@ -242,7 +262,191 @@ namespace lsp
 
         void AudioSample::size_request(ws::size_limit_t *r)
         {
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            bool sgroups        = sSGroups.get();
+
+            lltl::parray<AudioChannel> channels;
+            get_visible_items(&channels);
+
+            // Estimate the size of area for drawing samples
+            ws::size_limit_t sl;
+            r->nMinWidth        = 0;
+            r->nMinHeight       = 0;
+            r->nMaxWidth        = -1;
+            r->nMaxHeight       = -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
+
+            for (size_t i=0, n=channels.size(); i<n; ++i)
+            {
+                AudioChannel *c     = channels.uget(i);
+                c->constraints()->compute(&sl, scaling);
+                ssize_t h           = lsp_max(0, sl.nMinHeight);
+                r->nMinWidth        = lsp_max(r->nMinWidth, sl.nMinWidth);
+                r->nMinHeight      += (sgroups) ? (h >> 1) : h;
+            }
+
+            // Add padding to the rectangle
+            sIPadding.add(r, scaling);
+
+            // Compute additional space around the sample area
+            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+            float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
+            float ir        = lsp_max(0.0f, xr - bw);                       // internal radius
+            float bp        = (1.0f - M_SQRT1_2) * ir;                      // padding to not to cross internal radius
+            ssize_t padding = ceilf(bp + bw);
+            ssize_t wh      = lsp_max(padding * 2, xr * 2);                 // minimum possible width and height
+
+            r->nMinWidth    = lsp_max(r->nMinWidth  + padding * 2, wh);
+            r->nMinHeight   = lsp_max(r->nMinHeight + padding * 2, wh);
+
+            // Apply size constraints
+            sConstraints.apply(r, scaling);
+        }
+
+        void AudioSample::realize(const ws::rectangle_t *r)
+        {
+            // Call parent class to realize
+            WidgetContainer::realize(r);
+            lltl::parray<AudioChannel> channels;
+            get_visible_items(&channels);
+
+            // Compute the size of area
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float xr        = lsp_max(0.0f, ceilf(sBorderRadius.get() * scaling));  // external radius
+            float bw        = lsp_max(0.0f, ceilf(sBorder.get() * scaling));        // border size
+            float ir        = lsp_max(0.0f, xr - bw);                               // internal radius
+            ssize_t padding = ceilf((1.0f - M_SQRT1_2) * ir + bw);                  // padding of internal area
+
+            sGraph.nLeft    = r->nLeft   + padding;
+            sGraph.nTop     = r->nTop    + padding;
+            sGraph.nWidth   = r->nWidth  - padding*2;
+            sGraph.nHeight  = r->nHeight - padding*2;
+
+            sIPadding.enter(&sGraph, scaling);
+        }
+
+        void AudioSample::draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright)
+        {
             // TODO
+        }
+
+        void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright)
+        {
+            // TODO
+        }
+
+        void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright)
+        {
+            // TODO
+        }
+
+        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright)
+        {
+            // TODO
+        }
+
+        void AudioSample::draw(ws::ISurface *s)
+        {
+//            float scaling       = lsp_max(0.0f, sScaling.get());
+//            bool sgroups        = sSGroups.get();
+
+            lsp::Color red(1.0f, 0.0f, 0.0f);
+            s->clear(&red);
+        }
+
+        void AudioSample::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
+        {
+            if (nFlags & REDRAW_SURFACE)
+                force = true;
+
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+            float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
+            float bright    = sBrightness.get();
+            bool pressed    = nXFlags & XF_DOWN;
+
+            // Prepare palette
+            ws::ISurface *cv;
+            lsp::Color color(sColor);
+            lsp::Color bg_color(sBgColor);
+            color.scale_lightness(bright);
+
+            s->clip_begin(area);
+            {
+                // Draw widget background
+                s->fill_rect(bg_color, &sSize);
+
+                bool aa = s->set_antialiasing(true);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
+
+                // Get surface of widget
+                cv  = get_surface(s, sGraph.nWidth, sGraph.nHeight);
+                if (cv != NULL)
+                {
+                    // Draw the surface
+                    if (pressed)
+                    {
+                        ssize_t xbw         = lsp_max(1.0f, scaling);
+                        ws::rectangle_t xr  = sGraph;
+                        xr.nLeft           += xbw;
+                        xr.nTop            += xbw;
+                        xr.nWidth           = lsp_max(0, xr.nWidth  - xbw * 2);
+                        xr.nHeight          = lsp_max(0, xr.nHeight - xbw * 2);
+
+                        s->draw(cv, &xr);
+                    }
+                    else
+                        s->draw(cv, sGraph.nLeft, sGraph.nTop);
+                }
+
+                // Draw the glass and the border
+                color.copy(sGlassColor);
+                bg_color.copy(sColor);
+                color.scale_lightness(bright);
+                bg_color.scale_lightness(bright);
+
+                // Update border width if widget is in pressed state
+                if (pressed)
+                    bw         += lsp_max(1.0f, scaling);
+
+                if (sGlass.get())
+                {
+                    cv = create_border_glass(&pGlass, s,
+                            color, bg_color,
+                            SURFMASK_ALL_CORNER, bw, xr,
+                            sSize.nWidth, sSize.nHeight
+                        );
+                    if (cv != NULL)
+                        s->draw(cv, sSize.nLeft, sSize.nTop);
+                }
+                else
+                {
+                    drop_glass();
+                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize);
+                }
+
+                s->set_antialiasing(aa);
+            }
+            s->clip_end();
+        }
+
+        void AudioSample::hide_widget()
+        {
+            WidgetContainer::hide_widget();
+            drop_glass();
+        }
+
+        void AudioSample::get_visible_items(lltl::parray<AudioChannel> *dst)
+        {
+            for (size_t i=0, n=vChannels.size(); i<n; ++i)
+            {
+                AudioChannel *c = vChannels.get(i);
+                if ((c == NULL) || (!c->visibility()->get()))
+                    continue;
+                if (!dst->add(c))
+                    return;
+            }
         }
 
         void AudioSample::on_add_item(void *obj, Property *prop, Widget *w)
@@ -292,29 +496,100 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void AudioSample::draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright)
+        status_t AudioSample::on_mouse_down(const ws::event_t *e)
         {
-            // TODO
+            // Handle mouse event
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+
+            if (nBMask == 0)
+            {
+                nBMask |= 1 << e->nCode;
+                if (Position::rinside(&sSize, e->nLeft, e->nTop, xr))
+                {
+                    if (e->nCode == ws::MCB_LEFT)
+                        nXFlags    |= XF_LBUTTON;
+                    else if (e->nCode == ws::MCB_RIGHT)
+                        nXFlags    |= XF_RBUTTON;
+                }
+            }
+
+            return handle_mouse_move(e);
         }
 
-        void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright)
+        status_t AudioSample::on_mouse_up(const ws::event_t *e)
         {
-            // TODO
+            size_t mask = nBMask;
+            nBMask &= ~(1 << e->nCode);
+
+            if (mask == (1U << e->nCode))
+            {
+                size_t flags    = nXFlags;
+                nXFlags         = 0;
+
+                float scaling   = lsp_max(0.0f, sScaling.get());
+                float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+
+                if (Position::rinside(&sSize, e->nLeft, e->nTop, xr))
+                {
+                    if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
+                    {
+                        if (sActive.get())
+                            sSlots.execute(SLOT_SUBMIT, this, NULL);
+                    }
+                    else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
+                    {
+                        Menu *popup = sPopup.get();
+                        if (popup != NULL)
+                        {
+                            ws::rectangle_t sr;
+                            Window *wnd = widget_cast<Window>(this->toplevel());
+                            wnd->get_screen_rectangle(&sr);
+                            sr.nLeft       += e->nLeft;
+                            sr.nTop        += e->nTop;
+                            popup->show(this, sr.nLeft, sr.nTop);
+                        }
+                    }
+                }
+
+                if (flags != nXFlags)
+                {
+                    drop_glass();
+                    query_draw();
+                }
+            }
+
+            return STATUS_OK;
         }
 
-        void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright)
+        status_t AudioSample::on_mouse_move(const ws::event_t *e)
         {
-            // TODO
+            // Widget is not active?
+            if (nXFlags == 0)
+                return STATUS_OK;
+
+            return handle_mouse_move(e);
         }
 
-        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright)
+        status_t AudioSample::handle_mouse_move(const ws::event_t *e)
         {
-            // TODO
-        }
+            if (nXFlags & XF_LBUTTON)
+            {
+                float scaling   = lsp_max(0.0f, sScaling.get());
+                float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+                bool pressed    = (sActive.get()) && (nBMask & ws::MCF_LEFT) && (Position::rinside(&sSize, e->nLeft, e->nTop, xr));
 
-        void AudioSample::draw(ws::ISurface *s)
-        {
-            // TODO
+                size_t old      = nXFlags;
+                nXFlags         = lsp_setflag(nXFlags, XF_DOWN, pressed);
+
+                if (old != nXFlags)
+                {
+                    drop_glass();
+                    query_draw();
+                }
+            }
+
+            return STATUS_OK;
         }
     }
 }

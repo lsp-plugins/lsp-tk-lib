@@ -41,6 +41,14 @@ namespace lsp
                 AudioSample & operator = (const AudioSample &);
 
             protected:
+                enum flags_t
+                {
+                    XF_LBUTTON      = 1 << 0,
+                    XF_RBUTTON      = 1 << 1,
+                    XF_DOWN         = 1 << 2
+                };
+
+            protected:
                 prop::WidgetList<AudioChannel>  vChannels;          // List of audio channels
                 lltl::parray<AudioChannel>      vVisible;           // List of visible audio channels
                 prop::CollectionListener        sIListener;         // Listener to trigger vItems content change
@@ -74,12 +82,18 @@ namespace lsp
                 prop::Color             sBorderColor;               // Color of the border
                 prop::Color             sGlassColor;                // Color of the glass
                 prop::Padding           sIPadding;                  // Internal padding
+                prop::WidgetPtr<Menu>   sPopup;                     // Popup Menu
 
+                size_t                  nBMask;                     // Mouse button state
+                size_t                  nXFlags;                    // Button flags
                 ws::rectangle_t         sGraph;                     // Area for sample rendering
+                ws::ISurface           *pGlass;                     // Surface to draw glass
 
             public:
                 virtual void            size_request(ws::size_limit_t *r);
+                virtual void            realize(const ws::rectangle_t *r);
                 virtual void            property_changed(Property *prop);
+                virtual void            hide_widget();
 
                 void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright);
                 void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright);
@@ -91,6 +105,10 @@ namespace lsp
                 static void             on_remove_item(void *obj, Property *prop, Widget *w);
 
                 void                    do_destroy();
+
+                void                    get_visible_items(lltl::parray<AudioChannel> *dst);
+                status_t                handle_mouse_move(const ws::event_t *ev);
+                void                    drop_glass();
 
             public:
                 explicit AudioSample(Display *dpy);
@@ -132,14 +150,24 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                  glass_color,            &sGlassColor);
                 LSP_TK_PROPERTY(Padding,                internal_padding,       &sIPadding);
 
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,        popup,                  &sPopup);
+
             public:
                 virtual void                draw(ws::ISurface *s);
+
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
 
                 virtual status_t            add(Widget *widget);
 
                 virtual status_t            remove(Widget *child);
 
                 virtual status_t            remove_all();
+
+                virtual status_t            on_mouse_down(const ws::event_t *e);
+
+                virtual status_t            on_mouse_up(const ws::event_t *e);
+
+                virtual status_t            on_mouse_move(const ws::event_t *e);
         };
     }
 }
