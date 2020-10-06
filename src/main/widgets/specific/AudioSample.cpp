@@ -42,7 +42,7 @@ namespace lsp
             sActive(&sProperties),
             sSGroups(&sProperties),
             sMainText(&sProperties),
-            sMainLayout(&sProperties),
+            sMainTextLayout(&sProperties),
             sMainFont(&sProperties),
             sMainColor(&sProperties),
             sMainVisibility(&sProperties),
@@ -63,6 +63,7 @@ namespace lsp
                 sLabel[i].listener(&sProperties);
                 sLabelColor[i].listener(&sProperties);
                 sLabelLayout[i].listener(&sProperties);
+                sLabelTextLayout[i].listener(&sProperties);
                 sLabelVisibility[i].listener(&sProperties);
             }
 
@@ -139,7 +140,7 @@ namespace lsp
             sActive.bind("active", &sStyle);
             sSGroups.bind("stereo_groups", &sStyle);
             sMainText.bind(&sStyle, pDisplay->dictionary());
-            sMainLayout.bind("main.layout", &sStyle);
+            sMainTextLayout.bind("main.text.layout", &sStyle);
             sMainFont.bind("main.font", &sStyle);
             sMainColor.bind("main.color", &sStyle);
             sMainVisibility.bind("main.visibility", &sStyle);
@@ -163,6 +164,8 @@ namespace lsp
                 sLabelColor[i].bind(&id, &sStyle);
                 id.fmt_ascii("label.%d.layout", int(i));
                 sLabelLayout[i].bind(&id, &sStyle);
+                id.fmt_ascii("label.%d.text.layout", int(i));
+                sLabelTextLayout[i].bind(&id, &sStyle);
                 id.fmt_ascii("label.%d.visibility", int(i));
                 sLabelVisibility[i].bind(&id, &sStyle);
             }
@@ -179,7 +182,7 @@ namespace lsp
                 sActive.init(sclass, false);
                 sSGroups.init(sclass, false);
 
-                sMainLayout.init(sclass, 0.0f, 0.0f);
+                sMainTextLayout.init(sclass, 0.0f, 0.0f);
                 sMainFont.init(sclass, 16.0f, ws::FF_BOLD);
                 sMainColor.init(sclass, "#00ff00");
                 sMainVisibility.init(sclass, false);
@@ -198,7 +201,8 @@ namespace lsp
                 for (size_t i=0; i<LABELS; ++i)
                 {
                     sLabelColor[i].init(sclass, "#ffffff");
-                    sLabelLayout[i].init(sclass, 0.0f, 0.0f);
+                    sLabelLayout[i].init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
+                    sLabelTextLayout[i].init(sclass, 0.0f, 0.0f);
                     sLabelVisibility[i].init(sclass, false);
                 }
             }
@@ -229,7 +233,7 @@ namespace lsp
 
             if ((sMainText.is(prop)) && (sMainVisibility.get()))
                 query_draw();
-            if ((sMainLayout.is(prop)) && (sMainVisibility.get()))
+            if ((sMainTextLayout.is(prop)) && (sMainVisibility.get()))
                 query_draw();
             if ((sMainFont.is(prop)) && (sMainVisibility.get()))
                 query_draw();
@@ -262,6 +266,8 @@ namespace lsp
                 if (sLabelColor[i].is(prop))
                     query_draw();
                 if (sLabelLayout[i].is(prop))
+                    query_draw();
+                if (sLabelTextLayout[i].is(prop))
                     query_draw();
                 if (sLabelVisibility[i].is(prop))
                     query_draw();
@@ -624,7 +630,7 @@ namespace lsp
 
             draw_multiline_text(
                 s, &sMainFont, &xr, color, &fp, &tp,
-                sMainLayout.halign(), sMainLayout.valign(), scaling,
+                sMainTextLayout.halign(), sMainTextLayout.valign(), scaling,
                 &text
             );
         }

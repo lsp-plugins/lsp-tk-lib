@@ -63,13 +63,14 @@ namespace lsp
                 prop::Boolean           sSGroups;                   // Stereo groups enable
 
                 prop::String            sMainText;                  // Main text
-                prop::TextLayout        sMainLayout;                // Layout of main text
+                prop::TextLayout        sMainTextLayout;            // Layout of main text
                 prop::Font              sMainFont;                  // Main font
                 prop::Color             sMainColor;                 // Main font color
                 prop::Boolean           sMainVisibility;            // Show main text
                 prop::String            sLabel[LABELS];             // Label
                 prop::Color             sLabelColor[LABELS];        // Label text color
-                prop::TextLayout        sLabelLayout[LABELS];       // Layout of each label
+                prop::Layout            sLabelLayout[LABELS];       // Layout of each label
+                prop::TextLayout        sLabelTextLayout[LABELS];   // Text layout of each label
                 prop::Font              sLabelFont;                 // Font of label
                 prop::Color             sLabelBgColor;              // Background color of label
                 prop::Integer           sLabelRadius;               // Label radius
@@ -131,13 +132,14 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                stereo_groups,          &sSGroups)
 
                 LSP_TK_PROPERTY(String,                 main_text,              &sMainText)
-                LSP_TK_PROPERTY(TextLayout,             main_layout,            &sMainLayout)
+                LSP_TK_PROPERTY(TextLayout,             main_text_layout,       &sMainTextLayout)
                 LSP_TK_PROPERTY(Font,                   main_font,              &sMainFont)
                 LSP_TK_PROPERTY(Color,                  main_color,             &sMainColor)
                 LSP_TK_PROPERTY(Boolean,                main_visibility,        &sMainVisibility)
                 LSP_TK_IPROPERTY(String,                label,                  &sLabel[index], LABELS)
                 LSP_TK_IPROPERTY(Color,                 label_color,            &sLabelColor[index], LABELS)
-                LSP_TK_IPROPERTY(TextLayout,            label_layout,           &sLabelLayout[index], LABELS)
+                LSP_TK_IPROPERTY(Layout,                label_layout,           &sLabelLayout[index], LABELS)
+                LSP_TK_IPROPERTY(TextLayout,            label_text_layout,      &sLabelTextLayout[index], LABELS)
                 LSP_TK_PROPERTY(Font,                   label_font,             &sLabelFont)
                 LSP_TK_PROPERTY(Color,                  label_bg_color,         &sLabelBgColor)
                 LSP_TK_PROPERTY(Integer,                label_radius,           &sLabelRadius)
