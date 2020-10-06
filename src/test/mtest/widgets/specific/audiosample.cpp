@@ -186,6 +186,9 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
         LSPString id;
         tk::AudioChannel *ac = NULL;
 
+        static const float layout_x[] = { -1.0f, 1.0f, 0.0f, -1.0f, 1.0f };
+        static const float layout_y[] = { -1.0f, -1.0f, 0.0f, 1.0f, 1.0f };
+
         float hue = 1.0f / count;
         for (size_t i=0; i<count; ++i)
         {
@@ -203,6 +206,15 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
 
             ac->fade_in()->set(ac->samples()->size() * 0.5f * (i + 1) * hue);
             ac->fade_out()->set(ac->samples()->size() * 0.5f * (i + 1) * hue);
+        }
+
+        for (size_t i=0; i<5; ++i)
+        {
+            MTEST_ASSERT(id.fmt_ascii("label%d", int(i)));
+
+            as->label_visibility(i)->set(true);
+            as->label_layout(i)->set_align(layout_x[i], layout_y[i]);
+            as->label(i)->set(&id);
         }
     }
 

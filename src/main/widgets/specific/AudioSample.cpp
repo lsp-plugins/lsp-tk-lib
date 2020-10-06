@@ -23,6 +23,7 @@
 #include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/common/alloc.h>
+#include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
 {
@@ -187,8 +188,8 @@ namespace lsp
                 sMainColor.init(sclass, "#00ff00");
                 sMainVisibility.init(sclass, false);
                 sLabelFont.init(sclass, 10.0f);
-                sLabelBgColor.init(sclass, "#88000000");
-                sLabelRadius.init(sclass, 2);
+                sLabelBgColor.init(sclass, "#44000000");
+                sLabelRadius.init(sclass, 4);
 
                 sBorder.init(sclass, 4);
                 sBorderRadius.init(sclass, 12);
@@ -624,7 +625,7 @@ namespace lsp
             sMainFont.get_parameters(s, scaling, &fp);
             sMainFont.get_multitext_parameters(s, &tp, scaling, &text);
 
-            // Draw main font
+            // Draw main text
             lsp::Color color(sMainColor);
             color.scale_lightness(bright);
 
@@ -633,6 +634,65 @@ namespace lsp
                 sMainTextLayout.halign(), sMainTextLayout.valign(), scaling,
                 &text
             );
+        }
+
+        void AudioSample::draw_label(ws::ISurface *s, size_t idx)
+        {
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+            ws::rectangle_t       xr, gr;
+            ws::size_limit_t      sr;
+            LSPString text;
+
+            // Get label text parameters
+            sLabel[idx].format(&text);
+            sLabelFont.get_parameters(s, scaling, &fp);
+            sLabelFont.get_multitext_parameters(s, &tp, scaling, &text);
+
+            ssize_t rad         = (sLabelRadius.get() > 0) ? lsp_max(1.0f, sLabelRadius.get() * scaling) : 0.0f;
+            size_t padding      = ceilf(rad * M_SQRT1_2);
+
+            // Allocate space for the label
+            sr.nMinWidth        = tp.Width  + padding * 2;
+            sr.nMinHeight       = tp.Height + padding * 2;
+            sr.nMaxWidth        = sGraph.nWidth;
+            sr.nMaxHeight       = sGraph.nHeight;
+            sr.nPreWidth        = -1;
+            sr.nPreHeight       = -1;
+
+            gr.nLeft            = 0;
+            gr.nTop             = 0;
+            gr.nWidth           = sGraph.nWidth;
+            gr.nHeight          = sGraph.nHeight;
+
+            sLabelLayout[idx].apply(&xr, &gr, &sr);
+
+            bool aa             = s->set_antialiasing(true);
+
+            // Draw label background
+            lsp::Color color(sLabelBgColor);
+            color.scale_lightness(bright);
+            s->fill_round_rect(color, SURFMASK_ALL_CORNER, rad, &xr);
+
+            // Draw label text
+            xr.nLeft           += padding;
+            xr.nTop            += padding;
+            xr.nWidth          -= padding * 2;
+            xr.nHeight         -= padding * 2;
+
+            color.copy(sLabelColor[idx]);
+            color.scale_lightness(bright);
+
+            draw_multiline_text(
+                s, &sLabelFont, &xr, color, &fp, &tp,
+                sLabelTextLayout[idx].halign(), sLabelTextLayout[idx].valign(), scaling,
+                &text
+            );
+
+            s->set_antialiasing(aa);
         }
 
         void AudioSample::draw(ws::ISurface *s)
@@ -742,7 +802,13 @@ namespace lsp
                 }
             }
 
-            // TODO: draw labels
+            // Draw labels
+            for (size_t i=0; i<LABELS; ++i)
+            {
+                if (!sLabelVisibility[i].get())
+                    continue;
+                draw_label(s, i);
+            }
         }
 
         void AudioSample::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

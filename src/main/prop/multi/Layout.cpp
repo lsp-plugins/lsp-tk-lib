@@ -261,7 +261,7 @@ namespace lsp
                 h              = lsp_min(h, req->nMaxHeight);
 
             // Estimate the amount of free space and update position (if possible)
-            xgap            = lsp_max(0, src->nWidth - w);
+            xgap            = lsp_max(0, src->nWidth  - w);
             ygap            = lsp_max(0, src->nHeight - h);
 
             // Scale position (if possible) and store results
