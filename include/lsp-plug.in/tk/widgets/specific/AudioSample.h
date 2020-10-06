@@ -98,8 +98,8 @@ namespace lsp
                 void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
 
-                void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples);
-                void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples);
+                void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down);
+                void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, size_t samples, bool down);
 
                 static void             on_add_item(void *obj, Property *prop, Widget *w);
                 static void             on_remove_item(void *obj, Property *prop, Widget *w);

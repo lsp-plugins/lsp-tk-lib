@@ -285,13 +285,25 @@ namespace lsp
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
 
-            for (size_t i=0, n=channels.size(); i<n; ++i)
+            if (sMainVisibility.get())
             {
-                AudioChannel *c     = channels.uget(i);
-                c->constraints()->compute(&sl, scaling);
-                ssize_t h           = lsp_max(0, sl.nMinHeight);
-                r->nMinWidth        = lsp_max(r->nMinWidth, sl.nMinWidth);
-                r->nMinHeight      += (sgroups) ? (h >> 1) : h;
+                ws::text_parameters_t tp;
+                LSPString text;
+                sMainText.format(&text);
+                sMainFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+                r->nMinWidth            = tp.Width;
+                r->nMinHeight           = tp.Height;
+            }
+            else
+            {
+                for (size_t i=0, n=channels.size(); i<n; ++i)
+                {
+                    AudioChannel *c     = channels.uget(i);
+                    c->constraints()->compute(&sl, scaling);
+                    ssize_t h           = lsp_max(0, sl.nMinHeight);
+                    r->nMinWidth        = lsp_max(r->nMinWidth, sl.nMinWidth);
+                    r->nMinHeight      += (sgroups) ? (h >> 1) : h;
+                }
             }
 
             // Add padding to the rectangle
@@ -464,14 +476,125 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
-        void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples)
+        void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down)
         {
-            // TODO
+            // Check limits
+            if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
+                return;
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+
+            // Init decimation buffer
+            ssize_t n_draw      = lsp_min(ssize_t(samples), r->nWidth);
+            size_t n_points     = n_draw + 2;
+            size_t n_decim      = lsp::align_size(n_points, 16); // 2 additional points at start and end
+
+            // Try to allocate memory
+            uint8_t *data       = NULL;
+            float *x            = lsp::alloc_aligned<float>(data, n_decim * 2);
+            float *y            = &x[n_decim];
+            if (x == NULL)
+                return;
+
+            bool aa             = s->set_antialiasing(true);
+
+            // Form the x and y values for sample 1
+            FloatArray *vsamp   = &c->vSamples;
+            float border        = (sWaveBorder.get() > 0) ? lsp_max(1.0f, sWaveBorder.get() * scaling) : 0.0f;
+            float dx            = lsp_max(1.0f, float(r->nWidth) / float(samples));
+            float kx            = lsp_max(1.0f, float(samples) / float(r->nWidth));
+            float ky            = ((down) ? 1.0f : -1.0f) * (r->nHeight - border);
+            float sy            = (down) ? r->nTop : r->nTop + r->nHeight;
+
+            x[0]                = -1.0f;
+            y[0]                = sy;
+            x[n_points-1]       = r->nWidth;
+            y[n_points-1]       = sy;
+
+            for (ssize_t i=1; i <= n_draw; ++i)
+            {
+                ssize_t xx          = i - 1;
+                x[i]                = xx * dx;
+                y[i]                = sy + ky * fabs(vsamp->get(ssize_t(xx * kx)));
+            }
+
+            // Draw the poly
+            lsp::Color fill(c->sColor);
+            lsp::Color wire(c->sWaveBorderColor);
+            fill.scale_lightness(bright);
+            wire.scale_lightness(bright);
+            s->draw_poly(fill, wire, border, x, y, n_points);
+
+            // Free allocated data
+            s->set_antialiasing(aa);
+            lsp::free_aligned(data);
         }
 
-        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples)
+        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down)
         {
-            // TODO
+            // Check limits
+            if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
+                return;
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+
+            float x[4], y[4];
+
+            bool aa             = s->set_antialiasing(true);
+
+            // Draw fade in
+            if (c->sFadeIn.get() > 0)
+            {
+                float border        = (sFadeInBorder.get() > 0) ? lsp_max(1.0f, sFadeInBorder.get() * scaling) : 0.0f;
+                float xx            = float(c->sFadeIn.get() * r->nWidth) / float(samples);
+
+                // Form the arrays
+                x[0]                = r->nLeft;
+                x[1]                = xx;
+                x[2]                = x[0];
+                x[3]                = x[0];
+
+                y[0]                = (down) ? r->nTop : r->nTop + r->nHeight;
+                y[1]                = (down) ? r->nTop + r->nHeight : r->nTop;
+                y[2]                = y[1];
+                y[3]                = y[0];
+
+                lsp::Color fill(c->sFadeInColor);
+                lsp::Color wire(c->sFadeInBorderColor);
+                fill.scale_lightness(bright);
+                wire.scale_lightness(bright);
+
+                s->draw_poly(fill, wire, border, x, y, 4);
+            }
+
+            // Draw fade out
+            if (c->sFadeOut.get() > 0)
+            {
+                float border        = (sFadeOutBorder.get() > 0) ? lsp_max(1.0f, sFadeOutBorder.get() * scaling) : 0.0f;
+                float xx            = r->nLeft + r->nWidth - float(c->sFadeOut.get() * r->nWidth) / float(samples);
+
+                // Form the arrays
+                x[0]                = r->nLeft + r->nWidth;
+                x[1]                = xx;
+                x[2]                = x[0];
+                x[3]                = x[0];
+
+                y[0]                = (down) ? r->nTop : r->nTop + r->nHeight;
+                y[1]                = (down) ? r->nTop + r->nHeight : r->nTop;
+                y[2]                = y[1];
+                y[3]                = y[0];
+
+                lsp::Color fill(c->sFadeOutColor);
+                lsp::Color wire(c->sFadeOutBorderColor);
+                fill.scale_lightness(bright);
+                wire.scale_lightness(bright);
+
+                s->draw_poly(fill, wire, border, x, y, 4);
+            }
+
+            s->set_antialiasing(aa);
         }
 
         void AudioSample::draw_main_text(ws::ISurface *s)
@@ -541,17 +664,45 @@ namespace lsp
                     samples         = lsp_max(samples, c->samples()->size());
                 }
 
+                xr.nHeight          = sGraph.nHeight / items;
+                ssize_t place       = xr.nHeight * items;
+                ssize_t y           = (sGraph.nHeight - place) >> 1;
+
                 // Draw depending of the view type
                 if (sSGroups.get())
                 {
-                    // Draw stereo groups
+                    // Draw stereo samples
+                    xr.nTop             = y;
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        AudioChannel *c     = vVisible.uget(i);
+                        draw_channel2(&xr, s, c, samples, i & 1);
+                        xr.nTop            += xr.nHeight;
+                    }
+
+                    // Draw fades
+                    xr.nTop             = y;
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        AudioChannel *c     = vVisible.uget(i);
+                        draw_fades2(&xr, s, c, samples, i & 1);
+                        xr.nTop            += xr.nHeight;
+                    }
+
+                    // Draw lines
+                    color.copy(sLineColor);
+                    xr.nTop             = y + xr.nHeight;
+                    color.scale_lightness(bright);
+                    bool aa             = s->set_antialiasing(false);
+                    for (size_t i=0; i<items; i += 2)
+                    {
+                        s->line(xr.nLeft, xr.nTop, xr.nLeft + xr.nWidth, xr.nTop, line_w, color);
+                        xr.nTop            += xr.nHeight * 2;
+                    }
+                    s->set_antialiasing(aa);
                 }
                 else
                 {
-                    xr.nHeight          = sGraph.nHeight / items;
-                    ssize_t place       = xr.nHeight * items;
-                    ssize_t y           = (sGraph.nHeight - place) >> 1;
-
                     // Draw monophonic samples
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)

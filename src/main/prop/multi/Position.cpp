@@ -168,6 +168,9 @@ namespace lsp
             if (!inside(r, x, y))
                 return false;
 
+            x -= r->nLeft;
+            y -= r->nTop;
+
             // Check special case: corners
             if (x < radius)
             {

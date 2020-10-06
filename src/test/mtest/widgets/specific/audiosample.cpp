@@ -279,7 +279,22 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
             add_samples(as, widgets, vh, vid, 7);
             as->active()->set(false);
             as->stereo_groups()->set(true);
+            as->main_visibility()->set(false);
             as->main_text()->set_raw("Click or drag to load");
+
+            // Create audio sample with grouping items
+            MTEST_ASSERT(id.fmt_ascii("audiosample-%d", int(vid++)));
+            MTEST_ASSERT(as = new tk::AudioSample(dpy));
+            MTEST_ASSERT(init_widget(as, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(as));
+            MTEST_ASSERT(grid->add(as) == STATUS_OK);
+
+            add_samples(as, widgets, vh, vid, 7);
+            as->stereo_groups()->set(true);
+            as->active()->set(true);
+            as->main_visibility()->set(true);
+            as->main_text()->set_raw("Click or drag to load");
+            as->constraints()->set_min_height(96);
         }
 
         // Show window
