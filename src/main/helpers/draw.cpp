@@ -215,6 +215,54 @@ namespace lsp
             draw_border_back(s, c, mask, thick, radius,
                     size->nLeft, size->nTop, size->nWidth, size->nHeight);
         }
+
+        void draw_multiline_text(
+            ws::ISurface *s,
+            Font *font,
+            const ws::rectangle_t *r,
+            const lsp::Color &color,
+            const ws::font_parameters_t *fp,
+            const ws::text_parameters_t *tp,
+            float halign, float valign, float scaling,
+            const LSPString *text
+        )
+        {
+            ws::text_parameters_t xtp;
+            halign         += 1.0f;
+            valign         += 1.0f;
+
+            float dy        = (r->nHeight - tp->Height) * 0.5f;
+            ssize_t y       = r->nTop + dy * valign - fp->Descent;
+
+            // Estimate text size
+            ssize_t last = 0, curr = 0, tail = 0, len = text->length();
+
+            while (curr < len)
+            {
+                // Get next line indexes
+                curr    = text->index_of(last, '\n');
+                if (curr < 0)
+                {
+                    curr        = len;
+                    tail        = len;
+                }
+                else
+                {
+                    tail        = curr;
+                    if ((tail > last) && (text->at(tail-1) == '\r'))
+                        --tail;
+                }
+
+                // Calculate text location
+                font->get_text_parameters(s, &xtp, scaling, text, last, tail);
+                float dx    = (r->nWidth - xtp.Width) * 0.5f;
+                ssize_t x   = r->nLeft   + dx * halign - xtp.XBearing;
+                y          += fp->Height;
+
+                font->draw(s, color, x, y, scaling, text, last, tail);
+                last    = curr + 1;
+            }
+        }
     }
 }
 

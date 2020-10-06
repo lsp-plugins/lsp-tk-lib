@@ -99,6 +99,31 @@ namespace lsp
             ssize_t thick, size_t radius,
             const ws::rectangle_t *size
         );
+
+        /**
+         * Draw multiline text
+         *
+         * @param s destination surface to perform draw
+         * @param font font to use
+         * @param r rectangle to fit the font
+         * @param color color of the rectangle
+         * @param fp font parameters
+         * @param tp text parameters
+         * @param halign horizontal font alignment
+         * @param valign vertical font alignment
+         * @param scaling font scaling
+         * @param text text to output
+         */
+        void draw_multiline_text(
+            ws::ISurface *s,
+            Font *font,
+            const ws::rectangle_t *r,
+            const lsp::Color &color,
+            const ws::font_parameters_t *fp,
+            const ws::text_parameters_t *tp,
+            float halign, float valign, float scaling,
+            const LSPString *text
+        );
     }
 }
 

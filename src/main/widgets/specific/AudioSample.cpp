@@ -137,6 +137,7 @@ namespace lsp
             sMainText.bind(&sStyle, pDisplay->dictionary());
             sMainLayout.bind("main.layout", &sStyle);
             sMainFont.bind("main.font", &sStyle);
+            sMainColor.bind("main.color", &sStyle);
             sMainVisibility.bind("main.visibility", &sStyle);
             sLabelFont.bind("label.font", &sStyle);
             sLabelBgColor.bind("label.bg.color", &sStyle);
@@ -174,7 +175,7 @@ namespace lsp
                 sSGroups.init(sclass, false);
 
                 sMainLayout.init(sclass, 0.0f, 0.0f);
-                sMainFont.init(sclass, 16.0f);
+                sMainFont.init(sclass, 16.0f, ws::FF_BOLD);
                 sMainColor.init(sclass, "#00ff00");
                 sMainVisibility.init(sclass, false);
                 sLabelFont.init(sclass, 10.0f);
@@ -348,11 +349,46 @@ namespace lsp
 
         void AudioSample::draw(ws::ISurface *s)
         {
-//            float scaling       = lsp_max(0.0f, sScaling.get());
-//            bool sgroups        = sSGroups.get();
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+            bool sgroups        = sSGroups.get();
 
-            lsp::Color red(1.0f, 0.0f, 0.0f);
-            s->clear(&red);
+            LSPString text;
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+            ws::rectangle_t xr;
+
+            // Draw background
+            lsp::Color color(sColor);
+            color.scale_lightness(bright);
+
+            s->clear(&color);
+            if (sMainVisibility.get())
+            {
+                // Draw main text
+                xr.nLeft            = 0;
+                xr.nTop             = 0;
+                xr.nWidth           = sGraph.nWidth;
+                xr.nHeight          = sGraph.nHeight;
+
+                // Get main text parameters
+                sMainText.format(&text);
+                sMainFont.get_parameters(s, scaling, &fp);
+                sMainFont.get_multitext_parameters(s, &tp, scaling, &text);
+
+                // Draw main font
+                color.copy(sMainColor);
+                color.scale_lightness(bright);
+
+                draw_multiline_text(
+                    s, &sMainFont, &xr, color, &fp, &tp,
+                    sMainLayout.halign(), sMainLayout.valign(), scaling,
+                    &text
+                );
+            }
+            else
+            {
+            }
         }
 
         void AudioSample::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

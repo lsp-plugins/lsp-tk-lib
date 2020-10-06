@@ -261,6 +261,8 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
 
             add_samples(as, widgets, vh, vid, 7);
             as->active()->set(true);
+            as->main_visibility()->set(true);
+            as->main_text()->set_raw("Click or drag to load");
         }
 
         // Show window
