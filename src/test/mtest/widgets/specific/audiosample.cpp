@@ -196,8 +196,13 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
             MTEST_ASSERT(as->add(ac) == STATUS_OK);
 
             init_values(ac);
-            ac->color()->set_rgb24(0xff0000);
+            ac->color()->set_rgba32(0x88ff0000);
             ac->color()->hue(hue * i);
+            ac->wave_border_color()->set_rgb24(0xff0000);
+            ac->wave_border_color()->hue(hue * i);
+
+            ac->fade_in()->set(ac->samples()->size() * 0.5f * (i + 1) * hue);
+            ac->fade_out()->set(ac->samples()->size() * 0.5f * (i + 1) * hue);
         }
     }
 
@@ -243,7 +248,7 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
         grid->rows()->set(2);
-        grid->columns()->set(1);
+        grid->columns()->set(2);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
         grid->vspacing()->set(2);
@@ -252,7 +257,19 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
             // Create meter channels
             LSPString id;
 
-            // Create audio channel
+            // Create audio sample with non-grouping items
+            MTEST_ASSERT(id.fmt_ascii("audiosample-%d", int(vid++)));
+            MTEST_ASSERT(as = new tk::AudioSample(dpy));
+            MTEST_ASSERT(init_widget(as, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(as));
+            MTEST_ASSERT(grid->add(as, 2, 1) == STATUS_OK);
+
+            add_samples(as, widgets, vh, vid, 7);
+            as->active()->set(true);
+            as->main_visibility()->set(false);
+            as->main_text()->set_raw("Click or drag to load");
+
+            // Create audio sample with grouping items
             MTEST_ASSERT(id.fmt_ascii("audiosample-%d", int(vid++)));
             MTEST_ASSERT(as = new tk::AudioSample(dpy));
             MTEST_ASSERT(init_widget(as, vh, id.get_ascii()) == STATUS_OK);
@@ -260,8 +277,8 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
             MTEST_ASSERT(grid->add(as) == STATUS_OK);
 
             add_samples(as, widgets, vh, vid, 7);
-            as->active()->set(true);
-            as->main_visibility()->set(true);
+            as->active()->set(false);
+            as->stereo_groups()->set(true);
             as->main_text()->set_raw("Click or drag to load");
         }
 

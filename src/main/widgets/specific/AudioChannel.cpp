@@ -176,7 +176,7 @@ namespace lsp
             float dx            = lsp_max(1.0f, float(r->nWidth) / float(samples));
             float kx            = lsp_max(1.0f, float(samples) / float(r->nWidth));
             float ky            = -0.5f * (r->nHeight - border);
-            float sy            = r->nHeight * 0.5f;
+            float sy            = r->nTop + r->nHeight * 0.5f;
 
             x[0]                = -1.0f;
             y[0]                = sy;
@@ -230,8 +230,8 @@ namespace lsp
 
                 y[0]                = r->nTop;
                 y[1]                = y[0];
-                y[2]                = r->nHeight >> 1;
-                y[3]                = r->nHeight;
+                y[2]                = y[0] + (r->nHeight >> 1);
+                y[3]                = y[0] + r->nHeight;
                 y[4]                = y[3];
                 y[5]                = y[0];
 
@@ -259,8 +259,8 @@ namespace lsp
 
                 y[0]                = r->nTop;
                 y[1]                = y[0];
-                y[2]                = r->nHeight >> 1;
-                y[3]                = r->nHeight;
+                y[2]                = y[0] + (r->nHeight >> 1);
+                y[3]                = y[0] + r->nHeight;
                 y[4]                = y[3];
                 y[5]                = y[0];
 

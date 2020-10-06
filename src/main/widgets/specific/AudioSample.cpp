@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/common/debug.h>
+#include <lsp-plug.in/common/alloc.h>
 
 namespace lsp
 {
@@ -36,6 +37,7 @@ namespace lsp
             sFadeInBorder(&sProperties),
             sFadeOutBorder(&sProperties),
             sLineWidth(&sProperties),
+            sLineColor(&sProperties),
             sConstraints(&sProperties),
             sActive(&sProperties),
             sSGroups(&sProperties),
@@ -53,7 +55,8 @@ namespace lsp
             sColor(&sProperties),
             sBorderColor(&sProperties),
             sGlassColor(&sProperties),
-            sIPadding(&sProperties)
+            sIPadding(&sProperties),
+            sPopup(&sProperties)
         {
             for (size_t i=0; i<LABELS; ++i)
             {
@@ -131,6 +134,7 @@ namespace lsp
             sFadeInBorder.bind("fade_in.border", &sStyle);
             sFadeOutBorder.bind("fade_out.border", &sStyle);
             sLineWidth.bind("line.width", &sStyle);
+            sLineColor.bind("line.color", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sActive.bind("active", &sStyle);
             sSGroups.bind("stereo_groups", &sStyle);
@@ -170,6 +174,7 @@ namespace lsp
                 sFadeInBorder.init(sclass, 1);
                 sFadeOutBorder.init(sclass, 1);
                 sLineWidth.init(sclass, 1);
+                sLineColor.init(sclass, "#ffffff");
                 sConstraints.init(sclass);
                 sActive.init(sclass, false);
                 sSGroups.init(sclass, false);
@@ -214,6 +219,8 @@ namespace lsp
             if (sFadeOutBorder.is(prop))
                 query_draw();
             if (sLineWidth.is(prop))
+                query_draw();
+            if (sLineColor.is(prop))
                 query_draw();
             if (sConstraints.is(prop))
                 query_resize();
@@ -325,70 +332,260 @@ namespace lsp
             sGraph.nHeight  = r->nHeight - padding*2;
 
             sIPadding.enter(&sGraph, scaling);
+            vVisible.swap(&channels);
         }
 
-        void AudioSample::draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright)
+        void AudioSample::draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples)
+        {
+            // Check limits
+            if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
+                return;
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+
+            // Init decimation buffer
+            ssize_t n_draw      = lsp_min(ssize_t(samples), r->nWidth);
+            size_t n_points     = n_draw + 2;
+            size_t n_decim      = lsp::align_size(n_points, 16); // 2 additional points at start and end
+
+            // Try to allocate memory
+            uint8_t *data       = NULL;
+            float *x            = lsp::alloc_aligned<float>(data, n_decim * 2);
+            float *y            = &x[n_decim];
+            if (x == NULL)
+                return;
+
+            // Form the x and y values
+            FloatArray *vsamp   = &c->vSamples;
+            float border        = (sWaveBorder.get() > 0) ? lsp_max(1.0f, sWaveBorder.get() * scaling) : 0.0f;
+            float dx            = lsp_max(1.0f, float(r->nWidth) / float(samples));
+            float kx            = lsp_max(1.0f, float(samples) / float(r->nWidth));
+            float ky            = -0.5f * (r->nHeight - border);
+            float sy            = r->nTop + r->nHeight * 0.5f;
+
+            x[0]                = -1.0f;
+            y[0]                = sy;
+            x[n_points-1]       = r->nWidth;
+            y[n_points-1]       = sy;
+
+            for (ssize_t i=1; i <= n_draw; ++i)
+            {
+                ssize_t xx          = i - 1;
+                x[i]                = xx * dx;
+                y[i]                = sy + ky * vsamp->get(ssize_t(xx * kx));
+            }
+
+            // Draw the poly
+            lsp::Color fill(c->sColor);
+            lsp::Color wire(c->sWaveBorderColor);
+            fill.scale_lightness(bright);
+            wire.scale_lightness(bright);
+
+            bool aa             = s->set_antialiasing(true);
+            s->draw_poly(fill, wire, border, x, y, n_points);
+            s->set_antialiasing(aa);
+
+            // Free allocated data
+            lsp::free_aligned(data);
+        }
+
+        void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples)
+        {
+            // Check limits
+            if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
+                return;
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+
+            float x[6], y[6];
+
+            bool aa             = s->set_antialiasing(true);
+
+            // Draw fade in
+            if (c->sFadeIn.get() > 0)
+            {
+                float border        = (sFadeInBorder.get() > 0) ? lsp_max(1.0f, sFadeInBorder.get() * scaling) : 0.0f;
+                float xx            = float(c->sFadeIn.get() * r->nWidth) / float(samples);
+
+                // Form the arrays
+                x[0]                = r->nLeft;
+                x[1]                = xx;
+                x[2]                = x[0];
+                x[3]                = x[1];
+                x[4]                = x[0];
+                x[5]                = x[0];
+
+                y[0]                = r->nTop;
+                y[1]                = y[0];
+                y[2]                = y[0] + (r->nHeight >> 1);
+                y[3]                = y[0] + r->nHeight;
+                y[4]                = y[3];
+                y[5]                = y[0];
+
+                lsp::Color fill(c->sFadeInColor);
+                lsp::Color wire(c->sFadeInBorderColor);
+                fill.scale_lightness(bright);
+                wire.scale_lightness(bright);
+
+                s->draw_poly(fill, wire, border, x, y, 6);
+            }
+
+            // Draw fade out
+            if (c->sFadeOut.get() > 0)
+            {
+                float border        = (sFadeOutBorder.get() > 0) ? lsp_max(1.0f, sFadeOutBorder.get() * scaling) : 0.0f;
+                float xx            = r->nLeft + r->nWidth - float(c->sFadeOut.get() * r->nWidth) / float(samples);
+
+                // Form the arrays
+                x[0]                = r->nLeft + r->nWidth;
+                x[1]                = xx;
+                x[2]                = x[0];
+                x[3]                = x[1];
+                x[4]                = x[0];
+                x[5]                = x[0];
+
+                y[0]                = r->nTop;
+                y[1]                = y[0];
+                y[2]                = y[0] + (r->nHeight >> 1);
+                y[3]                = y[0] + r->nHeight;
+                y[4]                = y[3];
+                y[5]                = y[0];
+
+                lsp::Color fill(c->sFadeOutColor);
+                lsp::Color wire(c->sFadeOutBorderColor);
+                fill.scale_lightness(bright);
+                wire.scale_lightness(bright);
+
+                s->draw_poly(fill, wire, border, x, y, 6);
+            }
+
+            s->set_antialiasing(aa);
+        }
+
+        void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples)
         {
             // TODO
         }
 
-        void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright)
+        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples)
         {
             // TODO
         }
 
-        void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright)
-        {
-            // TODO
-        }
-
-        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright)
-        {
-            // TODO
-        }
-
-        void AudioSample::draw(ws::ISurface *s)
+        void AudioSample::draw_main_text(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float bright        = sBrightness.get();
-            bool sgroups        = sSGroups.get();
 
             LSPString text;
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
             ws::rectangle_t xr;
 
+            // Draw main text
+            xr.nLeft            = 0;
+            xr.nTop             = 0;
+            xr.nWidth           = sGraph.nWidth;
+            xr.nHeight          = sGraph.nHeight;
+
+            // Get main text parameters
+            sMainText.format(&text);
+            sMainFont.get_parameters(s, scaling, &fp);
+            sMainFont.get_multitext_parameters(s, &tp, scaling, &text);
+
+            // Draw main font
+            lsp::Color color(sMainColor);
+            color.scale_lightness(bright);
+
+            draw_multiline_text(
+                s, &sMainFont, &xr, color, &fp, &tp,
+                sMainLayout.halign(), sMainLayout.valign(), scaling,
+                &text
+            );
+        }
+
+        void AudioSample::draw(ws::ISurface *s)
+        {
+            // Main parameters
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+
             // Draw background
             lsp::Color color(sColor);
             color.scale_lightness(bright);
-
             s->clear(&color);
+
+            // Draw main text if it is required to be shown
             if (sMainVisibility.get())
             {
-                // Draw main text
-                xr.nLeft            = 0;
-                xr.nTop             = 0;
-                xr.nWidth           = sGraph.nWidth;
-                xr.nHeight          = sGraph.nHeight;
-
-                // Get main text parameters
-                sMainText.format(&text);
-                sMainFont.get_parameters(s, scaling, &fp);
-                sMainFont.get_multitext_parameters(s, &tp, scaling, &text);
-
-                // Draw main font
-                color.copy(sMainColor);
-                color.scale_lightness(bright);
-
-                draw_multiline_text(
-                    s, &sMainFont, &xr, color, &fp, &tp,
-                    sMainLayout.halign(), sMainLayout.valign(), scaling,
-                    &text
-                );
+                draw_main_text(s);
+                return;
             }
-            else
+
+            // Draw all samples
+            size_t items = vVisible.size();
+            if (items > 0)
             {
+                ws::rectangle_t xr;
+                xr.nLeft            = 0;
+                xr.nWidth           = sGraph.nWidth;
+                ssize_t line_w      = (sLineWidth.get() > 0) ? lsp_max(1.0f, sLineWidth.get() * scaling) : 0.0f;
+
+                // Estimate overall number of samples
+                size_t samples  = 0;
+                for (size_t i=0; i<items; ++i)
+                {
+                    AudioChannel *c = vVisible.uget(i);
+                    samples         = lsp_max(samples, c->samples()->size());
+                }
+
+                // Draw depending of the view type
+                if (sSGroups.get())
+                {
+                    // Draw stereo groups
+                }
+                else
+                {
+                    xr.nHeight          = sGraph.nHeight / items;
+                    ssize_t place       = xr.nHeight * items;
+                    ssize_t y           = (sGraph.nHeight - place) >> 1;
+
+                    // Draw monophonic samples
+                    xr.nTop             = y;
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        AudioChannel *c     = vVisible.uget(i);
+                        draw_channel1(&xr, s, c, samples);
+                        xr.nTop            += xr.nHeight;
+                    }
+
+                    // Draw fades
+                    xr.nTop             = y;
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        AudioChannel *c     = vVisible.uget(i);
+                        draw_fades1(&xr, s, c, samples);
+                        xr.nTop            += xr.nHeight;
+                    }
+
+                    // Draw lines
+                    color.copy(sLineColor);
+                    xr.nTop             = y;
+                    color.scale_lightness(bright);
+                    float sy            = xr.nHeight * 0.5f;
+                    bool aa             = s->set_antialiasing(false);
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        s->line(xr.nLeft, xr.nTop + sy, xr.nLeft + xr.nWidth, xr.nTop + sy, line_w, color);
+                        xr.nTop            += xr.nHeight;
+                    }
+                    s->set_antialiasing(aa);
+                }
             }
+
+            // TODO: draw labels
         }
 
         void AudioSample::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

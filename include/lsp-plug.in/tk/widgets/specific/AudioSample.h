@@ -95,11 +95,11 @@ namespace lsp
                 virtual void            property_changed(Property *prop);
                 virtual void            hide_widget();
 
-                void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright);
-                void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float scaling, float bright);
+                void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
+                void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
 
-                void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright);
-                void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples, float scaling, float bright);
+                void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples);
+                void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, AudioChannel *c2, size_t samples);
 
                 static void             on_add_item(void *obj, Property *prop, Widget *w);
                 static void             on_remove_item(void *obj, Property *prop, Widget *w);
@@ -109,6 +109,7 @@ namespace lsp
                 void                    get_visible_items(lltl::parray<AudioChannel> *dst);
                 status_t                handle_mouse_move(const ws::event_t *ev);
                 void                    drop_glass();
+                void                    draw_main_text(ws::ISurface *s);
 
             public:
                 explicit AudioSample(Display *dpy);
