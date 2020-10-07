@@ -431,6 +431,24 @@ namespace lsp
             return (tmp.set_utf8(text)) ? get_text_parameters(s, tp, scaling, &tmp, first, last) : false;
         }
 
+        bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const char *text) const
+        {
+            LSPString tmp;
+            return (tmp.set_utf8(text)) ? get_text_parameters(dpy, tp, scaling, &tmp, 0, tmp.length()) : false;
+        }
+
+        bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const char *text, ssize_t first) const
+        {
+            LSPString tmp;
+            return (tmp.set_utf8(text)) ? get_text_parameters(dpy, tp, scaling, &tmp, first, tmp.length()) : false;
+        }
+
+        bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const char *text, ssize_t first, ssize_t last) const
+        {
+            LSPString tmp;
+            return (tmp.set_utf8(text)) ? get_text_parameters(dpy, tp, scaling, &tmp, first, last) : false;
+        }
+
         void Font::draw(ws::ISurface *s, const lsp::Color &c, float x, float y, float scaling, const LSPString *text) const
         {
             if (text != NULL)

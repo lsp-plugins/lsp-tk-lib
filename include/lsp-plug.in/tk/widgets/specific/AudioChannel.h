@@ -73,8 +73,8 @@ namespace lsp
                 explicit AudioChannel(Display *dpy);
                 virtual ~AudioChannel();
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t        init();
+                virtual void            destroy();
 
             public:
                 LSP_TK_PROPERTY(FloatArray,             samples,                &vSamples);
@@ -94,7 +94,7 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints);
 
             public:
-                virtual void                draw(ws::ISurface *s);
+                virtual void            draw(ws::ISurface *s);
         };
     }
 }

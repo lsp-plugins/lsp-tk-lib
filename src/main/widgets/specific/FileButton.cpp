@@ -375,7 +375,6 @@ namespace lsp
         {
             if (nBMask == 0)
             {
-                nBMask |= 1 << e->nCode;
                 if (Position::inside(&sButton, e->nLeft, e->nTop))
                 {
                     if (e->nCode == ws::MCB_LEFT)
@@ -385,6 +384,8 @@ namespace lsp
                 }
             }
 
+            nBMask |= 1 << e->nCode;
+
             return handle_mouse_move(e);
         }
 
@@ -393,33 +394,34 @@ namespace lsp
             size_t mask = nBMask;
             nBMask &= ~(1 << e->nCode);
 
-            if (mask == (1U << e->nCode))
-            {
-                size_t flags = nXFlags;
-                nXFlags      = 0;
+            if (mask != (1U << e->nCode))
+                return handle_mouse_move(e);
 
-                if (Position::inside(&sButton, e->nLeft, e->nTop))
+            // Last button released
+            size_t flags = nXFlags;
+            nXFlags      = 0;
+
+            if (Position::inside(&sButton, e->nLeft, e->nTop))
+            {
+                if ((e->nCode == ws::MCB_LEFT) && (flags & FB_LBUTTON))
+                    sSlots.execute(SLOT_SUBMIT, this, NULL);
+                else if ((e->nCode == ws::MCB_RIGHT) && (flags & FB_RBUTTON))
                 {
-                    if ((e->nCode == ws::MCB_LEFT) && (flags & FB_LBUTTON))
-                        sSlots.execute(SLOT_SUBMIT, this, NULL);
-                    else if ((e->nCode == ws::MCB_RIGHT) && (flags & FB_RBUTTON))
+                    Menu *popup = sPopup.get();
+                    if (popup != NULL)
                     {
-                        Menu *popup = sPopup.get();
-                        if (popup != NULL)
-                        {
-                            ws::rectangle_t sr;
-                            Window *wnd = widget_cast<Window>(this->toplevel());
-                            wnd->get_screen_rectangle(&sr);
-                            sr.nLeft       += e->nLeft;
-                            sr.nTop        += e->nTop;
-                            popup->show(this, sr.nLeft, sr.nTop);
-                        }
+                        ws::rectangle_t sr;
+                        Window *wnd = widget_cast<Window>(this->toplevel());
+                        wnd->get_screen_rectangle(&sr);
+                        sr.nLeft       += e->nLeft;
+                        sr.nTop        += e->nTop;
+                        popup->show(this, sr.nLeft, sr.nTop);
                     }
                 }
-
-                if (flags != nXFlags)
-                    query_draw();
             }
+
+            if (flags != nXFlags)
+                query_draw();
 
             return STATUS_OK;
         }
@@ -436,7 +438,7 @@ namespace lsp
         {
             if (nXFlags & FB_LBUTTON)
             {
-                bool pressed= (nBMask & ws::MCF_LEFT) && (Position::inside(&sButton, e->nLeft, e->nTop));
+                bool pressed= (nBMask == ws::MCF_LEFT) && (Position::inside(&sButton, e->nLeft, e->nTop));
 
                 size_t old  = nXFlags;
                 nXFlags     = lsp_setflag(nXFlags, FB_DOWN, pressed);

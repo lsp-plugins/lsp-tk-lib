@@ -960,7 +960,6 @@ namespace lsp
 
             if (nBMask == 0)
             {
-                nBMask |= 1 << e->nCode;
                 if (Position::rinside(&sSize, e->nLeft, e->nTop, xr))
                 {
                     if (e->nCode == ws::MCB_LEFT)
@@ -970,6 +969,8 @@ namespace lsp
                 }
             }
 
+            nBMask         |= 1 << e->nCode;
+
             return handle_mouse_move(e);
         }
 
@@ -978,41 +979,42 @@ namespace lsp
             size_t mask = nBMask;
             nBMask &= ~(1 << e->nCode);
 
-            if (mask == (1U << e->nCode))
+            if (mask != (1U << e->nCode))
+                return handle_mouse_move(e);
+
+            // Last button released, process the vent
+            size_t flags    = nXFlags;
+            nXFlags         = 0;
+
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+
+            if (Position::rinside(&sSize, e->nLeft, e->nTop, xr))
             {
-                size_t flags    = nXFlags;
-                nXFlags         = 0;
-
-                float scaling   = lsp_max(0.0f, sScaling.get());
-                float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
-
-                if (Position::rinside(&sSize, e->nLeft, e->nTop, xr))
+                if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
                 {
-                    if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
+                    if (sActive.get())
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
+                }
+                else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
+                {
+                    Menu *popup = sPopup.get();
+                    if (popup != NULL)
                     {
-                        if (sActive.get())
-                            sSlots.execute(SLOT_SUBMIT, this, NULL);
-                    }
-                    else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
-                    {
-                        Menu *popup = sPopup.get();
-                        if (popup != NULL)
-                        {
-                            ws::rectangle_t sr;
-                            Window *wnd = widget_cast<Window>(this->toplevel());
-                            wnd->get_screen_rectangle(&sr);
-                            sr.nLeft       += e->nLeft;
-                            sr.nTop        += e->nTop;
-                            popup->show(this, sr.nLeft, sr.nTop);
-                        }
+                        ws::rectangle_t sr;
+                        Window *wnd = widget_cast<Window>(this->toplevel());
+                        wnd->get_screen_rectangle(&sr);
+                        sr.nLeft       += e->nLeft;
+                        sr.nTop        += e->nTop;
+                        popup->show(this, sr.nLeft, sr.nTop);
                     }
                 }
+            }
 
-                if (flags != nXFlags)
-                {
-                    drop_glass();
-                    query_draw();
-                }
+            if (flags != nXFlags)
+            {
+                drop_glass();
+                query_draw();
             }
 
             return STATUS_OK;
@@ -1029,11 +1031,12 @@ namespace lsp
 
         status_t AudioSample::handle_mouse_move(const ws::event_t *e)
         {
+            lsp_trace("nBMask = %x, nXFlags = %x", int(nBMask), int(nXFlags));
             if (nXFlags & XF_LBUTTON)
             {
                 float scaling   = lsp_max(0.0f, sScaling.get());
                 float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
-                bool pressed    = (sActive.get()) && (nBMask & ws::MCF_LEFT) && (Position::rinside(&sSize, e->nLeft, e->nTop, xr));
+                bool pressed    = (sActive.get()) && (nBMask == ws::MCF_LEFT) && (Position::rinside(&sSize, e->nLeft, e->nTop, xr));
 
                 size_t old      = nXFlags;
                 nXFlags         = lsp_setflag(nXFlags, XF_DOWN, pressed);

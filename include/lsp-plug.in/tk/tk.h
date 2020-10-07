@@ -168,6 +168,7 @@
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeter.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeterChannel.h>
+#include <lsp-plug.in/tk/widgets/specific/RackEars.h>
 
 // Graph widgets
 #include <lsp-plug.in/tk/widgets/graph/GraphItem.h>
