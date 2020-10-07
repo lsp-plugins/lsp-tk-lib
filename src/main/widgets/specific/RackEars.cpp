@@ -84,13 +84,13 @@ namespace lsp
             {
                 sFont.init(sclass, 16, ws::FF_BOLD);
                 sColor.init(sclass, "#00ccff");
-                sScrewColor.init(sclass, "#cccccc");
+                sScrewColor.init(sclass, "#444444");
                 sTextColor.init(sclass, "#ffffff");
                 sHoleColor.init(sclass, "#000000");
                 sAngle.init(sclass, 0);
                 sButtonPadding.init(sclass, 4);
                 sScrewPadding.init(sclass, 2);
-                sScrewSize.init(sclass, 16);
+                sScrewSize.init(sclass, 20);
             }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
@@ -131,7 +131,7 @@ namespace lsp
             screw->nLeft        = 0;
             screw->nTop         = 0;
             screw->nHeight      = ceilf(sScrewSize.get() * scaling);
-            screw->nWidth       = screw->nHeight << 1;
+            screw->nWidth       = screw->nHeight * M_GOLD_RATIO;
 
             sScrewPadding.add(screw, scaling);
 
@@ -228,6 +228,74 @@ namespace lsp
             sButtonPadding.enter(&sButton, &btn, scaling);
         }
 
+        void RackEars::draw_screw(ws::ISurface *s, const ws::rectangle_t *r, float angle)
+        {
+            ws::IGradient *gr;
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            bool aa             = s->set_antialiasing(true);
+            ssize_t rad         = r->nHeight >> 1;
+            float cx            = r->nLeft + (r->nWidth  * 0.5f);
+            float cy            = r->nTop  + (r->nHeight * 0.5f);
+
+            // Draw hole
+            lsp::Color hole(sBgColor);
+            ws::rectangle_t h   = *r;
+            ssize_t hole_r      = 0.375f * r->nHeight;
+            ssize_t chamfer     = lsp_min(scaling * 3.0f, 0.25f * r->nHeight);
+
+            h.nHeight          *= 0.725f;
+            h.nTop              = r->nTop + ((r->nHeight - h.nHeight) >> 1);
+
+            float delta         = r->nWidth;
+
+            for (ssize_t i=0; i<chamfer; ++i)
+            {
+                // Compute color
+                float bright = float(chamfer - i) / chamfer;
+                hole.lightness(bright);
+
+                gr = s->radial_gradient(r->nLeft, r->nTop + r->nHeight, scaling, r->nLeft, r->nTop + r->nHeight, delta);
+                gr->add_color(0.0, hole);
+                gr->add_color(1.0, 0.5 * hole.red(), 0.5 *  hole.green(), 0.5 * hole.blue());
+                s->fill_round_rect(gr, SURFMASK_ALL_CORNER, hole_r, &h);
+                delete gr;
+
+                h.nLeft        += 1;
+                h.nTop         += 1;
+                h.nWidth       -= 2;
+                h.nHeight      -= 2;
+                hole_r          = lsp_max(0, hole_r - 1);
+            }
+
+            hole.copy(sHoleColor);
+            s->fill_round_rect(hole, SURFMASK_ALL_CORNER, hole_r, &h);
+
+            // Draw screw
+            lsp::Color screw(sScrewColor);
+            screw.scale_lightness(0.5f);
+
+            gr = s->radial_gradient(cx + (rad * M_RGOLD_RATIO), cy - (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
+            gr->add_color(0.0, 1.0, 1.0, 1.0);
+            gr->add_color(1.0, &screw);
+            s->fill_circle(cx, cy, rad, gr);
+            delete gr;
+
+            // Draw screw cross
+            ssize_t lwidth  = 3.0f * scaling;
+            float a_cos     = (rad - lwidth) * cosf(angle), a_sin = (rad - lwidth) * sinf(angle);
+
+            gr = s->radial_gradient(cx - (rad * M_RGOLD_RATIO), cy + (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
+            gr->add_color(0.0, 1.0, 1.0, 1.0);
+            gr->add_color(1.0, &screw);
+            ws::surf_line_cap_t cap = s->set_line_cap(ws::SURFLCAP_ROUND);
+            s->line(cx + a_cos, cy + a_sin, cx - a_cos, cy - a_sin, lwidth, gr);
+            s->line(cx - a_sin, cy + a_cos, cx + a_sin, cy - a_cos, lwidth, gr);
+            s->set_line_cap(cap);
+            delete gr;
+
+            s->set_antialiasing(aa);
+        }
+
         void RackEars::draw(ws::ISurface *s)
         {
             lsp::Color col(sBgColor);
@@ -247,8 +315,23 @@ namespace lsp
             btn.nLeft      -= sSize.nLeft;
             btn.nTop       -= sSize.nTop;
 
-            s->fill_rect(col, &screw[0]);
-            s->fill_rect(col, &screw[1]);
+            ssize_t xangle  = sAngle.get();
+
+            if (!(xangle & 1))
+            {
+                float angle  = (xangle & 2) >> 1;
+
+                draw_screw(s, &screw[0], M_PI * (angle + 1) / 8 + M_PI / 16);
+                draw_screw(s, &screw[1], M_PI * (angle + 3) / 8 + M_PI / 16);
+            }
+            else
+            {
+                draw_screw(s, &screw[0], M_PI * 1.0 / 8.0 + M_PI / 16.0);
+                draw_screw(s, &screw[1], M_PI * 3.0 / 8.0 + M_PI / 16.0);
+            }
+
+//            s->fill_rect(col, &screw[0]);
+//            s->fill_rect(col, &screw[1]);
             s->fill_rect(col, &btn);
         }
 

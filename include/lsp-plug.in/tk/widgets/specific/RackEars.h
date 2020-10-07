@@ -77,6 +77,7 @@ namespace lsp
                 virtual void                realize(const ws::rectangle_t *r);
 
                 void                        estimate_sizes(ws::rectangle_t *screw, ws::rectangle_t *btn);
+                void                        draw_screw(ws::ISurface *s, const ws::rectangle_t *r, float angle);
 
                 status_t                    handle_mouse_move(const ws::event_t *e);
 
