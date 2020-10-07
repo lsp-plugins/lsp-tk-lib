@@ -90,7 +90,7 @@ namespace lsp
                 sAngle.init(sclass, 0);
                 sButtonPadding.init(sclass, 4);
                 sScrewPadding.init(sclass, 2);
-                sScrewSize.init(sclass, 40);
+                sScrewSize.init(sclass, 16);
             }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
@@ -114,17 +114,24 @@ namespace lsp
                 query_draw();
             if (sAngle.is(prop))
                 query_resize();
+            if (sButtonPadding.is(prop))
+                query_resize();
+            if (sScrewPadding.is(prop))
+                query_resize();
+            if (sScrewSize.is(prop))
+                query_resize();
         }
 
         void RackEars::estimate_sizes(ws::rectangle_t *screw, ws::rectangle_t *btn)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t angle       = (sAngle.get() & 0x03);
 
             // Screw parameters
             screw->nLeft        = 0;
             screw->nTop         = 0;
             screw->nHeight      = ceilf(sScrewSize.get() * scaling);
-            screw->nWidth       = ceilf(screw->nHeight * 1.5f);
+            screw->nWidth       = screw->nHeight << 1;
 
             sScrewPadding.add(screw, scaling);
 
@@ -142,7 +149,7 @@ namespace lsp
             btn->nWidth         = tp1.Width;
             btn->nHeight        = tp1.Height;
 
-            if (!(sAngle.get() & 0x2))
+            if (!(angle & 1))
             {
                 btn->nHeight        = lsp_max(btn->nHeight, 2 * screw->nHeight);
                 btn->nWidth         = lsp_max(btn->nWidth, btn->nHeight * M_GOLD_RATIO);
@@ -156,7 +163,9 @@ namespace lsp
             ws::rectangle_t screw, btn;
             estimate_sizes(&screw, &btn);
 
-            if (sAngle.get() & 1)
+            ssize_t angle       = (sAngle.get() & 0x03);
+
+            if (angle & 1)
             {
                 // Horizontal orientation
                 r->nMinWidth    = screw.nWidth * 2  + btn.nWidth;
@@ -184,7 +193,7 @@ namespace lsp
             Widget::realize(r);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            int angle           = (sAngle.get() & 0x03);
+            ssize_t angle       = (sAngle.get() & 0x03);
 
             ws::rectangle_t screw[2], btn;
             estimate_sizes(&screw[0], &btn);
@@ -194,17 +203,18 @@ namespace lsp
             if (angle & 1)
             {
                 // Horizontal orientation
-                screw[0].nLeft  = (angle & 0x02) ? sSize.nLeft + sSize.nWidth - screw[0].nWidth : sSize.nLeft;
-                screw[1].nLeft  = screw[0].nLeft;
-                screw[0].nTop   = sSize.nTop;
-                screw[1].nTop   = sSize.nTop + sSize.nHeight - screw[1].nHeight;
-            }
-            else
-            {
                 screw[0].nLeft  = sSize.nLeft;
                 screw[1].nLeft  = sSize.nLeft + sSize.nWidth - screw[1].nWidth;
                 screw[0].nTop   = sSize.nTop  + ((sSize.nHeight - screw[0].nHeight) >> 1);
                 screw[1].nTop   = screw[0].nTop;
+            }
+            else
+            {
+                // Vertical orientation
+                screw[0].nLeft  = (angle & 0x02) ? sSize.nLeft : sSize.nLeft + sSize.nWidth - screw[0].nWidth;
+                screw[1].nLeft  = screw[0].nLeft;
+                screw[0].nTop   = sSize.nTop;
+                screw[1].nTop   = sSize.nTop + sSize.nHeight - screw[1].nHeight;
             }
 
 
@@ -220,6 +230,26 @@ namespace lsp
 
         void RackEars::draw(ws::ISurface *s)
         {
+            lsp::Color col(sBgColor);
+            s->clear(col);
+
+            col.set_rgb(1.0f, 0.0f, 0.0f);
+
+            ws::rectangle_t screw[2], btn;
+            screw[0]        = sScrew[0];
+            screw[1]        = sScrew[1];
+            btn             = sButton;
+
+            screw[0].nLeft -= sSize.nLeft;
+            screw[0].nTop  -= sSize.nTop;
+            screw[1].nLeft -= sSize.nLeft;
+            screw[1].nTop  -= sSize.nTop;
+            btn.nLeft      -= sSize.nLeft;
+            btn.nTop       -= sSize.nTop;
+
+            s->fill_rect(col, &screw[0]);
+            s->fill_rect(col, &screw[1]);
+            s->fill_rect(col, &btn);
         }
 
         status_t RackEars::on_mouse_down(const ws::event_t *e)
