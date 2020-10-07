@@ -172,10 +172,12 @@ namespace lsp
                     status_t            init(Style *style, size_t left, size_t right, size_t top, size_t bottom);
                     status_t            init(Style *style, const padding_t *p);
                     inline status_t     init(Style *style, size_t all)                  { return init(style, all, all, all, all);               }
+                    inline status_t     init(Style *style, size_t hor, size_t vert)     { return init(style, hor, hor, vert, vert);             }
 
                     status_t            override(Style *style, size_t left, size_t right, size_t top, size_t bottom);
                     status_t            override(Style *style, const padding_t *p);
                     inline status_t     override(Style *style, size_t all)              { return override(style, all, all, all, all);           }
+                    inline status_t     override(Style *style, size_t hor, size_t vert) { return override(style, hor, hor, vert, vert);         }
             };
         }
     

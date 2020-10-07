@@ -38,7 +38,7 @@ MTEST_BEGIN("tk.widgets.specific", rackears)
 
     static status_t slot_key_up(tk::Widget *sender, void *ptr, void *data)
     {
-        tk::Window *wnd = tk::widget_cast<tk::Window>(sender);
+        tk::Window *wnd = tk::widget_cast<tk::Window>(sender->toplevel());
         ws::event_t *ev = static_cast<ws::event_t *>(data);
         test_type_t *_this = static_cast<test_type_t *>(ptr);
 
@@ -156,6 +156,11 @@ MTEST_BEGIN("tk.widgets.specific", rackears)
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
 
+        if (tk::instance_of<tk::RackEars>(w))
+        {
+            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_KEY_UP, slot_key_up, this);
+        }
+
         if (hid < 0)
             res = -hid;
 
@@ -233,6 +238,8 @@ MTEST_BEGIN("tk.widgets.specific", rackears)
 
             ra->angle()->set(1);
             ra->text()->set_raw("LSP-TK");
+            ra->bg_color()->set_rgb24(0x1b1c22);
+            ra->font()->set_size(12);
 
             // Create left rack
             MTEST_ASSERT(id.fmt_ascii("rack-%d", int(vid++)));
@@ -243,6 +250,7 @@ MTEST_BEGIN("tk.widgets.specific", rackears)
 
             ra->angle()->set(2);
             ra->text()->set_raw("LSP");
+            ra->bg_color()->set_rgb24(0x1b1c22);
 
             // Create filler
             MTEST_ASSERT(id.fmt_ascii("void-%d", int(vid++)));
@@ -253,6 +261,7 @@ MTEST_BEGIN("tk.widgets.specific", rackears)
 
             vw->size_constraints()->set_min(320, 200);
             vw->allocation()->set_expand(true);
+            vw->bg_color()->set_rgb24(0x1b1c22);
 
             // Create right rack
             MTEST_ASSERT(id.fmt_ascii("rack-%d", int(vid++)));
@@ -263,6 +272,7 @@ MTEST_BEGIN("tk.widgets.specific", rackears)
 
             ra->angle()->set(0);
             ra->text()->set_raw("TK");
+            ra->bg_color()->set_rgb24(0x1b1c22);
 
             // Create bottom rack
             MTEST_ASSERT(id.fmt_ascii("rack-%d", int(vid++)));
@@ -271,8 +281,10 @@ MTEST_BEGIN("tk.widgets.specific", rackears)
             MTEST_ASSERT(widgets.push(ra));
             MTEST_ASSERT(grid->add(ra, 1, 3) == STATUS_OK);
 
-            ra->angle()->set(1);
+            ra->angle()->set(3);
             ra->text()->set_raw("TEST");
+            ra->bg_color()->set_rgb24(0x1b1c22);
+            ra->font()->set_size(12);
         }
 
         // Show window

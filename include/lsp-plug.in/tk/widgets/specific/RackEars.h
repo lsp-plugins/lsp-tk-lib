@@ -57,6 +57,7 @@ namespace lsp
                 prop::Padding       sButtonPadding;
                 prop::Padding       sScrewPadding;
                 prop::Integer       sScrewSize;
+                prop::Padding       sTextPadding;
 
                 size_t              nBMask;
                 size_t              nXFlags;
@@ -91,6 +92,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Padding,            button_padding,     &sButtonPadding)
                 LSP_TK_PROPERTY(Padding,            screw_padding,      &sScrewPadding)
                 LSP_TK_PROPERTY(Integer,            screw_size,         &sScrewSize)
+                LSP_TK_PROPERTY(Padding,            text_padding,       &sTextPadding)
 
             public:
                 virtual void                draw(ws::ISurface *s);

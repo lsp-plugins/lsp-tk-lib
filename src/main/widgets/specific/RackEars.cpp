@@ -37,7 +37,8 @@ namespace lsp
             sAngle(&sProperties),
             sButtonPadding(&sProperties),
             sScrewPadding(&sProperties),
-            sScrewSize(&sProperties)
+            sScrewSize(&sProperties),
+            sTextPadding(&sProperties)
         {
             nBMask              = 0;
             nXFlags             = 0;
@@ -78,6 +79,7 @@ namespace lsp
             sButtonPadding.bind("button.padding", &sStyle);
             sScrewPadding.bind("screw.padding", &sStyle);
             sScrewSize.bind("screw.size", &sStyle);
+            sTextPadding.bind("text.padding", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -88,9 +90,10 @@ namespace lsp
                 sTextColor.init(sclass, "#ffffff");
                 sHoleColor.init(sclass, "#000000");
                 sAngle.init(sclass, 0);
-                sButtonPadding.init(sclass, 4);
+                sButtonPadding.init(sclass, 2);
                 sScrewPadding.init(sclass, 2);
                 sScrewSize.init(sclass, 20);
+                sTextPadding.init(sclass, 4, 2);
             }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
@@ -120,40 +123,47 @@ namespace lsp
                 query_resize();
             if (sScrewSize.is(prop))
                 query_resize();
+            if (sTextPadding.is(prop))
+                query_resize();
         }
 
         void RackEars::estimate_sizes(ws::rectangle_t *screw, ws::rectangle_t *btn)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t angle       = (sAngle.get() & 0x03);
+            ssize_t chamfer     = lsp_max(1.0f, scaling * 3.0f);
 
             // Screw parameters
             screw->nLeft        = 0;
             screw->nTop         = 0;
             screw->nHeight      = ceilf(sScrewSize.get() * scaling);
-            screw->nWidth       = screw->nHeight * M_GOLD_RATIO;
+            screw->nWidth       = screw->nHeight * 1.5f;
 
             sScrewPadding.add(screw, scaling);
 
             // Button parameters
             ws::font_parameters_t fp;
-            ws::text_parameters_t tp1;
+            ws::text_parameters_t tp;
             LSPString text;
 
             sText.format(&text);
             sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_text_parameters(pDisplay, &tp1, scaling, &text);
+            sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
 
             btn->nLeft          = 0;
             btn->nTop           = 0;
-            btn->nWidth         = tp1.Width;
-            btn->nHeight        = tp1.Height;
+            btn->nWidth         = tp.Width;
+            btn->nHeight        = fp.Height;
+            sTextPadding.add(btn, scaling);
 
             if (!(angle & 1))
             {
-                btn->nHeight        = lsp_max(btn->nHeight, 2 * screw->nHeight);
+                btn->nHeight        = lsp_max(btn->nHeight, 1.5f * screw->nHeight);
                 btn->nWidth         = lsp_max(btn->nWidth, btn->nHeight * M_GOLD_RATIO);
             }
+
+            btn->nWidth        += chamfer * 2;
+            btn->nHeight       += chamfer * 2;
 
             sButtonPadding.add(btn, scaling);
         }
@@ -205,7 +215,7 @@ namespace lsp
                 // Horizontal orientation
                 screw[0].nLeft  = sSize.nLeft;
                 screw[1].nLeft  = sSize.nLeft + sSize.nWidth - screw[1].nWidth;
-                screw[0].nTop   = sSize.nTop  + ((sSize.nHeight - screw[0].nHeight) >> 1);
+                screw[0].nTop   = (angle & 2) ? sSize.nTop + sSize.nHeight - screw[0].nHeight : sSize.nTop;
                 screw[1].nTop   = screw[0].nTop;
             }
             else
@@ -232,7 +242,6 @@ namespace lsp
         {
             ws::IGradient *gr;
             float scaling       = lsp_max(0.0f, sScaling.get());
-            bool aa             = s->set_antialiasing(true);
             ssize_t rad         = r->nHeight >> 1;
             float cx            = r->nLeft + (r->nWidth  * 0.5f);
             float cy            = r->nTop  + (r->nHeight * 0.5f);
@@ -241,7 +250,7 @@ namespace lsp
             lsp::Color hole(sBgColor);
             ws::rectangle_t h   = *r;
             ssize_t hole_r      = 0.375f * r->nHeight;
-            ssize_t chamfer     = lsp_min(scaling * 3.0f, 0.25f * r->nHeight);
+            ssize_t chamfer     = lsp_max(1.0f, lsp_min(scaling * 3.0f, 0.25f * r->nHeight));
 
             h.nHeight          *= 0.725f;
             h.nTop              = r->nTop + ((r->nHeight - h.nHeight) >> 1);
@@ -292,16 +301,13 @@ namespace lsp
             s->line(cx - a_sin, cy + a_cos, cx + a_sin, cy - a_cos, lwidth, gr);
             s->set_line_cap(cap);
             delete gr;
-
-            s->set_antialiasing(aa);
         }
 
         void RackEars::draw(ws::ISurface *s)
         {
-            lsp::Color col(sBgColor);
-            s->clear(col);
-
-            col.set_rgb(1.0f, 0.0f, 0.0f);
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float bright    = sBrightness.get();
+            bool aa         = s->set_antialiasing(true);
 
             ws::rectangle_t screw[2], btn;
             screw[0]        = sScrew[0];
@@ -315,6 +321,11 @@ namespace lsp
             btn.nLeft      -= sSize.nLeft;
             btn.nTop       -= sSize.nTop;
 
+            // Draw background
+            lsp::Color col(sBgColor);
+            s->clear(col);
+
+            // Draw screws
             ssize_t xangle  = sAngle.get();
 
             if (!(xangle & 1))
@@ -330,9 +341,60 @@ namespace lsp
                 draw_screw(s, &screw[1], M_PI * 3.0 / 8.0 + M_PI / 16.0);
             }
 
-//            s->fill_rect(col, &screw[0]);
-//            s->fill_rect(col, &screw[1]);
-            s->fill_rect(col, &btn);
+            // Draw button
+            lsp::Color logo(sColor);
+            lsp::Color font(sTextColor);
+
+            logo.scale_lightness(bright);
+            font.scale_lightness(bright);
+
+            float logo_l        = logo.lightness();
+            ssize_t chamfer     = lsp_max(1.0f, scaling * 3.0f);
+
+            for (ssize_t i=0; i<=chamfer; ++i)
+            {
+                float bright = logo_l * (i + 1) / (chamfer + 1);
+
+                ws::IGradient *gr = (nXFlags & XF_DOWN) ?
+                        s->radial_gradient(
+                            btn.nLeft, btn.nTop + btn.nHeight, btn.nWidth >> 2,
+                            btn.nLeft, btn.nTop + btn.nHeight, btn.nWidth
+                        ) :
+                        s->radial_gradient(
+                            btn.nLeft + btn.nWidth, btn.nTop, btn.nWidth >> 2,
+                            btn.nLeft + btn.nWidth, btn.nTop, btn.nWidth
+                        );
+
+                logo.lightness(bright * 1.5f);
+                gr->add_color(0.0f, logo);
+                logo.lightness(bright);
+                gr->add_color(1.0f, logo);
+                s->fill_round_rect(gr, SURFMASK_ALL_CORNER, chamfer - i + 1, btn.nLeft, btn.nTop, btn.nWidth, btn.nHeight);
+                delete gr;
+
+                btn.nLeft      += 1;
+                btn.nTop       += 1;
+                btn.nWidth     -= 2;
+                btn.nHeight    -= 2;
+            }
+
+            // Draw text
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+            LSPString text;
+
+            sText.format(&text);
+            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+
+            sFont.draw(s, font,
+                btn.nLeft + ((btn.nWidth  - tp.Width ) * 0.5f),
+                btn.nTop  + ((btn.nHeight - fp.Height) * 0.5f) + fp.Ascent,
+                scaling, &text
+            );
+
+            // Restore antialiasing
+            s->set_antialiasing(aa);
         }
 
         status_t RackEars::on_mouse_down(const ws::event_t *e)
