@@ -170,6 +170,9 @@
 #include <lsp-plug.in/tk/widgets/specific/LedMeterChannel.h>
 #include <lsp-plug.in/tk/widgets/specific/RackEars.h>
 
+// 3D rendering
+#include <lsp-plug.in/tk/widgets/3d/Area3D.h>
+
 // Graph widgets
 #include <lsp-plug.in/tk/widgets/graph/GraphItem.h>
 #include <lsp-plug.in/tk/widgets/graph/Graph.h>
