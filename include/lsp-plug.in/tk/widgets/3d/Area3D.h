@@ -63,8 +63,9 @@ namespace lsp
 
                 void                        do_destroy();
                 virtual void                hide_widget();
-                void                        drop_resources();
-                ws::IR3DBackend            *create_backend();
+                void                        drop_glass();
+                void                        drop_backend();
+                ws::IR3DBackend            *get_backend();
 
             public:
                 explicit Area3D(Display *dpy);
@@ -84,6 +85,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                      glass_color,        &sGlassColor);
 
             public:
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+
                 virtual void                draw(ws::ISurface *s);
 
                 virtual status_t            on_draw3d(ws::IR3DBackend *r3d);

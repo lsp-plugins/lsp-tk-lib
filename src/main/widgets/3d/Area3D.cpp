@@ -20,7 +20,9 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/common/debug.h>
+#include <lsp-plug.in/dsp/dsp.h>
 
 namespace lsp
 {
@@ -62,22 +64,28 @@ namespace lsp
 
         void Area3D::do_destroy()
         {
-            // Destroy glass
-            drop_resources();
+            // Destroy resources
+            drop_glass();
+            drop_backend();
         }
 
-        void Area3D::drop_resources()
+        void Area3D::drop_glass()
         {
-            if (pBackend != NULL)
-            {
-                pBackend->destroy();
-                delete pBackend;
-            }
             if (pGlass != NULL)
             {
                 pGlass->destroy();
                 delete pGlass;
                 pGlass = NULL;
+            }
+        }
+
+        void Area3D::drop_backend()
+        {
+            if (pBackend != NULL)
+            {
+                pBackend->destroy();
+                delete pBackend;
+                pBackend = NULL;
             }
         }
 
@@ -183,15 +191,19 @@ namespace lsp
         void Area3D::hide_widget()
         {
             Widget::hide_widget();
-            drop_resources();
+            drop_glass();
+            drop_backend();
         }
 
-        ws::IR3DBackend *Area3D::create_backend()
+        ws::IR3DBackend *Area3D::get_backend()
         {
-            if (pBackend != NULL)
+            // Check that we have valid backend
+            if ((pBackend != NULL) && (pBackend->valid()))
                 return pBackend;
 
+            // Drop backend and create new one
             lsp_trace("Creating 3D backend");
+            drop_backend();
 
             // Obtain the necessary information
             ws::IDisplay *dpy = pDisplay->display();
@@ -226,6 +238,103 @@ namespace lsp
 
         void Area3D::draw(ws::ISurface *s)
         {
+            // Obtain a 3D backend and draw it if it is valid
+            ws::IR3DBackend *r3d    = get_backend();
+            if ((r3d == NULL) || (!r3d->valid()))
+                return;
+
+            // Update backend color
+            r3d::color_t c;
+            c.r     = sColor.red();
+            c.g     = sColor.green();
+            c.b     = sColor.blue();
+            c.a     = 1.0f;
+            pBackend->set_bg_color(&c);
+
+            // Update matrices
+//            pBackend->set_matrix(r3d::MATRIX_PROJECTION, &sProjection);
+//            pBackend->set_matrix(r3d::MATRIX_VIEW, &sView);
+//            pBackend->set_matrix(r3d::MATRIX_WORLD, &sWorld);
+
+            // Perform a draw call
+            void *buf       = s->start_direct();
+            {
+                // Estimate the right memory offset
+                size_t stride   = s->stride();
+                uint8_t *dst    = reinterpret_cast<uint8_t *>(buf);
+
+                r3d->locate(sCanvas.nLeft, sCanvas.nTop, sCanvas.nWidth, sCanvas.nHeight);
+                pDisplay->sync();
+
+                r3d->begin_draw();
+                    sSlots.execute(SLOT_DRAW3D, this, r3d);
+                    r3d->sync();
+                    r3d->read_pixels(dst, stride, r3d::PIXEL_RGBA);
+
+                    for (ssize_t i=0; i<sCanvas.nHeight; ++i)
+                    {
+                        dsp::abgr32_to_bgrff32(dst, dst, sCanvas.nWidth);
+                        dst    += stride;
+                    }
+                r3d->end_draw();
+            }
+            s->end_direct();
+        }
+
+        void Area3D::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
+        {
+            if (nFlags & REDRAW_SURFACE)
+                force = true;
+
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
+            float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
+            float bright    = sBrightness.get();
+
+            // Prepare palette
+            ws::ISurface *cv;
+            lsp::Color color(sColor);
+            lsp::Color bg_color(sBgColor);
+            color.scale_lightness(bright);
+
+            s->clip_begin(area);
+            {
+                // Draw widget background
+                s->fill_rect(bg_color, &sSize);
+
+                bool aa = s->set_antialiasing(true);
+                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
+
+                // Get surface of widget
+                cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);
+                if (cv != NULL)
+                    s->draw(cv, sCanvas.nLeft, sCanvas.nTop);
+
+                // Draw the glass and the border
+                color.copy(sGlassColor);
+                bg_color.copy(sColor);
+                color.scale_lightness(bright);
+                bg_color.scale_lightness(bright);
+
+                if (sGlass.get())
+                {
+                    cv = create_border_glass(&pGlass, s,
+                            color, bg_color,
+                            SURFMASK_ALL_CORNER, bw, xr,
+                            sSize.nWidth, sSize.nHeight
+                        );
+                    if (cv != NULL)
+                        s->draw(cv, sSize.nLeft, sSize.nTop);
+                }
+                else
+                {
+                    drop_glass();
+                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize);
+                }
+
+                s->set_antialiasing(aa);
+            }
+            s->clip_end();
         }
 
         status_t Area3D::on_draw3d(ws::IR3DBackend *r3d)
