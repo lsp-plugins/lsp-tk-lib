@@ -34,10 +34,15 @@ LSP_RUNTIME_LIB_NAME       := lsp-runtime-lib
 LSP_RUNTIME_LIB_TYPE       := src
 LSP_RUNTIME_LIB_URL        := https://github.com/sadko4u/$(LSP_RUNTIME_LIB_NAME).git
 
+LSP_R3D_IFACE_VERSION      := 0.5.1
+LSP_R3D_IFACE_NAME         := lsp-r3d-iface
+LSP_R3D_IFACE_URL          := https://github.com/sadko4u/$(LSP_R3D_IFACE_NAME).git
+LSP_R3D_IFACE_TYPE         := src
+
 LSP_R3D_BASE_LIB_VERSION   := 0.5.3
 LSP_R3D_BASE_LIB_NAME      := lsp-r3d-base-lib
 LSP_R3D_BASE_LIB_URL       := https://github.com/sadko4u/$(LSP_R3D_BASE_LIB_NAME).git
-LSP_R3D_BASE_LIB_TYPE      := hdr
+LSP_R3D_BASE_LIB_TYPE      := src
 
 LSP_WS_LIB_VERSION         := 0.5.2
 LSP_WS_LIB_NAME            := lsp-ws-lib
@@ -48,6 +53,11 @@ LSP_DSP_LIB_VERSION        := 0.5.9
 LSP_DSP_LIB_NAME           := lsp-dsp-lib
 LSP_DSP_LIB_TYPE           := src
 LSP_DSP_LIB_URL            := https://github.com/sadko4u/$(LSP_DSP_LIB_NAME).git
+
+LSP_R3D_GLX_LIB_VERSION    := 0.5.3
+LSP_R3D_GLX_LIB_NAME       := lsp-r3d-glx-lib
+LSP_R3D_GLX_LIB_URL        := https://github.com/sadko4u/$(LSP_R3D_GLX_LIB_NAME).git
+LSP_R3D_GLX_LIB_TYPE       := src
 
 LSP_TEST_FW_VERSION        := 1.0.6
 LSP_TEST_FW_NAME           := lsp-test-fw
@@ -65,6 +75,10 @@ XLIB_TYPE                  := pkg
 CAIRO_VERSION         	   := system
 CAIRO_NAME                 := cairo
 CAIRO_TYPE                 := pkg
+
+OPENGL_VERSION             := system
+OPENGL_NAME                := gl
+OPENGL_TYPE                := pkg
 
 ifeq ($(PLATFORM),Windows)
   STDLIB_VERSION             := system

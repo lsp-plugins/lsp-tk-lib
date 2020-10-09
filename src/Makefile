@@ -22,8 +22,7 @@ CONFIG                 := $(CURDIR)/.config.mk
 
 include $(CONFIG)
 include $(CURDIR)/../project.mk
-
-rwildcard               = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $(subst *,%,$2),$d))
+include $(CURDIR)/../make/functions.mk
 
 CXX_SRCMAIN             = $(call rwildcard, main, *.cpp)
 CXX_SRCEXT              =
