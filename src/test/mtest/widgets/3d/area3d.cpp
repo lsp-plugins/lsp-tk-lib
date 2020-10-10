@@ -72,7 +72,7 @@ namespace lsp
         D3(  1.0f, -1.0f, -1.0f )
     };
 
-    static const r3d::vec4_t box_colors[] =
+    static const r3d::color_t box_colors[] =
     {
         C3( 1.0f, 0.0f, 0.0f ),
         C3( 0.0f, 1.0f, 0.0f ),
@@ -243,26 +243,26 @@ MTEST_BEGIN("tk.widgets.3d", area3d)
                 // Set Light parameters
                 r3d::light_t light;
 
-                light.type          = r3d::LIGHT_POINT;
+                light.type          = r3d::LIGHT_SPOT;
                 light.position      = sPov.r3dv;
                 light.direction.dx  = -dir.dx;
                 light.direction.dy  = -dir.dy;
                 light.direction.dz  = -dir.dz;
                 light.direction.dw  = 0.0f;
 
-                light.ambient.r     = 0.0f;
-                light.ambient.g     = 0.0f;
-                light.ambient.b     = 0.0f;
+                light.ambient.r     = 0.5f;
+                light.ambient.g     = 0.5f;
+                light.ambient.b     = 0.5f;
                 light.ambient.a     = 1.0f;
 
-                light.diffuse.r     = 1.0f;
-                light.diffuse.g     = 1.0f;
-                light.diffuse.b     = 1.0f;
+                light.diffuse.r     = 0.5f;
+                light.diffuse.g     = 0.5f;
+                light.diffuse.b     = 0.5f;
                 light.diffuse.a     = 1.0f;
 
-                light.specular.r    = 1.0f;
-                light.specular.g    = 1.0f;
-                light.specular.b    = 1.0f;
+                light.specular.r    = 0.5f;
+                light.specular.g    = 0.5f;
+                light.specular.b    = 0.5f;
                 light.specular.a    = 1.0f;
 
                 light.constant      = 1.0f;
@@ -310,29 +310,27 @@ MTEST_BEGIN("tk.widgets.3d", area3d)
 
                 r3d->draw_primitives(&buf);
 
-//                // Draw box
-//                r3d::init_buffer(&buf);
-//
-//                buf.type            = r3d::PRIMITIVE_TRIANGLES;
-//                buf.width           = 1.0f;
-//                buf.count           = sizeof(box_vertex_idx) / (sizeof(uint32_t) * 2);
-//                buf.flags           = r3d::BUFFER_LIGHTING;
-//
-//                buf.vertex.data     = box_vertex;
-//                buf.vertex.stride   = sizeof(r3d::vec4_t);
-//                buf.vertex.index    = box_vertex_idx;
-//
-//                buf.normal.data     = box_normal;
-//                buf.normal.stride   = sizeof(r3d::vec4_t);
-//                buf.normal.index    = box_normal_idx;
-//
-//                buf.color.data      = box_colors;
-//                buf.color.stride    = sizeof(r3d::color_t);
-//                buf.color.index     = box_vertex_idx;
-//
-//                buf.element.index   = NULL;
-//
-//                r3d->draw_primitives(&buf);
+                // Draw box
+                r3d::init_buffer(&buf);
+
+                buf.type            = r3d::PRIMITIVE_TRIANGLES;
+                buf.width           = 1.0f;
+                buf.count           = sizeof(box_vertex_idx) / (sizeof(uint32_t) * 3);
+                buf.flags           = r3d::BUFFER_LIGHTING;
+
+                buf.vertex.data     = box_vertex;
+                buf.vertex.stride   = sizeof(r3d::vec4_t);
+                buf.vertex.index    = box_vertex_idx;
+
+                buf.normal.data     = box_normal;
+                buf.normal.stride   = sizeof(r3d::vec4_t);
+                buf.normal.index    = box_normal_idx;
+
+                buf.color.data      = box_colors;
+                buf.color.stride    = sizeof(r3d::color_t);
+                buf.color.index     = box_vertex_idx;
+
+                r3d->draw_primitives(&buf);
 
                 return STATUS_OK;
             }
