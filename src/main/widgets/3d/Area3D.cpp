@@ -249,12 +249,7 @@ namespace lsp
             c.g     = sColor.green();
             c.b     = sColor.blue();
             c.a     = 1.0f;
-            pBackend->set_bg_color(&c);
-
-            // Update matrices
-//            pBackend->set_matrix(r3d::MATRIX_PROJECTION, &sProjection);
-//            pBackend->set_matrix(r3d::MATRIX_VIEW, &sView);
-//            pBackend->set_matrix(r3d::MATRIX_WORLD, &sWorld);
+            r3d->set_bg_color(&c);
 
             // Perform a draw call
             void *buf       = s->start_direct();
