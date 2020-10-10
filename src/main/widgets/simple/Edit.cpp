@@ -366,7 +366,7 @@ namespace lsp
             sTextArea.nHeight   = r->nHeight- border*2;
         }
 
-        status_t Edit::timer_handler(ws::timestamp_t time, void *arg)
+        status_t Edit::timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             Edit *_this = widget_ptrcast<Edit>(arg);
             if (_this == NULL)

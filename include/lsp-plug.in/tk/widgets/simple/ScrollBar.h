@@ -118,7 +118,7 @@ namespace lsp
 
             protected:
                 static status_t                 slot_on_change(Widget *sender, void *ptr, void *data);
-                static status_t                 timer_handler(ws::timestamp_t time, void *arg);
+                static status_t                 timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:
                 virtual void                    size_request(ws::size_limit_t *r);

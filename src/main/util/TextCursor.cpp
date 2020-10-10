@@ -39,7 +39,7 @@ namespace lsp
         {
         }
 
-        status_t TextCursor::update_blink(ws::timestamp_t ts, void *arg)
+        status_t TextCursor::update_blink(ws::timestamp_t sched, ws::timestamp_t ts, void *arg)
         {
             if (arg == NULL)
                 return STATUS_BAD_ARGUMENTS;

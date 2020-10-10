@@ -116,7 +116,7 @@ namespace lsp
 //                Menu                   *pPopup;
 
             protected:
-                static status_t                     timer_handler(ws::timestamp_t time, void *arg);
+                static status_t                     timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
                 static status_t                     slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t                     slot_popup_cut_action(Widget *sender, void *ptr, void *data);
                 static status_t                     slot_popup_copy_action(Widget *sender, void *ptr, void *data);

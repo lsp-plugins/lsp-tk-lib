@@ -349,7 +349,7 @@ namespace lsp
             query_draw();
         }
 
-        status_t ScrollBar::timer_handler(ws::timestamp_t time, void *arg)
+        status_t ScrollBar::timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             ScrollBar *_this = widget_ptrcast<ScrollBar>(arg);
             if (_this == NULL)

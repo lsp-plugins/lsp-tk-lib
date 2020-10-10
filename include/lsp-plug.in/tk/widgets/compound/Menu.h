@@ -157,8 +157,8 @@ namespace lsp
                 prop::WidgetPtr<Menu>   sSubmenu;           // Sub-menu
 
             protected:
-                static status_t             key_scroll_handler(ws::timestamp_t time, void *arg);
-                static status_t             mouse_scroll_handler(ws::timestamp_t time, void *arg);
+                static status_t             key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
+                static status_t             mouse_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:
                 void                        allocate_items(lltl::darray<item_t> *out, istats_t *stats);

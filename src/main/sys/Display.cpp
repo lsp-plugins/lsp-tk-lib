@@ -80,7 +80,7 @@ namespace lsp
             }
         }
 
-        status_t Display::main_task_handler(ws::timestamp_t time, void *arg)
+        status_t Display::main_task_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             Display *_this   = reinterpret_cast<Display *>(arg);
             if (_this == NULL)

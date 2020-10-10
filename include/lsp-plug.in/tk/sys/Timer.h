@@ -62,10 +62,10 @@ namespace lsp
                 ws::taskid_t        nTaskID;
 
             protected:
-                static  status_t    execute(ws::timestamp_t time, void *arg);
-                status_t            execute_task(ws::timestamp_t time, void *arg);
+                static  status_t    execute(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
+                status_t            execute_task(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
-                status_t            submit_task(ws::timestamp_t at);
+                status_t            submit_task(ws::timestamp_t sched, ws::timestamp_t at);
 
             public:
                 /** Constructor

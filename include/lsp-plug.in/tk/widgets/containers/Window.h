@@ -89,7 +89,7 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Slot handlers
             protected:
-                static status_t     tmr_redraw_request(ws::timestamp_t ts, void *args);
+                static status_t     tmr_redraw_request(ws::timestamp_t sched, ws::timestamp_t ts, void *args);
                 static status_t     slot_window_close(Widget *sender, void *ptr, void *data);
 
                 status_t            do_render();

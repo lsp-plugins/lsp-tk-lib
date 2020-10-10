@@ -43,7 +43,7 @@ namespace lsp
             cancel();
         }
 
-        status_t Timer::submit_task(ws::timestamp_t ctime)
+        status_t Timer::submit_task(ws::timestamp_t sched, ws::timestamp_t ctime)
         {
             // Check error status
             if ((nFlags & (TF_ERROR | TF_STOP_ON_ERR)) == (TF_ERROR | TF_STOP_ON_ERR))
@@ -59,22 +59,23 @@ namespace lsp
             }
 
             // Submit task to display's queue
-            nTaskID     = pDisplay->submit_task(ctime + nRepeatInterval, execute, this);
+            ws::timestamp_t time    = lsp_max(ctime, sched + nRepeatInterval);
+            nTaskID     = pDisplay->submit_task(time, execute, this);
             if (nTaskID < 0)
                 return -nTaskID;
             return STATUS_OK;
         }
 
-        status_t Timer::execute(ws::timestamp_t time, void *arg)
+        status_t Timer::execute(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             Timer *_this      = static_cast<Timer *>(arg);
             if (_this == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            return _this->execute_task(time, arg);
+            return _this->execute_task(sched, time, arg);
         }
 
-        status_t Timer::execute_task(ws::timestamp_t time, void *arg)
+        status_t Timer::execute_task(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             // Decrement number of repeats
             nTaskID             = -1;
@@ -92,7 +93,7 @@ namespace lsp
             else if (pHandler != NULL)
             {
                 // How run handler if present
-                code       = pHandler(time, pArguments);
+                code       = pHandler(sched, time, pArguments);
 
                 // Analyze status of execution
                 if ((nFlags & TF_STOP_ON_ERR) && (code != STATUS_OK))
@@ -102,7 +103,7 @@ namespace lsp
                 }
             }
 
-            return submit_task(time);
+            return submit_task(sched, time);
         }
 
         void Timer::bind(ws::IDisplay *dpy)
@@ -207,7 +208,7 @@ namespace lsp
                 return STATUS_BAD_STATE;
 
             nFlags         &= ~TF_ERROR;
-            return submit_task(0);
+            return submit_task(0, 0);
         }
 
         status_t Timer::run(ws::timestamp_t time, void *args)

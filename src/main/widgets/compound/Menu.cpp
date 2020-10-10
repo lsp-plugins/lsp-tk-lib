@@ -1362,13 +1362,13 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Menu::key_scroll_handler(ws::timestamp_t time, void *arg)
+        status_t Menu::key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             Menu *m = widget_ptrcast<Menu>(arg);
             return (m != NULL) ? m->on_key_scroll(m->nKeyScroll) : STATUS_OK;
         }
 
-        status_t Menu::mouse_scroll_handler(ws::timestamp_t time, void *arg)
+        status_t Menu::mouse_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             Menu *m = widget_ptrcast<Menu>(arg);
             return (m != NULL) ? m->on_mouse_scroll(m->nMouseScroll) : STATUS_OK;

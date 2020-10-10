@@ -245,7 +245,7 @@ namespace lsp
             WidgetContainer::destroy();
         }
 
-        status_t Window::tmr_redraw_request(ws::timestamp_t ts, void *args)
+        status_t Window::tmr_redraw_request(ws::timestamp_t sched, ws::timestamp_t ts, void *args)
         {
             if (args == NULL)
                 return STATUS_BAD_ARGUMENTS;

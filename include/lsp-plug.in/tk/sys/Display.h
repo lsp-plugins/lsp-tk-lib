@@ -66,7 +66,7 @@ namespace lsp
                 void    do_destroy();
 
             protected:
-                static status_t     main_task_handler(ws::timestamp_t time, void *arg);
+                static status_t     main_task_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             //---------------------------------------------------------------------------------
             // Construction and destruction

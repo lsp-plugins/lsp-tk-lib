@@ -186,13 +186,13 @@ MTEST_BEGIN("tk.widgets.3d", area3d)
 
                 nPeriod         = 0x100000;
                 nYaw            = 0;
-                nStep           = nPeriod / (FRAME_PERIOD * 5.0f);
+                nStep           = (nPeriod * FRAME_PERIOD) / 5000.0f;
 
                 fFov            = 70.0f;
 
                 // Bind rendering slot
                 a3->slots()->bind(tk::SLOT_DRAW3D, slot_draw, this);
-                dsp::init_point_xyz(&sPov.dspv, 5.0f, 1.0f, 3.5f);
+                dsp::init_point_xyz(&sPov.dspv, 3.0f, 0.6f, 2.1f);
                 dsp::init_point_xyz(&sDst.dspv, 0.0f, 0.0f, 0.0f);
                 dsp::init_vector_dxyz(&sTop.dspv, 0.0f, 0.0f, -1.0f);
                 dsp::init_matrix3d_identity(&sWorld.dspm);
@@ -204,8 +204,6 @@ MTEST_BEGIN("tk.widgets.3d", area3d)
                 // Update mesh matrix
                 nYaw            = (nYaw + nStep) % nPeriod;
                 float yaw       = (2.0f * M_PI * nYaw) / float(nPeriod);
-
-                lsp_trace("%lld - %f", (long long)time, yaw);
 
                 dsp::init_matrix3d_rotate_z(&sWorld.dspm, -yaw);
 

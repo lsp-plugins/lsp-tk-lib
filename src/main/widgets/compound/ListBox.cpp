@@ -1054,7 +1054,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t ListBox::key_scroll_handler(ws::timestamp_t time, void *arg)
+        status_t ListBox::key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             ListBox *_this = widget_ptrcast<ListBox>(arg);
             return (_this != NULL) ? _this->on_key_scroll() : STATUS_OK;

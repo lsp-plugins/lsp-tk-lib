@@ -50,7 +50,7 @@ namespace lsp
                 Timer       sTimer;
 
             protected:
-                static status_t     update_blink(ws::timestamp_t ts, void *arg);
+                static status_t     update_blink(ws::timestamp_t sched, ws::timestamp_t ts, void *arg);
 
                 virtual ssize_t     limit(ssize_t value);
                 virtual void        on_change();

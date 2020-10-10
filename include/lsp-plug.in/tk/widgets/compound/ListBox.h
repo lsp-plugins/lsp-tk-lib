@@ -150,7 +150,7 @@ namespace lsp
 
                 static void             on_add_item(void *obj, Property *prop, Widget *w);
                 static void             on_remove_item(void *obj, Property *prop, Widget *w);
-                static status_t         key_scroll_handler(ws::timestamp_t time, void *arg);
+                static status_t         key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:
                 virtual void            property_changed(Property *prop);
