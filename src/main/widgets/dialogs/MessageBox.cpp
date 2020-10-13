@@ -63,6 +63,56 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
+            if (res == STATUS_OK)
+                res = sHeading.init();
+            if (res == STATUS_OK)
+            {
+                sHeading.font()->set_size(16);
+                sHeading.font()->set_bold(true);
+                sHeading.allocation()->set_fill(true);
+                sHeading.text_layout()->set(-1.0f, 0.0f);
+            }
+            if (res == STATUS_OK)
+                res = sMessage.init();
+            if (res == STATUS_OK)
+            {
+                sMessage.allocation()->set_fill(true);
+                sMessage.allocation()->set_expand(true);
+                sMessage.text_layout()->set(-1.0f, 0.0f);
+            }
+
+            // Initialize boxes
+            if (res == STATUS_OK)
+                res = sVBox.init();
+            if (res == STATUS_OK)
+            {
+                sVBox.orientation()->set_vertical();
+                sVBox.spacing()->set(8);
+            }
+            if (res == STATUS_OK)
+                res = sBtnBox.init();
+            if (res == STATUS_OK)
+            {
+                sBtnBox.orientation()->set_horizontal();
+                sBtnBox.spacing()->set(8);
+            }
+
+            // Initialize structure
+            if (res == STATUS_OK)
+                res = sVBox.add(&sHeading);
+            if (res == STATUS_OK)
+                res = sVBox.add(&sMessage);
+            if (res == STATUS_OK)
+                res = sVBox.add(&sBtnBox);
+
+            // Add child
+            if (res == STATUS_OK)
+                res = this->add(&sVBox);
+
+            padding()->set(16);
+            border_style()->set(ws::BS_DIALOG);
+            actions()->set(ws::WA_DIALOG);
+
             return STATUS_OK;
         }
 
@@ -84,8 +134,10 @@ namespace lsp
 
             ssize_t index = _this->vButtons.index_of(w);
             if (index >= 0)
-                _this->sBtnBox.add(w); // TODO: replace with code below
-//                _this->sBtnBox.items()->insert(index, w);
+            {
+                w->slot(SLOT_SUBMIT)->bind(slot_on_button_submit, _this->self());
+                _this->sBtnBox.items()->insert(w, index);
+            }
         }
 
         void MessageBox::on_remove_item(void *obj, Property *prop, Widget *w)
@@ -95,6 +147,7 @@ namespace lsp
                 return;
 
             // Remove button from list
+            w->slot(SLOT_SUBMIT)->unbind(slot_on_button_submit, _this->self());
             _this->sBtnBox.remove(w);
         }
 
