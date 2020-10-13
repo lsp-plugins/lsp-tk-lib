@@ -184,6 +184,9 @@
 #include <lsp-plug.in/tk/widgets/graph/GraphOrigin.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphText.h>
 
+// Dialogs
+#include <lsp-plug.in/tk/widgets/dialogs/MessageBox.h>
+
 namespace lsp
 {
     namespace tk

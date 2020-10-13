@@ -34,22 +34,55 @@ namespace lsp
 
         GenericWidgetList::~GenericWidgetList()
         {
+            // Garbage-collect managed widgets
+            for (size_t i=0, n=sList.size(); i<n; ++i)
+            {
+                item_t *xw  = sList.uget(i);
+                if (xw->bManage)
+                {
+                    xw->pWidget->destroy();
+                    delete xw->pWidget;
+                }
+            }
+
             sList.flush();
 
             pMeta       = NULL;
             pCListener  = NULL;
         }
 
-        status_t GenericWidgetList::add(Widget *w)
+        ssize_t GenericWidgetList::index_of(const Widget *w) const
+        {
+            for (size_t i=0, n=sList.size(); i<n; ++i)
+            {
+                item_t *xw  = sList.uget(i);
+                if (xw->pWidget == w)
+                    return i;
+            }
+            return -1;
+        }
+
+        Widget *GenericWidgetList::get(size_t index)
+        {
+            item_t *item = sList.get(index);
+            return (item != NULL) ? item->pWidget : NULL;
+        }
+
+        status_t GenericWidgetList::add(Widget *w, bool manage)
         {
             if (w == NULL)
                 return STATUS_BAD_ARGUMENTS;
             if (!w->instance_of(pMeta))
                 return STATUS_BAD_TYPE;
-            if (sList.index_of(w) >= 0)
+            if (index_of(w) >= 0)
                 return STATUS_ALREADY_EXISTS;
-            if (!sList.add(w))
+
+            item_t *item = sList.add();
+            if (item == NULL)
                 return STATUS_NO_MEM;
+
+            item->pWidget = w;
+            item->bManage = manage;
 
             // Notify listeners
             if (pCListener != NULL)
@@ -66,36 +99,55 @@ namespace lsp
                 return STATUS_BAD_ARGUMENTS;
             if (!w->instance_of(pMeta))
                 return STATUS_BAD_TYPE;
-            if (!sList.premove(w))
+            ssize_t index = index_of(w);
+            if (index < 0)
                 return STATUS_NOT_FOUND;
+
+            item_t xw;
+            if (!sList.remove(index, &xw))
+                return STATUS_UNKNOWN_ERR;
 
             // Notify listeners
             if (pCListener != NULL)
                 pCListener->remove(this, w);
             if (pListener != NULL)
                 pListener->notify(this);
+
+            // Remove widget
+            if (xw.bManage)
+            {
+                xw.pWidget->destroy();
+                delete xw.pWidget;
+            }
 
             return STATUS_OK;
         }
 
         status_t GenericWidgetList::remove(size_t index)
         {
-            Widget *w = sList.remove(index);
-            if (w == NULL)
+            item_t xw;
+            if (sList.remove(index, &xw))
                 return STATUS_INVALID_VALUE;
 
             // Notify listeners
             if (pCListener != NULL)
-                pCListener->remove(this, w);
+                pCListener->remove(this, xw.pWidget);
             if (pListener != NULL)
                 pListener->notify(this);
+
+            // Remove widget
+            if (xw.bManage)
+            {
+                xw.pWidget->destroy();
+                delete xw.pWidget;
+            }
 
             return STATUS_OK;
         }
 
         status_t GenericWidgetList::remove(size_t index, size_t count)
         {
-            lltl::parray<Widget> removed;
+            lltl::darray<item_t> removed;
             if (!sList.remove_n(index, count, &removed))
                 return STATUS_INVALID_VALUE;
 
@@ -104,8 +156,13 @@ namespace lsp
             {
                 for (size_t i=0, n=removed.size(); i<n; ++i)
                 {
-                    Widget *w = removed.uget(i);
-                    pCListener->remove(this, w);
+                    item_t *xw = removed.uget(i);
+                    pCListener->remove(this, xw->pWidget);
+                    if (xw->bManage)
+                    {
+                        xw->pWidget->destroy();
+                        delete xw->pWidget;
+                    }
                 }
             }
             if ((pListener != NULL) && (removed.size() > 0))
@@ -114,16 +171,21 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t GenericWidgetList::insert(Widget *w, size_t index)
+        status_t GenericWidgetList::insert(Widget *w, size_t index, bool manage)
         {
             if (w == NULL)
                 return STATUS_BAD_ARGUMENTS;
             if (!w->instance_of(pMeta))
                 return STATUS_BAD_TYPE;
-            if (sList.index_of(w) >= 0)
+            if (index_of(w) >= 0)
                 return STATUS_ALREADY_EXISTS;
-            if (!sList.insert(index, w))
+
+            item_t *item = sList.insert(index);
+            if (item == NULL)
                 return STATUS_NO_MEM;
+
+            item->pWidget = w;
+            item->bManage = manage;
 
             // Notify listeners
             if (pCListener != NULL)
@@ -136,7 +198,7 @@ namespace lsp
 
         void GenericWidgetList::clear()
         {
-            lltl::parray<Widget> removed;
+            lltl::darray<item_t> removed;
             removed.swap(&sList);
 
             // Notify listeners
@@ -144,33 +206,45 @@ namespace lsp
             {
                 for (size_t i=0, n=removed.size(); i<n; ++i)
                 {
-                    Widget *w = removed.uget(i);
-                    pCListener->remove(this, w);
+                    item_t *xw = removed.uget(i);
+                    pCListener->remove(this, xw->pWidget);
+                    if (xw->bManage)
+                    {
+                        xw->pWidget->destroy();
+                        delete xw->pWidget;
+                    }
                 }
             }
             if ((pListener != NULL) && (removed.size() > 0))
                 pListener->notify(this);
         }
 
-        status_t GenericWidgetList::set(Widget *w, size_t index)
+        status_t GenericWidgetList::set(Widget *w, size_t index, bool manage)
         {
             if (w == NULL)
                 return STATUS_BAD_ARGUMENTS;
             if (!w->instance_of(pMeta))
                 return STATUS_BAD_TYPE;
-            ssize_t idx = sList.index_of(w);
+            ssize_t idx = index_of(w);
             if (idx >= 0)
                 return (size_t(idx) == index) ? STATUS_OK : STATUS_ALREADY_EXISTS;
-            Widget *old = sList.get(idx);
-            if (!sList.set(index, w))
-                return STATUS_INVALID_VALUE;
+
+            item_t *xw      = sList.get(idx);
+            item_t old      = *xw;
+            xw->pWidget     = w;
+            xw->bManage     = manage;
 
             // Notify listeners
             if (pCListener != NULL)
             {
-                if (old != NULL)
-                    pCListener->remove(this, old);
+                if (old.pWidget != NULL)
+                    pCListener->remove(this, old.pWidget);
                 pCListener->add(this, w);
+                if (xw->bManage)
+                {
+                    xw->pWidget->destroy();
+                    delete xw->pWidget;
+                }
             }
             if (pListener != NULL)
                 pListener->notify(this);
@@ -186,7 +260,7 @@ namespace lsp
                 return STATUS_OK;
 
             // Remove data from original lists
-            lltl::parray<Widget> t1, t2;
+            lltl::darray<item_t> t1, t2;
             t1.swap(&sList);
             t2.swap(&dst->sList);
 
@@ -195,16 +269,16 @@ namespace lsp
             {
                 for (size_t i=0, n=t1.size(); i<n; ++i)
                 {
-                    Widget *w   = t1.uget(i);
-                    pCListener->remove(this, w);
+                    item_t *xw  = t1.uget(i);
+                    pCListener->remove(this, xw->pWidget);
                 }
             }
             if (dst->pCListener != NULL)
             {
                 for (size_t i=0, n=t2.size(); i<n; ++i)
                 {
-                    Widget *w   = t2.uget(i);
-                    dst->pCListener->remove(dst, w);
+                    item_t *xw  = t2.uget(i);
+                    dst->pCListener->remove(dst, xw->pWidget);
                 }
             }
 
@@ -217,16 +291,16 @@ namespace lsp
             {
                 for (size_t i=0, n=sList.size(); i<n; ++i)
                 {
-                    Widget *w   = sList.uget(i);
-                    pCListener->add(this, w);
+                    item_t *xw  = sList.uget(i);
+                    pCListener->add(this, xw->pWidget);
                 }
             }
             if (dst->pCListener != NULL)
             {
                 for (size_t i=0, n=dst->sList.size(); i<n; ++i)
                 {
-                    Widget *w   = dst->sList.uget(i);
-                    dst->pCListener->add(dst, w);
+                    item_t *xw  = dst->sList.uget(i);
+                    dst->pCListener->add(dst, xw->pWidget);
                 }
             }
 

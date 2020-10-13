@@ -38,23 +38,33 @@ namespace lsp
                 GenericWidgetList & operator = (const GenericWidgetList &);
 
             protected:
+                typedef struct item_t
+                {
+                    Widget     *pWidget;
+                    bool        bManage;
+                } item_t;
+
+            protected:
                 const w_class_t                *pMeta;
                 prop::CollectionListener       *pCListener;
-                mutable lltl::parray<Widget>    sList;
+                mutable lltl::darray<item_t>    sList;
 
             public:
                 explicit GenericWidgetList(const w_class_t *meta, prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL);
                 ~GenericWidgetList();
 
             public:
-                status_t        add(Widget *w);
+                status_t        add(Widget *w, bool manage);
                 status_t        premove(Widget *w);
                 status_t        remove(size_t index);
                 status_t        remove(size_t index, size_t count);
-                status_t        insert(Widget *w, size_t index);
+                status_t        insert(Widget *w, size_t index, bool manage);
                 void            clear();
+                ssize_t         index_of(const Widget *w) const;
+                inline bool     contains(const Widget *w) const             { return index_of(w) >= 0;                              }
+                Widget         *get(size_t index);
 
-                status_t        set(Widget *w, size_t index);
+                status_t        set(Widget *w, size_t index, bool manage);
                 status_t        swap(GenericWidgetList *dst);
                 status_t        xswap(size_t i1, size_t i2);
         };
@@ -73,17 +83,18 @@ namespace lsp
                     ~WidgetList() {}
 
                 public:
-                    inline size_t       size() const                        { return sList.size();                          }
-                    inline status_t     add(widget_t *w)                    { return GenericWidgetList::add(w);             }
-                    inline status_t     premove(widget_t *w)                { return GenericWidgetList::premove(w);         }
-                    inline status_t     insert(widget_t *w, size_t index)   { return GenericWidgetList::insert(w, index);   }
-                    inline status_t     set(widget_t *w, size_t index)      { return GenericWidgetList::set(w, index);      }
-                    inline widget_t    *get(size_t index)                   { return wcast(sList.get(index));               }
-                    inline bool         contains(const widget_t *w) const   { return sList.contains(w);                     }
-                    inline ssize_t      index_of(const widget_t *w) const   { return sList.index_of(w);                     }
+                    inline size_t       size() const                        { return sList.size();                                  }
+                    inline status_t     add(widget_t *w)                    { return GenericWidgetList::add(w, false);              }
+                    inline status_t     madd(widget_t *w)                   { return GenericWidgetList::add(w, true);               }
+                    inline status_t     premove(widget_t *w)                { return GenericWidgetList::premove(w);                 }
+                    inline status_t     insert(widget_t *w, size_t index)   { return GenericWidgetList::insert(w, index, false);    }
+                    inline status_t     minsert(widget_t *w, size_t index)  { return GenericWidgetList::insert(w, index, true);     }
+                    inline status_t     set(widget_t *w, size_t index)      { return GenericWidgetList::set(w, index, false);       }
+                    inline status_t     mset(widget_t *w, size_t index)     { return GenericWidgetList::set(w, index, true);        }
+                    inline widget_t    *get(size_t index)                   { return wcast(GenericWidgetList::get(index));          }
 
-                    inline status_t     swap(WidgetList<widget_t> *lst)     { return GenericWidgetList::swap(lst);          }
-                    inline status_t     swap(WidgetList<widget_t> &lst)     { return GenericWidgetList::swap(&lst);         }
+                    inline status_t     swap(WidgetList<widget_t> *lst)     { return GenericWidgetList::swap(lst);                  }
+                    inline status_t     swap(WidgetList<widget_t> &lst)     { return GenericWidgetList::swap(&lst);                 }
             };
 
         namespace prop
@@ -101,7 +112,6 @@ namespace lsp
                     public:
                         inline void         flush()                             { this->sList.flush();                                              }
                         inline bool         unlink(Widget *w)                   { return this->sList.premove(w);                                    }
-                        inline widget_t    *uget(size_t index)                  { return tk::WidgetList<widget_t>::wcast(this->sList.get(index));   }
                 };
         }
     }

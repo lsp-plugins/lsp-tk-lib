@@ -65,7 +65,7 @@ namespace lsp
             // Unlink all items
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                LedMeterChannel *item   = vItems.uget(i);
+                LedMeterChannel *item   = vItems.get(i);
                 if (item == NULL)
                     continue;
 

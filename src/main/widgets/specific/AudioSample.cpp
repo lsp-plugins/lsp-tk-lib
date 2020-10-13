@@ -107,7 +107,7 @@ namespace lsp
             // Unlink all items
             for (size_t i=0, n=vChannels.size(); i<n; ++i)
             {
-                AudioChannel *item   = vChannels.uget(i);
+                AudioChannel *item   = vChannels.get(i);
                 if (item == NULL)
                     continue;
 

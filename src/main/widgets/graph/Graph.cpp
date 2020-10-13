@@ -72,7 +72,7 @@ namespace lsp
             // Unlink all items
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                GraphItem *item     = vItems.uget(i);
+                GraphItem *item     = vItems.get(i);
                 if (item == NULL)
                     continue;
 

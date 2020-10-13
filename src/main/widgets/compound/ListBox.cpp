@@ -86,7 +86,7 @@ namespace lsp
             size_t n            = vItems.size();
             for (size_t i=0; i<n; ++i)
             {
-                ListBoxItem *item   = vItems.uget(i);
+                ListBoxItem *item   = vItems.get(i);
                 if (item == NULL)
                     continue;
 
@@ -237,7 +237,7 @@ namespace lsp
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Skip invisible items
-                ListBoxItem *li = vItems.uget(i);
+                ListBoxItem *li = vItems.get(i);
                 if ((li == NULL) || (!li->visibility()->get()))
                     continue;
 
