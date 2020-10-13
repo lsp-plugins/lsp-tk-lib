@@ -51,7 +51,9 @@ namespace lsp
                 } cell_t;
 
             protected:
-                lltl::darray<cell_t>        vItems;
+                lltl::darray<cell_t>        vVisible;
+                prop::WidgetList<Widget>    vItems;
+                prop::CollectionListener    sIListener;         // Listener to trigger vItems content change
 
                 prop::Integer               sSpacing;
                 prop::Boolean               sHomogeneous;
@@ -59,13 +61,16 @@ namespace lsp
 
             protected:
                 static inline bool          hidden_widget(const cell_t *w);
-                static status_t             visible_items(lltl::parray<cell_t> *out, lltl::darray<cell_t> *list);
+                status_t                    visible_items(lltl::darray<cell_t> *out);
                 void                        do_destroy();
 
-                status_t                    allocate_homogeneous(const ws::rectangle_t *r, lltl::parray<cell_t> &visible);
-                status_t                    allocate_proportional(const ws::rectangle_t *r, lltl::parray<cell_t> &visible);
-                void                        allocate_widget_space(const ws::rectangle_t *r, lltl::parray<cell_t> &visible, ssize_t spacing);
-                void                        realize_children(lltl::parray<cell_t> &visible);
+                static void                 on_add_item(void *obj, Property *prop, Widget *w);
+                static void                 on_remove_item(void *obj, Property *prop, Widget *w);
+
+                status_t                    allocate_homogeneous(const ws::rectangle_t *r, lltl::darray<cell_t> &visible);
+                status_t                    allocate_proportional(const ws::rectangle_t *r, lltl::darray<cell_t> &visible);
+                void                        allocate_widget_space(const ws::rectangle_t *r, lltl::darray<cell_t> &visible, ssize_t spacing);
+                void                        realize_children(lltl::darray<cell_t> &visible);
 
             protected:
                 virtual void                size_request(ws::size_limit_t *r);
@@ -99,6 +104,12 @@ namespace lsp
                  * @return box orientation
                  */
                 LSP_TK_PROPERTY(Orientation,        orientation,        &sOrientation)
+
+                /**
+                 * Get collection of widgets
+                 * @return collection of widgets
+                 */
+                LSP_TK_PROPERTY(WidgetList<Widget>, items,              &vItems)
 
             //---------------------------------------------------------------------------------
             // Manipulation

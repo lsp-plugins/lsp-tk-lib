@@ -55,11 +55,12 @@ namespace lsp
 
             public:
                 status_t        add(Widget *w, bool manage);
-                status_t        premove(Widget *w);
+                status_t        premove(const Widget *w);
                 status_t        remove(size_t index);
                 status_t        remove(size_t index, size_t count);
                 status_t        insert(Widget *w, size_t index, bool manage);
                 void            clear();
+                void            flush();
                 ssize_t         index_of(const Widget *w) const;
                 inline bool     contains(const Widget *w) const             { return index_of(w) >= 0;                              }
                 Widget         *get(size_t index);
@@ -86,7 +87,6 @@ namespace lsp
                     inline size_t       size() const                        { return sList.size();                                  }
                     inline status_t     add(widget_t *w)                    { return GenericWidgetList::add(w, false);              }
                     inline status_t     madd(widget_t *w)                   { return GenericWidgetList::add(w, true);               }
-                    inline status_t     premove(widget_t *w)                { return GenericWidgetList::premove(w);                 }
                     inline status_t     insert(widget_t *w, size_t index)   { return GenericWidgetList::insert(w, index, false);    }
                     inline status_t     minsert(widget_t *w, size_t index)  { return GenericWidgetList::insert(w, index, true);     }
                     inline status_t     set(widget_t *w, size_t index)      { return GenericWidgetList::set(w, index, false);       }
@@ -110,8 +110,8 @@ namespace lsp
                         ~WidgetList() {}
 
                     public:
-                        inline void         flush()                             { this->sList.flush();                                              }
-                        inline bool         unlink(Widget *w)                   { return this->sList.premove(w);                                    }
+                        inline void         flush()                             { tk::WidgetList<widget_t>::flush();                }
+                        inline bool         unlink(Widget *w)                   { return tk::WidgetList<widget_t>::premove(w);      }
                 };
         }
     }

@@ -30,6 +30,7 @@ namespace lsp
 
         Box::Box(Display *dpy):
             WidgetContainer(dpy),
+            vItems(&sProperties, &sIListener),
             sSpacing(&sProperties),
             sHomogeneous(&sProperties),
             sOrientation(&sProperties)
@@ -45,23 +46,27 @@ namespace lsp
         status_t Box::init()
         {
             status_t res = WidgetContainer::init();
-            if (res == STATUS_OK)
+            if (res != STATUS_OK)
+                return res;
+
+            // Init listener
+            sIListener.bind_all(this, on_add_item, on_remove_item);
+
+            // Init properties
+            sSpacing.bind("spacing", &sStyle);
+            sHomogeneous.bind("homogeneous", &sStyle);
+            sOrientation.bind("orientation", &sStyle);
+
+            Style *sclass = style_class();
+            if (sclass != NULL)
             {
-                sSpacing.bind("spacing", &sStyle);
-                sHomogeneous.bind("homogeneous", &sStyle);
-                sOrientation.bind("orientation", &sStyle);
-
-                Style *sclass = style_class();
-                if (sclass != NULL)
-                {
-                    sSpacing.init(sclass, 0);
-                    sHomogeneous.init(sclass, false);
-                    sOrientation.init(sclass, O_HORIZONTAL);
-                }
-
-                // Override settings for hfill and vfill
-                sAllocation.set(true, false);
+                sSpacing.init(sclass, 0);
+                sHomogeneous.init(sclass, false);
+                sOrientation.init(sclass, O_HORIZONTAL);
             }
+
+            // Override settings for hfill and vfill
+            sAllocation.set(true, false);
 
             return res;
         }
@@ -72,19 +77,52 @@ namespace lsp
             WidgetContainer::destroy();
         }
 
+        void Box::property_changed(Property *prop)
+        {
+            Widget::property_changed(prop);
+
+            if (vItems.is(prop))
+                query_resize();
+            if (sSpacing.is(prop))
+                query_resize();
+            if (sHomogeneous.is(prop))
+                query_resize();
+            if (sOrientation.is(prop))
+                query_resize();
+        }
+
+        void Box::on_add_item(void *obj, Property *prop, Widget *w)
+        {
+            Box *_this = widget_ptrcast<Box>(obj);
+            if (_this == NULL)
+                return;
+
+            w->set_parent(_this);
+            _this->query_resize();
+        }
+
+        void Box::on_remove_item(void *obj, Property *prop, Widget *w)
+        {
+            Box *_this = widget_ptrcast<Box>(obj);
+            if (_this == NULL)
+                return;
+
+            _this->unlink_widget(w);
+            _this->query_resize();
+        }
+
         void Box::do_destroy()
         {
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Get widget
-                cell_t *w = vItems.uget(i);
-                if (w->pWidget == NULL)
-                    continue;
-
-                unlink_widget(w->pWidget);
-                w->pWidget = NULL;
+                Widget *w = vItems.get(i);
+                if (w != NULL)
+                    unlink_widget(w);
             }
 
+            // Cleanup collections
+            vVisible.flush();
             vItems.flush();
         }
 
@@ -95,21 +133,30 @@ namespace lsp
             return !w->pWidget->visibility()->get();
         }
 
-        status_t Box::visible_items(lltl::parray<cell_t> *out, lltl::darray<cell_t> *list)
+        status_t Box::visible_items(lltl::darray<cell_t> *out)
         {
             // Estimate number of visible items
-            for (size_t i=0, n=list->size(); i<n; ++i)
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Get widget
-                cell_t *w = list->uget(i);
-                if (w->pWidget == NULL)
-                    continue;
-                if (!w->pWidget->visibility()->get())
+                Widget *w = vItems.get(i);
+                if ((w == NULL) || (!w->visibility()->get()))
                     continue;
 
-                // Add visible widget to list
-                if (!out->add(w))
+                // Add cell
+                cell_t *cell = out->add();
+                if (cell == NULL)
                     return STATUS_NO_MEM;
+
+                cell->a.nLeft       = 0;
+                cell->a.nTop        = 0;
+                cell->a.nWidth      = 0;
+                cell->a.nHeight     = 0;
+                cell->s.nLeft       = 0;
+                cell->s.nTop        = 0;
+                cell->s.nWidth      = 0;
+                cell->s.nHeight     = 0;
+                cell->pWidget       = w;
             }
 
             return STATUS_OK;
@@ -117,9 +164,9 @@ namespace lsp
 
         Widget *Box::find_widget(ssize_t x, ssize_t y)
         {
-            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
-                cell_t *w = vItems.uget(i);
+                cell_t *w = vVisible.uget(i);
                 if (hidden_widget(w))
                     continue;
                 if (w->pWidget->inside(x, y))
@@ -127,18 +174,6 @@ namespace lsp
             }
 
             return NULL;
-        }
-
-        void Box::property_changed(Property *prop)
-        {
-            Widget::property_changed(prop);
-
-            if (sSpacing.is(prop))
-                query_resize();
-            if (sHomogeneous.is(prop))
-                query_resize();
-            if (sOrientation.is(prop))
-                query_resize();
         }
 
         void Box::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -150,17 +185,8 @@ namespace lsp
             // Estimate palette
             lsp::Color bg_color(sBgColor);
 
-            // Render child widgets
-            lltl::parray<cell_t>    visible;
-            status_t res    = visible_items(&visible, &vItems);
-            if (res != STATUS_OK)
-            {
-                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
-                return;
-            }
-
             // Draw background if needed
-            if ((visible.is_empty()) && (force))
+            if ((vVisible.is_empty()) && (force))
             {
                 s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
                 return;
@@ -174,9 +200,9 @@ namespace lsp
             bool horizontal     = sOrientation.horizontal();
             ws::rectangle_t xr;
 
-            for (size_t i=0, n=visible.size(); i<n; ++i)
+            for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
-                cell_t *wc = visible.uget(i);
+                cell_t *wc = vVisible.uget(i);
                 Widget *w = wc->pWidget;
 
                 if ((!force) && (!w->redraw_pending()))
@@ -229,76 +255,21 @@ namespace lsp
         {
             if (widget == NULL)
                 return STATUS_BAD_ARGUMENTS;
-
-            // Check that widget already exists
-            for (size_t i=0, n=vItems.size(); i<n; ++i)
-            {
-                cell_t *cell        = vItems.uget(i);
-                if (cell->pWidget == widget)
-                    return STATUS_ALREADY_EXISTS;
-            }
-
-            cell_t *cell = vItems.append();
-            if (cell == NULL)
-                return STATUS_NO_MEM;
-
-            cell->a.nLeft       = 0;
-            cell->a.nTop        = 0;
-            cell->a.nWidth      = 0;
-            cell->a.nHeight     = 0;
-            cell->s.nLeft       = 0;
-            cell->s.nTop        = 0;
-            cell->s.nWidth      = 0;
-            cell->s.nHeight     = 0;
-            cell->pWidget       = widget;
-
-            widget->set_parent(this);
-
-            if (widget->visibility()->get())
-                query_resize();
-            return STATUS_SUCCESS;
+            return vItems.add(widget);
         }
 
         status_t Box::remove(Widget *child)
         {
-            size_t n            = vItems.size();
-            for (size_t i=0; i<n; ++i)
-            {
-                cell_t *cell        = vItems.uget(i);
-                if (cell->pWidget == child)
-                {
-                    if (!vItems.remove(i))
-                        return STATUS_UNKNOWN_ERR;
-                    query_resize();
-                    child->set_parent(NULL);
-                    return STATUS_OK;
-                }
-            }
-
-            return STATUS_NOT_FOUND;
+            return vItems.premove(child);
         }
 
         status_t Box::remove_all()
         {
-            if (vItems.size() <= 0)
-                return STATUS_OK;
-
-            lltl::darray<cell_t> tmp;
-            vItems.swap(&tmp);
-
-            for (size_t i=0, n=tmp.size(); i<n; ++i)
-            {
-                cell_t *cell        = tmp.uget(i);
-                if (cell->pWidget != NULL)
-                    cell->pWidget->set_parent(NULL);
-            }
-
-            tmp.flush();
-            query_resize();
+            vItems.clear();
             return STATUS_OK;
         }
 
-        status_t Box::allocate_homogeneous(const ws::rectangle_t *r, lltl::parray<cell_t> &visible)
+        status_t Box::allocate_homogeneous(const ws::rectangle_t *r, lltl::darray<cell_t> &visible)
         {
             // Get the final area to perform allocation
             float scaling       = lsp_max(0.0f, sScaling.get());
@@ -352,7 +323,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Box::allocate_proportional(const ws::rectangle_t *r, lltl::parray<cell_t> &visible)
+        status_t Box::allocate_proportional(const ws::rectangle_t *r, lltl::darray<cell_t> &visible)
         {
             // Get the final area to perform allocation
             float scaling       = lsp_max(0.0f, sScaling.get());
@@ -505,7 +476,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Box::allocate_widget_space(const ws::rectangle_t *r, lltl::parray<cell_t> &visible, ssize_t spacing)
+        void Box::allocate_widget_space(const ws::rectangle_t *r, lltl::darray<cell_t> &visible, ssize_t spacing)
         {
             bool horizontal     = sOrientation.horizontal();
             ssize_t l = r->nLeft, t = r->nTop; // Left-Top corner
@@ -529,7 +500,7 @@ namespace lsp
             }
         }
 
-        void Box::realize_children(lltl::parray<cell_t> &visible)
+        void Box::realize_children(lltl::darray<cell_t> &visible)
         {
             ws::size_limit_t sr;
             ws::rectangle_t r;
@@ -563,35 +534,29 @@ namespace lsp
 
         void Box::realize(const ws::rectangle_t *r)
         {
-            lsp_trace("this=%p, size={%d, %d, %d, %d}",
-                    this, int(r->nLeft), int(r->nTop), int(r->nWidth), int(r->nHeight)
-                );
-
-            // Make a copy of current widget list
-            lltl::darray<cell_t>    items;
-            if (items.add(&vItems))
-            {
-                lltl::parray<cell_t>    visible;
-                status_t res    = visible_items(&visible, &items);
-
-                // Realize child widgets
-                if ((res == STATUS_OK) && (visible.size() > 0))
-                {
-                    res = (sHomogeneous.get()) ?
-                        allocate_homogeneous(r, visible) :
-                        allocate_proportional(r, visible);
-                }
-
-                // Update state of all widgets
-                if (res == STATUS_OK)
-                {
-                    realize_children(visible);
-                    vItems.swap(&items);
-                }
-            }
-
             // Call parent method to realize
             WidgetContainer::realize(r);
+
+            // Create list of visible items
+            lltl::darray<cell_t>    visible;
+            status_t res    = visible_items(&visible);
+            if (res != STATUS_OK)
+                return;
+
+            // Allocate space for child widgets
+            if ((res == STATUS_OK) && (visible.size() > 0))
+            {
+                res = (sHomogeneous.get()) ?
+                    allocate_homogeneous(r, visible) :
+                    allocate_proportional(r, visible);
+            }
+
+            // Update list of visible items
+            if (res == STATUS_OK)
+            {
+                realize_children(visible);
+                vVisible.swap(&visible);
+            }
         }
 
         void Box::size_request(ws::size_limit_t *r)
@@ -604,14 +569,9 @@ namespace lsp
             r->nPreWidth    = -1;
             r->nPreHeight   = -1;
 
-            // Create copy of current state
-            lltl::darray<cell_t>    items;
-            if (!items.add(&vItems))
-                return;
-
             // Obtain list of visible items
-            lltl::parray<cell_t>    visible;
-            status_t res    = visible_items(&visible, &items);
+            lltl::darray<cell_t>    visible;
+            status_t res    = visible_items(&visible);
             if ((res != STATUS_OK) || (visible.is_empty()))
                 return;
 

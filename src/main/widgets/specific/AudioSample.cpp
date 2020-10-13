@@ -108,10 +108,8 @@ namespace lsp
             for (size_t i=0, n=vChannels.size(); i<n; ++i)
             {
                 AudioChannel *item   = vChannels.get(i);
-                if (item == NULL)
-                    continue;
-
-                unlink_widget(item);
+                if (item != NULL)
+                    unlink_widget(item);
             }
 
             // Drop glass

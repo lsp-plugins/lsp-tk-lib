@@ -93,7 +93,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t GenericWidgetList::premove(Widget *w)
+        status_t GenericWidgetList::premove(const Widget *w)
         {
             if (w == NULL)
                 return STATUS_BAD_ARGUMENTS;
@@ -109,7 +109,7 @@ namespace lsp
 
             // Notify listeners
             if (pCListener != NULL)
-                pCListener->remove(this, w);
+                pCListener->remove(this, xw.pWidget);
             if (pListener != NULL)
                 pListener->notify(this);
 
@@ -208,15 +208,39 @@ namespace lsp
                 {
                     item_t *xw = removed.uget(i);
                     pCListener->remove(this, xw->pWidget);
-                    if (xw->bManage)
-                    {
-                        xw->pWidget->destroy();
-                        delete xw->pWidget;
-                    }
                 }
             }
+
             if ((pListener != NULL) && (removed.size() > 0))
                 pListener->notify(this);
+
+            // Manage removed items
+            for (size_t i=0, n=removed.size(); i<n; ++i)
+            {
+                item_t *xw = removed.uget(i);
+                if (xw->bManage)
+                {
+                    xw->pWidget->destroy();
+                    delete xw->pWidget;
+                }
+            }
+        }
+
+        void GenericWidgetList::flush()
+        {
+            lltl::darray<item_t> removed;
+            removed.swap(&sList);
+
+            // Manage removed items
+            for (size_t i=0, n=removed.size(); i<n; ++i)
+            {
+                item_t *xw = removed.uget(i);
+                if (xw->bManage)
+                {
+                    xw->pWidget->destroy();
+                    delete xw->pWidget;
+                }
+            }
         }
 
         status_t GenericWidgetList::set(Widget *w, size_t index, bool manage)
