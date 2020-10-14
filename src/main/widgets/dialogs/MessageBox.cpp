@@ -25,14 +25,16 @@ namespace lsp
 {
     namespace tk
     {
-        const w_class_t MessageBox::metadata        = { "MessageBox", &MessageBox::metadata };
+        const w_class_t MessageBox::metadata        = { "MessageBox", &Window::metadata };
 
         MessageBox::MessageBox(Display *dpy):
             Window(dpy),
             sHeading(dpy),
             sMessage(dpy),
             sVBox(dpy),
+            sBtnAlign(dpy),
             sBtnBox(dpy),
+            sBtnStyle(dpy->schema()),
             vButtons(&sProperties, &sIListener)
         {
             pClass          = &metadata;
@@ -45,6 +47,10 @@ namespace lsp
 
         void MessageBox::do_destroy()
         {
+            vButtons.clear();
+
+            sStyle.destroy();
+            sBtnAlign.destroy();
             sBtnBox.destroy();
             sVBox.destroy();
             sMessage.destroy();
@@ -63,6 +69,23 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
+            // Init listener
+            sIListener.bind_all(this, on_add_item, on_remove_item);
+
+            // Init button style
+            if (res == STATUS_OK)
+                res = sBtnStyle.init();
+            sBtnConstraints.bind("size.constraints", &sBtnStyle);
+
+            // Override parameters
+            Style *sclass = style_class();
+            if (sclass != NULL)
+            {
+                // Overrides
+                sSizeConstraints.override(sclass, 0, 0, 0, 0);
+            }
+
+            // Initialize widgets
             if (res == STATUS_OK)
                 res = sHeading.init();
             if (res == STATUS_OK)
@@ -79,41 +102,55 @@ namespace lsp
                 sMessage.allocation()->set_fill(true);
                 sMessage.allocation()->set_expand(true);
                 sMessage.text_layout()->set(-1.0f, 0.0f);
+                sMessage.padding()->set_bottom(8);
             }
 
-            // Initialize boxes
-            if (res == STATUS_OK)
-                res = sVBox.init();
+            // Initialize containers
             if (res == STATUS_OK)
             {
-                sVBox.orientation()->set_vertical();
-                sVBox.spacing()->set(8);
+                if ((res = sVBox.init()) == STATUS_OK)
+                {
+                    sVBox.orientation()->set_vertical();
+                    sVBox.spacing()->set(8);
+                }
             }
             if (res == STATUS_OK)
-                res = sBtnBox.init();
+            {
+                if ((res = sBtnBox.init()) == STATUS_OK)
+                {
+                    sBtnBox.orientation()->set_horizontal();
+                    sBtnBox.spacing()->set(8);
+                }
+            }
             if (res == STATUS_OK)
             {
-                sBtnBox.orientation()->set_horizontal();
-                sBtnBox.spacing()->set(8);
+                if ((res = sBtnAlign.init()) == STATUS_OK)
+                    sBtnAlign.layout()->set(0.0f, 0.0f);
             }
 
             // Initialize structure
+            if (res == STATUS_OK)
+                res = sBtnAlign.add(&sBtnBox);
             if (res == STATUS_OK)
                 res = sVBox.add(&sHeading);
             if (res == STATUS_OK)
                 res = sVBox.add(&sMessage);
             if (res == STATUS_OK)
-                res = sVBox.add(&sBtnBox);
+                res = sVBox.add(&sBtnAlign);
 
             // Add child
             if (res == STATUS_OK)
-                res = this->add(&sVBox);
+                res = Window::add(&sVBox);
 
-            padding()->set(16);
-            border_style()->set(ws::BS_DIALOG);
-            actions()->set(ws::WA_DIALOG);
+            if (res == STATUS_OK)
+            {
+                padding()->set(16);
+                border_style()->set(ws::BS_DIALOG);
+                actions()->set(ws::WA_DIALOG);
+                layout()->set_scale(1.0f);
+            }
 
-            return STATUS_OK;
+            return res;
         }
 
         status_t MessageBox::slot_on_button_submit(Widget *sender, void *ptr, void *data)
@@ -132,6 +169,10 @@ namespace lsp
             if (_this == NULL)
                 return;
 
+            Button *btn = widget_cast<Button>(w);
+            if (btn != NULL)
+                btn->style()->add_parent(&_this->sBtnStyle);
+
             ssize_t index = _this->vButtons.index_of(w);
             if (index >= 0)
             {
@@ -146,12 +187,16 @@ namespace lsp
             if (_this == NULL)
                 return;
 
+            Button *btn = widget_cast<Button>(w);
+            if (btn != NULL)
+                btn->style()->remove_parent(&_this->sStyle);
+
             // Remove button from list
             w->slot(SLOT_SUBMIT)->unbind(slot_on_button_submit, _this->self());
             _this->sBtnBox.remove(w);
         }
 
-        status_t MessageBox::add(const char *text, event_handler_t *handler, void *arg)
+        status_t MessageBox::add(const char *text, event_handler_t handler, void *arg)
         {
             LSPString tmp;
             if (!tmp.set_utf8(text))
@@ -159,7 +204,7 @@ namespace lsp
             return add(&tmp, handler, arg);
         }
 
-        status_t MessageBox::add(const LSPString *text, event_handler_t *handler, void *arg)
+        status_t MessageBox::add(const LSPString *text, event_handler_t handler, void *arg)
         {
             Button *btn = new Button(pDisplay);
             if (btn == NULL)
@@ -167,9 +212,9 @@ namespace lsp
 
             status_t res = btn->init();
             if (res == STATUS_OK)
-                res = btn->text()->set_raw(text);
+                res = btn->text()->set(text);
             if ((res == STATUS_OK) && (handler != NULL))
-                btn->slot(SLOT_SUBMIT)->bind(*handler, arg);
+                btn->slot(SLOT_SUBMIT)->bind(handler, arg);
             if (res == STATUS_OK)
                 res = vButtons.madd(btn);
 
@@ -182,7 +227,7 @@ namespace lsp
             return res;
         }
 
-        status_t MessageBox::add(const String *text, event_handler_t *handler, void *arg)
+        status_t MessageBox::add(const String *text, event_handler_t handler, void *arg)
         {
             Button *btn = new Button(pDisplay);
             if (btn == NULL)
@@ -192,7 +237,7 @@ namespace lsp
             if (res == STATUS_OK)
                 res = btn->text()->set(text);
             if ((res == STATUS_OK) && (handler != NULL))
-                btn->slot(SLOT_SUBMIT)->bind(*handler, arg);
+                btn->slot(SLOT_SUBMIT)->bind(handler, arg);
             if (res == STATUS_OK)
                 res = vButtons.madd(btn);
 

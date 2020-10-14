@@ -461,16 +461,16 @@ namespace lsp
         {
             // Compute basic elements
             LSPString text;
-            ws::size_limit_t sc;
+            ws::rectangle_t xr;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            sConstraints.compute(&sc, scaling);
-            sText.format(&text);
 
-            sc.nMinWidth        = lsp_max(sc.nMinWidth,  2 * scaling);
-            sc.nMinHeight       = lsp_max(sc.nMinHeight, 2 * scaling);
+            xr.nWidth       = 0;
+            xr.nHeight      = 0;
 
             // Need to analyze text parameters?
+            sText.format(&text);
+
             if ((text.length() > 0) && (!sTextClip.get()))
             {
                 ws::font_parameters_t fp;
@@ -479,32 +479,31 @@ namespace lsp
                 sFont.get_parameters(pDisplay, scaling, &fp);
                 sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
 
-                ssize_t tminw   = ceil(tp.Width) + 2 * scaling;
-                ssize_t tminh   = ceil(lsp_max(tp.Height, fp.Height)) + 2 * scaling;
+                ssize_t tminw   = ceil(tp.Width);
+                ssize_t tminh   = ceil(lsp_max(tp.Height, fp.Height));
 
-                sc.nMinWidth    = lsp_max(sc.nMinWidth, tminw);
-                sc.nMinHeight   = lsp_max(sc.nMinHeight, tminh);
+                xr.nWidth       = lsp_max(xr.nWidth, tminw);
+                xr.nHeight      = lsp_max(xr.nHeight, tminh);
 
-                if (sc.nMaxWidth < 0)
-                    sc.nMaxWidth    = lsp_max(sc.nMaxWidth, tminw);
-                if (sc.nMaxHeight < 0)
-                    sc.nMaxHeight   = lsp_max(sc.nMaxHeight, tminh);
-                sTextPadding.add(&sc, scaling);
+                sTextPadding.add(&xr, scaling);
             }
 
-            // Compute additional elements
             size_t chamfer      = lsp_max(1, scaling * 3.0f);
             size_t hole         = (nState & S_HOLE) ? lsp_max(1, scaling) : 0;
             size_t light        = (nState & S_LED)  ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
             size_t outer        = lsp_max(hole, light);
 
-            // Compute final widget size limits
-            r->nMinWidth        = sc.nMinWidth  + (chamfer + outer) * 2;
-            r->nMinHeight       = sc.nMinHeight + (chamfer + outer) * 2;
-            r->nMaxWidth        = (sc.nMaxWidth  >= 0) ? lsp_max(r->nMinWidth,  r->nMaxWidth ) : -1;
-            r->nMaxHeight       = (sc.nMaxHeight >= 0) ? lsp_max(r->nMinHeight, r->nMaxHeight) : -1;
+            xr.nWidth          += (chamfer + outer) * 2;
+            xr.nHeight         += (chamfer + outer) * 2;
+
+            r->nMinWidth        = xr.nWidth;
+            r->nMinHeight       = xr.nHeight;
+            r->nMaxWidth        = -1;
+            r->nMaxHeight       = -1;
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
+
+            sConstraints.apply(r, scaling);
         }
 
         void Button::realize(const ws::rectangle_t *r)

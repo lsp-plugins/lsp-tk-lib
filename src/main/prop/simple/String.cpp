@@ -369,7 +369,7 @@ namespace lsp
 
             // Still no template? Leave
             if (res == STATUS_NOT_FOUND)
-                res = (out->set(&sText)) ? STATUS_OK : STATUS_NO_MEM; // By default output dictionary key
+                res = expr::format(out, &sText, &sParams);
             else if (res != STATUS_OK)
                 return res;
             else

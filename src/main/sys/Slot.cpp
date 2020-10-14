@@ -117,7 +117,7 @@ namespace lsp
                 {
                     handler_id_t id  = ptr->nID;
                     vItems.remove(i);
-                    return id;;
+                    return id;
                 }
             }
 

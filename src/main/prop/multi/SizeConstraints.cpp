@@ -502,6 +502,49 @@ namespace lsp
                 style->end();
                 return STATUS_OK;
             }
+
+            status_t SizeConstraints::override(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
+            {
+                ws::size_limit_t sl;
+                sl.nMinWidth    = min_width;
+                sl.nMinHeight   = min_height;
+                sl.nMaxWidth    = max_width;
+                sl.nMaxHeight   = max_height;
+
+                return override(style, &sl);
+            }
+
+            status_t SizeConstraints::override(Style *style)
+            {
+                ws::size_limit_t sl;
+                sl.nMinWidth    = -1;
+                sl.nMinHeight   = -1;
+                sl.nMaxWidth    = -1;
+                sl.nMaxHeight   = -1;
+
+                return override(style, &sl);
+            }
+
+            status_t SizeConstraints::override(Style *style, const ws::size_limit_t *p)
+            {
+                if ((pStyle == NULL) || (p == NULL))
+                    return STATUS_BAD_STATE;
+
+                style->begin();
+                {
+                    style->override_int(vAtoms[P_MIN_WIDTH], p->nMinWidth);
+                    style->override_int(vAtoms[P_MIN_HEIGHT], p->nMinHeight);
+                    style->override_int(vAtoms[P_MAX_WIDTH], p->nMaxWidth);
+                    style->override_int(vAtoms[P_MAX_HEIGHT], p->nMaxHeight);
+
+                    // Compound objects
+                    LSPString s;
+                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nMinWidth), long(p->nMinHeight), long(p->nMaxWidth), long(p->nMaxHeight));
+                    style->override_string(vAtoms[P_VALUE], &s);
+                }
+                style->end();
+                return STATUS_OK;
+            }
         }
     } /* namespace tk */
 } /* namespace lsp */

@@ -42,9 +42,13 @@ namespace lsp
                 Label                       sHeading;
                 Label                       sMessage;
                 Box                         sVBox;
+                Align                       sBtnAlign;
                 Box                         sBtnBox;
+                Style                       sBtnStyle;
+
                 prop::WidgetList<Button>    vButtons;
                 prop::CollectionListener    sIListener;
+                prop::SizeConstraints       sBtnConstraints;
 
             public:
                 explicit MessageBox(Display *dpy);
@@ -67,11 +71,14 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                heading_visibiity,          sHeading.visibility())
                 LSP_TK_PROPERTY(Boolean,                message_visibiity,          sMessage.visibility())
                 LSP_TK_PROPERTY(WidgetList<Button>,     buttons,                    &vButtons)
+                LSP_TK_PROPERTY(SizeConstraints,        button_constraints,         &sBtnConstraints)
+                LSP_TK_PROPERTY(Integer,                button_spacing,             sBtnBox.spacing())
+                LSP_TK_PROPERTY(Padding,                message_padding,            sMessage.padding())
 
             public:
-                virtual status_t                add(const char *text, event_handler_t *handler = NULL, void *arg = NULL);
-                virtual status_t                add(const LSPString *text, event_handler_t *handler = NULL, void *arg = NULL);
-                virtual status_t                add(const String *text, event_handler_t *handler = NULL, void *arg = NULL);
+                virtual status_t                add(const char *text, event_handler_t handler = NULL, void *arg = NULL);
+                virtual status_t                add(const LSPString *text, event_handler_t handler = NULL, void *arg = NULL);
+                virtual status_t                add(const String *text, event_handler_t handler = NULL, void *arg = NULL);
                 virtual status_t                add(Button *btn);
                 virtual status_t                madd(Button *btn);
                 virtual status_t                add(Widget *widget);
