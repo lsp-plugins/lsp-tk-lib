@@ -73,12 +73,14 @@
 #include <lsp-plug.in/tk/prop/simple/Boolean.h>
 #include <lsp-plug.in/tk/prop/simple/Integer.h>
 #include <lsp-plug.in/tk/prop/simple/Float.h>
+#include <lsp-plug.in/tk/prop/simple/PathPattern.h>
 #include <lsp-plug.in/tk/prop/simple/String.h>
 
 // Compound properties
 #include <lsp-plug.in/tk/prop/multi/Color.h>
 #include <lsp-plug.in/tk/prop/multi/ColorRange.h>
 #include <lsp-plug.in/tk/prop/multi/Embedding.h>
+#include <lsp-plug.in/tk/prop/multi/FileMask.h>
 #include <lsp-plug.in/tk/prop/multi/Font.h>
 #include <lsp-plug.in/tk/prop/multi/Layout.h>
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
