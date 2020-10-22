@@ -99,6 +99,7 @@
 
 // Collections
 #include <lsp-plug.in/tk/prop/collection/ColorRanges.h>
+#include <lsp-plug.in/tk/prop/collection/FileFilters.h>
 #include <lsp-plug.in/tk/prop/collection/FloatArray.h>
 #include <lsp-plug.in/tk/prop/collection/StringList.h>
 #include <lsp-plug.in/tk/prop/collection/WidgetList.h>

@@ -40,6 +40,7 @@ namespace lsp
 
         FileMask::~FileMask()
         {
+            unbind();
         }
 
         status_t FileMask::bind(atom_t property, Style *style, i18n::IDictionary *dict)
