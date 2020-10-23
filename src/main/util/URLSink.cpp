@@ -3,7 +3,7 @@
  *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 28 авг. 2019 г.
+ * Created on: 23 окт. 2020 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,27 +19,29 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <lsp-plug.in/tk-old/util/LSPUrlSink.h>
+#include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/mime.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
     namespace tk
     {
-        LSPUrlSink::LSPUrlSink()
+        URLSink::URLSink()
         {
+            pOS         = NULL;
             sProtocol   = NULL;
-            pOS         = NULL;
             nCtype      = -1;
         }
-        
-        LSPUrlSink::LSPUrlSink(const char *protocol)
+
+        URLSink::URLSink(const char *protocol)
         {
-            sProtocol   = ::strdup(protocol);
             pOS         = NULL;
+            sProtocol   = ::strdup(protocol);
             nCtype      = -1;
         }
-        
-        LSPUrlSink::~LSPUrlSink()
+
+        URLSink::~URLSink()
         {
             if (pOS != NULL)
             {
@@ -54,7 +56,7 @@ namespace lsp
             }
         }
 
-        const char * const LSPUrlSink::acceptMime[] =
+        const char * const URLSink::acceptMime[] =
         {
             "text/uri-list",
             "text/x-moz-url",
@@ -63,7 +65,7 @@ namespace lsp
             NULL
         };
 
-        ssize_t LSPUrlSink::get_mime_index(const char *mime)
+        ssize_t URLSink::get_mime_index(const char *mime)
         {
             ssize_t idx = 0;
             for (const char * const *p = acceptMime; *p != NULL; ++p, ++idx)
@@ -74,7 +76,7 @@ namespace lsp
             return -1;
         }
 
-        ssize_t LSPUrlSink::select_mime_type(const char * const *mime_types)
+        ssize_t URLSink::select_mime_type(const char * const *mime_types)
         {
             for (const char * const *p = acceptMime; *p != NULL; ++p)
             {
@@ -88,7 +90,7 @@ namespace lsp
             return -1;
         }
 
-        ssize_t LSPUrlSink::open(const char * const *mime_types)
+        ssize_t URLSink::open(const char * const *mime_types)
         {
             if (pOS != NULL)
                 return -STATUS_BAD_STATE;
@@ -108,14 +110,14 @@ namespace lsp
             return idx; // Return the index from mime_types array
         }
 
-        status_t LSPUrlSink::write(const void *buf, size_t count)
+        status_t URLSink::write(const void *buf, size_t count)
         {
             if (pOS == NULL)
                 return STATUS_CLOSED;
             return pOS->write(buf, count);
         }
 
-        status_t LSPUrlSink::close(status_t code)
+        status_t URLSink::close(status_t code)
         {
             if (pOS == NULL)
                 return STATUS_OK;
@@ -171,12 +173,12 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t LSPUrlSink::commit_url(const LSPString *url)
+        status_t URLSink::commit_url(const LSPString *url)
         {
             return STATUS_OK;
         }
 
-        status_t LSPUrlSink::set_protocol(const char *protocol)
+        status_t URLSink::set_protocol(const char *protocol)
         {
             if (protocol != NULL)
             {
@@ -195,6 +197,8 @@ namespace lsp
             return STATUS_OK;
         }
 
-    
+
     } /* namespace tk */
 } /* namespace lsp */
+
+

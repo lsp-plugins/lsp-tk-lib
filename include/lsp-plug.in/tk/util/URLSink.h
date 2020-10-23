@@ -3,7 +3,7 @@
  *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 28 авг. 2019 г.
+ * Created on: 23 окт. 2020 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,17 +19,23 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UI_TK_UTIL_LSPURLSINK_H_
-#define UI_TK_UTIL_LSPURLSINK_H_
+#ifndef LSP_PLUG_IN_TK_UTIL_URLSINK_H_
+#define LSP_PLUG_IN_TK_UTIL_URLSINK_H_
 
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
+#include <lsp-plug.in/io/OutMemoryStream.h>
 
 namespace lsp
 {
     namespace tk
     {
-        class LSPUrlSink: public IDataSink
+        /**
+         * Text data sink
+         */
+        class URLSink: public ws::IDataSink
         {
             protected:
                 static const char * const acceptMime[];
@@ -49,29 +55,30 @@ namespace lsp
                 ssize_t                 nCtype;
 
             protected:
-                ssize_t     get_mime_index(const char *mime);
+                ssize_t                 get_mime_index(const char *mime);
 
             public:
-                explicit LSPUrlSink();
-                explicit LSPUrlSink(const char *protocol);
-                virtual ~LSPUrlSink();
+                explicit URLSink();
+                explicit URLSink(const char *protocol);
+                virtual ~URLSink();
 
             public:
-                ssize_t             select_mime_type(const char * const *mime_types);
-
-                inline const char  *get_protocol() const { return sProtocol; }
-
-                virtual status_t    commit_url(const LSPString *url);
-
-                status_t            set_protocol(const char *protocol);
+                ssize_t                 select_mime_type(const char * const *mime_types);
+                inline const char      *get_protocol() const { return sProtocol; }
+                virtual status_t        commit_url(const LSPString *url);
+                status_t                set_protocol(const char *protocol);
 
             public:
-                virtual ssize_t     open(const char * const *mime_types);
-                virtual status_t    write(const void *buf, size_t count);
-                virtual status_t    close(status_t code);
+                void                    clear();
+
+                virtual ssize_t         open(const char * const *mime_types);
+                virtual status_t        write(const void *buf, size_t count);
+                virtual status_t        close(status_t code);
+
         };
-    
-    } /* namespace tk */
-} /* namespace lsp */
+    }
+}
 
-#endif /* UI_TK_UTIL_LSPURLSINK_H_ */
+
+
+#endif /* LSP_PLUG_IN_TK_UTIL_URLSINK_H_ */

@@ -26,8 +26,6 @@
 #include <lsp-plug.in/common/status.h>
 #include <lsp-plug.in/io/IInStream.h>
 #include <lsp-plug.in/io/IInSequence.h>
-#include <lsp-plug.in/tk-old/types.h>
-#include <lsp-plug.in/tk-old/version.h>
 
 namespace lsp
 {

@@ -126,6 +126,7 @@
 #include <lsp-plug.in/tk/util/TextCursor.h>
 #include <lsp-plug.in/tk/util/TextDataSink.h>
 #include <lsp-plug.in/tk/util/TextDataSource.h>
+#include <lsp-plug.in/tk/util/URLSink.h>
 
 // Base widgets
 #include <lsp-plug.in/tk/base/Widget.h>

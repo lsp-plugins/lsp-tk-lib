@@ -19,7 +19,10 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <lsp-plug.in/tk-old/helpers/mime.h>
+#include <lsp-plug.in/tk/helpers/mime.h>
+#include <lsp-plug.in/io/InSequence.h>
+#include <lsp-plug.in/io/InStringSequence.h>
+#include <lsp-plug.in/io/InMemoryStream.h>
 
 namespace lsp
 {
