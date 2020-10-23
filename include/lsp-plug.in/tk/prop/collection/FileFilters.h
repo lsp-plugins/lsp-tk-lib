@@ -59,6 +59,7 @@ namespace lsp
             protected:
                 lltl::parray<FileMask>          vItems;
                 Listener                        sListener;
+                prop::CollectionListener       *pCListener;
                 atom_t                          nProperty;
                 i18n::IDictionary              *pDict;
 
@@ -75,7 +76,7 @@ namespace lsp
                 static void         destroy_items(lltl::parray<FileMask> *list);
 
             protected:
-                explicit FileFilters(prop::Listener *listener = NULL);
+                explicit FileFilters(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL);
                 ~FileFilters();
 
             public:
@@ -184,7 +185,7 @@ namespace lsp
                     FileFilters & operator = (const FileFilters &);
 
                 public:
-                    explicit FileFilters(prop::Listener *listener = NULL): tk::FileFilters(listener) {}
+                    explicit FileFilters(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::FileFilters(listener, clistener) {}
 
                 public:
                     /**
