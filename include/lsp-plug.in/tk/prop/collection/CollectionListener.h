@@ -73,16 +73,16 @@ namespace lsp
                     /**
                      * Callback that notifies that widget has been added
                      * @param prop property that triggered event
-                     * @param w widget that has been added
+                     * @param item item that has been added to collection
                      */
-                    virtual void    add(Property *prop, Widget *w);
+                    virtual void    add(Property *prop, void *item);
 
                     /**
                      * Callback that notifies that widget has been removed
                      * @param prop property that triggered event
-                     * @param w widget that has been removed
+                     * @param item item that has been removed from collection
                      */
-                    virtual void    remove(Property *prop, Widget *w);
+                    virtual void    remove(Property *prop, void *item);
             };
         }
     }

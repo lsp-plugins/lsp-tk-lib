@@ -80,16 +80,16 @@ namespace lsp
                 pRemCb      = NULL;
             }
 
-            void CollectionListener::add(Property *prop, Widget *w)
+            void CollectionListener::add(Property *prop, void *item)
             {
                 if (pAddCb != NULL)
-                    pAddCb(pAddObj, prop, w);
+                    pAddCb(pAddObj, prop, item);
             }
 
-            void CollectionListener::remove(Property *prop, Widget *w)
+            void CollectionListener::remove(Property *prop, void *item)
             {
                 if (pRemCb != NULL)
-                    pRemCb(pRemObj, prop, w);
+                    pRemCb(pRemObj, prop, item);
             }
         }
     }
