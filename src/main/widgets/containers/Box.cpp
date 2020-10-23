@@ -33,7 +33,8 @@ namespace lsp
             vItems(&sProperties, &sIListener),
             sSpacing(&sProperties),
             sHomogeneous(&sProperties),
-            sOrientation(&sProperties)
+            sOrientation(&sProperties),
+            sConstraints(&sProperties)
         {
             pClass          = &metadata;
         }
@@ -56,6 +57,7 @@ namespace lsp
             sSpacing.bind("spacing", &sStyle);
             sHomogeneous.bind("homogeneous", &sStyle);
             sOrientation.bind("orientation", &sStyle);
+            sConstraints.bind("size.constraints", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -63,6 +65,7 @@ namespace lsp
                 sSpacing.init(sclass, 0);
                 sHomogeneous.init(sclass, false);
                 sOrientation.init(sclass, O_HORIZONTAL);
+                sConstraints.init(sclass);
             }
 
             // Override settings for hfill and vfill
@@ -88,6 +91,8 @@ namespace lsp
             if (sHomogeneous.is(prop))
                 query_resize();
             if (sOrientation.is(prop))
+                query_resize();
+            if (sConstraints.is(prop))
                 query_resize();
         }
 
@@ -628,6 +633,9 @@ namespace lsp
                 else
                     r->nMinHeight       = e_height + spacing * (visible.size() - 1);
             }
+
+            // Apply size constraints
+            sConstraints.apply(r, scaling);
 
             lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this, int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }

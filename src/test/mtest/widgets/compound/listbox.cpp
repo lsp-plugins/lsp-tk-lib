@@ -244,7 +244,7 @@ MTEST_BEGIN("tk.widgets.compound", listbox)
         lb->vscroll_mode()->set(tk::SCROLL_NONE);
         lb->multi_select()->set(true);
 
-        lb->size_constraints()->set(96, 96, 96, 96);
+        lb->constraints()->set(96, 96, 96, 96);
         {
             LSPString id;
             size_t wid = 0;

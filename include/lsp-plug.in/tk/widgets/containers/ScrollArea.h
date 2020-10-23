@@ -86,7 +86,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
-                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sSizeConstraints)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sSizeConstraints)
                 LSP_TK_PROPERTY(Scrolling,          hscroll_mode,       &sHScrollMode)
                 LSP_TK_PROPERTY(Scrolling,          vscroll_mode,       &sVScrollMode)
 

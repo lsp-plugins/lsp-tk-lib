@@ -190,6 +190,7 @@
 
 // Dialogs
 #include <lsp-plug.in/tk/widgets/dialogs/MessageBox.h>
+#include <lsp-plug.in/tk/widgets/dialogs/FileDialog.h>
 
 namespace lsp
 {

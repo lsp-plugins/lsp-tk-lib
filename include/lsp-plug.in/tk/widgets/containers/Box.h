@@ -58,6 +58,7 @@ namespace lsp
                 prop::Integer               sSpacing;
                 prop::Boolean               sHomogeneous;
                 prop::Orientation           sOrientation;
+                prop::SizeConstraints       sConstraints;        // Size constraints
 
             protected:
                 static inline bool          hidden_widget(const cell_t *w);
@@ -104,6 +105,12 @@ namespace lsp
                  * @return box orientation
                  */
                 LSP_TK_PROPERTY(Orientation,        orientation,        &sOrientation)
+
+                /**
+                 * Get size constraints of the box
+                 * @return size constraints of the box
+                 */
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
 
                 /**
                  * Get collection of widgets

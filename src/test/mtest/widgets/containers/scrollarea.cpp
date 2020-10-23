@@ -253,7 +253,7 @@ MTEST_BEGIN("tk.widgets.containers", scrollarea)
         grid->rows()->set(2);
         grid->columns()->set(2);
 
-        sa->size_constraints()->set(64, 64, 64, 64);
+        sa->constraints()->set(64, 64, 64, 64);
         {
             LSPString id;
             size_t wid = 0;

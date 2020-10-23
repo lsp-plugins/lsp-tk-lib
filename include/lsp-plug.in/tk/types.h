@@ -155,6 +155,15 @@ namespace lsp
         } arrangement_t;
 
         /**
+         * File dialog mode
+         */
+        enum file_dialog_mode_t
+        {
+            FDM_OPEN_FILE,
+            FDM_SAVE_FILE
+        };
+
+        /**
          * Atom identifier
          */
         typedef ssize_t             atom_t;
