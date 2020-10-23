@@ -75,8 +75,8 @@ namespace lsp
 
                 void                        get_visible_items(lltl::parray<LedMeterChannel> *dst);
 
-                static void                 on_add_item(void *obj, Property *prop, Widget *w);
-                static void                 on_remove_item(void *obj, Property *prop, Widget *w);
+                static void                 on_add_item(void *obj, Property *prop, void *w);
+                static void                 on_remove_item(void *obj, Property *prop, void *w);
 
             public:
                 virtual void                query_draw(size_t flags = REDRAW_SURFACE);

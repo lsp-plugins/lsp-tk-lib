@@ -249,9 +249,9 @@ namespace lsp
             }
         }
 
-        void ComboGroup::on_add_widget(void *obj, Property *prop, Widget *w)
+        void ComboGroup::on_add_widget(void *obj, Property *prop, void *w)
         {
-            ListBoxItem *item = widget_cast<ListBoxItem>(w);
+            ListBoxItem *item = widget_ptrcast<ListBoxItem>(w);
             if (item == NULL)
                 return;
 
@@ -263,9 +263,9 @@ namespace lsp
             _this->query_resize();
         }
 
-        void ComboGroup::on_remove_widget(void *obj, Property *prop, Widget *w)
+        void ComboGroup::on_remove_widget(void *obj, Property *prop, void *w)
         {
-            ListBoxItem *item = widget_cast<ListBoxItem>(w);
+            ListBoxItem *item = widget_ptrcast<ListBoxItem>(w);
             if (item == NULL)
                 return;
 

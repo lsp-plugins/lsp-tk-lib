@@ -47,7 +47,7 @@ namespace lsp
                 Style                       sBtnStyle;
 
                 prop::WidgetList<Button>    vButtons;
-                prop::CollectionListener    sIListener;
+                prop::CollectionListener    sBtnListener;
                 prop::SizeConstraints       sBtnConstraints;
 
             public:
@@ -59,8 +59,8 @@ namespace lsp
 
             protected:
                 static status_t                 slot_on_button_submit(Widget *sender, void *ptr, void *data);
-                static void                     on_add_item(void *obj, Property *prop, Widget *w);
-                static void                     on_remove_item(void *obj, Property *prop, Widget *w);
+                static void                     on_add_item(void *obj, Property *prop, void *w);
+                static void                     on_remove_item(void *obj, Property *prop, void *w);
                 void                            do_destroy();
 
             public:

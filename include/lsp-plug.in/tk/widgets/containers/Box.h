@@ -64,8 +64,8 @@ namespace lsp
                 status_t                    visible_items(lltl::darray<cell_t> *out);
                 void                        do_destroy();
 
-                static void                 on_add_item(void *obj, Property *prop, Widget *w);
-                static void                 on_remove_item(void *obj, Property *prop, Widget *w);
+                static void                 on_add_item(void *obj, Property *prop, void *w);
+                static void                 on_remove_item(void *obj, Property *prop, void *w);
 
                 status_t                    allocate_homogeneous(const ws::rectangle_t *r, lltl::darray<cell_t> &visible);
                 status_t                    allocate_proportional(const ws::rectangle_t *r, lltl::darray<cell_t> &visible);

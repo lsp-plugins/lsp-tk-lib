@@ -497,9 +497,9 @@ namespace lsp
             }
         }
 
-        void LedMeter::on_add_item(void *obj, Property *prop, Widget *w)
+        void LedMeter::on_add_item(void *obj, Property *prop, void *w)
         {
-            LedMeterChannel *item = widget_cast<LedMeterChannel>(w);
+            LedMeterChannel *item = widget_ptrcast<LedMeterChannel>(w);
             if (item == NULL)
                 return;
 
@@ -511,9 +511,9 @@ namespace lsp
             _this->query_resize();
         }
 
-        void LedMeter::on_remove_item(void *obj, Property *prop, Widget *w)
+        void LedMeter::on_remove_item(void *obj, Property *prop, void *w)
         {
-            LedMeterChannel *item = widget_cast<LedMeterChannel>(w);
+            LedMeterChannel *item = widget_ptrcast<LedMeterChannel>(w);
             if (item == NULL)
                 return;
 

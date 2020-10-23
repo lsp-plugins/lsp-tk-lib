@@ -120,8 +120,8 @@ namespace lsp
                 ListBoxItem                *current_item();
                 bool                        scroll_item(ssize_t direction, size_t count);
 
-                static void                 on_add_widget(void *obj, Property *prop, Widget *w);
-                static void                 on_remove_widget(void *obj, Property *prop, Widget *w);
+                static void                 on_add_widget(void *obj, Property *prop, void *w);
+                static void                 on_remove_widget(void *obj, Property *prop, void *w);
                 static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
 

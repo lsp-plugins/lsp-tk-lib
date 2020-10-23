@@ -35,7 +35,7 @@ namespace lsp
             sBtnAlign(dpy),
             sBtnBox(dpy),
             sBtnStyle(dpy->schema()),
-            vButtons(&sProperties, &sIListener)
+            vButtons(&sProperties, &sBtnListener)
         {
             pClass          = &metadata;
         }
@@ -70,7 +70,7 @@ namespace lsp
                 return res;
 
             // Init listener
-            sIListener.bind_all(this, on_add_item, on_remove_item);
+            sBtnListener.bind_all(this, on_add_item, on_remove_item);
 
             // Init button style
             if (res == STATUS_OK)
@@ -163,37 +163,41 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void MessageBox::on_add_item(void *obj, Property *prop, Widget *w)
+        void MessageBox::on_add_item(void *obj, Property *prop, void *w)
         {
             MessageBox *_this = widget_ptrcast<MessageBox>(obj);
             if (_this == NULL)
                 return;
 
-            Button *btn = widget_cast<Button>(w);
-            if (btn != NULL)
-                btn->style()->add_parent(&_this->sBtnStyle);
+            Button *btn = widget_ptrcast<Button>(w);
+            if (btn == NULL)
+                return;
 
-            ssize_t index = _this->vButtons.index_of(w);
+            btn->style()->add_parent(&_this->sBtnStyle);
+
+            ssize_t index = _this->vButtons.index_of(btn);
             if (index >= 0)
             {
-                w->slot(SLOT_SUBMIT)->bind(slot_on_button_submit, _this->self());
-                _this->sBtnBox.items()->insert(w, index);
+                btn->slot(SLOT_SUBMIT)->bind(slot_on_button_submit, _this->self());
+                _this->sBtnBox.items()->insert(btn, index);
             }
         }
 
-        void MessageBox::on_remove_item(void *obj, Property *prop, Widget *w)
+        void MessageBox::on_remove_item(void *obj, Property *prop, void *w)
         {
             MessageBox *_this = widget_ptrcast<MessageBox>(obj);
             if (_this == NULL)
                 return;
 
-            Button *btn = widget_cast<Button>(w);
-            if (btn != NULL)
-                btn->style()->remove_parent(&_this->sStyle);
+            Button *btn = widget_ptrcast<Button>(w);
+            if (btn == NULL)
+                return;
+
+            btn->style()->remove_parent(&_this->sStyle);
 
             // Remove button from list
-            w->slot(SLOT_SUBMIT)->unbind(slot_on_button_submit, _this->self());
-            _this->sBtnBox.remove(w);
+            btn->slot(SLOT_SUBMIT)->unbind(slot_on_button_submit, _this->self());
+            _this->sBtnBox.remove(btn);
         }
 
         status_t MessageBox::add(const char *text, event_handler_t handler, void *arg)

@@ -103,8 +103,8 @@ namespace lsp
                 void                    draw_main_text(ws::ISurface *s);
                 void                    draw_label(ws::ISurface *s, size_t idx);
 
-                static void             on_add_item(void *obj, Property *prop, Widget *w);
-                static void             on_remove_item(void *obj, Property *prop, Widget *w);
+                static void             on_add_item(void *obj, Property *prop, void *w);
+                static void             on_remove_item(void *obj, Property *prop, void *w);
 
                 void                    do_destroy();
 

@@ -148,8 +148,8 @@ namespace lsp
                 static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
-                static void             on_add_item(void *obj, Property *prop, Widget *w);
-                static void             on_remove_item(void *obj, Property *prop, Widget *w);
+                static void             on_add_item(void *obj, Property *prop, void *w);
+                static void             on_remove_item(void *obj, Property *prop, void *w);
                 static status_t         key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:

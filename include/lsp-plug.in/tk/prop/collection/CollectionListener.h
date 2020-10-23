@@ -38,9 +38,9 @@ namespace lsp
              * Callback type for collection listener
              * @param obj object
              * @param prop property that triggered event
-             * @param w widget that has been added
+             * @param item the item that has been added/removed
              */
-            typedef void (* collection_cb_t)(void *obj, Property *prop, Widget *w);
+            typedef void (* collection_cb_t)(void *obj, Property *prop, void *item);
 
             /**
              * Collection listener

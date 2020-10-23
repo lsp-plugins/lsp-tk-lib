@@ -903,9 +903,9 @@ namespace lsp
             }
         }
 
-        void AudioSample::on_add_item(void *obj, Property *prop, Widget *w)
+        void AudioSample::on_add_item(void *obj, Property *prop, void *w)
         {
-            AudioChannel *item = widget_cast<AudioChannel>(w);
+            AudioChannel *item = widget_ptrcast<AudioChannel>(w);
             if (item == NULL)
                 return;
 
@@ -917,9 +917,9 @@ namespace lsp
             _this->query_resize();
         }
 
-        void AudioSample::on_remove_item(void *obj, Property *prop, Widget *w)
+        void AudioSample::on_remove_item(void *obj, Property *prop, void *w)
         {
-            AudioChannel *item = widget_cast<AudioChannel>(w);
+            AudioChannel *item = widget_ptrcast<AudioChannel>(w);
             if (item == NULL)
                 return;
 

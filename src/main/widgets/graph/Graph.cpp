@@ -346,9 +346,9 @@ namespace lsp
             return NULL;
         }
 
-        void Graph::on_add_item(void *obj, Property *prop, Widget *w)
+        void Graph::on_add_item(void *obj, Property *prop, void *w)
         {
-            GraphItem *item = widget_cast<GraphItem>(w);
+            GraphItem *item = widget_ptrcast<GraphItem>(w);
             if (item == NULL)
                 return;
 
@@ -360,9 +360,9 @@ namespace lsp
             _this->query_draw();
         }
 
-        void Graph::on_remove_item(void *obj, Property *prop, Widget *w)
+        void Graph::on_remove_item(void *obj, Property *prop, void *w)
         {
-            GraphItem *item = widget_cast<GraphItem>(w);
+            GraphItem *item = widget_ptrcast<GraphItem>(w);
             if (item == NULL)
                 return;
 

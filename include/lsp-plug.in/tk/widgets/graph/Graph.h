@@ -68,8 +68,8 @@ namespace lsp
             protected:
                 void                        do_destroy();
 
-                static void                 on_add_item(void *obj, Property *prop, Widget *w);
-                static void                 on_remove_item(void *obj, Property *prop, Widget *w);
+                static void                 on_add_item(void *obj, Property *prop, void *w);
+                static void                 on_remove_item(void *obj, Property *prop, void *w);
 
             protected:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);

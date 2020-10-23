@@ -703,9 +703,9 @@ namespace lsp
             return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
         }
 
-        void ListBox::on_add_item(void *obj, Property *prop, Widget *w)
+        void ListBox::on_add_item(void *obj, Property *prop, void *w)
         {
-            ListBoxItem *item = widget_cast<ListBoxItem>(w);
+            ListBoxItem *item = widget_ptrcast<ListBoxItem>(w);
             if (item == NULL)
                 return;
 
@@ -716,9 +716,9 @@ namespace lsp
             item->set_parent(_this);
         }
 
-        void ListBox::on_remove_item(void *obj, Property *prop, Widget *w)
+        void ListBox::on_remove_item(void *obj, Property *prop, void *w)
         {
-            ListBoxItem *item = widget_cast<ListBoxItem>(w);
+            ListBoxItem *item = widget_ptrcast<ListBoxItem>(w);
             if (item == NULL)
                 return;
 

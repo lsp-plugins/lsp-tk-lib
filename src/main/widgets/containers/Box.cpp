@@ -91,23 +91,31 @@ namespace lsp
                 query_resize();
         }
 
-        void Box::on_add_item(void *obj, Property *prop, Widget *w)
+        void Box::on_add_item(void *obj, Property *prop, void *w)
         {
+            Widget *widget = widget_ptrcast<Widget>(w);
+            if (widget == NULL)
+                return;
+
             Box *_this = widget_ptrcast<Box>(obj);
             if (_this == NULL)
                 return;
 
-            w->set_parent(_this);
+            widget->set_parent(_this);
             _this->query_resize();
         }
 
-        void Box::on_remove_item(void *obj, Property *prop, Widget *w)
+        void Box::on_remove_item(void *obj, Property *prop, void *w)
         {
+            Widget *widget = widget_ptrcast<Widget>(w);
+            if (widget == NULL)
+                return;
+
             Box *_this = widget_ptrcast<Box>(obj);
             if (_this == NULL)
                 return;
 
-            _this->unlink_widget(w);
+            _this->unlink_widget(widget);
             _this->query_resize();
         }
 
