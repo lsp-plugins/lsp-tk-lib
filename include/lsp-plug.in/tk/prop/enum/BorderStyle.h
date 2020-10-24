@@ -82,6 +82,8 @@ namespace lsp
                      */
                     inline status_t     init(Style *style, ws::border_style_t bs)       { return tk::BorderStyle::init(style, bs);      };
                     inline status_t     override(Style *style, ws::border_style_t bs)   { return tk::BorderStyle::override(style, bs);  };
+
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
         }
     }

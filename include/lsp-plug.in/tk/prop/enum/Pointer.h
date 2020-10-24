@@ -81,6 +81,8 @@ namespace lsp
                      */
                     inline status_t     init(Style *style, ws::mouse_pointer_t mp)      { return tk::Pointer::init(style, mp);      }
                     inline status_t     override(Style *style, ws::mouse_pointer_t mp)  { return tk::Pointer::override(style, mp);  }
+
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
         }
     } /* namespace tk */

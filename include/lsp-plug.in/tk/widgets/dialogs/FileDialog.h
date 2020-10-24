@@ -70,10 +70,16 @@ namespace lsp
                 Slot                    sAction;
                 Slot                    sCancel;
 
+                prop::FileDialogMode    sMode;
+
             protected:
                 status_t            add_label(WidgetContainer *c, const char *text, float align = 0.0f, Label **label = NULL);
                 status_t            add_menu_item(Menu *m, const char *text, event_handler_t handler);
                 status_t            add_ext_button(WidgetContainer *c, const char *text);
+                void                sync_mode();
+
+            protected:
+                virtual void        property_changed(Property *prop);
 
             public:
                 explicit FileDialog(Display *dpy);
@@ -81,6 +87,9 @@ namespace lsp
 
                 virtual status_t                init();
                 virtual void                    destroy();
+
+            public:
+                LSP_TK_PROPERTY(FileDialogMode,             mode,               &sMode);
         };
     }
 }

@@ -87,6 +87,8 @@ namespace lsp
                      * @return status of operation
                      */
                     inline status_t     init(Style *style, scrolling_t o)               { return tk::Scrolling::init(style, o);      };
+
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
         }
     } /* namespace tk */

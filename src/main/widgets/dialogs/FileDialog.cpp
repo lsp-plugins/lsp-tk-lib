@@ -29,6 +29,7 @@ namespace lsp
 
         FileDialog::FileDialog(Display *dpy):
             Window(dpy),
+
             sWPath(dpy),
             sWSearch(dpy),
             sWFilter(dpy),
@@ -48,7 +49,9 @@ namespace lsp
             wGo(dpy),
             wUp(dpy),
             wPathBox(dpy),
-            sWWarning(dpy)
+            sWWarning(dpy),
+
+            sMode(&sProperties)
         {
             pWConfirm       = NULL;
             pWSearch        = NULL;
@@ -176,7 +179,7 @@ namespace lsp
             wAutoExt.mode()->set_toggle();
             wAutoExt.down()->set(true);
 
-            LSP_STATUS_ASSERT(this->add(&sMainGrid));
+            LSP_STATUS_ASSERT(add(&sMainGrid));
 
             // Bind events
 // TODO
@@ -215,10 +218,99 @@ namespace lsp
             border_style()->set(ws::BS_DIALOG);
             actions()->set_actions(ws::WA_DIALOG | ws::WA_RESIZE | ws::WA_CLOSE);
 
+            // Bind properties
+            sMode.bind("mode", &sStyle);
+
+            Style *sclass = style_class();
+            if (sclass != NULL)
+            {
+                sMode.init(sclass, FDM_OPEN_FILE);
+            }
+
 // TODO
 //            sync_mode();
 
             return STATUS_OK;
+        }
+
+        void FileDialog::destroy()
+        {
+            Window::destroy();
+
+//            drop_bookmarks();
+//            destroy_file_entries(&vFiles);
+
+            // Clear dynamically allocated widgets
+            size_t n = vWidgets.size();
+            for (size_t i=0; i<n; ++i)
+            {
+                Widget *w       = vWidgets.uget(i);
+                if (w == NULL)
+                    continue;
+                w->destroy();
+                delete w;
+            }
+            vWidgets.clear();
+
+            sWPath.destroy();
+            sWSearch.destroy();
+            sWFilter.destroy();
+            sWFiles.destroy();
+            sWAction.destroy();
+            sWCancel.destroy();
+            sHBox.destroy();
+            sWarnBox.destroy();
+            sSBBookmarks.destroy();
+            sSBAlign.destroy();
+            sBookmarks.destroy();
+            sBMPopup.destroy();
+            sBMAdd.destroy();
+            sMainGrid.destroy();
+            sWWarning.destroy();
+            sAppendExt.destroy();
+            wAutoExt.destroy();
+            wGo.destroy();
+            wUp.destroy();
+            wPathBox.destroy();
+
+            pWSearch = NULL;
+
+            if (pWConfirm != NULL)
+            {
+                pWConfirm->destroy();
+                delete pWConfirm;
+                pWConfirm = NULL;
+            }
+
+            if (pWMessage != NULL)
+            {
+                pWMessage->destroy();
+                delete pWMessage;
+                pWMessage = NULL;
+            }
+        }
+
+        void FileDialog::sync_mode()
+        {
+            if (sMode.open_file())
+            {
+                if (pWSearch != NULL)
+                    pWSearch->text()->set("labels.search");
+                sAppendExt.visibility()->set(false);
+            }
+            else if (sMode.save_file())
+            {
+                if (pWSearch != NULL)
+                    pWSearch->text()->set("labels.file_name");
+                sAppendExt.visibility()->set(true);
+            }
+        }
+
+        void FileDialog::property_changed(Property *prop)
+        {
+            Window::property_changed(prop);
+
+            // TODO
         }
 
         status_t FileDialog::add_label(WidgetContainer *c, const char *text, float align, Label **label)
@@ -237,11 +329,6 @@ namespace lsp
         {
             // TODO
             return STATUS_OK;
-        }
-
-        void FileDialog::destroy()
-        {
-            Window::destroy();
         }
     }
 }

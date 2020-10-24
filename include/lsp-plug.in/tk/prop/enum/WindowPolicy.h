@@ -76,6 +76,8 @@ namespace lsp
                      * @return status of operation
                      */
                     inline status_t     init(Style *style, window_policy_t wp)          { return tk::WindowPolicy::init(style, wp);      };
+
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
         }
     } /* namespace tk */

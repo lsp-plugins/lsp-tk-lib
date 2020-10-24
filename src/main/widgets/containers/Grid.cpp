@@ -264,15 +264,18 @@ namespace lsp
         status_t Grid::attach_internal(ssize_t left, ssize_t top, Widget *widget, size_t rows, size_t cols)
         {
             // Add widget
-            if ((widget == NULL) || (rows < 1) || (cols < 1))
+            if ((rows < 1) || (cols < 1))
                 return STATUS_BAD_ARGUMENTS;
 
             // Check that widget already exists
-            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            if (widget != NULL)
             {
-                widget_t *cell      = vItems.uget(i);
-                if (cell->pWidget == widget)
-                    return STATUS_ALREADY_EXISTS;
+                for (size_t i=0, n=vItems.size(); i<n; ++i)
+                {
+                    widget_t *cell      = vItems.uget(i);
+                    if (cell->pWidget == widget)
+                        return STATUS_ALREADY_EXISTS;
+                }
             }
 
             // Allocate item

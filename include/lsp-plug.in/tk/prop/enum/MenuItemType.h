@@ -86,6 +86,8 @@ namespace lsp
                      * @return status of operation
                      */
                     inline status_t     init(Style *style, menu_item_type_t t)          { return tk::MenuItemType::init(style, t);      };
+
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
         }
     } /* namespace tk */

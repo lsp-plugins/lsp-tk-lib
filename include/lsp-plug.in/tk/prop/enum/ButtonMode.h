@@ -84,6 +84,8 @@ namespace lsp
                      * @return status of operation
                      */
                     inline status_t     init(Style *style, button_mode_t bm)            { return tk::ButtonMode::init(style, bm);      };
+
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
         }
     } /* namespace tk */

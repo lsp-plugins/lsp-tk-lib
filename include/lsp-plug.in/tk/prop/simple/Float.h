@@ -127,7 +127,7 @@ namespace lsp
                      */
                     inline void         commit(float value)                             { fValue        = value; }
 
-                    inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
         }
 
