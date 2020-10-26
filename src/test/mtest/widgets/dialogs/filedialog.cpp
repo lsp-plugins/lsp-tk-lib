@@ -22,6 +22,7 @@
 #include <lsp-plug.in/test-fw/mtest.h>
 #include <lsp-plug.in/tk/tk.h>
 #include <private/mtest/tk/common.h>
+#include <lsp-plug.in/resource/DirLoader.h>
 
 MTEST_BEGIN("tk.widgets.dialogs", filedialog)
     typedef struct handler_t
@@ -212,8 +213,18 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
     MTEST_MAIN
     {
         lltl::parray<handler_t> vh;
+        // Initialize resources
+        const char *res_path = resources();
+        printf("Resource path: %s\n", res_path);
+        resource::DirLoader loader;
+        loader.set_enforce(true);
+        MTEST_ASSERT(loader.set_path(res_path) == STATUS_OK);
 
-        tk::Display *dpy = new tk::Display();
+        // Create display
+        tk::display_settings_t dpy_settings;
+        dpy_settings.resources  = &loader;
+        dpy_settings.dictionary = "i18n";
+        tk::Display *dpy = new tk::Display(&dpy_settings);
         MTEST_ASSERT(dpy != NULL);
 
         MTEST_ASSERT(dpy->init(0, NULL) == STATUS_OK);
@@ -268,7 +279,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
 
             btn->color()->set_rgb24(next_color(col));
             btn->constraints()->set_fixed(64, 32);
-            btn->text()->set("Open dialog");
+            btn->text()->set("actions.dlg.open");
             btn->slots()->bind(tk::SLOT_SUBMIT, slot_dialog_open, vh.last());
 
             // Create save dialog button
@@ -280,7 +291,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
 
             btn->color()->set_rgb24(next_color(col));
             btn->constraints()->set_fixed(64, 32);
-            btn->text()->set("Save dialog");
+            btn->text()->set("actions.dlg.save");
             btn->slots()->bind(tk::SLOT_SUBMIT, slot_dialog_save, vh.last());
         }
 

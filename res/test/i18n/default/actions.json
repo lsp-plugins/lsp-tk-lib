@@ -1,0 +1,12 @@
+{
+	"cancel": "Cancel",
+	"nav": {
+		"go": "Go",
+		"up": "Up"
+	},
+	"to_bookmarks": "+Bookmarks",
+	"dlg": {
+		"open": "Open Dialog",
+		"save": "Save Dialog"
+	}
+}

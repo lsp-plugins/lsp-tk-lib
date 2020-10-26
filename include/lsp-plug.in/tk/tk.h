@@ -116,6 +116,7 @@
 #include <lsp-plug.in/tk/style/Schema.h>
 
 // System objects
+#include <lsp-plug.in/tk/sys/settings.h>
 #include <lsp-plug.in/tk/sys/Atoms.h>
 #include <lsp-plug.in/tk/sys/Slot.h>
 #include <lsp-plug.in/tk/sys/SlotSet.h>

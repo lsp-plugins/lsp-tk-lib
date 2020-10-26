@@ -315,8 +315,9 @@ namespace lsp
 
             LSPString path;
 
+            // Lookup the corresponding language first
             status_t res = STATUS_NOT_FOUND;
-            if (lang != NULL)
+            if ((lang != NULL) && (!lang->is_empty()))
             {
                 if (!path.append(lang))
                     return STATUS_NO_MEM;
@@ -429,12 +430,20 @@ namespace lsp
         {
             if (out == NULL)
                 return STATUS_BAD_ARGUMENTS;
-            if (lang == NULL)
-                return fmt_internal(out, NULL);
 
             LSPString tlang;
-            if (!tlang.set_ascii(lang))
-                return STATUS_NO_MEM;
+            if (lang != NULL)
+            {
+                if (!tlang.set_ascii(lang))
+                    return STATUS_NO_MEM;
+
+                return fmt_internal(out, &tlang);
+            }
+
+            // Use current language if language is not specified
+            if ((pStyle == NULL) || (pStyle->get_string(nAtom, &tlang) != STATUS_OK))
+                return fmt_internal(out, NULL);
+
             return fmt_internal(out, &tlang);
         }
 
@@ -442,14 +451,28 @@ namespace lsp
         {
             if (out == NULL)
                 return STATUS_BAD_ARGUMENTS;
-            return fmt_internal(out, lang);
+            if (lang != NULL)
+                return fmt_internal(out, lang);
+
+            // Use current language if language is not specified
+            LSPString tlang;
+            if ((pStyle == NULL) || (pStyle->get_string(nAtom, &tlang) != STATUS_OK))
+                return fmt_internal(out, NULL);
+
+            return fmt_internal(out, &tlang);
         }
 
         status_t String::format(LSPString *out) const
         {
             if (out == NULL)
                 return STATUS_BAD_ARGUMENTS;
-            return fmt_internal(out, NULL);
+
+            // Use current language if language is not specified
+            LSPString tlang;
+            if ((pStyle == NULL) || (pStyle->get_string(nAtom, &tlang) != STATUS_OK))
+                return fmt_internal(out, NULL);
+
+            return fmt_internal(out, &tlang);
         }
 
         void String::swap(String *dst)

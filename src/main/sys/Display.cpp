@@ -28,11 +28,19 @@ namespace lsp
 {
     namespace tk
     {
-        Display::Display():
+        Display::Display(display_settings_t *settings):
             sSchema(this)
         {
             pDictionary     = NULL;
             pDisplay        = NULL;
+
+            // Apply custom settings
+            if (settings != NULL)
+            {
+                pResourceLoader     = settings->resources;
+                if (settings->dictionary != NULL)
+                    sDictBase.set_utf8(settings->dictionary);
+            }
         }
 
         Display::~Display()
@@ -145,9 +153,15 @@ namespace lsp
                 return STATUS_BAD_ARGUMENTS;
 
             // Initialize dictionary
-            i18n::Dictionary *dict = new i18n::Dictionary();
+            i18n::Dictionary *dict = new i18n::Dictionary(pResourceLoader);
             if (dict == NULL)
                 return STATUS_NO_MEM;
+            status_t res = dict->init(&sDictBase);
+            if (res != STATUS_OK)
+            {
+                delete dict;
+                return res;
+            }
 
             // Initialize display
             pDisplay        = dpy;

@@ -62,6 +62,9 @@ namespace lsp
                 i18n::IDictionary      *pDictionary;
                 ws::IDisplay           *pDisplay;
 
+                resource::ILoader      *pResourceLoader;
+                LSPString               sDictBase;
+
             protected:
                 void    do_destroy();
 
@@ -72,9 +75,9 @@ namespace lsp
             // Construction and destruction
             public:
                 /** Constructor
-                 *
+                 * @param settings additional display settings
                  */
-                explicit Display();
+                explicit Display(display_settings_t *settings = NULL);
 
                 /** Destructor
                  *
