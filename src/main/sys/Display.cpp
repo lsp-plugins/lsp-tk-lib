@@ -33,13 +33,14 @@ namespace lsp
         {
             pDictionary     = NULL;
             pDisplay        = NULL;
+            pResourceLoader = NULL;
+            pEnv            = NULL;
 
             // Apply custom settings
             if (settings != NULL)
             {
                 pResourceLoader     = settings->resources;
-                if (settings->dictionary != NULL)
-                    sDictBase.set_utf8(settings->dictionary);
+                pEnv                = (settings->environment != NULL) ? settings->environment->clone() : NULL;
             }
         }
 
@@ -85,6 +86,13 @@ namespace lsp
             {
                 delete pDictionary;
                 pDictionary = NULL;
+            }
+
+            // Destroy environment
+            if (pEnv != NULL)
+            {
+                delete pEnv;
+                pEnv        = NULL;
             }
         }
 
@@ -152,11 +160,25 @@ namespace lsp
             if (dpy == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
+            // Initialize environment
+            if (pEnv == NULL)
+                pEnv                = new resource::Environment();
+            if (pEnv == NULL)
+                return STATUS_NO_MEM;
+
             // Initialize dictionary
-            i18n::Dictionary *dict = new i18n::Dictionary(pResourceLoader);
+            i18n::Dictionary *dict  = new i18n::Dictionary(pResourceLoader);
             if (dict == NULL)
                 return STATUS_NO_MEM;
-            status_t res = dict->init(&sDictBase);
+
+            // Initialize dictionary
+            LSPString dict_base;
+            const char *env_dict_base = pEnv->get_utf8(LSP_TK_ENV_DICT_PATH, LSP_TK_ENV_DICT_PATH_DFL);
+            if (!dict_base.set_utf8(env_dict_base))
+                return STATUS_NO_MEM;
+
+            // Initialize dictionary
+            status_t res = dict->init(&dict_base);
             if (res != STATUS_OK)
             {
                 delete dict;

@@ -154,7 +154,7 @@ namespace lsp
                 prop::Integer           sCheckBorderRadius;
                 prop::Integer           sSeparatorWidth;
                 prop::Integer           sSpacing;
-                prop::WidgetPtr<Menu>   sSubmenu;           // Sub-menu
+                prop::WidgetPtr<Menu>   sSubmenu;       // Sub-menu
 
             protected:
                 static status_t             key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
@@ -236,6 +236,7 @@ namespace lsp
 
                 virtual void                show();
                 virtual void                show(Widget *w);
+                virtual void                showxy(Widget *w);
                 virtual void                show(Widget *w, ssize_t x, ssize_t y);
                 virtual void                show(Widget *w, ssize_t x, ssize_t y, ssize_t xw, ssize_t xh);
                 virtual void                show(Widget *w, const ws::rectangle_t *r);

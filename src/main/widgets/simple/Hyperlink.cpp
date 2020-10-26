@@ -39,21 +39,30 @@ namespace lsp
             sText(&sProperties),
             sConstraints(&sProperties),
             sFollow(&sProperties),
-            sUrl(&sProperties)
+            sUrl(&sProperties),
+            sPopup(&sProperties)
         {
-            pClass      = &metadata;
-            nMFlags     = 0;
-            nState      = 0;
+            nMFlags         = 0;
+            nState          = 0;
+            vMenus[0]       = NULL;
+            vMenus[1]       = NULL;
+            vMenus[2]       = NULL;
+
+            pClass          = &metadata;
         }
 
         Hyperlink::~Hyperlink()
         {
+            do_destroy();
         }
 
         status_t Hyperlink::init()
         {
             status_t res = Widget::init();
             if (res != STATUS_SUCCESS)
+                return res;
+
+            if ((res = create_default_menu()) != STATUS_OK)
                 return res;
 
             sTextLayout.bind("text.layout", &sStyle);
@@ -64,6 +73,7 @@ namespace lsp
             sConstraints.bind("size.constraints", &sStyle);
             sFollow.bind("follow", &sStyle);
             sUrl.bind(&sStyle, pDisplay->dictionary());
+            sPopup.bind(widget_ptrcast<Menu>(vMenus[0]));
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -85,32 +95,61 @@ namespace lsp
             if (id < 0)
                 return -id;
 
-// TODO: add default menu
-//            ui_handler_id_t id = 0;
-//
-//            LSP_STATUS_ASSERT(sStdMenu.init());
-//            LSPMenuItem *mi = new LSPMenuItem(pDisplay);
-//            if (mi == NULL)
-//                return STATUS_NO_MEM;
-//            vStdItems[0] = mi;
-//            LSP_STATUS_ASSERT(mi->init());
-//            LSP_STATUS_ASSERT(sStdMenu.add(mi));
-//            LSP_STATUS_ASSERT(mi->text()->set("actions.link.copy"));
-//            id = mi->slots()->bind(LSPSLOT_SUBMIT, slot_copy_link_action, self());
-//            if (id < 0)
-//                return -id;
-//
-//            mi = new LSPMenuItem(pDisplay);
-//            if (mi == NULL)
-//                return STATUS_NO_MEM;
-//            vStdItems[1] = mi;
-//            LSP_STATUS_ASSERT(mi->init());
-//            LSP_STATUS_ASSERT(sStdMenu.add(mi));
-//            LSP_STATUS_ASSERT(mi->text()->set("actions.link.follow"));
-//            id = mi->slots()->bind(LSPSLOT_SUBMIT, slot_on_submit, self());
-//            if (id < 0)
-//                return -id;
-//
+            return STATUS_OK;
+        }
+
+        void Hyperlink::destroy()
+        {
+            Widget::destroy();
+            do_destroy();
+        }
+
+        void Hyperlink::do_destroy()
+        {
+            // Destroy all nested widgets
+            for (size_t i=0; i<sizeof(vMenus)/sizeof(Menu *); ++i)
+            {
+                if (vMenus[i] != NULL)
+                {
+                    vMenus[i]->destroy();
+                    delete vMenus[i];
+                    vMenus[i] = NULL;
+                }
+            }
+        }
+
+        status_t Hyperlink::create_default_menu()
+        {
+            // Add default menu
+            handler_id_t id = 0;
+            Menu *menu      = new Menu(pDisplay);
+            if (menu == NULL)
+                return STATUS_NO_MEM;
+            vMenus[0]       = menu;
+            LSP_STATUS_ASSERT(menu->init());
+
+            // Create 'copy' menu item
+            MenuItem *mi    = new MenuItem(pDisplay);
+            if (mi == NULL)
+                return STATUS_NO_MEM;
+            vMenus[1]       = mi;
+            LSP_STATUS_ASSERT(mi->init());
+            LSP_STATUS_ASSERT(menu->add(mi));
+            LSP_STATUS_ASSERT(mi->text()->set("actions.link.copy"));
+            id = mi->slots()->bind(SLOT_SUBMIT, slot_copy_link_action, self());
+            if (id < 0)
+                return -id;
+
+            mi    = new MenuItem(pDisplay);
+                        if (mi == NULL)
+                            return STATUS_NO_MEM;
+            vMenus[2]       = mi;
+            LSP_STATUS_ASSERT(mi->init());
+            LSP_STATUS_ASSERT(menu->add(mi));
+            LSP_STATUS_ASSERT(mi->text()->set("actions.link.follow"));
+            id = mi->slots()->bind(SLOT_SUBMIT, slot_on_submit, self());
+            if (id < 0)
+                return -id;
 
             return STATUS_OK;
         }
@@ -170,15 +209,15 @@ namespace lsp
         status_t Hyperlink::slot_on_before_popup(Widget *sender, void *ptr, void *data)
         {
             Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
-            /* Menu *menu = widget_ptrcast<Menu>(data); */
-            return (_this != NULL) ? _this->on_before_popup(/* menu */) : STATUS_BAD_ARGUMENTS;
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_before_popup(_menu) : STATUS_BAD_ARGUMENTS;
         }
 
         status_t Hyperlink::slot_on_popup(Widget *sender, void *ptr, void *data)
         {
             Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
-            /* Menu *menu = widget_ptrcast<Menu>(data); */
-            return (_this != NULL) ? _this->on_popup(/* menu */) : STATUS_BAD_ARGUMENTS;
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
         }
 
         status_t Hyperlink::slot_copy_link_action(Widget *sender, void *ptr, void *data)
@@ -430,24 +469,24 @@ namespace lsp
             {
                 if ((flags == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
                     sSlots.execute(SLOT_SUBMIT, this);
-                // TODO
-//                else if ((flags == (1 << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT) && (pMenu != NULL))
-//                {
-//                    sSlots.execute(SLOT_BEFORE_POPUP, this, pMenu->self());
-//                    pPopup->show(this, e);
-//                    sSlots.execute(SLOT_POPUP, this, pMenu->self());
-//                }
+                else if ((flags == (1 << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT) && (sPopup.is_set()))
+                {
+                    Menu *popup = sPopup.get();
+                    sSlots.execute(SLOT_BEFORE_POPUP, popup, self());
+                    popup->show();
+                    sSlots.execute(SLOT_POPUP, popup, self());
+                }
             }
 
             return STATUS_OK;
         }
 
-        status_t Hyperlink::on_before_popup(/* Menu *menu */)
+        status_t Hyperlink::on_before_popup(Menu *menu)
         {
             return STATUS_OK;
         }
 
-        status_t Hyperlink::on_popup(/* Menu *menu */)
+        status_t Hyperlink::on_popup(Menu *menu)
         {
             return STATUS_OK;
         }

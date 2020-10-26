@@ -63,10 +63,10 @@ namespace lsp
                 ws::IDisplay           *pDisplay;
 
                 resource::ILoader      *pResourceLoader;
-                LSPString               sDictBase;
+                resource::Environment  *pEnv;
 
             protected:
-                void    do_destroy();
+                void                do_destroy();
 
             protected:
                 static status_t     main_task_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
@@ -220,6 +220,12 @@ namespace lsp
                  * @return dictionary object
                  */
                 inline i18n::IDictionary *dictionary()      { return pDictionary;               }
+
+                /**
+                 * Get environment
+                 * @return environment
+                 */
+                inline resource::Environment *environment() { return pEnv;                      }
 
                 /**
                  * Get clipboard data

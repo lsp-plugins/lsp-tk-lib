@@ -48,7 +48,7 @@ namespace lsp
             protected:
                 size_t                      nMFlags;
                 size_t                      nState;
-//                Menu                       *pPopup;         // TODO
+                Widget                     *vMenus[3];
 
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::Font                  sFont;          // Font parameters
@@ -58,12 +58,16 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Boolean               sFollow;        // Follow hyperlink
                 prop::String                sUrl;           // URL
+                prop::WidgetPtr<Menu>       sPopup;         // Popup menu
 
             protected:
                 static status_t                 slot_on_submit(Widget *sender, void *ptr, void *data);
                 static status_t                 slot_on_before_popup(Widget *sender, void *ptr, void *data);
                 static status_t                 slot_on_popup(Widget *sender, void *ptr, void *data);
                 static status_t                 slot_copy_link_action(Widget *sender, void *ptr, void *data);
+
+                status_t                        create_default_menu();
+                void                            do_destroy();
 
             protected:
                 virtual void                    size_request(ws::size_limit_t *r);
@@ -74,6 +78,7 @@ namespace lsp
                 virtual ~Hyperlink();
 
                 virtual status_t                init();
+                virtual void                    destroy();
 
             public:
                 LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
@@ -84,6 +89,7 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Boolean,            follow,             &sFollow)
                 LSP_TK_PROPERTY(String,             url,                &sUrl)
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,              &sPopup)
 
             public:
                 status_t                        copy_url(ws::clipboard_id_t cb);
@@ -102,9 +108,9 @@ namespace lsp
 
                 virtual status_t                on_mouse_up(const ws::event_t *e);
 
-                virtual status_t                on_before_popup(/* Menu *menu */);
+                virtual status_t                on_before_popup(Menu *menu);
 
-                virtual status_t                on_popup(/* Menu *menu */);
+                virtual status_t                on_popup(Menu *menu);
 
                 virtual status_t                on_submit();
 

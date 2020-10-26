@@ -217,13 +217,16 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         const char *res_path = resources();
         printf("Resource path: %s\n", res_path);
         resource::DirLoader loader;
+        resource::Environment env;
         loader.set_enforce(true);
         MTEST_ASSERT(loader.set_path(res_path) == STATUS_OK);
+        MTEST_ASSERT(env.set(LSP_TK_ENV_DICT_PATH, "i18n") == STATUS_OK);
+        MTEST_ASSERT(env.set(LSP_TK_ENV_LANG, "en_US") == STATUS_OK);
+        MTEST_ASSERT(env.set(LSP_TK_ENV_CONFIG, "lsp-tk-lib") == STATUS_OK);
 
         // Create display
         tk::display_settings_t dpy_settings;
         dpy_settings.resources  = &loader;
-        dpy_settings.dictionary = "i18n";
         tk::Display *dpy = new tk::Display(&dpy_settings);
         MTEST_ASSERT(dpy != NULL);
 

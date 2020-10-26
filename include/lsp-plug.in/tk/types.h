@@ -26,6 +26,16 @@
     #error "use <lsp-plug.in/tk/tk.h>"
 #endif
 
+// The default dictionary location
+#define LSP_TK_ENV_DICT_PATH            "dictionary"
+#define LSP_TK_ENV_DICT_PATH_DFL        "i18n"
+// The default language selected at startup
+#define LSP_TK_ENV_LANG                 "language"
+#define LSP_TK_ENV_LANG_DFL             "en"
+// The default configuration path
+#define LSP_TK_ENV_CONFIG               "configuration"
+#define LSP_TK_ENV_CONFIG_DFL           "lsp-tk"
+
 namespace lsp
 {
     namespace tk

@@ -27,6 +27,7 @@
 #endif
 
 #include <lsp-plug.in/fmt/bookmarks.h>
+#include <lsp-plug.in/lltl/parray.h>
 
 namespace lsp
 {
@@ -97,9 +98,10 @@ namespace lsp
                 static status_t         slot_on_go(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_up(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_path_key_up(Widget *sender, void *ptr, void *data);
+
+                static status_t         slot_on_bm_popup(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_add(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_submit(Widget *sender, void *ptr, void *data);
-                static status_t         slot_on_bm_popup(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_menu_open(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_menu_follow(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_menu_copy(Widget *sender, void *ptr, void *data);
@@ -129,6 +131,16 @@ namespace lsp
                 void                    sync_mode();
 
                 void                    drop_bookmarks();
+                status_t                read_lsp_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
+                static status_t         read_gtk2_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
+                static status_t         read_gtk3_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
+                static status_t         read_qt5_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
+                status_t                save_bookmarks(lltl::parray<bookmarks::bookmark_t> *vbm);
+                status_t                sync_bookmarks();
+                status_t                refresh_bookmarks();
+                status_t                select_current_bookmark();
+                status_t                remove_bookmark(bm_entry_t *entry);
+                bm_entry_t             *find_bookmark(Widget *sender);
 
             protected:
                 virtual void            property_changed(Property *prop);

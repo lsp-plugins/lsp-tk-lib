@@ -27,6 +27,7 @@
 #endif
 
 #include <lsp-plug.in/resource/ILoader.h>
+#include <lsp-plug.in/resource/Environment.h>
 
 namespace lsp
 {
@@ -40,10 +41,9 @@ namespace lsp
             resource::ILoader      *resources;
 
             /**
-             * UTF-8 encoded path to JSON dictionary root
-             * within the resource registry
+             * Environment variables
              */
-            const char             *dictionary;
+            resource::Environment  *environment;
 
             /**
              * Default constructor

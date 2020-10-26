@@ -28,13 +28,13 @@ namespace lsp
         display_settings_t::display_settings_t()
         {
             resources       = NULL;
-            dictionary      = NULL;
+            environment     = NULL;
         }
 
         void display_settings_t::construct()
         {
             resources       = NULL;
-            dictionary      = NULL;
+            environment     = NULL;
         }
     }
 }
