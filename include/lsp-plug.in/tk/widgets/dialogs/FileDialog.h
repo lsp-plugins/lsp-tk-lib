@@ -67,21 +67,53 @@ namespace lsp
                 Label                  *pWSearch;
 
                 lltl::parray<Widget>    vWidgets;
-                Slot                    sAction;
-                Slot                    sCancel;
 
                 prop::FileDialogMode    sMode;
                 prop::Boolean           sCustomAction;
                 prop::String            sActionText;
 
             protected:
-                status_t            add_label(WidgetContainer *c, const char *key, float align = 0.0f, Label **label = NULL);
-                status_t            add_menu_item(Menu *m, const char *text, event_handler_t handler);
-                status_t            add_ext_button(WidgetContainer *c, const char *text);
-                void                sync_mode();
+                static status_t         slot_on_action(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_confirm(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_cancel(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_search(Widget *sender, void *ptr, void *data);
+                static status_t         slot_mouse_dbl_click(Widget *sender, void *ptr, void *data);
+                static status_t         slot_list_change(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_go(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_up(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_path_key_up(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_add(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_submit(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_popup(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_menu_open(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_menu_follow(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_menu_copy(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_menu_delete(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_menu_up(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_menu_down(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_menu_first(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_menu_last(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void        property_changed(Property *prop);
+                virtual status_t        on_dlg_action(void *data);
+                virtual status_t        on_dlg_confirm(void *data);
+                virtual status_t        on_dlg_cancel(void *data);
+                virtual status_t        on_dlg_search(void *data);
+                virtual status_t        on_dlg_mouse_dbl_click(void *data);
+                virtual status_t        on_dlg_list_change(void *data);
+                virtual status_t        on_dlg_go(void *data);
+                virtual status_t        on_dlg_up(void *data);
+                virtual status_t        on_path_key_up(ws::event_t *e);
+                virtual status_t        on_bm_submit(Widget *sender);
+
+            protected:
+                status_t                add_label(WidgetContainer *c, const char *key, float align = -1.0f, Label **label = NULL);
+                status_t                add_menu_item(Menu *m, const char *text, event_handler_t handler);
+                status_t                add_ext_button(WidgetContainer *c, const char *text);
+                void                    sync_mode();
+
+            protected:
+                virtual void            property_changed(Property *prop);
 
             public:
                 explicit FileDialog(Display *dpy);
@@ -94,6 +126,13 @@ namespace lsp
                 LSP_TK_PROPERTY(FileDialogMode,             mode,               &sMode);
                 LSP_TK_PROPERTY(Boolean,                    custom_action,      &sCustomAction);
                 LSP_TK_PROPERTY(String,                     action_text,        &sActionText);
+                LSP_TK_PROPERTY(Color,                      warn_color,         sWWarning.color());
+                LSP_TK_PROPERTY(Color,                      auto_ext_color,     wAutoExt.color());
+
+            public:
+                virtual status_t        on_show();
+
+                virtual status_t        on_close(const ws::event_t *e);
         };
     }
 }

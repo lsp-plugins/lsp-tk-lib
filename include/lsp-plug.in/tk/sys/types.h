@@ -53,6 +53,7 @@ namespace lsp
             SLOT_SHOW,              //!< SLOT_SHOW Triggered when widget becomes visible
             SLOT_HIDE,              //!< SLOT_HIDE Triggered when widget becomes invisible
             SLOT_SUBMIT,            //!< SLOT_SUBMIT Triggered when value(s) stored by the widget is submitted (but can be not changed)
+            SLOT_CANCEL,            //!< SLOT_CANCEL Triggered when the 'Cancel' action has been performed (for example, in dialogs)
             SLOT_CHANGE,            //!< SLOT_CHANGE Triggered only when value(s) stored by the widget is(are) changed
             SLOT_DESTROY,           //!< SLOT_DESTROY Triggered when widget associated with slot is destroyed
             SLOT_RESIZE,            //!< SLOT_RESIZE Triggered when the geometry of widget has been changed

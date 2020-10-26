@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -67,6 +68,8 @@ namespace lsp
 
         status_t FileDialog::init()
         {
+            Label *l;
+
             // Initialize labels
             LSP_STATUS_ASSERT(Window::init());
             LSP_STATUS_ASSERT(sWPath.init());
@@ -89,12 +92,15 @@ namespace lsp
 
             LSP_STATUS_ASSERT(wGo.init());
             LSP_STATUS_ASSERT(wGo.text()->set("actions.nav.go"));
+            wGo.allocation()->set_fill(false);
             wGo.constraints()->set_min_width(32);
             LSP_STATUS_ASSERT(wUp.init());
             LSP_STATUS_ASSERT(wUp.text()->set("actions.nav.up"));
+            wUp.allocation()->set_fill(false);
             wUp.constraints()->set_min_width(32);
             LSP_STATUS_ASSERT(sBMAdd.init());
             LSP_STATUS_ASSERT(sBMAdd.text()->set("actions.to_bookmarks"));
+            sBMAdd.allocation()->set_fill(false);
             sBMAdd.constraints()->set_min_width(32);
 
             LSP_STATUS_ASSERT(wPathBox.init());
@@ -140,15 +146,14 @@ namespace lsp
 // TODO
 //            LSP_STATUS_ASSERT(init_bm_popup_menu());
 
-//            init_color(C_YELLOW, sWWarning.font()->color());
-
             // Initialize supplementary elements
             // Path box
             sBMAdd.allocation()->set_fill(true);
             LSP_STATUS_ASSERT(wPathBox.add(&sBMAdd));
             LSP_STATUS_ASSERT(wPathBox.add(&wUp));
             LSP_STATUS_ASSERT(wPathBox.add(&wGo));
-            LSP_STATUS_ASSERT(add_label(&wPathBox, "labels.location", 1.0f));
+            LSP_STATUS_ASSERT(add_label(&wPathBox, "labels.location", 1.0f, &l));
+            l->allocation()->set(true, true);
             // Button box
             LSP_STATUS_ASSERT(sHBox.add(&sWAction));
             LSP_STATUS_ASSERT(sHBox.add(&sWCancel));
@@ -180,7 +185,6 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.add(&sHBox));
 
             // Initialize structure
-//            init_color(C_YELLOW, wAutoExt.color());
             wAutoExt.led()->set(true);
             wAutoExt.mode()->set_toggle();
             wAutoExt.down()->set(true);
@@ -188,37 +192,38 @@ namespace lsp
             LSP_STATUS_ASSERT(add(&sMainGrid));
 
             // Bind events
-// TODO
-//            status_t result = sWAction.slots()->bind(SLOT_SUBMIT, slot_on_action, self());
-//            if (result < 0)
-//                return -result;
-//            result = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_cancel, self());
-//            if (result < 0)
-//                return -result;
-//            result = sWSearch.slots()->bind(SLOT_CHANGE, slot_on_search, self());
-//            if (result < 0)
-//                return -result;
-//            result = sWFilter.slots()->bind(SLOT_SUBMIT, slot_on_search, self());
-//            if (result < 0)
-//                return -result;
-//            result = sWFiles.slots()->bind(SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, self());
-//            if (result < 0)
-//                return -result;
-//            result = sWFiles.slots()->bind(SLOT_CHANGE, slot_list_change, self());
-//            if (result < 0)
-//                return -result;
-//            result = wGo.slots()->bind(SLOT_SUBMIT, slot_on_go, self());
-//            if (result < 0)
-//                return -result;
-//            result = wUp.slots()->bind(SLOT_SUBMIT, slot_on_up, self());
-//            if (result < 0)
-//                return -result;
-//            result = sBMAdd.slots()->bind(SLOT_SUBMIT, slot_on_bm_add, self());
-//            if (result < 0)
-//                return -result;
-//            result = sWPath.slots()->bind(SLOT_KEY_UP, slot_on_path_key_up, self());
-//            if (result < 0)
-//                return -result;
+            status_t result;
+
+            result = sWAction.slots()->bind(SLOT_SUBMIT, slot_on_action, self());
+            if (result < 0)
+                return -result;
+            result = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_cancel, self());
+            if (result < 0)
+                return -result;
+            result = sWSearch.slots()->bind(SLOT_CHANGE, slot_on_search, self());
+            if (result < 0)
+                return -result;
+            result = sWFilter.slots()->bind(SLOT_SUBMIT, slot_on_search, self());
+            if (result < 0)
+                return -result;
+            result = sWFiles.slots()->bind(SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, self());
+            if (result < 0)
+                return -result;
+            result = sWFiles.slots()->bind(SLOT_CHANGE, slot_list_change, self());
+            if (result < 0)
+                return -result;
+            result = wGo.slots()->bind(SLOT_SUBMIT, slot_on_go, self());
+            if (result < 0)
+                return -result;
+            result = wUp.slots()->bind(SLOT_SUBMIT, slot_on_up, self());
+            if (result < 0)
+                return -result;
+            result = sBMAdd.slots()->bind(SLOT_SUBMIT, slot_on_bm_add, self());
+            if (result < 0)
+                return -result;
+            result = sWPath.slots()->bind(SLOT_KEY_UP, slot_on_path_key_up, self());
+            if (result < 0)
+                return -result;
 
             padding()->set_all(8);
             border_style()->set(ws::BS_DIALOG);
@@ -337,42 +342,25 @@ namespace lsp
 
         status_t FileDialog::add_label(WidgetContainer *c, const char *key, float align, Label **label)
         {
-            Align *algn = new Align(pDisplay);
-            if (algn == NULL)
-                return STATUS_NO_MEM;
-
             Label *lbl = new Label(pDisplay);
             if (lbl == NULL)
-            {
-                delete algn;
                 return STATUS_NO_MEM;
-            }
 
             status_t result = (vWidgets.add(lbl)) ? STATUS_OK : STATUS_NO_MEM;
-            if (result == STATUS_OK)
-                result = (vWidgets.add(algn)) ? STATUS_OK : STATUS_NO_MEM;
 
             if (result == STATUS_OK)
                 result = lbl->init();
             if (result == STATUS_OK)
-                result = algn->init();
-            algn->layout()->set_halign(align);
-            if (result == STATUS_OK)
                 result = lbl->text()->set(key);
-
             if (result == STATUS_OK)
-                result = algn->add(lbl);
-            if (result == STATUS_OK)
-                result = c->add(algn);
+                result = c->add(lbl);
+            lbl->text_layout()->set_halign(align);
 
             if (result != STATUS_OK)
             {
                 vWidgets.premove(lbl);
-                vWidgets.premove(algn);
                 lbl->destroy();
                 delete lbl;
-                algn->destroy();
-                delete algn;
             }
 
             if (label != NULL)
@@ -438,6 +426,425 @@ namespace lsp
             }
 
             return result;
+        }
+
+        status_t FileDialog::slot_on_action(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_dlg_action(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_confirm(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_dlg_confirm(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_cancel(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_dlg_cancel(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_search(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_dlg_search(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_mouse_dbl_click(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_dlg_mouse_dbl_click(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_list_change(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_dlg_list_change(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_go(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_dlg_go(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_up(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_dlg_up(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_bm_add(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+//            if (dlg != NULL)
+//                dlg->add_new_bookmark();
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_path_key_up(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            ws::event_t *ev  = static_cast<ws::event_t *>(data);
+            return (dlg != NULL) ? dlg->on_path_key_up(ev) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_bm_submit(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+            return (_this != NULL) ? _this->on_bm_submit(sender) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t FileDialog::slot_on_bm_popup(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            _this->pPopupBookmark = _this->find_bookmark(sender);
+            return STATUS_OK;;
+        }
+
+        status_t FileDialog::slot_on_bm_menu_open(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            return ((_this != NULL) && (_this->pPopupBookmark != NULL)) ?
+//                _this->set_path(&_this->pPopupBookmark->sBookmark.path) :
+//                STATUS_OK;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_bm_menu_follow(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            return ((_this != NULL) && (_this->pPopupBookmark != NULL)) ?
+//                _this->pPopupBookmark->sHlink.follow_url() :
+//                STATUS_OK;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_bm_menu_copy(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            return ((_this != NULL) && (_this->pPopupBookmark != NULL)) ?
+//                _this->pPopupBookmark->sHlink.copy_url(CBUF_CLIPBOARD) :
+//                STATUS_OK;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_bm_menu_delete(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            return ((_this != NULL) && (_this->pPopupBookmark != NULL)) ?
+//                _this->remove_bookmark(_this->pPopupBookmark) :
+//                STATUS_OK;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_bm_menu_up(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            ssize_t idx = (_this->pPopupBookmark != NULL) ?
+//                    _this->vBookmarks.index_of(_this->pPopupBookmark) : -1;
+//
+//            // Find previous visible bookmark
+//            ssize_t prev = idx - 1;
+//            for ( ; prev >= 0; --prev)
+//            {
+//                bm_entry_t *ent = _this->vBookmarks.at(prev);
+//                if ((ent != NULL) && (ent->sBookmark.origin & bookmarks::BM_LSP))
+//                    break;
+//            }
+//
+//            if (prev < 0)
+//                return STATUS_OK;
+//
+//            return (_this->vBookmarks.swap(prev, idx)) ?  _this->sync_bookmarks() : STATUS_UNKNOWN_ERR;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_bm_menu_down(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            ssize_t items = _this->vBookmarks.size();
+//            ssize_t idx = (_this->pPopupBookmark != NULL) ?
+//                    _this->vBookmarks.index_of(_this->pPopupBookmark) : items;
+//
+//            // Find next visible bookmark
+//            ssize_t next = idx + 1;
+//            for ( ; next < items; ++next)
+//            {
+//                bm_entry_t *ent = _this->vBookmarks.at(next);
+//                if ((ent != NULL) && (ent->sBookmark.origin & bookmarks::BM_LSP))
+//                    break;
+//            }
+//
+//            if (next >= items)
+//                return STATUS_OK;
+//
+//            return (_this->vBookmarks.swap(idx, next)) ?  _this->sync_bookmarks() : STATUS_UNKNOWN_ERR;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_bm_menu_first(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            ssize_t idx = (_this->pPopupBookmark != NULL) ?
+//                    _this->vBookmarks.index_of(_this->pPopupBookmark) : -1;
+//            if (idx <= 0)
+//                return STATUS_OK;
+//            return (_this->vBookmarks.move(idx, 0)) ? _this->sync_bookmarks() : STATUS_UNKNOWN_ERR;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_bm_menu_last(Widget *sender, void *ptr, void *data)
+        {
+//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+//            ssize_t last = _this->vBookmarks.size() - 1;
+//            ssize_t idx = (_this->pPopupBookmark != NULL) ?
+//                    _this->vBookmarks.index_of(_this->pPopupBookmark) : last;
+//            if (idx >= last)
+//                return STATUS_OK;
+//            return (_this->vBookmarks.move(idx, last)) ? _this->sync_bookmarks() : STATUS_UNKNOWN_ERR;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_dlg_mouse_dbl_click(void *data)
+        {
+//            file_entry_t *ent = selected_entry();
+//            if (ent == NULL)
+//                return STATUS_OK;
+//
+//            // Analyze what to do
+//            LSPString path;
+//            if (ent->nFlags & F_DOTDOT)
+//                return on_dlg_up(NULL);
+//            else if (ent->nFlags & F_ISDIR)
+//            {
+//                LSP_STATUS_ASSERT(sWPath.get_text(&path));
+//                LSP_STATUS_ASSERT(LSPFileMask::append_path(&path, &ent->sName));
+//                return set_path(&path);
+//            }
+//            else
+//                return on_dlg_action(data);
+
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_dlg_list_change(void *data)
+        {
+//            if (enMode != FDM_SAVE_FILE)
+//                return STATUS_OK;
+//
+//            file_entry_t *ent = selected_entry();
+//            if (ent == NULL)
+//                return STATUS_OK;
+//
+//            // Analyze what to do
+//            if ((ent->nFlags & F_DOTDOT) || (ent->nFlags & F_ISDIR))
+//                return STATUS_OK;
+//
+//            return sWSearch.set_text(&ent->sName);
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_dlg_search(void *data)
+        {
+//            if (invisible())
+//                return STATUS_OK;
+//
+//            return apply_filters();
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_dlg_action(void *data)
+        {
+//            bool committed = false;
+//
+//            if (enMode == FDM_SAVE_FILE) // Use 'File name' field
+//            {
+//                LSPString fname;
+//                LSP_STATUS_ASSERT(sWSearch.get_text(&fname));
+//
+//                if (wAutoExt.is_down())
+//                {
+//                    LSPString ext;
+//                    ssize_t sel = sWFilter.selected();
+//
+//                    LSPFileFilterItem *item  = sFilter.get((sel < 0) ? 0 : sel);
+//                    status_t res = (item != NULL) ? item->get_extension(&ext) : STATUS_NOT_FOUND;
+//
+//                    if (res == STATUS_OK)
+//                    {
+//                        lsp_trace("fname = %s, ext = %s", fname.get_native(), ext.get_native());
+//                        if (!fname.ends_with_nocase(&ext))
+//                            fname.append(&ext);
+//                        lsp_trace("fname = %s", fname.get_native());
+//                    }
+//                }
+//
+//                if (LSPFileMask::is_dots(&fname) || (!LSPFileMask::valid_file_name(&fname)))
+//                    return show_message("titles.attention", "headings.attention", "messages.file.invalid_name");
+//
+//                LSP_STATUS_ASSERT(build_full_path(&sSelected, &fname));
+//                committed = true;
+//            }
+//            else
+//            {
+//                LSPString fname;
+//                LSP_STATUS_ASSERT(sWSearch.get_text(&fname));
+//                if ((!LSPFileMask::is_dots(&fname)) && (LSPFileMask::valid_file_name(&fname)))
+//                {
+//                    LSP_STATUS_ASSERT(build_full_path(&sSelected, &fname));
+//                    committed = true;
+//                }
+//            }
+//
+//            // Use selection
+//            if (!committed)
+//            {
+//                file_entry_t *ent = selected_entry();
+//                if (ent == NULL)
+//                    return show_message("titles.attention", "headings.attention", "messages.file.not_specified");
+//
+//                // Analyze what to do
+//                if (ent->nFlags & F_DOTDOT)
+//                    return on_dlg_up(NULL);
+//                else if (ent->nFlags & F_ISDIR)
+//                {
+//                    LSPString path;
+//                    LSP_STATUS_ASSERT(sWPath.get_text(&path));
+//                    LSP_STATUS_ASSERT(LSPFileMask::append_path(&path, &ent->sName));
+//                    return set_path(&path);
+//                }
+//                else
+//                {
+//                    LSPString path;
+//                    LSP_STATUS_ASSERT(sWPath.get_text(&path));
+//                    LSP_STATUS_ASSERT(LSPFileMask::append_path(&sSelected, &path, &ent->sName));
+//                }
+//            }
+//
+//            // Special case for saving file
+//            io::fattr_t fattr;
+//            status_t stat_result = io::File::sym_stat(&sSelected, &fattr);
+//
+//            if (enMode == FDM_SAVE_FILE)
+//            {
+//                if (!bUseConfirm)
+//                    return on_dlg_confirm(data);
+//
+//                // Check that file exists and avoid confirmation if it doesn't
+//                lsp_trace("Checking file: %s", sSelected.get_native());
+//                if (stat_result != STATUS_OK)
+//                    return on_dlg_confirm(data);
+//            }
+//            else
+//            {
+//                if (stat_result != 0)
+//                    return show_message("titles.attention", "headings.attention", "messages.file.not_exists");
+//
+//                if (!bUseConfirm)
+//                    return on_dlg_confirm(data);
+//            }
+//
+//            if (pWConfirm == NULL)
+//            {
+//                // Create dialog object
+//                pWConfirm = new LSPMessageBox(pDisplay);
+//                if (pWConfirm == NULL)
+//                    return STATUS_NO_MEM;
+//                pWConfirm->init();
+//
+//                pWConfirm->title()->set("titles.confirmation");
+//                pWConfirm->heading()->set("headings.confirmation");
+//                pWConfirm->add_button("actions.confirm.yes", slot_on_confirm, self());
+//                pWConfirm->add_button("actions.confirm.no");
+//            }
+//            pWConfirm->message()->set(&sConfirm);
+//            pWConfirm->show(this);
+
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_dlg_confirm(void *data)
+        {
+//            // Hide dialogs
+//            if (pWConfirm != NULL)
+//                pWConfirm->hide();
+//            hide();
+//            destroy_file_entries(&vFiles);
+//
+//            // Execute slots
+//            return sAction.execute(this, data);
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_dlg_cancel(void *data)
+        {
+            // Hide dialogs
+            if (pWConfirm != NULL)
+                pWConfirm->hide();
+            hide();
+//            destroy_file_entries(&vFiles);
+
+            // Execute slots
+            return sSlots.execute(SLOT_CANCEL, this, data);
+        }
+
+        status_t FileDialog::on_show()
+        {
+//            ssize_t idx = sFilter.get_default();
+//            if ((idx < 0) && (sFilter.size() > 0))
+//                idx = 0;
+//            sWFilter.set_selected(idx);
+//            refresh_bookmarks();
+//            refresh_current_path();
+//            return STATUS_OK;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_close(const ws::event_t *e)
+        {
+            ws::event_t ev = *e;
+            return on_dlg_cancel(&ev);
+        }
+
+        status_t FileDialog::on_bm_submit(Widget *sender)
+        {
+//            bm_entry_t *ent = find_bookmark(sender);
+//            return (ent != NULL) ? set_path(&ent->sBookmark.path) : STATUS_OK;
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_dlg_go(void *data)
+        {
+//            LSPString path;
+//            LSP_STATUS_ASSERT(sWPath.get_text(&path));
+//            return set_path(&path);
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_dlg_up(void *data)
+        {
+//            LSPString path;
+//            LSP_STATUS_ASSERT(sWPath.get_text(&path));
+//            ssize_t pos = path.rindex_of(FILE_SEPARATOR_C);
+//            if (pos < 0)
+//                return STATUS_OK;
+//            path.truncate(pos);
+//            if (path.length() <= 0)
+//                path.append(FILE_SEPARATOR_C);
+//            return set_path(&path);
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_path_key_up(ws::event_t *e)
+        {
+            lsp_trace("Path key code released=%x, modifiers=%x", int(e->nCode), int(e->nState));
+            ws::code_t key = KeyboardHandler::translate_keypad(e->nCode);
+            if (key == ws::WSK_RETURN)
+                return on_dlg_go(e);
+            return STATUS_OK;
         }
     }
 }

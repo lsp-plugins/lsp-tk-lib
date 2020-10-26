@@ -380,7 +380,7 @@ namespace lsp
             if (force)
             {
                 pWidget->get_rectangle(&xr);
-                if (Size::overlap(&xr, &xa))
+                if ((Size::is_empty(&xr)) || (Size::overlap(&xr, &xa)))
                 {
                     s->clip_begin(&xa);
                     {

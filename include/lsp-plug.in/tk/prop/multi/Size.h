@@ -96,6 +96,7 @@ namespace lsp
                 static inline bool  intersection(ws::rectangle_t *dst, const ws::rectangle_t *src) { return intersection(dst, dst, src); }
 
                 static bool         overlap(const ws::rectangle_t *a, const ws::rectangle_t *b);
+                static bool         is_empty(const ws::rectangle_t *r);
         };
 
         namespace prop

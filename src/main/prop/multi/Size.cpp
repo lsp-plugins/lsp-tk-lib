@@ -246,6 +246,11 @@ namespace lsp
             return true;
         }
 
+        bool Size::is_empty(const ws::rectangle_t *r)
+        {
+            return (r->nWidth <= 0) || (r->nHeight <= 0);
+        }
+
         namespace prop
         {
             status_t Size::init(Style *style, size_t width, size_t height)

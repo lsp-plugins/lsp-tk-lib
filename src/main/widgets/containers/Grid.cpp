@@ -147,7 +147,7 @@ namespace lsp
                 force = true;
 
             // No widgets to draw?
-            if (sAlloc.vCells.is_empty())
+            if (sAlloc.vTable.is_empty())
             {
                 s->clip_begin(area);
                     s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
@@ -161,9 +161,9 @@ namespace lsp
             ws::rectangle_t xr;
 
             // Render nested widgets
-            for (size_t i=0, n=sAlloc.vCells.size(); i<n; ++i)
+            for (size_t i=0, n=sAlloc.vTable.size(); i<n; ++i)
             {
-                cell_t *w = sAlloc.vCells.uget(i);
+                cell_t *w = sAlloc.vTable.uget(i);
 
                 if (w->pWidget == NULL)
                 {
