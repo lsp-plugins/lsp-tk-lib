@@ -8,5 +8,7 @@
 	"dlg": {
 		"open": "Open Dialog",
 		"save": "Save Dialog"
-	}
+	},
+	"open": "Open",
+	"save": "Save"
 }

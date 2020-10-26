@@ -51,7 +51,9 @@ namespace lsp
             wPathBox(dpy),
             sWWarning(dpy),
 
-            sMode(&sProperties)
+            sMode(&sProperties),
+            sCustomAction(&sProperties),
+            sActionText(&sProperties)
         {
             pWConfirm       = NULL;
             pWSearch        = NULL;
@@ -68,13 +70,13 @@ namespace lsp
             // Initialize labels
             LSP_STATUS_ASSERT(Window::init());
             LSP_STATUS_ASSERT(sWPath.init());
-            sWPath.allocation()->set_expand(true);
+            sWPath.allocation()->set_hexpand(true);
             LSP_STATUS_ASSERT(sWSearch.init());
             LSP_STATUS_ASSERT(sWFilter.init());
             sWFilter.allocation()->set_fill(true);
             LSP_STATUS_ASSERT(sWFiles.init());
             sWFiles.constraints()->set_min(400, 320);
-            sWFiles.allocation()->set_expand(true);
+            sWFiles.allocation()->set_hexpand(true);
             LSP_STATUS_ASSERT(sWAction.init());
             sWAction.constraints()->set_min(96, 24);
             LSP_STATUS_ASSERT(sWCancel.init());
@@ -82,7 +84,7 @@ namespace lsp
             sWCancel.constraints()->set_min(96, 24);
             LSP_STATUS_ASSERT(sWWarning.init());
             sWWarning.visibility()->set(false);
-            sWWarning.allocation()->set_expand(true);
+            sWWarning.allocation()->set_hexpand(true);
             sWWarning.text_layout()->set(1.0f, 0.5f);
 
             LSP_STATUS_ASSERT(wGo.init());
@@ -105,6 +107,10 @@ namespace lsp
             sMainGrid.columns()->set(2);
             sMainGrid.hspacing()->set(4);
             sMainGrid.vspacing()->set(4);
+            sMainGrid.bg_color()->set_rgb24(0xff0000);
+            sMainGrid.hspacing()->set(4);
+            sMainGrid.vspacing()->set(4);
+            sMainGrid.orientation()->set(O_HORIZONTAL);
 
             LSP_STATUS_ASSERT(sHBox.init());
             sHBox.orientation()->set_horizontal();
@@ -217,18 +223,22 @@ namespace lsp
             padding()->set_all(8);
             border_style()->set(ws::BS_DIALOG);
             actions()->set_actions(ws::WA_DIALOG | ws::WA_RESIZE | ws::WA_CLOSE);
+            layout()->set(0.0f, 1.0f);
 
             // Bind properties
             sMode.bind("mode", &sStyle);
+            sCustomAction.bind("custom.action", &sStyle);
+            sActionText.bind(&sStyle, pDisplay->dictionary());
 
             Style *sclass = style_class();
             if (sclass != NULL)
             {
                 sMode.init(sclass, FDM_OPEN_FILE);
+                sCustomAction.init(sclass, false);
             }
 
-// TODO
-//            sync_mode();
+            // Sync mode
+            sync_mode();
 
             return STATUS_OK;
         }
@@ -304,19 +314,71 @@ namespace lsp
                     pWSearch->text()->set("labels.file_name");
                 sAppendExt.visibility()->set(true);
             }
+
+            if (sCustomAction.get())
+                sWAction.text()->set(&sActionText);
+            else if (sMode.save_file())
+                sWAction.text()->set("actions.save");
+            else
+                sWAction.text()->set("actions.open");
         }
 
         void FileDialog::property_changed(Property *prop)
         {
             Window::property_changed(prop);
 
-            // TODO
+            if (sMode.is(prop))
+                sync_mode();
+            if (sCustomAction.is(prop))
+                sync_mode();
+            if (sActionText.is(prop))
+                sync_mode();
         }
 
-        status_t FileDialog::add_label(WidgetContainer *c, const char *text, float align, Label **label)
+        status_t FileDialog::add_label(WidgetContainer *c, const char *key, float align, Label **label)
         {
-            // TODO
-            return STATUS_OK;
+            Align *algn = new Align(pDisplay);
+            if (algn == NULL)
+                return STATUS_NO_MEM;
+
+            Label *lbl = new Label(pDisplay);
+            if (lbl == NULL)
+            {
+                delete algn;
+                return STATUS_NO_MEM;
+            }
+
+            status_t result = (vWidgets.add(lbl)) ? STATUS_OK : STATUS_NO_MEM;
+            if (result == STATUS_OK)
+                result = (vWidgets.add(algn)) ? STATUS_OK : STATUS_NO_MEM;
+
+            if (result == STATUS_OK)
+                result = lbl->init();
+            if (result == STATUS_OK)
+                result = algn->init();
+            algn->layout()->set_halign(align);
+            if (result == STATUS_OK)
+                result = lbl->text()->set(key);
+
+            if (result == STATUS_OK)
+                result = algn->add(lbl);
+            if (result == STATUS_OK)
+                result = c->add(algn);
+
+            if (result != STATUS_OK)
+            {
+                vWidgets.premove(lbl);
+                vWidgets.premove(algn);
+                lbl->destroy();
+                delete lbl;
+                algn->destroy();
+                delete algn;
+            }
+
+            if (label != NULL)
+                *label = lbl;
+
+            return result;
         }
 
         status_t FileDialog::add_menu_item(Menu *m, const char *text, event_handler_t handler)
@@ -327,8 +389,55 @@ namespace lsp
 
         status_t FileDialog::add_ext_button(WidgetContainer *c, const char *text)
         {
-            // TODO
-            return STATUS_OK;
+            LSP_STATUS_ASSERT(sAppendExt.init());
+            LSP_STATUS_ASSERT(wAutoExt.init());
+
+            Label *lbl = new Label(pDisplay);
+            if (lbl == NULL)
+                return STATUS_NO_MEM;
+
+            Box *box = new Box(pDisplay);
+            if (box == NULL)
+            {
+                delete lbl;
+                return STATUS_NO_MEM;
+            }
+            box->orientation()->set_horizontal();
+
+            status_t result = (vWidgets.add(lbl)) ? STATUS_OK : STATUS_NO_MEM;
+            if (result == STATUS_OK)
+                result = (vWidgets.add(box)) ? STATUS_OK : STATUS_NO_MEM;
+
+            if (result == STATUS_OK)
+                result = lbl->init();
+            if (result == STATUS_OK)
+                result = box->init();
+
+            box->spacing()->set(4);
+            sAppendExt.layout()->set_align(-1.0f);
+
+            if (result == STATUS_OK)
+                result = lbl->text()->set(text);
+            if (result == STATUS_OK)
+                result = sAppendExt.add(box);
+            if (result == STATUS_OK)
+                result = box->add(&wAutoExt);
+            if (result == STATUS_OK)
+                result = box->add(lbl);
+            if (result == STATUS_OK)
+                result = c->add(&sAppendExt);
+
+            if (result != STATUS_OK)
+            {
+                vWidgets.premove(lbl);
+                vWidgets.premove(box);
+                lbl->destroy();
+                delete lbl;
+                box->destroy();
+                delete box;
+            }
+
+            return result;
         }
     }
 }
