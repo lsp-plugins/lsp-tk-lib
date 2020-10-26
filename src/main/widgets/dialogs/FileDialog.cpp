@@ -66,6 +66,84 @@ namespace lsp
         {
         }
 
+
+        void FileDialog::destroy()
+        {
+            Window::destroy();
+
+            drop_bookmarks();
+//            destroy_file_entries(&vFiles);
+
+            // Clear dynamically allocated widgets
+            size_t n = vWidgets.size();
+            for (size_t i=0; i<n; ++i)
+            {
+                Widget *w       = vWidgets.uget(i);
+                if (w == NULL)
+                    continue;
+                w->destroy();
+                delete w;
+            }
+            vWidgets.clear();
+
+            sWPath.destroy();
+            sWSearch.destroy();
+            sWFilter.destroy();
+            sWFiles.destroy();
+            sWAction.destroy();
+            sWCancel.destroy();
+            sHBox.destroy();
+            sWarnBox.destroy();
+            sSBBookmarks.destroy();
+            sSBAlign.destroy();
+            sBookmarks.destroy();
+            sBMPopup.destroy();
+            sBMAdd.destroy();
+            sMainGrid.destroy();
+            sWWarning.destroy();
+            sAppendExt.destroy();
+            wAutoExt.destroy();
+            wGo.destroy();
+            wUp.destroy();
+            wPathBox.destroy();
+
+            pWSearch = NULL;
+
+            if (pWConfirm != NULL)
+            {
+                pWConfirm->destroy();
+                delete pWConfirm;
+                pWConfirm = NULL;
+            }
+
+            if (pWMessage != NULL)
+            {
+                pWMessage->destroy();
+                delete pWMessage;
+                pWMessage = NULL;
+            }
+        }
+
+        void FileDialog::drop_bookmarks()
+        {
+            // Deactivate currently selected bookmark
+            sBookmarks.remove_all();
+            pSelBookmark    = NULL;
+            pPopupBookmark  = NULL;
+
+            // Destroy bookmarks storage
+            for (size_t i=0, n=vBookmarks.size(); i<n; ++i)
+            {
+                bm_entry_t *ent = vBookmarks.uget(i);
+                if (ent != NULL)
+                {
+                    ent->sHlink.destroy();
+                    delete ent;
+                }
+            }
+            vBookmarks.flush();
+        }
+
         status_t FileDialog::init()
         {
             Label *l;
@@ -248,63 +326,6 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void FileDialog::destroy()
-        {
-            Window::destroy();
-
-//            drop_bookmarks();
-//            destroy_file_entries(&vFiles);
-
-            // Clear dynamically allocated widgets
-            size_t n = vWidgets.size();
-            for (size_t i=0; i<n; ++i)
-            {
-                Widget *w       = vWidgets.uget(i);
-                if (w == NULL)
-                    continue;
-                w->destroy();
-                delete w;
-            }
-            vWidgets.clear();
-
-            sWPath.destroy();
-            sWSearch.destroy();
-            sWFilter.destroy();
-            sWFiles.destroy();
-            sWAction.destroy();
-            sWCancel.destroy();
-            sHBox.destroy();
-            sWarnBox.destroy();
-            sSBBookmarks.destroy();
-            sSBAlign.destroy();
-            sBookmarks.destroy();
-            sBMPopup.destroy();
-            sBMAdd.destroy();
-            sMainGrid.destroy();
-            sWWarning.destroy();
-            sAppendExt.destroy();
-            wAutoExt.destroy();
-            wGo.destroy();
-            wUp.destroy();
-            wPathBox.destroy();
-
-            pWSearch = NULL;
-
-            if (pWConfirm != NULL)
-            {
-                pWConfirm->destroy();
-                delete pWConfirm;
-                pWConfirm = NULL;
-            }
-
-            if (pWMessage != NULL)
-            {
-                pWMessage->destroy();
-                delete pWMessage;
-                pWMessage = NULL;
-            }
-        }
-
         void FileDialog::sync_mode()
         {
             if (sMode.open_file())
@@ -326,6 +347,22 @@ namespace lsp
                 sWAction.text()->set("actions.save");
             else
                 sWAction.text()->set("actions.open");
+        }
+
+        status_t FileDialog::init_bm_popup_menu()
+        {
+            LSP_STATUS_ASSERT(sBMPopup.init());
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.open", slot_on_bm_menu_open));
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.link.follow", slot_on_bm_menu_follow));
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.link.copy", slot_on_bm_menu_copy));
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.delete", slot_on_bm_menu_delete));
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, NULL, NULL));
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.move_first", slot_on_bm_menu_first));
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.move_up", slot_on_bm_menu_up));
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.move_down", slot_on_bm_menu_down));
+            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.move_last", slot_on_bm_menu_last));
+
+            return STATUS_OK;
         }
 
         void FileDialog::property_changed(Property *prop)
@@ -369,9 +406,31 @@ namespace lsp
             return result;
         }
 
-        status_t FileDialog::add_menu_item(Menu *m, const char *text, event_handler_t handler)
+        status_t FileDialog::add_menu_item(Menu *m, const char *key, event_handler_t handler)
         {
-            // TODO
+            MenuItem *mi = new MenuItem(pDisplay);
+            if (mi == NULL)
+                return STATUS_NO_MEM;
+            if (!vWidgets.add(mi))
+            {
+                mi->destroy();
+                delete mi;
+                return STATUS_NO_MEM;
+            }
+
+            LSP_STATUS_ASSERT(mi->init());
+            if (key != NULL)
+            {
+                LSP_STATUS_ASSERT(mi->text()->set(key));
+                handler_id_t id = mi->slots()->bind(SLOT_SUBMIT, handler, self());
+                if (id < 0)
+                    return STATUS_UNKNOWN_ERR;
+            }
+            else
+                mi->type()->set_separator();
+
+            LSP_STATUS_ASSERT(m->add(mi));
+
             return STATUS_OK;
         }
 

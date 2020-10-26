@@ -26,6 +26,8 @@
     #error "use <lsp-plug.in/tk/tk.h>"
 #endif
 
+#include <lsp-plug.in/fmt/bookmarks.h>
+
 namespace lsp
 {
     namespace tk
@@ -42,35 +44,48 @@ namespace lsp
                 FileDialog & operator = (const FileDialog &);
 
             protected:
-                Edit                    sWPath;
-                Edit                    sWSearch;
-                ComboBox                sWFilter;
-                ListBox                 sWFiles;
-                Button                  sWAction;
-                Button                  sWCancel;
-                Grid                    sMainGrid;
-                ScrollArea              sSBBookmarks;
-                Align                   sSBAlign;
-                Box                     sBookmarks;
-                Menu                    sBMPopup;
-                Button                  sBMAdd;
-                Box                     sHBox;
-                Box                     sWarnBox;
-                Align                   sAppendExt;
-                Button                  wAutoExt;
-                Button                  wGo;
-                Button                  wUp;
-                Box                     wPathBox;
-                MessageBox             *pWConfirm;
-                MessageBox             *pWMessage;
-                Label                   sWWarning;
-                Label                  *pWSearch;
+                typedef struct bm_entry_t
+                {
+                    Hyperlink               sHlink;
+                    io::Path                sPath;
+                    bookmarks::bookmark_t   sBookmark;
 
-                lltl::parray<Widget>    vWidgets;
+                    inline bm_entry_t(Display *dpy): sHlink(dpy) {}
+                } bm_entry_t;
 
-                prop::FileDialogMode    sMode;
-                prop::Boolean           sCustomAction;
-                prop::String            sActionText;
+            protected:
+                Edit                        sWPath;
+                Edit                        sWSearch;
+                ComboBox                    sWFilter;
+                ListBox                     sWFiles;
+                Button                      sWAction;
+                Button                      sWCancel;
+                Grid                        sMainGrid;
+                ScrollArea                  sSBBookmarks;
+                Align                       sSBAlign;
+                Box                         sBookmarks;
+                Menu                        sBMPopup;
+                Button                      sBMAdd;
+                Box                         sHBox;
+                Box                         sWarnBox;
+                Align                       sAppendExt;
+                Button                      wAutoExt;
+                Button                      wGo;
+                Button                      wUp;
+                Box                         wPathBox;
+                MessageBox                 *pWConfirm;
+                MessageBox                 *pWMessage;
+                Label                       sWWarning;
+                Label                      *pWSearch;
+
+                lltl::parray<Widget>        vWidgets;
+                lltl::parray<bm_entry_t>    vBookmarks;
+                bm_entry_t                 *pSelBookmark;
+                bm_entry_t                 *pPopupBookmark;
+
+                prop::FileDialogMode        sMode;
+                prop::Boolean               sCustomAction;
+                prop::String                sActionText;
 
             protected:
                 static status_t         slot_on_action(Widget *sender, void *ptr, void *data);
@@ -108,9 +123,12 @@ namespace lsp
 
             protected:
                 status_t                add_label(WidgetContainer *c, const char *key, float align = -1.0f, Label **label = NULL);
-                status_t                add_menu_item(Menu *m, const char *text, event_handler_t handler);
+                status_t                add_menu_item(Menu *m, const char *key, event_handler_t handler);
                 status_t                add_ext_button(WidgetContainer *c, const char *text);
+                status_t                init_bm_popup_menu();
                 void                    sync_mode();
+
+                void                    drop_bookmarks();
 
             protected:
                 virtual void            property_changed(Property *prop);

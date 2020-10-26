@@ -10,5 +10,16 @@
 		"save": "Save Dialog"
 	},
 	"open": "Open",
-	"save": "Save"
+	"save": "Save",
+	"link": {
+		"follow": "Follow link",
+		"copy": "Copy link"
+	},
+	"edit": {
+		"delete": "Delete",
+		"move_first": "Move First",
+		"move_last": "Move Last",
+		"move_up": "Move Up",
+		"move_down": "Move Down"
+	}
 }
