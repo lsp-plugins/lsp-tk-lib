@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -106,6 +107,9 @@ namespace lsp
         {
             do_destroy();
             WidgetContainer::destroy();
+
+            sHBar.destroy();
+            sVBar.destroy();
         }
 
         void ScrollArea::do_destroy()
@@ -367,6 +371,10 @@ namespace lsp
                 return;
             }
 
+            // Draw the rest part of widget
+            if (!Size::intersection(&xa, area))
+                return;
+
             if ((force) || (pWidget->redraw_pending()))
             {
                 // Draw the child only if it is visible in the area
@@ -450,6 +458,20 @@ namespace lsp
             child->padding()->enter(&xr, child->scaling()->get());
             child->realize_widget(&xr);
             _this->query_draw();
+
+            return STATUS_OK;
+        }
+
+        status_t ScrollArea::on_mouse_scroll(const ws::event_t *e)
+        {
+            ws::event_t ev = *e;
+            if ((ev.nState & ws::MCF_ALT) && (sHBar.visibility()->get()))
+            {
+                ev.nState &= ~ws::MCF_ALT;
+                return sHBar.handle_event(&ev);
+            }
+            else if (sVBar.visibility()->get())
+                return sVBar.handle_event(&ev);
 
             return STATUS_OK;
         }

@@ -119,8 +119,7 @@ namespace lsp
                 status_t            parse_data(io::IInSequence *seq, size_t flags = WRAP_NONE);
 
             public:
-                inline Float               *scaling()                   { return &sScaling;     }
-                inline const Float         *scaling() const             { return &sScaling;     }
+                LSP_TK_PROPERTY(Float,          scaling,            &sScaling)
 
             public:
                 /**

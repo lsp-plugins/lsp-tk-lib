@@ -89,7 +89,7 @@ namespace lsp
                 w->destroy();
                 delete w;
             }
-            vWidgets.clear();
+            vWidgets.flush();
 
             sWPath.destroy();
             sWSearch.destroy();
@@ -153,8 +153,19 @@ namespace lsp
         {
             Label *l;
 
-            // Initialize labels
+            // Initialize window
             LSP_STATUS_ASSERT(Window::init());
+
+            // Add slots
+            handler_id_t id = 0;
+            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
+            if (id < 0)
+                return -id;
+
+            lsp_trace("Scaling factor: %f", sScaling.get());
+
+            // Initialize labels
             LSP_STATUS_ASSERT(sWPath.init());
             sWPath.allocation()->set_hexpand(true);
             LSP_STATUS_ASSERT(sWSearch.init());
@@ -164,10 +175,14 @@ namespace lsp
             sWFiles.constraints()->set_min(400, 320);
             sWFiles.allocation()->set_hexpand(true);
             LSP_STATUS_ASSERT(sWAction.init());
-            sWAction.constraints()->set_min(96, 24);
+            sWAction.constraints()->set_min_width(96);
+            sWAction.allocation()->set_fill(false);
+            sWAction.flat()->set(true);
             LSP_STATUS_ASSERT(sWCancel.init());
             LSP_STATUS_ASSERT(sWCancel.text()->set("actions.cancel"));
-            sWCancel.constraints()->set_min(96, 24);
+            sWCancel.constraints()->set_min_width(96);
+            sWCancel.allocation()->set_fill(false);
+            sWCancel.flat()->set(true);
             LSP_STATUS_ASSERT(sWWarning.init());
             sWWarning.visibility()->set(false);
             sWWarning.allocation()->set_hexpand(true);
@@ -177,14 +192,17 @@ namespace lsp
             LSP_STATUS_ASSERT(wGo.text()->set("actions.nav.go"));
             wGo.allocation()->set_fill(false);
             wGo.constraints()->set_min_width(32);
+            wGo.flat()->set(true);
             LSP_STATUS_ASSERT(wUp.init());
             LSP_STATUS_ASSERT(wUp.text()->set("actions.nav.up"));
             wUp.allocation()->set_fill(false);
             wUp.constraints()->set_min_width(32);
+            wUp.flat()->set(true);
             LSP_STATUS_ASSERT(sBMAdd.init());
             LSP_STATUS_ASSERT(sBMAdd.text()->set("actions.to_bookmarks"));
             sBMAdd.allocation()->set_fill(false);
             sBMAdd.constraints()->set_min_width(32);
+            sBMAdd.flat()->set(true);
 
             LSP_STATUS_ASSERT(wPathBox.init());
             wPathBox.orientation()->set_horizontal();
@@ -194,9 +212,6 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.init());
             sMainGrid.rows()->set(7);
             sMainGrid.columns()->set(2);
-            sMainGrid.hspacing()->set(4);
-            sMainGrid.vspacing()->set(4);
-            sMainGrid.bg_color()->set_rgb24(0xff0000);
             sMainGrid.hspacing()->set(4);
             sMainGrid.vspacing()->set(4);
             sMainGrid.orientation()->set(O_HORIZONTAL);
@@ -264,7 +279,7 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.add(&sWFilter));
             // Row 7
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
-            LSP_STATUS_ASSERT(sMainGrid.add(&sHBox));
+            LSP_STATUS_ASSERT(sMainGrid.add(&sHBox)); // Action button box
 
             // Initialize structure
             wAutoExt.led()->set(true);
@@ -276,10 +291,10 @@ namespace lsp
             // Bind events
             status_t result;
 
-            result = sWAction.slots()->bind(SLOT_SUBMIT, slot_on_action, self());
+            result = sWAction.slots()->bind(SLOT_SUBMIT, slot_on_btn_action, self());
             if (result < 0)
                 return -result;
-            result = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_cancel, self());
+            result = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_btn_cancel, self());
             if (result < 0)
                 return -result;
             result = sWSearch.slots()->bind(SLOT_CHANGE, slot_on_search, self());
@@ -304,6 +319,12 @@ namespace lsp
             if (result < 0)
                 return -result;
             result = sWPath.slots()->bind(SLOT_KEY_UP, slot_on_path_key_up, self());
+            if (result < 0)
+                return -result;
+            result = sBookmarks.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll, self());
+            if (result < 0)
+                return -result;
+            result = sSBBookmarks.slots()->bind(SLOT_REALIZED, slot_on_bm_realized, self());
             if (result < 0)
                 return -result;
 
@@ -491,22 +512,34 @@ namespace lsp
             return result;
         }
 
-        status_t FileDialog::slot_on_action(Widget *sender, void *ptr, void *data)
+        status_t FileDialog::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
             FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
-            return (dlg != NULL) ? dlg->on_dlg_action(data) : STATUS_BAD_STATE;
+            return (dlg != NULL) ? dlg->on_submit() : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_cancel(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_cancel() : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_btn_action(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_btn_action(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_btn_cancel(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_btn_cancel(data) : STATUS_BAD_STATE;
         }
 
         status_t FileDialog::slot_on_confirm(Widget *sender, void *ptr, void *data)
         {
             FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
             return (dlg != NULL) ? dlg->on_dlg_confirm(data) : STATUS_BAD_STATE;
-        }
-
-        status_t FileDialog::slot_on_cancel(Widget *sender, void *ptr, void *data)
-        {
-            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
-            return (dlg != NULL) ? dlg->on_dlg_cancel(data) : STATUS_BAD_STATE;
         }
 
         status_t FileDialog::slot_on_search(Widget *sender, void *ptr, void *data)
@@ -558,6 +591,13 @@ namespace lsp
         {
             FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
             return (_this != NULL) ? _this->on_bm_submit(sender) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t FileDialog::slot_on_bm_scroll(Widget *sender, void *ptr, void *data)
+        {
+            ScrollArea *_parent = parent_widget<ScrollArea>(sender);
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            return (_parent != NULL) ? _parent->handle_event(ev) : STATUS_OK;
         }
 
         status_t FileDialog::slot_on_bm_popup(Widget *sender, void *ptr, void *data)
@@ -676,6 +716,33 @@ namespace lsp
             return _this->sync_bookmarks();
         }
 
+        status_t FileDialog::slot_on_bm_realized(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+            ScrollArea *_area = widget_cast<ScrollArea>(sender);
+            if ((_this == NULL) || (_area == NULL))
+                return STATUS_OK;
+            size_t n    = _this->vBookmarks.size();
+            if (n <= 0)
+                return STATUS_OK;
+
+            ws::rectangle_t sa, sb;
+            _this->sBookmarks.get_rectangle(&sa);
+            _this->sBookmarks.get_rectangle(&sb);
+            float ydelta    = float(sb.nHeight) / n;
+
+            if (sa.nHeight >= (ydelta * 4))
+                ydelta         *= 4;
+
+            float smin      = _area->vscroll()->min();
+            float smax      = _area->vscroll()->max();
+            float sdelta    = (smax - smin) / n;
+
+            _area->vstep()->set(lsp_max(sdelta, ydelta));
+
+            return STATUS_OK;
+        }
+
         status_t FileDialog::on_dlg_mouse_dbl_click(void *data)
         {
 //            file_entry_t *ent = selected_entry();
@@ -724,7 +791,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t FileDialog::on_dlg_action(void *data)
+        status_t FileDialog::on_btn_action(void *data)
         {
 //            bool committed = false;
 //
@@ -847,14 +914,14 @@ namespace lsp
             return sSlots.execute(SLOT_SUBMIT, this, data);
         }
 
-        status_t FileDialog::on_dlg_cancel(void *data)
+        status_t FileDialog::on_btn_cancel(void *data)
         {
             // Hide dialogs
             if (pWConfirm != NULL)
                 pWConfirm->hide();
+            drop_bookmarks();
             hide();
 //            destroy_file_entries(&vFiles);
-            drop_bookmarks();
 
             // Execute slots
             return sSlots.execute(SLOT_CANCEL, this, data);
@@ -874,7 +941,7 @@ namespace lsp
         status_t FileDialog::on_close(const ws::event_t *e)
         {
             ws::event_t ev = *e;
-            return on_dlg_cancel(&ev);
+            return on_btn_cancel(&ev);
         }
 
         status_t FileDialog::on_bm_submit(Widget *sender)
@@ -1027,6 +1094,7 @@ namespace lsp
                 ent->sHlink.padding()->set_horizontal(8, 8);
                 ent->sHlink.slots()->bind(SLOT_SUBMIT, slot_on_bm_submit, self());
                 ent->sHlink.slots()->bind(SLOT_BEFORE_POPUP, slot_on_bm_popup, self());
+                ent->sHlink.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll);
                 ent->sHlink.popup()->set(&sBMPopup);
                 if (b->origin & bookmarks::BM_LSP)
                 {
@@ -1195,6 +1263,16 @@ namespace lsp
                     return ent;
             }
             return NULL;
+        }
+
+        status_t FileDialog::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::on_cancel()
+        {
+            return STATUS_OK;
         }
     }
 }

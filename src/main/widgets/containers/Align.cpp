@@ -116,7 +116,7 @@ namespace lsp
                 // Draw the child only if it is visible in the area
                 ws::rectangle_t xr;
                 pWidget->get_rectangle(&xr);
-                if (Size::intersection(&xr, &sSize))
+                if (Size::intersection(&xr, area))
                     pWidget->render(s, &xr, force);
 
                 pWidget->commit_redraw();

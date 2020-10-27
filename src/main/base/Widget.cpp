@@ -101,7 +101,6 @@ namespace lsp
 
                     sAllocation.init(sclass, true, false);
                     sPadding.init(sclass, 0, 0, 0, 0);
-                    sScaling.init(sclass, 1.0f);
                     sBrightness.init(sclass, 1.0f);
                     sBgColor.init(sclass, "#cccccc");
                     sVisibility.init(sclass, true);
@@ -131,6 +130,7 @@ namespace lsp
             if (id >= 0) id = sSlots.add(SLOT_RESIZE, slot_resize, self());
             if (id >= 0) id = sSlots.add(SLOT_RESIZE_PARENT, slot_resize_parent, self());
             if (id >= 0) id = sSlots.add(SLOT_DRAG_REQUEST, slot_drag_request, self());
+            if (id >= 0) id = sSlots.add(SLOT_REALIZED, slot_realized, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }
@@ -186,6 +186,7 @@ namespace lsp
         {
             if (w == NULL)
                 return;
+            w->kill_focus();
             if (w->pParent == this)
                 w->pParent  = NULL;
         }
@@ -379,12 +380,32 @@ namespace lsp
             return _this->on_drag_request(ev, ctype);
         }
 
+        status_t Widget::slot_realized(Widget *sender, void *ptr, void *data)
+        {
+            if (ptr == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            Widget *_this  = widget_ptrcast<Widget>(ptr);
+            ws::rectangle_t *r = static_cast<ws::rectangle_t *>(data);
+            return _this->on_realized(r);
+        }
+
         bool Widget::inside(ssize_t left, ssize_t top)
         {
             if (!sVisibility.get())
                 return false;
 
             return Position::inside(&sSize, left, top);
+        }
+
+        Widget *Widget::parent(const w_class_t *meta)
+        {
+            for (Widget *w=pParent; w != NULL; w = w->pParent)
+            {
+                if (w->instance_of(meta))
+                    return w;
+            }
+            return NULL;
         }
 
         void Widget::hide_widget()
@@ -424,6 +445,7 @@ namespace lsp
         {
             if (pParent == parent)
                 return;
+            kill_focus();
 
             if (pParent != NULL)
             {
@@ -585,6 +607,10 @@ namespace lsp
             // Reset size pending flags
             nFlags     &= ~(SIZE_INVALID | RESIZE_PENDING | REALIZE_ACTIVE);
             query_draw();   // Always query redraw after realize()
+
+            // Send Realized() event
+            ws::rectangle_t rm = *r;
+            sSlots.execute(SLOT_REALIZED, this, &rm);
         }
 
         void Widget::get_size_limits(ws::size_limit_t *l)
@@ -726,6 +752,7 @@ namespace lsp
 
         void Widget::destroy()
         {
+            kill_focus();
             do_destroy();
         }
 
@@ -820,6 +847,11 @@ namespace lsp
         }
 
         status_t Widget::on_drag_request(const ws::event_t *e, const char * const *ctype)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Widget::on_realized(const ws::rectangle_t *r)
         {
             return STATUS_OK;
         }

@@ -66,6 +66,14 @@ namespace lsp
             {
                 return (w != NULL) && (w->instance_of(&Target::metadata));
             }
+
+        template <class Target>
+            inline Target          *parent_widget(Widget *w)
+            {
+                if (w == NULL)
+                    return NULL;
+                return widget_cast<Target>(w->parent(&Target::metadata));
+            }
     }
 }
 

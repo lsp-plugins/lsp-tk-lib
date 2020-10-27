@@ -90,6 +90,10 @@ namespace lsp
                 ws::rectangle_t         sGraph;                     // Area for sample rendering
                 ws::ISurface           *pGlass;                     // Surface to draw glass
 
+            protected:
+                static status_t         slot_on_before_popup(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_popup(Widget *sender, void *ptr, void *data);
+
             public:
                 virtual void            size_request(ws::size_limit_t *r);
                 virtual void            realize(const ws::rectangle_t *r);
@@ -171,6 +175,10 @@ namespace lsp
                 virtual status_t            on_mouse_up(const ws::event_t *e);
 
                 virtual status_t            on_mouse_move(const ws::event_t *e);
+
+                virtual status_t            on_before_popup(Menu *menu);
+
+                virtual status_t            on_popup(Menu *menu);
         };
     }
 }

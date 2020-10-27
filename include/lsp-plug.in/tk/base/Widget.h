@@ -108,6 +108,7 @@ namespace lsp
                 static status_t     slot_focus_in(Widget *sender, void *ptr, void *data);
                 static status_t     slot_focus_out(Widget *sender, void *ptr, void *data);
                 static status_t     slot_drag_request(Widget *sender, void *ptr, void *data);
+                static status_t     slot_realized(Widget *sender, void *ptr, void *data);
 
             //---------------------------------------------------------------------------------
             // Interface for nested classes
@@ -318,6 +319,13 @@ namespace lsp
                  * @return parent widget
                  */
                 inline Widget          *parent()                { return pParent; }
+
+                /**
+                 * Find parent widget of the specified type
+                 * @param meta metadata
+                 * @return the parent widget of the specified type or NULL
+                 */
+                Widget                 *parent(const w_class_t *meta);
 
                 /** Get slots
                  *
@@ -617,6 +625,12 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t        on_drag_request(const ws::event_t *e, const char * const *ctype);
+
+                /** The widget has just been realized
+                 * @param size the actual widget size
+                 * @return status of operation
+                 */
+                virtual status_t        on_realized(const ws::rectangle_t *size);
         };
     }
 

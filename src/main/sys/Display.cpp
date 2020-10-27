@@ -102,21 +102,28 @@ namespace lsp
             if (_this == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            for (size_t i=0, n=_this->vGarbage.size(); i<n; ++i)
+            _this->garbage_collect();
+
+            return STATUS_OK;
+        }
+
+        void Display::garbage_collect()
+        {
+            for (size_t i=0, n=vGarbage.size(); i<n; ++i)
             {
                 // Get widget
-                Widget *w = _this->vGarbage.uget(i);
+                Widget *w = vGarbage.uget(i);
                 if (w == NULL)
                     continue;
 
                 // Widget is registered?
-                for (size_t j=0, m=_this->sWidgets.size(); j<m; )
+                for (size_t j=0, m=sWidgets.size(); j<m; )
                 {
-                    item_t *item = _this->sWidgets.uget(j);
+                    item_t *item = sWidgets.uget(j);
                     if (item->widget == w)
                     {
                         // Free the binding
-                        _this->sWidgets.qremove(j);
+                        sWidgets.qremove(j);
                         item->id        = NULL;
                         item->widget    = NULL;
                         ::free(item);
@@ -131,9 +138,7 @@ namespace lsp
             }
 
             // Cleanup garbage
-            _this->vGarbage.flush();
-
-            return STATUS_OK;
+            vGarbage.flush();
         }
 
         status_t Display::init(int argc, const char **argv)
@@ -212,6 +217,7 @@ namespace lsp
 
         void Display::destroy()
         {
+            garbage_collect();
             do_destroy();
         }
 

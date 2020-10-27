@@ -81,7 +81,11 @@ namespace lsp
                         explicit WidgetPtr(prop::Listener *listener = NULL): tk::WidgetPtr<widget_t>(listener) {}
 
                     public:
-                        inline void             bind(widget_t *dfl) { this->pDfl  = tk::WidgetPtr<widget_t>::vcast(dfl);    }
+                        inline void             bind(widget_t *dfl)
+                        {
+                            this->pDfl      = tk::WidgetPtr<widget_t>::vcast(dfl);
+                            this->pCurr     = this->pDfl;
+                        }
                 };
         }
     }

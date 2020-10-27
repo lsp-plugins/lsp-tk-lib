@@ -223,7 +223,13 @@ namespace lsp
 
                 // Render widget
                 if (Size::intersection(&xr, area, &wc->s))
+                {
+                    lsp_trace("area={%d %d %d %d}, xr={%d %d %d %d}",
+                            int(area->nLeft), int(area->nTop), int(area->nWidth), int(area->nHeight),
+                            int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight)
+                        );
                     w->render(s, &xr, force);
+                }
                 w->commit_redraw();
 
                 // Fill unused space with background

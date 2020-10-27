@@ -961,10 +961,10 @@ namespace lsp
             ws::size_limit_t sr;
             ws::rectangle_t r;
 
-            for (size_t i=0, n=a->vCells.size(); i<n; ++i)
+            for (size_t i=0, n=a->vTable.size(); i<n; ++i)
             {
                 // Get widget
-                cell_t *w       = a->vCells.uget(i);
+                cell_t *w       = a->vTable.uget(i);
                 if (w->pWidget == NULL)
                     continue;
 

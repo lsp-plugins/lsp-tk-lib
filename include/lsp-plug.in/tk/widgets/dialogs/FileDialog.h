@@ -89,9 +89,13 @@ namespace lsp
                 prop::String                sActionText;
 
             protected:
-                static status_t         slot_on_action(Widget *sender, void *ptr, void *data);
-                static status_t         slot_on_confirm(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_cancel(Widget *sender, void *ptr, void *data);
+
+                static status_t         slot_on_btn_action(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_btn_cancel(Widget *sender, void *ptr, void *data);
+
+                static status_t         slot_on_confirm(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_search(Widget *sender, void *ptr, void *data);
                 static status_t         slot_mouse_dbl_click(Widget *sender, void *ptr, void *data);
                 static status_t         slot_list_change(Widget *sender, void *ptr, void *data);
@@ -99,6 +103,7 @@ namespace lsp
                 static status_t         slot_on_up(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_path_key_up(Widget *sender, void *ptr, void *data);
 
+                static status_t         slot_on_bm_scroll(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_popup(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_add(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_submit(Widget *sender, void *ptr, void *data);
@@ -110,11 +115,13 @@ namespace lsp
                 static status_t         slot_on_bm_menu_down(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_menu_first(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_menu_last(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_bm_realized(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual status_t        on_dlg_action(void *data);
+                virtual status_t        on_btn_action(void *data);
+                virtual status_t        on_btn_cancel(void *data);
+
                 virtual status_t        on_dlg_confirm(void *data);
-                virtual status_t        on_dlg_cancel(void *data);
                 virtual status_t        on_dlg_search(void *data);
                 virtual status_t        on_dlg_mouse_dbl_click(void *data);
                 virtual status_t        on_dlg_list_change(void *data);
@@ -163,6 +170,10 @@ namespace lsp
                 virtual status_t        on_show();
 
                 virtual status_t        on_close(const ws::event_t *e);
+
+                virtual status_t        on_submit();
+
+                virtual status_t        on_cancel();
         };
     }
 }

@@ -66,6 +66,7 @@ namespace lsp
             SLOT_DRAG_REQUEST,      //!< SLOT_DRAG_REQUEST Triggered when a drag request is pending on the widget
             SLOT_BEFORE_POPUP,      //!< SLOT_BEFORE_POPUP Triggered before pop-up element is going to be shown
             SLOT_POPUP,             //!< SLOT_POPUP Triggered after pop-up element has been shown
+            SLOT_REALIZED           //!< SLOT_REALIZED Widget has been just realized
         };
 
         /** Event handler identifier

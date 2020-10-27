@@ -1048,6 +1048,30 @@ namespace lsp
 
             return STATUS_OK;
         }
+
+        status_t AudioSample::on_before_popup(Menu *menu)
+        {
+            return STATUS_OK;
+        }
+
+        status_t AudioSample::on_popup(Menu *menu)
+        {
+            return STATUS_OK;
+        }
+
+        status_t AudioSample::slot_on_before_popup(Widget *sender, void *ptr, void *data)
+        {
+            AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_before_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t AudioSample::slot_on_popup(Widget *sender, void *ptr, void *data)
+        {
+            AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
     }
 }
 

@@ -134,33 +134,63 @@ namespace lsp
             sBorderSize(&sProperties),
             sBorderGapSize(&sProperties),
             sBorderRadius(&sProperties),
-            sConstraints(&sProperties)
+            sConstraints(&sProperties),
+            sPopup(&sProperties)
         {
             sTextPos            = 0;
             nMBState            = 0;
             nScrDirection       = 0;
-//            pPopup          = &sStdPopup;
             pDataSink           = NULL;
+            vMenu[0]            = NULL;
+            vMenu[1]            = NULL;
+            vMenu[2]            = NULL;
+            vMenu[3]            = NULL;
 
             sTextArea.nLeft     = -1;
             sTextArea.nTop      = -1;
             sTextArea.nWidth    = 0;
             sTextArea.nHeight   = 0;
 
-//            vStdItems[0]    = NULL;
-//            vStdItems[1]    = NULL;
-//            vStdItems[2]    = NULL;
             pClass          = &metadata;
         }
 
         Edit::~Edit()
         {
+            do_destroy();
+        }
+
+        void Edit::destroy()
+        {
+            do_destroy();
+
+            if (pDataSink != NULL)
+            {
+                pDataSink->unbind();
+                pDataSink   = NULL;
+            }
+
+            Widget::destroy();
+        }
+
+        void Edit::do_destroy()
+        {
+            for (size_t i=0; i<4; ++i)
+                if (vMenu[i] != NULL)
+                {
+                    vMenu[i]->destroy();
+                    delete vMenu[i];
+                    vMenu[i] = NULL;
+                }
         }
 
         status_t Edit::init()
         {
             handler_id_t id;
             status_t result = Widget::init();
+            if (result != STATUS_OK)
+                return result;
+
+            result = create_default_menu();
             if (result != STATUS_OK)
                 return result;
 
@@ -185,6 +215,7 @@ namespace lsp
             sBorderGapSize.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
+            sPopup.bind(widget_ptrcast<Menu>(vMenu[0]));
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -207,42 +238,6 @@ namespace lsp
                 sPointer.override(sclass, ws::MP_IBEAM);
             }
 
-            // TODO: Initialize standard menu
-//            ui_handler_id_t id = 0;
-//            LSP_STATUS_ASSERT(sStdPopup.init());
-//            LSPMenuItem *mi = new LSPMenuItem(pDisplay);
-//            if (mi == NULL)
-//                return STATUS_NO_MEM;
-//            vStdItems[0] = mi;
-//            LSP_STATUS_ASSERT(mi->init());
-//            LSP_STATUS_ASSERT(sStdPopup.add(mi));
-//            LSP_STATUS_ASSERT(mi->text()->set("actions.edit.cut"));
-//            id = mi->slots()->bind(LSPSLOT_SUBMIT, slot_popup_cut_action, self());
-//            if (id < 0)
-//                return -id;
-//
-//            mi = new LSPMenuItem(pDisplay);
-//            if (mi == NULL)
-//                return STATUS_NO_MEM;
-//            vStdItems[1] = mi;
-//            LSP_STATUS_ASSERT(mi->init());
-//            LSP_STATUS_ASSERT(sStdPopup.add(mi));
-//            LSP_STATUS_ASSERT(mi->text()->set("actions.edit.copy"));
-//            id = mi->slots()->bind(LSPSLOT_SUBMIT, slot_popup_copy_action, self());
-//            if (id < 0)
-//                return -id;
-//
-//            mi = new LSPMenuItem(pDisplay);
-//            if (mi == NULL)
-//                return STATUS_NO_MEM;
-//            vStdItems[2] = mi;
-//            LSP_STATUS_ASSERT(mi->init());
-//            LSP_STATUS_ASSERT(sStdPopup.add(mi));
-//            LSP_STATUS_ASSERT(mi->text()->set("actions.edit.paste"));
-//            id = mi->slots()->bind(LSPSLOT_SUBMIT, slot_popup_paste_action, self());
-//            if (id < 0)
-//                return -id;
-
             // Bind slots
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)
@@ -251,23 +246,49 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Edit::destroy()
+        status_t Edit::create_default_menu()
         {
-//            for (size_t i=0; i<3; ++i)
-//                if (vStdItems[i] != NULL)
-//                {
-//                    vStdItems[i]->destroy();
-//                    delete vStdItems[i];
-//                    vStdItems[i] = NULL;
-//                }
+            Menu *menu      = new Menu(pDisplay);
+            if (menu == NULL)
+                return STATUS_NO_MEM;
+            vMenu[0]        = menu;
+            LSP_STATUS_ASSERT(menu->init());
 
-            if (pDataSink != NULL)
-            {
-                pDataSink->unbind();
-                pDataSink   = NULL;
-            }
+            handler_id_t id = 0;
+            MenuItem *mi    = new MenuItem(pDisplay);
+            if (mi == NULL)
+                return STATUS_NO_MEM;
+            vMenu[1]        = mi;
+            LSP_STATUS_ASSERT(mi->init());
+            LSP_STATUS_ASSERT(menu->add(mi));
+            LSP_STATUS_ASSERT(mi->text()->set("actions.edit.cut"));
+            id = mi->slots()->bind(SLOT_SUBMIT, slot_popup_cut_action, self());
+            if (id < 0)
+                return -id;
 
-            Widget::destroy();
+            mi              = new MenuItem(pDisplay);
+            if (mi == NULL)
+                return STATUS_NO_MEM;
+            vMenu[2]        = mi;
+            LSP_STATUS_ASSERT(mi->init());
+            LSP_STATUS_ASSERT(menu->add(mi));
+            LSP_STATUS_ASSERT(mi->text()->set("actions.edit.copy"));
+            id = mi->slots()->bind(SLOT_SUBMIT, slot_popup_copy_action, self());
+            if (id < 0)
+                return -id;
+
+            mi              = new MenuItem(pDisplay);
+            if (mi == NULL)
+                return STATUS_NO_MEM;
+            vMenu[3]        = mi;
+            LSP_STATUS_ASSERT(mi->init());
+            LSP_STATUS_ASSERT(menu->add(mi));
+            LSP_STATUS_ASSERT(mi->text()->set("actions.edit.paste"));
+            id = mi->slots()->bind(SLOT_SUBMIT, slot_popup_paste_action, self());
+            if (id < 0)
+                return -id;
+
+            return STATUS_OK;
         }
 
         void Edit::property_changed(Property *prop)
@@ -278,10 +299,7 @@ namespace lsp
 
             // Self properties
             if (sSelection.is(prop))
-            {
-                // TODO: sync state
                 query_draw();
-            }
 
             if (sText.is(prop))
             {
@@ -750,8 +768,13 @@ namespace lsp
             lsp_trace("mouse up");
             if ((nMBState == (1 << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT))
             {
-//                if (pPopup != NULL)
-//                    pPopup->show(this, e);
+                Menu *popup = sPopup.get();
+                if (popup != NULL)
+                {
+                    sSlots.execute(SLOT_BEFORE_POPUP, popup, self());
+                    popup->show();
+                    sSlots.execute(SLOT_POPUP, popup, self());
+                }
             }
             else if ((nMBState == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
             {
@@ -1054,6 +1077,16 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Edit::on_before_popup(Menu *menu)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Edit::on_popup(Menu *menu)
+        {
+            return STATUS_OK;
+        }
+
         status_t Edit::slot_popup_cut_action(Widget *sender, void *ptr, void *data)
         {
             Edit *_this = widget_ptrcast<Edit>(ptr);
@@ -1070,6 +1103,20 @@ namespace lsp
         {
             Edit *_this = widget_ptrcast<Edit>(ptr);
             return (_this != NULL) ? _this->paste_data(ws::CBUF_CLIPBOARD) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Edit::slot_on_before_popup(Widget *sender, void *ptr, void *data)
+        {
+            Edit *_this = widget_ptrcast<Edit>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_before_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Edit::slot_on_popup(Widget *sender, void *ptr, void *data)
+        {
+            Edit *_this = widget_ptrcast<Edit>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
         }
 
     } /* namespace tk */

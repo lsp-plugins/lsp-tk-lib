@@ -85,6 +85,9 @@ namespace lsp
                 virtual void            destroy();
 
             public:
+                inline void             get_area(ws::rectangle_t *area) { *area = sArea;            }
+
+            public:
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sSizeConstraints)
                 LSP_TK_PROPERTY(Scrolling,          hscroll_mode,       &sHScrollMode)
@@ -92,6 +95,8 @@ namespace lsp
 
                 LSP_TK_PROPERTY(RangeFloat,         hscroll,            &sHScroll)
                 LSP_TK_PROPERTY(RangeFloat,         vscroll,            &sVScroll)
+                LSP_TK_PROPERTY(StepFloat,          hstep,               sHBar.step())
+                LSP_TK_PROPERTY(StepFloat,          vstep,               sVBar.step())
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
@@ -101,6 +106,8 @@ namespace lsp
                 virtual status_t        remove(Widget *widget);
 
                 virtual Widget         *find_widget(ssize_t x, ssize_t y);
+
+                virtual status_t        on_mouse_scroll(const ws::event_t *e);
         };
     
     } /* namespace tk */

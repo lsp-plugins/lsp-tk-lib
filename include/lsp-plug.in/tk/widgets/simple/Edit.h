@@ -30,6 +30,8 @@ namespace lsp
 {
     namespace tk
     {
+        class Menu;
+
         class Edit: public Widget
         {
             public:
@@ -93,6 +95,8 @@ namespace lsp
                 EditCursor              sCursor;
                 Timer                   sScroll;
 
+                Widget                 *vMenu[4];
+
                 ws::rectangle_t         sTextArea;
 
                 prop::String            sText;
@@ -109,11 +113,7 @@ namespace lsp
                 prop::Integer           sBorderGapSize;
                 prop::Integer           sBorderRadius;
                 prop::SizeConstraints   sConstraints;
-
-                // TODO
-//                Menu                    sStdPopup;
-//                MenuItem               *vStdItems[3];
-//                Menu                   *pPopup;
+                prop::WidgetPtr<Menu>   sPopup;
 
             protected:
                 static status_t                     timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
@@ -121,6 +121,8 @@ namespace lsp
                 static status_t                     slot_popup_cut_action(Widget *sender, void *ptr, void *data);
                 static status_t                     slot_popup_copy_action(Widget *sender, void *ptr, void *data);
                 static status_t                     slot_popup_paste_action(Widget *sender, void *ptr, void *data);
+                static status_t                     slot_on_before_popup(Widget *sender, void *ptr, void *data);
+                static status_t                     slot_on_popup(Widget *sender, void *ptr, void *data);
 
             protected:
                 ssize_t                             mouse_to_cursor_pos(ssize_t x, ssize_t y, bool range = true);
@@ -132,6 +134,8 @@ namespace lsp
                 status_t                            copy_data(size_t bufid);
                 status_t                            paste_data(size_t bufid);
                 void                                paste_clipboard(const LSPString *data);
+                void                                do_destroy();
+                status_t                            create_default_menu();
 
             protected:
                 virtual void                        size_request(ws::size_limit_t *r);
@@ -160,11 +164,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_gap_size,                &sBorderGapSize)
                 LSP_TK_PROPERTY(Integer,            border_radius,                  &sBorderRadius)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,                    &sConstraints)
-
-//                inline Menu                        *get_popup()             { return pPopup;            }
-
-            public:
-//                inline void         set_popup(LSPMenu *popup)   { pPopup = popup; }
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,                          &sPopup)
 
             public:
                 virtual void                    draw(ws::ISurface *s);
@@ -188,6 +188,10 @@ namespace lsp
                 virtual status_t                on_key_down(const ws::event_t *e);
 
                 virtual status_t                on_key_up(const ws::event_t *e);
+
+                virtual status_t                on_before_popup(Menu *menu);
+
+                virtual status_t                on_popup(Menu *menu);
         };
     
     } /* namespace tk */

@@ -123,7 +123,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
     static status_t slot_ok_submitted(tk::Widget *sender, void *ptr, void *data)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
-        h->test->printf("MESSAGEBOX OK SUBMITTED: %s\n", h->label);
+        h->test->printf("DIALOG OK SUBMITTED: %s\n", h->label);
 
         sender->display()->queue_destroy(h->dlg);
         h->dlg      = NULL;
@@ -133,7 +133,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
     static status_t slot_cancel_submitted(tk::Widget *sender, void *ptr, void *data)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
-        h->test->printf("MESSAGEBOX CANCEL SUBMITTED: %s\n", h->label);
+        h->test->printf("DIALOG CANCEL SUBMITTED: %s\n", h->label);
 
         sender->display()->queue_destroy(h->dlg);
         h->dlg      = NULL;
@@ -148,6 +148,8 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         tk::FileDialog *dlg = new tk::FileDialog(sender->display());
         dlg->init();
         dlg->mode()->set_open_file();
+        dlg->slots()->bind(tk::SLOT_SUBMIT, slot_ok_submitted, h);
+        dlg->slots()->bind(tk::SLOT_CANCEL, slot_cancel_submitted, h);
 
         h->dlg      = dlg;
         dlg->show(sender);
@@ -163,6 +165,8 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         tk::FileDialog *dlg = new tk::FileDialog(sender->display());
         dlg->init();
         dlg->mode()->set_save_file();
+        dlg->slots()->bind(tk::SLOT_SUBMIT, slot_ok_submitted, h);
+        dlg->slots()->bind(tk::SLOT_CANCEL, slot_cancel_submitted, h);
 
         h->dlg      = dlg;
         dlg->show(sender);
