@@ -794,24 +794,28 @@ namespace lsp
 
         status_t FileDialog::on_dlg_mouse_dbl_click(void *data)
         {
-//            file_entry_t *ent = selected_entry();
-//            if (ent == NULL)
-//                return STATUS_OK;
-//
-//            // Analyze what to do
-//            LSPString path;
-//            if (ent->nFlags & F_DOTDOT)
-//                return on_dlg_up(NULL);
-//            else if (ent->nFlags & F_ISDIR)
-//            {
-//                LSP_STATUS_ASSERT(sWPath.get_text(&path));
-//                LSP_STATUS_ASSERT(LSPFileMask::append_path(&path, &ent->sName));
-//                return set_path(&path);
-//            }
-//            else
-//                return on_dlg_action(data);
+            f_entry_t *ent = selected_entry();
+            if (ent == NULL)
+                return STATUS_OK;
 
-            return STATUS_OK;
+            // Analyze what to do
+            LSPString spath;
+            io::Path path;
+
+            if (ent->nFlags & F_DOTDOT)
+                return on_dlg_up(NULL);
+
+            if (ent->nFlags & F_ISDIR)
+            {
+                LSP_STATUS_ASSERT(sPath.format(&spath));
+                LSP_STATUS_ASSERT(path.set(&spath));
+                LSP_STATUS_ASSERT(path.append_child(&ent->sName));
+                LSP_STATUS_ASSERT(path.canonicalize());
+
+                return sPath.set_raw(path.as_string());
+            }
+
+            return on_btn_action(data);
         }
 
         status_t FileDialog::on_dlg_list_change(void *data)
