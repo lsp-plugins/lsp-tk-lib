@@ -98,7 +98,7 @@ namespace lsp
 
         status_t Display::main_task_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
-            Display *_this   = reinterpret_cast<Display *>(arg);
+            Display *_this   = static_cast<Display *>(arg);
             if (_this == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
@@ -232,7 +232,12 @@ namespace lsp
         {
             if (pDisplay == NULL)
                 return STATUS_BAD_STATE;
-            return pDisplay->main_iteration();
+            if (!sLock.lock())
+                return STATUS_UNKNOWN_ERR;
+            status_t res = pDisplay->main_iteration();
+            if (!sLock.unlock())
+                return STATUS_UNKNOWN_ERR;
+            return res;
         }
 
         void Display::quit_main()

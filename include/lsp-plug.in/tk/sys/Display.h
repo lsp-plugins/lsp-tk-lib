@@ -32,6 +32,7 @@
 #include <lsp-plug.in/ws/IDataSink.h>
 #include <lsp-plug.in/i18n/IDictionary.h>
 #include <lsp-plug.in/lltl/parray.h>
+#include <lsp-plug.in/ipc/Mutex.h>
 
 namespace lsp
 {
@@ -55,6 +56,7 @@ namespace lsp
             protected:
                 lltl::parray<item_t>    sWidgets;
                 lltl::parray<Widget>    vGarbage;
+                ipc::Mutex              sLock;
 
                 SlotSet                 sSlots;
                 Schema                  sSchema;
@@ -180,7 +182,25 @@ namespace lsp
                  * @param id widget identifier
                  * @return true on success
                  */
-                inline bool exists(const char *id) { return get(id) != NULL; }
+                inline bool exists(const char *id)          { return get(id) != NULL; }
+
+                /**
+                 * Lock the main event loop until unlock() is called
+                 * @return true if main event loop has been locked
+                 */
+                inline bool lock()                          { return sLock.lock();      }
+
+                /**
+                 * Perform single try to lock the main event loop until unlock() is called
+                 * @return true if main event loop has been locked
+                 */
+                inline bool try_lock()                      { return sLock.try_lock();  }
+
+                /**
+                 * Unlock previously locked main event loop
+                 * @return true if main event loop has been unlocked
+                 */
+                inline bool unlock()                        { return sLock.unlock();    }
 
             //---------------------------------------------------------------------------------
             // Properties
