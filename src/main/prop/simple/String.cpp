@@ -28,6 +28,8 @@ namespace lsp
     {
         void String::Params::modified()
         {
+            if (bLock)
+                return;
             pString->sync();
         }
 
@@ -202,9 +204,25 @@ namespace lsp
             // Apply
             nFlags      = F_LOCALIZED;
             sText.swap(&ts);
-            sParams.swap(&tp); // will call sync()
+            sParams.swap(&tp); // will call sync() if not locked
 
             return STATUS_OK;
+        }
+
+        status_t String::commit_raw(const LSPString *s)
+        {
+            sParams.set_lock(true);
+            status_t res = set(s, NULL);
+            sParams.set_lock(false);
+            return res;
+        }
+
+        status_t String::commit(const LSPString *s, const expr::Parameters *params)
+        {
+            sParams.set_lock(true);
+            status_t res = set(s, params);
+            sParams.set_lock(false);
+            return res;
         }
 
         status_t String::set_key(const char *key)

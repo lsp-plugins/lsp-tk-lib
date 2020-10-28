@@ -50,12 +50,16 @@ namespace lsp
                 {
                     private:
                         String  *pString;
+                        bool     bLock;
 
                     public:
-                        explicit inline Params(String *ps) { pString = ps; }
+                        explicit inline Params(String *ps) { pString = ps; bLock = false; }
 
                     protected:
                         virtual void        modified();
+
+                    public:
+                        inline void         set_lock(bool lock) { bLock = lock; }
                 };
 
                 class Listener: public IStyleListener
@@ -91,6 +95,8 @@ namespace lsp
                 void                sync();
                 void                invalidate();
                 void                commit(atom_t property);
+                status_t            commit_raw(const LSPString *s);
+                status_t            commit(const LSPString *s, const expr::Parameters *params);
 
             protected:
                 explicit String(prop::Listener *listener = NULL);
@@ -255,6 +261,8 @@ namespace lsp
                     inline LSPString   *formatted()                         { return tk::String::fmt_for_update();      }
                     bool                invalidate();
                     inline void         sync()                              { tk::String::sync();                       }
+                    inline status_t     commit_raw(const LSPString *s)      { return tk::String::commit_raw(s);         }
+                    inline status_t     commit(const LSPString *s, const expr::Parameters *params = NULL)   { return tk::String::commit(s, params);     }
 
                     /**
                      * Bind property with specified name to the style of linked widget

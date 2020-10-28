@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/runtime/system.h>
+#include <lsp-plug.in/io/Dir.h>
 
 namespace lsp
 {
@@ -53,9 +54,13 @@ namespace lsp
             wPathBox(dpy),
             sWWarning(dpy),
 
+            sBMSelected(dpy->schema()),
             sMode(&sProperties),
             sCustomAction(&sProperties),
-            sActionText(&sProperties)
+            sActionText(&sProperties),
+            sPath(&sProperties),
+            sBMSelTextColor(&sProperties),
+            sBMSelBgColor(&sProperties)
         {
             pWConfirm       = NULL;
             pWSearch        = NULL;
@@ -77,7 +82,7 @@ namespace lsp
             Window::destroy();
 
             drop_bookmarks();
-//            destroy_file_entries(&vFiles);
+            destroy_file_entries(&vFiles);
 
             // Clear dynamically allocated widgets
             size_t n = vWidgets.size();
@@ -111,6 +116,8 @@ namespace lsp
             wGo.destroy();
             wUp.destroy();
             wPathBox.destroy();
+
+            sBMSelected.destroy();
 
             pWSearch = NULL;
 
@@ -147,6 +154,17 @@ namespace lsp
                 }
             }
             vBookmarks.flush();
+        }
+
+        void FileDialog::destroy_file_entries(lltl::parray<f_entry_t> *list)
+        {
+            for (size_t i=0, n = list->size(); i<n; ++i)
+            {
+                f_entry_t *fd = list->uget(i);
+                if (fd != NULL)
+                    delete fd;
+            }
+            list->clear();
         }
 
         status_t FileDialog::init()
@@ -251,6 +269,7 @@ namespace lsp
             LSP_STATUS_ASSERT(wPathBox.add(&wGo));
             LSP_STATUS_ASSERT(add_label(&wPathBox, "labels.location", 1.0f, &l));
             l->allocation()->set(true, true);
+            l->padding()->set_left(8);
             // Button box
             LSP_STATUS_ASSERT(sHBox.add(&sWAction));
             LSP_STATUS_ASSERT(sHBox.add(&sWCancel));
@@ -337,6 +356,7 @@ namespace lsp
             sMode.bind("mode", &sStyle);
             sCustomAction.bind("custom.action", &sStyle);
             sActionText.bind(&sStyle, pDisplay->dictionary());
+            sPath.bind(&sStyle, pDisplay->dictionary());
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -344,6 +364,13 @@ namespace lsp
                 sMode.init(sclass, FDM_OPEN_FILE);
                 sCustomAction.init(sclass, false);
             }
+
+            // Init selected bookmark
+            sBMSelected.init();
+            sBMSelTextColor.bind("text.color", &sBMSelected);
+            sBMSelBgColor.bind("bg.color", &sBMSelected);
+            sBMSelTextColor.init(&sBMSelected, "#ffffff");
+            sBMSelBgColor.init(&sBMSelected, "#888888");
 
             // Sync mode
             sync_mode();
@@ -400,6 +427,12 @@ namespace lsp
                 sync_mode();
             if (sActionText.is(prop))
                 sync_mode();
+            if (sPath.is(prop))
+            {
+                sWPath.text()->set(&sPath);
+                if (sVisibility.get())
+                    refresh_current_path();
+            }
         }
 
         status_t FileDialog::add_label(WidgetContainer *c, const char *key, float align, Label **label)
@@ -574,9 +607,9 @@ namespace lsp
 
         status_t FileDialog::slot_on_bm_add(Widget *sender, void *ptr, void *data)
         {
-//            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
-//            if (dlg != NULL)
-//                dlg->add_new_bookmark();
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            if (dlg != NULL)
+                dlg->add_new_bookmark();
             return STATUS_OK;
         }
 
@@ -610,11 +643,9 @@ namespace lsp
 
         status_t FileDialog::slot_on_bm_menu_open(Widget *sender, void *ptr, void *data)
         {
-//            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
-//            bm_entry_t *bm = _this->pPopupBookmark;
-
-//            return ((_this != NULL) && (bm != NULL)) ? _this->set_path(&bm->sBookmark.path) : STATUS_OK;
-            return STATUS_OK;
+            FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+            bm_entry_t *bm = _this->pPopupBookmark;
+            return ((_this != NULL) && (bm != NULL)) ? _this->on_bm_submit(&bm->sHlink) : STATUS_OK;
         }
 
         status_t FileDialog::slot_on_bm_menu_follow(Widget *sender, void *ptr, void *data)
@@ -907,7 +938,7 @@ namespace lsp
             if (pWConfirm != NULL)
                 pWConfirm->hide();
             hide();
-//            destroy_file_entries(&vFiles);
+            destroy_file_entries(&vFiles);
             drop_bookmarks();
 
             // Execute slots
@@ -921,7 +952,7 @@ namespace lsp
                 pWConfirm->hide();
             drop_bookmarks();
             hide();
-//            destroy_file_entries(&vFiles);
+            destroy_file_entries(&vFiles);
 
             // Execute slots
             return sSlots.execute(SLOT_CANCEL, this, data);
@@ -934,7 +965,7 @@ namespace lsp
 //                idx = 0;
 //            sWFilter.set_selected(idx);
             refresh_bookmarks();
-//            refresh_current_path();
+            refresh_current_path();
             return STATUS_OK;
         }
 
@@ -946,31 +977,32 @@ namespace lsp
 
         status_t FileDialog::on_bm_submit(Widget *sender)
         {
-//            bm_entry_t *ent = find_bookmark(sender);
-//            return (ent != NULL) ? set_path(&ent->sBookmark.path) : STATUS_OK;
-            return STATUS_OK;
+            bm_entry_t *bm = find_bookmark(sender);
+            return (bm != NULL) ? sPath.set_raw(&bm->sBookmark.path) : STATUS_OK;
         }
 
         status_t FileDialog::on_dlg_go(void *data)
         {
-//            LSPString path;
-//            LSP_STATUS_ASSERT(sWPath.get_text(&path));
-//            return set_path(&path);
-            return STATUS_OK;
+            io::Path path;
+            LSPString spath;
+            LSP_STATUS_ASSERT(sWPath.text()->format(&spath));
+            LSP_STATUS_ASSERT(path.set(&spath));
+            LSP_STATUS_ASSERT(path.canonicalize());
+
+            return sPath.set_raw(path.as_string());
         }
 
         status_t FileDialog::on_dlg_up(void *data)
         {
-//            LSPString path;
-//            LSP_STATUS_ASSERT(sWPath.get_text(&path));
-//            ssize_t pos = path.rindex_of(FILE_SEPARATOR_C);
-//            if (pos < 0)
-//                return STATUS_OK;
-//            path.truncate(pos);
-//            if (path.length() <= 0)
-//                path.append(FILE_SEPARATOR_C);
-//            return set_path(&path);
-            return STATUS_OK;
+            io::Path path;
+            LSPString spath;
+
+            LSP_STATUS_ASSERT(sWPath.text()->format(&spath));
+            LSP_STATUS_ASSERT(path.set(&spath));
+            LSP_STATUS_ASSERT(path.remove_last());
+            LSP_STATUS_ASSERT(path.canonicalize());
+
+            return sPath.set_raw(path.as_string());
         }
 
         status_t FileDialog::on_path_key_up(ws::event_t *e)
@@ -1088,6 +1120,7 @@ namespace lsp
                 if (res != STATUS_OK)
                     break;
 
+                ent->sHlink.padding()->set_vertical(2, 2);
                 ent->sHlink.text_layout()->set_halign(-1.0f);
                 ent->sHlink.follow()->set(false);
                 ent->sHlink.url()->set_raw(&url);
@@ -1192,39 +1225,39 @@ namespace lsp
 
         status_t FileDialog::select_current_bookmark()
         {
-//            status_t res;
-//            LSPString spath;
-//            io::Path path;
-//
-//            // Get path and canonicalize
-//            if ((res = sWPath.get_text(&spath)) != STATUS_OK)
-//                return res;
-//            if ((res = path.set(&spath)) != STATUS_OK)
-//                return res;
-//            if ((res = path.canonicalize()) != STATUS_OK)
-//                return res;
-//
-//            bm_entry_t *found = NULL;
-//            for (size_t i=0, n=vBookmarks.size(); i<n; ++i)
-//            {
-//                bm_entry_t *ent = vBookmarks.at(i);
-//                if ((ent != NULL) && (ent->sPath.equals(&path)))
-//                {
-//                    found = ent;
-//                    break;
-//                }
-//            }
-//
-//            // Check state
-//            if (found == pSelBookmark)
-//                return STATUS_OK;
-//
-//            // Deactivate selected bookmark
-//            if (pSelBookmark != NULL)
-//                pSelBookmark->sHlink.bg_color()->set_default();
-//            pSelBookmark = found;
-//            if (found != NULL)
-//                init_color(C_BACKGROUND2, found->sHlink.bg_color());
+            status_t res;
+            LSPString spath;
+            io::Path path;
+
+            // Get path and canonicalize
+            if ((res = sWPath.text()->format(&spath)) != STATUS_OK)
+                return res;
+            if ((res = path.set(&spath)) != STATUS_OK)
+                return res;
+            if ((res = path.canonicalize()) != STATUS_OK)
+                return res;
+
+            bm_entry_t *found = NULL;
+            for (size_t i=0, n=vBookmarks.size(); i<n; ++i)
+            {
+                bm_entry_t *ent = vBookmarks.uget(i);
+                if ((ent != NULL) && (ent->sPath.equals(&path)))
+                {
+                    found = ent;
+                    break;
+                }
+            }
+
+            // Check state
+            if (found == pSelBookmark)
+                return STATUS_OK;
+
+            // Deactivate selected bookmark
+            if (pSelBookmark != NULL)
+                pSelBookmark->sHlink.style()->remove_parent(&sBMSelected);
+            pSelBookmark = found;
+            if (pSelBookmark != NULL)
+                pSelBookmark->sHlink.style()->add_parent(&sBMSelected);
 
             return STATUS_OK;
         }
@@ -1265,6 +1298,105 @@ namespace lsp
             return NULL;
         }
 
+        status_t FileDialog::add_new_bookmark()
+        {
+            status_t res;
+            LSPString spath;
+            io::Path path;
+
+            // Get current path
+            LSP_STATUS_ASSERT(sWPath.text()->format(&spath));
+            LSP_STATUS_ASSERT(path.set(&spath));
+
+            // Get selected entry
+            f_entry_t *fent = selected_entry();
+            if ((fent != NULL) && ((fent->nFlags & (F_ISDIR | F_DOTDOT)) == F_ISDIR))
+            {
+                if ((res = path.append_child(&fent->sName)) != STATUS_OK)
+                    return res;
+            }
+
+            lsp_trace("Add bookmark path=%s", path.as_native());
+
+            // Canonicalize path
+            if ((res = path.canonicalize()) != STATUS_OK)
+                return res;
+            if (!path.is_dir())
+                return STATUS_NOT_DIRECTORY;
+
+            // Now seek that item is already present
+            bm_entry_t *ent;
+            for (size_t i=0, n=vBookmarks.size(); i<n; ++i)
+            {
+                ent = vBookmarks.uget(i);
+                if ((ent != NULL) && (ent->sPath.equals(&path)))
+                {
+                    if (ent->sBookmark.origin & bookmarks::BM_LSP)
+                        return STATUS_ALREADY_EXISTS;
+                    if ((res = path.get_last(&ent->sBookmark.name)) != STATUS_OK)
+                        return res;
+                    ent->sBookmark.origin |= bookmarks::BM_LSP;
+                    return sync_bookmarks();
+                }
+            }
+
+            // Create new bookmark
+            if ((ent = new bm_entry_t(pDisplay)) == NULL)
+                return STATUS_NO_MEM;
+            if (!vBookmarks.add(ent))
+            {
+                delete ent;
+                return STATUS_NO_MEM;
+            }
+
+            if ((res = init_bookmark_entry(ent, &path)) != STATUS_OK)
+            {
+                vBookmarks.premove(ent);
+                ent->sHlink.destroy();
+                delete ent;
+                return STATUS_NO_MEM;
+            }
+
+            // Synchronize bookmarks and exit
+            return sync_bookmarks();
+        }
+
+        status_t FileDialog::init_bookmark_entry(bm_entry_t *ent, const io::Path *path)
+        {
+            status_t res;
+            LSPString url;
+
+            ent->sBookmark.origin   = bookmarks::BM_LSP;
+            if ((res = path->get_last(&ent->sBookmark.name)) != STATUS_OK)
+                return res;
+            if ((res = path->get(&ent->sBookmark.path)) != STATUS_OK)
+                return res;
+
+            // Initialize data
+            if ((res = ent->sPath.set(path)) != STATUS_OK)
+                return res;
+            if ((res = ent->sHlink.init()) != STATUS_OK)
+                return res;
+            if ((res = ent->sHlink.text()->set_raw(&ent->sBookmark.name)) != STATUS_OK)
+                return res;
+            if ((res = path->get(&url)) != STATUS_OK)
+                return res;
+            if (!url.prepend_ascii("file://"))
+                return STATUS_NO_MEM;
+
+            ent->sHlink.text_layout()->set_halign(-1.0f);
+            ent->sHlink.follow()->set(false);
+            ent->sHlink.url()->set_raw(&url);
+            ent->sHlink.padding()->set_horizontal(8, 8);
+            ent->sHlink.padding()->set_vertical(2, 2);
+            ent->sHlink.slots()->bind(SLOT_SUBMIT, slot_on_bm_submit, self());
+            ent->sHlink.slots()->bind(SLOT_BEFORE_POPUP, slot_on_bm_popup, self());
+            ent->sHlink.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll);
+            ent->sHlink.popup()->set(&sBMPopup);
+
+            return STATUS_OK;
+        }
+
         status_t FileDialog::on_submit()
         {
             return STATUS_OK;
@@ -1272,6 +1404,299 @@ namespace lsp
 
         status_t FileDialog::on_cancel()
         {
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::refresh_current_path()
+        {
+            lltl::parray<f_entry_t> scanned;
+            LSPString str, path;
+            status_t xres;
+
+            // Obtain the path to working directory
+            io::Path xpath;
+            xres = sPath.format(&path);
+            if ((xres == STATUS_OK) && (path.length() > 0))
+                xres = xpath.set(&path); // Directory is specified, use it
+            else
+            {
+                xres = xpath.current(); // Directory is not specified, use current
+                if (xres == STATUS_OK)
+                {
+                    sPath.commit_raw(xpath.as_string());
+                    sWPath.text()->set_raw(xpath.as_string());
+                }
+            }
+            if ((xres == STATUS_OK) && (!xpath.is_root())) // Need to add dotdot entry?
+                xres = add_file_entry(&scanned, "..", F_DOTDOT);
+
+            if (xres != STATUS_OK) // Check result
+            {
+                destroy_file_entries(&scanned);
+                return xres;
+            }
+
+            // Open directory for reading
+            io::Dir dir;
+            xres = dir.open(&xpath);
+            if (xres == STATUS_OK)
+            {
+                sWWarning.hide();
+
+                // Read directory
+                io::fattr_t fattr;
+                io::Path fname;
+
+                while (dir.reads(&fname, &fattr, false) == STATUS_OK)
+                {
+                    // Reject dot and dotdot from search
+                    if ((fname.is_dot()) || (fname.is_dotdot()))
+                        continue;
+
+                    // Analyze file flags
+                    size_t nflags = 0;
+                    if (fname.as_string()->first() == '.')
+                        nflags      |= F_ISHIDDEN;
+
+                    if (fattr.type == io::fattr_t::FT_DIRECTORY) // Directory?
+                        nflags      |= F_ISDIR;
+                    else if (fattr.type == io::fattr_t::FT_SYMLINK) // Symbolic link?
+                        nflags      |= F_ISLINK;
+                    else if (fattr.type == io::fattr_t::FT_REGULAR)
+                        nflags      |= F_ISREG;
+                    else
+                        nflags      |= F_ISOTHER;
+
+                    if (nflags & F_ISLINK)
+                    {
+                        // Stat a file associated with symbolic link
+                        xres = dir.sym_stat(&fname, &fattr);
+
+                        if (xres != STATUS_OK)
+                            nflags      |= F_ISINVALID;
+                        else if (fattr.type == io::fattr_t::FT_DIRECTORY) // Directory?
+                            nflags      |= F_ISDIR;
+                        else if (fattr.type == io::fattr_t::FT_SYMLINK) // Symbolic link?
+                            nflags      |= F_ISLINK;
+                        else if (fattr.type == io::fattr_t::FT_REGULAR)
+                            nflags      |= F_ISREG;
+                        else
+                            nflags      |= F_ISOTHER;
+                    }
+
+                    // Add entry to list of found files
+                    if ((xres = add_file_entry(&scanned, fname.as_native(), nflags)) != STATUS_OK)
+                    {
+                        dir.close();
+                        destroy_file_entries(&scanned);
+                        return xres;
+                    }
+                }
+
+                // Close directory
+                if (dir.close() != STATUS_OK)
+                {
+                    destroy_file_entries(&scanned);
+                    return STATUS_IO_ERROR;
+                }
+            }
+            else // Analyze errcode
+            {
+                const char *text = "unknown I/O error";
+                switch (xres)
+                {
+                    case STATUS_PERMISSION_DENIED:    text = "permission denied"; break;
+                    case STATUS_NOT_FOUND:    text = "directory does not exist"; break;
+                    case STATUS_NO_MEM:    text = "not enough memory"; break;
+                    default: break;
+                }
+
+                str.set_native("Access error: ");
+                path.set_native(text);
+                str.append(&path);
+                sWWarning.text()->set_raw(&str);
+                sWWarning.show();
+            }
+
+            // Now we have the complete list of files, need to reorder them
+            scanned.qsort(cmp_file_entry);
+
+            // Alright, now we can swap contents and delete previous contents
+            vFiles.swap(&scanned);
+            destroy_file_entries(&scanned);
+
+            apply_filters();
+
+            return select_current_bookmark();
+        }
+
+        int FileDialog::cmp_file_entry(const f_entry_t *a, const f_entry_t *b)
+        {
+            ssize_t delta = ((b->nFlags & F_DOTDOT) - (a->nFlags & F_DOTDOT));
+            if (delta != 0)
+                return delta;
+            delta = ((b->nFlags & F_ISDIR) - (a->nFlags & F_ISDIR));
+            if (delta != 0)
+                return delta;
+            return a->sName.compare_to(&b->sName);
+        }
+
+        status_t FileDialog::add_file_entry(lltl::parray<f_entry_t> *dst, const char *name, size_t flags)
+        {
+            LSPString xname;
+            if (!xname.set_utf8(name))
+                return STATUS_NO_MEM;
+            return add_file_entry(dst, &xname, flags);
+        }
+
+        status_t FileDialog::add_file_entry(lltl::parray<f_entry_t> *dst, const LSPString *name, size_t flags)
+        {
+            f_entry_t *ent = new f_entry_t();
+            if (ent == NULL)
+                return STATUS_NO_MEM;
+            if (!ent->sName.set(name))
+            {
+                delete ent;
+                return STATUS_NO_MEM;
+            }
+            ent->nFlags     = flags;
+
+            if (!dst->add(ent))
+            {
+                delete ent;
+                return STATUS_NO_MEM;
+            }
+
+            return STATUS_OK;
+        }
+
+        FileDialog::f_entry_t *FileDialog::selected_entry()
+        {
+            ListBoxItem *item = sWFiles.selected()->any();
+            if (item == NULL)
+                return NULL;
+            ssize_t index = item->tag()->get();
+            if (index < 0)
+                return NULL;
+            return vFiles.get(index);
+        }
+
+        status_t FileDialog::apply_filters()
+        {
+//            status_t xres;
+//            LSPString tmp, xfname, *psrc = NULL;
+//            LSPFileMask *fmask = NULL, smask;
+//
+//            // Initialize masks
+//            if (enMode == FDM_OPEN_FILE) // Additional filtering is available only when opening file
+//            {
+//                LSP_STATUS_ASSERT(sWSearch.get_text(&tmp));
+//
+//                if (tmp.length() > 0)
+//                {
+//                    if (!tmp.prepend('*'))
+//                        return STATUS_NO_MEM;
+//                    if (!tmp.append('*'))
+//                        return STATUS_NO_MEM;
+//                    xres = smask.parse(&tmp);
+//                    if (xres != STATUS_OK)
+//                        return xres;
+//                }
+//            }
+//            else
+//            {
+//                sWFiles.selection()->clear();
+//                LSP_STATUS_ASSERT(sWSearch.get_text(&xfname));
+//            }
+//
+//            if (sWFilter.items()->size() > 0)
+//            {
+//                ssize_t sel = sWFilter.selected();
+//                LSPFileFilterItem *fi = sFilter.get((sel < 0) ? 0 : sel);
+//                fmask = (fi != NULL) ? fi->pattern() : NULL;
+//            }
+//
+//            // Now we need to fill data
+//            LSPItemList *lst = sWFiles.items();
+//            float xs = sWFiles.hscroll(), ys = sWFiles.vscroll();
+//            lst->clear();
+//
+//            // Process files
+//            size_t n = vFiles.size();
+//            for (size_t i=0; i<n; ++i)
+//            {
+//                file_entry_t *ent = vFiles.at(i);
+//                psrc = &ent->sName;
+//
+//                // Pass entry name through filter
+//                if (!(ent->nFlags & (F_ISDIR | F_DOTDOT)))
+//                {
+//                    // Process with masks
+//                    if ((fmask != NULL) && (!fmask->matched(psrc)))
+//                        continue;
+//                    if (!smask.matched(psrc))
+//                        continue;
+//                }
+//
+//                // Add some special characters
+//                if (ent->nFlags & (F_ISOTHER | F_ISDIR | F_ISLINK | F_ISINVALID))
+//                {
+//                    if (!tmp.set(psrc))
+//                    {
+//                        lst->clear();
+//                        return STATUS_NO_MEM;
+//                    }
+//                    psrc = &tmp;
+//
+//                    // Modify the name of the item
+//                    bool ok = true;
+//                    if (ent->nFlags & F_ISOTHER)
+//                        ok = ok && psrc->prepend('*');
+//                    else if (ent->nFlags & (F_ISLINK | F_ISINVALID))
+//                        ok = ok && psrc->prepend((ent->nFlags & F_ISINVALID) ? '!' : '~');
+//
+//                    if (ent->nFlags & F_ISDIR)
+//                    {
+//                        ok = ok && psrc->prepend('[');
+//                        ok = ok && psrc->append(']');
+//                    }
+//
+//                    if (!ok)
+//                    {
+//                        lst->clear();
+//                        return STATUS_NO_MEM;
+//                    }
+//                }
+//
+//                // Add item
+//                LSPItem *item = NULL;
+//                if ((xres = lst->add(&item)) != STATUS_OK)
+//                {
+//                    lst->clear();
+//                    return xres;
+//                }
+//                item->text()->set_raw(psrc);
+//                item->set_value(i);
+//
+//                // Check if is equal
+//                if ((!(ent->nFlags & (F_ISDIR | F_DOTDOT))) && (xfname.length() > 0))
+//                {
+//                    lsp_trace("  %s <-> %s", ent->sName.get_native(), xfname.get_native());
+//                    #ifdef PLATFORM_UNIX_COMPATIBLE
+//                    if (ent->sName.equals(&xfname))
+//                        sWFiles.selection()->set_value(lst->size() - 1);
+//                    #endif /* PLATFORM_UNIX_COMPATIBLE */
+//
+//                    #ifdef PLATFORM_WINDOWS
+//                    if (ent->sName.equals_nocase(&xfname))
+//                        sWFiles.selection()->set_value(lst->size() - 1);
+//                    #endif /* PLATFORM_WINDOWS */
+//                }
+//            }
+//
+//            sWFiles.set_hscroll(xs);
+//            sWFiles.set_vscroll(ys);
+
             return STATUS_OK;
         }
     }

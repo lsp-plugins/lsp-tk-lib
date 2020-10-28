@@ -42,7 +42,8 @@ namespace lsp
             sPadding(&sProperties),
             sBgColor(&sProperties),
             sVisibility(&sProperties),
-            sPointer(&sProperties)
+            sPointer(&sProperties),
+            sTag(&sProperties)
         {
             nFlags                  = REDRAW_SURFACE | SIZE_INVALID;
             pClass                  = &metadata;

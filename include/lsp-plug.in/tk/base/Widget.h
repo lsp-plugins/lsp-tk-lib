@@ -85,6 +85,7 @@ namespace lsp
                 prop::Color         sBgColor;       // Widget color
                 prop::Boolean       sVisibility;    // Visibility
                 prop::Pointer       sPointer;       // Mouse pointer
+                prop::Integer       sTag;           // Some tag associated with widget
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -393,6 +394,11 @@ namespace lsp
                  * @return mouse pointer style
                  */
                 LSP_TK_PROPERTY(Pointer,            pointer,            &sPointer)
+
+                /**
+                 * Some tag associated with widget, can be used as the user decides
+                 */
+                LSP_TK_PROPERTY(Integer,            tag,                &sTag)
 
             //---------------------------------------------------------------------------------
             // Manipulation

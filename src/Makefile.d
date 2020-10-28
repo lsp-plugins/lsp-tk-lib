@@ -118,6 +118,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/RackEars.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -295,6 +298,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/LedMeter.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -472,6 +478,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/LedMeterChannel.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -649,6 +658,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/Fraction.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -826,6 +838,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/FileButton.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -1003,6 +1018,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/AudioSample.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -1183,6 +1201,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/AudioChannel.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -1361,6 +1382,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Void.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -1539,6 +1563,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Switch.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -1717,6 +1744,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Separator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -1894,6 +1924,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ScrollBar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -2072,6 +2105,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ProgressBar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -2249,6 +2285,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/MenuItem.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -2427,6 +2466,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ListBoxItem.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -2603,6 +2645,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Led.o: main/widgets/simple/Led.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -2780,6 +2825,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Label.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -2957,6 +3005,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Knob.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -3135,6 +3186,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Indicator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -3312,6 +3366,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Hyperlink.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -3491,6 +3548,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Fader.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -3668,6 +3728,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Edit.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -3846,6 +3909,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Button.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -4023,6 +4089,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphText.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -4200,6 +4269,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphOrigin.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -4377,6 +4449,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphMesh.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -4597,6 +4672,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphMarker.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -4776,6 +4854,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphItem.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -4953,6 +5034,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphFrameBuffer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -5173,6 +5257,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphDot.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -5351,6 +5438,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/Graph.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -5530,6 +5620,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphAxis.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -5750,6 +5843,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/dialogs/MessageBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -5927,6 +6023,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/dialogs/FileDialog.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -5985,7 +6084,10 @@ $(LSP_TK_LIB_BIN)/main/widgets/dialogs/FileDialog.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/system.h
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/system.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/Dir.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/File.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdio.h
 $(LSP_TK_LIB_BIN)/main/widgets/containers/Window.o: \
  main/widgets/containers/Window.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -6106,6 +6208,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Window.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -6284,6 +6389,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/ScrollArea.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -6462,6 +6570,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/PopupWindow.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -6640,6 +6751,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Group.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -6818,6 +6932,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Grid.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -6996,6 +7113,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Box.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -7174,6 +7294,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Align.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -7352,6 +7475,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/Menu.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -7530,6 +7656,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ListBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -7707,6 +7836,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ComboGroup.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -7885,6 +8017,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ComboBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -8061,6 +8196,9 @@ $(LSP_TK_LIB_BIN)/main/widgets/3d/Area3D.o: main/widgets/3d/Area3D.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -8281,6 +8419,9 @@ $(LSP_TK_LIB_BIN)/main/util/URLSink.o: main/util/URLSink.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -8460,6 +8601,9 @@ $(LSP_TK_LIB_BIN)/main/util/TextDataSource.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -8637,6 +8781,9 @@ $(LSP_TK_LIB_BIN)/main/util/TextDataSink.o: main/util/TextDataSink.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -8814,6 +8961,9 @@ $(LSP_TK_LIB_BIN)/main/util/TextCursor.o: main/util/TextCursor.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -8991,6 +9141,9 @@ $(LSP_TK_LIB_BIN)/main/util/KeyboardHandler.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -9168,6 +9321,9 @@ $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -9386,6 +9542,9 @@ $(LSP_TK_LIB_BIN)/main/sys/Timer.o: main/sys/Timer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -9562,6 +9721,9 @@ $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -9738,6 +9900,9 @@ $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -9914,6 +10079,9 @@ $(LSP_TK_LIB_BIN)/main/sys/settings.o: main/sys/settings.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -10090,6 +10258,9 @@ $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -10268,6 +10439,9 @@ $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -10444,6 +10618,9 @@ $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -10620,6 +10797,9 @@ $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -10798,6 +10978,9 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleListener.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -10975,6 +11158,9 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleInitializer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -11152,6 +11338,9 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphMeshData.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -11372,6 +11561,9 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphFrameData.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -11593,6 +11785,9 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/String.o: main/prop/simple/String.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -11771,6 +11966,9 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/PathPattern.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -11948,6 +12146,9 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Integer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -12124,6 +12325,9 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Float.o: main/prop/simple/Float.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -12301,6 +12505,9 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Boolean.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -12478,6 +12685,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Vector2D.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -12656,6 +12866,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextSelection.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -12833,6 +13046,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextLayout.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -13010,6 +13226,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextFitness.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -13187,6 +13406,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/StepFloat.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -13364,6 +13586,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/SizeRange.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -13540,6 +13765,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Size.o: main/prop/multi/Size.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -13717,6 +13945,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/SizeConstraints.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -13894,6 +14125,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Shortcut.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -14071,6 +14305,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Rectangle.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -14248,6 +14485,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/RangeFloat.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -14425,6 +14665,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Position.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -14601,6 +14844,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Padding.o: main/prop/multi/Padding.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -14778,6 +15024,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Layout.o: main/prop/multi/Layout.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -14955,6 +15204,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Font.o: main/prop/multi/Font.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -15132,6 +15384,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/FileMask.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -15309,6 +15564,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Embedding.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -15486,6 +15744,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/ColorRange.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -15663,6 +15924,9 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Color.o: main/prop/multi/Color.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -15839,6 +16103,9 @@ $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -16016,6 +16283,9 @@ $(LSP_TK_LIB_BIN)/main/prop/flags/WindowActions.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -16193,6 +16463,9 @@ $(LSP_TK_LIB_BIN)/main/prop/flags/Allocation.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -16370,6 +16643,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/WindowPolicy.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -16547,6 +16823,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Scrolling.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -16723,6 +17002,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Pointer.o: main/prop/enum/Pointer.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -16900,6 +17182,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Orientation.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -17077,6 +17362,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/MenuItemType.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -17254,6 +17542,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/GraphFrameFunction.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -17431,6 +17722,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/FileDialogMode.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -17608,6 +17902,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/ButtonMode.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -17785,6 +18082,9 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/BorderStyle.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -17962,6 +18262,9 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetSet.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -18139,6 +18442,9 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetList.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -18316,6 +18622,9 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/StringList.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -18493,6 +18802,9 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/FloatArray.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -18712,6 +19024,9 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/FileFilters.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -18889,6 +19204,9 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/ColorRanges.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -19067,6 +19385,9 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/CollectionListener.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -19244,6 +19565,9 @@ $(LSP_TK_LIB_BIN)/main/prop/base/SimpleProperty.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -19420,6 +19744,9 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Ptr.o: main/prop/base/Ptr.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -19597,6 +19924,9 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Property.o: main/prop/base/Property.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -19775,6 +20105,9 @@ $(LSP_TK_LIB_BIN)/main/prop/base/MultiProperty.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -19951,6 +20284,9 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Flags.o: main/prop/base/Flags.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -20127,6 +20463,9 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Enum.o: main/prop/base/Enum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -20303,6 +20642,9 @@ $(LSP_TK_LIB_BIN)/main/prop/base/BitEnum.o: main/prop/base/BitEnum.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -20502,6 +20844,9 @@ $(LSP_TK_LIB_BIN)/main/helpers/graphics.o: main/helpers/graphics.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -20679,6 +21024,9 @@ $(LSP_TK_LIB_BIN)/main/helpers/draw.o: main/helpers/draw.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -20855,6 +21203,9 @@ $(LSP_TK_LIB_BIN)/main/base/Widget.o: main/base/Widget.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -21033,6 +21384,9 @@ $(LSP_TK_LIB_BIN)/main/base/WidgetContainer.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -21210,6 +21564,9 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -21403,6 +21760,9 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/schema.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -21588,6 +21948,9 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/prop/specific/graphframedata.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -21772,6 +22135,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/rackears.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -21957,6 +22323,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/ledmeter.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -22142,6 +22511,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/ledmeterchannel.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -22327,6 +22699,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/fraction.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -22512,6 +22887,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/filebutton.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -22697,6 +23075,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/audiosample.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -22882,6 +23263,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/audiochannel.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -23067,6 +23451,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/switch.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -23252,6 +23639,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/separator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -23437,6 +23827,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/scrollbar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -23622,6 +24015,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/progressbar.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -23807,6 +24203,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/led.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -23992,6 +24391,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/label.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -24177,6 +24579,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/knob.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -24362,6 +24767,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/indicator.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -24547,6 +24955,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/hyperlink.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -24732,6 +25143,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/fader.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -24917,6 +25331,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/edit.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -25102,6 +25519,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/button.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -25287,6 +25707,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/graph/graph.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -25514,6 +25937,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/dialogs/messagebox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -25699,6 +26125,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/dialogs/filedialog.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -25885,6 +26314,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/scrollarea.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -26070,6 +26502,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/popup.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -26255,6 +26690,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/group.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -26440,6 +26878,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid4.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -26625,6 +27066,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid3.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -26810,6 +27254,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid2.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -26995,6 +27442,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid1.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -27180,6 +27630,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/box.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -27364,6 +27817,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/align.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -27549,6 +28005,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/menu.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -27734,6 +28193,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/listbox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -27919,6 +28381,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combogroup.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -28104,6 +28569,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combobox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -28289,6 +28757,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/3d/area3d.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -28521,6 +28992,9 @@ $(LSP_TK_LIB_BIN)/test/mtest/sys/display.o: test/mtest/sys/display.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \
@@ -28708,6 +29182,9 @@ $(LSP_TK_LIB_BIN)/test/init/init.o: test/init/init.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/SlotSet.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Timer.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/Display.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/ipc/Mutex.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/atomic.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/atomic.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/KeyboardHandler.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextCursor.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/util/TextDataSink.h \

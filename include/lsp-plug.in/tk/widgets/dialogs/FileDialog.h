@@ -45,6 +45,23 @@ namespace lsp
                 FileDialog & operator = (const FileDialog &);
 
             protected:
+                enum
+                {
+                    F_ISDIR     = 1 << 0,
+                    F_ISLINK    = 1 << 1,
+                    F_ISREG     = 1 << 2,
+                    F_ISOTHER   = 1 << 3,
+                    F_ISINVALID = 1 << 4,
+                    F_DOTDOT    = 1 << 5,
+                    F_ISHIDDEN  = 1 << 6
+                };
+
+                typedef struct f_entry_t
+                {
+                    LSPString               sName;
+                    size_t                  nFlags;
+                } f_entry_t;
+
                 typedef struct bm_entry_t
                 {
                     Hyperlink               sHlink;
@@ -81,12 +98,19 @@ namespace lsp
 
                 lltl::parray<Widget>        vWidgets;
                 lltl::parray<bm_entry_t>    vBookmarks;
+                lltl::parray<f_entry_t>     vFiles;
+
                 bm_entry_t                 *pSelBookmark;
                 bm_entry_t                 *pPopupBookmark;
+
+                Style                       sBMSelected;
 
                 prop::FileDialogMode        sMode;
                 prop::Boolean               sCustomAction;
                 prop::String                sActionText;
+                prop::String                sPath;
+                prop::Color                 sBMSelTextColor;
+                prop::Color                 sBMSelBgColor;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -148,6 +172,17 @@ namespace lsp
                 status_t                select_current_bookmark();
                 status_t                remove_bookmark(bm_entry_t *entry);
                 bm_entry_t             *find_bookmark(Widget *sender);
+                status_t                add_new_bookmark();
+                status_t                init_bookmark_entry(bm_entry_t *ent, const io::Path *path);
+
+                void                    destroy_file_entries(lltl::parray<f_entry_t> *list);
+                status_t                refresh_current_path();
+                status_t                add_file_entry(lltl::parray<f_entry_t> *dst, const char *name, size_t flags);
+                status_t                add_file_entry(lltl::parray<f_entry_t> *dst, const LSPString *name, size_t flags);
+                static int              cmp_file_entry(const f_entry_t *a, const f_entry_t *b);
+                f_entry_t              *selected_entry();
+
+                status_t                apply_filters();
 
             protected:
                 virtual void            property_changed(Property *prop);
@@ -160,11 +195,14 @@ namespace lsp
                 virtual void                    destroy();
 
             public:
-                LSP_TK_PROPERTY(FileDialogMode,             mode,               &sMode);
-                LSP_TK_PROPERTY(Boolean,                    custom_action,      &sCustomAction);
-                LSP_TK_PROPERTY(String,                     action_text,        &sActionText);
-                LSP_TK_PROPERTY(Color,                      warn_color,         sWWarning.color());
-                LSP_TK_PROPERTY(Color,                      auto_ext_color,     wAutoExt.color());
+                LSP_TK_PROPERTY(FileDialogMode,             mode,                           &sMode);
+                LSP_TK_PROPERTY(Boolean,                    custom_action,                  &sCustomAction);
+                LSP_TK_PROPERTY(String,                     action_text,                    &sActionText);
+                LSP_TK_PROPERTY(String,                     path,                           &sPath);
+                LSP_TK_PROPERTY(Color,                      warn_color,                     sWWarning.color());
+                LSP_TK_PROPERTY(Color,                      auto_ext_color,                 wAutoExt.color());
+                LSP_TK_PROPERTY(Color,                      bookmark_selected_bg_color,     &sBMSelBgColor);
+                LSP_TK_PROPERTY(Color,                      bookmark_selected_text_color,   &sBMSelTextColor);
 
             public:
                 virtual status_t        on_show();
