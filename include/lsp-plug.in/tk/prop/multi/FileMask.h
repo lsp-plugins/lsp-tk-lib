@@ -83,6 +83,10 @@ namespace lsp
 
                 inline PathPattern         *pattern()           { return &sPattern;         }
                 inline const PathPattern   *pattern() const     { return &sPattern;         }
+
+                inline bool                 test(const LSPString *path) const       { return sPattern.test(path);       }
+                inline bool                 test(const io::Path *path) const        { return sPattern.test(path);       }
+                inline bool                 test(const char *path) const            { return sPattern.test(path);       }
         };
 
         namespace prop

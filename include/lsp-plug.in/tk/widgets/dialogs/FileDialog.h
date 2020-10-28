@@ -111,6 +111,8 @@ namespace lsp
                 prop::String                sPath;
                 prop::Color                 sBMSelTextColor;
                 prop::Color                 sBMSelBgColor;
+                prop::FileFilters           sFilter;
+                prop::Integer               sSelFilter;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -182,6 +184,7 @@ namespace lsp
                 static int              cmp_file_entry(const f_entry_t *a, const f_entry_t *b);
                 f_entry_t              *selected_entry();
 
+                status_t                sync_filters();
                 status_t                apply_filters();
 
             protected:
@@ -203,6 +206,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                      auto_ext_color,                 wAutoExt.color());
                 LSP_TK_PROPERTY(Color,                      bookmark_selected_bg_color,     &sBMSelBgColor);
                 LSP_TK_PROPERTY(Color,                      bookmark_selected_text_color,   &sBMSelTextColor);
+                LSP_TK_PROPERTY(FileFilters,                filter,                         &sFilter);
+                LSP_TK_PROPERTY(Integer,                    selected_filter,                &sSelFilter);
 
             public:
                 virtual status_t        on_show();

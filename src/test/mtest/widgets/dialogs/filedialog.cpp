@@ -140,18 +140,37 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         return STATUS_OK;
     }
 
+    static void init_dialog(tk::FileDialog *dlg, handler_t *h)
+    {
+        dlg->init();
+        dlg->slots()->bind(tk::SLOT_SUBMIT, slot_ok_submitted, h);
+        dlg->slots()->bind(tk::SLOT_CANCEL, slot_cancel_submitted, h);
+
+        tk::FileMask *m;
+        m = dlg->filter()->add();
+        m->pattern()->set("*.txt");
+        m->title()->set_raw("Text files");
+
+        m = dlg->filter()->add();
+        m->pattern()->set("*.c|*.cc|*.cpp|*.h|*.hpp");
+        m->title()->set_raw("C/C++ files");
+
+        m = dlg->filter()->add();
+        m->pattern()->set("*");
+        m->title()->set_raw("All files");
+
+        h->dlg      = dlg;
+    }
+
     static status_t slot_dialog_open(tk::Widget *sender, void *ptr, void *data)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("BUTTON SUBMITTED: %s\n", h->label);
 
         tk::FileDialog *dlg = new tk::FileDialog(sender->display());
-        dlg->init();
-        dlg->mode()->set_open_file();
-        dlg->slots()->bind(tk::SLOT_SUBMIT, slot_ok_submitted, h);
-        dlg->slots()->bind(tk::SLOT_CANCEL, slot_cancel_submitted, h);
 
-        h->dlg      = dlg;
+        init_dialog(dlg, h);
+        dlg->mode()->set_open_file();
         dlg->show(sender);
 
         return STATUS_OK;
@@ -163,12 +182,8 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         h->test->printf("BUTTON SUBMITTED: %s\n", h->label);
 
         tk::FileDialog *dlg = new tk::FileDialog(sender->display());
-        dlg->init();
+        init_dialog(dlg, h);
         dlg->mode()->set_save_file();
-        dlg->slots()->bind(tk::SLOT_SUBMIT, slot_ok_submitted, h);
-        dlg->slots()->bind(tk::SLOT_CANCEL, slot_cancel_submitted, h);
-
-        h->dlg      = dlg;
         dlg->show(sender);
 
         return STATUS_OK;

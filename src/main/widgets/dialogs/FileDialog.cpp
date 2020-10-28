@@ -60,7 +60,9 @@ namespace lsp
             sActionText(&sProperties),
             sPath(&sProperties),
             sBMSelTextColor(&sProperties),
-            sBMSelBgColor(&sProperties)
+            sBMSelBgColor(&sProperties),
+            sFilter(&sProperties),
+            sSelFilter(&sProperties)
         {
             pWConfirm       = NULL;
             pWSearch        = NULL;
@@ -357,12 +359,15 @@ namespace lsp
             sCustomAction.bind("custom.action", &sStyle);
             sActionText.bind(&sStyle, pDisplay->dictionary());
             sPath.bind(&sStyle, pDisplay->dictionary());
+            sFilter.bind(&sStyle, pDisplay->dictionary());
+            sSelFilter.bind("filter.selected", &sStyle);
 
             Style *sclass = style_class();
             if (sclass != NULL)
             {
                 sMode.init(sclass, FDM_OPEN_FILE);
                 sCustomAction.init(sclass, false);
+                sSelFilter.init(sclass, 0);
             }
 
             // Init selected bookmark
@@ -430,6 +435,19 @@ namespace lsp
             if (sPath.is(prop))
             {
                 sWPath.text()->set(&sPath);
+                if (sVisibility.get())
+                    refresh_current_path();
+            }
+            if (sFilter.is(prop))
+            {
+                if (sVisibility.get())
+                {
+                    sync_filters();
+                    refresh_current_path();
+                }
+            }
+            if (sSelFilter.is(prop))
+            {
                 if (sVisibility.get())
                     refresh_current_path();
             }
@@ -815,11 +833,7 @@ namespace lsp
 
         status_t FileDialog::on_dlg_search(void *data)
         {
-//            if (invisible())
-//                return STATUS_OK;
-//
-//            return apply_filters();
-            return STATUS_OK;
+            return (sVisibility.get()) ? apply_filters() : STATUS_OK;
         }
 
         status_t FileDialog::on_btn_action(void *data)
@@ -960,10 +974,7 @@ namespace lsp
 
         status_t FileDialog::on_show()
         {
-//            ssize_t idx = sFilter.get_default();
-//            if ((idx < 0) && (sFilter.size() > 0))
-//                idx = 0;
-//            sWFilter.set_selected(idx);
+            sync_filters();
             refresh_bookmarks();
             refresh_current_path();
             return STATUS_OK;
@@ -1581,121 +1592,153 @@ namespace lsp
             return vFiles.get(index);
         }
 
+        status_t FileDialog::sync_filters()
+        {
+            status_t res;
+            sWFilter.items()->clear();
+            ssize_t index = (sFilter.size() > 0) ?
+                    lsp_limit(sSelFilter.get(), 0, ssize_t(sFilter.size()) - 1) : -1;
+
+            // Add new items
+            for (size_t i=0, n=sFilter.size(); i<n; ++i)
+            {
+                FileMask *fm = sFilter.get(i);
+                ListBoxItem *item = new ListBoxItem(pDisplay);
+                if (item == NULL)
+                    return STATUS_NO_MEM;
+                res = item->init();
+                if (res == STATUS_OK)
+                    res = item->text()->set(fm->title());
+                if (res == STATUS_OK)
+                    item->tag()->set(i);
+                if (res == STATUS_OK)
+                    res = sWFilter.items()->madd(item); // Add in managed mode
+                if (res != STATUS_OK)
+                {
+                    item->destroy();
+                    delete item;
+                    return res;
+                }
+            }
+
+            // Update index
+            ListBoxItem *sel = (index >= 0) ? sWFilter.items()->get(index) : NULL;
+            sWFilter.selected()->set(sel);
+            sSelFilter.commit(index);
+
+            return STATUS_OK;
+        }
+
         status_t FileDialog::apply_filters()
         {
-//            status_t xres;
-//            LSPString tmp, xfname, *psrc = NULL;
-//            LSPFileMask *fmask = NULL, smask;
-//
-//            // Initialize masks
-//            if (enMode == FDM_OPEN_FILE) // Additional filtering is available only when opening file
-//            {
-//                LSP_STATUS_ASSERT(sWSearch.get_text(&tmp));
-//
-//                if (tmp.length() > 0)
-//                {
-//                    if (!tmp.prepend('*'))
-//                        return STATUS_NO_MEM;
-//                    if (!tmp.append('*'))
-//                        return STATUS_NO_MEM;
-//                    xres = smask.parse(&tmp);
-//                    if (xres != STATUS_OK)
-//                        return xres;
-//                }
-//            }
-//            else
-//            {
-//                sWFiles.selection()->clear();
-//                LSP_STATUS_ASSERT(sWSearch.get_text(&xfname));
-//            }
-//
-//            if (sWFilter.items()->size() > 0)
-//            {
-//                ssize_t sel = sWFilter.selected();
-//                LSPFileFilterItem *fi = sFilter.get((sel < 0) ? 0 : sel);
-//                fmask = (fi != NULL) ? fi->pattern() : NULL;
-//            }
-//
-//            // Now we need to fill data
-//            LSPItemList *lst = sWFiles.items();
-//            float xs = sWFiles.hscroll(), ys = sWFiles.vscroll();
-//            lst->clear();
-//
-//            // Process files
-//            size_t n = vFiles.size();
-//            for (size_t i=0; i<n; ++i)
-//            {
-//                file_entry_t *ent = vFiles.at(i);
-//                psrc = &ent->sName;
-//
-//                // Pass entry name through filter
-//                if (!(ent->nFlags & (F_ISDIR | F_DOTDOT)))
-//                {
-//                    // Process with masks
-//                    if ((fmask != NULL) && (!fmask->matched(psrc)))
-//                        continue;
-//                    if (!smask.matched(psrc))
-//                        continue;
-//                }
-//
-//                // Add some special characters
-//                if (ent->nFlags & (F_ISOTHER | F_ISDIR | F_ISLINK | F_ISINVALID))
-//                {
-//                    if (!tmp.set(psrc))
-//                    {
-//                        lst->clear();
-//                        return STATUS_NO_MEM;
-//                    }
-//                    psrc = &tmp;
-//
-//                    // Modify the name of the item
-//                    bool ok = true;
-//                    if (ent->nFlags & F_ISOTHER)
-//                        ok = ok && psrc->prepend('*');
-//                    else if (ent->nFlags & (F_ISLINK | F_ISINVALID))
-//                        ok = ok && psrc->prepend((ent->nFlags & F_ISINVALID) ? '!' : '~');
-//
-//                    if (ent->nFlags & F_ISDIR)
-//                    {
-//                        ok = ok && psrc->prepend('[');
-//                        ok = ok && psrc->append(']');
-//                    }
-//
-//                    if (!ok)
-//                    {
-//                        lst->clear();
-//                        return STATUS_NO_MEM;
-//                    }
-//                }
-//
-//                // Add item
-//                LSPItem *item = NULL;
-//                if ((xres = lst->add(&item)) != STATUS_OK)
-//                {
-//                    lst->clear();
-//                    return xres;
-//                }
-//                item->text()->set_raw(psrc);
-//                item->set_value(i);
-//
-//                // Check if is equal
-//                if ((!(ent->nFlags & (F_ISDIR | F_DOTDOT))) && (xfname.length() > 0))
-//                {
-//                    lsp_trace("  %s <-> %s", ent->sName.get_native(), xfname.get_native());
-//                    #ifdef PLATFORM_UNIX_COMPATIBLE
-//                    if (ent->sName.equals(&xfname))
-//                        sWFiles.selection()->set_value(lst->size() - 1);
-//                    #endif /* PLATFORM_UNIX_COMPATIBLE */
-//
-//                    #ifdef PLATFORM_WINDOWS
-//                    if (ent->sName.equals_nocase(&xfname))
-//                        sWFiles.selection()->set_value(lst->size() - 1);
-//                    #endif /* PLATFORM_WINDOWS */
-//                }
-//            }
-//
-//            sWFiles.set_hscroll(xs);
-//            sWFiles.set_vscroll(ys);
+            LSPString tmp, xfname, *psrc = NULL;
+            io::PathPattern *psmask = NULL, smask;
+            FileMask *fmask = NULL;
+
+            // Initialize masks
+            if (sMode.get() == FDM_OPEN_FILE) // Additional filtering is available only when opening file
+            {
+                LSP_STATUS_ASSERT(sWSearch.text()->format(&tmp));
+                if (tmp.length() > 0)
+                {
+                    if (!tmp.prepend('*'))
+                        return STATUS_NO_MEM;
+                    if (!tmp.append('*'))
+                        return STATUS_NO_MEM;
+                    LSP_STATUS_ASSERT(smask.set(&tmp));
+                    psmask = &smask;
+                }
+            }
+            else
+            {
+                sWFiles.selected()->clear();
+                LSP_STATUS_ASSERT(sWSearch.text()->format(&xfname));
+            }
+
+            if (sWFilter.items()->size() > 0)
+            {
+                ListBoxItem *sel = sWFilter.selected()->get();
+                ssize_t tag      = (sel != NULL) ? sel->tag()->get() : -1;
+                fmask            = (tag >= 0) ? sFilter.get(tag) : NULL;
+            }
+
+            // Now we need to fill data
+            WidgetList<ListBoxItem> *lst = sWFiles.items();
+            lst->clear();
+            float xs = sWFiles.hscroll()->get(), ys = sWFiles.vscroll()->get(); // Remember scroll values
+
+            // Process files
+            for (size_t i=0, n=vFiles.size(); i<n; ++i)
+            {
+                f_entry_t *ent = vFiles.uget(i);
+                psrc = &ent->sName;
+
+                // Pass entry name through filter
+                if (!(ent->nFlags & (F_ISDIR | F_DOTDOT)))
+                {
+                    // Process with masks
+                    if ((fmask != NULL) && (!fmask->test(psrc)))
+                        continue;
+                    if ((psmask != NULL) && (!psmask->test(psrc)))
+                        continue;
+                }
+
+                // Add some special characters
+                if (ent->nFlags & (F_ISOTHER | F_ISDIR | F_ISLINK | F_ISINVALID))
+                {
+                    if (!tmp.set(psrc))
+                    {
+                        lst->clear();
+                        return STATUS_NO_MEM;
+                    }
+                    psrc = &tmp;
+
+                    // Modify the name of the item
+                    bool ok = true;
+                    if (ent->nFlags & F_ISOTHER)
+                        ok = ok && psrc->prepend('*');
+                    else if (ent->nFlags & (F_ISLINK | F_ISINVALID))
+                        ok = ok && psrc->prepend((ent->nFlags & F_ISINVALID) ? '!' : '~');
+
+                    if (ent->nFlags & F_ISDIR)
+                    {
+                        ok = ok && psrc->prepend('[');
+                        ok = ok && psrc->append(']');
+                    }
+
+                    if (!ok)
+                    {
+                        lst->clear();
+                        return STATUS_NO_MEM;
+                    }
+                }
+
+                // Add item
+                ListBoxItem *item = new ListBoxItem(pDisplay);
+                if (item == NULL)
+                    return STATUS_NO_MEM;
+                LSP_STATUS_ASSERT(item->init());
+                item->text()->set_raw(psrc);
+                item->tag()->set(i);
+                LSP_STATUS_ASSERT(lst->add(item));
+
+                // Check if is equal
+                if ((!(ent->nFlags & (F_ISDIR | F_DOTDOT))) && (xfname.length() > 0))
+                {
+                    lsp_trace("  %s <-> %s", ent->sName.get_native(), xfname.get_native());
+                    #ifdef PLATFORM_WINDOWS
+                    if (ent->sName.equals_nocase(&xfname))
+                        sWFiles.selected()->add(item);
+                    #else
+                    if (ent->sName.equals(&xfname))
+                        sWFiles.selected()->add(item);
+                    #endif /* PLATFORM_WINDOWS */
+                }
+            }
+
+            // Restore scroll values
+            sWFiles.hscroll()->set(xs);
+            sWFiles.vscroll()->set(ys);
 
             return STATUS_OK;
         }

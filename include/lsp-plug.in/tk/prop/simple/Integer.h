@@ -101,6 +101,8 @@ namespace lsp
                     explicit Integer(prop::Listener *listener = NULL): tk::Integer(listener) {};
 
                 public:
+                    ssize_t             commit(ssize_t value);
+
                     /**
                      * Bind property with specified name to the style of linked widget
                      */

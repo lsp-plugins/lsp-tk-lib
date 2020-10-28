@@ -103,6 +103,13 @@ namespace lsp
                 style->override_int(nAtom, value);
                 return STATUS_OK;
             }
+
+            ssize_t Integer::commit(ssize_t value)
+            {
+                ssize_t old = nValue;
+                value       = nValue;
+                return old;
+            }
         }
     } /* namespace tk */
 } /* namespace lsp */
