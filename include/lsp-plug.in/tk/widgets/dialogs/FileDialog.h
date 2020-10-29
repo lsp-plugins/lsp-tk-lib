@@ -113,6 +113,9 @@ namespace lsp
                 prop::Color                 sBMSelBgColor;
                 prop::FileFilters           sFilter;
                 prop::Integer               sSelFilter;
+                prop::String                sSelected;
+                prop::Boolean               sUseConfirm;
+                prop::String                sConfirmMsg;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -146,12 +149,12 @@ namespace lsp
                 static status_t         slot_on_bm_realized(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual status_t        on_btn_action(void *data);
-                virtual status_t        on_btn_cancel(void *data);
+                virtual status_t        on_dlg_action(void *data, bool list);
+                virtual status_t        on_dlg_cancel(void *data);
 
                 virtual status_t        on_dlg_confirm(void *data);
                 virtual status_t        on_dlg_search(void *data);
-                virtual status_t        on_dlg_mouse_dbl_click(void *data);
+                virtual status_t        on_dlg_list_dbl_click(void *data);
                 virtual status_t        on_dlg_list_change(void *data);
                 virtual status_t        on_dlg_go(void *data);
                 virtual status_t        on_dlg_up(void *data);
@@ -164,6 +167,7 @@ namespace lsp
                 status_t                add_ext_button(WidgetContainer *c, const char *text);
                 status_t                init_bm_popup_menu();
                 void                    sync_mode();
+                status_t                show_message(const char *title, const char *heading, const char *message, const io::Path *path);
 
                 void                    drop_bookmarks();
                 status_t                read_lsp_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
@@ -210,6 +214,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                      bookmark_selected_text_color,   &sBMSelTextColor);
                 LSP_TK_PROPERTY(FileFilters,                filter,                         &sFilter);
                 LSP_TK_PROPERTY(Integer,                    selected_filter,                &sSelFilter);
+                LSP_TK_PROPERTY(String,                     selected_file,                  &sSelected);
+                LSP_TK_PROPERTY(Boolean,                    use_confirm,                    &sUseConfirm);
+                LSP_TK_PROPERTY(String,                     confirm_message,                &sConfirmMsg);
 
             public:
                 virtual status_t        on_show();

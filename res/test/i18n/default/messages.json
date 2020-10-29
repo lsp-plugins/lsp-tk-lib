@@ -1,0 +1,9 @@
+{
+	"file": {
+		"invalid_name": "Invalid file name\nfile:{@file}\npath:{@path}\nname:{@name}",
+		"not_specified": "File not specified",
+		"not_exists": "File does not exist\nfile:{@file}\npath:{@path}\nname:{@name}",
+		"confirm_save": "Save file?\nfile:{@file}\npath:{@path}\nname:{@name}",
+		"confirm_open": "Open file?\nfile:{@file}\npath:{@path}\nname:{@name}"
+	}
+}

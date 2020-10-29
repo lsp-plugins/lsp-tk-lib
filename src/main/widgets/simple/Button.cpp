@@ -561,12 +561,14 @@ namespace lsp
                 if ((nState & S_PRESSED) && (!(nState & S_DOWN)))
                 {
                     nState      |= S_DOWN;
+                    sDown.commit(nState & S_DOWN);
                     nChanges    ++;
                     sSlots.execute(SLOT_CHANGE, this);
                 }
                 else if ((!(nState & S_PRESSED)) && (nState & S_DOWN))
                 {
                     nState      &= ~S_DOWN;
+                    sDown.commit(nState & S_DOWN);
                     nChanges    ++;
                     sSlots.execute(SLOT_CHANGE, this);
                 }
@@ -612,11 +614,13 @@ namespace lsp
                     {
                         nState      |= S_DOWN;
                         nChanges    ++;
+                        sDown.commit(nState & S_DOWN);
                         sSlots.execute(SLOT_CHANGE, this);
                     }
                     else if ((!(nState & S_PRESSED)) && (nState & S_DOWN))
                     {
                         nState      &= ~S_DOWN;
+                        sDown.commit(nState & S_DOWN);
                         nChanges    ++;
                         sSlots.execute(SLOT_CHANGE, this);
                     }
@@ -632,12 +636,14 @@ namespace lsp
                     if ((nState & S_TOGGLED) && (!(nState & S_DOWN)))
                     {
                         nState      |= S_DOWN;
+                        sDown.commit(nState & S_DOWN);
                         nChanges    ++;
                         sSlots.execute(SLOT_CHANGE, this);
                     }
                     else if ((!(nState & S_TOGGLED)) && (nState & S_DOWN))
                     {
                         nState      &= ~S_DOWN;
+                        sDown.commit(nState & S_DOWN);
                         nChanges    ++;
                         sSlots.execute(SLOT_CHANGE, this);
                     }
@@ -649,6 +655,7 @@ namespace lsp
                 if ((mask == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
                 {
                     nState &= ~(S_PRESSED | S_TOGGLED | S_DOWN);
+                    sDown.commit(nState & S_DOWN);
                     if (m_over)
                     {
                         nChanges    ++;
@@ -697,12 +704,14 @@ namespace lsp
                 if ((nState & S_PRESSED) && (!(nState & S_DOWN)))
                 {
                     nState      |= S_DOWN;
+                    sDown.commit(nState & S_DOWN);
                     nChanges    ++;
                     sSlots.execute(SLOT_CHANGE, this);
                 }
                 else if ((!(nState & S_PRESSED)) && (nState & S_DOWN))
                 {
                     nState      &= ~S_DOWN;
+                    sDown.commit(nState & S_DOWN);
                     nChanges    ++;
                     sSlots.execute(SLOT_CHANGE, this);
                 }

@@ -32,7 +32,7 @@ namespace lsp
 
         FileMask::FileMask(prop::Listener *listener):
             sTitle(&sListener),
-            sExtension(&sListener),
+            sExtensions(&sListener),
             sPattern(&sListener),
             sListener(this)
         {
@@ -51,7 +51,7 @@ namespace lsp
                 res = sTitle.bind(property, style, dict);
                 if (res == STATUS_OK)
                 {
-                    res = sExtension.bind(property, style, dict);
+                    res = sExtensions.bind(property, style, dict);
                     if (res != STATUS_OK)
                         sTitle.unbind();
                 }
@@ -72,7 +72,7 @@ namespace lsp
                 res = sTitle.bind(property, style, dict);
                 if (res == STATUS_OK)
                 {
-                    res = sExtension.bind(property, style, dict);
+                    res = sExtensions.bind(property, style, dict);
                     if (res != STATUS_OK)
                         sTitle.unbind();
                 }
@@ -93,7 +93,7 @@ namespace lsp
                 res = sTitle.bind(property, style, dict);
                 if (res == STATUS_OK)
                 {
-                    res = sExtension.bind(property, style, dict);
+                    res = sExtensions.bind(property, style, dict);
                     if (res != STATUS_OK)
                         sTitle.unbind();
                 }
@@ -113,9 +113,9 @@ namespace lsp
             {
                 res = sTitle.unbind();
                 if (res == STATUS_OK)
-                    res = sExtension.unbind();
+                    res = sExtensions.unbind();
                 else
-                    sExtension.unbind();
+                    sExtensions.unbind();
             }
             sListener.set_lock(false);
 
@@ -135,6 +135,42 @@ namespace lsp
         {
             if (pListener != NULL)
                 pListener->notify(this);
+        }
+
+        status_t FileMask::append_extension(LSPString *str)
+        {
+            LSPString mask, ext;
+            status_t res    = sExtensions.format(&mask);
+            if (res != STATUS_OK)
+                return res;
+
+            ssize_t first = 0, dfl = -1, last = -1, idx;
+            do
+            {
+                idx     = mask.index_of(first, ':');
+                last    = (idx < 0) ? mask.length() : idx;
+
+                if (idx > first)
+                {
+                    if (!ext.set(&mask, first, last))
+                        return STATUS_NO_MEM;
+                    if (str->ends_with_nocase(&ext))
+                        return STATUS_OK;
+                }
+                if (dfl < 0)
+                    dfl     = last;
+                first   = idx + 1;
+            } while (idx >= 0);
+
+            if (dfl <= 0)
+                return STATUS_OK;
+
+            if (!ext.set(&mask, first, dfl))
+                return STATUS_NO_MEM;
+            if (!str->append(&ext))
+                return STATUS_NO_MEM;
+
+            return STATUS_OK;
         }
     }
 }

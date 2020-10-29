@@ -125,6 +125,10 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("DIALOG OK SUBMITTED: %s\n", h->label);
 
+        LSPString path;
+        h->dlg->selected_file()->format(&path);
+        h->test->printf(" path: %s\n", path.get_utf8());
+
         sender->display()->queue_destroy(h->dlg);
         h->dlg      = NULL;
         return STATUS_OK;
@@ -150,14 +154,17 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         m = dlg->filter()->add();
         m->pattern()->set("*.txt");
         m->title()->set_raw("Text files");
+        m->extensions()->set_raw(".txt");
 
         m = dlg->filter()->add();
         m->pattern()->set("*.c|*.cc|*.cpp|*.h|*.hpp");
         m->title()->set_raw("C/C++ files");
+        m->extensions()->set_raw(".c:.cc:.cpp:.h:.hpp");
 
         m = dlg->filter()->add();
         m->pattern()->set("*");
         m->title()->set_raw("All files");
+        m->extensions()->set_raw("");
 
         h->dlg      = dlg;
     }
@@ -171,6 +178,8 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
 
         init_dialog(dlg, h);
         dlg->mode()->set_open_file();
+        dlg->use_confirm()->set(true);
+        dlg->confirm_message()->set("messages.file.confirm_open");
         dlg->show(sender);
 
         return STATUS_OK;
@@ -183,6 +192,8 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
 
         tk::FileDialog *dlg = new tk::FileDialog(sender->display());
         init_dialog(dlg, h);
+        dlg->use_confirm()->set(true);
+        dlg->confirm_message()->set("messages.file.confirm_save");
         dlg->mode()->set_save_file();
         dlg->show(sender);
 

@@ -58,7 +58,7 @@ namespace lsp
 
             protected:
                 prop::String        sTitle;
-                prop::String        sExtension;
+                prop::String        sExtensions;
                 prop::PathPattern   sPattern;
                 Listener            sListener;
 
@@ -75,18 +75,16 @@ namespace lsp
                 ~FileMask();
 
             public:
-                inline String              *title()             { return &sTitle;           }
-                inline const String        *title() const       { return &sTitle;           }
+                LSP_TK_PROPERTY(String,             title,                  &sTitle);
+                LSP_TK_PROPERTY(String,             extensions,             &sExtensions);
+                LSP_TK_PROPERTY(PathPattern,        pattern,                &sPattern);
 
-                inline String              *extension()         { return &sExtension;       }
-                inline const String        *extension() const   { return &sExtension;       }
-
-                inline PathPattern         *pattern()           { return &sPattern;         }
-                inline const PathPattern   *pattern() const     { return &sPattern;         }
-
+            public:
                 inline bool                 test(const LSPString *path) const       { return sPattern.test(path);       }
                 inline bool                 test(const io::Path *path) const        { return sPattern.test(path);       }
                 inline bool                 test(const char *path) const            { return sPattern.test(path);       }
+
+                status_t                    append_extension(LSPString *str);
         };
 
         namespace prop

@@ -24,5 +24,10 @@
 		"cut": "Cut",
 		"copy": "Copy",
 		"paste": "Paste"
-	}
+	},
+	"confirm": {
+		"yes": "Yes",
+		"no": "No"
+	},
+	"ok": "OK"
 }

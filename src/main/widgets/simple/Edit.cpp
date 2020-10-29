@@ -309,7 +309,6 @@ namespace lsp
                 LSPString *text = sText.formatted();
                 sSelection.set_limit(text->length());
                 query_draw();
-                sSlots.execute(SLOT_CHANGE, this);
             }
 
             if (sFont.is(prop))
@@ -866,6 +865,7 @@ namespace lsp
             {
                 sSelection.set_limit(text->length());
                 sText.invalidate();
+                sSlots.execute(SLOT_CHANGE, this);
             }
         }
 
@@ -903,6 +903,7 @@ namespace lsp
 
                     sCursor.move(1);
                     sText.invalidate();
+                    sSlots.execute(SLOT_CHANGE, this);
 
                     return STATUS_OK;
                 }
@@ -983,6 +984,7 @@ namespace lsp
                     }
 
                     sText.invalidate();
+                    sSlots.execute(SLOT_CHANGE, this);
                     break;
                 }
                 case ws::WSK_DELETE:
@@ -1003,6 +1005,7 @@ namespace lsp
                     }
 
                     sText.invalidate();
+                    sSlots.execute(SLOT_CHANGE, this);
                     break;
                 }
                 case ws::WSK_INSERT:
@@ -1063,6 +1066,7 @@ namespace lsp
                 sCursor.set_location(sSelection.starting());
                 sSelection.clear();
                 sText.invalidate(); // Will update limit of selection
+                sSlots.execute(SLOT_CHANGE, this);
             }
             return STATUS_OK;
         }

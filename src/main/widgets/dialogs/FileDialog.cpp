@@ -62,7 +62,10 @@ namespace lsp
             sBMSelTextColor(&sProperties),
             sBMSelBgColor(&sProperties),
             sFilter(&sProperties),
-            sSelFilter(&sProperties)
+            sSelFilter(&sProperties),
+            sSelected(&sProperties),
+            sUseConfirm(&sProperties),
+            sConfirmMsg(&sProperties)
         {
             pWConfirm       = NULL;
             pWSearch        = NULL;
@@ -336,6 +339,9 @@ namespace lsp
             sPath.bind(&sStyle, pDisplay->dictionary());
             sFilter.bind(&sStyle, pDisplay->dictionary());
             sSelFilter.bind("filter.selected", &sStyle);
+            sSelected.bind(&sStyle, pDisplay->dictionary());
+            sUseConfirm.bind("confirm", &sStyle);
+            sConfirmMsg.bind(&sStyle, pDisplay->dictionary());
 
             Style *sclass = style_class();
             if (sclass != NULL)
@@ -343,6 +349,7 @@ namespace lsp
                 sMode.init(sclass, FDM_OPEN_FILE);
                 sCustomAction.init(sclass, false);
                 sSelFilter.init(sclass, 0);
+                sUseConfirm.init(sclass, false);
             }
 
             // Init selected bookmark
@@ -553,13 +560,13 @@ namespace lsp
         status_t FileDialog::slot_on_btn_action(Widget *sender, void *ptr, void *data)
         {
             FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
-            return (dlg != NULL) ? dlg->on_btn_action(data) : STATUS_BAD_STATE;
+            return (dlg != NULL) ? dlg->on_dlg_action(data, false) : STATUS_BAD_STATE;
         }
 
         status_t FileDialog::slot_on_btn_cancel(Widget *sender, void *ptr, void *data)
         {
             FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
-            return (dlg != NULL) ? dlg->on_btn_cancel(data) : STATUS_BAD_STATE;
+            return (dlg != NULL) ? dlg->on_dlg_cancel(data) : STATUS_BAD_STATE;
         }
 
         status_t FileDialog::slot_on_confirm(Widget *sender, void *ptr, void *data)
@@ -577,7 +584,7 @@ namespace lsp
         status_t FileDialog::slot_on_list_dbl_click(Widget *sender, void *ptr, void *data)
         {
             FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
-            return (dlg != NULL) ? dlg->on_dlg_mouse_dbl_click(data) : STATUS_BAD_STATE;
+            return (dlg != NULL) ? dlg->on_dlg_list_dbl_click(data) : STATUS_BAD_STATE;
         }
 
         status_t FileDialog::slot_on_list_change(Widget *sender, void *ptr, void *data)
@@ -782,7 +789,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t FileDialog::on_dlg_mouse_dbl_click(void *data)
+        status_t FileDialog::on_dlg_list_dbl_click(void *data)
         {
             f_entry_t *ent = selected_entry();
             if (ent == NULL)
@@ -805,24 +812,23 @@ namespace lsp
                 return sPath.set_raw(path.as_string());
             }
 
-            return on_btn_action(data);
+            return on_dlg_action(data, true);
         }
 
         status_t FileDialog::on_dlg_list_change(void *data)
         {
-//            if (enMode != FDM_SAVE_FILE)
-//                return STATUS_OK;
-//
-//            file_entry_t *ent = selected_entry();
-//            if (ent == NULL)
-//                return STATUS_OK;
-//
-//            // Analyze what to do
-//            if ((ent->nFlags & F_DOTDOT) || (ent->nFlags & F_ISDIR))
-//                return STATUS_OK;
-//
-//            return sWSearch.set_text(&ent->sName);
-            return STATUS_OK;
+            if (!sMode.save_file())
+                return STATUS_OK;
+
+            f_entry_t *ent = selected_entry();
+            if (ent == NULL)
+                return STATUS_OK;
+
+            // Analyze what to do
+            if ((ent->nFlags & F_DOTDOT) || (ent->nFlags & F_ISDIR))
+                return STATUS_OK;
+
+            return sWSearch.text()->set_raw(&ent->sName);
         }
 
         status_t FileDialog::on_dlg_search(void *data)
@@ -830,112 +836,120 @@ namespace lsp
             return (sVisibility.get()) ? apply_filters() : STATUS_OK;
         }
 
-        status_t FileDialog::on_btn_action(void *data)
+        status_t FileDialog::on_dlg_action(void *data, bool list)
         {
-//            bool committed = false;
-//
-//            if (enMode == FDM_SAVE_FILE) // Use 'File name' field
-//            {
-//                LSPString fname;
-//                LSP_STATUS_ASSERT(sWSearch.get_text(&fname));
-//
-//                if (wAutoExt.is_down())
-//                {
-//                    LSPString ext;
-//                    ssize_t sel = sWFilter.selected();
-//
-//                    LSPFileFilterItem *item  = sFilter.get((sel < 0) ? 0 : sel);
-//                    status_t res = (item != NULL) ? item->get_extension(&ext) : STATUS_NOT_FOUND;
-//
-//                    if (res == STATUS_OK)
-//                    {
-//                        lsp_trace("fname = %s, ext = %s", fname.get_native(), ext.get_native());
-//                        if (!fname.ends_with_nocase(&ext))
-//                            fname.append(&ext);
-//                        lsp_trace("fname = %s", fname.get_native());
-//                    }
-//                }
-//
-//                if (LSPFileMask::is_dots(&fname) || (!LSPFileMask::valid_file_name(&fname)))
-//                    return show_message("titles.attention", "headings.attention", "messages.file.invalid_name");
-//
-//                LSP_STATUS_ASSERT(build_full_path(&sSelected, &fname));
-//                committed = true;
-//            }
-//            else
-//            {
-//                LSPString fname;
-//                LSP_STATUS_ASSERT(sWSearch.get_text(&fname));
-//                if ((!LSPFileMask::is_dots(&fname)) && (LSPFileMask::valid_file_name(&fname)))
-//                {
-//                    LSP_STATUS_ASSERT(build_full_path(&sSelected, &fname));
-//                    committed = true;
-//                }
-//            }
-//
-//            // Use selection
-//            if (!committed)
-//            {
-//                file_entry_t *ent = selected_entry();
-//                if (ent == NULL)
-//                    return show_message("titles.attention", "headings.attention", "messages.file.not_specified");
-//
-//                // Analyze what to do
-//                if (ent->nFlags & F_DOTDOT)
-//                    return on_dlg_up(NULL);
-//                else if (ent->nFlags & F_ISDIR)
-//                {
-//                    LSPString path;
-//                    LSP_STATUS_ASSERT(sWPath.get_text(&path));
-//                    LSP_STATUS_ASSERT(LSPFileMask::append_path(&path, &ent->sName));
-//                    return set_path(&path);
-//                }
-//                else
-//                {
-//                    LSPString path;
-//                    LSP_STATUS_ASSERT(sWPath.get_text(&path));
-//                    LSP_STATUS_ASSERT(LSPFileMask::append_path(&sSelected, &path, &ent->sName));
-//                }
-//            }
-//
-//            // Special case for saving file
-//            io::fattr_t fattr;
-//            status_t stat_result = io::File::sym_stat(&sSelected, &fattr);
-//
-//            if (enMode == FDM_SAVE_FILE)
-//            {
-//                if (!bUseConfirm)
-//                    return on_dlg_confirm(data);
-//
-//                // Check that file exists and avoid confirmation if it doesn't
-//                lsp_trace("Checking file: %s", sSelected.get_native());
-//                if (stat_result != STATUS_OK)
-//                    return on_dlg_confirm(data);
-//            }
-//            else
-//            {
-//                if (stat_result != 0)
-//                    return show_message("titles.attention", "headings.attention", "messages.file.not_exists");
-//
-//                if (!bUseConfirm)
-//                    return on_dlg_confirm(data);
-//            }
-//
-//            if (pWConfirm == NULL)
-//            {
-//                // Create dialog object
-//                pWConfirm = new LSPMessageBox(pDisplay);
-//                if (pWConfirm == NULL)
-//                    return STATUS_NO_MEM;
-//                pWConfirm->init();
-//
-//                pWConfirm->title()->set("titles.confirmation");
-//                pWConfirm->heading()->set("headings.confirmation");
-//                pWConfirm->add_button("actions.confirm.yes", slot_on_confirm, self());
-//                pWConfirm->add_button("actions.confirm.no");
-//            }
-//            pWConfirm->message()->set(&sConfirm);
-//            pWConfirm->show(this);
+            LSPString fname, spath;
+            io::Path path;
+
+            LSP_STATUS_ASSERT(sWSearch.text()->format(&fname));
+            LSP_STATUS_ASSERT(sWPath.text()->format(&spath));
+            LSP_STATUS_ASSERT(path.set(&spath));
+
+            if (list)
+            {
+                f_entry_t *ent = selected_entry();
+                if (ent == NULL)
+                    return show_message("titles.attention", "headings.attention", "messages.file.not_specified", NULL);
+
+                // Analyze what to do
+                if (ent->nFlags & F_DOTDOT)
+                    return on_dlg_up(NULL);
+
+                LSP_STATUS_ASSERT(path.append_child(&ent->sName));
+                if (ent->nFlags & F_ISDIR)
+                    return sPath.set_raw(path.as_utf8());
+            }
+            else if (sMode.save_file()) // Use 'File name' field
+            {
+                if (wAutoExt.down()->get())
+                {
+                    LSPString ext;
+                    ListBoxItem *isel = sWFilter.selected()->get();
+                    FileMask *mask = sFilter.get((isel != NULL) ? isel->tag()->get() : 0);
+                    if (mask != NULL)
+                        mask->append_extension(&fname);
+                }
+
+                LSP_STATUS_ASSERT(path.append_child(&fname));
+
+                if (io::Path::is_dots(&fname) || (!io::Path::valid_file_name(&fname)))
+                    return show_message("titles.attention", "headings.attention", "messages.file.invalid_name", &path);
+            }
+            else if ((!io::Path::is_dots(&fname)) && (io::Path::valid_file_name(&fname)))
+            {
+                LSP_STATUS_ASSERT(path.append_child(&fname));
+            }
+            else // Use selection
+            {
+                f_entry_t *ent = selected_entry();
+                if (ent == NULL)
+                    return show_message("titles.attention", "headings.attention", "messages.file.not_specified", NULL);
+
+                // Analyze what to do
+                if (ent->nFlags & F_DOTDOT)
+                    return on_dlg_up(NULL);
+
+                LSP_STATUS_ASSERT(path.append_child(&ent->sName));
+                if (ent->nFlags & F_ISDIR)
+                    return sPath.set_raw(path.as_utf8());
+            }
+
+            LSP_STATUS_ASSERT(sSelected.set_raw(path.as_string()));
+
+            // Special case for saving file
+            io::fattr_t fattr;
+            status_t stat_result = io::File::sym_stat(&path, &fattr);
+
+            if (sMode.save_file())
+            {
+                if (!sUseConfirm.get())
+                    return on_dlg_confirm(data);
+
+                // Check that file exists and avoid confirmation if it doesn't
+                lsp_trace("Checking file: %s", path.as_utf8());
+                if (stat_result != STATUS_OK)
+                    return on_dlg_confirm(data);
+            }
+            else
+            {
+                if (stat_result != 0)
+                    return show_message("titles.attention", "headings.attention", "messages.file.not_exists", &path);
+
+                if (!sUseConfirm.get())
+                    return on_dlg_confirm(data);
+            }
+
+            if (pWConfirm == NULL)
+            {
+                // Create dialog object
+                pWConfirm = new MessageBox(pDisplay);
+                if (pWConfirm == NULL)
+                    return STATUS_NO_MEM;
+                status_t res = pWConfirm->init();
+                if (res != STATUS_OK)
+                {
+                    pWConfirm->destroy();
+                    delete pWConfirm;
+                    pWConfirm = NULL;
+                    return res;
+                }
+
+                LSP_STATUS_ASSERT(pWConfirm->title()->set("titles.confirmation"));
+                LSP_STATUS_ASSERT(pWConfirm->heading()->set("headings.confirmation"));
+                LSP_STATUS_ASSERT(pWConfirm->add("actions.confirm.yes", slot_on_confirm, self()));
+                LSP_STATUS_ASSERT(pWConfirm->add("actions.confirm.no"));
+                pWConfirm->buttons()->get(0)->constraints()->set_min_width(96);
+                pWConfirm->buttons()->get(1)->constraints()->set_min_width(96);
+            }
+
+            LSP_STATUS_ASSERT(pWConfirm->message()->set(&sConfirmMsg));
+            LSP_STATUS_ASSERT(path.get_parent(&spath));
+            LSP_STATUS_ASSERT(pWConfirm->message()->params()->set_string("path", &spath));
+            LSP_STATUS_ASSERT(path.get_last(&spath));
+            LSP_STATUS_ASSERT(pWConfirm->message()->params()->set_string("name", &spath));
+            LSP_STATUS_ASSERT(pWConfirm->message()->params()->set_string("file", path.as_string()));
+
+            pWConfirm->show(this);
 
             return STATUS_OK;
         }
@@ -953,7 +967,7 @@ namespace lsp
             return sSlots.execute(SLOT_SUBMIT, this, data);
         }
 
-        status_t FileDialog::on_btn_cancel(void *data)
+        status_t FileDialog::on_dlg_cancel(void *data)
         {
             // Hide dialogs
             if (pWConfirm != NULL)
@@ -977,7 +991,7 @@ namespace lsp
         status_t FileDialog::on_close(const ws::event_t *e)
         {
             ws::event_t ev = *e;
-            return on_btn_cancel(&ev);
+            return on_dlg_cancel(&ev);
         }
 
         status_t FileDialog::on_bm_submit(Widget *sender)
@@ -1734,6 +1748,39 @@ namespace lsp
             sWFiles.hscroll()->set(xs);
             sWFiles.vscroll()->set(ys);
 
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::show_message(const char *title, const char *heading, const char *message, const io::Path *path)
+        {
+            if (pWMessage == NULL)
+            {
+                pWMessage       = new MessageBox(pDisplay);
+                status_t res    = pWMessage->init();
+                if (res != STATUS_OK)
+                {
+                    delete pWMessage;
+                    return res;
+                }
+
+                LSP_STATUS_ASSERT(pWMessage->add("actions.ok"));
+                pWMessage->buttons()->get(0)->constraints()->set_min_width(96);
+            }
+            LSP_STATUS_ASSERT(pWMessage->title()->set(title));
+            LSP_STATUS_ASSERT(pWMessage->heading()->set(heading));
+            LSP_STATUS_ASSERT(pWMessage->message()->set(message));
+
+            if (path != NULL)
+            {
+                LSPString spath;
+                LSP_STATUS_ASSERT(path->get_parent(&spath));
+                LSP_STATUS_ASSERT(pWMessage->message()->params()->set_string("path", &spath));
+                LSP_STATUS_ASSERT(path->get_last(&spath));
+                LSP_STATUS_ASSERT(pWMessage->message()->params()->set_string("name", &spath));
+                LSP_STATUS_ASSERT(pWMessage->message()->params()->set_string("file", path->as_string()));
+            }
+
+            pWMessage->show(this);
             return STATUS_OK;
         }
     }
