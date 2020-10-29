@@ -81,7 +81,7 @@ namespace lsp
 
         Widget *Align::find_widget(ssize_t x, ssize_t y)
         {
-            if ((pWidget == NULL) || (!pWidget->valid()))
+            if ((pWidget == NULL) || (!pWidget->is_visible_child_of(this)))
                 return NULL;
 
             return (pWidget->inside(x, y)) ? pWidget : NULL;

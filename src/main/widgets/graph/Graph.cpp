@@ -339,7 +339,7 @@ namespace lsp
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 GraphItem *gi = vItems.get(i);
-                if ((gi == NULL) || (!gi->valid()) || (!gi->visibility()->get()))
+                if ((gi == NULL) || (!gi->is_visible_child_of(this)))
                     continue;
 
                 if (gi->inside(x, y))

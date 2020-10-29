@@ -28,7 +28,8 @@ namespace lsp
     {
         void Widget::PropListener::notify(Property *prop)
         {
-            pWidget->property_changed(prop);
+            if (pWidget->valid())
+                pWidget->property_changed(prop);
         }
 
         const w_class_t Widget::metadata = { "Widget", NULL };
@@ -67,7 +68,12 @@ namespace lsp
         Widget::~Widget()
         {
             nFlags     |= FINALIZED;
-            discard();
+            do_destroy();
+        }
+
+        void Widget::destroy()
+        {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -144,6 +150,11 @@ namespace lsp
 
         void Widget::do_destroy()
         {
+            // Remove from parent window
+            Window *wnd             = widget_cast<Window>(toplevel());
+            if (wnd != NULL)
+                wnd->discard_widget(this);
+
             // Set parent widget to NULL
             set_parent(NULL);
 
@@ -189,14 +200,28 @@ namespace lsp
             return s->get(pClass->name);
         }
 
+        bool Widget::is_visible_child_of(const Widget *parent) const
+        {
+            if (pParent != parent)
+                return false;
+            if (!valid())
+                return false;
+
+            return sVisibility.get();
+        }
+
         void Widget::unlink_widget(Widget *w)
         {
             if (w == NULL)
                 return;
 
-            w->discard();
+            Window *wnd = widget_cast<Window>(w->toplevel());
             if (w->pParent == this)
-                w->pParent  = NULL;
+            {
+                w->pParent  = NULL;         // First remove parent
+                if (wnd != NULL)
+                    wnd->discard_widget(w);     // Then discard widget
+            }
         }
 
         status_t Widget::slot_mouse_move(Widget *sender, void *ptr, void *data)
@@ -418,8 +443,10 @@ namespace lsp
 
         void Widget::hide_widget()
         {
-            // Kill focus
-            discard();
+            // Remove from parent window
+            Window *wnd             = widget_cast<Window>(toplevel());
+            if (wnd != NULL)
+                wnd->discard_widget(this);
 
             // Drop surface to not to eat memory
             if (pSurface != NULL)
@@ -454,12 +481,16 @@ namespace lsp
             if (pParent == parent)
                 return;
 
-            discard();
+            WidgetContainer *wc     = widget_cast<WidgetContainer>(pParent);
+            Window *wnd             = widget_cast<Window>(toplevel());
+            pParent                 = NULL; // Important!
 
-            WidgetContainer *wc = widget_cast<WidgetContainer>(pParent);
             if (wc != NULL)
                 wc->remove(this);
+            if (wnd != NULL)
+                wnd->discard_widget(this);
 
+            // Update current parent
             pParent = parent;
         }
 
@@ -672,13 +703,6 @@ namespace lsp
             return (wnd != NULL) ? wnd->kill_focus(this) : false;
         }
 
-        void Widget::discard()
-        {
-            Window *wnd = widget_cast<Window>(toplevel());
-            if (wnd != NULL)
-                wnd->discard_widget(this);
-        }
-
         ws::mouse_pointer_t Widget::current_pointer()
         {
             return sPointer.get();
@@ -757,13 +781,6 @@ namespace lsp
         status_t Widget::get_padded_screen_rectangle(ws::rectangle_t *r)
         {
             return get_screen_rectangle(r, &sSize);
-        }
-
-        void Widget::destroy()
-        {
-            nFlags     |= FINALIZED;
-            discard();
-            do_destroy();
         }
 
         status_t Widget::on_key_down(const ws::event_t *e)

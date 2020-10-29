@@ -1030,7 +1030,9 @@ namespace lsp
                 hMouse.pWidget      = NULL;
 
                 old->handle_event(&ev);
-                sync_mouse_handler(&ev);
+
+                if ((valid()) && (sVisibility.get()))
+                    sync_mouse_handler(&ev);
             }
         }
 

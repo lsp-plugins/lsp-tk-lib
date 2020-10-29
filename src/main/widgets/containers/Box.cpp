@@ -175,14 +175,14 @@ namespace lsp
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 cell_t *w = vVisible.uget(i);
+                Widget *pw = w->pWidget;
 
-                if ((w == NULL) || (w->pWidget == NULL) || (!w->pWidget->valid()))
+                if ((pw == NULL) || (!pw->is_visible_child_of(this)))
                     continue;
-                if (!w->pWidget->visibility()->get())
+                if (!pw->visibility()->get())
                     continue;
-
-                if (w->pWidget->inside(x, y))
-                    return w->pWidget;
+                if (pw->inside(x, y))
+                    return pw;
             }
 
             return NULL;

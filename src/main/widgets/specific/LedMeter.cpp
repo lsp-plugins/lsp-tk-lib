@@ -539,7 +539,7 @@ namespace lsp
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 LedMeterChannel *c = vVisible.uget(i);
-                if ((c == NULL) || (!c->valid()))
+                if ((c == NULL) || (!c->is_visible_child_of(this)))
                     continue;
 
                 if (Position::inside(&c->sAMeter, x, y))

@@ -646,9 +646,9 @@ namespace lsp
 
         Widget *ListBox::find_widget(ssize_t x, ssize_t y)
         {
-            if ((sHBar.valid()) && (sHBar.visibility()->get()) && (sHBar.inside(x, y)))
+            if ((sHBar.is_visible_child_of(this)) && (sHBar.inside(x, y)))
                 return &sHBar;
-            if ((sVBar.valid()) && (sVBar.visibility()->get()) && (sVBar.inside(x, y)))
+            if ((sVBar.is_visible_child_of(this)) && (sVBar.inside(x, y)))
                 return &sVBar;
 
             return NULL;

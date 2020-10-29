@@ -291,11 +291,6 @@ namespace lsp
                 virtual bool            kill_focus();
 
                 /**
-                 * Detach (kill any event handlers) widget from parent window
-                 */
-                virtual void            discard();
-
-                /**
                  * Get current mouse pointer
                  * @return current mouse pointer
                  */
@@ -359,6 +354,13 @@ namespace lsp
                  * @return true if widget is in valid state
                  */
                 inline bool             valid() const           { return (nFlags & (INITIALIZED | FINALIZED)) == INITIALIZED; }
+
+                /**
+                 * Check whether widget is visible child of parent widget
+                 * @param parent parent widget
+                 * @return true if widget is visible child of parent widget
+                 */
+                bool                    is_visible_child_of(const Widget *parent) const;
 
                 /**
                  * Return widget's style

@@ -607,7 +607,7 @@ namespace lsp
         Widget *ComboGroup::find_widget(ssize_t x, ssize_t y)
         {
             Widget *widget  = current_widget();
-            if ((widget->valid()) && (widget->inside(x, y)))
+            if ((widget->is_visible_child_of(this)) && (widget->inside(x, y)))
                 return widget;
 
             return NULL;

@@ -1142,9 +1142,9 @@ namespace lsp
         Widget *Menu::find_widget(ssize_t x, ssize_t y)
         {
             // Handle special buttons
-            if ((sUp.valid()) && (sUp.visibility()->get()) && (sUp.inside(x, y)))
+            if ((sUp.is_visible_child_of(this)) && (sUp.inside(x, y)))
                 return &sUp;
-            if ((sDown.valid()) && (sDown.visibility()->get()) && (sDown.inside(x, y)))
+            if ((sDown.is_visible_child_of(this)) && (sDown.inside(x, y)))
                 return &sDown;
 
             for (size_t i=0, n=vVisible.size(); i<n; ++i)

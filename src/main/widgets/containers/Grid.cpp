@@ -129,10 +129,11 @@ namespace lsp
             for (size_t i=0, n=sAlloc.vCells.size(); i<n; ++i)
             {
                 cell_t *w = sAlloc.vCells.uget(i);
-                if ((w->pWidget == NULL) || (!w->pWidget->valid()))
+                Widget *pw = w->pWidget;
+                if ((pw == NULL) || (!pw->is_visible_child_of(this)))
                     continue;
-                if (w->pWidget->inside(x, y))
-                    return w->pWidget;
+                if (pw->inside(x, y))
+                    return pw;
             }
 
             return NULL;
