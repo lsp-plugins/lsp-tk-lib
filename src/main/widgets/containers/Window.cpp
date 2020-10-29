@@ -1013,7 +1013,6 @@ namespace lsp
         {
             if (w == NULL)
                 return;
-            lsp_trace("discard widget: w=%p, class=%s", w, w->get_class()->name);
 
             // Kill focus on the widget
             kill_focus(w);
