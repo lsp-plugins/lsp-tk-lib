@@ -101,6 +101,7 @@ namespace lsp
         
         Indicator::~Indicator()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Indicator::init()

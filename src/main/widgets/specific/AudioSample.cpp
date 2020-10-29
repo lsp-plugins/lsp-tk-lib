@@ -83,11 +83,13 @@ namespace lsp
 
         AudioSample::~AudioSample()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
         void AudioSample::destroy()
         {
+            nFlags     |= FINALIZED;
             WidgetContainer::destroy();
             do_destroy();
         }

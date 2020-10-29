@@ -41,6 +41,7 @@ namespace lsp
         
         Box::~Box()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -76,6 +77,7 @@ namespace lsp
 
         void Box::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
         }
@@ -139,13 +141,6 @@ namespace lsp
             vItems.flush();
         }
 
-        bool Box::hidden_widget(const cell_t *w)
-        {
-            if ((w == NULL) || (w->pWidget == NULL))
-                return true;
-            return !w->pWidget->visibility()->get();
-        }
-
         status_t Box::visible_items(lltl::darray<cell_t> *out)
         {
             // Estimate number of visible items
@@ -180,8 +175,12 @@ namespace lsp
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 cell_t *w = vVisible.uget(i);
-                if (hidden_widget(w))
+
+                if ((w == NULL) || (w->pWidget == NULL) || (!w->pWidget->valid()))
                     continue;
+                if (!w->pWidget->visibility()->get())
+                    continue;
+
                 if (w->pWidget->inside(x, y))
                     return w->pWidget;
             }

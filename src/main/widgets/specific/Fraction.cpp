@@ -229,6 +229,7 @@ namespace lsp
 
         Fraction::~Fraction()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -238,6 +239,7 @@ namespace lsp
 
         void Fraction::destroy()
         {
+            nFlags     |= FINALIZED;
             Widget::destroy();
             do_destroy();
         }

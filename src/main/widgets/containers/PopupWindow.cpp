@@ -41,6 +41,7 @@ namespace lsp
 
         PopupWindow::~PopupWindow()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t PopupWindow::init()

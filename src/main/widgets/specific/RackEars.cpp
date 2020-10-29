@@ -61,6 +61,7 @@ namespace lsp
 
         RackEars::~RackEars()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t RackEars::init()

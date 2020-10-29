@@ -85,7 +85,6 @@ namespace lsp
                 virtual ~FileButton();
 
                 virtual status_t            init();
-                virtual void                destroy();
 
             public:
                 LSP_TK_PROPERTY(RangeFloat,             value,              &sValue);

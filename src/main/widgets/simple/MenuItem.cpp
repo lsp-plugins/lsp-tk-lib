@@ -47,6 +47,7 @@ namespace lsp
         
         MenuItem::~MenuItem()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t MenuItem::slot_on_submit(Widget *sender, void *ptr, void *data)

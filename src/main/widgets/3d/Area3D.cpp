@@ -53,11 +53,13 @@ namespace lsp
 
         Area3D::~Area3D()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
         void Area3D::destroy()
         {
+            nFlags     |= FINALIZED;
             Widget::destroy();
             do_destroy();
         }

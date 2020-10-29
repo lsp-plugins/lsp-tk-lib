@@ -61,7 +61,6 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;        // Size constraints
 
             protected:
-                static inline bool          hidden_widget(const cell_t *w);
                 status_t                    visible_items(lltl::darray<cell_t> *out);
                 void                        do_destroy();
 

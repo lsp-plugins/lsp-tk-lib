@@ -49,6 +49,14 @@ namespace lsp
 
         GraphMesh::~GraphMesh()
         {
+            nFlags     |= FINALIZED;
+            do_destroy();
+        }
+
+        void GraphMesh::destroy()
+        {
+            nFlags     |= FINALIZED;
+            GraphItem::destroy();
             do_destroy();
         }
 
@@ -60,11 +68,6 @@ namespace lsp
                 vBuffer         = NULL;
             }
             nCapacity       = 0;
-        }
-
-        void GraphMesh::destroy()
-        {
-            do_destroy();
         }
 
         status_t GraphMesh::init()

@@ -46,6 +46,7 @@ namespace lsp
 
         GraphAxis::~GraphAxis()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t GraphAxis::init()

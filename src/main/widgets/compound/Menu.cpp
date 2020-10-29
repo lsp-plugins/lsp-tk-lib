@@ -253,6 +253,7 @@ namespace lsp
         
         Menu::~Menu()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -336,6 +337,7 @@ namespace lsp
 
         void Menu::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
         }
@@ -1140,15 +1142,15 @@ namespace lsp
         Widget *Menu::find_widget(ssize_t x, ssize_t y)
         {
             // Handle special buttons
-            if ((sUp.visibility()->get()) && (sUp.inside(x, y)))
+            if ((sUp.valid()) && (sUp.visibility()->get()) && (sUp.inside(x, y)))
                 return &sUp;
-            if ((sDown.visibility()->get()) && (sDown.inside(x, y)))
+            if ((sDown.valid()) && (sDown.visibility()->get()) && (sDown.inside(x, y)))
                 return &sDown;
 
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 item_t *pi = vVisible.uget(i);
-                if (pi->item->inside(x, y))
+                if ((pi->item->valid()) && (pi->item->inside(x, y)))
                     return pi->item;
             }
             return NULL;

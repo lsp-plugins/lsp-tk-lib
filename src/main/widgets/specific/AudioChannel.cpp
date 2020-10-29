@@ -51,6 +51,7 @@ namespace lsp
 
         AudioChannel::~AudioChannel()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t AudioChannel::init()
@@ -97,11 +98,6 @@ namespace lsp
             }
 
             return STATUS_OK;
-        }
-
-        void AudioChannel::destroy()
-        {
-            Widget::destroy();
         }
 
         void AudioChannel::property_changed(Property *prop)

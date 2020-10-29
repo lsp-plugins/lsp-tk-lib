@@ -46,11 +46,13 @@ namespace lsp
             protected:
                 enum flags_t
                 {
-                    REDRAW_SURFACE  = 1 << 0,       // Need to redraw surface
-                    REDRAW_CHILD    = 1 << 1,       // Need to redraw child only
-                    SIZE_INVALID    = 1 << 2,       // Size limit structure is valid
-                    RESIZE_PENDING  = 1 << 3,       // The resize request is pending
-                    REALIZE_ACTIVE  = 1 << 4        // Realize is active, no need to trigger for realize
+                    INITIALIZED     = 1 << 0,       // Widget is initialized
+                    FINALIZED       = 1 << 1,       // Widget is in destroy state
+                    REDRAW_SURFACE  = 1 << 2,       // Need to redraw surface
+                    REDRAW_CHILD    = 1 << 3,       // Need to redraw child only
+                    SIZE_INVALID    = 1 << 4,       // Size limit structure is valid
+                    RESIZE_PENDING  = 1 << 5,       // The resize request is pending
+                    REALIZE_ACTIVE  = 1 << 6        // Realize is active, no need to trigger for realize
                 };
 
             protected:
@@ -289,6 +291,11 @@ namespace lsp
                 virtual bool            kill_focus();
 
                 /**
+                 * Detach (kill any event handlers) widget from parent window
+                 */
+                virtual void            discard();
+
+                /**
                  * Get current mouse pointer
                  * @return current mouse pointer
                  */
@@ -347,6 +354,12 @@ namespace lsp
                  */
                 Style                  *style_class() const;
                 
+                /**
+                 * Check that widget is in valid state
+                 * @return true if widget is in valid state
+                 */
+                inline bool             valid() const           { return (nFlags & (INITIALIZED | FINALIZED)) == INITIALIZED; }
+
                 /**
                  * Return widget's style
                  * @return widget's style

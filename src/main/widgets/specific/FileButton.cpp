@@ -60,10 +60,7 @@ namespace lsp
 
         FileButton::~FileButton()
         {
-        }
-
-        void FileButton::destroy()
-        {
+            nFlags     |= FINALIZED;
         }
 
         status_t FileButton::init()

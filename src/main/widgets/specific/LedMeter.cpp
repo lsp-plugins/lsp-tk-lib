@@ -51,11 +51,13 @@ namespace lsp
 
         LedMeter::~LedMeter()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
         void LedMeter::destroy()
         {
+            nFlags     |= FINALIZED;
             WidgetContainer::destroy();
             do_destroy();
         }
@@ -537,7 +539,7 @@ namespace lsp
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 LedMeterChannel *c = vVisible.uget(i);
-                if (c == NULL)
+                if ((c == NULL) || (!c->valid()))
                     continue;
 
                 if (Position::inside(&c->sAMeter, x, y))

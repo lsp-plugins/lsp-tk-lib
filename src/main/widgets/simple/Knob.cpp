@@ -51,6 +51,7 @@ namespace lsp
 
         Knob::~Knob()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Knob::init()

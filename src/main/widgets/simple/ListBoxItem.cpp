@@ -39,6 +39,7 @@ namespace lsp
         
         ListBoxItem::~ListBoxItem()
         {
+            nFlags     |= FINALIZED;
         }
     
         status_t ListBoxItem::init()

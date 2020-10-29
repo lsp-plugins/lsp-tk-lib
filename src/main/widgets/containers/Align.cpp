@@ -40,6 +40,7 @@ namespace lsp
 
         Align::~Align()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -64,6 +65,7 @@ namespace lsp
 
         void Align::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
         }
@@ -79,7 +81,7 @@ namespace lsp
 
         Widget *Align::find_widget(ssize_t x, ssize_t y)
         {
-            if (pWidget == NULL)
+            if ((pWidget == NULL) || (!pWidget->valid()))
                 return NULL;
 
             return (pWidget->inside(x, y)) ? pWidget : NULL;

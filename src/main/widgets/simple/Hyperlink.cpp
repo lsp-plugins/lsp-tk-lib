@@ -53,6 +53,7 @@ namespace lsp
 
         Hyperlink::~Hyperlink()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -100,6 +101,7 @@ namespace lsp
 
         void Hyperlink::destroy()
         {
+            nFlags     |= FINALIZED;
             Widget::destroy();
             do_destroy();
         }

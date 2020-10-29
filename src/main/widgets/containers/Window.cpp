@@ -69,6 +69,7 @@ namespace lsp
 
         Window::~Window()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -240,8 +241,8 @@ namespace lsp
 
         void Window::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
-
             WidgetContainer::destroy();
         }
 
@@ -951,7 +952,7 @@ namespace lsp
 
         Widget *Window::find_widget(ssize_t x, ssize_t y)
         {
-            if ((pChild == NULL) || (!pChild->inside(x, y)))
+            if ((pChild == NULL) || (!pChild->valid()) || (!pChild->inside(x, y)))
                 return this;
 
             Widget *curr = pChild;

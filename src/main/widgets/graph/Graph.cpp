@@ -58,11 +58,13 @@ namespace lsp
 
         Graph::~Graph()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
         void Graph::destroy()
         {
+            nFlags     |= FINALIZED;
             WidgetContainer::destroy();
             do_destroy();
         }
@@ -337,7 +339,7 @@ namespace lsp
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 GraphItem *gi = vItems.get(i);
-                if ((gi == NULL) || (!gi->visibility()->get()))
+                if ((gi == NULL) || (!gi->valid()) || (!gi->visibility()->get()))
                     continue;
 
                 if (gi->inside(x, y))

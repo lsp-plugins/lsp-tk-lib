@@ -63,6 +63,7 @@ namespace lsp
 
         GraphMarker::~GraphMarker()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t GraphMarker::init()

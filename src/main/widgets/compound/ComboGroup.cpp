@@ -125,6 +125,7 @@ namespace lsp
 
         ComboGroup::~ComboGroup()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t ComboGroup::init()
@@ -606,7 +607,7 @@ namespace lsp
         Widget *ComboGroup::find_widget(ssize_t x, ssize_t y)
         {
             Widget *widget  = current_widget();
-            if (widget->inside(x, y))
+            if ((widget->valid()) && (widget->inside(x, y)))
                 return widget;
 
             return NULL;

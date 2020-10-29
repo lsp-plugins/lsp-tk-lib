@@ -74,11 +74,7 @@ namespace lsp
 
         LedMeterChannel::~LedMeterChannel()
         {
-        }
-
-        void LedMeterChannel::destroy()
-        {
-            Widget::destroy();
+            nFlags     |= FINALIZED;
         }
 
         status_t LedMeterChannel::init()

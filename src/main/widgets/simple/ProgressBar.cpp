@@ -56,6 +56,7 @@ namespace lsp
         
         ProgressBar::~ProgressBar()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t ProgressBar::init()

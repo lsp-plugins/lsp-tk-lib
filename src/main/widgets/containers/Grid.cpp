@@ -43,6 +43,7 @@ namespace lsp
         
         Grid::~Grid()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -68,6 +69,7 @@ namespace lsp
 
         void Grid::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
         }
@@ -117,9 +119,7 @@ namespace lsp
 
         bool Grid::hidden_widget(const widget_t *w)
         {
-            if (w == NULL)
-                return true;
-            if (w->pWidget == NULL)
+            if ((w == NULL) || (w->pWidget == NULL) || (!w->pWidget->valid()))
                 return true;
             return !w->pWidget->visibility()->get();
         }
@@ -129,7 +129,7 @@ namespace lsp
             for (size_t i=0, n=sAlloc.vCells.size(); i<n; ++i)
             {
                 cell_t *w = sAlloc.vCells.uget(i);
-                if (w->pWidget == NULL)
+                if ((w->pWidget == NULL) || (!w->pWidget->valid()))
                     continue;
                 if (w->pWidget->inside(x, y))
                     return w->pWidget;

@@ -39,6 +39,7 @@ namespace lsp
         
         Separator::~Separator()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Separator::init()

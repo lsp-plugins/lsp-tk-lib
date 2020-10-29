@@ -110,6 +110,7 @@ namespace lsp
 
         GraphDot::~GraphDot()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t GraphDot::init()

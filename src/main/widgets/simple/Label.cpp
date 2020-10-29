@@ -41,6 +41,7 @@ namespace lsp
 
         Label::~Label()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Label::init()

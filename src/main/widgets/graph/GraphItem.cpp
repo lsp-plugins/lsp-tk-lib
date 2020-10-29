@@ -35,6 +35,7 @@ namespace lsp
 
         GraphItem::~GraphItem()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t GraphItem::init()
@@ -57,6 +58,7 @@ namespace lsp
 
         void GraphItem::destroy()
         {
+            nFlags     |= FINALIZED;
             Widget::destroy();
         }
 

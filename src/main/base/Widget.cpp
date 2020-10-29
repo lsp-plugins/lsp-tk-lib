@@ -66,6 +66,8 @@ namespace lsp
 
         Widget::~Widget()
         {
+            nFlags     |= FINALIZED;
+            discard();
             do_destroy();
         }
 
@@ -84,6 +86,10 @@ namespace lsp
 
         status_t Widget::init()
         {
+            // Mark as initialized
+            nFlags     |= INITIALIZED;
+
+            // Initialize style
             status_t res = sStyle.init();
             if (res == STATUS_OK)
             {
@@ -187,7 +193,8 @@ namespace lsp
         {
             if (w == NULL)
                 return;
-            w->kill_focus();
+
+            w->discard();
             if (w->pParent == this)
                 w->pParent  = NULL;
         }
@@ -412,7 +419,7 @@ namespace lsp
         void Widget::hide_widget()
         {
             // Kill focus
-            kill_focus();
+            discard();
 
             // Drop surface to not to eat memory
             if (pSurface != NULL)
@@ -446,18 +453,12 @@ namespace lsp
         {
             if (pParent == parent)
                 return;
-            kill_focus();
 
-            if (pParent != NULL)
-            {
-                WidgetContainer *wc = widget_cast<WidgetContainer>(pParent);
-                if (wc != NULL)
-                    wc->remove(this);
+            discard();
 
-                Window *wnd = widget_cast<Window>(toplevel());
-                if (wnd != NULL)
-                    wnd->discard_widget(wc);
-            }
+            WidgetContainer *wc = widget_cast<WidgetContainer>(pParent);
+            if (wc != NULL)
+                wc->remove(this);
 
             pParent = parent;
         }
@@ -671,6 +672,13 @@ namespace lsp
             return (wnd != NULL) ? wnd->kill_focus(this) : false;
         }
 
+        void Widget::discard()
+        {
+            Window *wnd = widget_cast<Window>(toplevel());
+            if (wnd != NULL)
+                wnd->discard_widget(this);
+        }
+
         ws::mouse_pointer_t Widget::current_pointer()
         {
             return sPointer.get();
@@ -753,7 +761,8 @@ namespace lsp
 
         void Widget::destroy()
         {
-            kill_focus();
+            nFlags     |= FINALIZED;
+            discard();
             do_destroy();
         }
 

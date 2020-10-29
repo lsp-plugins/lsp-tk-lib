@@ -42,6 +42,7 @@ namespace lsp
 
         MessageBox::~MessageBox()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -59,6 +60,7 @@ namespace lsp
 
         void MessageBox::destroy()
         {
+            nFlags     |= FINALIZED;
             Window::destroy();
             do_destroy();
         }

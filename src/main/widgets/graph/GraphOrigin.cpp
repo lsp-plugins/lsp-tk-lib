@@ -39,6 +39,7 @@ namespace lsp
 
         GraphOrigin::~GraphOrigin()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t GraphOrigin::init()

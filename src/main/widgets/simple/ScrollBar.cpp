@@ -90,6 +90,7 @@ namespace lsp
 
         ScrollBar::~ScrollBar()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 

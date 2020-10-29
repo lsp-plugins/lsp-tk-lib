@@ -51,6 +51,7 @@ namespace lsp
         
         ScrollArea::~ScrollArea()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
@@ -105,6 +106,7 @@ namespace lsp
 
         void ScrollArea::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
 
@@ -426,11 +428,11 @@ namespace lsp
 
         Widget *ScrollArea::find_widget(ssize_t x, ssize_t y)
         {
-            if ((sHBar.visibility()->get()) && (sHBar.inside(x, y)))
+            if ((sHBar.valid()) && (sHBar.visibility()->get()) && (sHBar.inside(x, y)))
                 return &sHBar;
-            if ((sVBar.visibility()->get()) && (sVBar.inside(x, y)))
+            if ((sVBar.valid()) && (sVBar.visibility()->get()) && (sVBar.inside(x, y)))
                 return &sVBar;
-            if ((pWidget != NULL) && (pWidget->inside(x, y)))
+            if ((pWidget != NULL) && (pWidget->valid()) && (pWidget->inside(x, y)))
                 return pWidget;
 
             return NULL;

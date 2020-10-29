@@ -39,6 +39,7 @@ namespace lsp
 
         Edit::EditCursor::~EditCursor()
         {
+            nFlags     |= FINALIZED;
         }
 
         ssize_t Edit::EditCursor::limit(ssize_t value)
@@ -156,11 +157,13 @@ namespace lsp
 
         Edit::~Edit()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
         void Edit::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
 
             if (pDataSink != NULL)

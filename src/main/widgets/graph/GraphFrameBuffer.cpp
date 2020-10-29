@@ -54,11 +54,14 @@ namespace lsp
 
         GraphFrameBuffer::~GraphFrameBuffer()
         {
+            nFlags     |= FINALIZED;
             destroy_data();
         }
 
         void GraphFrameBuffer::destroy()
         {
+            nFlags     |= FINALIZED;
+            GraphItem::destroy();
             destroy_data();
         }
 

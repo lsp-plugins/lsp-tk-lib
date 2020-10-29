@@ -42,6 +42,7 @@ namespace lsp
 
         Led::~Led()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Led::init()

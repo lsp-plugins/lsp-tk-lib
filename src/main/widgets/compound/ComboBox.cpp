@@ -133,11 +133,13 @@ namespace lsp
 
         ComboBox::~ComboBox()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
         void ComboBox::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
         }

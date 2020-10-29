@@ -61,6 +61,7 @@ namespace lsp
         
         Fader::~Fader()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 

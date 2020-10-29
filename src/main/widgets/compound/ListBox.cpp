@@ -71,11 +71,13 @@ namespace lsp
         
         ListBox::~ListBox()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
         }
 
         void ListBox::destroy()
         {
+            nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
         }
@@ -644,9 +646,9 @@ namespace lsp
 
         Widget *ListBox::find_widget(ssize_t x, ssize_t y)
         {
-            if ((sHBar.visibility()->get()) && (sHBar.inside(x, y)))
+            if ((sHBar.valid()) && (sHBar.visibility()->get()) && (sHBar.inside(x, y)))
                 return &sHBar;
-            if ((sVBar.visibility()->get()) && (sVBar.inside(x, y)))
+            if ((sVBar.valid()) && (sVBar.visibility()->get()) && (sVBar.inside(x, y)))
                 return &sVBar;
 
             return NULL;

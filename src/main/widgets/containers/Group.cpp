@@ -59,6 +59,7 @@ namespace lsp
 
         Group::~Group()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Group::init()

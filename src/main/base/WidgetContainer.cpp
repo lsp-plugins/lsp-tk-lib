@@ -35,6 +35,7 @@ namespace lsp
 
         WidgetContainer::~WidgetContainer()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t WidgetContainer::add(Widget *child)

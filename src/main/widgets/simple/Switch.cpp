@@ -96,6 +96,7 @@ namespace lsp
 
         Switch::~Switch()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Switch::slot_on_change(Widget *sender, void *ptr, void *data)

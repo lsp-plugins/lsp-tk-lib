@@ -76,11 +76,12 @@ namespace lsp
 
         FileDialog::~FileDialog()
         {
+            nFlags     |= FINALIZED;
         }
-
 
         void FileDialog::destroy()
         {
+            nFlags     |= FINALIZED;
             Window::destroy();
 
             drop_bookmarks();

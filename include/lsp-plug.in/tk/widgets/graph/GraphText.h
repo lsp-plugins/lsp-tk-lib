@@ -58,7 +58,6 @@ namespace lsp
                 virtual ~GraphText();
 
                 virtual status_t            init();
-                virtual void                destroy();
 
             public:
                 LSP_TK_PROPERTY(String,             text,               &sText)

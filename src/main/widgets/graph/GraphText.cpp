@@ -45,10 +45,7 @@ namespace lsp
 
         GraphText::~GraphText()
         {
-        }
-
-        void GraphText::destroy()
-        {
+            nFlags     |= FINALIZED;
         }
 
         status_t GraphText::init()

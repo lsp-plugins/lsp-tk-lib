@@ -79,7 +79,6 @@ namespace lsp
                 virtual ~LedMeterChannel();
 
                 virtual status_t            init();
-                virtual void                destroy();
 
             protected:
                 virtual void                property_changed(Property *prop);

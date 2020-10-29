@@ -37,6 +37,7 @@ namespace lsp
         
         Void::~Void()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Void::init()

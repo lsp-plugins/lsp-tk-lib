@@ -61,6 +61,7 @@ namespace lsp
         
         Button::~Button()
         {
+            nFlags     |= FINALIZED;
         }
 
         status_t Button::init()
