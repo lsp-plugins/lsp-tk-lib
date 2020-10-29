@@ -177,13 +177,6 @@ namespace lsp
             // Initialize window
             LSP_STATUS_ASSERT(Window::init());
 
-            // Add slots
-            handler_id_t id = 0;
-            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
-            if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
-            if (id < 0)
-                return -id;
-
             lsp_trace("Scaling factor: %f", sScaling.get());
 
             // Initialize labels
@@ -310,45 +303,26 @@ namespace lsp
 
             LSP_STATUS_ASSERT(add(&sMainGrid));
 
-            // Bind events
-            status_t result;
+            // Add slots
+            handler_id_t id = 0;
+            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
+            if (id >= 0) id = sWAction.slots()->bind(SLOT_SUBMIT, slot_on_btn_action, self());
+            if (id >= 0) id = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_btn_cancel, self());
+            if (id >= 0) id = sWSearch.slots()->bind(SLOT_CHANGE, slot_on_search, self());
+            if (id >= 0) id = sWFilter.slots()->bind(SLOT_SUBMIT, slot_on_search, self());
+            if (id >= 0) id = sWFiles.slots()->bind(SLOT_MOUSE_DBL_CLICK, slot_on_list_dbl_click, self());
+            if (id >= 0) id = sWFiles.slots()->bind(SLOT_CHANGE, slot_on_list_change, self());
+            if (id >= 0) id = sWFiles.slots()->bind(SLOT_REALIZED, slot_on_list_realized, self());
+            if (id >= 0) id = wGo.slots()->bind(SLOT_SUBMIT, slot_on_go, self());
+            if (id >= 0) id = wUp.slots()->bind(SLOT_SUBMIT, slot_on_up, self());
+            if (id >= 0) id = sBMAdd.slots()->bind(SLOT_SUBMIT, slot_on_bm_add, self());
+            if (id >= 0) id = sWPath.slots()->bind(SLOT_KEY_UP, slot_on_path_key_up, self());
+            if (id >= 0) id = sBookmarks.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll, self());
+            if (id >= 0) id = sSBBookmarks.slots()->bind(SLOT_REALIZED, slot_on_bm_realized, self());
 
-            result = sWAction.slots()->bind(SLOT_SUBMIT, slot_on_btn_action, self());
-            if (result < 0)
-                return -result;
-            result = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_btn_cancel, self());
-            if (result < 0)
-                return -result;
-            result = sWSearch.slots()->bind(SLOT_CHANGE, slot_on_search, self());
-            if (result < 0)
-                return -result;
-            result = sWFilter.slots()->bind(SLOT_SUBMIT, slot_on_search, self());
-            if (result < 0)
-                return -result;
-            result = sWFiles.slots()->bind(SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, self());
-            if (result < 0)
-                return -result;
-            result = sWFiles.slots()->bind(SLOT_CHANGE, slot_list_change, self());
-            if (result < 0)
-                return -result;
-            result = wGo.slots()->bind(SLOT_SUBMIT, slot_on_go, self());
-            if (result < 0)
-                return -result;
-            result = wUp.slots()->bind(SLOT_SUBMIT, slot_on_up, self());
-            if (result < 0)
-                return -result;
-            result = sBMAdd.slots()->bind(SLOT_SUBMIT, slot_on_bm_add, self());
-            if (result < 0)
-                return -result;
-            result = sWPath.slots()->bind(SLOT_KEY_UP, slot_on_path_key_up, self());
-            if (result < 0)
-                return -result;
-            result = sBookmarks.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll, self());
-            if (result < 0)
-                return -result;
-            result = sSBBookmarks.slots()->bind(SLOT_REALIZED, slot_on_bm_realized, self());
-            if (result < 0)
-                return -result;
+            if (id < 0)
+                return -id;
 
             padding()->set_all(8);
             border_style()->set(ws::BS_DIALOG);
@@ -600,16 +574,31 @@ namespace lsp
             return (dlg != NULL) ? dlg->on_dlg_search(data) : STATUS_BAD_STATE;
         }
 
-        status_t FileDialog::slot_mouse_dbl_click(Widget *sender, void *ptr, void *data)
+        status_t FileDialog::slot_on_list_dbl_click(Widget *sender, void *ptr, void *data)
         {
             FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
             return (dlg != NULL) ? dlg->on_dlg_mouse_dbl_click(data) : STATUS_BAD_STATE;
         }
 
-        status_t FileDialog::slot_list_change(Widget *sender, void *ptr, void *data)
+        status_t FileDialog::slot_on_list_change(Widget *sender, void *ptr, void *data)
         {
             FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
             return (dlg != NULL) ? dlg->on_dlg_list_change(data) : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_list_realized(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            ListBox *list   = widget_ptrcast<ListBox>(sender);
+            if ((dlg == NULL) || (list == NULL))
+                return STATUS_OK;
+
+            ssize_t n = list->items()->size();
+            if (n <= 0)
+                return n;
+            float delta = (4.0f * list->vscroll()->range()) / n;
+            list->vstep()->set(delta);
+            return STATUS_OK;
         }
 
         status_t FileDialog::slot_on_go(Widget *sender, void *ptr, void *data)

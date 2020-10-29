@@ -123,11 +123,13 @@ namespace lsp
 
                 static status_t         slot_on_confirm(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_search(Widget *sender, void *ptr, void *data);
-                static status_t         slot_mouse_dbl_click(Widget *sender, void *ptr, void *data);
-                static status_t         slot_list_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_go(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_up(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_path_key_up(Widget *sender, void *ptr, void *data);
+
+                static status_t         slot_on_list_dbl_click(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_list_change(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_list_realized(Widget *sender, void *ptr, void *data);
 
                 static status_t         slot_on_bm_scroll(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_popup(Widget *sender, void *ptr, void *data);
