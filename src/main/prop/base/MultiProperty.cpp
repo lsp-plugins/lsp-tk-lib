@@ -79,7 +79,7 @@ namespace lsp
                         res = STATUS_NO_MEM;
                         break;
                     }
-                    atom_t atom = style->atom_id(key.get_utf8());
+                    atom_t atom = style->atom_id(&key);
                     if (atom < 0)
                     {
                         res = STATUS_NO_MEM;

@@ -29,6 +29,8 @@
 // The default dictionary location
 #define LSP_TK_ENV_DICT_PATH            "dictionary"
 #define LSP_TK_ENV_DICT_PATH_DFL        "i18n"
+// The default dictionary location
+#define LSP_TK_ENV_SCHEMA_PATH          "schema"
 // The default language selected at startup
 #define LSP_TK_ENV_LANG                 "language"
 #define LSP_TK_ENV_LANG_DFL             "en"

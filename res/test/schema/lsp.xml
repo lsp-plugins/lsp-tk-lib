@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema>
+	<!-- Color aliases -->
+	<colors>
+		<!-- Background colors -->
+		<bg value="#1b1c22" />
+		<bg2 value="#2f3037" />
+		<bg3 value="#45464d" />
+		<hole value="#000000" />
+		<glass value="#101010" />
+		
+		<!-- Label colors -->
+		<main_text value="#dae0ff" />
+		<dark_text value="#1b1c22" />
+		<invalid_input value="#880000" />
+		
+		<!-- Knob colors -->
+		<knob_cap value="#474843" />
+		<knob_scale value="#00c0ff" />
+		
+		<!-- Hyperlink -->
+		<hlink_text value="#80ffff" />
+		<hlink_hover value="#ff8080" />
+	</colors>
+	
+	<!-- Root style -->
+	<root>
+		<scaling value="1.0" />
+		<lang value="en_US" />
+		<bg.color value="bg" />
+	</root>
+	
+	<!-- Nested style of window -->
+	<style class="Window" parents="root">
+	</style>
+	
+	<style class="Label" parents="root">
+		<text.color value="main_text" />
+	</style>
+	
+	<style class="Button" parents="root">
+		<text.color value="main_text" />
+	</style>
+</schema>

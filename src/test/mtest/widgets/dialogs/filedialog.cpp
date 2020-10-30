@@ -254,11 +254,13 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         MTEST_ASSERT(loader.set_path(res_path) == STATUS_OK);
         MTEST_ASSERT(env.set(LSP_TK_ENV_DICT_PATH, "i18n") == STATUS_OK);
         MTEST_ASSERT(env.set(LSP_TK_ENV_LANG, "en_US") == STATUS_OK);
+        MTEST_ASSERT(env.set(LSP_TK_ENV_SCHEMA_PATH, "schema/lsp.xml") == STATUS_OK);
         MTEST_ASSERT(env.set(LSP_TK_ENV_CONFIG, "lsp-tk-lib") == STATUS_OK);
 
         // Create display
         tk::display_settings_t dpy_settings;
-        dpy_settings.resources  = &loader;
+        dpy_settings.resources      = &loader;
+        dpy_settings.environment    = &env;
         tk::Display *dpy = new tk::Display(&dpy_settings);
         MTEST_ASSERT(dpy != NULL);
 

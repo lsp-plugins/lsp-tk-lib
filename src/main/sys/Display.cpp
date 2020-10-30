@@ -49,6 +49,12 @@ namespace lsp
             do_destroy();
         }
         
+        void Display::destroy()
+        {
+            garbage_collect();
+            do_destroy();
+        }
+
         void Display::do_destroy()
         {
             // Auto-destruct widgets
@@ -209,16 +215,22 @@ namespace lsp
             }
 
             // Initialize theme
-//            sTheme.init(this); // TODO
             pDictionary     = dict;
 
-            return STATUS_OK;
+            return init_schema();
         }
 
-        void Display::destroy()
+        status_t Display::init_schema()
         {
-            garbage_collect();
-            do_destroy();
+            const char *schema_path = pEnv->get_utf8(LSP_TK_ENV_SCHEMA_PATH);
+            if (schema_path == NULL)
+                return STATUS_OK;
+
+            io::IInSequence *is = pResourceLoader->read_sequence(schema_path);
+            if (is == NULL)
+                return STATUS_NOT_FOUND;
+
+            return sSchema.parse_data(is, WRAP_CLOSE | WRAP_DELETE);
         }
 
         status_t Display::main()

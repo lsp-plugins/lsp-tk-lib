@@ -70,6 +70,7 @@ namespace lsp
             protected:
                 void                do_destroy();
                 void                garbage_collect();
+                status_t            init_schema();
 
             protected:
                 static status_t     main_task_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
