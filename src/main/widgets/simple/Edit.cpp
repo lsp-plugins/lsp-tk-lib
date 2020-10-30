@@ -308,6 +308,7 @@ namespace lsp
             {
                 LSPString *text = sText.formatted();
                 sSelection.set_limit(text->length());
+                sCursor.move(0);
                 query_draw();
             }
 

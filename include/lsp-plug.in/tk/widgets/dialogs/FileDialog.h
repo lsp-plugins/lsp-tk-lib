@@ -133,6 +133,7 @@ namespace lsp
                 static status_t         slot_on_list_dbl_click(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_list_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_list_realized(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_list_key_down(Widget *sender, void *ptr, void *data);
 
                 static status_t         slot_on_bm_scroll(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_popup(Widget *sender, void *ptr, void *data);
@@ -147,6 +148,10 @@ namespace lsp
                 static status_t         slot_on_bm_menu_first(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_menu_last(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_bm_realized(Widget *sender, void *ptr, void *data);
+
+                static status_t         slot_on_filter_key_down(Widget *sender, void *ptr, void *data);
+
+                static status_t         slot_on_search_key_down(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual status_t        on_dlg_action(void *data, bool list);

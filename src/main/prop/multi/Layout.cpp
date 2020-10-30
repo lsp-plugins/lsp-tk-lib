@@ -245,7 +245,7 @@ namespace lsp
 
         void Layout::apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *req)
         {
-            lsp_trace("before: x=%d, y=%d, w=%d, h=%d", int(src->nLeft), int(src->nTop), int(src->nWidth), int(src->nHeight));
+//            lsp_trace("before: x=%d, y=%d, w=%d, h=%d", int(src->nLeft), int(src->nTop), int(src->nWidth), int(src->nHeight));
             // Estimate the minimum area size and the amount of free space
             ssize_t w       = lsp_max(0, req->nMinWidth);
             ssize_t h       = lsp_max(0, req->nMinHeight);
@@ -269,7 +269,7 @@ namespace lsp
             dst->nTop       = src->nTop  + ygap * (vAlign + 1.0f) * 0.5f;
             dst->nWidth     = w;
             dst->nHeight    = h;
-            lsp_trace("after: x=%d, y=%d, w=%d, h=%d", int(dst->nLeft), int(dst->nTop), int(dst->nWidth), int(dst->nHeight));
+//            lsp_trace("after: x=%d, y=%d, w=%d, h=%d", int(dst->nLeft), int(dst->nTop), int(dst->nWidth), int(dst->nHeight));
         }
 
         namespace prop

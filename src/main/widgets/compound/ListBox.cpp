@@ -130,12 +130,16 @@ namespace lsp
             sHBar.accel_step()->set(1.0f, 8.0f, 0.5f);
             sHBar.set_parent(this);
             sHBar.slots()->bind(SLOT_CHANGE, slot_on_scroll_change, self());
+            sHBar.slots()->bind(SLOT_KEY_DOWN, slot_on_scroll_key_down, self());
+            sHBar.slots()->bind(SLOT_KEY_UP, slot_on_scroll_key_up, self());
 
             sVBar.orientation()->set(O_VERTICAL);
             sVBar.step()->set(1.0f, 8.0f, 0.5f);
             sVBar.accel_step()->set(1.0f, 8.0f, 0.5f);
             sVBar.set_parent(this);
             sVBar.slots()->bind(SLOT_CHANGE, slot_on_scroll_change, self());
+            sVBar.slots()->bind(SLOT_KEY_DOWN, slot_on_scroll_key_down, self());
+            sVBar.slots()->bind(SLOT_KEY_UP, slot_on_scroll_key_up, self());
 
             // Init style
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -168,7 +172,7 @@ namespace lsp
                 sFont.init(sclass);
                 sBorderSize.init(sclass, 1);
                 sBorderGap.init(sclass, 1);
-                sBorderRadius.init(sclass, 2);
+                sBorderRadius.init(sclass, 4);
                 sBorderColor.init(sclass, "#000000");
                 sListBgColor.init(sclass, "#ffffff");
                 sSpacing.init(sclass, 0);
@@ -693,6 +697,20 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t ListBox::slot_on_scroll_key_down(Widget *sender, void *ptr, void *data)
+        {
+            ListBox *_this = widget_ptrcast<ListBox>(ptr);
+            const ws::event_t *e = static_cast<ws::event_t *>(data);
+            return (_this != NULL) ? _this->handle_event(e) : STATUS_OK;
+        }
+
+        status_t ListBox::slot_on_scroll_key_up(Widget *sender, void *ptr, void *data)
+        {
+            ListBox *_this = widget_ptrcast<ListBox>(ptr);
+            const ws::event_t *e = static_cast<ws::event_t *>(data);
+            return (_this != NULL) ? _this->handle_event(e) : STATUS_OK;
+        }
+
         status_t ListBox::slot_on_change(Widget *sender, void *ptr, void *data)
         {
             ListBox *_this = widget_ptrcast<ListBox>(ptr);
@@ -951,6 +969,7 @@ namespace lsp
             if (changed)
             {
                 nXFlags  |= F_CHANGED;
+                query_draw();
                 sSlots.execute(SLOT_CHANGE, this, NULL);
             }
         }
@@ -1148,9 +1167,15 @@ namespace lsp
                 return false;
 
             if (curr->r.nTop < sList.nTop)
+            {
                 sVBar.value()->sub(sList.nTop - curr->r.nTop);
+                realize_children();
+            }
             else if ((curr->r.nTop + curr->r.nHeight) > (sList.nTop + sList.nHeight))
+            {
                 sVBar.value()->add(curr->r.nTop + curr->r.nHeight - sList.nTop - sList.nHeight);
+                realize_children();
+            }
             else
                 return false;
 

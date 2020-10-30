@@ -329,10 +329,10 @@ namespace lsp
             // Add self padding
             sPadding.add(r, scaling);
 
-            lsp_trace("this=%p, w={%d, %d, %d}, h={%d, %d, %d}", this,
-                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nPreWidth),
-                    int(r->nMinHeight), int(r->nMaxHeight), int(r->nPreHeight)
-                );
+//            lsp_trace("this=%p, w={%d, %d, %d}, h={%d, %d, %d}", this,
+//                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nPreWidth),
+//                    int(r->nMinHeight), int(r->nMaxHeight), int(r->nPreHeight)
+//                );
         }
 
         bool PopupWindow::arrange_preferred(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force)

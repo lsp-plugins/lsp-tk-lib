@@ -313,10 +313,13 @@ namespace lsp
             if (id >= 0) id = sWAction.slots()->bind(SLOT_SUBMIT, slot_on_btn_action, self());
             if (id >= 0) id = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_btn_cancel, self());
             if (id >= 0) id = sWSearch.slots()->bind(SLOT_CHANGE, slot_on_search, self());
+            if (id >= 0) id = sWSearch.slots()->bind(SLOT_KEY_DOWN, slot_on_search_key_down, self());
             if (id >= 0) id = sWFilter.slots()->bind(SLOT_SUBMIT, slot_on_search, self());
+            if (id >= 0) id = sWFilter.slots()->bind(SLOT_KEY_DOWN, slot_on_filter_key_down, self());
             if (id >= 0) id = sWFiles.slots()->bind(SLOT_MOUSE_DBL_CLICK, slot_on_list_dbl_click, self());
             if (id >= 0) id = sWFiles.slots()->bind(SLOT_CHANGE, slot_on_list_change, self());
             if (id >= 0) id = sWFiles.slots()->bind(SLOT_REALIZED, slot_on_list_realized, self());
+            if (id >= 0) id = sWFiles.slots()->bind(SLOT_KEY_DOWN, slot_on_list_key_down, self());
             if (id >= 0) id = wGo.slots()->bind(SLOT_SUBMIT, slot_on_go, self());
             if (id >= 0) id = wUp.slots()->bind(SLOT_SUBMIT, slot_on_up, self());
             if (id >= 0) id = sBMAdd.slots()->bind(SLOT_SUBMIT, slot_on_bm_add, self());
@@ -605,6 +608,73 @@ namespace lsp
                 return n;
             float delta = (4.0f * list->vscroll()->range()) / n;
             list->vstep()->set(delta);
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_list_key_down(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            const ws::event_t *ev = static_cast<ws::event_t *>(data);
+            ws::code_t key = KeyboardHandler::translate_keypad(ev->nCode);
+
+            switch (key)
+            {
+                case ws::WSK_KEYPAD_ENTER:
+                case ws::WSK_RETURN:
+                    return (dlg != NULL) ? dlg->on_dlg_list_dbl_click(data) : STATUS_BAD_STATE;
+                case ws::WSK_BACKSPACE:
+                    dlg->on_dlg_up(data);
+                    break;
+                case ws::WSK_ESCAPE:
+                    dlg->on_dlg_cancel(data);
+                    break;
+                default:
+                    break;
+            }
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_filter_key_down(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            const ws::event_t *ev = static_cast<ws::event_t *>(data);
+            ws::code_t key = KeyboardHandler::translate_keypad(ev->nCode);
+
+            switch (key)
+            {
+                case ws::WSK_BACKSPACE:
+                    dlg->on_dlg_up(data);
+                    break;
+                case ws::WSK_ESCAPE:
+                    dlg->on_dlg_cancel(data);
+                    break;
+                default:
+                    break;
+            }
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_search_key_down(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            const ws::event_t *ev = static_cast<ws::event_t *>(data);
+            ws::code_t key = KeyboardHandler::translate_keypad(ev->nCode);
+
+            switch (key)
+            {
+                case ws::WSK_ESCAPE:
+                {
+                    LSPString pattern;
+                    LSP_STATUS_ASSERT(dlg->sWSearch.text()->format(&pattern));
+                    if (pattern.is_empty())
+                        return dlg->on_dlg_cancel(data);
+
+                    dlg->sWSearch.text()->set_raw("");
+                    return dlg->on_dlg_search(data);
+                }
+                default:
+                    break;
+            }
             return STATUS_OK;
         }
 
@@ -1028,8 +1098,17 @@ namespace lsp
         {
             lsp_trace("Path key code released=%x, modifiers=%x", int(e->nCode), int(e->nState));
             ws::code_t key = KeyboardHandler::translate_keypad(e->nCode);
-            if (key == ws::WSK_RETURN)
-                return on_dlg_go(e);
+            switch (key)
+            {
+                case ws::WSK_RETURN:
+                    return on_dlg_go(e);
+
+                case ws::WSK_ESCAPE:
+                    return on_dlg_cancel(e);
+
+                default:
+                    break;
+            }
             return STATUS_OK;
         }
 
@@ -1728,12 +1807,12 @@ namespace lsp
                 LSP_STATUS_ASSERT(item->init());
                 item->text()->set_raw(psrc);
                 item->tag()->set(i);
-                LSP_STATUS_ASSERT(lst->add(item));
+                LSP_STATUS_ASSERT(lst->madd(item));
 
                 // Check if is equal
                 if ((!(ent->nFlags & (F_ISDIR | F_DOTDOT))) && (xfname.length() > 0))
                 {
-                    lsp_trace("  %s <-> %s", ent->sName.get_native(), xfname.get_native());
+//                    lsp_trace("  %s <-> %s", ent->sName.get_native(), xfname.get_native());
                     #ifdef PLATFORM_WINDOWS
                     if (ent->sName.equals_nocase(&xfname))
                         sWFiles.selected()->add(item);

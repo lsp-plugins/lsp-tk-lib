@@ -147,6 +147,8 @@ namespace lsp
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_scroll_key_down(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_scroll_key_up(Widget *sender, void *ptr, void *data);
 
                 static void             on_add_item(void *obj, Property *prop, void *w);
                 static void             on_remove_item(void *obj, Property *prop, void *w);

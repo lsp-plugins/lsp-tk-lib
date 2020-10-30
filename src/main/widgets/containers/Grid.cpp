@@ -321,10 +321,10 @@ namespace lsp
 
         void Grid::realize(const ws::rectangle_t *r)
         {
-            lsp_trace("this=%p, size={%d, %d, %d, %d}",
-                    this, int(r->nLeft), int(r->nTop), int(r->nWidth), int(r->nHeight)
-                );
-
+//            lsp_trace("this=%p, size={%d, %d, %d, %d}",
+//                    this, int(r->nLeft), int(r->nTop), int(r->nWidth), int(r->nHeight)
+//                );
+//
             alloc_t a;
 
             status_t res = allocate_cells(&a);
@@ -368,9 +368,9 @@ namespace lsp
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
 
-            lsp_trace("w={%d, %d}, h={%d, %d}",
-                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight)
-            );
+//            lsp_trace("w={%d, %d}, h={%d, %d}",
+//                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight)
+//            );
         }
 
         bool Grid::attach_cell(alloc_t *a, widget_t *w, size_t left, size_t top)
@@ -403,9 +403,9 @@ namespace lsp
             cell->nCols     = xmax - left;
             cell->nTag      = 0;
 
-            lsp_trace("attach_cell widget=%p, structure={%d, %d, %d, %d}",
-                    cell->pWidget, int(cell->nLeft), int(cell->nTop), int(cell->nRows), int(cell->nCols)
-            );
+//            lsp_trace("attach_cell widget=%p, structure={%d, %d, %d, %d}",
+//                    cell->pWidget, int(cell->nLeft), int(cell->nTop), int(cell->nRows), int(cell->nCols)
+//            );
 
             // Fill table with the cell
             for (size_t y=top; y < ymax; ++y)
@@ -985,11 +985,11 @@ namespace lsp
                 w->pWidget->padding()->enter(&w->s, w->pWidget->scaling()->get());
 
                 // Realize the widget
-                lsp_trace("realize widget %p, id=%d, allocation = {%d, %d, %d, %d}, size = {%d, %d, %d, %d}",
-                        w->pWidget, int(i),
-                        int(w->a.nLeft), int(w->a.nTop), int(w->a.nWidth), int(w->a.nHeight),
-                        int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
-                );
+//                lsp_trace("realize widget %p, id=%d, allocation = {%d, %d, %d, %d}, size = {%d, %d, %d, %d}",
+//                        w->pWidget, int(i),
+//                        int(w->a.nLeft), int(w->a.nTop), int(w->a.nWidth), int(w->a.nHeight),
+//                        int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
+//                );
                 w->pWidget->realize_widget(&w->s);
             }
         }

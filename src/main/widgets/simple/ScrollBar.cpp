@@ -394,7 +394,6 @@ namespace lsp
 
         status_t ScrollBar::on_change()
         {
-            lsp_trace("value = %f", sValue.get());
             return STATUS_OK;
         }
 

@@ -538,8 +538,8 @@ namespace lsp
                 w->pWidget->padding()->enter(&w->s, w->pWidget->scaling()->get());
 
                 // Realize the widget
-                lsp_trace("realize child=%p, id=%d, parameters = {%d, %d, %d, %d}",
-                        w->pWidget, int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
+//                lsp_trace("realize child=%p, id=%d, parameters = {%d, %d, %d, %d}",
+//                        w->pWidget, int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
                 w->pWidget->realize_widget(&w->s);
             }
         }
