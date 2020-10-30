@@ -113,6 +113,7 @@
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>
+#include <lsp-plug.in/tk/style/StyleFactory.h>
 #include <lsp-plug.in/tk/style/Schema.h>
 
 // System objects
