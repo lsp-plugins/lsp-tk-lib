@@ -181,6 +181,42 @@ namespace lsp
             return fStep;
         }
 
+        status_t StepFloat::init()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+
+                pStyle->create_float(vAtoms[P_STEP], step());
+                pStyle->create_float(vAtoms[P_ACCEL], accel());
+                pStyle->create_float(vAtoms[P_DECEL], decel());
+
+                // Compound properties
+                s.fmt_ascii("%.10f %.10f %.10f", step(), accel(), decel());
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t StepFloat::override()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+
+                pStyle->override_float(vAtoms[P_STEP], step());
+                pStyle->override_float(vAtoms[P_ACCEL], accel());
+                pStyle->override_float(vAtoms[P_DECEL], decel());
+
+                // Compound properties
+                s.fmt_ascii("%.10f %.10f %.10f", step(), accel(), decel());
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t StepFloat::init(Style *style, float step, float accel, float decel)
@@ -202,6 +238,22 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t StepFloat::init(const char *name, Style *style, float step, float accel, float decel)
+            {
+                prop::StepFloat v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(step, accel, decel);
+                return v.init();
+            }
+
+            status_t StepFloat::override(const char *name, Style *style, float step, float accel, float decel)
+            {
+                prop::StepFloat v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(step, accel, decel);
+                return v.override();
             }
         }
     } /* namespace tk */

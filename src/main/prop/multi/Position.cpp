@@ -202,6 +202,38 @@ namespace lsp
             return true;
         }
 
+        status_t Position::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_int(vAtoms[P_LEFT], left());
+                pStyle->create_int(vAtoms[P_TOP], top());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld", long(left()), long(top()));
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t Position::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_int(vAtoms[P_LEFT], left());
+                pStyle->override_int(vAtoms[P_TOP], top());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld", long(left()), long(top()));
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t Position::init(Style *style, ssize_t left, ssize_t top)
@@ -228,6 +260,22 @@ namespace lsp
                 nLeft   = left;
                 nTop    = top;
                 sync(false);
+            }
+
+            status_t Position::init(const char *name, Style *style, ssize_t left, ssize_t top)
+            {
+                prop::Position v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(left, top);
+                return v.init();
+            }
+
+            status_t Position::override(const char *name, Style *style, ssize_t left, ssize_t top)
+            {
+                prop::Position v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(left, top);
+                return v.override();
             }
         }
     } /* namespace tk */

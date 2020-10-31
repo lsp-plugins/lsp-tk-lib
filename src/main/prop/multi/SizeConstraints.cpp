@@ -458,6 +458,42 @@ namespace lsp
                 dst->nHeight    = sc->nMinWidth;
         }
 
+        status_t SizeConstraints::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_int(vAtoms[P_MIN_WIDTH], min_width());
+                pStyle->create_int(vAtoms[P_MIN_HEIGHT], min_height());
+                pStyle->create_int(vAtoms[P_MAX_WIDTH], max_width());
+                pStyle->create_int(vAtoms[P_MAX_HEIGHT], max_height());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld %ld %ld", long(min_width()), long(min_height()), long(max_width()), long(max_height()));
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t SizeConstraints::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_int(vAtoms[P_MIN_WIDTH], min_width());
+                pStyle->override_int(vAtoms[P_MIN_HEIGHT], min_height());
+                pStyle->override_int(vAtoms[P_MAX_WIDTH], max_width());
+                pStyle->override_int(vAtoms[P_MAX_HEIGHT], max_height());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld %ld %ld", long(min_width()), long(min_height()), long(max_width()), long(max_height()));
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t SizeConstraints::init(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
@@ -544,6 +580,52 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t SizeConstraints::init(const char *name, Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
+            {
+                prop::SizeConstraints v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(min_width, min_height, max_width, max_height);
+                return v.init();
+            }
+
+            status_t SizeConstraints::init(const char *name, Style *style, const ws::size_limit_t *p)
+            {
+                prop::SizeConstraints v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(p);
+                return v.init();
+            }
+
+            status_t SizeConstraints::init(const char *name, Style *style)
+            {
+                prop::SizeConstraints v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init();
+            }
+
+            status_t SizeConstraints::override(const char *name, Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
+            {
+                prop::SizeConstraints v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(min_width, min_height, max_width, max_height);
+                return v.override();
+            }
+
+            status_t SizeConstraints::override(const char *name, Style *style, const ws::size_limit_t *p)
+            {
+                prop::SizeConstraints v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(p);
+                return v.override();
+            }
+
+            status_t SizeConstraints::override(const char *name, Style *style)
+            {
+                prop::SizeConstraints v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override();
             }
         }
     } /* namespace tk */

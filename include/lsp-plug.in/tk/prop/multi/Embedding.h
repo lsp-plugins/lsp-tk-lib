@@ -90,6 +90,8 @@ namespace lsp
                 bool            set_flag(size_t flag, bool set);
                 void            sync();
                 void            commit(atom_t property);
+                status_t        init();
+                status_t        override();
 
             protected:
                 Embedding(prop::Listener *listener = NULL);
@@ -122,7 +124,11 @@ namespace lsp
                     Embedding & operator = (const Embedding &);
 
                 public:
-                    explicit Embedding(prop::Listener *listener = NULL): tk::Embedding(listener) {};
+                    explicit Embedding(prop::Listener *listener = NULL): tk::Embedding(listener) {}
+
+                protected:
+                    using               tk::Embedding::init;
+                    using               tk::Embedding::override;
 
                 public:
                     /**
@@ -148,6 +154,14 @@ namespace lsp
                     status_t            override(Style *style, bool left, bool right, bool top, bool bottom);
                     inline status_t     override(Style *style, bool hor, bool vert)     { return override(style, hor, hor, vert, vert);     }
                     inline status_t     override(Style *style, bool on)                 { return override(style, on, on, on, on);           }
+
+                    static status_t            init(const char *name, Style *style, bool left, bool right, bool top, bool bottom);
+                    static inline status_t     init(const char *name, Style *style, bool hor, bool vert)         { return init(name, style, hor, hor, vert, vert);         }
+                    static inline status_t     init(const char *name, Style *style, bool on)                     { return init(name, style, on, on, on, on);               }
+
+                    static status_t            override(const char *name, Style *style, bool left, bool right, bool top, bool bottom);
+                    static inline status_t     override(const char *name, Style *style, bool hor, bool vert)     { return override(name, style, hor, hor, vert, vert);     }
+                    static inline status_t     override(const char *name, Style *style, bool on)                 { return override(name, style, on, on, on, on);           }
             };
         }
 

@@ -206,6 +206,38 @@ namespace lsp
             sync();
         }
 
+        status_t TextSelection::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_int(vAtoms[P_FIRST], first());
+                pStyle->create_int(vAtoms[P_LAST], last());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld", long(first()), long(last()));
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t TextSelection::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_int(vAtoms[P_FIRST], first());
+                pStyle->override_int(vAtoms[P_LAST], last());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld", long(first()), long(last()));
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             void TextSelection::set_limit(ssize_t limit)
@@ -231,6 +263,22 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t TextSelection::init(const char *name, Style *style, float first, float last)
+            {
+                prop::TextSelection v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(first, last);
+                return v.init();
+            }
+
+            status_t TextSelection::override(const char *name, Style *style, float first, float last)
+            {
+                prop::TextSelection v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(first, last);
+                return v.override();
             }
         }
 

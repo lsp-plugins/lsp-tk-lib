@@ -69,6 +69,8 @@ namespace lsp
             protected:
                 void                sync();
                 void                commit(atom_t property);
+                status_t            init();
+                status_t            override();
 
             protected:
                 explicit SizeRange(prop::Listener *listener = NULL);
@@ -108,6 +110,10 @@ namespace lsp
                 public:
                     explicit SizeRange(prop::Listener *listener = NULL): tk::SizeRange(listener) {};
 
+                protected:
+                    using               tk::SizeRange::init;
+                    using               tk::SizeRange::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -128,6 +134,12 @@ namespace lsp
                      */
                     status_t            init(Style *style, ssize_t min, ssize_t max);
                     inline status_t     init(Style *style, ssize_t value)               { return init(style, value, value); }
+
+                    static status_t            init(const char *name, Style *style, ssize_t min, ssize_t max);
+                    static inline status_t     init(const char *name, Style *style, ssize_t value)  { return init(name, style, value, value); }
+
+                    static status_t            override(const char *name, Style *style, ssize_t min, ssize_t max);
+                    static inline status_t     override(const char *name, Style *style, ssize_t value)  { return override(name, style, value, value); }
             };
         }
 

@@ -492,6 +492,42 @@ namespace lsp
             return format_value(s, nKey, nMod);
         }
 
+        status_t Shortcut::init()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+
+                // Simple components
+                if (format_value(&s, key(), modifiers()) == STATUS_OK)
+                    pStyle->create_string(vAtoms[P_VALUE], &s);
+                if (format_modifiers(&s, modifiers()) == STATUS_OK)
+                    pStyle->create_string(vAtoms[P_MOD], &s);
+                if (format_key(&s, key()) == STATUS_OK)
+                    pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t Shortcut::override()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+
+                // Simple components
+                if (format_value(&s, key(), modifiers()) == STATUS_OK)
+                    pStyle->override_string(vAtoms[P_VALUE], &s);
+                if (format_modifiers(&s, modifiers()) == STATUS_OK)
+                    pStyle->override_string(vAtoms[P_MOD], &s);
+                if (format_key(&s, key()) == STATUS_OK)
+                    pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t Shortcut::init(Style *style)
@@ -510,14 +546,44 @@ namespace lsp
 
                     // Simple components
                     if (format_value(&s, key, mod) == STATUS_OK)
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
+                        pStyle->create_string(vAtoms[P_VALUE], &s);
                     if (format_modifiers(&s, mod) == STATUS_OK)
-                        pStyle->set_string(vAtoms[P_MOD], &s);
+                        pStyle->create_string(vAtoms[P_MOD], &s);
                     if (format_key(&s, key) == STATUS_OK)
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
+                        pStyle->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t Shortcut::init(const char *name, Style *style, ws::code_t key, size_t mod)
+            {
+                prop::Shortcut v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(key, mod);
+                return v.init();
+            }
+
+            status_t Shortcut::init(const char *name, Style *style)
+            {
+                prop::Shortcut v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init();
+            }
+
+            status_t Shortcut::override(const char *name, Style *style, ws::code_t key, size_t mod)
+            {
+                prop::Shortcut v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(key, mod);
+                return v.override();
+            }
+
+            status_t Shortcut::override(const char *name, Style *style)
+            {
+                prop::Shortcut v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override();
             }
         }
     } /* namespace tk */

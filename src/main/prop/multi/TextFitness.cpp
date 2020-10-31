@@ -162,6 +162,38 @@ namespace lsp
             r->nHeight  = lsp_max(0.0f, hFit * r->nHeight);
         }
 
+        status_t TextFitness::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_float(vAtoms[P_HFIT], hfit());
+                pStyle->create_float(vAtoms[P_VFIT], vfit());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%.4f %.4f", hfit(), vfit());
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t TextFitness::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_float(vAtoms[P_HFIT], hfit());
+                pStyle->override_float(vAtoms[P_VFIT], vfit());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%.4f %.4f", hfit(), vfit());
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t TextFitness::init(Style *style, float halign, float valign)
@@ -182,6 +214,23 @@ namespace lsp
                 style->end();
                 return STATUS_OK;
             }
+
+            status_t TextFitness::init(const char *name, Style *style, float hfit, float vfit)
+            {
+                prop::TextFitness v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(hfit, vfit);
+                return v.init();
+            }
+
+            status_t TextFitness::override(const char *name, Style *style, float hfit, float vfit)
+            {
+                prop::TextFitness v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(hfit, vfit);
+                return v.override();
+            }
+
         }
 
     } /* namespace tk */

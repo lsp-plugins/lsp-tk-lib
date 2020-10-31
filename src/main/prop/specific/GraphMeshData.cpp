@@ -206,6 +206,26 @@ namespace lsp
             return true;
         }
 
+        status_t GraphMeshData::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_int(vAtoms[P_SIZE], size());
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t GraphMeshData::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_int(vAtoms[P_SIZE], size());
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t GraphMeshData::init(Style *style, size_t size)
@@ -232,6 +252,22 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t GraphMeshData::init(const char *name, Style *style, size_t size)
+            {
+                prop::GraphMeshData v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_size(size);
+                return v.init();
+            }
+
+            status_t GraphMeshData::override(const char *name, Style *style, size_t size)
+            {
+                prop::GraphMeshData v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_size(size);
+                return v.override();
             }
         }
     }

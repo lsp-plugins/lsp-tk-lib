@@ -71,6 +71,8 @@ namespace lsp
                 void                commit(atom_t property);
                 float               climited(float v) const;
                 float               change(float k, float step);
+                status_t            init();
+                status_t            override();
 
             protected:
                 explicit Rectangle(prop::Listener *listener = NULL);
@@ -107,6 +109,10 @@ namespace lsp
                 public:
                     explicit Rectangle(prop::Listener *listener = NULL): tk::Rectangle(listener) {};
 
+                protected:
+                    using               tk::Rectangle::init;
+                    using               tk::Rectangle::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -127,6 +133,14 @@ namespace lsp
                     status_t            override(Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
                     status_t            override(Style *style, const ws::rectangle_t *rect);
                     status_t            override(Style *style);
+
+                    static status_t     init(const char *name, Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
+                    static status_t     init(const char *name, Style *style, const ws::rectangle_t *rect);
+                    static status_t     init(const char *name, Style *style);
+
+                    static status_t     override(const char *name, Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
+                    static status_t     override(const char *name, Style *style, const ws::rectangle_t *rect);
+                    static status_t     override(const char *name, Style *style);
             };
         }
 

@@ -80,6 +80,8 @@ namespace lsp
             protected:
                 void                sync();
                 void                commit(atom_t property);
+                status_t            init();
+                status_t            override();
 
                 static void         calc_cart  (float *dx, float *dy, float rho, float phi);
                 static void         calc_polar (float *rho, float *phi, float dx, float dy);
@@ -135,6 +137,10 @@ namespace lsp
                 protected:
                     status_t            init(Style *style, float dx, float dy, float rho, float phi);
 
+                protected:
+                    using               tk::Vector2D::init;
+                    using               tk::Vector2D::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -157,6 +163,14 @@ namespace lsp
                     status_t            init_rpolar(Style *style, float rho, float phi);
                     inline status_t     init_dpolar(Style *style, float rho, float phi)  { return init_rpolar(style, rho, phi * (M_PI / 180.0f));   }
                     inline status_t     init_polar(Style *style, float rho, float phi)   { return init_rpolar(style, rho, phi);                     }
+
+                    static status_t     init_cart(const char *name, Style *style, float dx, float dy);
+                    static status_t     init_rpolar(const char *name, Style *style, float rho, float phi);
+                    static status_t     init_dpolar(const char *name, Style *style, float rho, float phi);
+
+                    static status_t     override_cart(const char *name, Style *style, float dx, float dy);
+                    static status_t     override_rpolar(const char *name, Style *style, float rho, float phi);
+                    static status_t     override_dpolar(const char *name, Style *style, float rho, float phi);
             };
         }
 

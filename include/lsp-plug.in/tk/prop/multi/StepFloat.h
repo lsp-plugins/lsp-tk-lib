@@ -79,6 +79,8 @@ namespace lsp
                 void                commit(atom_t property);
                 float               climited(float v) const;
                 float               change(float k, float step);
+                status_t            init();
+                status_t            override();
 
             protected:
                 explicit StepFloat(prop::Listener *listener = NULL);
@@ -118,6 +120,10 @@ namespace lsp
                 public:
                     explicit StepFloat(prop::Listener *listener = NULL): tk::StepFloat(listener) {};
 
+                protected:
+                    using               tk::StepFloat::init;
+                    using               tk::StepFloat::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -137,6 +143,9 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, float step, float accel = 10.0f, float decel = 0.1f);
+
+                    static status_t     init(const char *name, Style *style, float step, float accel = 10.0f, float decel = 0.1f);
+                    static status_t     override(const char *name, Style *style, float step, float accel = 10.0f, float decel = 0.1f);
             };
         }
 

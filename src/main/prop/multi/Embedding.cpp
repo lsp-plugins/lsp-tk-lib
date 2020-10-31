@@ -187,6 +187,52 @@ namespace lsp
             return old;
         }
 
+        status_t Embedding::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_bool(vAtoms[P_LEFT],   left());
+                pStyle->create_bool(vAtoms[P_RIGHT],  right());
+                pStyle->create_bool(vAtoms[P_TOP],    top());
+                pStyle->create_bool(vAtoms[P_BOTTOM], bottom());
+
+                LSPString s;
+                s.fmt_ascii("%s %s %s %s",
+                            (left()) ? "true" : "false",
+                            (right()) ? "true" : "false",
+                            (top()) ? "true" : "false",
+                            (bottom()) ? "true" : "false"
+                    );
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
+        status_t Embedding::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_bool(vAtoms[P_LEFT],   left());
+                pStyle->override_bool(vAtoms[P_RIGHT],  right());
+                pStyle->override_bool(vAtoms[P_TOP],    top());
+                pStyle->override_bool(vAtoms[P_BOTTOM], bottom());
+
+                LSPString s;
+                s.fmt_ascii("%s %s %s %s",
+                            (left()) ? "true" : "false",
+                            (right()) ? "true" : "false",
+                            (top()) ? "true" : "false",
+                            (bottom()) ? "true" : "false"
+                    );
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t Embedding::init(Style *style, bool left, bool right, bool top, bool bottom)
@@ -237,6 +283,22 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t Embedding::init(const char *name, Style *style, bool left, bool right, bool top, bool bottom)
+            {
+                prop::Embedding v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(left, right, top, bottom);
+                return v.init();
+            }
+
+            status_t Embedding::override(const char *name, Style *style, bool left, bool right, bool top, bool bottom)
+            {
+                prop::Embedding v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(left, right, top, bottom);
+                return v.override();
             }
         }
 

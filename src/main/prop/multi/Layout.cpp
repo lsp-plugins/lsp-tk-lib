@@ -272,6 +272,42 @@ namespace lsp
 //            lsp_trace("after: x=%d, y=%d, w=%d, h=%d", int(dst->nLeft), int(dst->nTop), int(dst->nWidth), int(dst->nHeight));
         }
 
+        status_t Layout::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_float(vAtoms[P_HALIGN], halign());
+                pStyle->create_float(vAtoms[P_VALIGN], valign());
+                pStyle->create_float(vAtoms[P_HSCALE], hscale());
+                pStyle->create_float(vAtoms[P_VSCALE], vscale());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%.4f %.4f %.4f %.4f", halign(), valign(), hscale(), vscale());
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t Layout::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_float(vAtoms[P_HALIGN], halign());
+                pStyle->override_float(vAtoms[P_VALIGN], valign());
+                pStyle->override_float(vAtoms[P_HSCALE], hscale());
+                pStyle->override_float(vAtoms[P_VSCALE], vscale());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%.4f %.4f %.4f %.4f", halign(), valign(), hscale(), vscale());
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t Layout::init(Style *style, float halign, float valign, float hscale, float vscale)
@@ -314,6 +350,22 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t Layout::init(const char *name, Style *style, float halign, float valign, float hscale, float vscale)
+            {
+                prop::Layout v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(halign, valign, hscale, vscale);
+                return v.init();
+            }
+
+            status_t Layout::override(const char *name, Style *style, float halign, float valign, float hscale, float vscale)
+            {
+                prop::Layout v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(halign, valign, hscale, vscale);
+                return v.override();
             }
         }
 

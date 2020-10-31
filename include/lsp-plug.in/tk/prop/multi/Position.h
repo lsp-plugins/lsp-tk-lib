@@ -74,6 +74,8 @@ namespace lsp
                 void                sync(bool notify);
                 void                commit(atom_t property);
                 void                parse(const LSPString *s);
+                status_t            init();
+                status_t            override();
 
             protected:
                 explicit Position(prop::Listener *listener = NULL);
@@ -115,6 +117,10 @@ namespace lsp
                 public:
                     explicit Position(prop::Listener *listener = NULL): tk::Position(listener) {};
 
+                protected:
+                    using               tk::Position::init;
+                    using               tk::Position::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -136,6 +142,9 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, ssize_t left, ssize_t top);
+
+                    static status_t     init(const char *name, Style *style, ssize_t left, ssize_t top);
+                    static status_t     override(const char *name, Style *style, ssize_t left, ssize_t top);
 
                     /**
                      * Commit new position

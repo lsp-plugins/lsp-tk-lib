@@ -71,6 +71,8 @@ namespace lsp
             protected:
                 void                sync();
                 void                commit(atom_t property);
+                status_t            init();
+                status_t            override();
 
             protected:
                 explicit SizeConstraints(prop::Listener *listener = NULL);
@@ -155,6 +157,10 @@ namespace lsp
                 public:
                     explicit SizeConstraints(prop::Listener *listener = NULL): tk::SizeConstraints(listener) {};
 
+                protected:
+                    using               tk::SizeConstraints::init;
+                    using               tk::SizeConstraints::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -180,6 +186,14 @@ namespace lsp
                     status_t            override(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
                     status_t            override(Style *style, const ws::size_limit_t *p);
                     status_t            override(Style *style);
+
+                    static status_t     init(const char *name, Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
+                    static status_t     init(const char *name, Style *style, const ws::size_limit_t *p);
+                    static status_t     init(const char *name, Style *style);
+
+                    static status_t     override(const char *name, Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
+                    static status_t     override(const char *name, Style *style, const ws::size_limit_t *p);
+                    static status_t     override(const char *name, Style *style);
             };
         }
 

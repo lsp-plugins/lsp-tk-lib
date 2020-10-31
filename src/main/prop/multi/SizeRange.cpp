@@ -180,6 +180,38 @@ namespace lsp
             r->nMinHeight       = r->nMinWidth;
         }
 
+        status_t SizeRange::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_int(vAtoms[P_MIN], min());
+                pStyle->create_int(vAtoms[P_MAX], max());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld ", long(min()), long(max()));
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t SizeRange::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_int(vAtoms[P_MIN], min());
+                pStyle->override_int(vAtoms[P_MAX], max());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld ", long(min()), long(max()));
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t SizeRange::init(Style *style, ssize_t min, ssize_t max)
@@ -199,6 +231,22 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t SizeRange::init(const char *name, Style *style, ssize_t min, ssize_t max)
+            {
+                prop::SizeRange v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(min, max);
+                return v.init();
+            }
+
+            status_t SizeRange::override(const char *name, Style *style, ssize_t min, ssize_t max)
+            {
+                prop::SizeRange v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(min, max);
+                return v.override();
             }
         }
     } /* namespace tk */

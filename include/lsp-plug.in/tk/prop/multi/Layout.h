@@ -83,6 +83,8 @@ namespace lsp
                 void                sync();
                 void                commit(atom_t property);
                 void                parse(const LSPString *s);
+                status_t            init();
+                status_t            override();
 
             protected:
                 explicit Layout(prop::Listener *listener = NULL);
@@ -128,6 +130,10 @@ namespace lsp
                 public:
                     explicit Layout(prop::Listener *listener = NULL): tk::Layout(listener) {};
 
+                protected:
+                    using               tk::Layout::init;
+                    using               tk::Layout::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -146,8 +152,10 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, float halign, float valign, float hscale, float vscale);
-
                     status_t            override(Style *style, float halign, float valign, float hscale, float vscale);
+
+                    static status_t     init(const char *name, Style *style, float halign, float valign, float hscale, float vscale);
+                    static status_t     override(const char *name, Style *style, float halign, float valign, float hscale, float vscale);
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };

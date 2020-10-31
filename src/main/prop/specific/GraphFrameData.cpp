@@ -379,6 +379,44 @@ namespace lsp
             nChanges    = 0;
         }
 
+        status_t GraphFrameData::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_int(vAtoms[P_ROWS], rows());
+                pStyle->create_int(vAtoms[P_COLS], columns());
+                pStyle->create_float(vAtoms[P_MIN], min());
+                pStyle->create_float(vAtoms[P_MAX], max());
+                pStyle->create_float(vAtoms[P_DFL], get_default());
+
+                LSPString s;
+                s.fmt_ascii("%d %d", int(rows()), int(columns()));
+                pStyle->create_string(vAtoms[P_SIZE], &s);
+            }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
+        status_t GraphFrameData::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_int(vAtoms[P_ROWS], rows());
+                pStyle->override_int(vAtoms[P_COLS], columns());
+                pStyle->override_float(vAtoms[P_MIN], min());
+                pStyle->override_float(vAtoms[P_MAX], max());
+                pStyle->override_float(vAtoms[P_DFL], get_default());
+
+                LSPString s;
+                s.fmt_ascii("%d %d", int(rows()), int(columns()));
+                pStyle->override_string(vAtoms[P_SIZE], &s);
+            }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t GraphFrameData::init(Style *style, size_t rows, size_t cols, float min, float max, float dfl)
@@ -425,6 +463,24 @@ namespace lsp
                 style->end();
 
                 return STATUS_OK;
+            }
+
+            status_t GraphFrameData::init(const char *name, Style *style, size_t rows, size_t cols, float min, float max, float dfl)
+            {
+                prop::GraphFrameData v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_size(rows, cols);
+                v.set_range(min, max, dfl);
+                return v.init();
+            }
+
+            status_t GraphFrameData::override(const char *name, Style *style, size_t rows, size_t cols, float min, float max, float dfl)
+            {
+                prop::GraphFrameData v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_size(rows, cols);
+                v.set_range(min, max, dfl);
+                return v.override();
             }
         }
     }

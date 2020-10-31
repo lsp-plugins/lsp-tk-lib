@@ -251,6 +251,38 @@ namespace lsp
             return (r->nWidth <= 0) || (r->nHeight <= 0);
         }
 
+        status_t Size::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_int(vAtoms[P_WIDTH], width());
+                pStyle->create_int(vAtoms[P_HEIGHT], height());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld", long(width()), long(height()));
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t Size::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_int(vAtoms[P_WIDTH], width());
+                pStyle->override_int(vAtoms[P_HEIGHT], height());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld", long(width()), long(height()));
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t Size::init(Style *style, size_t width, size_t height)
@@ -290,6 +322,22 @@ namespace lsp
             void Size::commit(const ws::rectangle_t *rect, float scale)
             {
                 commit(rect->nWidth, rect->nHeight, scale);
+            }
+
+            status_t Size::init(const char *name, Style *style, size_t width, size_t height)
+            {
+                prop::Size v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(width, height);
+                return v.init();
+            }
+
+            status_t Size::override(const char *name, Style *style, size_t width, size_t height)
+            {
+                prop::Size v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(width, height);
+                return v.override();
             }
         }
     } /* namespace tk */

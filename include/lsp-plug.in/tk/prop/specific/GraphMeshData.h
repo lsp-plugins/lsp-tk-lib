@@ -71,6 +71,8 @@ namespace lsp
                 void            sync();
                 void            commit(atom_t property);
                 bool            resize_buffer(size_t size);
+                status_t        init();
+                status_t        override();
 
             public:
                 explicit GraphMeshData(prop::Listener *listener);
@@ -99,7 +101,11 @@ namespace lsp
                     GraphMeshData &operator = (const GraphMeshData &);
 
                 public:
-                    explicit inline GraphMeshData(prop::Listener *listener): tk::GraphMeshData(listener) {}
+                    explicit inline GraphMeshData(prop::Listener *listener = NULL): tk::GraphMeshData(listener) {}
+
+                protected:
+                    using               tk::GraphMeshData::init;
+                    using               tk::GraphMeshData::override;
 
                 public:
                     inline status_t     bind(atom_t property, Style *style)             { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
@@ -107,8 +113,10 @@ namespace lsp
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
 
                     status_t            init(Style *style, size_t size);
-
                     status_t            override(Style *style, size_t size);
+
+                    static status_t     init(const char *name, Style *style, size_t size);
+                    static status_t     override(const char *name, Style *style, size_t size);
             };
         };
     }

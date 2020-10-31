@@ -227,6 +227,44 @@ namespace lsp
             sync();
         }
 
+        status_t Rectangle::init()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+
+                pStyle->create_int(vAtoms[P_LEFT], left());
+                pStyle->create_int(vAtoms[P_TOP], top());
+                pStyle->create_int(vAtoms[P_WIDTH], width());
+                pStyle->create_int(vAtoms[P_HEIGHT], height());
+
+                // Compound properties
+                s.fmt_ascii("%ld %ld %ld %ld", long(left()), long(top()), long(width()), long(height()));
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t Rectangle::override()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+
+                pStyle->override_int(vAtoms[P_LEFT], left());
+                pStyle->override_int(vAtoms[P_TOP], top());
+                pStyle->override_int(vAtoms[P_WIDTH], width());
+                pStyle->override_int(vAtoms[P_HEIGHT], height());
+
+                // Compound properties
+                s.fmt_ascii("%ld %ld %ld %ld", long(left()), long(top()), long(width()), long(height()));
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t Rectangle::init(Style *style)
@@ -267,7 +305,7 @@ namespace lsp
 
                     // Compound properties
                     s.fmt_ascii("%ld %ld %ld %ld", long(rect->nLeft), long(rect->nTop), long(rect->nWidth), long(rect->nHeight));
-                    pStyle->set_string(vAtoms[P_VALUE], &s);
+                    pStyle->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;
@@ -311,10 +349,56 @@ namespace lsp
 
                     // Compound properties
                     s.fmt_ascii("%ld %ld %ld %ld", long(rect->nLeft), long(rect->nTop), long(rect->nWidth), long(rect->nHeight));
-                    pStyle->set_string(vAtoms[P_VALUE], &s);
+                    pStyle->override_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t Rectangle::init(const char *name, Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height)
+            {
+                prop::Rectangle v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(left, top, width, height);
+                return v.init();
+            }
+
+            status_t Rectangle::init(const char *name, Style *style, const ws::rectangle_t *rect)
+            {
+                prop::Rectangle v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(rect);
+                return v.init();
+            }
+
+            status_t Rectangle::init(const char *name, Style *style)
+            {
+                prop::Rectangle v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init();
+            }
+
+            status_t Rectangle::override(const char *name, Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height)
+            {
+                prop::Rectangle v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(left, top, width, height);
+                return v.override();
+            }
+
+            status_t Rectangle::override(const char *name, Style *style, const ws::rectangle_t *rect)
+            {
+                prop::Rectangle v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(rect);
+                return v.override();
+            }
+
+            status_t Rectangle::override(const char *name, Style *style)
+            {
+                prop::Rectangle v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override();
             }
         }
     } /* namespace tk */

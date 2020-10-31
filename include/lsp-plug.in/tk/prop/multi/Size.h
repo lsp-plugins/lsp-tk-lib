@@ -69,6 +69,8 @@ namespace lsp
             protected:
                 void                sync(bool notify);
                 void                commit(atom_t property);
+                status_t            init();
+                status_t            override();
 
             protected:
                 explicit Size(prop::Listener *listener = NULL);
@@ -112,6 +114,10 @@ namespace lsp
                 public:
                     explicit Size(prop::Listener *listener = NULL): tk::Size(listener) {};
 
+                protected:
+                    using               tk::Size::init;
+                    using               tk::Size::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -133,6 +139,9 @@ namespace lsp
                      * @return status of operation
                      */
                     status_t            init(Style *style, size_t width, size_t height);
+
+                    static status_t     init(const char *name, Style *style, size_t width, size_t height);
+                    static status_t     override(const char *name, Style *style, size_t width, size_t height);
 
                     /**
                      * Commit new size

@@ -82,6 +82,8 @@ namespace lsp
                 static ws::code_t   parse_key(const LSPString *s);
                 static size_t       parse_modifiers(const LSPString *s);
                 static size_t       parse_modifier(const LSPString *s);
+                status_t            init();
+                status_t            override();
 
             protected:
                 explicit Shortcut(prop::Listener *listener = NULL);
@@ -89,6 +91,7 @@ namespace lsp
 
             public:
                 inline bool         modifier(key_modifier_t v) const    { return (nMod & v) == v;               }
+                inline size_t       modifiers() const                   { return nMod;                          }
 
                 inline bool         lctrl() const                       { return modifier(KM_LCTRL);            }
                 inline bool         rctrl() const                       { return modifier(KM_RCTRL);            }
@@ -153,6 +156,10 @@ namespace lsp
                     inline Shortcut(prop::Listener *listener = NULL): tk::Shortcut(listener) {}
                     inline ~Shortcut() {}
 
+                protected:
+                    using               tk::Shortcut::init;
+                    using               tk::Shortcut::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -163,6 +170,12 @@ namespace lsp
 
                     status_t            init(Style *style, ws::code_t key, size_t mod);
                     status_t            init(Style *style);
+
+                    static status_t     init(const char *name, Style *style, ws::code_t key, size_t mod);
+                    static status_t     init(const char *name, Style *style);
+
+                    static status_t     override(const char *name, Style *style, ws::code_t key, size_t mod);
+                    static status_t     override(const char *name, Style *style);
             };
         }
     }

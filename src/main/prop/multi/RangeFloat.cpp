@@ -288,6 +288,42 @@ namespace lsp
             return old;
         }
 
+        status_t RangeFloat::init()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+
+                pStyle->create_float(vAtoms[P_RVALUE], get());
+                pStyle->create_float(vAtoms[P_MIN], min());
+                pStyle->create_float(vAtoms[P_MAX], max());
+
+                // Compound properties
+                s.fmt_ascii("%.10f %.10f %.10f", get(), min(), max());
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t RangeFloat::override()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+
+                pStyle->override_float(vAtoms[P_RVALUE], get());
+                pStyle->override_float(vAtoms[P_MIN], min());
+                pStyle->override_float(vAtoms[P_MAX], max());
+
+                // Compound properties
+                s.fmt_ascii("%.10f %.10f %.10f", get(), min(), max());
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             bool RangeFloat::lock_range(bool lock)
@@ -385,10 +421,26 @@ namespace lsp
 
                     // Compound properties
                     s.fmt_ascii("%.10f %.10f %.10f", value, min, max);
-                    style->set_string(vAtoms[P_VALUE], &s);
+                    style->create_string(vAtoms[P_VALUE], &s);
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t RangeFloat::init(const char *name, Style *style, float value, float min, float max)
+            {
+                prop::RangeFloat v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_all(value, min, max);
+                return v.init();
+            }
+
+            status_t RangeFloat::override(const char *name, Style *style, float value, float min, float max)
+            {
+                prop::RangeFloat v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_all(value, min, max);
+                return v.override();
             }
         }
     } /* namespace tk */

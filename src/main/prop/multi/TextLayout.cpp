@@ -156,6 +156,38 @@ namespace lsp
             sync();
         }
 
+        status_t TextLayout::init()
+        {
+            pStyle->begin();
+            {
+                pStyle->create_float(vAtoms[P_HALIGN], halign());
+                pStyle->create_float(vAtoms[P_VALIGN], valign());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%.4f %.4f", halign(), valign());
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t TextLayout::override()
+        {
+            pStyle->begin();
+            {
+                pStyle->override_float(vAtoms[P_HALIGN], halign());
+                pStyle->override_float(vAtoms[P_VALIGN], valign());
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%.4f %.4f", halign(), valign());
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t TextLayout::init(Style *style, float halign, float valign)
@@ -175,6 +207,22 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t TextLayout::init(const char *name, Style *style, float halign, float valign)
+            {
+                prop::TextLayout v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(halign, valign);
+                return v.init();
+            }
+
+            status_t TextLayout::override(const char *name, Style *style, float halign, float valign)
+            {
+                prop::TextLayout v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(halign, valign);
+                return v.override();
             }
         }
 
