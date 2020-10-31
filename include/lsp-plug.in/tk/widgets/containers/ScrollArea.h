@@ -110,6 +110,7 @@ namespace lsp
                 virtual status_t        on_mouse_scroll(const ws::event_t *e);
         };
     
+        STYLE_INITIALIZER_DEF(ScrollArea, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

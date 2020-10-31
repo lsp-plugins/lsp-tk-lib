@@ -132,6 +132,7 @@ namespace lsp
 
         };
     
+        STYLE_INITIALIZER_DEF(Box, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

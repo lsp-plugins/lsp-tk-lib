@@ -26,6 +26,23 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(MenuItem, Widget);
+
+            prop::String::init("text", style);
+            prop::MenuItemType::init("type", style, MI_NORMAL);
+            prop::Boolean::init("checked", style, false);
+            prop::Color::init("bg.selected.color", style, "#000088");
+            prop::Color::init("text.color", style, "#000000");
+            prop::Color::init("text.selected.color", style, "#ffffff");
+            prop::Color::init("check.color", style, "#00ccff");
+            prop::Color::init("check.bg.color", style, "#ffffff");
+            prop::Color::init("check.border.color", style, "#000000");
+            prop::Shortcut::init("shortcut", style);
+            // Overrides
+            prop::Padding::override("padding", style, 16, 16, 2, 2);
+
+        STYLE_INITIALIZER_END(MenuItem, "MenuItem");
+
         const w_class_t MenuItem::metadata      = { "MenuItem", &Widget::metadata };
 
         MenuItem::MenuItem(Display *dpy):

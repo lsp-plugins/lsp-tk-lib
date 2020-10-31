@@ -25,6 +25,24 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(FileButton, Widget);
+
+            prop::RangeFloat::init("value", style, 0.0f, 0.0f, 1.0f);
+            prop::String::init("text", style);
+            prop::StringList::init("text.list", style);
+            prop::Font::init("font", style, 10.0f);
+            prop::TextLayout::init("text.layout", style, 0.0f, 0.0f);
+            prop::Padding::init("text.padding", style, 2, 2, 2, 2);
+            prop::SizeConstraints::init("size.constraints", style);
+            prop::Color::init("color", style, "#cccccc");
+            prop::Color::init("inv.color", style, "#00cc00");
+            prop::Color::init("line.color", style, "#000000");
+            prop::Color::init("line.inv.color", style, "#000000");
+            prop::Color::init("text.color", style, "#cccccc");
+            prop::Color::init("text.inv.color", style, "#00cc00");
+
+        STYLE_INITIALIZER_END(FileButton, "FileButton");
+
         #define NPOINTS 9
         static const float xx[NPOINTS] = { 0.5f, 7.0f, 8.0f, 8.0f, 7.5f, 0.5f, 0.0f, 0.0f, 0.5f };
         static const float yy[NPOINTS] = { 0.0f, 0.0f, 1.0f, 7.5f, 8.0f, 8.0f, 7.5f, 0.5f, 0.0f };

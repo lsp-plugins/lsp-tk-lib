@@ -76,6 +76,8 @@ namespace lsp
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
+
+        STYLE_INITIALIZER_DEF(GraphMesh, GraphItem);
     }
 }
 

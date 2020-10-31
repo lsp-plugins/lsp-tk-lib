@@ -231,6 +231,8 @@ namespace lsp
                  */
                 virtual status_t        set_icon(const void *bgra, size_t width, size_t height);
         };
+
+        STYLE_INITIALIZER_DEF(Window, WidgetContainer);
     
     } /* namespace tk */
 } /* namespace lsp */

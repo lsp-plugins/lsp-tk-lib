@@ -53,6 +53,9 @@ namespace lsp
         #define STYLE_INITIALIZER_DEF(widget, parent)   \
             class widget ## StyleInitializer: public parent ## StyleInitializer \
             { \
+                private: \
+                    widget ## StyleInitializer & operator = (const widget ## StyleInitializer &); \
+                \
                 public: \
                     explicit widget ## StyleInitializer(const char *style = NULL); \
                 \
@@ -72,11 +75,11 @@ namespace lsp
                 if (__res != STATUS_OK) \
                     return __res; \
 
-        #define STYLE_INITIALIZER_END(widget, parent) \
+        #define STYLE_INITIALIZER_END(widget, name) \
                 return STATUS_OK; \
             } \
             \
-            static widget ## StyleInitializer   widget ## StyleInitializerInstance;
+            static widget ## StyleInitializer   widget ## StyleInitializerInstance(name);
 
     }
 }

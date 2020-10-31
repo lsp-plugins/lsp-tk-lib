@@ -26,6 +26,12 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Void, Widget);
+
+            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
+
+        STYLE_INITIALIZER_END(Void, "Void");
+
         const w_class_t Void::metadata      = { "Void", &Widget::metadata };
         
         Void::Void(Display *dpy):

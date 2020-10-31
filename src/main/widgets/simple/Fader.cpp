@@ -26,6 +26,20 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Fader, Widget);
+
+            prop::Color::init("color", style, "#cccccc");
+            prop::Color::init("hole.color", style, "#000000");
+            prop::SizeRange::init("size", style, 64, -1);
+            prop::RangeFloat::init("value", style, 0.5f);
+            prop::StepFloat::init("step", style, 0.01f);
+            prop::SizeRange::init("button.width", style, 0);
+            prop::Float::init("button.aspect", style, 1.41f);
+            prop::Integer::init("angle", style, 0);
+            prop::Pointer::init("button.pointer", style, ws::MP_DEFAULT);
+
+        STYLE_INITIALIZER_END(Fader, "Fader");
+
         const w_class_t Fader::metadata         = { "Fader", &Widget::metadata };
         
         Fader::Fader(Display *dpy):

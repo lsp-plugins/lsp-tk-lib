@@ -28,6 +28,20 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Hyperlink, Widget);
+
+            prop::TextLayout::init("text.layout", style, -1.0f, 0.0f);
+            prop::Font::init("font", style, 12.0f, ws::FF_UNDERLINE);
+            prop::Color::init("text.color", style, "#0000cc");
+            prop::Color::init("text.hover.color", style, "#ff0000");
+            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
+            prop::Boolean::init("follow", style, true);
+            prop::String::init("url", style);
+            // Overrides
+            prop::Pointer::init("pointer", style, ws::MP_HAND);
+
+        STYLE_INITIALIZER_END(Hyperlink, "Hyperlink");
+
         const w_class_t Hyperlink::metadata =        { "Hyperlink", &Widget::metadata };
 
         Hyperlink::Hyperlink(Display *dpy):

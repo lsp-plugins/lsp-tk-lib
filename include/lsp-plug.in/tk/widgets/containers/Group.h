@@ -94,6 +94,7 @@ namespace lsp
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
 
+        STYLE_INITIALIZER_DEF(Group, Align);
     } /* namespace tk */
 } /* namespace lsp */
 

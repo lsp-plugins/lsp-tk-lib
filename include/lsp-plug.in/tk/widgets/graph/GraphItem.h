@@ -74,6 +74,8 @@ namespace lsp
                  */
                 virtual bool        inside(ssize_t x, ssize_t y);
         };
+
+        STYLE_INITIALIZER_DEF(GraphItem, Widget);
     }
 }
 

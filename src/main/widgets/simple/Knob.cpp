@@ -27,6 +27,21 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Knob, Widget);
+
+            prop::Color::init("color", style, "#cccccc");
+            prop::Color::init("scale.color", style, "#00cc00");
+            prop::Color::init("hole.color", style, "#000000");
+            prop::Color::init("tip.color", style, "#000000");
+            prop::SizeRange::init("size.range", style, 8, -1);
+            prop::Float::init("scale.size", style, 4);
+            prop::RangeFloat::init("value", style, 0.5f, 0.0f, 1.0f);
+            prop::StepFloat::init("step", style, 0.01f);
+            prop::Float::init("value.balance", style, 0.5f);
+            prop::Boolean::init("value.cycling", style, false);
+
+        STYLE_INITIALIZER_END(Knob, "Knob");
+
         const w_class_t Knob::metadata      = { "Knob", &Widget::metadata };
 
         Knob::Knob(Display *dpy):

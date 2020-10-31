@@ -216,6 +216,7 @@ namespace lsp
                 virtual status_t            remove(Widget *widget);
         };
     
+        STYLE_INITIALIZER_DEF(Grid, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

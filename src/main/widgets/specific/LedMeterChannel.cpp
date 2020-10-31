@@ -26,6 +26,57 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(LedMeterChannel, Widget);
+            prop::RangeFloat        sValue;
+            prop::Float             sPeak;
+            prop::Float             sBalance;
+            prop::Color             sColor;
+            prop::Color             sValueColor;
+            prop::ColorRanges       sValueRanges;
+            prop::Color             sPeakColor;
+            prop::ColorRanges       sPeakRanges;
+            prop::Color             sTextColor;
+            prop::ColorRanges       sTextRanges;
+            prop::Color             sBalanceColor;
+            prop::String            sText;
+            prop::String            sEstText;
+            prop::Boolean           sPeakVisible;
+            prop::Boolean           sBalanceVisible;
+            prop::Boolean           sTextVisible;
+            prop::Boolean           sReversive;
+            prop::Boolean           sActive;
+            prop::Integer           sMinSegments;
+            prop::SizeConstraints   sConstraints;
+            prop::Font              sFont;
+            prop::Integer           sBorder;
+            prop::Integer           sAngle;
+
+            prop::RangeFloat::init("value", style, 0.0f, 0.0f, 1.0f);
+            prop::Float::init("peak", style, 0.0f);
+            prop::Float::init("balance", style, 0.5f);
+            prop::Color::init("color", style, "#000000");
+            prop::Color::init("value.color", style, "#00ff00");
+            prop::ColorRanges::init("value.ranges", style, "");
+            prop::Color::init("peak.color", style, "#ff0000");
+            prop::ColorRanges::init("peak.ranges", style, "");
+            prop::Color::init("text.color", style, "#00ff00");
+            prop::ColorRanges::init("text.ranges", style, "");
+            prop::Color::init("balance.color", style, "#ffff00");
+            prop::String::init("text", style);
+            prop::String::init("text.est", style);
+            prop::Boolean::init("peak.visible", style, false);
+            prop::Boolean::init("balance.visible", style, false);
+            prop::Boolean::init("text.visible", style, false);
+            prop::Boolean::init("reversive", style, false);
+            prop::Boolean::init("active", style, true);
+            prop::Integer::init("segments.min", style, 12);
+            prop::SizeConstraints::init("constraints", style, 20, -1, 20, -1);
+            prop::Font::init("font", style, 9);
+            prop::Integer::init("border", style, 2);
+            prop::Integer::init("angle", style, 0);
+
+        STYLE_INITIALIZER_END(LedMeterChannel, "LedMeterChannel");
+
         const w_class_t LedMeterChannel::metadata           = { "LedMeterChannel", &Widget::metadata };
 
         LedMeterChannel::LedMeterChannel(Display *dpy):
@@ -135,9 +186,9 @@ namespace lsp
                 sFont.init(sclass, 9);
                 sBorder.init(sclass, 2);
                 sAngle.init(sclass, 0);
-
-                sEstText.set_raw("+99.9");
             }
+
+            sEstText.set_raw("+99.9");
 
             return STATUS_OK;
         }

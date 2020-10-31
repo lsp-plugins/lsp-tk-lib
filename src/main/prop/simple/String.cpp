@@ -529,6 +529,16 @@ namespace lsp
                 sync();
                 return true;
             }
+
+            status_t String::init(const char *name, Style *style)
+            {
+                return STATUS_OK;
+            }
+
+            status_t String::override(const char *name, Style *style)
+            {
+                return STATUS_OK;
+            }
         }
 
     } /* namespace tk */

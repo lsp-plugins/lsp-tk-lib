@@ -26,6 +26,24 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Fraction, Widget);
+
+            prop::Color::init("num.color", style, "#000000");
+            prop::String::init("num.text", style);
+            prop::Boolean::init("num.opened", style, false);
+
+            prop::Color::init("den.color", style, "#000000");
+            prop::String::init("den.text", style);
+            prop::Boolean::init("den.opened", style, false);
+
+            prop::Color::init("color", style, "#000000");
+            prop::Font::init("font", style, 14.0f);
+            prop::Float::init("angle", style, 60.0f);
+            prop::Integer::init("text.pad", style, 6);
+            prop::Integer::init("thick", style, 1);
+
+        STYLE_INITIALIZER_END(Fraction, "Fraction");
+
         //-----------------------------------------------------------------------------
         // Fraction popup window implementation
         const w_class_t Fraction::Window::metadata      = { "Fraction::Window", &PopupWindow::metadata };

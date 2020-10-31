@@ -82,6 +82,8 @@ namespace lsp
             public:
                 virtual status_t                handle_event(const ws::event_t *e);
         };
+
+        STYLE_INITIALIZER_DEF(PopupWindow, Window);
     }
 }
 

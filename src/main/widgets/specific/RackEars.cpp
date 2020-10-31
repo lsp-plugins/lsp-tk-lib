@@ -25,6 +25,22 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(RackEars, Widget);
+
+            prop::Font::init("font", style, 16, ws::FF_BOLD);
+            prop::String::init("text", style);
+            prop::Color::init("color", style, "#00ccff");
+            prop::Color::init("text.color", style, "#ffffff");
+            prop::Color::init("screw.color", style, "#444444");
+            prop::Color::init("hole.color", style, "#000000");
+            prop::Integer::init("angle", style, 0);
+            prop::Padding::init("button.padding", style, 2);
+            prop::Padding::init("screw.padding", style, 2);
+            prop::Integer::init("screw.size", style, 20);
+            prop::Padding::init("text.padding", style, 4, 2);
+
+        STYLE_INITIALIZER_END(RackEars, "RackEars");
+
         const w_class_t RackEars::metadata              = { "RackEars", &Widget::metadata };
 
         RackEars::RackEars(Display *dpy):

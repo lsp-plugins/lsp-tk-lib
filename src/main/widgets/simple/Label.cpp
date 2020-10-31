@@ -26,6 +26,16 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Label, Widget);
+
+            prop::TextLayout::init("text.layout", style, 0.0f, 0.0f);
+            prop::Font::init("font", style);
+            prop::Color::init("text.color", style, "#000000");
+            prop::String::init("text", style);
+            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
+
+        STYLE_INITIALIZER_END(Label, "Label");
+
         const w_class_t Label::metadata =       { "Label", &Widget::metadata };
 
         Label::Label(Display *dpy):

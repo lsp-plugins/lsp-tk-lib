@@ -26,6 +26,19 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Indicator, Widget);
+
+            prop::Color::init("color", style, "#111111");
+            prop::Color::init("text.color", style, "#00ff00");
+            prop::Integer::init("rows", style, 1);
+            prop::Integer::init("columns", style, 5);
+            prop::Integer::init("text.shift", style, 0);
+            prop::Integer::init("text.gap", style, 0);
+            prop::Boolean::init("text.loop", style, false);
+            prop::String::init("text", style);
+
+        STYLE_INITIALIZER_END(Indicator, "Indicator");
+
         typedef struct rect_t
         {
             int         x, y, w, h;

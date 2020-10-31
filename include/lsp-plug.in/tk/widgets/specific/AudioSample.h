@@ -180,6 +180,8 @@ namespace lsp
 
                 virtual status_t            on_popup(Menu *menu);
         };
+
+        STYLE_INITIALIZER_DEF(AudioSample, WidgetContainer);
     }
 }
 

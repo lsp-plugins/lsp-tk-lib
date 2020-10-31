@@ -103,6 +103,8 @@ namespace lsp
                 virtual status_t            remove_all();
 
         };
+
+        STYLE_INITIALIZER_DEF(LedMeter, WidgetContainer);
     }
 }
 

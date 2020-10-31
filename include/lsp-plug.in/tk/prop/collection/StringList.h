@@ -187,6 +187,9 @@ namespace lsp
                     inline status_t     bind(const char *id, Style *style, i18n::IDictionary *dict)         { return tk::StringList::bind(id, style, dict); }
                     inline status_t     bind(Style *style, i18n::IDictionary *dict)                         { return tk::StringList::bind(LSP_TK_PROP_LANGUAGE, style, dict); }
 
+                    static status_t     init(const char *name, Style *style);
+                    static status_t     override(const char *name, Style *style);
+
                     /**
                      * Unbind property
                      */

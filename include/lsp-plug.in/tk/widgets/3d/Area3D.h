@@ -91,6 +91,8 @@ namespace lsp
 
                 virtual status_t            on_draw3d(ws::IR3DBackend *r3d);
         };
+
+        STYLE_INITIALIZER_DEF(Area3D, Widget);
     }
 }
 

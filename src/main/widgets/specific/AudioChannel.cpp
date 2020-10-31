@@ -26,6 +26,28 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(AudioChannel, Widget);
+
+            // Bind properties
+            prop::Integer::init("fade_in.length", style, 0);
+            prop::Integer::init("fade_out.length", style, 0);
+            prop::Integer::init("wave.border", style, 1);
+            prop::Integer::init("fade_in.border", style, 1);
+            prop::Integer::init("fade_out.border", style, 1);
+            prop::Integer::init("line.width", style, 1);
+            prop::Color::init("color", style, "#8800ff00");
+            prop::Color::init("line.color", style, "#ffffff");
+            prop::Color::init("wave.border.color", style, "#00ff00");
+            prop::Color::init("fade_in.color", style, "#88ffff00");
+            prop::Color::init("fade_out.color", style, "#88ffff00");
+            prop::Color::init("fade_in.border.color", style, "#ffff00");
+            prop::Color::init("fade_out.border.color", style, "#ffff00");
+            prop::SizeConstraints::init("size.constraints", style, 128, 32, -1, -1);
+            // Overrides
+            prop::Color::override("bg.color", style, "#000000");
+
+        STYLE_INITIALIZER_END(AudioChannel, "AudioChannel");
+
         const w_class_t AudioChannel::metadata      = { "AudioChannel", &Widget::metadata };
 
         AudioChannel::AudioChannel(Display *dpy):

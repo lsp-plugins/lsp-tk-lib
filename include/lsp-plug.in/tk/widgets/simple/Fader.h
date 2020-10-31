@@ -131,6 +131,8 @@ namespace lsp
 
                 virtual void                    draw(ws::ISurface *s);
         };
+
+        STYLE_INITIALIZER_DEF(Fader, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

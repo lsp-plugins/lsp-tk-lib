@@ -219,6 +219,7 @@ namespace lsp
                 virtual status_t            on_submit();
         };
     
+        STYLE_INITIALIZER_DEF(ListBox, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

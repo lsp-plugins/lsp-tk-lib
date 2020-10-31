@@ -60,6 +60,8 @@ namespace lsp
 
                 virtual void        render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
+
+        STYLE_INITIALIZER_DEF(Void, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

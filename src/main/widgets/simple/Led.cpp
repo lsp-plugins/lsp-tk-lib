@@ -25,6 +25,18 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Led, Widget);
+
+            prop::Color::init("color", style, "#cccccc");
+            prop::Color::init("led.color", style, "#00cc00");
+            prop::Color::init("hole.color", style, "#000000");
+            prop::SizeRange::init("size", style, 8, -1);
+            prop::Boolean::init("on", style, false);
+            prop::Boolean::init("hole", style, true);
+            prop::Integer::init("led", style, 8);
+
+        STYLE_INITIALIZER_END(Led, "Led");
+
         const w_class_t Led::metadata           = { "Led", &Widget::metadata };
 
         Led::Led(Display *dpy):

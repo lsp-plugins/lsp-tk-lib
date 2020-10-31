@@ -72,6 +72,7 @@ namespace lsp
                 virtual status_t    remove_all();
         };
     
+        STYLE_INITIALIZER_DEF(WidgetContainer, Widget);
     } /* namespace tk */
 } /* namespace lsp */
 

@@ -27,6 +27,21 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Switch, Widget);
+
+            prop::Color::init("color", style, "#444444");
+            prop::Color::init("text.color", style, "#eeeeee");
+            prop::Color::init("border.color", style, "#444444");
+            prop::Color::init("hole.color", style, "#000000");
+            prop::Integer::init("border.size", style, 6);
+            prop::SizeRange::init("size.range", style, 24);
+            prop::Float::init("size.aspect", style, 1.41);
+            prop::Integer::init("angle", style, 0);
+            prop::Boolean::init("down", style, false);
+            prop::Pointer::init("button.pointer", style, ws::MP_DEFAULT);
+
+        STYLE_INITIALIZER_END(Switch, "Switch");
+
         static const float ANGLE = 15.0f * M_PI / 180.0f;
         
         const w_class_t Switch::metadata =      { "Switch", &Widget::metadata };

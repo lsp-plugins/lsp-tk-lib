@@ -25,6 +25,10 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(WidgetContainer, Widget);
+            // Nothing
+        STYLE_INITIALIZER_END(WidgetContainer, "WidgetContainer");
+
         const w_class_t WidgetContainer::metadata = { "WidgetContainer", &Widget::metadata };
 
         WidgetContainer::WidgetContainer(Display *dpy):

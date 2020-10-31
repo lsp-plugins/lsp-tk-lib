@@ -64,6 +64,8 @@ namespace lsp
                 virtual void render(ws::ISurface *s, bool force);
 
         };
+
+        STYLE_INITIALIZER_DEF(Separator, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

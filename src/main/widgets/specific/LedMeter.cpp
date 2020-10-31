@@ -26,6 +26,20 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(LedMeter, WidgetContainer);
+
+            prop::SizeConstraints::init("constraints", style, 20, -1, 20, -1);
+            prop::Font::init("font", style, 9);
+            prop::Integer::init("border", style, 2);
+            prop::Integer::init("angle", style, 0);
+            prop::String::init("text.est", style);
+            prop::Boolean::init("stereo_groups", style, true);
+            prop::Boolean::init("text.visible", style, false);
+            prop::Color::init("color", style, "#000000");
+            prop::Integer::init("channel.width.min", style, 16);
+
+        STYLE_INITIALIZER_END(LedMeter, "LedMeter");
+
         const w_class_t LedMeter::metadata              = { "LedMeter", &WidgetContainer::metadata };
 
         LedMeter::LedMeter(Display *dpy):
@@ -110,9 +124,9 @@ namespace lsp
                 sTextVisible.init(sclass, false);
                 sColor.init(sclass, "#000000");
                 sMinChannelWidth.init(sclass, 16);
-
-                sEstText.set_raw("+99.9");
             }
+
+            sEstText.set_raw("+99.9");
 
             return STATUS_OK;
         }

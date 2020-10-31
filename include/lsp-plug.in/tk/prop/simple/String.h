@@ -277,6 +277,9 @@ namespace lsp
                      */
                     inline status_t     unbind()                            { return tk::String::unbind();              }
 
+                    static status_t     init(const char *name, Style *style);
+                    static status_t     override(const char *name, Style *style);
+
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
         }

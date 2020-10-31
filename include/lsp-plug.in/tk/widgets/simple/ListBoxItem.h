@@ -54,6 +54,8 @@ namespace lsp
             public:
                 virtual status_t            init();
         };
+
+        STYLE_INITIALIZER_DEF(ListBoxItem, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

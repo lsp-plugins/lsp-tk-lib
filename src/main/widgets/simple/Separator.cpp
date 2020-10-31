@@ -25,6 +25,15 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Separator, Widget);
+
+            prop::Orientation::init("orientation", style, O_VERTICAL);
+            prop::Color::init("color", style, "#000000");
+            prop::SizeRange::init("size", style, -1, -1);
+            prop::Integer::init("thickness", style, 1);
+
+        STYLE_INITIALIZER_END(Separator, "Separator");
+
         const w_class_t Separator::metadata = { "Separator", &Widget::metadata };
 
         Separator::Separator(Display *dpy):

@@ -34,7 +34,7 @@ namespace lsp
             prop::Color::init("bg.color", style, "#cccccc");
             prop::Boolean::init("visible", style, true);
             prop::Pointer::init("pointer", style, ws::MP_DEFAULT);
-        STYLE_INITIALIZER_END(Widget, );
+        STYLE_INITIALIZER_END(Widget, "Widget");
 
         void Widget::PropListener::notify(Property *prop)
         {

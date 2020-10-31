@@ -82,6 +82,9 @@ namespace lsp
                 status_t            parse_items(lltl::parray<ColorRange> *out, const LSPString *src);
                 void                destroy_items(lltl::parray<ColorRange> *out);
                 bool                deploy_items(lltl::parray<ColorRange> *out);
+                status_t            init();
+                status_t            override();
+                status_t            build_ranges(LSPString *dst);
 
             protected:
                 explicit ColorRanges(prop::Listener *listener = NULL);
@@ -137,6 +140,9 @@ namespace lsp
                 inline ColorRange  *get(size_t index)                   { return vItems.get(index); }
                 inline const ColorRange  *get(size_t index) const       { return vItems.get(index); }
 
+                status_t            set_all(const char *values);
+                status_t            set_all(const LSPString *values);
+
                 /**
                  * Swap two color ranges
                  * @param i1 index of first color range
@@ -162,6 +168,10 @@ namespace lsp
                 public:
                     explicit ColorRanges(prop::Listener *listener = NULL): tk::ColorRanges(listener) {};
 
+                protected:
+                    using tk::ColorRanges::init;
+                    using tk::ColorRanges::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -186,6 +196,12 @@ namespace lsp
 
                     status_t            override(Style *style, const char *value);
                     status_t            override(Style *style, const LSPString *value);
+
+                    static status_t     init(const char *name, Style *style, const char *value);
+                    static status_t     init(const char *name, Style *style, const LSPString *value);
+
+                    static status_t     override(const char *name, Style *style, const char *value);
+                    static status_t     override(const char *name, Style *style, const LSPString *value);
             };
         }
     }

@@ -27,6 +27,36 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(ScrollBar, Widget);
+
+            prop::RangeFloat::init("value", style, 0.5f);
+            prop::StepFloat::init("step", style, 0.01f);
+            prop::StepFloat::init("accel.step", style, 0.05f);
+            prop::SizeConstraints::init("size", style, 16, -1, 16, -1);
+            prop::Orientation::init("orientation", style, O_HORIZONTAL);
+            prop::Pointer::init("slider.pointer", style, ws::MP_DEFAULT);
+            prop::Pointer::init("inc.pointer", style, ws::MP_DEFAULT);
+            prop::Pointer::init("dec.pointer", style, ws::MP_DEFAULT);
+            prop::Integer::init("border.radius", style, 4);
+            prop::Integer::init("border.size", style, 1);
+            prop::Integer::init("border.gap", style, 1);
+            prop::Integer::init("slider.border.size", style, 1);
+            prop::Color::init("button.color", style, "#cccccc");
+            prop::Color::init("button.active.color", style, "#ffffff");
+            prop::Color::init("inc.color", style, "#888888");
+            prop::Color::init("inc.active.color", style, "#ffffff");
+            prop::Color::init("dec.color", style, "#888888");
+            prop::Color::init("dec.active.color", style, "#ffffff");
+            prop::Color::init("border.color", style, "#000000");
+            prop::Color::init("border.gap.color", style, "#888888");
+            prop::Color::init("slider.color", style, "#cccccc");
+            prop::Color::init("slider.border.color", style, "#000000");
+            prop::Color::init("slider.active.color", style, "#ffffff");
+            prop::Color::init("text.color", style, "#000000");
+            prop::Color::init("text.active.color", style, "#000000");
+
+        STYLE_INITIALIZER_END(ScrollBar, "ScrollBar");
+
         const w_class_t ScrollBar::metadata         = { "ScrollBar", &Widget::metadata };
 
         ScrollBar::ScrollBar(Display *dpy):

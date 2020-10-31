@@ -248,6 +248,7 @@ namespace lsp
                 virtual status_t            on_key_up(const ws::event_t *e);
         };
     
+        STYLE_INITIALIZER_DEF(Menu, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

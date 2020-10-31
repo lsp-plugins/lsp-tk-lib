@@ -103,6 +103,8 @@ namespace lsp
 
                 virtual status_t            on_change(bool set);
         };
+
+        STYLE_INITIALIZER_DEF(Switch, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

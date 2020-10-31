@@ -28,6 +28,27 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Edit, Widget);
+
+            prop::String::init("text", style);
+            prop::TextSelection::init("selection", style);
+            prop::Font::init("font", style);
+            prop::Color::init("color", style, "#ffffff");
+            prop::Color::init("border.color", style, "#000000");
+            prop::Color::init("border.gap.color", style, "#cccccc");
+            prop::Color::init("cursor.color", style, "#000000");
+            prop::Color::init("text.color", style, "#000000");
+            prop::Color::init("text.selected.color", style, "#ffffff");
+            prop::Color::init("selection.color", style, "#00c0ff");
+            prop::Integer::init("border.size", style, 1);
+            prop::Integer::init("border.gap.size", style, 1);
+            prop::Integer::init("border.radius", style, 4);
+            prop::SizeConstraints::init("size.constraints", style,  -1, -1, -1, 8);
+            // Overrides
+            prop::Pointer::init("pointer", style, ws::MP_IBEAM);
+
+        STYLE_INITIALIZER_END(Edit, "Edit");
+
         const w_class_t Edit::metadata      = { "Edit", &Widget::metadata };
 
         //-----------------------------------------------------------------------------
@@ -205,6 +226,7 @@ namespace lsp
                 sScroll.set_handler(timer_handler, self());
             }
 
+            sText.bind(&sStyle, pDisplay->dictionary());
             sSelection.bind("selection", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("color", &sStyle);

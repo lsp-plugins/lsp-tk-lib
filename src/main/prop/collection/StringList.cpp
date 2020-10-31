@@ -266,6 +266,19 @@ namespace lsp
 
             return STATUS_OK;
         }
+
+        namespace prop
+        {
+            status_t StringList::init(const char *name, Style *style)
+            {
+                return STATUS_OK;
+            }
+
+            status_t StringList::override(const char *name, Style *style)
+            {
+                return STATUS_OK;
+            }
+        }
     }
 }
 

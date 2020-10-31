@@ -26,6 +26,28 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Button, Widget);
+
+            prop::Color::init("color", style, "#cccccc");
+            prop::Color::init("led.color", style, "#00cc00");
+            prop::Color::init("text.color", style, "#000000");
+            prop::Color::init("led.text.color", style, "#000000");
+            prop::Color::init("hole.color", style, "#000000");
+            prop::Font::init("font", style, 12.0f);
+            prop::String::init("text", style);
+            prop::SizeConstraints::init("size.constraints", style, 18, 18, -1, -1);
+            prop::TextLayout::init("text.layout", style, 0.0f, 0.0f);
+            prop::ButtonMode::init("mode", style, BM_NORMAL);
+            prop::Boolean::init("down", style, false);
+            prop::Integer::init("led", style, 0);
+            prop::Boolean::init("editable", style, true);
+            prop::Boolean::init("hole", style, true);
+            prop::Boolean::init("flat", style, false);
+            prop::Boolean::init("text.clip", style, false);
+            prop::Padding::init("text.padding", style, 2, 2, 2, 2);
+
+        STYLE_INITIALIZER_END(Button, "Button");
+
         const w_class_t Button::metadata        = { "Button", &Widget::metadata };
 
         Button::Button(Display *dpy):

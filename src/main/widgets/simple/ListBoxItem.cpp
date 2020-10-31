@@ -25,6 +25,18 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(ListBoxItem, Widget);
+
+            prop::String::init("text", style);
+            prop::Color::init("bg.selected.color", style, "#00ccff");
+            prop::Color::init("text.color", style, "#000000");
+            prop::Color::init("text.selected.color", style, "#ffffff");
+            // Overrides
+            prop::Padding::override("padding", style, 2, 2, 0, 0);
+            prop::Color::override("bg.color", style, "#ffffff");
+
+        STYLE_INITIALIZER_END(ListBoxItem, "ListBoxItem");
+
         const w_class_t ListBoxItem::metadata       = { "ListBoxItem", &Widget::metadata };
 
         ListBoxItem::ListBoxItem(Display *dpy):

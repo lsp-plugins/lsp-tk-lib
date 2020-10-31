@@ -145,6 +145,8 @@ namespace lsp
 
                 virtual status_t            on_change();
         };
+
+        STYLE_INITIALIZER_DEF(GraphDot, GraphItem);
     }
 }
 

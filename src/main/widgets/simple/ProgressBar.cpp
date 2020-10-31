@@ -26,6 +26,27 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(ProgressBar, Widget);
+            prop::RangeFloat::init("value", style, 0.5f);
+            prop::SizeConstraints::init("size", style, -1, -1, -1, -1);
+            prop::String::init("text", style);
+            prop::TextLayout::init("text.layout", style, 0.0f, 0.0f);
+            prop::Boolean::init("text.show", style, true);
+            prop::Font::init("font", style, 12.0f);
+            prop::Color::init("border.color", style, "#444444");
+            prop::Color::init("border.gap.color", style, "#000000");
+            prop::Integer::init("border.size", style, 1);
+            prop::Integer::init("border.gap.size", style, 1);
+            prop::Integer::init("border.radius", style, 4);
+            prop::Color::init("color", style, "#008800");
+            prop::Color::init("text.color", style, "#ffffff");
+            prop::Color::init("inv.color", style, "#ffffff");
+            prop::Color::init("text.inv.color", style, "#000000");
+            // Overrides
+            prop::Allocation::override("allocation", style, true, false, false, false);
+
+        STYLE_INITIALIZER_END(ProgressBar, "ProgressBar");
+
         const w_class_t ProgressBar::metadata           = { "ProgressBar", &Widget::metadata };
 
         ProgressBar::ProgressBar(Display *dpy):

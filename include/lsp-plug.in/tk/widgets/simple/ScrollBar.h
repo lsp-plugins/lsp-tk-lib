@@ -182,6 +182,8 @@ namespace lsp
 
                 virtual void                    draw(ws::ISurface *s);
         };
+
+        STYLE_INITIALIZER_DEF(ScrollBar, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

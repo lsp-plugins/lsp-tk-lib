@@ -50,6 +50,29 @@ namespace lsp
             SimpleProperty::unbind(&sListener);
         }
 
+        status_t ColorRanges::build_ranges(LSPString *s)
+        {
+            char buf[32];
+
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                ColorRange *cr          = vItems.uget(i);
+                const lsp::Color *col   = cr->color();
+
+                if (col->is_hsl())
+                    col->format_hsla(buf, sizeof(buf)/sizeof(char));
+                else
+                    col->format_rgba(buf, sizeof(buf)/sizeof(char));
+
+                if (i > 0)
+                    s->fmt_append_utf8(", %.10f %.10f %s", cr->min(), cr->max(), buf);
+                else
+                    s->fmt_append_utf8("%.10f %.10f %s", cr->min(), cr->max(), buf);
+            }
+
+            return STATUS_OK;
+        }
+
         void ColorRanges::sync()
         {
             if (pStyle != NULL)
@@ -57,24 +80,7 @@ namespace lsp
                 pStyle->begin(&sListener);
                 {
                     LSPString s;
-                    char buf[32];
-
-                    for (size_t i=0, n=vItems.size(); i<n; ++i)
-                    {
-                        ColorRange *cr          = vItems.uget(i);
-                        const lsp::Color *col   = cr->color();
-
-                        if (col->is_hsl())
-                            col->format_hsla(buf, sizeof(buf)/sizeof(char));
-                        else
-                            col->format_rgba(buf, sizeof(buf)/sizeof(char));
-
-                        if (i > 0)
-                            s.fmt_append_utf8(", %.10f %.10f %s", cr->min(), cr->max(), buf);
-                        else
-                            s.fmt_append_utf8("%.10f %.10f %s", cr->min(), cr->max(), buf);
-                    }
-
+                    build_ranges(&s);
 
                     // Min and max components
                     if (nAtom >= 0)
@@ -130,7 +136,7 @@ namespace lsp
             sChanges.enable(false);
             {
                 lltl::parray<ColorRange> a;
-                if (parse_items(&a, &s))
+                if (parse_items(&a, &s) == STATUS_OK)
                     deploy_items(&a);
                 destroy_items(&a);
             }
@@ -309,6 +315,59 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t ColorRanges::set_all(const char *values)
+        {
+            LSPString tmp;
+            if (!tmp.set_utf8(values))
+                return STATUS_NO_MEM;
+            return set_all(&tmp);
+        }
+
+        status_t ColorRanges::set_all(const LSPString *values)
+        {
+            status_t res = STATUS_OK;
+
+            sChanges.enable(false);
+            {
+                lltl::parray<ColorRange> a;
+                if ((res = parse_items(&a, values)) == STATUS_OK)
+                    deploy_items(&a);
+                destroy_items(&a);
+            }
+            sChanges.enable(true);
+
+            if (res == STATUS_OK)
+                sync();
+
+            return res;
+        }
+
+        status_t ColorRanges::init()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+                build_ranges(&s);
+                pStyle->create_string(nAtom, &s);
+            }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
+        status_t ColorRanges::override()
+        {
+            pStyle->begin();
+            {
+                LSPString s;
+                build_ranges(&s);
+                pStyle->override_string(nAtom, &s);
+            }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t ColorRanges::init(Style *style, const char *value)
@@ -353,6 +412,38 @@ namespace lsp
 
                 style->override_string(nAtom, value);
                 return STATUS_OK;
+            }
+
+            status_t ColorRanges::init(const char *name, Style *style, const char *value)
+            {
+                prop::ColorRanges v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_all(value);
+                return v.init();
+            }
+
+            status_t ColorRanges::init(const char *name, Style *style, const LSPString *value)
+            {
+                prop::ColorRanges v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_all(value);
+                return v.init();
+            }
+
+            status_t ColorRanges::override(const char *name, Style *style, const char *value)
+            {
+                prop::ColorRanges v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_all(value);
+                return v.override();
+            }
+
+            status_t ColorRanges::override(const char *name, Style *style, const LSPString *value)
+            {
+                prop::ColorRanges v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_all(value);
+                return v.override();
             }
         }
     }

@@ -188,6 +188,8 @@ namespace lsp
                 virtual status_t            on_key_down(const ws::event_t *e);
         };
 
+        STYLE_INITIALIZER_DEF(ComboGroup, WidgetContainer);
+
     } /* namespace tk */
 } /* namespace lsp */
 

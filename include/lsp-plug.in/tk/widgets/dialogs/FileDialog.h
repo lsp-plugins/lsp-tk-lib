@@ -232,6 +232,8 @@ namespace lsp
 
                 virtual status_t        on_cancel();
         };
+
+        STYLE_INITIALIZER_DEF(FileDialog, Window);
     }
 }
 
