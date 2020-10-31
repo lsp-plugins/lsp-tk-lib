@@ -196,6 +196,35 @@ namespace lsp
                 pListener->notify(this);
         }
 
+        status_t Flags::init()
+        {
+            pStyle->begin(&sListener);
+                atom_t *atoms = vAtoms;
+                size_t bit = 1;
+                for (const char * const *flags = pFlags; *flags != NULL; ++atoms, ++flags, bit <<= 1)
+                {
+                    if (*atoms >= 0)
+                        pStyle->create_bool(*atoms, nFlags & bit);
+                }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t Flags::override()
+        {
+            pStyle->begin(&sListener);
+                atom_t *atoms = vAtoms;
+                size_t bit = 1;
+                for (const char * const *flags = pFlags; *flags != NULL; ++atoms, ++flags, bit <<= 1)
+                {
+                    if (*atoms >= 0)
+                        pStyle->override_bool(*atoms, nFlags & bit);
+                }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
         void Flags::set_default()
         {
             if (pStyle == NULL)

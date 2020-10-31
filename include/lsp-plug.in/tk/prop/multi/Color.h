@@ -77,6 +77,9 @@ namespace lsp
                 void                sync();
                 void                commit(atom_t property);
 
+                status_t            init();
+                status_t            override();
+
             protected:
                 explicit Color(prop::Listener *listener = NULL);
                 ~Color();
@@ -186,6 +189,10 @@ namespace lsp
                 public:
                     explicit inline Color(prop::Listener *listener = NULL): tk::Color(listener) {};
 
+                protected:
+                    using tk::Color::init;
+                    using tk::Color::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -212,6 +219,14 @@ namespace lsp
                     status_t            override(Style *style, const char *value);
                     status_t            override(Style *style, const LSPString *value);
                     status_t            override(Style *style, const lsp::Color *value);
+
+                    static status_t     init(const char *name, Style *style, const char *value);
+                    static status_t     init(const char *name, Style *style, const LSPString *value);
+                    static status_t     init(const char *name, Style *style, const lsp::Color *value);
+
+                    static status_t     override(const char *name, Style *style, const char *value);
+                    static status_t     override(const char *name, Style *style, const LSPString *value);
+                    static status_t     override(const char *name, Style *style, const lsp::Color *value);
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };

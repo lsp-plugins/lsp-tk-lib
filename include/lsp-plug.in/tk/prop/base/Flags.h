@@ -72,6 +72,9 @@ namespace lsp
                 bool            unset(size_t ordinal);
                 bool            toggle(size_t ordinal);
 
+                status_t        init();
+                status_t        override();
+
             protected:
                 explicit Flags(const char * const *flags, atom_t *atoms, prop::Listener *listener = NULL);
                 ~Flags();

@@ -66,6 +66,10 @@ namespace lsp
                 public:
                     explicit MenuItemType(prop::Listener *listener = NULL): tk::MenuItemType(listener) {};
 
+                protected:
+                    using tk::Enum::init;
+                    using tk::Enum::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -86,6 +90,9 @@ namespace lsp
                      * @return status of operation
                      */
                     inline status_t     init(Style *style, menu_item_type_t t)          { return tk::MenuItemType::init(style, t);      };
+
+                    static status_t     init(const char *name, Style *style, menu_item_type_t value);
+                    static status_t     override(const char *name, Style *style, menu_item_type_t value);
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };

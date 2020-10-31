@@ -65,6 +65,8 @@ namespace lsp
                 ssize_t             set(ssize_t v);
                 ssize_t             init(Style *style, ssize_t v);
                 ssize_t             override(Style *style, ssize_t v);
+                ssize_t             init(ssize_t v);
+                ssize_t             override(ssize_t v);
 
             protected:
                 explicit Enum(const prop::enum_t *xenum, prop::Listener *listener = NULL);

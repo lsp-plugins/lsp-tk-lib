@@ -57,6 +57,16 @@ namespace lsp
                 pListener->notify(this);
         }
 
+        status_t Boolean::init(bool value)
+        {
+            return pStyle->create_bool(nAtom, value);
+        }
+
+        status_t Boolean::override(bool value)
+        {
+            return pStyle->override_bool(nAtom, value);
+        }
+
         bool Boolean::set(bool v)
         {
             bool prev = bValue;
@@ -123,6 +133,20 @@ namespace lsp
                 }
 
                 return prev;
+            }
+
+            status_t Boolean::init(const char *name, Style *style, bool value)
+            {
+                prop::Boolean v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init(value);
+            }
+
+            status_t Boolean::override(const char *name, Style *style, bool value)
+            {
+                prop::Boolean v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override(value);
             }
         }
     } /* namespace calc */

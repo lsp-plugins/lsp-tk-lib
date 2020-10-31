@@ -210,6 +210,52 @@ namespace lsp
                 pListener->notify(this);
         }
 
+        status_t Padding::init()
+        {
+            pStyle->begin(&sListener);
+            {
+                padding_t &p    = sValue;
+
+                pStyle->create_int(vAtoms[P_LEFT], p.nLeft);
+                pStyle->create_int(vAtoms[P_RIGHT], p.nRight);
+                pStyle->create_int(vAtoms[P_TOP], p.nTop);
+                pStyle->create_int(vAtoms[P_BOTTOM], p.nBottom);
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld %ld %ld", long(p.nTop), long(p.nRight), long(p.nBottom), long(p.nLeft));
+                pStyle->create_string(vAtoms[P_CSS], &s);
+
+                s.fmt_ascii("%ld %ld %ld %ld", long(p.nLeft), long(p.nRight), long(p.nTop), long(p.nBottom));
+                pStyle->create_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t Padding::override()
+        {
+            pStyle->begin(&sListener);
+            {
+                padding_t &p    = sValue;
+
+                pStyle->override_int(vAtoms[P_LEFT], p.nLeft);
+                pStyle->override_int(vAtoms[P_RIGHT], p.nRight);
+                pStyle->override_int(vAtoms[P_TOP], p.nTop);
+                pStyle->override_int(vAtoms[P_BOTTOM], p.nBottom);
+
+                // Compound objects
+                LSPString s;
+                s.fmt_ascii("%ld %ld %ld %ld", long(p.nTop), long(p.nRight), long(p.nBottom), long(p.nLeft));
+                pStyle->override_string(vAtoms[P_CSS], &s);
+
+                s.fmt_ascii("%ld %ld %ld %ld", long(p.nLeft), long(p.nRight), long(p.nTop), long(p.nBottom));
+                pStyle->override_string(vAtoms[P_VALUE], &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         void Padding::get(size_t *left, size_t *right, size_t *top, size_t *bottom) const
         {
             *left       = sValue.nLeft;
@@ -540,6 +586,38 @@ namespace lsp
                 }
                 style->end();
                 return STATUS_OK;
+            }
+
+            status_t Padding::init(const char *name, Style *style, size_t left, size_t right, size_t top, size_t bottom)
+            {
+                prop::Padding v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(left, right, top, bottom);
+                return v.init();
+            }
+
+            status_t Padding::init(const char *name, Style *style, const padding_t *p)
+            {
+                prop::Padding v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(p);
+                return v.init();
+            }
+
+            status_t Padding::override(const char *name, Style *style, size_t left, size_t right, size_t top, size_t bottom)
+            {
+                prop::Padding v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(left, right, top, bottom);
+                return v.override();
+            }
+
+            status_t Padding::override(const char *name, Style *style, const padding_t *p)
+            {
+                prop::Padding v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(p);
+                return v.override();
             }
         }
     } /* namespace tk */

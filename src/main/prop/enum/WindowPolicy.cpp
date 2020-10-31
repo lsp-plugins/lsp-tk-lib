@@ -33,5 +33,21 @@ namespace lsp
             { NULL,             -1                  }
         };
     
+        namespace prop
+        {
+            status_t WindowPolicy::init(const char *name, Style *style, window_policy_t value)
+            {
+                prop::WindowPolicy v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init(value);
+            }
+
+            status_t WindowPolicy::override(const char *name, Style *style, window_policy_t value)
+            {
+                prop::WindowPolicy v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override(value);
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */

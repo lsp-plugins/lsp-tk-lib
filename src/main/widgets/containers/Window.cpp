@@ -992,11 +992,6 @@ namespace lsp
             rc.nLeft            = border;
             rc.nTop             = border;
 
-            if (pChild->allocation()->hembed())
-                sr.nMaxWidth        = -1;
-            if (pChild->allocation()->vembed())
-                sr.nMaxHeight       = -1;
-
             rc.nWidth           = lsp_max(0, ssize_t(r->nWidth  - border*2));
             rc.nHeight          = lsp_max(0, ssize_t(r->nHeight - border*2));
 

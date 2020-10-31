@@ -19,34 +19,30 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LSP_PLUG_IN_TK_STYLE_STYLEFACTORY_H_
-#define LSP_PLUG_IN_TK_STYLE_STYLEFACTORY_H_
+#include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {
     namespace tk
     {
-        class Style;
+        StyleInitializer *StyleInitializer::pRoot = NULL;
 
-        class StyleFactory
+        StyleInitializer::StyleInitializer(const char *style)
         {
-            protected:
-                static StyleFactory    *pRoot;
-                StyleFactory           *pNext;
-                const char             *pClass;
+            pClass      = style;
+            pNext       = pRoot;
+            pRoot       = pNext;
+        }
 
-            public:
-                explicit StyleFactory(const char *style);
-                virtual ~StyleFactory();
+        StyleInitializer::~StyleInitializer()
+        {
+        }
 
-            public:
-                static inline StyleFactory     *root()  { return pRoot;     }
-
-            public:
-                inline const char  *name() const        { return pClass;    }
-                virtual status_t    init(Style *style);
-        };
+        status_t StyleInitializer::init(Style *style)
+        {
+            return STATUS_OK;
+        }
     }
 }
 
-#endif /* LSP_PLUG_IN_TK_STYLE_STYLEFACTORY_H_ */
+

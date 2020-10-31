@@ -823,7 +823,7 @@ namespace lsp
             return get(&tmp, init, args);
         }
 
-        Style *Schema::get(const char *id, IStyleInitializer *init)
+        Style *Schema::get(const char *id, StyleInitializer *init)
         {
             LSPString tmp;
             if (!tmp.set_utf8(id))
@@ -845,7 +845,7 @@ namespace lsp
             return &s->sStyle;
         }
 
-        Style *Schema::get(const LSPString *id, IStyleInitializer *init)
+        Style *Schema::get(const LSPString *id, StyleInitializer *init)
         {
             style_t *s = get_style(id);
 

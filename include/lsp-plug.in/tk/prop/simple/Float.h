@@ -57,6 +57,8 @@ namespace lsp
 
             protected:
                 void                commit();
+                status_t            init(float value);
+                status_t            override(float value);
 
             protected:
                 explicit Float(prop::Listener *listener = NULL);
@@ -99,6 +101,10 @@ namespace lsp
                 public:
                     explicit inline Float(prop::Listener *listener = NULL): tk::Float(listener) {};
 
+                protected:
+                    using tk::Float::init;
+                    using tk::Float::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -120,6 +126,9 @@ namespace lsp
                      */
                     status_t            init(Style *style, float value);
                     status_t            override(Style *style, float value);
+
+                    static status_t     init(const char *name, Style *style, float value);
+                    static status_t     override(const char *name, Style *style, float value);
 
                     /**
                      * Change value without notification of any listener

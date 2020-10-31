@@ -42,7 +42,6 @@
 #include <lsp-plug.in/tk/prop/Listener.h>
 #include <lsp-plug.in/tk/prop/collection/CollectionListener.h>
 #include <lsp-plug.in/tk/style/IStyleListener.h>
-#include <lsp-plug.in/tk/style/IStyleInitializer.h>
 
 // Base property definition
 #include <lsp-plug.in/tk/prop/base/Property.h>
@@ -113,7 +112,7 @@
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/Style.h>
-#include <lsp-plug.in/tk/style/StyleFactory.h>
+#include <lsp-plug.in/tk/style/StyleInitializer.h>
 #include <lsp-plug.in/tk/style/Schema.h>
 
 // System objects
@@ -132,9 +131,9 @@
 #include <lsp-plug.in/tk/util/URLSink.h>
 
 // Base widgets
-#include <lsp-plug.in/tk/base/Widget.h>
-#include <lsp-plug.in/tk/base/WidgetContainer.h>
-#include <lsp-plug.in/tk/base/cast.h>
+#include <lsp-plug.in/tk/widgets/base/Widget.h>
+#include <lsp-plug.in/tk/widgets/base/WidgetContainer.h>
+#include <lsp-plug.in/tk/widgets/cast.h>
 
 // Simple widgets
 #include <lsp-plug.in/tk/widgets/simple/Button.h>

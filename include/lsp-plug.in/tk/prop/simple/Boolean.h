@@ -55,6 +55,9 @@ namespace lsp
                 bool                bValue;
                 Listener            sListener;
 
+                status_t            init(bool value);
+                status_t            override(bool value);
+
             protected:
                 void                commit();
 
@@ -116,6 +119,10 @@ namespace lsp
                 public:
                     explicit inline Boolean(prop::Listener *listener = NULL): tk::Boolean(listener) {};
 
+                protected:
+                    using tk::Boolean::init;
+                    using tk::Boolean::override;
+
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -137,6 +144,9 @@ namespace lsp
                      */
                     status_t            init(Style *style, bool value);
                     status_t            override(Style *style, bool value);
+
+                    static status_t     init(const char *name, Style *style, bool value);
+                    static status_t     override(const char *name, Style *style, bool value);
 
                     /**
                      * Commit value

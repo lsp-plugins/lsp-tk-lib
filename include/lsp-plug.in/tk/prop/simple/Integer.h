@@ -57,6 +57,8 @@ namespace lsp
 
             protected:
                 void                commit();
+                status_t            init(ssize_t value);
+                status_t            override(ssize_t value);
 
             protected:
                 explicit Integer(prop::Listener *listener = NULL);
@@ -100,6 +102,10 @@ namespace lsp
                 public:
                     explicit Integer(prop::Listener *listener = NULL): tk::Integer(listener) {};
 
+                protected:
+                    using tk::Integer::init;
+                    using tk::Integer::override;
+
                 public:
                     ssize_t             commit(ssize_t value);
 
@@ -123,6 +129,9 @@ namespace lsp
                      */
                     status_t            init(Style *style, ssize_t value);
                     status_t            override(Style *style, ssize_t value);
+
+                    static status_t     init(const char *name, Style *style, ssize_t value);
+                    static status_t     override(const char *name, Style *style, ssize_t value);
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };

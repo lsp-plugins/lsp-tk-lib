@@ -100,6 +100,30 @@ namespace lsp
                 pListener->notify(this);
         }
 
+        status_t BitEnum::init()
+        {
+            pStyle->begin(&sListener);
+            {
+                LSPString s;
+                if (Property::fmt_bit_enums(&s, pEnum, nValue))
+                    pStyle->create_string(nAtom, &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
+        status_t BitEnum::override()
+        {
+            pStyle->begin(&sListener);
+            {
+                LSPString s;
+                if (Property::fmt_bit_enums(&s, pEnum, nValue))
+                    pStyle->override_string(nAtom, &s);
+            }
+            pStyle->end();
+            return STATUS_OK;
+        }
+
         status_t BitEnum::init(Style *style, size_t v)
         {
             if (pStyle == NULL)

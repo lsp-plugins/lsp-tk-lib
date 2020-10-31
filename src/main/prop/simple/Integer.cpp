@@ -44,6 +44,16 @@ namespace lsp
             unbind(&sListener);
         }
 
+        status_t Integer::init(ssize_t value)
+        {
+            return pStyle->create_int(nAtom, value);
+        }
+
+        status_t Integer::override(ssize_t value)
+        {
+            return pStyle->override_int(nAtom, value);
+        }
+
         void Integer::commit()
         {
             // Handle change: remember new value
@@ -109,6 +119,20 @@ namespace lsp
                 ssize_t old = nValue;
                 value       = nValue;
                 return old;
+            }
+
+            status_t Integer::init(const char *name, Style *style, ssize_t value)
+            {
+                prop::Integer v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init(value);
+            }
+
+            status_t Integer::override(const char *name, Style *style, ssize_t value)
+            {
+                prop::Integer v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override(value);
             }
         }
     } /* namespace tk */

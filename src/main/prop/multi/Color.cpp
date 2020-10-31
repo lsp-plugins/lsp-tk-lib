@@ -388,6 +388,92 @@ namespace lsp
             c->sync();
         }
 
+        status_t Color::init()
+        {
+            char buf[32];
+
+            pStyle->begin();
+            {
+                // R, G, B components
+                pStyle->create_float(vAtoms[P_R], sColor.red());
+                pStyle->create_float(vAtoms[P_G], sColor.green());
+                pStyle->create_float(vAtoms[P_B], sColor.blue());
+
+                // H, S, L components
+                pStyle->create_float(vAtoms[P_H], sColor.hue());
+                pStyle->create_float(vAtoms[P_S], sColor.saturation());
+                pStyle->create_float(vAtoms[P_L], sColor.lightness());
+
+                // Alpha component
+                pStyle->create_float(vAtoms[P_A], sColor.alpha());
+
+                // Mixed components
+                sColor.format_rgb(buf, sizeof(buf)/sizeof(char));
+                pStyle->create_string(vAtoms[P_RGB], buf);
+
+                sColor.format_rgba(buf, sizeof(buf)/sizeof(char));
+                pStyle->create_string(vAtoms[P_RGBA], buf);
+
+                sColor.format_hsl(buf, sizeof(buf)/sizeof(char));
+                pStyle->create_string(vAtoms[P_HSL], buf);
+
+                sColor.format_hsla(buf, sizeof(buf)/sizeof(char));
+                pStyle->create_string(vAtoms[P_HSLA], buf);
+
+                if (sColor.is_hsl())
+                    sColor.format_hsla(buf, sizeof(buf)/sizeof(char));
+                else
+                    sColor.format_rgba(buf, sizeof(buf)/sizeof(char));
+                pStyle->create_string(vAtoms[P_VALUE], buf);
+            }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
+        status_t Color::override()
+        {
+            char buf[32];
+
+            pStyle->begin();
+            {
+                // R, G, B components
+                pStyle->override_float(vAtoms[P_R], sColor.red());
+                pStyle->override_float(vAtoms[P_G], sColor.green());
+                pStyle->override_float(vAtoms[P_B], sColor.blue());
+
+                // H, S, L components
+                pStyle->override_float(vAtoms[P_H], sColor.hue());
+                pStyle->override_float(vAtoms[P_S], sColor.saturation());
+                pStyle->override_float(vAtoms[P_L], sColor.lightness());
+
+                // Alpha component
+                pStyle->override_float(vAtoms[P_A], sColor.alpha());
+
+                // Mixed components
+                sColor.format_rgb(buf, sizeof(buf)/sizeof(char));
+                pStyle->override_string(vAtoms[P_RGB], buf);
+
+                sColor.format_rgba(buf, sizeof(buf)/sizeof(char));
+                pStyle->override_string(vAtoms[P_RGBA], buf);
+
+                sColor.format_hsl(buf, sizeof(buf)/sizeof(char));
+                pStyle->override_string(vAtoms[P_HSL], buf);
+
+                sColor.format_hsla(buf, sizeof(buf)/sizeof(char));
+                pStyle->override_string(vAtoms[P_HSLA], buf);
+
+                if (sColor.is_hsl())
+                    sColor.format_hsla(buf, sizeof(buf)/sizeof(char));
+                else
+                    sColor.format_rgba(buf, sizeof(buf)/sizeof(char));
+                pStyle->override_string(vAtoms[P_VALUE], buf);
+            }
+            pStyle->end();
+
+            return STATUS_OK;
+        }
+
         namespace prop
         {
             status_t Color::init(Style *style, const char *value)
@@ -532,6 +618,54 @@ namespace lsp
                 style->end();
 
                 return STATUS_OK;
+            }
+
+            status_t Color::init(const char *name, Style *style, const char *value)
+            {
+                prop::Color v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(value);
+                return v.init();
+            }
+
+            status_t Color::init(const char *name, Style *style, const LSPString *value)
+            {
+                prop::Color v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(value);
+                return v.init();
+            }
+
+            status_t Color::init(const char *name, Style *style, const lsp::Color *value)
+            {
+                prop::Color v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.copy(value);
+                return v.init();
+            }
+
+            status_t Color::override(const char *name, Style *style, const char *value)
+            {
+                prop::Color v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(value);
+                return v.override();
+            }
+
+            status_t Color::override(const char *name, Style *style, const LSPString *value)
+            {
+                prop::Color v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set(value);
+                return v.override();
+            }
+
+            status_t Color::override(const char *name, Style *style, const lsp::Color *value)
+            {
+                prop::Color v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.copy(value);
+                return v.override();
             }
         }
     } /* namespace tk */

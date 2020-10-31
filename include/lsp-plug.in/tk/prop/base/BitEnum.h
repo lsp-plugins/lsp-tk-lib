@@ -71,6 +71,9 @@ namespace lsp
                 size_t              xtoggle(size_t v);
                 size_t              xset_all(size_t v);
 
+                status_t            init();
+                status_t            override();
+
             protected:
                 explicit BitEnum(const prop::enum_t *xenum, prop::Listener *listener = NULL);
                 ~BitEnum();

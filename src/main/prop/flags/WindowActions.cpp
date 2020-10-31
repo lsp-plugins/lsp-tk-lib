@@ -39,6 +39,25 @@ namespace lsp
 
             { NULL,             -1                  }
         };
+
+        namespace prop
+        {
+            status_t WindowActions::init(const char *name, Style *style, size_t actions)
+            {
+                prop::WindowActions v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_actions(actions);
+                return v.init();
+            }
+
+            status_t WindowActions::override(const char *name, Style *style, size_t actions)
+            {
+                prop::WindowActions v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                v.set_actions(actions);
+                return v.override();
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */
 

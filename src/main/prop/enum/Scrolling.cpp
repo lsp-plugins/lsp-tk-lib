@@ -35,6 +35,22 @@ namespace lsp
             { NULL, -1 }
         };
 
+        namespace prop
+        {
+            status_t Scrolling::init(const char *name, Style *style, scrolling_t value)
+            {
+                prop::Scrolling v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init(value);
+            }
+
+            status_t Scrolling::override(const char *name, Style *style, scrolling_t value)
+            {
+                prop::Scrolling v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override(value);
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */
 

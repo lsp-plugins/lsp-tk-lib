@@ -43,6 +43,16 @@ namespace lsp
             SimpleProperty::unbind(&sListener);
         }
 
+        status_t Float::init(float value)
+        {
+            return pStyle->create_float(nAtom, value);
+        }
+
+        status_t Float::override(float value)
+        {
+            return pStyle->override_float(nAtom, value);
+        }
+
         void Float::commit()
         {
             // Handle change: remember new value
@@ -101,6 +111,20 @@ namespace lsp
                     return STATUS_BAD_STATE;
                 style->override_float(nAtom, value);
                 return STATUS_OK;
+            }
+
+            status_t Float::init(const char *name, Style *style, float value)
+            {
+                prop::Float v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init(value);
+            }
+
+            status_t Float::override(const char *name, Style *style, float value)
+            {
+                prop::Float v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override(value);
             }
         }
     

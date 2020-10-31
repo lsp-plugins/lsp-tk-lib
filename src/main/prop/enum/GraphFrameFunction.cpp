@@ -36,6 +36,22 @@ namespace lsp
             { NULL,             -1                  }
         };
 
+        namespace prop
+        {
+            status_t GraphFrameFunction::init(const char *name, Style *style, graph_frame_function_t value)
+            {
+                prop::GraphFrameFunction v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.init(value);
+            }
+
+            status_t GraphFrameFunction::override(const char *name, Style *style, graph_frame_function_t value)
+            {
+                prop::GraphFrameFunction v;
+                LSP_STATUS_ASSERT(v.bind(name, style));
+                return v.override(value);
+            }
+        }
     } /* namespace tk */
 } /* namespace lsp */
 
