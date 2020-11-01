@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/io/InStringSequence.h>
 #include <lsp-plug.in/expr/Tokenizer.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -133,6 +134,9 @@ namespace lsp
                         return STATUS_CORRUPTED;
                 }
             }
+
+            if ((read) && (res == STATUS_OK))
+                res = validate();
 
             return (read) ? res : STATUS_CORRUPTED;
         }
@@ -305,6 +309,8 @@ namespace lsp
                                 res = STATUS_DUPLICATED;
                             }
                             else if (!vStyles.put(&sClass, style, NULL))
+                                res = STATUS_NO_MEM;
+                            else if (!style->name.set(&sClass))
                                 res = STATUS_NO_MEM;
                         }
 
@@ -737,6 +743,148 @@ namespace lsp
             if (!c.set_utf8(color))
                 return STATUS_NOT_FOUND;
             return get_color(&c, dst);
+        }
+
+        status_t StyleSheet::validate()
+        {
+            if (pRoot != NULL)
+            {
+                if (!pRoot->parents.is_empty())
+                {
+                    sError.set_ascii("Root style can not have parents");
+                    return STATUS_BAD_HIERARCHY;
+                }
+            }
+
+            lltl::parray<style_t> vs;
+            if (!vStyles.values(&vs))
+                return STATUS_NO_MEM;
+
+            for (size_t i=0, n=vs.size(); i<n; ++i)
+            {
+                // Add style to the path
+                style_t *s = vs.uget(i);
+                status_t res = validate_style(s);
+                if (res != STATUS_OK)
+                    return res;
+            }
+
+            return STATUS_OK;
+        }
+
+        void StyleSheet::drop_paths(lltl::parray<path_t> *paths)
+        {
+            for (size_t i=0, n=paths->size(); i<n; ++i)
+            {
+                path_t *p = paths->uget(i);
+                if (p != NULL)
+                    delete p;
+            }
+            paths->flush();
+        }
+
+        status_t StyleSheet::validate_style(style_t *s)
+        {
+            lltl::parray<path_t> stack;
+            path_t *p = new path_t();
+            if (p == NULL)
+                return STATUS_NO_MEM;
+            else if (!stack.push(p))
+            {
+                delete p;
+                return STATUS_NO_MEM;
+            }
+            p->curr = s;
+
+            while (!stack.is_empty())
+            {
+                // Get current path
+                p = stack.pop();
+                if (p == NULL)
+                {
+                    drop_paths(&stack);
+                    return STATUS_UNKNOWN_ERR;
+                }
+
+                // There is nothing to check?
+                s = p->curr;
+                if (s->parents.is_empty())
+                {
+                    delete p;
+                    continue;
+                }
+
+                // Add current style to list of visited
+                if (!p->visited.add(s))
+                {
+                    delete p;
+                    drop_paths(&stack);
+                    return STATUS_NO_MEM;
+                }
+
+//                lsp_trace("Curr: %p (%s)", s, s->name.get_utf8());
+//                for (size_t i=0, n=p->visited.size(); i<n; ++i)
+//                {
+//                    style_t *xp = p->visited.uget(i);
+//                    lsp_trace("  visited: %p (%s)", xp, xp->name.get_utf8());
+//                }
+
+                for (size_t i=0, n=s->parents.size(); i<n; )
+                {
+                    // Obtain the parent style
+                    LSPString *name = s->parents.uget(i++);
+                    style_t *ps = name->equals_ascii("root") ? pRoot : vStyles.get(name);
+
+//                    lsp_trace("  testing: %p (%s), i=%d, n=%d", ps, (ps != NULL) ? ps->name.get_utf8() : "???", int(i), int(n));
+                    if (ps == NULL)
+                    {
+                        sError.fmt_utf8("Unexisting style found in tree: '%s'", (name != NULL) ? name->get_utf8() : "root");
+                        delete p;
+                        drop_paths(&stack);
+                        return STATUS_BAD_HIERARCHY;
+                    }
+                    else if (p->visited.contains(ps))
+                    {
+                        sError.fmt_utf8("Found inheritance loop at style '%s'", (name != NULL) ? name->get_utf8() : "root");
+                        delete p;
+                        drop_paths(&stack);
+                        return STATUS_BAD_HIERARCHY;
+                    }
+
+                    // Check next step
+                    path_t *np = p;
+                    if (i < n)
+                    {
+                        np = new path_t();
+                        if (np == NULL)
+                        {
+                            drop_paths(&stack);
+                            delete p;
+                            return STATUS_NO_MEM;
+                        }
+
+                        if (!np->visited.add(p->visited)) // Copy list of visited
+                        {
+                            delete np;
+                            delete p;
+                            drop_paths(&stack);
+                            return STATUS_NO_MEM;
+                        }
+                    }
+
+                    np->curr    = ps;
+
+                    // Add path to stack
+                    if (!stack.push(np))
+                    {
+                        delete np;
+                        drop_paths(&stack);
+                        return STATUS_NO_MEM;
+                    }
+                }
+            }
+
+            return STATUS_OK;
         }
     }
 }

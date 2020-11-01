@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema>
+	<!-- Root style -->
+	<root />
+	
+	<!-- Nested style of window -->
+	<style class="a" parents="root,d,f" />
+	<style class="b" parents="a" />
+	<style class="c" parents="b" />
+	<style class="e" parents="b" />
+	<style class="d" parents="c" />
+	<style class="f" parents="e" />
+
+</schema>
+

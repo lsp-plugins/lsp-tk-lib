@@ -231,9 +231,41 @@ UTEST_BEGIN("tk.style", stylesheet)
 
     }
 
+    void test_loop()
+    {
+        printf("Testing different inheritance loops...\n");
+
+        io::Path path;
+
+        {
+            tk::StyleSheet ss;
+            UTEST_ASSERT(path.fmt("%s/schema/loop1.xml", resources()) > 0);
+            UTEST_ASSERT(ss.parse_file(&path) == STATUS_BAD_HIERARCHY);
+        }
+
+        {
+            tk::StyleSheet ss;
+            UTEST_ASSERT(path.fmt("%s/schema/loop2.xml", resources()) > 0);
+            UTEST_ASSERT(ss.parse_file(&path) == STATUS_BAD_HIERARCHY);
+        }
+
+        {
+            tk::StyleSheet ss;
+            UTEST_ASSERT(path.fmt("%s/schema/loop3.xml", resources()) > 0);
+            UTEST_ASSERT(ss.parse_file(&path) == STATUS_BAD_HIERARCHY);
+        }
+
+        {
+            tk::StyleSheet ss;
+            UTEST_ASSERT(path.fmt("%s/schema/loop4.xml", resources()) > 0);
+            UTEST_ASSERT(ss.parse_file(&path) == STATUS_OK);
+        }
+    }
+
     UTEST_MAIN
     {
         test_load();
+        test_loop();
     }
 
 UTEST_END

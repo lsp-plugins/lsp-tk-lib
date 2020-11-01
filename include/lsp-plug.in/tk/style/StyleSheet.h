@@ -59,6 +59,12 @@ namespace lsp
                     ~style_t();
                 } style_t;
 
+                typedef struct path_t
+                {
+                    lltl::parray<style_t>                   visited;
+                    style_t                                *curr;
+                } path_t;
+
             protected:
                 style_t                            *pRoot;      // Root style
                 lltl::pphash<LSPString, style_t>    vStyles;    // Additional named styles
@@ -80,6 +86,10 @@ namespace lsp
                 status_t            parse_style_class(LSPString *cname, const LSPString *text);
                 status_t            parse_style_parents(style_t *style, const LSPString *text);
                 status_t            parse_property_type(property_type_t *pt, const LSPString *text);
+
+                status_t            validate();
+                status_t            validate_style(style_t *s);
+                static void         drop_paths(lltl::parray<path_t> *paths);
 
             public:
                 status_t            parse_file(const char *path, const char *charset = NULL);
