@@ -26,6 +26,26 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(ListBox, WidgetContainer);
+
+            prop::SizeConstraints::init("size.constraints", style);
+            prop::Scrolling::init("hscroll.mode", style, SCROLL_OPTIONAL);
+            prop::Scrolling::init("vscroll.mode", style, SCROLL_OPTIONAL);
+            prop::RangeFloat::init("hscroll", style, 0.0f, 0.0f, 0.0f);
+            prop::RangeFloat::init("vscroll", style, 0.0f, 0.0f, 0.0f);
+            prop::Font::init("font", style);
+            prop::Integer::init("border.size", style, 1);
+            prop::Integer::init("border.gap", style, 1);
+            prop::Integer::init("border.radius", style, 4);
+            prop::Color::init("border.color", style, "#000000");
+            prop::Color::init("list.bg.color", style, "#ffffff");
+            prop::Integer::init("spacing", style, 0);
+            prop::Boolean::init("selection.multiple", style, false);
+            prop::Integer::init("hscroll.spacing", style, 1);
+            prop::Integer::init("vscroll.spacing", style, 1);
+
+        STYLE_INITIALIZER_END(ListBox, "ListBox");
+
         const w_class_t ListBox::metadata               = { "ListBox", &WidgetContainer::metadata };
 
         ListBox::ListBox(Display *dpy):

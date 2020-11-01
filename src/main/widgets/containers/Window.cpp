@@ -29,18 +29,6 @@ namespace lsp
     namespace tk
     {
         STYLE_INITIALIZER_BEGIN(Window, WidgetContainer);
-            prop::String            sTitle;
-            prop::String            sRole;
-            prop::Color             sBorderColor;
-            prop::BorderStyle       sBorderStyle;
-            prop::Integer           sBorderSize;
-            prop::Float             sBorderRadius;
-            prop::WindowActions     sActions;
-            prop::Position          sPosition;
-            prop::Size              sWindowSize;
-            prop::SizeConstraints   sSizeConstraints;
-            prop::Layout            sLayout;
-            prop::WindowPolicy      sPolicy;
 
             prop::String::init("title", style);
             prop::String::init("role", style);

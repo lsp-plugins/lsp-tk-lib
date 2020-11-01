@@ -26,6 +26,28 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(ComboBox, WidgetContainer);
+
+            prop::Integer::init("border.size", style, 1);
+            prop::Integer::init("border.gap", style, 1);
+            prop::Integer::init("border.radius", style, 4);
+            prop::Integer::init("spin.size", style, 10);
+            prop::Integer::init("spin.separator", style, 1);
+            prop::Color::init("color", style, "#ffffff");
+            prop::Color::init("spin.color", style, "#ffffff");
+            prop::Color::init("text.color", style, "#000000");
+            prop::Color::init("spin.text.color", style, "#000000");
+            prop::Color::init("border.color", style, "#000000");
+            prop::Color::init("border.gap.color", style, "#cccccc");
+            prop::Boolean::init("opened", style, false);
+            prop::TextFitness::init("text.fit", style);
+            prop::Font::init("font", style);
+            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, 0);
+            prop::TextLayout::init("text.layout", style, -1.0f, 0.0f);
+            prop::String::init("text.empty", style);
+
+        STYLE_INITIALIZER_END(ComboBox, "ComboBox");
+
         //-----------------------------------------------------------------------------
         // ComboBox popup window implementation
         const w_class_t ComboBox::Window::metadata      = { "ComboBox::Window", &PopupWindow::metadata };
