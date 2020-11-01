@@ -183,7 +183,7 @@ MTEST_BEGIN("tk.widgets.containers", grid3)
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
-        wnd->size_constraints()->set(160, 100, 640, 400);
+        wnd->constraints()->set(160, 100, 640, 400);
         wnd->size()->set(320, 200);
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);

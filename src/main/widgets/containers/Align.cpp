@@ -26,6 +26,13 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Align, WidgetContainer);
+
+            prop::Layout::init("layout", style, 0.0f, 0.0f, 0.0f, 0.0f);
+            prop::SizeConstraints::init("size.constraints", style);
+
+        STYLE_INITIALIZER_END(Align, "Align");
+
         const w_class_t Align::metadata         = { "Align", &WidgetContainer::metadata };
 
         Align::Align(Display *dpy):

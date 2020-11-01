@@ -198,7 +198,7 @@ MTEST_BEGIN("tk.widgets.containers", popup)
         wnd->border_style()->set(ws::BS_DIALOG);
 //        wnd->border_size()->set(2);
         wnd->border_color()->set_rgb(1.0f, 1.0f, 0.0f);
-        wnd->size_constraints()->set(160, 100, 640, 400);
+        wnd->constraints()->set(160, 100, 640, 400);
         wnd->size()->set(320, 200);
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
@@ -234,7 +234,7 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(init_widget(pw, vh, NULL, id.get_ascii()) == STATUS_OK);
                 pw->add_arrangement(arr[i]);
                 pw->bg_color()->set_rgb24(next_color(col));
-                pw->size_constraints()->set(32, 128, 0, 0);
+                pw->constraints()->set(32, 128, 0, 0);
 
                 // Create void widget
                 MTEST_ASSERT(id.fmt_ascii("void-%d", int(i)));
@@ -264,7 +264,7 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 pw->add_arrangement(arr[i*2]);
                 pw->add_arrangement(arr[i*2+1]);
                 pw->bg_color()->set_rgb24(next_color(col));
-                pw->size_constraints()->set(32, 128, 0, 0);
+                pw->constraints()->set(32, 128, 0, 0);
 
                 // Create void widget
                 MTEST_ASSERT(id.fmt_ascii("void-%d", int(i+4)));

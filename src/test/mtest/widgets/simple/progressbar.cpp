@@ -190,7 +190,7 @@ MTEST_BEGIN("tk.widgets.simple", progressbar)
         wnd->border_style()->set(ws::BS_DIALOG);
 //        wnd->border_size()->set(2);
         wnd->border_color()->set_rgb(1.0f, 1.0f, 0.0f);
-        wnd->size_constraints()->set(160, 100, 640, 400);
+        wnd->constraints()->set(160, 100, 640, 400);
         wnd->size()->set(320, 200);
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);

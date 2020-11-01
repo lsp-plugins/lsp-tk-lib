@@ -330,6 +330,19 @@ namespace lsp
 
             sync();
         }
+
+        namespace prop
+        {
+            status_t FileFilters::init(const char *name, Style *style)
+            {
+                return STATUS_OK;
+            }
+
+            status_t FileFilters::override(const char *name, Style *style)
+            {
+                return STATUS_OK;
+            }
+        }
     }
 }
 

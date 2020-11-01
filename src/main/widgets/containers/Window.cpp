@@ -28,6 +28,37 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Window, WidgetContainer);
+            prop::String            sTitle;
+            prop::String            sRole;
+            prop::Color             sBorderColor;
+            prop::BorderStyle       sBorderStyle;
+            prop::Integer           sBorderSize;
+            prop::Float             sBorderRadius;
+            prop::WindowActions     sActions;
+            prop::Position          sPosition;
+            prop::Size              sWindowSize;
+            prop::SizeConstraints   sSizeConstraints;
+            prop::Layout            sLayout;
+            prop::WindowPolicy      sPolicy;
+
+            prop::String::init("title", style);
+            prop::String::init("role", style);
+            prop::Color::init("border.color", style, "#000000");
+            prop::BorderStyle::init("border.style", style, ws::BS_SIZEABLE);
+            prop::Integer::init("border.size", style, 0);
+            prop::Float::init("border.radius", style, 2);
+            prop::WindowActions::init("actions", style, ws::WA_ALL);
+            prop::Position::init("position", style, 0, 0);
+            prop::Size::init("size", style, 160, 100);
+            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
+            prop::Layout::init("layout", style, 0.0f, 0.0f, 0.0f, 0.0f);
+            prop::WindowPolicy::init("policy", style, WP_NORMAL);
+
+            prop::Boolean::override("visible", style, false);
+
+        STYLE_INITIALIZER_END(Window, "Window");
+
         const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };
 
         Window::Window(Display *dpy, void *handle, ssize_t screen):

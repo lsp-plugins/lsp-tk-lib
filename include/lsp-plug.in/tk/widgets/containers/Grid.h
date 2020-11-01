@@ -90,9 +90,9 @@ namespace lsp
 
                 prop::Integer               sRows;
                 prop::Integer               sColumns;
-                prop::Orientation           sOrientation;
                 prop::Integer               sHSpacing;
                 prop::Integer               sVSpacing;
+                prop::Orientation           sOrientation;
 
             protected:
                 void                        do_destroy();

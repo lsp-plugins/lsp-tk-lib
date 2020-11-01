@@ -26,6 +26,17 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(ScrollArea, WidgetContainer);
+
+            prop::Layout::init("layout", style, -1.0f, -1.0f, 0.0f, 0.0f);
+            prop::SizeConstraints::init("size.constraints", style);
+            prop::Scrolling::init("hscroll.mode", style, SCROLL_OPTIONAL);
+            prop::Scrolling::init("vscroll.mode", style, SCROLL_OPTIONAL);
+            prop::RangeFloat::init("hscroll", style, 0.0f, 0.0f, 0.0f);
+            prop::RangeFloat::init("vscroll", style, 0.0f, 0.0f, 0.0f);
+
+        STYLE_INITIALIZER_END(ScrollArea, "ScrollArea");
+
         const w_class_t ScrollArea::metadata    = { "ScrollArea", &WidgetContainer::metadata };
         
         ScrollArea::ScrollArea(Display *dpy):

@@ -28,6 +28,20 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(FileDialog, Window);
+
+            prop::FileDialogMode::init("mode", style, FDM_OPEN_FILE);
+            prop::Boolean::init("custom.action", style, false);
+            prop::String::init("action.text", style);
+            prop::String::init("path", style);
+            prop::FileFilters::init("filter", style);
+            prop::Integer::init("filter.selected", style, 0);
+            prop::String::init("path.selected", style);
+            prop::Boolean::init("confirm", style, false);
+            prop::String::init("confirm.msg", style);
+
+        STYLE_INITIALIZER_END(FileDialog, "FileDialog");
+
         const w_class_t FileDialog::metadata            = { "FileDialog", &Window::metadata };
 
         FileDialog::FileDialog(Display *dpy):

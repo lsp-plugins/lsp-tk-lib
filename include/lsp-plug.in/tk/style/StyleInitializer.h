@@ -75,11 +75,14 @@ namespace lsp
                 if (__res != STATUS_OK) \
                     return __res; \
 
+        #define STYLE_INITIALIZER_CLASS(widget)         widget ## StyleInitializer
+        #define STYLE_INITIALIZER_INSTANCE(widget)      widget ## StyleInitializerInstance
+
         #define STYLE_INITIALIZER_END(widget, name) \
                 return STATUS_OK; \
             } \
             \
-            static widget ## StyleInitializer   widget ## StyleInitializerInstance(name);
+            static STYLE_INITIALIZER_CLASS(widget)   STYLE_INITIALIZER_INSTANCE(widget)(name);
 
     }
 }

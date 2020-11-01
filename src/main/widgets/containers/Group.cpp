@@ -27,6 +27,24 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Group, Align);
+
+            prop::Font::init("font", style);
+            prop::Color::init("color", style, "#000000");
+            prop::Color::init("text.color", style, "#ffffff");
+            prop::String::init("text", style);
+            prop::Boolean::init("text.show", style, true);
+            prop::Integer::init("border.size", style, 2);
+            prop::Integer::init("text.border", style, 2);
+            prop::Integer::init("border.radius", style, 10);
+            prop::Integer::init("text.radius", style, 10);
+            prop::Embedding::init("embed", style, false);
+
+            // Overrides
+            prop::Layout::override("layout", style, 0.0f, 0.0f, 1.0f, 1.0f);
+
+        STYLE_INITIALIZER_END(Group, "Group");
+
         const w_class_t Group::metadata         = { "Group", &Align::metadata };
 
         Group::Group(Display *dpy):

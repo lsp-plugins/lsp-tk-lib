@@ -26,6 +26,15 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Box, WidgetContainer);
+
+            prop::Integer::init("spacing", style, 0);
+            prop::Boolean::init("homogeneous", style, false);
+            prop::Orientation::init("orientation", style, O_HORIZONTAL);
+            prop::SizeConstraints::init("size.constraints", style);
+
+        STYLE_INITIALIZER_END(Box, "Box");
+
         const w_class_t Box::metadata   =   { "Box", &WidgetContainer::metadata     };
 
         Box::Box(Display *dpy):

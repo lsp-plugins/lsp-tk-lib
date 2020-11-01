@@ -169,7 +169,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
                 LSP_TK_PROPERTY(WindowActions,      actions,            &sActions)
                 LSP_TK_PROPERTY(Size,               size,               &sWindowSize)
-                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sSizeConstraints)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sSizeConstraints)
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(WindowPolicy,       policy,             &sPolicy)
                 LSP_TK_PROPERTY(Widget,             child,              pChild)

@@ -25,6 +25,10 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(MessageBox, Window);
+
+        STYLE_INITIALIZER_END(MessageBox, "MessageBox");
+
         const w_class_t MessageBox::metadata        = { "MessageBox", &Window::metadata };
 
         MessageBox::MessageBox(Display *dpy):
