@@ -25,6 +25,15 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(GraphOrigin, GraphItem);
+
+            prop::RangeFloat::init("left", style, 0.0f, -1.0f, 1.0f);
+            prop::RangeFloat::init("top", style, 0.0f, -1.0f, 1.0f);
+            prop::Integer::init("radius", style, 4.0f);
+            prop::Color::init("color", style, "#ffffff");
+
+        STYLE_INITIALIZER_END(GraphOrigin, "GraphOrigin");
+
         const w_class_t GraphOrigin::metadata             = { "GraphOrigin", &GraphItem::metadata };
 
         GraphOrigin::GraphOrigin(Display *dpy):

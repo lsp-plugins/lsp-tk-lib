@@ -27,6 +27,33 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(GraphMarker, GraphItem);
+
+            prop::Integer::init("origin", style, 0);
+            prop::Integer::init("basis", style, 0);
+            prop::Integer::init("parallel", style, 1);
+            prop::RangeFloat::init("value", style, 0.0f, -1.0f, 1.0f);
+            prop::Float::init("value.offset", style, 0.0f);
+            prop::StepFloat::init("step", style, 1.0f, 10.0f, 0.1f);
+            prop::Vector2D::init_cart("direction", style, 1.0f, 0.0f);
+            prop::Integer::init("width", style, 1);
+            prop::Integer::init("hover.width", style, 3);
+            prop::Boolean::init("editable", style, false);
+            prop::Integer::init("border.left.size", style, 0);
+            prop::Integer::init("border.right.size", style, 0);
+            prop::Integer::init("hover.border.left.size", style, 0);
+            prop::Integer::init("hover.border.right.size", style, 0);
+            prop::Color::init("color", style, "#ffffff");
+            prop::Color::init("hover.color", style, "#ffffff");
+            prop::Color::init("border.left.color", style, "#ffffff");
+            prop::Color::init("border.right.color", style, "#ffffff");
+            prop::Color::init("hover.border.left.color", style, "#ffffff");
+            prop::Color::init("hover.border.right.color", style, "#ffffff");
+            // Overrides
+            prop::Boolean::override("smooth", style, false);
+
+        STYLE_INITIALIZER_END(GraphMarker, "GraphMarker");
+
         const w_class_t GraphMarker::metadata             = { "GraphMarker", &GraphItem::metadata };
 
         GraphMarker::GraphMarker(Display *dpy):

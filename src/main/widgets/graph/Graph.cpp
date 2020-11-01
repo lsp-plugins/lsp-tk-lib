@@ -28,6 +28,28 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(Graph, WidgetContainer);
+            prop::SizeConstraints           sConstraints;   // Size constraints
+            prop::Integer                   sBorder;        // Border size
+            prop::Integer                   sBorderRadius;  // Border radius
+            prop::Boolean                   sGlass;         // Draw glass
+            prop::Color                     sColor;         // Graph color
+            prop::Color                     sBorderColor;   // Color of the border
+            prop::Color                     sGlassColor;    // Color of the glass
+            prop::Padding                   sIPadding;      // Internal padding
+
+            // Init style
+            prop::SizeConstraints::init("size.constraints", style);
+            prop::Integer::init("border.size", style, 4);
+            prop::Integer::init("border.radius", style, 12);
+            prop::Boolean::init("glass.visibility", style, true);
+            prop::Color::init("color", style, "#000000");
+            prop::Color::init("border.color", style, "#000000");
+            prop::Color::init("glass.color", style, "#ffffff");
+            prop::Padding::init("padding.internal", style, 1);
+
+        STYLE_INITIALIZER_END(Graph, "Graph");
+
         const w_class_t Graph::metadata         =   { "Graph", &WidgetContainer::metadata };
 
         Graph::Graph(Display *dpy):

@@ -27,6 +27,20 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(GraphFrameBuffer, GraphItem);
+
+            prop::GraphFrameData::init("data", style, 0, 0, 0.0f, 1.0f, 0.0f);
+            prop::Float::init("transparency", style, 0.5f);
+            prop::Integer::init("angle", style, 0);
+            prop::Float::init("hpos", style, -1.0f);
+            prop::Float::init("vpos", style, 1.0f);
+            prop::Float::init("hscale", style, 1.0f);
+            prop::Float::init("vscale", style, 1.0f);
+            prop::Color::init("color", style, "#ff0000");
+            prop::GraphFrameFunction::init("function", style, GFF_DEFAULT);
+
+        STYLE_INITIALIZER_END(GraphFrameBuffer, "GraphFrameBuffer");
+
         const w_class_t GraphFrameBuffer::metadata             = { "GraphFrameBuffer", &GraphItem::metadata };
 
         GraphFrameBuffer::GraphFrameBuffer(Display *dpy):

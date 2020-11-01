@@ -26,6 +26,36 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(GraphDot, GraphItem);
+
+            prop::Integer::init("origin", style, 0);
+            prop::Integer::init("haxis", style, 0);
+            prop::Integer::init("vaxis", style, 1);
+            prop::Integer::init("size", style, 4);
+            prop::Integer::init("hover.size", style, 4);
+            prop::Integer::init("border.size", style, 0);
+            prop::Integer::init("hover.border.size", style, 12);
+            prop::Integer::init("gap", style, 1);
+            prop::Integer::init("hover.gap", style, 1);
+            prop::Color::init("color", style, "#cccccc");
+            prop::Color::init("hover.color", style, "#ffffff");
+            prop::Color::init("border.color", style, "#cccccc");
+            prop::Color::init("hover.border.color", style, "#ffffff");
+            prop::Color::init("gap.color", style, "#000000");
+            prop::Color::init("hover.gap.color", style, "#000000");
+
+            prop::Boolean::init("hvalue.editable", style, false);
+            prop::RangeFloat::init("hvalue.value", style, 0.0f, -1.0f, 1.0f);
+            prop::StepFloat::init("hvalue.step", style, 1.0f, 10.0f, 0.1f);
+            prop::Boolean::init("vvalue.editable", style, false);
+            prop::RangeFloat::init("vvalue.value", style, 0.0f, -1.0f, 1.0f);
+            prop::StepFloat::init("vvalue.step", style, 1.0f, 10.0f, 0.1f);
+            prop::Boolean::init("zvalue.editable", style, false);
+            prop::RangeFloat::init("zvalue.value", style, 0.0f, -1.0f, 1.0f);
+            prop::StepFloat::init("zvalue.step", style, 1.0f, 10.0f, 0.1f);
+
+        STYLE_INITIALIZER_END(GraphDot, "GraphDot");
+
         const w_class_t GraphDot::metadata             = { "GraphDot", &GraphItem::metadata };
 
         GraphDot::param_t::param_t(GraphDot *dot, prop::Listener *lst):

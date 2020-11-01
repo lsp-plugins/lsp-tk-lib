@@ -25,6 +25,33 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(GraphText, GraphItem);
+            prop::String            sText;
+            prop::Font              sFont;
+            prop::Color             sColor;
+            prop::Layout            sLayout;
+            prop::TextLayout        sTextLayout;
+            prop::Float             sHValue;
+            prop::Float             sVValue;
+            prop::Integer           sHAxis;
+            prop::Integer           sVAxis;
+            prop::Integer           sOrigin;
+
+            prop::String::init("text", style);
+            prop::Font::init("font", style, 10.0f);
+            prop::Color::init("color", style, "#ffffff");
+            prop::Layout::init("layout", style, 1.0f, 1.0f, 0.0f, 0.0f);
+            prop::TextLayout::init("text.layout", style, 0.5f, 0.5f);
+            prop::Float::init("hvalue", style, 0.0f);
+            prop::Float::init("vvalue", style, 0.0f);
+            prop::Integer::init("haxis", style, 0);
+            prop::Integer::init("vaxis", style, 1);
+            prop::Integer::init("origin", style, 0);
+            // Overrides
+            prop::Padding::override("padding", style, 2);
+
+        STYLE_INITIALIZER_END(GraphText, "GraphText");
+
         const w_class_t GraphText::metadata             = { "GraphText", &GraphItem::metadata };
 
         GraphText::GraphText(Display *dpy):

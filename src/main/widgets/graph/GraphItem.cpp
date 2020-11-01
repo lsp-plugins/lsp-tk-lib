@@ -25,6 +25,12 @@ namespace lsp
 {
     namespace tk
     {
+        STYLE_INITIALIZER_BEGIN(GraphItem, Widget);
+
+            prop::Boolean::init("smooth", style, true);
+
+        STYLE_INITIALIZER_END(GraphItem, "GraphItem");
+
         const w_class_t GraphItem::metadata     =   { "GraphItem", &Widget::metadata };
 
         GraphItem::GraphItem(Display *dpy):
