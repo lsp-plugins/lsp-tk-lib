@@ -111,6 +111,7 @@
 #include <lsp-plug.in/tk/prop/specific/GraphFrameData.h>
 
 // Styles and schemas
+#include <lsp-plug.in/tk/style/StyleSheet.h>
 #include <lsp-plug.in/tk/style/Style.h>
 #include <lsp-plug.in/tk/style/StyleInitializer.h>
 #include <lsp-plug.in/tk/style/Schema.h>

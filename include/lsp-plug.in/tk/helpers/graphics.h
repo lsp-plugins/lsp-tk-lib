@@ -98,4 +98,4 @@ namespace lsp
 }
 
 
-#endif /* INCLUDE_LSP_PLUG_IN_TK_HELPERS_GRAPHICS_H_ */
+#endif /* LSP_PLUG_IN_TK_HELPERS_GRAPHICS_H_ */

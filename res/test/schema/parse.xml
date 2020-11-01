@@ -20,11 +20,11 @@
 		<f.value value="123.45" />
 		<s.value value="some text" />
 		
-		<s.b.value value="true" type="string" />
-		<s.i.value value="123" type="s" />
-		<s.f.value value="123.45" type="text" />
+		<s.b.value value="true" />
+		<s.i.value value="123" />
+		<s.f.value value="123.45" />
 		
-		<f.i.value value="123" type="float" />
+		<f.i.value value="123" />
 	</root>
 	
 	<!-- Nested style of window -->

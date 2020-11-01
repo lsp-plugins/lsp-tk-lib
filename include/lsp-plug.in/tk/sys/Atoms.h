@@ -74,4 +74,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* INCLUDE_LSP_PLUG_IN_TK_SYS_ATOMS_H_ */
+#endif /* LSP_PLUG_IN_TK_SYS_ATOMS_H_ */
