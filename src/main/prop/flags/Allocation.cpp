@@ -31,8 +31,6 @@ namespace lsp
             ".vfill",
             ".hexpand",
             ".vexpand",
-            ".hembed",
-            ".vembed",
             NULL
         };
     
