@@ -567,6 +567,34 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Style::remove_all_children()
+        {
+            if (vChildren.is_empty())
+                return STATUS_OK;
+
+            // Remove all children
+            lltl::parray<Style> children;
+            children.swap(vChildren);
+
+            // Remove self from parent list of each child
+            for (size_t i=0, n=children.size(); i < n; ++i)
+            {
+                Style *child = children.uget(i);
+                if (child != NULL)
+                    child->vParents.premove(this);
+            }
+
+            // Synchronize children
+            for (size_t i=0, n=children.size(); i < n; ++i)
+            {
+                Style *child = children.uget(i);
+                if (child != NULL)
+                    child->sync();
+            }
+
+            return STATUS_OK;
+        }
+
         status_t Style::remove_parent(Style *parent)
         {
             if (parent == NULL)
@@ -576,6 +604,29 @@ namespace lsp
                 return STATUS_NOT_FOUND;
 
             parent->vChildren.premove(this);
+            sync();
+
+            return STATUS_OK;
+        }
+
+        status_t Style::remove_all_parents()
+        {
+            if (vParents.is_empty())
+                return STATUS_OK;
+
+            // Remove all parents
+            lltl::parray<Style> parents;
+            parents.swap(vParents);
+
+            // Remove self from parent lists
+            for (size_t i=0, n=parents.size(); i < n; ++i)
+            {
+                Style *parent = parents.uget(i);
+                if (parent != NULL)
+                    parent->vChildren.premove(this);
+            }
+
+            // Synchronize state
             sync();
 
             return STATUS_OK;

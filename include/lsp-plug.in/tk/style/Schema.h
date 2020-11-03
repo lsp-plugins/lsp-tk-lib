@@ -77,12 +77,18 @@ namespace lsp
                 } property_value_t;
 
             protected:
-                context_t           sCtx;
-                mutable Atoms      *pAtoms;
+                context_t                           sCtx; // TODO: remove me
 
-                prop::Float         sScaling;
+                mutable Atoms                      *pAtoms;
+                bool                                bInitialized;
+                Style                              *pRoot;
+                lltl::pphash<LSPString, Style>      vStyles;
+
+                prop::Float                         sScaling;
 
             protected:
+                status_t            create_style(StyleInitializer *init);
+
                 status_t            apply_context(context_t *ctx);
                 static void         init_context(context_t *ctx);
                 static void         swap_context(context_t *a, context_t *b);
@@ -94,6 +100,8 @@ namespace lsp
                 status_t            parse_style(xml::PullParser *p, context_t *ctx, bool root);
                 status_t            parse_color(xml::PullParser *p, lsp::Color *color);
                 status_t            parse_property(xml::PullParser *p, style_t *style, const LSPString *name);
+                static status_t     apply_settings(Style *s, StyleSheet::style_t *xs);
+                status_t            apply_relations(Style *s, StyleSheet::style_t *xs);
 
                 static status_t     parse_style_class(LSPString *cname, const LSPString *text);
                 static status_t     parse_style_parents(style_t *style, const LSPString *text);
@@ -102,11 +110,40 @@ namespace lsp
 
                 style_t            *get_style(const LSPString *id);
 
-                void                bind();
+                void                bind(Style *root);
 
             public:
                 explicit Schema(Atoms *atoms);
                 virtual ~Schema();
+
+                /**
+                 * Initialize schema with the specified list of styles
+                 * Can be run only once after the schema is instantiated. Otherwise
+                 * it will return error
+                 *
+                 * @param list list of styles
+                 * @return status of operation
+                 */
+                status_t            init(lltl::parray<StyleInitializer> *list);
+                status_t            init(lltl::parray<StyleInitializer> &list);
+
+                /**
+                 * Initialize schema with the specified list of styles
+                 * Can be run only once after the schema is instantiated. Otherwise
+                 * it will return error
+                 *
+                 * @param list array of pointers to style initializers
+                 * @param n number of elements in array
+                 * @return status of operation
+                 */
+                status_t            init(StyleInitializer **list, size_t n);
+
+                /**
+                 * Apply stylesheet settings to the schema
+                 * @param sheet style sheet
+                 * @return status of operation
+                 */
+                status_t            apply(StyleSheet *sheet);
 
             public:
                 status_t            parse_file(const char *path, const char *charset = NULL);

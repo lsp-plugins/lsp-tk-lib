@@ -169,6 +169,12 @@ namespace lsp
                 status_t                remove_parent(Style *parent);
 
                 /**
+                 * Remove all parents
+                 * @return status of operation
+                 */
+                status_t                remove_all_parents();
+
+                /**
                  * Check whether style has a parent
                  * @param parent parent style
                  * @param recursive flag that indicates that a recursive search should be performed
@@ -203,6 +209,12 @@ namespace lsp
                  * @return status of operation
                  */
                 status_t                remove_child(Style *child);
+
+                /**
+                 * Remove all parents
+                 * @return status of operation
+                 */
+                status_t                remove_all_children();
 
                 /**
                  * Check whether style has a child

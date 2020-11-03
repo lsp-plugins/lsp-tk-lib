@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/io/InStringSequence.h>
 #include <lsp-plug.in/expr/Tokenizer.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -54,6 +55,203 @@ namespace lsp
             sScaling.unbind();
 
             destroy_context(&sCtx);
+
+            // Destroy named styles
+            lltl::parray<Style> vs;
+            vStyles.values(&vs);
+            vStyles.flush();
+            for (size_t i=0, n=vs.size(); i<n; ++i)
+            {
+                Style *s = vs.uget(i);
+                if (s != NULL)
+                    delete s;
+            }
+
+            // Destroy root style
+            if (pRoot != NULL)
+            {
+                delete pRoot;
+                pRoot = NULL;
+            }
+        }
+
+        status_t Schema::init(lltl::parray<StyleInitializer> *list)
+        {
+            return init(list->array(), list->size());
+        }
+
+        status_t Schema::init(lltl::parray<StyleInitializer> &list)
+        {
+            return init(list.array(), list.size());
+        }
+
+        status_t Schema::init(StyleInitializer **list, size_t n)
+        {
+            // Check for initialize state
+            if (bInitialized)
+                return STATUS_BAD_STATE;
+            bInitialized = true;
+
+            // Create root style
+            if (pRoot == NULL)
+            {
+                pRoot = new Style(this);
+                if (pRoot == NULL)
+                    return STATUS_NO_MEM;
+            }
+
+            // Initialize root style with properties
+            bind(pRoot);
+
+            // Create all necessary styles
+            for (size_t i=0; i<n; ++i)
+            {
+                LSP_STATUS_ASSERT(create_style(list[i]));
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::apply(StyleSheet *sheet)
+        {
+            if (sheet == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            // Destroy all relations between styles
+            status_t res;
+            lltl::parray<Style> vs;
+            if (!vStyles.values(&vs))
+                return STATUS_NO_MEM;
+
+            for (size_t i=0, n=vs.size(); i<n; ++i)
+            {
+                Style *s = vs.uget(i);
+                s->remove_all_parents();
+                s->remove_all_children();
+            }
+
+            // Initialize each style
+            if (sheet->pRoot != NULL)
+            {
+                res = apply_relations(pRoot, sheet->pRoot);
+                if (res == STATUS_OK)
+                    res = apply_settings(pRoot, sheet->pRoot);
+                if (res != STATUS_OK)
+                    return res;
+            }
+
+            // Iterate over named styles
+            lltl::parray<StyleSheet::style_t>  vss;
+            if (!sheet->vStyles.values(&vss))
+                return STATUS_NO_MEM;
+
+            for (size_t i=0, n=vss.size(); i<n; ++i)
+            {
+                StyleSheet::style_t *xs = vss.uget(i);
+                Style *s = vStyles.get(&xs->name);
+                if ((s == NULL) || (xs == NULL))
+                    continue;
+
+                res = apply_relations(s, xs);
+                if (res == STATUS_OK)
+                    res = apply_settings(s, xs);
+                if (res != STATUS_OK)
+                    return res;
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::apply_settings(Style *s, StyleSheet::style_t *xs)
+        {
+            lltl::parray<LSPString> pnames;
+            if (!xs->properties.keys(&pnames))
+                return STATUS_NO_MEM;
+
+            property_value_t v;
+            status_t res;
+
+            for (size_t i=0, n=pnames.size(); i<n; ++i)
+            {
+                LSPString *name         = pnames.uget(i);
+                LSPString *value        = xs->properties.get(name);
+                property_type_t type    = s->get_type(name);
+
+                if (parse_property_value(&v, value, type) == STATUS_OK)
+                {
+                    switch (v.type)
+                    {
+                        case PT_BOOL:   res = s->set_bool(name, v.bvalue);      break;
+                        case PT_INT:    res = s->set_int(name, v.ivalue);       break;
+                        case PT_FLOAT:  res = s->set_float(name, v.fvalue);     break;
+                        case PT_STRING: res = s->set_string(name, &v.svalue);   break;
+                        default:        res = STATUS_OK;
+                    }
+
+                    if (res != STATUS_OK)
+                        return res;
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::apply_relations(Style *s, StyleSheet::style_t *xs)
+        {
+            status_t res;
+
+            for (size_t i=0, n=xs->parents.size(); i<n; ++i)
+            {
+                LSPString *parent = xs->parents.get(i);
+                Style *ps = (parent->equals_ascii("root")) ? pRoot : vStyles.get(parent);
+                if (ps == NULL)
+                    continue;
+
+                res = s->add_parent(ps);
+                if (res != STATUS_OK)
+                    return res;
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::create_style(StyleInitializer *init)
+        {
+            LSPString name;
+
+            // Style should have name
+            if (!name.set_utf8(init->name()))
+                return STATUS_NO_MEM;
+
+            // Duplicates are disallowed
+            if (vStyles.contains(&name))
+                return STATUS_ALREADY_EXISTS;
+
+            // Create style
+            lsp_trace("Creating style '%s'...", init->name());
+            Style *style = new Style(this);
+            if (style == NULL)
+                return STATUS_NO_MEM;
+
+            // Initialize style and bind to Root by default
+            status_t res = init->init(style);
+            if (res == STATUS_OK)
+                res         = style->add_parent(pRoot);
+
+            if (res != STATUS_OK)
+            {
+                delete style;
+                return res;
+            }
+
+            // Register style in the list
+            if (!vStyles.create(&name, style))
+            {
+                delete style;
+                return STATUS_NO_MEM;
+            }
+
+            return STATUS_OK;
         }
 
         void Schema::destroy_context(context_t *ctx)
@@ -596,20 +794,18 @@ namespace lsp
             swap_context(&sCtx, ctx);
 
             // Bind schema
-            bind();
+            bind(&sCtx.pRoot->sStyle);
 
             return STATUS_OK;
         }
 
-        void Schema::bind()
+        void Schema::bind(Style *root)
         {
-            Style *root = (sCtx.pRoot != NULL) ? &sCtx.pRoot->sStyle : NULL;
+            // Initialize default values
+            sScaling.init(root, 1.0f);
 
             // Bind properties
             sScaling.bind("size.scaling", root);
-
-            // Initialize default values
-            sScaling.init(root, 1.0f);
         }
 
         status_t Schema::parse_style_class(LSPString *cname, const LSPString *text)
@@ -809,7 +1005,7 @@ namespace lsp
                 sCtx.pRoot  = s;
 
                 // Bind schema
-                bind();
+                bind(&s->sStyle);
             }
 
             return &s->sStyle;

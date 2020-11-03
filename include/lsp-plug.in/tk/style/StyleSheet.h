@@ -48,6 +48,8 @@ namespace lsp
             private:
                 StyleSheet & operator = (const StyleSheet &);
 
+                friend class Schema;
+
             protected:
                 typedef struct style_t
                 {
