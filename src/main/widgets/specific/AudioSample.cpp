@@ -24,6 +24,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -73,6 +74,7 @@ namespace lsp
             }
 
         STYLE_INITIALIZER_END(AudioSample, "AudioSample");
+        LSP_BUILTIN_STYLE(AudioSample);
 
         const w_class_t AudioSample::metadata           = { "AudioSample", &WidgetContainer::metadata };
 

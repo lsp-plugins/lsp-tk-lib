@@ -23,6 +23,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/runtime/system.h>
 #include <lsp-plug.in/io/Dir.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -41,6 +42,7 @@ namespace lsp
             prop::String::init("confirm.msg", style);
 
         STYLE_INITIALIZER_END(FileDialog, "FileDialog");
+        LSP_BUILTIN_STYLE(FileDialog);
 
         const w_class_t FileDialog::metadata            = { "FileDialog", &Window::metadata };
 

@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -34,6 +35,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style);
 
         STYLE_INITIALIZER_END(Box, "Box");
+        LSP_BUILTIN_STYLE(Box);
 
         const w_class_t Box::metadata   =   { "Box", &WidgetContainer::metadata     };
 

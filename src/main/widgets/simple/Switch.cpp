@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -41,6 +42,7 @@ namespace lsp
             prop::Pointer::init("button.pointer", style, ws::MP_DEFAULT);
 
         STYLE_INITIALIZER_END(Switch, "Switch");
+        LSP_BUILTIN_STYLE(Switch);
 
         static const float ANGLE = 15.0f * M_PI / 180.0f;
         

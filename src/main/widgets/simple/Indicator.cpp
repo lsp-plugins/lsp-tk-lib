@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -38,6 +39,7 @@ namespace lsp
             prop::String::init("text", style);
 
         STYLE_INITIALIZER_END(Indicator, "Indicator");
+        LSP_BUILTIN_STYLE(Indicator);
 
         typedef struct rect_t
         {

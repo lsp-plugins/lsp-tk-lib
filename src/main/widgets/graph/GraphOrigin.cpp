@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -33,6 +34,7 @@ namespace lsp
             prop::Color::init("color", style, "#ffffff");
 
         STYLE_INITIALIZER_END(GraphOrigin, "GraphOrigin");
+        LSP_BUILTIN_STYLE(GraphOrigin);
 
         const w_class_t GraphOrigin::metadata             = { "GraphOrigin", &GraphItem::metadata };
 

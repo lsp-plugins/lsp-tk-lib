@@ -23,6 +23,7 @@
 #include <lsp-plug.in/stdlib/string.h>
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/common/status.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -46,6 +47,7 @@ namespace lsp
             prop::Boolean::override("visible", style, false);
 
         STYLE_INITIALIZER_END(Window, "Window");
+        LSP_BUILTIN_STYLE(Window);
 
         const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };
 
@@ -114,23 +116,23 @@ namespace lsp
             sLayout.bind("layout", &sStyle);
             sPolicy.bind("policy", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sBorderColor.init(sclass, "#000000");
-                sBorderStyle.init(sclass, ws::BS_SIZEABLE);
-                sBorderSize.init(sclass, 0);
-                sBorderRadius.init(sclass, 2);
-                sActions.init(sclass, ws::WA_ALL);
-                sPosition.init(sclass, 0, 0);
-                sWindowSize.init(sclass, 160, 100);
-                sSizeConstraints.init(sclass, -1, -1, -1, -1);
-                sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
-                sPolicy.init(sclass, WP_NORMAL);
-
-                // Overrides
-                sVisibility.override(sclass, false);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sBorderColor.init(sclass, "#000000");
+//                sBorderStyle.init(sclass, ws::BS_SIZEABLE);
+//                sBorderSize.init(sclass, 0);
+//                sBorderRadius.init(sclass, 2);
+//                sActions.init(sclass, ws::WA_ALL);
+//                sPosition.init(sclass, 0, 0);
+//                sWindowSize.init(sclass, 160, 100);
+//                sSizeConstraints.init(sclass, -1, -1, -1, -1);
+//                sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
+//                sPolicy.init(sclass, WP_NORMAL);
+//
+//                // Overrides
+//                sVisibility.override(sclass, false);
+//            }
 
             // Cache the actual scaling factor
             fScaling    = sScaling.get();

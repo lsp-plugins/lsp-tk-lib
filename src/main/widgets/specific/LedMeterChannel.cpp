@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -76,6 +77,7 @@ namespace lsp
             prop::Integer::init("angle", style, 0);
 
         STYLE_INITIALIZER_END(LedMeterChannel, "LedMeterChannel");
+        LSP_BUILTIN_STYLE(LedMeterChannel);
 
         const w_class_t LedMeterChannel::metadata           = { "LedMeterChannel", &Widget::metadata };
 

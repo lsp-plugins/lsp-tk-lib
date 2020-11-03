@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -36,6 +37,7 @@ namespace lsp
             prop::Integer::init("led", style, 8);
 
         STYLE_INITIALIZER_END(Led, "Led");
+        LSP_BUILTIN_STYLE(Led);
 
         const w_class_t Led::metadata           = { "Led", &Widget::metadata };
 

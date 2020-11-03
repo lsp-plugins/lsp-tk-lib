@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -35,6 +36,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
 
         STYLE_INITIALIZER_END(Label, "Label");
+        LSP_BUILTIN_STYLE(Label);
 
         const w_class_t Label::metadata =       { "Label", &Widget::metadata };
 

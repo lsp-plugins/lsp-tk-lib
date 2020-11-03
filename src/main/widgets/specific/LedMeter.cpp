@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -39,6 +40,7 @@ namespace lsp
             prop::Integer::init("channel.width.min", style, 16);
 
         STYLE_INITIALIZER_END(LedMeter, "LedMeter");
+        LSP_BUILTIN_STYLE(LedMeter);
 
         const w_class_t LedMeter::metadata              = { "LedMeter", &WidgetContainer::metadata };
 

@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -47,6 +48,7 @@ namespace lsp
             prop::Padding::init("text.padding", style, 2, 2, 2, 2);
 
         STYLE_INITIALIZER_END(Button, "Button");
+        LSP_BUILTIN_STYLE(Button);
 
         const w_class_t Button::metadata        = { "Button", &Widget::metadata };
 

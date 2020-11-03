@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -30,6 +31,7 @@ namespace lsp
             prop::Boolean::init("smooth", style, true);
 
         STYLE_INITIALIZER_END(GraphItem, "GraphItem");
+        LSP_BUILTIN_STYLE(GraphItem);
 
         const w_class_t GraphItem::metadata     =   { "GraphItem", &Widget::metadata };
 

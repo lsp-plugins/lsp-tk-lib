@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -47,6 +48,7 @@ namespace lsp
             prop::String::init("text.empty", style);
 
         STYLE_INITIALIZER_END(ComboBox, "ComboBox");
+        LSP_BUILTIN_STYLE(ComboBox);
 
         //-----------------------------------------------------------------------------
         // ComboBox popup window implementation

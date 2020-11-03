@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/tk/helpers/graphics.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -53,6 +54,7 @@ namespace lsp
             prop::Boolean::override("smooth", style, false);
 
         STYLE_INITIALIZER_END(GraphMarker, "GraphMarker");
+        LSP_BUILTIN_STYLE(GraphMarker);
 
         const w_class_t GraphMarker::metadata             = { "GraphMarker", &GraphItem::metadata };
 

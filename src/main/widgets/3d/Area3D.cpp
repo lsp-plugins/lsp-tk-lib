@@ -23,6 +23,7 @@
 #include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp/dsp.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -40,6 +41,7 @@ namespace lsp
             prop::Color::init("glass.color", style, "#ffffff");
 
         STYLE_INITIALIZER_END(Area3D, "Area3D");
+        LSP_BUILTIN_STYLE(Area3D);
 
         const w_class_t Area3D::metadata      = { "Area3D", &Widget::metadata };
 

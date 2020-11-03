@@ -23,6 +23,7 @@
 #include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -49,6 +50,7 @@ namespace lsp
             prop::Padding::init("padding.internal", style, 1);
 
         STYLE_INITIALIZER_END(Graph, "Graph");
+        LSP_BUILTIN_STYLE(Graph);
 
         const w_class_t Graph::metadata         =   { "Graph", &WidgetContainer::metadata };
 

@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -41,6 +42,7 @@ namespace lsp
             prop::Boolean::init("value.cycling", style, false);
 
         STYLE_INITIALIZER_END(Knob, "Knob");
+        LSP_BUILTIN_STYLE(Knob);
 
         const w_class_t Knob::metadata      = { "Knob", &Widget::metadata };
 

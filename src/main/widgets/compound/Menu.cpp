@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -50,6 +51,7 @@ namespace lsp
             prop::Color::override("bg.color", style, "#cccccc");
 
         STYLE_INITIALIZER_END(Menu, "Menu");
+        LSP_BUILTIN_STYLE(Menu);
 
         //-----------------------------------------------------------------------------
         // Menu window implementation

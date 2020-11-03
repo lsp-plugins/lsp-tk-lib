@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -32,6 +33,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style);
 
         STYLE_INITIALIZER_END(Align, "Align");
+        LSP_BUILTIN_STYLE(Align);
 
         const w_class_t Align::metadata         = { "Align", &WidgetContainer::metadata };
 

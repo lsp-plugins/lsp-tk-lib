@@ -23,6 +23,7 @@
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/ws/factory.h>
 #include <lsp-plug.in/i18n/Dictionary.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -222,15 +223,38 @@ namespace lsp
 
         status_t Display::init_schema()
         {
+            // Form the list of initializers
+            status_t res = STATUS_OK;
+            lltl::parray<StyleInitializer> init;
+            for (BuiltinStyle *curr = BuiltinStyle::root(); curr != NULL; curr = curr->next())
+            {
+                if (!init.add(curr->init()))
+                    return STATUS_NO_MEM;
+            }
+
+            // Initialize schema
+            res = sSchema.init(&init);
+            if (res != STATUS_OK)
+                return res;
+
+            // Load schema settings
             const char *schema_path = pEnv->get_utf8(LSP_TK_ENV_SCHEMA_PATH);
             if (schema_path == NULL)
                 return STATUS_OK;
 
+            // Load style sheet
+            StyleSheet sheet;
             io::IInSequence *is = pResourceLoader->read_sequence(schema_path);
             if (is == NULL)
                 return STATUS_NOT_FOUND;
 
-            return sSchema.parse_data(is, WRAP_CLOSE | WRAP_DELETE);
+            // Parse style
+            res = sheet.parse_data(is, WRAP_CLOSE | WRAP_DELETE);
+            if (res != STATUS_OK)
+                return res;
+
+            // Apply loaded schema
+            return sSchema.apply(&sheet);
         }
 
         status_t Display::main()

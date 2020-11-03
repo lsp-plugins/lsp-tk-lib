@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -28,6 +29,7 @@ namespace lsp
         STYLE_INITIALIZER_BEGIN(MessageBox, Window);
 
         STYLE_INITIALIZER_END(MessageBox, "MessageBox");
+        LSP_BUILTIN_STYLE(MessageBox);
 
         const w_class_t MessageBox::metadata        = { "MessageBox", &Window::metadata };
 

@@ -23,6 +23,7 @@
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/dsp/dsp.h>
 #include <stdlib.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -40,6 +41,7 @@ namespace lsp
             prop::GraphMeshData::init("data", style, 0);
 
         STYLE_INITIALIZER_END(GraphMesh, "GraphMesh");
+        LSP_BUILTIN_STYLE(GraphMesh);
 
         const w_class_t GraphMesh::metadata             = { "GraphMesh", &GraphItem::metadata };
 

@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -39,6 +40,7 @@ namespace lsp
             prop::Pointer::init("button.pointer", style, ws::MP_DEFAULT);
 
         STYLE_INITIALIZER_END(Fader, "Fader");
+        LSP_BUILTIN_STYLE(Fader);
 
         const w_class_t Fader::metadata         = { "Fader", &Widget::metadata };
         

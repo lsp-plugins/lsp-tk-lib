@@ -3,7 +3,7 @@
  *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 31 окт. 2020 г.
+ * Created on: 3 нояб. 2020 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,26 +19,35 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#ifndef PRIVATE_TK_STYLE_BUILTINSTYLE_H_
+#define PRIVATE_TK_STYLE_BUILTINSTYLE_H_
+
 #include <lsp-plug.in/tk/tk.h>
 
 namespace lsp
 {
     namespace tk
     {
-        StyleInitializer::StyleInitializer(const char *style)
+        class BuiltinStyle
         {
-            pClass      = style;
-        }
+            private:
+                static BuiltinStyle        *pRoot;
+                BuiltinStyle               *pNext;
+                StyleInitializer           *pInit;
 
-        StyleInitializer::~StyleInitializer()
-        {
-        }
+            public:
+                explicit BuiltinStyle(StyleInitializer *init);
 
-        status_t StyleInitializer::init(Style *style)
-        {
-            return STATUS_OK;
-        }
+            public:
+                static inline BuiltinStyle *root() { return pRoot; }
+                inline BuiltinStyle        *next() { return pNext; }
+                inline StyleInitializer    *init() { return pInit; }
+        };
+
+        #define LSP_BUILTIN_STYLE(widget) \
+            LSP_SYMBOL_HIDDEN \
+            BuiltinStyle widget ## StyleBuiltin(& STYLE_INITIALIZER_INSTANCE(widget));
     }
 }
 
-
+#endif /* PRIVATE_TK_STYLE_BUILTINSTYLE_H_ */

@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -35,6 +36,7 @@ namespace lsp
             prop::Boolean::init("visible", style, true);
             prop::Pointer::init("pointer", style, ws::MP_DEFAULT);
         STYLE_INITIALIZER_END(Widget, "Widget");
+        LSP_BUILTIN_STYLE(Widget);
 
         void Widget::PropListener::notify(Property *prop)
         {

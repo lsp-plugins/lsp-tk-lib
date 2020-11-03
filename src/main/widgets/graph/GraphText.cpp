@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -51,6 +52,7 @@ namespace lsp
             prop::Padding::override("padding", style, 2);
 
         STYLE_INITIALIZER_END(GraphText, "GraphText");
+        LSP_BUILTIN_STYLE(GraphText);
 
         const w_class_t GraphText::metadata             = { "GraphText", &GraphItem::metadata };
 

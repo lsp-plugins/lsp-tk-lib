@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -45,6 +46,7 @@ namespace lsp
             prop::Integer::init("vscroll.spacing", style, 1);
 
         STYLE_INITIALIZER_END(ListBox, "ListBox");
+        LSP_BUILTIN_STYLE(ListBox);
 
         const w_class_t ListBox::metadata               = { "ListBox", &WidgetContainer::metadata };
 

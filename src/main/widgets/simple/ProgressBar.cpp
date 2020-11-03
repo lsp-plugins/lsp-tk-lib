@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -46,6 +47,7 @@ namespace lsp
             prop::Allocation::override("allocation", style, true, false, false, false);
 
         STYLE_INITIALIZER_END(ProgressBar, "ProgressBar");
+        LSP_BUILTIN_STYLE(ProgressBar);
 
         const w_class_t ProgressBar::metadata           = { "ProgressBar", &Widget::metadata };
 

@@ -47,23 +47,6 @@ namespace lsp
                 Schema & operator = (const Schema &);
 
             protected:
-                typedef struct style_t
-                {
-                    Style                       sStyle;
-                    lltl::parray<LSPString>     vParents;
-                    bool                        bInitialized;
-
-                    style_t(Schema *schema);
-                    ~style_t();
-                } style_t;
-
-                typedef struct context_t
-                {
-                    lltl::pphash<LSPString, lsp::Color> vColors;    // Color aliases
-                    lltl::pphash<LSPString, style_t>    vStyles;    // Styles
-                    style_t                            *pRoot;      // Root style
-                } context_t;
-
                 typedef struct property_value_t
                 {
                     property_type_t     type;
@@ -77,38 +60,21 @@ namespace lsp
                 } property_value_t;
 
             protected:
-                context_t                           sCtx; // TODO: remove me
-
                 mutable Atoms                      *pAtoms;
                 bool                                bInitialized;
                 Style                              *pRoot;
                 lltl::pphash<LSPString, Style>      vStyles;
+                lltl::pphash<LSPString, lsp::Color> vColors;
 
                 prop::Float                         sScaling;
 
             protected:
                 status_t            create_style(StyleInitializer *init);
 
-                status_t            apply_context(context_t *ctx);
-                static void         init_context(context_t *ctx);
-                static void         swap_context(context_t *a, context_t *b);
-                static void         destroy_context(context_t *ctx);
-
-                status_t            parse_document(xml::PullParser *p);
-                status_t            parse_schema(xml::PullParser *p, context_t *ctx);
-                status_t            parse_colors(xml::PullParser *p, context_t *ctx);
-                status_t            parse_style(xml::PullParser *p, context_t *ctx, bool root);
-                status_t            parse_color(xml::PullParser *p, lsp::Color *color);
-                status_t            parse_property(xml::PullParser *p, style_t *style, const LSPString *name);
                 static status_t     apply_settings(Style *s, StyleSheet::style_t *xs);
                 status_t            apply_relations(Style *s, StyleSheet::style_t *xs);
-
-                static status_t     parse_style_class(LSPString *cname, const LSPString *text);
-                static status_t     parse_style_parents(style_t *style, const LSPString *text);
-                static status_t     parse_property_type(property_type_t *pt, const LSPString *text);
+                void                destroy_colors();
                 static status_t     parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt);
-
-                style_t            *get_style(const LSPString *id);
 
                 void                bind(Style *root);
 
@@ -146,16 +112,6 @@ namespace lsp
                 status_t            apply(StyleSheet *sheet);
 
             public:
-                status_t            parse_file(const char *path, const char *charset = NULL);
-                status_t            parse_file(const LSPString *path, const char *charset = NULL);
-                status_t            parse_file(const io::Path *path, const char *charset = NULL);
-
-                status_t            parse_data(io::IInStream *is, size_t flags = WRAP_NONE, const char *charset = NULL);
-                status_t            parse_data(const char *str, const char *charset = NULL);
-                status_t            parse_data(const LSPString *str);
-                status_t            parse_data(io::IInSequence *seq, size_t flags = WRAP_NONE);
-
-            public:
                 LSP_TK_PROPERTY(Float,          scaling,            &sScaling)
 
             public:
@@ -177,21 +133,7 @@ namespace lsp
                  * Get root style
                  * @return root style or NULL on error
                  */
-                Style              *root();
-
-                /**
-                 * Get style by class identifier.
-                 * If style does not exists, it will be automatically created and bound to the root style
-                 * @return style or NULL on error
-                 */
-                Style              *get(const char *id, style_init_t init, void *args = NULL);
-
-                /**
-                 * Get style by class identifier.
-                 * If style does not exists, it will be automatically created and bound to the root style
-                 * @return style or NULL on error
-                 */
-                Style              *get(const LSPString *id, style_init_t init, void *args = NULL);
+                inline Style       *root() { return pRoot;  }
 
                 /**
                  * Get style by class identifier.

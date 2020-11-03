@@ -23,6 +23,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <wctype.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -48,6 +49,7 @@ namespace lsp
             prop::Pointer::init("pointer", style, ws::MP_IBEAM);
 
         STYLE_INITIALIZER_END(Edit, "Edit");
+        LSP_BUILTIN_STYLE(Edit);
 
         const w_class_t Edit::metadata      = { "Edit", &Widget::metadata };
 

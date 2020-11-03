@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -56,6 +57,7 @@ namespace lsp
             prop::Color::init("text.active.color", style, "#000000");
 
         STYLE_INITIALIZER_END(ScrollBar, "ScrollBar");
+        LSP_BUILTIN_STYLE(ScrollBar);
 
         const w_class_t ScrollBar::metadata         = { "ScrollBar", &Widget::metadata };
 

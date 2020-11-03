@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -42,6 +43,7 @@ namespace lsp
             prop::Padding::override("padding", style, 16, 16, 2, 2);
 
         STYLE_INITIALIZER_END(MenuItem, "MenuItem");
+        LSP_BUILTIN_STYLE(MenuItem);
 
         const w_class_t MenuItem::metadata      = { "MenuItem", &Widget::metadata };
 

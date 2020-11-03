@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/dsp/dsp.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -40,6 +41,7 @@ namespace lsp
             prop::GraphFrameFunction::init("function", style, GFF_DEFAULT);
 
         STYLE_INITIALIZER_END(GraphFrameBuffer, "GraphFrameBuffer");
+        LSP_BUILTIN_STYLE(GraphFrameBuffer);
 
         const w_class_t GraphFrameBuffer::metadata             = { "GraphFrameBuffer", &GraphItem::metadata };
 

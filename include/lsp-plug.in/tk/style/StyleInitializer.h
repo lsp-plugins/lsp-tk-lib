@@ -34,16 +34,11 @@ namespace lsp
         class StyleInitializer
         {
             protected:
-                static StyleInitializer    *pRoot;
-                StyleInitializer           *pNext;
-                const char             *pClass;
+                const char          *pClass;
 
             public:
                 explicit StyleInitializer(const char *style);
                 virtual ~StyleInitializer();
-
-            public:
-                static inline StyleInitializer     *root()  { return pRoot;     }
 
             public:
                 inline const char  *name() const        { return pClass;    }

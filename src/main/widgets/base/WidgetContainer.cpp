@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -28,6 +29,7 @@ namespace lsp
         STYLE_INITIALIZER_BEGIN(WidgetContainer, Widget);
             // Nothing
         STYLE_INITIALIZER_END(WidgetContainer, "WidgetContainer");
+        LSP_BUILTIN_STYLE(WidgetContainer);
 
         const w_class_t WidgetContainer::metadata = { "WidgetContainer", &Widget::metadata };
 

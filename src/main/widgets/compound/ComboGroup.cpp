@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -45,6 +46,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style);
 
         STYLE_INITIALIZER_END(ComboGroup, "ComboGroup");
+        LSP_BUILTIN_STYLE(ComboGroup);
 
         //-----------------------------------------------------------------------------
         // ComboBox popup window implementation

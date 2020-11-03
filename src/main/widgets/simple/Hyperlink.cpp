@@ -23,6 +23,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/ipc/Process.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -41,6 +42,7 @@ namespace lsp
             prop::Pointer::init("pointer", style, ws::MP_HAND);
 
         STYLE_INITIALIZER_END(Hyperlink, "Hyperlink");
+        LSP_BUILTIN_STYLE(Hyperlink);
 
         const w_class_t Hyperlink::metadata =        { "Hyperlink", &Widget::metadata };
 

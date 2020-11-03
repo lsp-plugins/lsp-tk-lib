@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -36,6 +37,7 @@ namespace lsp
             prop::RangeFloat::init("vscroll", style, 0.0f, 0.0f, 0.0f);
 
         STYLE_INITIALIZER_END(ScrollArea, "ScrollArea");
+        LSP_BUILTIN_STYLE(ScrollArea);
 
         const w_class_t ScrollArea::metadata    = { "ScrollArea", &WidgetContainer::metadata };
         

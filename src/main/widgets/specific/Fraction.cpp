@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -43,6 +44,7 @@ namespace lsp
             prop::Integer::init("thick", style, 1);
 
         STYLE_INITIALIZER_END(Fraction, "Fraction");
+        LSP_BUILTIN_STYLE(Fraction);
 
         //-----------------------------------------------------------------------------
         // Fraction popup window implementation

@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -36,6 +37,7 @@ namespace lsp
             prop::Color::override("bg.color", style, "#ffffff");
 
         STYLE_INITIALIZER_END(ListBoxItem, "ListBoxItem");
+        LSP_BUILTIN_STYLE(ListBoxItem);
 
         const w_class_t ListBoxItem::metadata       = { "ListBoxItem", &Widget::metadata };
 

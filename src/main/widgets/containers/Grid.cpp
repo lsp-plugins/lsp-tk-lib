@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -37,6 +38,7 @@ namespace lsp
             prop::Allocation::override("allocation", style, true, true, false, false);
 
         STYLE_INITIALIZER_END(Grid, "Grid");
+        LSP_BUILTIN_STYLE(Grid);
 
         const w_class_t Grid::metadata = { "Grid", &WidgetContainer::metadata };
         

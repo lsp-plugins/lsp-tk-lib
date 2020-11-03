@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/alloc.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -47,6 +48,7 @@ namespace lsp
             prop::Color::override("bg.color", style, "#000000");
 
         STYLE_INITIALIZER_END(AudioChannel, "AudioChannel");
+        LSP_BUILTIN_STYLE(AudioChannel);
 
         const w_class_t AudioChannel::metadata      = { "AudioChannel", &Widget::metadata };
 

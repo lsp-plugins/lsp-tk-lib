@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -40,6 +41,7 @@ namespace lsp
             prop::Padding::init("text.padding", style, 4, 2);
 
         STYLE_INITIALIZER_END(RackEars, "RackEars");
+        LSP_BUILTIN_STYLE(RackEars);
 
         const w_class_t RackEars::metadata              = { "RackEars", &Widget::metadata };
 

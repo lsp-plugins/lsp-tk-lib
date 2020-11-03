@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/debug.h>
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -55,6 +56,7 @@ namespace lsp
             prop::StepFloat::init("zvalue.step", style, 1.0f, 10.0f, 0.1f);
 
         STYLE_INITIALIZER_END(GraphDot, "GraphDot");
+        LSP_BUILTIN_STYLE(GraphDot);
 
         const w_class_t GraphDot::metadata             = { "GraphDot", &GraphItem::metadata };
 
