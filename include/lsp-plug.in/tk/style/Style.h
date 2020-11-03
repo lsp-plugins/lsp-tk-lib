@@ -35,6 +35,7 @@ namespace lsp
     namespace tk
     {
         class Schema;
+        class Property;
 
         /**
          * Some widget style. Allows nesting
@@ -89,6 +90,7 @@ namespace lsp
                 lltl::darray<property_t>        vProperties;
                 lltl::darray<listener_t>        vListeners;
                 lltl::parray<IStyleListener>    vLocks;
+                lltl::parray<Property>          vClients;
                 mutable Schema                 *pSchema;
                 bool                            bDelayed;
 

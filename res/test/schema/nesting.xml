@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema>
+	<!-- Root style -->
+	<root>
+		<size.scaling value="1.5f" />
+	</root>
+	
+	<!-- Nested style of window -->
+	<style class="TestBase" parents="root">
+		<int value="48000" />
+		<float value="1.41" />
+		<color value="#ccddee" />
+	</style>
+	
+	<style class="TestChild1" parents="root">
+	</style>
+	
+	<style class="TestChild2" parents="TestBase">
+	</style>
+	
+	<style class="TestChild3" parents="TestBase">
+		<int value="44100" />
+		<float value="10.0" />
+		<color value="#5a5a5a" />
+	</style>
+
+</schema>
+

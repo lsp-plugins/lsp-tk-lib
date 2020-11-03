@@ -89,6 +89,11 @@ namespace lsp
             do_destroy();
         }
 
+        const char *Widget::style_class() const
+        {
+            return pClass->name;
+        }
+
         bool Widget::instance_of(const w_class_t *wclass) const
         {
             const w_class_t *wc = pClass;
@@ -120,6 +125,9 @@ namespace lsp
                 sPointer.bind("pointer", &sStyle);
             }
 
+            Style *sclass = pDisplay->schema()->get(style_class());
+            if (sclass != NULL)
+                sStyle.add_parent(sclass);
 //                Style *sclass = style_class();
 //                if (sclass != NULL)
 //                {

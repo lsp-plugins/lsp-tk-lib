@@ -54,6 +54,9 @@ namespace lsp
                     pListener       = listener;
                 }
 
+            public:
+                virtual            ~Property();
+
             protected:
                 static const prop::enum_t *find_enum(const LSPString *s, const prop::enum_t *xenum);
 

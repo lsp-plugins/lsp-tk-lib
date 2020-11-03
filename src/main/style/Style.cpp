@@ -61,7 +61,7 @@ namespace lsp
                     parent->vChildren.premove(this);
             }
 
-            // Unlink from children and remove all children
+            // Unlink from children and remove all parents
             for (size_t i=0, n=vChildren.size(); i<n; ++i)
             {
                 Style *child = vChildren.uget(i);
@@ -73,9 +73,19 @@ namespace lsp
             }
             vChildren.flush();
 
-            // Synchronize state with listeners and remove them all
+            // Synchronize state with listeners and remove them
             sync();
             vListeners.flush();
+
+            // Destroy all property clients
+            for (size_t i=0, n=vClients.size(); i<n; ++i)
+            {
+                Property *prop = vClients.uget(i);
+                if (prop != NULL)
+                    delete prop;
+            }
+            vClients.flush();
+
 
             // Destroy stored properties
             for (size_t i=0, n=vProperties.size(); i<n; ++i)

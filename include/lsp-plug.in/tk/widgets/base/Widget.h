@@ -176,6 +176,12 @@ namespace lsp
                  */
                 inline const w_class_t *get_class() const { return pClass; }
 
+                /**
+                 * Get style class
+                 * @return style class
+                 */
+                virtual const char *style_class() const;
+
                 /** Check wheter the widget is instance of some class
                  *
                  * @param wclass widget class
