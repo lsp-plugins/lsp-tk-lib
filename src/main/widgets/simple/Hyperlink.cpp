@@ -92,19 +92,19 @@ namespace lsp
             sUrl.bind(&sStyle, pDisplay->dictionary());
             sPopup.bind(widget_ptrcast<Menu>(vMenus[0]));
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sTextLayout.init(sclass, 0.0f, 0.0f);
-                sFont.init(sclass, 12.0f, ws::FF_UNDERLINE);
-                sColor.init(sclass, "#0000cc");
-                sHoverColor.init(sclass, "#ff0000");
-                sConstraints.init(sclass, -1, -1, -1, -1);
-                sFollow.init(sclass, true);
-
-                // Overrides
-                sPointer.override(sclass, ws::MP_HAND);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sTextLayout.init(sclass, 0.0f, 0.0f);
+//                sFont.init(sclass, 12.0f, ws::FF_UNDERLINE);
+//                sColor.init(sclass, "#0000cc");
+//                sHoverColor.init(sclass, "#ff0000");
+//                sConstraints.init(sclass, -1, -1, -1, -1);
+//                sFollow.init(sclass, true);
+//
+//                // Overrides
+//                sPointer.override(sclass, ws::MP_HAND);
+//            }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
             if (id >= 0) id = sSlots.add(SLOT_BEFORE_POPUP, slot_on_before_popup, self());

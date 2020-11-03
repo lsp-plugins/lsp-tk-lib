@@ -90,18 +90,18 @@ namespace lsp
             sDown.bind("down", &sStyle);
             sButtonPointer.bind("button.pointer", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sColor.init(sclass, "#444444");
-                sTextColor.init(sclass, "#eeeeee");
-                sBorderColor.init(sclass, "#444444");
-                sHoleColor.init(sclass, "#000000");
-                sBorder.init(sclass, 6);
-                sSizeRange.init(sclass, 24);
-                sAspect.init(sclass, 1.41);
-                sButtonPointer.init(sclass, ws::MP_DEFAULT);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sColor.init(sclass, "#444444");
+//                sTextColor.init(sclass, "#eeeeee");
+//                sBorderColor.init(sclass, "#444444");
+//                sHoleColor.init(sclass, "#000000");
+//                sBorder.init(sclass, 6);
+//                sSizeRange.init(sclass, 24);
+//                sAspect.init(sclass, 1.41);
+//                sButtonPointer.init(sclass, ws::MP_DEFAULT);
+//            }
 
             pClass      = &metadata;
 

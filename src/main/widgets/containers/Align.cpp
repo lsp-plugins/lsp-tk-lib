@@ -62,12 +62,12 @@ namespace lsp
             sLayout.bind("layout", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
-                sSizeConstraints.init(sclass);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
+//                sSizeConstraints.init(sclass);
+//            }
 
             return STATUS_OK;
         }

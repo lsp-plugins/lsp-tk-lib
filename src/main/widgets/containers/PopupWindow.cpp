@@ -68,17 +68,17 @@ namespace lsp
             sTrgScreen.bind("trigger.screen", &sStyle);
             sAutoClose.bind("close.auto", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sTrgArea.init(sclass);
-                sTrgScreen.set(-1);
-                sAutoClose.init(sclass, true);
-
-                // Overrides
-                sBorderStyle.override(sclass, ws::BS_POPUP);
-                sActions.override(sclass, ws::WA_POPUP);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sTrgArea.init(sclass);
+//                sTrgScreen.set(-1);
+//                sAutoClose.init(sclass, true);
+//
+//                // Overrides
+//                sBorderStyle.override(sclass, ws::BS_POPUP);
+//                sActions.override(sclass, ws::WA_POPUP);
+//            }
 
             // Mark as initialized
             bInitialized = true;

@@ -100,20 +100,20 @@ namespace lsp
             sScrewSize.bind("screw.size", &sStyle);
             sTextPadding.bind("text.padding", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sFont.init(sclass, 16, ws::FF_BOLD);
-                sColor.init(sclass, "#00ccff");
-                sScrewColor.init(sclass, "#444444");
-                sTextColor.init(sclass, "#ffffff");
-                sHoleColor.init(sclass, "#000000");
-                sAngle.init(sclass, 0);
-                sButtonPadding.init(sclass, 2);
-                sScrewPadding.init(sclass, 2);
-                sScrewSize.init(sclass, 20);
-                sTextPadding.init(sclass, 4, 2);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sFont.init(sclass, 16, ws::FF_BOLD);
+//                sColor.init(sclass, "#00ccff");
+//                sScrewColor.init(sclass, "#444444");
+//                sTextColor.init(sclass, "#ffffff");
+//                sHoleColor.init(sclass, "#000000");
+//                sAngle.init(sclass, 0);
+//                sButtonPadding.init(sclass, 2);
+//                sScrewPadding.init(sclass, 2);
+//                sScrewSize.init(sclass, 20);
+//                sTextPadding.init(sclass, 4, 2);
+//            }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
 

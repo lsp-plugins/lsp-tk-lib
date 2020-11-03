@@ -64,14 +64,14 @@ namespace lsp
             sSizeRange.bind("size", &sStyle);
             sThickness.bind("thickness", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sOrientation.init(sclass, O_VERTICAL);
-                sColor.init(sclass, "#000000");
-                sSizeRange.init(sclass, -1, -1);
-                sThickness.init(sclass, 1);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sOrientation.init(sclass, O_VERTICAL);
+//                sColor.init(sclass, "#000000");
+//                sSizeRange.init(sclass, -1, -1);
+//                sThickness.init(sclass, 1);
+//            }
 
             return STATUS_OK;
         }

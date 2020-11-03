@@ -68,14 +68,14 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sTextLayout.init(sclass, 0.0f, 0.0f);
-                sFont.init(sclass);
-                sColor.init(sclass, "#000000");
-                sConstraints.init(sclass, -1, -1, -1, -1);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sTextLayout.init(sclass, 0.0f, 0.0f);
+//                sFont.init(sclass);
+//                sColor.init(sclass, "#000000");
+//                sConstraints.init(sclass, -1, -1, -1, -1);
+//            }
 
             return STATUS_OK;
         }

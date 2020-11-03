@@ -26,7 +26,7 @@
 	
 	<!-- Root style -->
 	<root>
-		<scaling value="1.0" />
+		<size.scaling value="1.0" />
 		<lang value="en_US" />
 		<bg.color value="bg" />
 	</root>

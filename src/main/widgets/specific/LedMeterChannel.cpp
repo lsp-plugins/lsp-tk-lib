@@ -163,32 +163,32 @@ namespace lsp
             // Disable automatic limit apply
             sValue.set_auto_limit(false);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sValue.init(sclass, 0.0f, 0.0f, 1.0f);
-                sPeak.init(sclass, 0.0f);
-                sBalance.init(sclass, 0.5f);
-                sColor.init(sclass, "#000000");
-                sValueColor.init(sclass, "#00ff00");
-                sValueRanges.init(sclass, "");
-                sPeakColor.init(sclass, "#ff0000");
-                sPeakRanges.init(sclass, "");
-                sBalanceColor.init(sclass, "#ffff00");
-                sTextColor.init(sclass, "#00ff00");
-                sTextRanges.init(sclass, "");
-                sBalanceColor.init(sclass, "#ffff00");
-                sPeakVisible.init(sclass, false);
-                sBalanceVisible.init(sclass, false);
-                sTextVisible.init(sclass, false);
-                sReversive.init(sclass, false);
-                sActive.init(sclass, true);
-                sMinSegments.init(sclass, 12);
-                sConstraints.init(sclass, 20, -1, 20, -1);
-                sFont.init(sclass, 9);
-                sBorder.init(sclass, 2);
-                sAngle.init(sclass, 0);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sValue.init(sclass, 0.0f, 0.0f, 1.0f);
+//                sPeak.init(sclass, 0.0f);
+//                sBalance.init(sclass, 0.5f);
+//                sColor.init(sclass, "#000000");
+//                sValueColor.init(sclass, "#00ff00");
+//                sValueRanges.init(sclass, "");
+//                sPeakColor.init(sclass, "#ff0000");
+//                sPeakRanges.init(sclass, "");
+//                sBalanceColor.init(sclass, "#ffff00");
+//                sTextColor.init(sclass, "#00ff00");
+//                sTextRanges.init(sclass, "");
+//                sBalanceColor.init(sclass, "#ffff00");
+//                sPeakVisible.init(sclass, false);
+//                sBalanceVisible.init(sclass, false);
+//                sTextVisible.init(sclass, false);
+//                sReversive.init(sclass, false);
+//                sActive.init(sclass, true);
+//                sMinSegments.init(sclass, 12);
+//                sConstraints.init(sclass, 20, -1, 20, -1);
+//                sFont.init(sclass, 9);
+//                sBorder.init(sclass, 2);
+//                sAngle.init(sclass, 0);
+//            }
 
             sEstText.set_raw("+99.9");
 

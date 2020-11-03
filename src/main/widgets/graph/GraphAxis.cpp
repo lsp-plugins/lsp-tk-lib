@@ -82,19 +82,19 @@ namespace lsp
             sOrigin.bind("origin", &sStyle);
             sColor.bind("color", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sDirection.init_cart(sclass, 1.0f, 0.0f);
-                sMin.init(sclass, -1.0f);
-                sMax.init(sclass, 1.0f);
-                sLogScale.init(sclass, false);
-                sBasis.init(sclass, true);
-                sWidth.init(sclass, 1);
-                sLength.init(sclass, -1.0f);
-                sOrigin.init(sclass, 0);
-                sColor.init(sclass, "#ffffff");
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sDirection.init_cart(sclass, 1.0f, 0.0f);
+//                sMin.init(sclass, -1.0f);
+//                sMax.init(sclass, 1.0f);
+//                sLogScale.init(sclass, false);
+//                sBasis.init(sclass, true);
+//                sWidth.init(sclass, 1);
+//                sLength.init(sclass, -1.0f);
+//                sOrigin.init(sclass, 0);
+//                sColor.init(sclass, "#ffffff");
+//            }
 
             pClass          = &metadata;
 

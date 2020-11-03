@@ -121,17 +121,17 @@ namespace lsp
             sBorderColor.bind("border.color", &sStyle);
             sGlassColor.bind("glass.color", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sConstraints.init(sclass);
-                sBorder.init(sclass, 4);
-                sBorderRadius.init(sclass, 12);
-                sGlass.init(sclass, true);
-                sColor.init(sclass, "#000000");
-                sBorderColor.init(sclass, "#000000");
-                sGlassColor.init(sclass, "#ffffff");
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sConstraints.init(sclass);
+//                sBorder.init(sclass, 4);
+//                sBorderRadius.init(sclass, 12);
+//                sGlass.init(sclass, true);
+//                sColor.init(sclass, "#000000");
+//                sBorderColor.init(sclass, "#000000");
+//                sGlassColor.init(sclass, "#ffffff");
+//            }
 
             // Add slots
             handler_id_t id = 0;

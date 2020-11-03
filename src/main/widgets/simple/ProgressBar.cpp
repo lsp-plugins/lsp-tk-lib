@@ -104,27 +104,27 @@ namespace lsp
             sInvColor.bind("inv.color", &sStyle);
             sInvTextColor.bind("text.inv.color", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sValue.init(sclass, 0.5f);
-                sConstraints.init(sclass, -1, -1, -1, -1);
-                sTextLayout.init(sclass, 0.0f, 0.0f);
-                sShowText.init(sclass, true);
-                sFont.init(sclass, 12.0f);
-                sBorderColor.init(sclass, "#444444");
-                sBorderGapColor.init(sclass, "#000000");
-                sBorderSize.init(sclass, 1);
-                sBorderGapSize.init(sclass, 1);
-                sBorderRadius.init(sclass, 4);
-                sColor.init(sclass, "#008800");
-                sTextColor.init(sclass, "#ffffff");
-                sInvColor.init(sclass, "#ffffff");
-                sInvTextColor.init(sclass, "#000000");
-
-                // Overrides
-                sAllocation.override(sclass, true, false, false, false);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sValue.init(sclass, 0.5f);
+//                sConstraints.init(sclass, -1, -1, -1, -1);
+//                sTextLayout.init(sclass, 0.0f, 0.0f);
+//                sShowText.init(sclass, true);
+//                sFont.init(sclass, 12.0f);
+//                sBorderColor.init(sclass, "#444444");
+//                sBorderGapColor.init(sclass, "#000000");
+//                sBorderSize.init(sclass, 1);
+//                sBorderGapSize.init(sclass, 1);
+//                sBorderRadius.init(sclass, 4);
+//                sColor.init(sclass, "#008800");
+//                sTextColor.init(sclass, "#ffffff");
+//                sInvColor.init(sclass, "#ffffff");
+//                sInvTextColor.init(sclass, "#000000");
+//
+//                // Overrides
+//                sAllocation.override(sclass, true, false, false, false);
+//            }
 
             return STATUS_OK;
         }

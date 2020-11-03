@@ -93,23 +93,23 @@ namespace lsp
             sShortcut.bind("shortcut", &sStyle);
             sMenu.bind(NULL);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sType.init(sclass, MI_NORMAL);
-                sChecked.init(sclass, false);
-
-                sBgSelectedColor.init(sclass, "#000088");
-                sTextColor.init(sclass, "#000000");
-                sTextSelectedColor.init(sclass, "#ffffff");
-                sCheckColor.init(sclass, "#00ccff");
-                sCheckBgColor.init(sclass, "#ffffff");
-                sCheckBorderColor.init(sclass, "#000000");
-                sShortcut.init(sclass);
-
-                // Override
-                sPadding.override(sclass, 16, 16, 2, 2);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sType.init(sclass, MI_NORMAL);
+//                sChecked.init(sclass, false);
+//
+//                sBgSelectedColor.init(sclass, "#000088");
+//                sTextColor.init(sclass, "#000000");
+//                sTextSelectedColor.init(sclass, "#ffffff");
+//                sCheckColor.init(sclass, "#00ccff");
+//                sCheckBgColor.init(sclass, "#ffffff");
+//                sCheckBorderColor.init(sclass, "#000000");
+//                sShortcut.init(sclass);
+//
+//                // Override
+//                sPadding.override(sclass, 16, 16, 2, 2);
+//            }
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
 

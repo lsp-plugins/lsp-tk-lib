@@ -118,20 +118,20 @@ namespace lsp
                 sBgColor.bind("bg.color", &sStyle);
                 sVisibility.bind("visible", &sStyle);
                 sPointer.bind("pointer", &sStyle);
-
-                Style *sclass = style_class();
-                if (sclass != NULL)
-                {
-                    sStyle.add_parent(sclass);
-
-                    sAllocation.init(sclass, true, false);
-                    sPadding.init(sclass, 0, 0, 0, 0);
-                    sBrightness.init(sclass, 1.0f);
-                    sBgColor.init(sclass, "#cccccc");
-                    sVisibility.init(sclass, true);
-                    sPointer.init(sclass, ws::MP_DEFAULT);
-                }
             }
+
+//                Style *sclass = style_class();
+//                if (sclass != NULL)
+//                {
+//                    sStyle.add_parent(sclass);
+//
+//                    sAllocation.init(sclass, true, false);
+//                    sPadding.init(sclass, 0, 0, 0, 0);
+//                    sBrightness.init(sclass, 1.0f);
+//                    sBgColor.init(sclass, "#cccccc");
+//                    sVisibility.init(sclass, true);
+//                    sPointer.init(sclass, ws::MP_DEFAULT);
+//                }
 
             // Declare slots
             handler_id_t id = 0;
@@ -202,14 +202,6 @@ namespace lsp
                 else
                     hide_widget();
             }
-        }
-
-        Style *Widget::style_class() const
-        {
-            Schema *s = const_cast<Widget *>(this)->pDisplay->schema();
-            if (s == NULL)
-                return NULL;
-            return s->get(pClass->name);
         }
 
         bool Widget::is_visible_child_of(const Widget *parent) const

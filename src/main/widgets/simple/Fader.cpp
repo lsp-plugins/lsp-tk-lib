@@ -97,19 +97,19 @@ namespace lsp
             sAngle.bind("angle", &sStyle);
             sBtnPointer.bind("button.pointer", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sColor.init(sclass, "#cccccc");
-                sHoleColor.init(sclass, "#000000");
-                sSizeRange.init(sclass, 64, -1);
-                sValue.init(sclass, 0.5f);
-                sStep.init(sclass, 0.01f);
-                sBtnWidth.init(sclass, 0);
-                sBtnAspect.init(sclass, 1.41f);
-                sAngle.init(sclass, 0);
-                sBtnPointer.init(sclass, ws::MP_DEFAULT);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sColor.init(sclass, "#cccccc");
+//                sHoleColor.init(sclass, "#000000");
+//                sSizeRange.init(sclass, 64, -1);
+//                sValue.init(sclass, 0.5f);
+//                sStep.init(sclass, 0.01f);
+//                sBtnWidth.init(sclass, 0);
+//                sBtnAspect.init(sclass, 1.41f);
+//                sAngle.init(sclass, 0);
+//                sBtnPointer.init(sclass, ws::MP_DEFAULT);
+//            }
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());

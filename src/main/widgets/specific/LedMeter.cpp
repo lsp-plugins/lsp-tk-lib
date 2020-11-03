@@ -115,18 +115,18 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sMinChannelWidth.bind("channel.width.min", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sConstraints.init(sclass, 20, -1, 20, -1);
-                sFont.init(sclass, 9);
-                sBorder.init(sclass, 2);
-                sAngle.init(sclass, 0);
-                sSGroups.init(sclass, true);
-                sTextVisible.init(sclass, false);
-                sColor.init(sclass, "#000000");
-                sMinChannelWidth.init(sclass, 16);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sConstraints.init(sclass, 20, -1, 20, -1);
+//                sFont.init(sclass, 9);
+//                sBorder.init(sclass, 2);
+//                sAngle.init(sclass, 0);
+//                sSGroups.init(sclass, true);
+//                sTextVisible.init(sclass, false);
+//                sColor.init(sclass, "#000000");
+//                sMinChannelWidth.init(sclass, 16);
+//            }
 
             sEstText.set_raw("+99.9");
 

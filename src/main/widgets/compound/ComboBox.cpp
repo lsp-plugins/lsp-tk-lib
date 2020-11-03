@@ -212,26 +212,26 @@ namespace lsp
             sTextLayout.bind("text.layout", &sStyle);
             sEmptyText.bind(&sStyle, pDisplay->dictionary());
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sBorderSize.init(sclass, 1);
-                sBorderGap.init(sclass, 1);
-                sBorderRadius.init(sclass, 4);
-                sSpinSize.init(sclass, 10);
-                sSpinSeparator.init(sclass, 1);
-                sColor.init(sclass, "#ffffff");
-                sSpinColor.init(sclass, "#ffffff");
-                sTextColor.init(sclass, "#000000");
-                sSpinTextColor.init(sclass, "#000000");
-                sBorderColor.init(sclass, "#000000");
-                sBorderGapColor.init(sclass, "#cccccc");
-                sOpened.init(sclass, false);
-                sTextFit.init(sclass);
-                sFont.init(sclass);
-                sConstraints.init(sclass, -1, -1, -1, 0);
-                sTextLayout.init(sclass, -1.0f, 0.0f);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sBorderSize.init(sclass, 1);
+//                sBorderGap.init(sclass, 1);
+//                sBorderRadius.init(sclass, 4);
+//                sSpinSize.init(sclass, 10);
+//                sSpinSeparator.init(sclass, 1);
+//                sColor.init(sclass, "#ffffff");
+//                sSpinColor.init(sclass, "#ffffff");
+//                sTextColor.init(sclass, "#000000");
+//                sSpinTextColor.init(sclass, "#000000");
+//                sBorderColor.init(sclass, "#000000");
+//                sBorderGapColor.init(sclass, "#cccccc");
+//                sOpened.init(sclass, false);
+//                sTextFit.init(sclass);
+//                sFont.init(sclass);
+//                sConstraints.init(sclass, -1, -1, -1, 0);
+//                sTextLayout.init(sclass, -1.0f, 0.0f);
+//            }
 
             // Bind slots
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());

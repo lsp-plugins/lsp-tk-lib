@@ -183,23 +183,23 @@ namespace lsp
             sLayout.bind("layout", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sFont.init(sclass);
-                sColor.init(sclass, "#000000");
-                sTextColor.init(sclass, "#ffffff");
-                sSpinColor.init(sclass, "#ffffff");
-                sOpened.init(sclass, false);
-                sBorder.init(sclass, 2);
-                sTextBorder.init(sclass, 2);
-                sRadius.init(sclass, 10);
-                sTextRadius.init(sclass, 10);
-                sSpinSize.init(sclass, 8);
-                sEmbedding.init(sclass, false);
-                sLayout.init(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
-                sSizeConstraints.init(sclass);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sFont.init(sclass);
+//                sColor.init(sclass, "#000000");
+//                sTextColor.init(sclass, "#ffffff");
+//                sSpinColor.init(sclass, "#ffffff");
+//                sOpened.init(sclass, false);
+//                sBorder.init(sclass, 2);
+//                sTextBorder.init(sclass, 2);
+//                sRadius.init(sclass, 10);
+//                sTextRadius.init(sclass, 10);
+//                sSpinSize.init(sclass, 8);
+//                sEmbedding.init(sclass, false);
+//                sLayout.init(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
+//                sSizeConstraints.init(sclass);
+//            }
 
             // Bind slots
             handler_id_t id;

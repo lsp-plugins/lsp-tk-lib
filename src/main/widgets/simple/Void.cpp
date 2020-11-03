@@ -56,11 +56,11 @@ namespace lsp
 
             sConstraints.bind("size.constraints", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sConstraints.init(sclass, -1, -1, -1, -1);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sConstraints.init(sclass, -1, -1, -1, -1);
+//            }
 
             return res;
         }

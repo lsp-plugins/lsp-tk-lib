@@ -183,25 +183,25 @@ namespace lsp
             sHScroll.lock_range();
             sVScroll.lock_range();
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sSizeConstraints.init(sclass);
-                sHScrollMode.init(sclass, SCROLL_OPTIONAL);
-                sVScrollMode.init(sclass, SCROLL_OPTIONAL);
-                sHScroll.init(sclass, 0.0f, 0.0f, 0.0f);
-                sVScroll.init(sclass, 0.0f, 0.0f, 0.0f);
-                sFont.init(sclass);
-                sBorderSize.init(sclass, 1);
-                sBorderGap.init(sclass, 1);
-                sBorderRadius.init(sclass, 4);
-                sBorderColor.init(sclass, "#000000");
-                sListBgColor.init(sclass, "#ffffff");
-                sSpacing.init(sclass, 0);
-                sMultiSelect.init(sclass, false);
-                sHScrollSpacing.init(sclass, 1);
-                sVScrollSpacing.init(sclass, 1);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sSizeConstraints.init(sclass);
+//                sHScrollMode.init(sclass, SCROLL_OPTIONAL);
+//                sVScrollMode.init(sclass, SCROLL_OPTIONAL);
+//                sHScroll.init(sclass, 0.0f, 0.0f, 0.0f);
+//                sVScroll.init(sclass, 0.0f, 0.0f, 0.0f);
+//                sFont.init(sclass);
+//                sBorderSize.init(sclass, 1);
+//                sBorderGap.init(sclass, 1);
+//                sBorderRadius.init(sclass, 4);
+//                sBorderColor.init(sclass, "#000000");
+//                sListBgColor.init(sclass, "#ffffff");
+//                sSpacing.init(sclass, 0);
+//                sMultiSelect.init(sclass, false);
+//                sHScrollSpacing.init(sclass, 1);
+//                sVScrollSpacing.init(sclass, 1);
+//            }
 
             // Bind slots
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());

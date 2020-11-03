@@ -55,11 +55,11 @@ namespace lsp
             // Init style
             sSmooth.bind("smooth", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sSmooth.init(sclass, true);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sSmooth.init(sclass, true);
+//            }
 
             return STATUS_OK;
         }

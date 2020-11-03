@@ -97,16 +97,16 @@ namespace lsp
             id.fmt_ascii("%s.step", prefix);
             sStep.bind(&id, style);
 
-            Style *sclass = pDot->style_class();
-            if (sclass != NULL)
-            {
-                id.fmt_ascii("%s.editable", prefix);
-                sEditable.init(sclass, false);
-                id.fmt_ascii("%s.value", prefix);
-                sValue.init(sclass, 0.0f, -1.0f, 1.0f);
-                id.fmt_ascii("%s.step", prefix);
-                sStep.init(sclass, 1.0f, 10.0f, 0.1f);
-            }
+//            Style *sclass = pDot->style_class();
+//            if (sclass != NULL)
+//            {
+//                id.fmt_ascii("%s.editable", prefix);
+//                sEditable.init(sclass, false);
+//                id.fmt_ascii("%s.value", prefix);
+//                sValue.init(sclass, 0.0f, -1.0f, 1.0f);
+//                id.fmt_ascii("%s.step", prefix);
+//                sStep.init(sclass, 1.0f, 10.0f, 0.1f);
+//            }
         }
 
         GraphDot::GraphDot(Display *dpy):
@@ -173,25 +173,25 @@ namespace lsp
             sGapColor.bind("gap.color", &sStyle);
             sHoverGapColor.bind("hover.gap.color", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sOrigin.init(sclass, 0);
-                sHAxis.init(sclass, 0);
-                sVAxis.init(sclass, 1);
-                sSize.init(sclass, 4);
-                sHoverSize.init(sclass, 4);
-                sBorderSize.init(sclass, 0);
-                sHoverBorderSize.init(sclass, 12);
-                sGap.init(sclass, 1);
-                sHoverGap.init(sclass, 1);
-                sColor.init(sclass, "#cccccc");
-                sHoverColor.init(sclass, "#ffffff");
-                sBorderColor.init(sclass, "#cccccc");
-                sHoverBorderColor.init(sclass, "#ffffff");
-                sGapColor.init(sclass, "#000000");
-                sHoverGapColor.init(sclass, "#000000");
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sOrigin.init(sclass, 0);
+//                sHAxis.init(sclass, 0);
+//                sVAxis.init(sclass, 1);
+//                sSize.init(sclass, 4);
+//                sHoverSize.init(sclass, 4);
+//                sBorderSize.init(sclass, 0);
+//                sHoverBorderSize.init(sclass, 12);
+//                sGap.init(sclass, 1);
+//                sHoverGap.init(sclass, 1);
+//                sColor.init(sclass, "#cccccc");
+//                sHoverColor.init(sclass, "#ffffff");
+//                sBorderColor.init(sclass, "#cccccc");
+//                sHoverBorderColor.init(sclass, "#ffffff");
+//                sGapColor.init(sclass, "#000000");
+//                sHoverGapColor.init(sclass, "#000000");
+//            }
 
             // Add handler
             handler_id_t id = 0;

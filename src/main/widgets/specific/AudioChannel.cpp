@@ -100,26 +100,26 @@ namespace lsp
             sFadeOutBorderColor.bind("fade_out.border.color", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sFadeIn.init(sclass, 0);
-                sFadeOut.init(sclass, 0);
-                sWaveBorder.init(sclass, 1);
-                sFadeInBorder.init(sclass, 1);
-                sFadeOutBorder.init(sclass, 1);
-                sLineWidth.init(sclass, 1);
-                sColor.init(sclass, "#8800ff00");
-                sLineColor.init(sclass, "#ffffff");
-                sWaveBorderColor.init(sclass, "#00ff00");
-                sFadeInColor.init(sclass, "#88ffff00");
-                sFadeOutColor.init(sclass, "#88ffff00");
-                sFadeInBorderColor.init(sclass, "#ffff00");
-                sFadeOutBorderColor.init(sclass, "#ffff00");
-                sConstraints.init(sclass, 128, 32, -1, -1);
-
-                sBgColor.override(sclass, "#000000");
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sFadeIn.init(sclass, 0);
+//                sFadeOut.init(sclass, 0);
+//                sWaveBorder.init(sclass, 1);
+//                sFadeInBorder.init(sclass, 1);
+//                sFadeOutBorder.init(sclass, 1);
+//                sLineWidth.init(sclass, 1);
+//                sColor.init(sclass, "#8800ff00");
+//                sLineColor.init(sclass, "#ffffff");
+//                sWaveBorderColor.init(sclass, "#00ff00");
+//                sFadeInColor.init(sclass, "#88ffff00");
+//                sFadeOutColor.init(sclass, "#88ffff00");
+//                sFadeInBorderColor.init(sclass, "#ffff00");
+//                sFadeOutBorderColor.init(sclass, "#ffff00");
+//                sConstraints.init(sclass, 128, 32, -1, -1);
+//
+//                sBgColor.override(sclass, "#000000");
+//            }
 
             return STATUS_OK;
         }

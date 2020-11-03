@@ -95,20 +95,20 @@ namespace lsp
             sVAxis.bind("vaxis", &sStyle);
             sOrigin.bind("origin", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sFont.init(sclass, 10.0f);
-                sColor.init(sclass, "#ffffff");
-                sLayout.init(sclass, 1.0f, 1.0f, 0.0f, 0.0f);
-                sTextLayout.init(sclass, 0.5f, 0.5f);
-                sHValue.init(sclass, 0.0f);
-                sVValue.init(sclass, 0.0f);
-                sHAxis.init(sclass, 0);
-                sVAxis.init(sclass, 0);
-                sOrigin.init(sclass, 0);
-                sPadding.override(sclass, 2);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sFont.init(sclass, 10.0f);
+//                sColor.init(sclass, "#ffffff");
+//                sLayout.init(sclass, 1.0f, 1.0f, 0.0f, 0.0f);
+//                sTextLayout.init(sclass, 0.5f, 0.5f);
+//                sHValue.init(sclass, 0.0f);
+//                sVValue.init(sclass, 0.0f);
+//                sHAxis.init(sclass, 0);
+//                sVAxis.init(sclass, 0);
+//                sOrigin.init(sclass, 0);
+//                sPadding.override(sclass, 2);
+//            }
 
             return STATUS_OK;
         }

@@ -168,35 +168,35 @@ namespace lsp
             sTextColor.bind("text.color", &sStyle);
             sTextActiveColor.bind("text.active.color", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sValue.init(sclass, 0.5f);
-                sStep.init(sclass, 0.01f);
-                sAccelStep.init(sclass, 0.05f);
-                sConstraints.init(sclass, 16, -1, 16, -1);
-                sOrientation.init(sclass, O_HORIZONTAL);
-                sSliderPointer.init(sclass, ws::MP_DEFAULT);
-                sIncPointer.init(sclass, ws::MP_DEFAULT);
-                sDecPointer.init(sclass, ws::MP_DEFAULT);
-                sBorderRadius.init(sclass, 4);
-                sBorderSize.init(sclass, 1);
-                sBorderGap.init(sclass, 1);
-                sSliderBorderSize.init(sclass, 1);
-                sButtonColor.init(sclass, "#cccccc");
-                sButtonActiveColor.init(sclass, "#ffffff");
-                sIncColor.init(sclass, "#888888");
-                sIncActiveColor.init(sclass, "#ffffff");
-                sDecColor.init(sclass, "#888888");
-                sDecActiveColor.init(sclass, "#ffffff");
-                sBorderColor.init(sclass, "#000000");
-                sBorderGapColor.init(sclass, "#888888");
-                sSliderColor.init(sclass, "#cccccc");
-                sSliderBorderColor.init(sclass, "#000000");
-                sSliderActiveColor.init(sclass, "#ffffff");
-                sTextColor.init(sclass, "#000000");
-                sTextActiveColor.init(sclass, "#000000");
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sValue.init(sclass, 0.5f);
+//                sStep.init(sclass, 0.01f);
+//                sAccelStep.init(sclass, 0.05f);
+//                sConstraints.init(sclass, 16, -1, 16, -1);
+//                sOrientation.init(sclass, O_HORIZONTAL);
+//                sSliderPointer.init(sclass, ws::MP_DEFAULT);
+//                sIncPointer.init(sclass, ws::MP_DEFAULT);
+//                sDecPointer.init(sclass, ws::MP_DEFAULT);
+//                sBorderRadius.init(sclass, 4);
+//                sBorderSize.init(sclass, 1);
+//                sBorderGap.init(sclass, 1);
+//                sSliderBorderSize.init(sclass, 1);
+//                sButtonColor.init(sclass, "#cccccc");
+//                sButtonActiveColor.init(sclass, "#ffffff");
+//                sIncColor.init(sclass, "#888888");
+//                sIncActiveColor.init(sclass, "#ffffff");
+//                sDecColor.init(sclass, "#888888");
+//                sDecActiveColor.init(sclass, "#ffffff");
+//                sBorderColor.init(sclass, "#000000");
+//                sBorderGapColor.init(sclass, "#888888");
+//                sSliderColor.init(sclass, "#cccccc");
+//                sSliderBorderColor.init(sclass, "#000000");
+//                sSliderActiveColor.init(sclass, "#ffffff");
+//                sTextColor.init(sclass, "#000000");
+//                sTextActiveColor.init(sclass, "#000000");
+//            }
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());

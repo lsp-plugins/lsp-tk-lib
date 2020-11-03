@@ -112,26 +112,26 @@ namespace lsp
             sTextClip.bind("text.clip", &sStyle);
             sTextPadding.bind("text.padding", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sColor.init(sclass, "#cccccc");
-                sLightColor.init(sclass, "#00cc00");
-                sTextColor.init(sclass, "#000000");
-                sLTextColor.init(sclass, "#000000");
-                sHoleColor.init(sclass, "#000000");
-                sFont.init(sclass, 12.0f);
-                sConstraints.init(sclass, 18, 18, -1, -1);
-                sTextLayout.init(sclass, 0.0f, 0.0f);
-                sMode.init(sclass, BM_NORMAL);
-                sDown.init(sclass, false);
-                sLed.init(sclass, 0);
-                sEditable.init(sclass, true);
-                sHole.init(sclass, true);
-                sFlat.init(sclass, false);
-                sTextClip.init(sclass, false);
-                sTextPadding.init(sclass, 2, 2, 2, 2);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sColor.init(sclass, "#cccccc");
+//                sLightColor.init(sclass, "#00cc00");
+//                sTextColor.init(sclass, "#000000");
+//                sLTextColor.init(sclass, "#000000");
+//                sHoleColor.init(sclass, "#000000");
+//                sFont.init(sclass, 12.0f);
+//                sConstraints.init(sclass, 18, 18, -1, -1);
+//                sTextLayout.init(sclass, 0.0f, 0.0f);
+//                sMode.init(sclass, BM_NORMAL);
+//                sDown.init(sclass, false);
+//                sLed.init(sclass, 0);
+//                sEditable.init(sclass, true);
+//                sHole.init(sclass, true);
+//                sFlat.init(sclass, false);
+//                sTextClip.init(sclass, false);
+//                sTextPadding.init(sclass, 2, 2, 2, 2);
+//            }
 
             // Additional slots
             handler_id_t id = 0;

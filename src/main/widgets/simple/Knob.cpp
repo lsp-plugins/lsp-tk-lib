@@ -88,20 +88,20 @@ namespace lsp
             sBalance.bind("value.balance", &sStyle);
             sCycling.bind("value.cycling", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sColor.init(sclass, "#cccccc");
-                sScaleColor.init(sclass, "#00cc00");
-                sHoleColor.init(sclass, "#000000");
-                sTipColor.init(sclass, "#000000");
-                sSizeRange.init(sclass, 8, -1);
-                sScale.init(sclass, 4);
-                sValue.init(sclass, 0.5f, 0.0f, 1.0f);
-                sStep.init(sclass, 0.01f);
-                sBalance.init(sclass, 0.5f);
-                sCycling.init(sclass, false);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sColor.init(sclass, "#cccccc");
+//                sScaleColor.init(sclass, "#00cc00");
+//                sHoleColor.init(sclass, "#000000");
+//                sTipColor.init(sclass, "#000000");
+//                sSizeRange.init(sclass, 8, -1);
+//                sScale.init(sclass, 4);
+//                sValue.init(sclass, 0.5f, 0.0f, 1.0f);
+//                sStep.init(sclass, 0.01f);
+//                sBalance.init(sclass, 0.5f);
+//                sCycling.init(sclass, false);
+//            }
 
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)

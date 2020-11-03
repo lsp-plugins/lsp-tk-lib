@@ -362,14 +362,14 @@ namespace lsp
             sUseConfirm.bind("confirm", &sStyle);
             sConfirmMsg.bind(&sStyle, pDisplay->dictionary());
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sMode.init(sclass, FDM_OPEN_FILE);
-                sCustomAction.init(sclass, false);
-                sSelFilter.init(sclass, 0);
-                sUseConfirm.init(sclass, false);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sMode.init(sclass, FDM_OPEN_FILE);
+//                sCustomAction.init(sclass, false);
+//                sSelFilter.init(sclass, 0);
+//                sUseConfirm.init(sclass, false);
+//            }
 
             // Init selected bookmark
             sBMSelected.init();

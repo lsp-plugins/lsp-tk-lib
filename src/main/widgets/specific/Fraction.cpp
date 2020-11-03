@@ -311,15 +311,15 @@ namespace lsp
             sTextPad.bind("text.pad", &sStyle);
             sThick.bind("thick", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sColor.init(sclass, "#000000");
-                sFont.init(sclass, 14.0f);
-                sAngle.init(sclass, 60.0f);
-                sTextPad.init(sclass, 6);
-                sThick.init(sclass, 1);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sColor.init(sclass, "#000000");
+//                sFont.init(sclass, 14.0f);
+//                sAngle.init(sclass, 60.0f);
+//                sTextPad.init(sclass, 6);
+//                sThick.init(sclass, 1);
+//            }
 
             // Bind slots
             handler_id_t id;

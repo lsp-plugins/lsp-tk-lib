@@ -65,14 +65,14 @@ namespace lsp
             sRadius.bind("radius", &sStyle);
             sColor.bind("color", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sLeft.init(sclass, 0.0f, -1.0f, 1.0f);
-                sTop.init(sclass, 0.0f, -1.0f, 1.0f);
-                sRadius.init(sclass, 4.0f);
-                sColor.init(sclass, "#ffffff");
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sLeft.init(sclass, 0.0f, -1.0f, 1.0f);
+//                sTop.init(sclass, 0.0f, -1.0f, 1.0f);
+//                sRadius.init(sclass, 4.0f);
+//                sColor.init(sclass, "#ffffff");
+//            }
 
             return STATUS_OK;
         }

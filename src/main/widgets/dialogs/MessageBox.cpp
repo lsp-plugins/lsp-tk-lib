@@ -85,13 +85,13 @@ namespace lsp
                 res = sBtnStyle.init();
             sBtnConstraints.bind("size.constraints", &sBtnStyle);
 
-            // Override parameters
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                // Overrides
-                sSizeConstraints.override(sclass, 0, 0, 0, 0);
-            }
+//            // Override parameters
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                // Overrides
+//                sSizeConstraints.override(sclass, 0, 0, 0, 0);
+//            }
 
             // Initialize widgets
             if (res == STATUS_OK)

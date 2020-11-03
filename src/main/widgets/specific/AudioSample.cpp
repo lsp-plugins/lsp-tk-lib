@@ -218,42 +218,42 @@ namespace lsp
                 sLabelVisibility[i].bind(&id, &sStyle);
             }
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sWaveBorder.init(sclass, 1);
-                sFadeInBorder.init(sclass, 1);
-                sFadeOutBorder.init(sclass, 1);
-                sLineWidth.init(sclass, 1);
-                sLineColor.init(sclass, "#ffffff");
-                sConstraints.init(sclass);
-                sActive.init(sclass, false);
-                sSGroups.init(sclass, false);
-
-                sMainTextLayout.init(sclass, 0.0f, 0.0f);
-                sMainFont.init(sclass, 16.0f, ws::FF_BOLD);
-                sMainColor.init(sclass, "#00ff00");
-                sMainVisibility.init(sclass, false);
-                sLabelFont.init(sclass, 10.0f);
-                sLabelBgColor.init(sclass, "#44000000");
-                sLabelRadius.init(sclass, 4);
-
-                sBorder.init(sclass, 4);
-                sBorderRadius.init(sclass, 12);
-                sGlass.init(sclass, true);
-                sColor.init(sclass, "#000000");
-                sBorderColor.init(sclass, "#000000");
-                sGlassColor.init(sclass, "#ffffff");
-                sIPadding.init(sclass, 1);
-
-                for (size_t i=0; i<LABELS; ++i)
-                {
-                    sLabelColor[i].init(sclass, "#ffffff");
-                    sLabelLayout[i].init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
-                    sLabelTextLayout[i].init(sclass, 0.0f, 0.0f);
-                    sLabelVisibility[i].init(sclass, false);
-                }
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sWaveBorder.init(sclass, 1);
+//                sFadeInBorder.init(sclass, 1);
+//                sFadeOutBorder.init(sclass, 1);
+//                sLineWidth.init(sclass, 1);
+//                sLineColor.init(sclass, "#ffffff");
+//                sConstraints.init(sclass);
+//                sActive.init(sclass, false);
+//                sSGroups.init(sclass, false);
+//
+//                sMainTextLayout.init(sclass, 0.0f, 0.0f);
+//                sMainFont.init(sclass, 16.0f, ws::FF_BOLD);
+//                sMainColor.init(sclass, "#00ff00");
+//                sMainVisibility.init(sclass, false);
+//                sLabelFont.init(sclass, 10.0f);
+//                sLabelBgColor.init(sclass, "#44000000");
+//                sLabelRadius.init(sclass, 4);
+//
+//                sBorder.init(sclass, 4);
+//                sBorderRadius.init(sclass, 12);
+//                sGlass.init(sclass, true);
+//                sColor.init(sclass, "#000000");
+//                sBorderColor.init(sclass, "#000000");
+//                sGlassColor.init(sclass, "#ffffff");
+//                sIPadding.init(sclass, 1);
+//
+//                for (size_t i=0; i<LABELS; ++i)
+//                {
+//                    sLabelColor[i].init(sclass, "#ffffff");
+//                    sLabelLayout[i].init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
+//                    sLabelTextLayout[i].init(sclass, 0.0f, 0.0f);
+//                    sLabelVisibility[i].init(sclass, false);
+//                }
+//            }
 
             return STATUS_OK;
         }

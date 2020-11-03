@@ -99,22 +99,22 @@ namespace lsp
             sTextRadius.bind("text.radius", &sStyle);
             sEmbedding.bind("embed", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sFont.init(sclass);
-                sColor.init(sclass, "#000000");
-                sTextColor.init(sclass, "#ffffff");
-                sShowText.init(sclass, true);
-                sBorder.init(sclass, 2);
-                sTextBorder.init(sclass, 2);
-                sRadius.init(sclass, 10);
-                sTextRadius.init(sclass, 10);
-                sEmbedding.init(sclass, false);
-
-                // Overrides
-                sLayout.override(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sFont.init(sclass);
+//                sColor.init(sclass, "#000000");
+//                sTextColor.init(sclass, "#ffffff");
+//                sShowText.init(sclass, true);
+//                sBorder.init(sclass, 2);
+//                sTextBorder.init(sclass, 2);
+//                sRadius.init(sclass, 10);
+//                sTextRadius.init(sclass, 10);
+//                sEmbedding.init(sclass, false);
+//
+//                // Overrides
+//                sLayout.override(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
+//            }
 
             return STATUS_OK;
         }

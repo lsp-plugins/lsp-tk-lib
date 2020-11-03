@@ -344,12 +344,6 @@ namespace lsp
                 inline Slot            *slot(slot_t id)         { return sSlots.slot(id); }
 
                 /**
-                 * Get style class of this widget
-                 * @return style clas of this widget
-                 */
-                Style                  *style_class() const;
-                
-                /**
                  * Check that widget is in valid state
                  * @return true if widget is in valid state
                  */

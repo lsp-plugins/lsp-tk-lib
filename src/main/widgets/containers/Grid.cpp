@@ -100,18 +100,18 @@ namespace lsp
             sVSpacing.bind("vspacing", &sStyle);
             sOrientation.bind("orientation", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sRows.init(sclass, 1);
-                sColumns.init(sclass, 1);
-                sHSpacing.init(sclass, 0);
-                sVSpacing.init(sclass, 0);
-                sOrientation.init(sclass, O_HORIZONTAL);
-
-                // Overrides
-                sAllocation.override(sclass, true, true, false, false);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sRows.init(sclass, 1);
+//                sColumns.init(sclass, 1);
+//                sHSpacing.init(sclass, 0);
+//                sVSpacing.init(sclass, 0);
+//                sOrientation.init(sclass, O_HORIZONTAL);
+//
+//                // Overrides
+//                sAllocation.override(sclass, true, true, false, false);
+//            }
 
             return STATUS_OK;
         }

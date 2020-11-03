@@ -134,17 +134,17 @@ namespace lsp
             sLoop.bind("text.loop", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sColor.init(sclass, "#111111");
-                sTextColor.init(sclass, "#00ff00");
-                sRows.init(sclass, 1);
-                sColumns.init(sclass, 5);
-                sShift.init(sclass, 0);
-                sTextGap.init(sclass, 0);
-                sLoop.init(sclass, false);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sColor.init(sclass, "#111111");
+//                sTextColor.init(sclass, "#00ff00");
+//                sRows.init(sclass, 1);
+//                sColumns.init(sclass, 5);
+//                sShift.init(sclass, 0);
+//                sTextGap.init(sclass, 0);
+//                sLoop.init(sclass, false);
+//            }
 
             return STATUS_OK;
         }

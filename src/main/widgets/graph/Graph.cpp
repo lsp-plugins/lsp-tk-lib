@@ -143,18 +143,18 @@ namespace lsp
             sGlassColor.bind("glass.color", &sStyle);
             sIPadding.bind("padding.internal", &sStyle);
 
-            Style *sclass = style_class();
-            if (sclass != NULL)
-            {
-                sConstraints.init(sclass);
-                sBorder.init(sclass, 4);
-                sBorderRadius.init(sclass, 12);
-                sGlass.init(sclass, true);
-                sColor.init(sclass, "#000000");
-                sBorderColor.init(sclass, "#000000");
-                sGlassColor.init(sclass, "#ffffff");
-                sIPadding.init(sclass, 1);
-            }
+//            Style *sclass = style_class();
+//            if (sclass != NULL)
+//            {
+//                sConstraints.init(sclass);
+//                sBorder.init(sclass, 4);
+//                sBorderRadius.init(sclass, 12);
+//                sGlass.init(sclass, true);
+//                sColor.init(sclass, "#000000");
+//                sBorderColor.init(sclass, "#000000");
+//                sGlassColor.init(sclass, "#ffffff");
+//                sIPadding.init(sclass, 1);
+//            }
 
             return STATUS_OK;
         }
