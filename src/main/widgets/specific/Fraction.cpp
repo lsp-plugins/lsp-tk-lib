@@ -44,7 +44,7 @@ namespace lsp
             prop::Integer::init("thick", style, 1);
 
         STYLE_INITIALIZER_END(Fraction, "Fraction");
-        LSP_BUILTIN_STYLE(Fraction);
+        LSP_BUILTIN_STYLE_DEPRECATED(Fraction);
 
         //-----------------------------------------------------------------------------
         // Fraction popup window implementation

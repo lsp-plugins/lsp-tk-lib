@@ -48,7 +48,7 @@ namespace lsp
             prop::String::init("text.empty", style);
 
         STYLE_INITIALIZER_END(ComboBox, "ComboBox");
-        LSP_BUILTIN_STYLE(ComboBox);
+        LSP_BUILTIN_STYLE_DEPRECATED(ComboBox);
 
         //-----------------------------------------------------------------------------
         // ComboBox popup window implementation

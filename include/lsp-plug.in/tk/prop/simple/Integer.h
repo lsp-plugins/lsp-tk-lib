@@ -57,6 +57,7 @@ namespace lsp
 
             protected:
                 void                commit();
+                void                sync();
                 status_t            init(ssize_t value);
                 status_t            override(ssize_t value);
 

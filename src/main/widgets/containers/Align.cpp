@@ -33,7 +33,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style);
 
         STYLE_INITIALIZER_END(Align, "Align");
-        LSP_BUILTIN_STYLE(Align);
+        LSP_BUILTIN_STYLE_DEPRECATED(Align);
 
         const w_class_t Align::metadata         = { "Align", &WidgetContainer::metadata };
 

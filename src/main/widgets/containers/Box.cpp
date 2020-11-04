@@ -35,7 +35,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style);
 
         STYLE_INITIALIZER_END(Box, "Box");
-        LSP_BUILTIN_STYLE(Box);
+        LSP_BUILTIN_STYLE_DEPRECATED(Box);
 
         const w_class_t Box::metadata   =   { "Box", &WidgetContainer::metadata     };
 

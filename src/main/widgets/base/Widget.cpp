@@ -36,7 +36,7 @@ namespace lsp
             prop::Boolean::init("visible", style, true);
             prop::Pointer::init("pointer", style, ws::MP_DEFAULT);
         STYLE_INITIALIZER_END(Widget, "Widget");
-        LSP_BUILTIN_STYLE(Widget);
+        LSP_BUILTIN_STYLE_DEPRECATED(Widget);
 
         void Widget::PropListener::notify(Property *prop)
         {

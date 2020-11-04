@@ -41,7 +41,7 @@ namespace lsp
             prop::Padding::init("text.padding", style, 4, 2);
 
         STYLE_INITIALIZER_END(RackEars, "RackEars");
-        LSP_BUILTIN_STYLE(RackEars);
+        LSP_BUILTIN_STYLE_DEPRECATED(RackEars);
 
         const w_class_t RackEars::metadata              = { "RackEars", &Widget::metadata };
 

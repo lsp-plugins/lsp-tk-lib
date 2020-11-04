@@ -49,7 +49,7 @@ namespace lsp
             prop::Pointer::init("pointer", style, ws::MP_IBEAM);
 
         STYLE_INITIALIZER_END(Edit, "Edit");
-        LSP_BUILTIN_STYLE(Edit);
+        LSP_BUILTIN_STYLE_DEPRECATED(Edit);
 
         const w_class_t Edit::metadata      = { "Edit", &Widget::metadata };
 

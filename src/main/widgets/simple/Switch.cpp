@@ -42,7 +42,7 @@ namespace lsp
             prop::Pointer::init("button.pointer", style, ws::MP_DEFAULT);
 
         STYLE_INITIALIZER_END(Switch, "Switch");
-        LSP_BUILTIN_STYLE(Switch);
+        LSP_BUILTIN_STYLE_DEPRECATED(Switch);
 
         static const float ANGLE = 15.0f * M_PI / 180.0f;
         

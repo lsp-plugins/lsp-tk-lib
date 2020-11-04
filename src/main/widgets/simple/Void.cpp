@@ -32,7 +32,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
 
         STYLE_INITIALIZER_END(Void, "Void");
-        LSP_BUILTIN_STYLE(Void);
+        LSP_BUILTIN_STYLE_DEPRECATED(Void);
 
         const w_class_t Void::metadata      = { "Void", &Widget::metadata };
         

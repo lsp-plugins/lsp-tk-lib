@@ -63,7 +63,21 @@ namespace lsp
             if (pStyle->get_int(nAtom, &nValue) != STATUS_OK)
                 return;
 
-            // Delegate event
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
+                pListener->notify(this);
+        }
+
+        void Integer::sync()
+        {
+            if (pStyle != NULL)
+            {
+                pStyle->begin(&sListener);
+                    pStyle->set_int(nAtom, nValue);
+                pStyle->end();
+            }
             if (pListener != NULL)
                 pListener->notify(this);
         }
@@ -75,14 +89,7 @@ namespace lsp
                 return prev;
 
             nValue  = v;
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                    pStyle->set_int(nAtom, v);
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
+            sync();
             return prev;
         }
 

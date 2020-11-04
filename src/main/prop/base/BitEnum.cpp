@@ -79,8 +79,10 @@ namespace lsp
             if (Property::parse_bit_enums(&v, &s, pEnum) >= 0)
                 nValue      = v;
 
-            // Delegate event
-            if (pListener != NULL)
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
         }
 

@@ -83,9 +83,29 @@ namespace lsp
             // Apply successfully parsed value
             nValue = v;
 
-            // Delegate event
-            if (pListener != NULL)
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
+        }
+
+        void Enum::sync()
+        {
+            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
+            {
+                if (nValue == e->value)
+                {
+                    if (pStyle != NULL)
+                    {
+                        pStyle->begin(&sListener);
+                            pStyle->set_string(nAtom, e->name);
+                        pStyle->end();
+                    }
+                    if (pListener != NULL)
+                        pListener->notify(this);
+                }
+            }
         }
 
         ssize_t Enum::set(ssize_t v)
@@ -102,7 +122,7 @@ namespace lsp
                     if (pStyle != NULL)
                     {
                         pStyle->begin(&sListener);
-                        pStyle->set_string(nAtom, e->name);
+                            pStyle->set_string(nAtom, e->name);
                         pStyle->end();
                     }
                     if (pListener != NULL)

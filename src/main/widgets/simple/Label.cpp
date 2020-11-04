@@ -36,7 +36,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
 
         STYLE_INITIALIZER_END(Label, "Label");
-        LSP_BUILTIN_STYLE(Label);
+        LSP_BUILTIN_STYLE_DEPRECATED(Label);
 
         const w_class_t Label::metadata =       { "Label", &Widget::metadata };
 

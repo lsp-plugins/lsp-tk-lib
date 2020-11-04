@@ -29,7 +29,7 @@ namespace lsp
         Style::Style(Schema *schema)
         {
             pSchema     = schema;
-            bDelayed    = false;
+            nFlags      = 0;
         }
         
         Style::~Style()
@@ -68,13 +68,13 @@ namespace lsp
                 if (child != NULL)
                 {
                     child->vParents.premove(this);
-                    child->sync();
+                    child->synchronize();
                 }
             }
             vChildren.flush();
 
             // Synchronize state with listeners and remove them
-            sync();
+            synchronize();
             vListeners.flush();
 
             // Destroy stored properties
@@ -109,6 +109,22 @@ namespace lsp
             property->type = PT_UNKNOWN;
         }
 
+        void Style::set_init_mode(bool init)
+        {
+            if (init)
+                nFlags     |= S_INIT;
+            else
+                nFlags     &= ~S_INIT;
+        }
+
+        void Style::set_sync_mode(bool init)
+        {
+            if (init)
+                nFlags     |= S_SYNC;
+            else
+                nFlags     &= ~S_SYNC;
+        }
+
         status_t Style::copy_property(property_t *dst, const property_t *src)
         {
             // Check type of property
@@ -120,32 +136,69 @@ namespace lsp
             {
                 case PT_INT:
                     if (dst->v.iValue != src->v.iValue)
+                    {
                         ++dst->changes;
-                    dst->v.iValue   = src->v.iValue;
+                        dst->v.iValue   = src->v.iValue;
+                    }
+
+                    // Copy default value in INIT mode
+                    if ((nFlags & S_INIT) && (dst->dv.iValue != src->dv.iValue))
+                    {
+                        ++dst->changes;
+                        dst->dv.iValue  = src->dv.iValue;
+                    }
                     break;
                 case PT_FLOAT:
                     if (dst->v.fValue != src->v.fValue)
+                    {
                         ++dst->changes;
-                    dst->v.fValue   = src->v.fValue;
+                        dst->v.fValue   = src->v.fValue;
+                    }
+
+                    // Copy default value in INIT mode
+                    if ((nFlags & S_INIT) && (dst->dv.fValue != src->dv.fValue))
+                    {
+                        ++dst->changes;
+                        dst->dv.fValue  = src->dv.fValue;
+                    }
                     break;
                 case PT_BOOL:
                     if (dst->v.bValue != src->v.bValue)
+                    {
                         ++dst->changes;
-                    dst->v.bValue   = src->v.bValue;
+                        dst->v.bValue   = src->v.bValue;
+                    }
+
+                    // Copy default value in INIT mode
+                    if ((nFlags & S_INIT) && (dst->dv.bValue != src->dv.bValue))
+                    {
+                        ++dst->changes;
+                        dst->dv.bValue  = src->dv.bValue;
+                    }
                     break;
                 case PT_STRING:
                 {
-                    // Value does match?
-                    if (::strcmp(dst->v.sValue, src->v.sValue) == 0)
-                        break;
+                    // Update value if it has changed
+                    if (::strcmp(dst->v.sValue, src->v.sValue) != 0)
+                    {
+                        char *tmp = ::strdup(src->v.sValue);
+                        if (tmp == NULL)
+                            return STATUS_NO_MEM;
+                        ::free(dst->v.sValue);
+                        dst->v.sValue   = tmp;
+                        ++dst->changes;
+                    }
 
-                    // Update value
-                    char *tmp = ::strdup(src->v.sValue);
-                    if (tmp == NULL)
-                        return STATUS_NO_MEM;
-                    ::free(dst->v.sValue);
-                    dst->v.sValue = tmp;
-                    ++dst->changes;
+                    // Copy default value in INIT mode
+                    if ((nFlags & S_INIT) && (::strcmp(dst->dv.sValue, src->dv.sValue) != 0))
+                    {
+                        char *tmp = ::strdup(src->dv.sValue);
+                        if (tmp == NULL)
+                            return STATUS_NO_MEM;
+                        ::free(dst->dv.sValue);
+                        dst->dv.sValue  = tmp;
+                        ++dst->changes;
+                    }
                     break;
                 }
                 default:
@@ -319,19 +372,19 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Style::sync()
+        void Style::synchronize()
         {
             // For each property: copy value from parent and notify children and listeners for changes
             property_t *vp = vProperties.array();
             for (size_t i=0, n=vProperties.size(); i < n; ++i)
                 sync_property(&vp[i]);
 
-            // Call all children for sync()
+            // Call all children for synchronize()
             for (size_t i=0, n=vChildren.size(); i<n; ++i)
             {
                 Style *child = vChildren.uget(i);
                 if (child != NULL)
-                    child->sync();
+                    child->synchronize();
             }
         }
 
@@ -339,10 +392,10 @@ namespace lsp
         {
             size_t notified;
 
-            if (bDelayed)
+            if (nFlags & S_DELAYED)
                 return;
 
-            bDelayed = true; // Disallow delayed notify because it is already active
+            nFlags |= S_DELAYED; // Disallow delayed notify because it is already active
             do
             {
                 notified = 0;
@@ -357,7 +410,7 @@ namespace lsp
                     }
                 }
             } while (notified > 0);
-            bDelayed = false;
+            nFlags &= ~S_DELAYED;
         }
 
         void Style::notify_change(property_t *prop)
@@ -517,7 +570,7 @@ namespace lsp
             }
 
             // Synchronize state
-            child->sync();
+            child->synchronize();
 
             return STATUS_OK;
         }
@@ -548,7 +601,7 @@ namespace lsp
             }
 
             // Synchronize state
-            sync();
+            synchronize();
 
             return STATUS_OK;
         }
@@ -562,7 +615,7 @@ namespace lsp
                 return STATUS_NOT_FOUND;
 
             child->vParents.premove(this);
-            child->sync();
+            child->synchronize();
 
             return STATUS_OK;
         }
@@ -589,7 +642,7 @@ namespace lsp
             {
                 Style *child = children.uget(i);
                 if (child != NULL)
-                    child->sync();
+                    child->synchronize();
             }
 
             return STATUS_OK;
@@ -604,7 +657,7 @@ namespace lsp
                 return STATUS_NOT_FOUND;
 
             parent->vChildren.premove(this);
-            sync();
+            synchronize();
 
             return STATUS_OK;
         }
@@ -627,7 +680,7 @@ namespace lsp
             }
 
             // Synchronize state
-            sync();
+            synchronize();
 
             return STATUS_OK;
         }
@@ -706,7 +759,7 @@ namespace lsp
             if (listener == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            property_t *p = get_property(id);
+            property_t *p   = get_property(id);
             listener_t *lst = NULL;
 
             // Property has been found?
@@ -1119,10 +1172,10 @@ namespace lsp
         {
             status_t res = STATUS_OK;
             property_t *p = get_property(id);
+
             if (p == NULL)
             {
-                // Allocate new property
-                p = create_property(id, src, F_OVERRIDDEN);
+                p = create_property(id, src, (nFlags & S_INIT) ? 0 : F_OVERRIDDEN);
                 if (p != NULL)
                 {
                     notify_listeners(p);
@@ -1139,7 +1192,9 @@ namespace lsp
 
                 if (res == STATUS_OK)
                 {
-                    p->flags   |= F_OVERRIDDEN;
+                    if (!(nFlags & S_INIT))
+                        p->flags   |= F_OVERRIDDEN;
+
                     if (change != p->changes)
                     {
                         notify_listeners(p);
@@ -1156,7 +1211,7 @@ namespace lsp
             property_t tmp;
             tmp.type        = PT_INT;
             tmp.v.iValue    = value;
-            tmp.dv.iValue   = 0;
+            tmp.dv.iValue   = value;
             return set_property(id, &tmp);
         }
 
@@ -1177,7 +1232,7 @@ namespace lsp
             property_t tmp;
             tmp.type        = PT_FLOAT;
             tmp.v.fValue    = value;
-            tmp.dv.fValue   = 0.0f;
+            tmp.dv.fValue   = value;
             return set_property(id, &tmp);
         }
 
@@ -1198,7 +1253,7 @@ namespace lsp
             property_t tmp;
             tmp.type        = PT_BOOL;
             tmp.v.bValue    = value;
-            tmp.dv.bValue   = false;
+            tmp.dv.bValue   = value;
             return set_property(id, &tmp);
         }
 
@@ -1219,12 +1274,10 @@ namespace lsp
             if (value == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            char empty[]    = "";
-
             property_t tmp;
             tmp.type        = PT_STRING;
             tmp.v.sValue    = const_cast<char *>(value->get_utf8());
-            tmp.dv.sValue   = empty;
+            tmp.dv.sValue   = tmp.v.sValue;
             return set_property(id, &tmp);
         }
 
@@ -1245,12 +1298,10 @@ namespace lsp
             if (value == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            char empty[]    = "";
-
             property_t tmp;
             tmp.type        = PT_STRING;
             tmp.v.sValue    = const_cast<char *>(value);
-            tmp.dv.sValue   = empty;
+            tmp.dv.sValue   = tmp.v.sValue;
             return set_property(id, &tmp);
         }
 

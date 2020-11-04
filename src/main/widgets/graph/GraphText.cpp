@@ -52,7 +52,7 @@ namespace lsp
             prop::Padding::override("padding", style, 2);
 
         STYLE_INITIALIZER_END(GraphText, "GraphText");
-        LSP_BUILTIN_STYLE(GraphText);
+        LSP_BUILTIN_STYLE_DEPRECATED(GraphText);
 
         const w_class_t GraphText::metadata             = { "GraphText", &GraphItem::metadata };
 

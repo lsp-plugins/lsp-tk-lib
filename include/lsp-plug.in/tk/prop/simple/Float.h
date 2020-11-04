@@ -57,6 +57,7 @@ namespace lsp
 
             protected:
                 void                commit();
+                void                sync();
                 status_t            init(float value);
                 status_t            override(float value);
 
@@ -117,6 +118,9 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return SimpleProperty::unbind(&sListener); };
+
+                    inline status_t     init(float value)                               { return tk::Float::init(value);        }
+                    inline status_t     override(float value)                           { return tk::Float::override(value);    }
 
                     static status_t     init(const char *name, Style *style, float value);
                     static status_t     override(const char *name, Style *style, float value);

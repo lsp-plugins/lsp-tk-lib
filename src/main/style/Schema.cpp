@@ -36,6 +36,9 @@ namespace lsp
             sScaling.set(1.0f);
         LSP_TK_STYLE_IMPL_END
 
+        LSP_SYMBOL_HIDDEN
+        StyleFactory<RootStyle> RootStyleFactory(NULL);
+
         Schema::Schema(Atoms *atoms)
         {
             pAtoms          = atoms;
@@ -87,17 +90,17 @@ namespace lsp
             }
         }
 
-        status_t Schema::init(lltl::parray<StyleInitializer> *list)
+        status_t Schema::init(lltl::parray<IStyleFactory> *list)
         {
             return init(list->array(), list->size());
         }
 
-        status_t Schema::init(lltl::parray<StyleInitializer> &list)
+        status_t Schema::init(lltl::parray<IStyleFactory> &list)
         {
             return init(list.array(), list.size());
         }
 
-        status_t Schema::init(StyleInitializer **list, size_t n)
+        status_t Schema::init(IStyleFactory **list, size_t n)
         {
             // Check for initialize state
             if (bInitialized)
@@ -107,7 +110,7 @@ namespace lsp
             // Create root style
             if (pRoot == NULL)
             {
-                pRoot = new Style(this);
+                pRoot = RootStyleFactory.create(this);
                 if (pRoot == NULL)
                     return STATUS_NO_MEM;
             }
@@ -167,6 +170,7 @@ namespace lsp
             }
 
             // Initialize each style
+            lsp_trace("Applying stylesheet to root style");
             if (sheet->pRoot != NULL)
             {
                 res = apply_relations(pRoot, sheet->pRoot);
@@ -188,9 +192,14 @@ namespace lsp
                 if ((s == NULL) || (xs == NULL))
                     continue;
 
+                lsp_trace("Applying stylesheet to style '%s'", xs->name.get_utf8());
                 res = apply_relations(s, xs);
                 if (res == STATUS_OK)
+                {
+                    s->set_sync_mode(true);
                     res = apply_settings(s, xs);
+                    s->set_sync_mode(false);
+                }
                 if (res != STATUS_OK)
                     return res;
             }
@@ -212,6 +221,8 @@ namespace lsp
                 LSPString *name         = pnames.uget(i);
                 LSPString *value        = xs->properties.get(name);
                 property_type_t type    = s->get_type(name);
+
+                lsp_trace("  %s = %s", name->get_utf8(), value->get_utf8());
 
                 if (parse_property_value(&v, value, type) == STATUS_OK)
                 {
@@ -243,6 +254,7 @@ namespace lsp
                 if (ps == NULL)
                     continue;
 
+                lsp_trace("  parent: %s", parent->get_utf8());
                 res = s->add_parent(ps);
                 if (res != STATUS_OK)
                     return res;
@@ -251,7 +263,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::create_style(StyleInitializer *init)
+        status_t Schema::create_style(IStyleFactory *init)
         {
             LSPString name;
 
@@ -265,15 +277,12 @@ namespace lsp
 
             // Create style
             lsp_trace("Creating style '%s'...", init->name());
-            Style *style = new Style(this);
+            Style *style    = init->create(this);
             if (style == NULL)
                 return STATUS_NO_MEM;
 
             // Initialize style and bind to Root by default
-            status_t res = init->init(style);
-            if (res == STATUS_OK)
-                res         = style->add_parent(pRoot);
-
+            status_t res    = style->add_parent(pRoot);
             if (res != STATUS_OK)
             {
                 delete style;
@@ -292,9 +301,6 @@ namespace lsp
 
         void Schema::bind(Style *root)
         {
-            // Initialize default values
-            prop::Float::init("size.scaling", root, 1.0f);
-
             // Bind properties
             sScaling.bind("size.scaling", root);
         }

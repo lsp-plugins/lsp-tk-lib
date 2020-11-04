@@ -110,13 +110,14 @@ namespace lsp
                     }
                     if (vAtoms[P_VALUE] >= 0)
                     {
-                        if (c.is_hsl())
-                            c.format_hsla(buf, sizeof(buf)/sizeof(char));
-                        else
+                        if (c.is_rgb())
                             c.format_rgba(buf, sizeof(buf)/sizeof(char));
+                        else
+                            c.format_hsla(buf, sizeof(buf)/sizeof(char));
                         pStyle->set_string(vAtoms[P_VALUE], buf);
                     }
                 }
+
                 pStyle->end();
             }
 
@@ -173,7 +174,10 @@ namespace lsp
                 }
             }
 
-            if (pListener != NULL)
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
         }
 

@@ -42,7 +42,7 @@ namespace lsp
             prop::Pointer::init("pointer", style, ws::MP_HAND);
 
         STYLE_INITIALIZER_END(Hyperlink, "Hyperlink");
-        LSP_BUILTIN_STYLE(Hyperlink);
+        LSP_BUILTIN_STYLE_DEPRECATED(Hyperlink);
 
         const w_class_t Hyperlink::metadata =        { "Hyperlink", &Widget::metadata };
 

@@ -40,7 +40,7 @@ namespace lsp
             prop::Pointer::init("button.pointer", style, ws::MP_DEFAULT);
 
         STYLE_INITIALIZER_END(Fader, "Fader");
-        LSP_BUILTIN_STYLE(Fader);
+        LSP_BUILTIN_STYLE_DEPRECATED(Fader);
 
         const w_class_t Fader::metadata         = { "Fader", &Widget::metadata };
         

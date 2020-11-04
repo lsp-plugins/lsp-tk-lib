@@ -62,6 +62,7 @@ namespace lsp
                 status_t            bind(const char *property, Style *style);
                 status_t            bind(const LSPString *property, Style *style);
                 void                commit();
+                void                sync();
                 ssize_t             set(ssize_t v);
                 ssize_t             init(Style *style, ssize_t v);
                 ssize_t             override(Style *style, ssize_t v);

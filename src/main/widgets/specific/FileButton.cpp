@@ -43,7 +43,7 @@ namespace lsp
             prop::Color::init("text.inv.color", style, "#00cc00");
 
         STYLE_INITIALIZER_END(FileButton, "FileButton");
-        LSP_BUILTIN_STYLE(FileButton);
+        LSP_BUILTIN_STYLE_DEPRECATED(FileButton);
 
         #define NPOINTS 9
         static const float xx[NPOINTS] = { 0.5f, 7.0f, 8.0f, 8.0f, 7.5f, 0.5f, 0.0f, 0.0f, 0.5f };

@@ -47,7 +47,7 @@ namespace lsp
             prop::Boolean::override("visible", style, false);
 
         STYLE_INITIALIZER_END(Window, "Window");
-        LSP_BUILTIN_STYLE(Window);
+        LSP_BUILTIN_STYLE_DEPRECATED(Window);
 
         const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };
 

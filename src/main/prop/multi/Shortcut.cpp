@@ -268,7 +268,10 @@ namespace lsp
             if ((property == vAtoms[P_KEY]) && (pStyle->get_string(vAtoms[P_KEY], &s) == STATUS_OK))
                 nKey = parse_key(&s);
 
-            if (pListener != NULL)
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
         }
 

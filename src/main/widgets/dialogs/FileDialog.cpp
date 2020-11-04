@@ -42,7 +42,7 @@ namespace lsp
             prop::String::init("confirm.msg", style);
 
         STYLE_INITIALIZER_END(FileDialog, "FileDialog");
-        LSP_BUILTIN_STYLE(FileDialog);
+        LSP_BUILTIN_STYLE_DEPRECATED(FileDialog);
 
         const w_class_t FileDialog::metadata            = { "FileDialog", &Window::metadata };
 

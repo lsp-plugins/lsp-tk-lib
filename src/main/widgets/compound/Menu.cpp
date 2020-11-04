@@ -51,7 +51,7 @@ namespace lsp
             prop::Color::override("bg.color", style, "#cccccc");
 
         STYLE_INITIALIZER_END(Menu, "Menu");
-        LSP_BUILTIN_STYLE(Menu);
+        LSP_BUILTIN_STYLE_DEPRECATED(Menu);
 
         //-----------------------------------------------------------------------------
         // Menu window implementation

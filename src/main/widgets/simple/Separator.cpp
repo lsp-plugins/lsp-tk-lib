@@ -34,7 +34,7 @@ namespace lsp
             prop::Integer::init("thickness", style, 1);
 
         STYLE_INITIALIZER_END(Separator, "Separator");
-        LSP_BUILTIN_STYLE(Separator);
+        LSP_BUILTIN_STYLE_DEPRECATED(Separator);
 
         const w_class_t Separator::metadata = { "Separator", &Widget::metadata };
 

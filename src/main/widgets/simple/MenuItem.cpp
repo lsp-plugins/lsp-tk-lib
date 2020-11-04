@@ -43,7 +43,7 @@ namespace lsp
             prop::Padding::override("padding", style, 16, 16, 2, 2);
 
         STYLE_INITIALIZER_END(MenuItem, "MenuItem");
-        LSP_BUILTIN_STYLE(MenuItem);
+        LSP_BUILTIN_STYLE_DEPRECATED(MenuItem);
 
         const w_class_t MenuItem::metadata      = { "MenuItem", &Widget::metadata };
 

@@ -3,7 +3,7 @@
  *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 16 июн. 2017 г.
+ * Created on: 4 нояб. 2020 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -20,43 +20,44 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
-#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(WidgetContainer, Widget);
-            // Nothing
-        STYLE_INITIALIZER_END(WidgetContainer, "WidgetContainer");
-        LSP_BUILTIN_STYLE_DEPRECATED(WidgetContainer);
-
-        const w_class_t WidgetContainer::metadata = { "WidgetContainer", &Widget::metadata };
-
-        WidgetContainer::WidgetContainer(Display *dpy):
-            Widget(dpy)
+        IStyleFactory::IStyleFactory(const char *name)
         {
-            pClass          = &metadata;
+            sName       = name;
         }
 
-        WidgetContainer::~WidgetContainer()
+        IStyleFactory::~IStyleFactory()
         {
-            nFlags     |= FINALIZED;
         }
 
-        status_t WidgetContainer::add(Widget *child)
+        Style *IStyleFactory::create(Schema *schema)
         {
-            return STATUS_NOT_IMPLEMENTED;
+            return NULL;
         }
 
-        status_t WidgetContainer::remove(Widget *child)
+        Style *IStyleFactory::init(Style *s)
         {
-            return STATUS_NOT_FOUND;
-        }
+            // Return immediately if style is NULL
+            if (s == NULL)
+                return NULL;
 
-        status_t WidgetContainer::remove_all()
-        {
-            return STATUS_NOT_IMPLEMENTED;
+            // Initialize style
+            s->set_init_mode(true);     // Set initialization mode
+            status_t res = s->init();
+            if (res != STATUS_OK)
+            {
+                delete s;
+                return NULL;
+            }
+            s->set_init_mode(false);    // Unset initialization mode
+
+            // Return initialized style
+            return s;
         }
-    } /* namespace tk */
-} /* namespace lsp */
+    }
+}
+

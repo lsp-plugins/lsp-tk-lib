@@ -54,7 +54,7 @@ namespace lsp
             prop::Boolean::override("smooth", style, false);
 
         STYLE_INITIALIZER_END(GraphMarker, "GraphMarker");
-        LSP_BUILTIN_STYLE(GraphMarker);
+        LSP_BUILTIN_STYLE_DEPRECATED(GraphMarker);
 
         const w_class_t GraphMarker::metadata             = { "GraphMarker", &GraphItem::metadata };
 

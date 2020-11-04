@@ -41,7 +41,7 @@ namespace lsp
             prop::GraphFrameFunction::init("function", style, GFF_DEFAULT);
 
         STYLE_INITIALIZER_END(GraphFrameBuffer, "GraphFrameBuffer");
-        LSP_BUILTIN_STYLE(GraphFrameBuffer);
+        LSP_BUILTIN_STYLE_DEPRECATED(GraphFrameBuffer);
 
         const w_class_t GraphFrameBuffer::metadata             = { "GraphFrameBuffer", &GraphItem::metadata };
 

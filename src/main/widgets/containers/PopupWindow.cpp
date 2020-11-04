@@ -37,7 +37,7 @@ namespace lsp
             prop::WindowActions::override("actions", style, ws::WA_POPUP);
 
         STYLE_INITIALIZER_END(PopupWindow, "PopupWindow");
-        LSP_BUILTIN_STYLE(PopupWindow);
+        LSP_BUILTIN_STYLE_DEPRECATED(PopupWindow);
 
         const w_class_t PopupWindow::metadata       = { "PopupWindow", &Window::metadata };
 

@@ -57,7 +57,7 @@ namespace lsp
             prop::Color::init("text.active.color", style, "#000000");
 
         STYLE_INITIALIZER_END(ScrollBar, "ScrollBar");
-        LSP_BUILTIN_STYLE(ScrollBar);
+        LSP_BUILTIN_STYLE_DEPRECATED(ScrollBar);
 
         const w_class_t ScrollBar::metadata         = { "ScrollBar", &Widget::metadata };
 

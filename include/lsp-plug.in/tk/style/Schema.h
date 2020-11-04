@@ -74,7 +74,7 @@ namespace lsp
                 prop::Float                         sScaling;
 
             protected:
-                status_t            create_style(StyleInitializer *init);
+                status_t            create_style(IStyleFactory *init);
 
                 static status_t     apply_settings(Style *s, StyleSheet::style_t *xs);
                 status_t            apply_relations(Style *s, StyleSheet::style_t *xs);
@@ -95,8 +95,8 @@ namespace lsp
                  * @param list list of styles
                  * @return status of operation
                  */
-                status_t            init(lltl::parray<StyleInitializer> *list);
-                status_t            init(lltl::parray<StyleInitializer> &list);
+                status_t            init(lltl::parray<IStyleFactory> *list);
+                status_t            init(lltl::parray<IStyleFactory> &list);
 
                 /**
                  * Initialize schema with the specified list of styles
@@ -107,7 +107,7 @@ namespace lsp
                  * @param n number of elements in array
                  * @return status of operation
                  */
-                status_t            init(StyleInitializer **list, size_t n);
+                status_t            init(IStyleFactory **list, size_t n);
 
                 /**
                  * Apply stylesheet settings to the schema

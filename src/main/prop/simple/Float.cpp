@@ -62,7 +62,21 @@ namespace lsp
             if (pStyle->get_float(nAtom, &fValue) != STATUS_OK)
                 return;
 
-            // Delegate event
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
+                pListener->notify(this);
+        }
+
+        void Float::sync()
+        {
+            if (pStyle != NULL)
+            {
+                pStyle->begin(&sListener);
+                    pStyle->set_float(nAtom, fValue);
+                pStyle->end();
+            }
             if (pListener != NULL)
                 pListener->notify(this);
         }
@@ -74,14 +88,7 @@ namespace lsp
                 return prev;
 
             fValue  = v;
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                    pStyle->set_float(nAtom, v);
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
+            sync();
             return prev;
         }
 

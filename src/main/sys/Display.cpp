@@ -225,7 +225,7 @@ namespace lsp
         {
             // Form the list of initializers
             status_t res = STATUS_OK;
-            lltl::parray<StyleInitializer> init;
+            lltl::parray<IStyleFactory> init;
             for (BuiltinStyle *curr = BuiltinStyle::root(); curr != NULL; curr = curr->next())
             {
                 if (!init.add(curr->init()))

@@ -60,6 +60,7 @@ namespace lsp
 
             protected:
                 void                commit();
+                void                sync();
 
             protected:
                 explicit Boolean(prop::Listener *listener = NULL);

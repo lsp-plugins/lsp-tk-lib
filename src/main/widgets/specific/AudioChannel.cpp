@@ -48,7 +48,7 @@ namespace lsp
             prop::Color::override("bg.color", style, "#000000");
 
         STYLE_INITIALIZER_END(AudioChannel, "AudioChannel");
-        LSP_BUILTIN_STYLE(AudioChannel);
+        LSP_BUILTIN_STYLE_DEPRECATED(AudioChannel);
 
         const w_class_t AudioChannel::metadata      = { "AudioChannel", &Widget::metadata };
 

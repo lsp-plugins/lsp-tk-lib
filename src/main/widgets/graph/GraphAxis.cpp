@@ -41,7 +41,7 @@ namespace lsp
             prop::Color::init("color", style, "#ffffff");
 
         STYLE_INITIALIZER_END(GraphAxis, "GraphAxis");
-        LSP_BUILTIN_STYLE(GraphAxis);
+        LSP_BUILTIN_STYLE_DEPRECATED(GraphAxis);
 
         const w_class_t GraphAxis::metadata             = { "GraphAxis", &GraphItem::metadata };
 

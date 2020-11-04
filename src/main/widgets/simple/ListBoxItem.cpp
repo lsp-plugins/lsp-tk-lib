@@ -37,7 +37,7 @@ namespace lsp
             prop::Color::override("bg.color", style, "#ffffff");
 
         STYLE_INITIALIZER_END(ListBoxItem, "ListBoxItem");
-        LSP_BUILTIN_STYLE(ListBoxItem);
+        LSP_BUILTIN_STYLE_DEPRECATED(ListBoxItem);
 
         const w_class_t ListBoxItem::metadata       = { "ListBoxItem", &Widget::metadata };
 

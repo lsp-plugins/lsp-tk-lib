@@ -37,7 +37,7 @@ namespace lsp
             prop::RangeFloat::init("vscroll", style, 0.0f, 0.0f, 0.0f);
 
         STYLE_INITIALIZER_END(ScrollArea, "ScrollArea");
-        LSP_BUILTIN_STYLE(ScrollArea);
+        LSP_BUILTIN_STYLE_DEPRECATED(ScrollArea);
 
         const w_class_t ScrollArea::metadata    = { "ScrollArea", &WidgetContainer::metadata };
         

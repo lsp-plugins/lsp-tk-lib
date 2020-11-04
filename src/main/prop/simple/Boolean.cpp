@@ -52,7 +52,21 @@ namespace lsp
             if (pStyle->get_bool(nAtom, &bValue) != STATUS_OK)
                 return;
 
-            // Delegate event
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
+                pListener->notify(this);
+        }
+
+        void Boolean::sync()
+        {
+            if (pStyle != NULL)
+            {
+                pStyle->begin(&sListener);
+                    pStyle->set_bool(nAtom, bValue);
+                pStyle->end();
+            }
             if (pListener != NULL)
                 pListener->notify(this);
         }
@@ -74,14 +88,8 @@ namespace lsp
                 return prev;
 
             bValue  = v;
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                    pStyle->set_bool(nAtom, v);
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
+            sync();
+
             return prev;
         }
 

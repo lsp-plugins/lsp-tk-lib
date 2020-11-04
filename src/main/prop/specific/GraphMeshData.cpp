@@ -73,7 +73,10 @@ namespace lsp
             if ((property == vAtoms[P_SIZE]) && (pStyle->get_int(vAtoms[P_SIZE], &v) == STATUS_OK))
                 resize_buffer(v);
 
-            if (pListener != NULL)
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
         }
 

@@ -46,7 +46,7 @@ namespace lsp
             prop::Integer::init("vscroll.spacing", style, 1);
 
         STYLE_INITIALIZER_END(ListBox, "ListBox");
-        LSP_BUILTIN_STYLE(ListBox);
+        LSP_BUILTIN_STYLE_DEPRECATED(ListBox);
 
         const w_class_t ListBox::metadata               = { "ListBox", &WidgetContainer::metadata };
 

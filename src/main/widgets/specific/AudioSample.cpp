@@ -74,7 +74,7 @@ namespace lsp
             }
 
         STYLE_INITIALIZER_END(AudioSample, "AudioSample");
-        LSP_BUILTIN_STYLE(AudioSample);
+        LSP_BUILTIN_STYLE_DEPRECATED(AudioSample);
 
         const w_class_t AudioSample::metadata           = { "AudioSample", &WidgetContainer::metadata };
 

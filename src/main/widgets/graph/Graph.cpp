@@ -50,7 +50,7 @@ namespace lsp
             prop::Padding::init("padding.internal", style, 1);
 
         STYLE_INITIALIZER_END(Graph, "Graph");
-        LSP_BUILTIN_STYLE(Graph);
+        LSP_BUILTIN_STYLE_DEPRECATED(Graph);
 
         const w_class_t Graph::metadata         =   { "Graph", &WidgetContainer::metadata };
 

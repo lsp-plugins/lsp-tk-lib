@@ -37,7 +37,7 @@ namespace lsp
             prop::Integer::init("led", style, 8);
 
         STYLE_INITIALIZER_END(Led, "Led");
-        LSP_BUILTIN_STYLE(Led);
+        LSP_BUILTIN_STYLE_DEPRECATED(Led);
 
         const w_class_t Led::metadata           = { "Led", &Widget::metadata };
 

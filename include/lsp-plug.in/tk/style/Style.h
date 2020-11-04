@@ -45,6 +45,9 @@ namespace lsp
             private:
                 Style & operator = (const Style &);
 
+                friend class IStyleFactory;
+                friend class Schema;
+
             protected:
                 enum flags_t
                 {
@@ -52,6 +55,13 @@ namespace lsp
                     F_OVERRIDDEN        = 1 << 1,   // Property has been locally overridden by client
                     F_NTF_LISTENERS     = 1 << 2,   // Property requires notification of listeners
                     F_NTF_CHILDREN      = 1 << 3,   // Property requires notification of children
+                };
+
+                enum style_flags_t
+                {
+                    S_INIT              = 1 << 0,   // Initialization flag
+                    S_SYNC            = 1 << 1,   // Value injection
+                    S_DELAYED           = 1 << 2    // Delayed notification
                 };
 
                 typedef struct property_t
@@ -100,7 +110,7 @@ namespace lsp
                 lltl::darray<listener_t>        vListeners;
                 lltl::parray<IStyleListener>    vLocks;
                 mutable Schema                 *pSchema;
-                bool                            bDelayed;
+                size_t                          nFlags;
 
             public:
                 explicit Style(Schema *schema);
@@ -129,13 +139,16 @@ namespace lsp
                 inline const property_t   *get_property(atom_t id) const { return const_cast<Style *>(this)->get_property(id); };
                 inline const property_t   *get_property_recursive(atom_t id) const { return const_cast<Style *>(this)->get_property_recursive(id); };
 
-                void                sync();
+                void                synchronize();
                 void                notify_change(property_t *prop);
                 void                notify_children(property_t *prop);
                 size_t              notify_children_delayed(property_t *prop);
                 void                notify_listeners(property_t *prop);
                 size_t              notify_listeners_delayed(property_t *prop);
                 void                deref_property(property_t *prop);
+
+                void                set_init_mode(bool init);
+                void                set_sync_mode(bool sync);
 
             public:
                 /**
@@ -161,7 +174,13 @@ namespace lsp
                  * @param idx sequential number of parent style starting with 0
                  * @return parent style or NULL if does not exist
                  */
-                inline Style           *parent(size_t idx)  { return vParents.get(idx); };
+                inline Style           *parent(size_t idx)  { return vParents.get(idx); }
+
+                /**
+                 * Check sync mode
+                 * @return true if sync mode
+                 */
+                inline bool             sync() const        { return nFlags & S_SYNC; }
 
                 /**
                  * Set parent style

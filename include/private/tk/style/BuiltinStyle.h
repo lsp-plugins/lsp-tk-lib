@@ -33,20 +33,29 @@ namespace lsp
             private:
                 static BuiltinStyle        *pRoot;
                 BuiltinStyle               *pNext;
-                StyleInitializer           *pInit;
+                IStyleFactory              *pInit;
 
             public:
-                explicit BuiltinStyle(StyleInitializer *init);
+                explicit BuiltinStyle(IStyleFactory *init);
 
             public:
                 static inline BuiltinStyle *root() { return pRoot; }
                 inline BuiltinStyle        *next() { return pNext; }
-                inline StyleInitializer    *init() { return pInit; }
+                inline IStyleFactory       *init() { return pInit; }
         };
 
-        #define LSP_BUILTIN_STYLE(widget) \
+        #define LSP_BUILTIN_STYLE_DEPRECATED(widget)
+
+        #define LSP_TK_BUILTIN_STYLE_VAR(Name) Style ## Builtin
+
+        #define LSP_TK_BUILTIN_STYLE(Style, Name) \
             LSP_SYMBOL_HIDDEN \
-            BuiltinStyle widget ## StyleBuiltin(& STYLE_INITIALIZER_INSTANCE(widget));
+            StyleFactory<Style> Style ## Factory(Name); \
+            \
+            LSP_SYMBOL_HIDDEN \
+            BuiltinStyle Style ## Builtin(& Style ## Factory);
+
+
     }
 }
 

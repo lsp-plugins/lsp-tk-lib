@@ -28,7 +28,7 @@ namespace lsp
         LSP_SYMBOL_HIDDEN
         BuiltinStyle *BuiltinStyle::pRoot    = NULL;
 
-        BuiltinStyle::BuiltinStyle(StyleInitializer *init)
+        BuiltinStyle::BuiltinStyle(IStyleFactory *init)
         {
             pInit   = init;
             pNext   = pRoot;

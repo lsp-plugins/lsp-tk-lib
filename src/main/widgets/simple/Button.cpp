@@ -48,7 +48,7 @@ namespace lsp
             prop::Padding::init("text.padding", style, 2, 2, 2, 2);
 
         STYLE_INITIALIZER_END(Button, "Button");
-        LSP_BUILTIN_STYLE(Button);
+        LSP_BUILTIN_STYLE_DEPRECATED(Button);
 
         const w_class_t Button::metadata        = { "Button", &Widget::metadata };
 

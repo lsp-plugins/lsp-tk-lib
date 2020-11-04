@@ -151,8 +151,10 @@ namespace lsp
                 }
             }
 
-            // Notify listener about change
-            if (pListener != NULL)
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
         }
 
@@ -194,6 +196,11 @@ namespace lsp
             // Notify listener about change
             if (pListener != NULL)
                 pListener->notify(this);
+        }
+
+        void Flags::sync()
+        {
+            sync(size_t(0) - 1); // Sync all items
         }
 
         status_t Flags::init()

@@ -56,7 +56,7 @@ namespace lsp
             prop::StepFloat::init("zvalue.step", style, 1.0f, 10.0f, 0.1f);
 
         STYLE_INITIALIZER_END(GraphDot, "GraphDot");
-        LSP_BUILTIN_STYLE(GraphDot);
+        LSP_BUILTIN_STYLE_DEPRECATED(GraphDot);
 
         const w_class_t GraphDot::metadata             = { "GraphDot", &GraphItem::metadata };
 

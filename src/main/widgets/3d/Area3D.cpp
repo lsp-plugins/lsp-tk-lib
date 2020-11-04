@@ -41,7 +41,7 @@ namespace lsp
             prop::Color::init("glass.color", style, "#ffffff");
 
         STYLE_INITIALIZER_END(Area3D, "Area3D");
-        LSP_BUILTIN_STYLE(Area3D);
+        LSP_BUILTIN_STYLE_DEPRECATED(Area3D);
 
         const w_class_t Area3D::metadata      = { "Area3D", &Widget::metadata };
 

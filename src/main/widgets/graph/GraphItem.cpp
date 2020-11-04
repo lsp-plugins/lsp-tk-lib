@@ -31,7 +31,7 @@ namespace lsp
             prop::Boolean::init("smooth", style, true);
 
         STYLE_INITIALIZER_END(GraphItem, "GraphItem");
-        LSP_BUILTIN_STYLE(GraphItem);
+        LSP_BUILTIN_STYLE_DEPRECATED(GraphItem);
 
         const w_class_t GraphItem::metadata     =   { "GraphItem", &Widget::metadata };
 

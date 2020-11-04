@@ -46,7 +46,7 @@ namespace lsp
             prop::SizeConstraints::init("size.constraints", style);
 
         STYLE_INITIALIZER_END(ComboGroup, "ComboGroup");
-        LSP_BUILTIN_STYLE(ComboGroup);
+        LSP_BUILTIN_STYLE_DEPRECATED(ComboGroup);
 
         //-----------------------------------------------------------------------------
         // ComboBox popup window implementation

@@ -3,7 +3,7 @@
 <schema>
 	<!-- Root style -->
 	<root>
-		<size.scaling value="1.5f" />
+		<size.scaling value="1.5" />
 	</root>
 	
 	<!-- Nested style of window -->

@@ -47,7 +47,7 @@ namespace lsp
             prop::Allocation::override("allocation", style, true, false, false, false);
 
         STYLE_INITIALIZER_END(ProgressBar, "ProgressBar");
-        LSP_BUILTIN_STYLE(ProgressBar);
+        LSP_BUILTIN_STYLE_DEPRECATED(ProgressBar);
 
         const w_class_t ProgressBar::metadata           = { "ProgressBar", &Widget::metadata };
 

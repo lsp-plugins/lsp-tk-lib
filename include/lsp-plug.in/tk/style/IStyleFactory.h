@@ -31,25 +31,58 @@ namespace lsp
 {
     namespace tk
     {
+        class Schema;
+        class Style;
+
         /**
-         * Style factory
+         * Style factory, allows to create and initialize the style
          */
         class IStyleFactory
         {
             private:
-                const char         *name;
+                IStyleFactory & operator = (const IStyleFactory &);
+
+            protected:
+                const char         *sName;
+
+            protected:
+                static Style       *init(Style *s);
 
             public:
                 explicit            IStyleFactory(const char *name);
                 virtual            ~IStyleFactory();
 
             public:
+                /**
+                 * Return the name of produced style
+                 * @return name of produced style
+                 */
+                inline const char  *name() const        { return sName;     }
+
+            public:
                 /** Create and initialize style
                  *
                  * @return created and initialized style
                  */
-                virtual Style      *create();
+                virtual Style      *create(Schema *schema);
         };
+
+        /**
+         * Generalized factory
+         * @tparam IStyle Style class to instantiate
+         */
+        template <class IStyle>
+            class StyleFactory: public IStyleFactory
+            {
+                private:
+                    StyleFactory & operator = (const StyleFactory &);
+
+                public:
+                    explicit StyleFactory(const char *name) : IStyleFactory(name) {}
+
+                public:
+                    virtual Style      *create(Schema *schema) { return init(new IStyle(schema));   }
+            };
     }
 }
 

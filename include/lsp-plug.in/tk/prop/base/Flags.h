@@ -63,6 +63,7 @@ namespace lsp
                 atom_t          lookup(size_t ordinal);
                 void            sync(atom_t atom, bool value);
                 void            sync(size_t mask);
+                void            sync();
 
                 void            set_default();
                 void            commit(atom_t property);

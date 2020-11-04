@@ -45,7 +45,7 @@ namespace lsp
             prop::Layout::override("layout", style, 0.0f, 0.0f, 1.0f, 1.0f);
 
         STYLE_INITIALIZER_END(Group, "Group");
-        LSP_BUILTIN_STYLE(Group);
+        LSP_BUILTIN_STYLE_DEPRECATED(Group);
 
         const w_class_t Group::metadata         = { "Group", &Align::metadata };
 

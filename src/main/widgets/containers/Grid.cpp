@@ -38,7 +38,7 @@ namespace lsp
             prop::Allocation::override("allocation", style, true, true, false, false);
 
         STYLE_INITIALIZER_END(Grid, "Grid");
-        LSP_BUILTIN_STYLE(Grid);
+        LSP_BUILTIN_STYLE_DEPRECATED(Grid);
 
         const w_class_t Grid::metadata = { "Grid", &WidgetContainer::metadata };
         

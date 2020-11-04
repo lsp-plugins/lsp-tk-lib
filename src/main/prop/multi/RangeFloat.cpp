@@ -99,7 +99,11 @@ namespace lsp
                         break;
                 }
             }
-            if (pListener != NULL)
+
+            // Update/notify listeners
+            if (pStyle->sync())
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
         }
 

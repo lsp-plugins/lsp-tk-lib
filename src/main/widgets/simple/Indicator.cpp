@@ -39,7 +39,7 @@ namespace lsp
             prop::String::init("text", style);
 
         STYLE_INITIALIZER_END(Indicator, "Indicator");
-        LSP_BUILTIN_STYLE(Indicator);
+        LSP_BUILTIN_STYLE_DEPRECATED(Indicator);
 
         typedef struct rect_t
         {
