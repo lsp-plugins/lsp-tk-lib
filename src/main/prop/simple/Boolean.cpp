@@ -135,6 +135,13 @@ namespace lsp
                 return prev;
             }
 
+            status_t Boolean::create(const char *name, Style *style, bool value)
+            {
+                LSP_STATUS_ASSERT(bind(name, style));
+                set(value);
+                return STATUS_OK;
+            }
+
             status_t Boolean::init(const char *name, Style *style, bool value)
             {
                 prop::Boolean v;

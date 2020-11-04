@@ -121,6 +121,13 @@ namespace lsp
                 return old;
             }
 
+            status_t Integer::create(const char *name, Style *style, ssize_t value)
+            {
+                LSP_STATUS_ASSERT(bind(name, style));
+                set(value);
+                return STATUS_OK;
+            }
+
             status_t Integer::init(const char *name, Style *style, ssize_t value)
             {
                 prop::Integer v;

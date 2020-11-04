@@ -41,6 +41,11 @@ namespace lsp
     {
         class Atoms;
 
+        // Style definition
+        LSP_TK_STYLE_DEF_BEGIN(RootStyle, Style)
+            prop::Float                         sScaling;
+        LSP_TK_STYLE_DEF_END
+
         class Schema
         {
             private:

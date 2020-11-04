@@ -77,16 +77,6 @@ namespace lsp
             sync();
             vListeners.flush();
 
-            // Destroy all property clients
-            for (size_t i=0, n=vClients.size(); i<n; ++i)
-            {
-                Property *prop = vClients.uget(i);
-                if (prop != NULL)
-                    delete prop;
-            }
-            vClients.flush();
-
-
             // Destroy stored properties
             for (size_t i=0, n=vProperties.size(); i<n; ++i)
                 undef_property(vProperties.uget(i));

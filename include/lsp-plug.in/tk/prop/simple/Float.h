@@ -118,17 +118,10 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return SimpleProperty::unbind(&sListener); };
 
-                    /**
-                     * Init default value
-                     * @param style style
-                     * @param value default value
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, float value);
-                    status_t            override(Style *style, float value);
-
                     static status_t     init(const char *name, Style *style, float value);
                     static status_t     override(const char *name, Style *style, float value);
+
+                    status_t            create(const char *name, Style *style, float value);
 
                     /**
                      * Change value without notification of any listener

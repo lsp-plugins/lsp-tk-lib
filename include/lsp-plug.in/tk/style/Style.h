@@ -42,6 +42,9 @@ namespace lsp
          */
         class Style
         {
+            private:
+                Style & operator = (const Style &);
+
             protected:
                 enum flags_t
                 {
@@ -84,13 +87,18 @@ namespace lsp
                     IStyleListener     *pListener;  // Listener
                 } listener_t;
 
+                typedef struct client_t
+                {
+                    atom_t              nId;
+                    Property           *pClient;
+                } client_t;
+
             private:
                 lltl::parray<Style>             vParents;
                 lltl::parray<Style>             vChildren;
                 lltl::darray<property_t>        vProperties;
                 lltl::darray<listener_t>        vListeners;
                 lltl::parray<IStyleListener>    vLocks;
-                lltl::parray<Property>          vClients;
                 mutable Schema                 *pSchema;
                 bool                            bDelayed;
 
@@ -98,7 +106,7 @@ namespace lsp
                 explicit Style(Schema *schema);
                 virtual ~Style();
 
-                status_t            init();
+                virtual status_t    init();
                 void                destroy();
 
             protected:
@@ -620,7 +628,37 @@ namespace lsp
                  */
                 const char             *atom_name(atom_t id) const;
         };
-    
+
+        #define LSP_TK_STYLE_DEF_BEGIN(Name, Parent) \
+            class Name : public Parent \
+            { \
+                private: \
+                    Name & operator = (Name &); \
+                \
+                public: \
+                    explicit Name(::lsp::tk::Schema *schema); \
+                \
+                public: \
+                    virtual ::lsp::status_t     init(); \
+                \
+                protected:
+
+        #define LSP_TK_STYLE_DEF_END \
+            };
+
+        #define LSP_TK_STYLE_IMPL_BEGIN(Name, Parent) \
+            Name::Name(::lsp::tk::Schema *schema): Parent(schema) {} \
+            \
+            status_t Name::init() \
+            { \
+                ::lsp::status_t res = Parent::init(); \
+                if (res != ::lsp::STATUS_OK) \
+                    return res;
+
+        #define LSP_TK_STYLE_IMPL_END \
+                return res; \
+            }
+
     } /* namespace tk */
 } /* namespace lsp */
 

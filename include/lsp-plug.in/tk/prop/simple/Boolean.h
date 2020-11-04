@@ -148,6 +148,8 @@ namespace lsp
                     static status_t     init(const char *name, Style *style, bool value);
                     static status_t     override(const char *name, Style *style, bool value);
 
+                    status_t            create(const char *name, Style *style, bool value);
+
                     /**
                      * Commit value
                      * @param value value to commit

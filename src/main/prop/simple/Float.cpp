@@ -97,19 +97,10 @@ namespace lsp
 
         namespace prop
         {
-            status_t Float::init(Style *style, float value)
+            status_t Float::create(const char *name, Style *style, float value)
             {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-                style->create_float(nAtom, value);
-                return STATUS_OK;
-            }
-
-            status_t Float::override(Style *style, float value)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-                style->override_float(nAtom, value);
+                LSP_STATUS_ASSERT(bind(name, style));
+                set(value);
                 return STATUS_OK;
             }
 

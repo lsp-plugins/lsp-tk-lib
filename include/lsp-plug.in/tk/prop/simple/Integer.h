@@ -133,6 +133,8 @@ namespace lsp
                     static status_t     init(const char *name, Style *style, ssize_t value);
                     static status_t     override(const char *name, Style *style, ssize_t value);
 
+                    status_t            create(const char *name, Style *style, ssize_t value);
+
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
         }

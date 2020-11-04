@@ -28,6 +28,14 @@ namespace lsp
 {
     namespace tk
     {
+        LSP_TK_STYLE_IMPL_BEGIN(RootStyle, Style)
+            // Bind
+            sScaling.bind("size.scaling", this);
+
+            // Set defaults
+            sScaling.set(1.0f);
+        LSP_TK_STYLE_IMPL_END
+
         Schema::Schema(Atoms *atoms)
         {
             pAtoms          = atoms;
@@ -285,7 +293,7 @@ namespace lsp
         void Schema::bind(Style *root)
         {
             // Initialize default values
-            sScaling.init(root, 1.0f);
+            prop::Float::init("size.scaling", root, 1.0f);
 
             // Bind properties
             sScaling.bind("size.scaling", root);
