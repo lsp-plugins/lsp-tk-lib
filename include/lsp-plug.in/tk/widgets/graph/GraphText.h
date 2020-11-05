@@ -30,6 +30,23 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(GraphText, GraphItem)
+                prop::String            sText;
+                prop::Font              sFont;
+                prop::Color             sColor;
+                prop::Layout            sLayout;
+                prop::TextLayout        sTextLayout;
+                prop::Float             sHValue;
+                prop::Float             sVValue;
+                prop::Integer           sHAxis;
+                prop::Integer           sVAxis;
+                prop::Integer           sOrigin;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class GraphText: public GraphItem
         {
             public:
@@ -74,8 +91,6 @@ namespace lsp
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
-
-        STYLE_INITIALIZER_DEF(GraphText, GraphItem);
     }
 }
 

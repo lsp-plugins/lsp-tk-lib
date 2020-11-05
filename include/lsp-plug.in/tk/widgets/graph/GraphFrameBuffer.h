@@ -30,6 +30,22 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(GraphFrameBuffer, GraphItem)
+                prop::GraphFrameData        sData;              // Framebuffer data
+                prop::Float                 sTransparency;      // Framebuffer transparency
+                prop::Integer               sAngle;             // Framebuffer rotation angle
+                prop::Float                 sHPos;              // Horizontal position
+                prop::Float                 sVPos;              // Vertical position
+                prop::Float                 sHScale;            // Width, proportional to the graph size
+                prop::Float                 sVScale;            // Height, proportional to the graph size
+                prop::Color                 sColor;             // Base color
+                prop::GraphFrameFunction    sFunction;          // Function
+            LSP_TK_STYLE_DEF_END
+        }
+
         class GraphFrameBuffer: public GraphItem
         {
             public:
@@ -95,8 +111,6 @@ namespace lsp
 
                 virtual void                draw(ws::ISurface *s);
         };
-
-        STYLE_INITIALIZER_DEF(GraphFrameBuffer, GraphItem);
     }
 }
 

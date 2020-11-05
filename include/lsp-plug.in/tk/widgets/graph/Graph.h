@@ -34,6 +34,21 @@ namespace lsp
         class GraphAxis;
         class GraphOrigin;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Graph, WidgetContainer)
+                prop::SizeConstraints           sConstraints;   // Size constraints
+                prop::Integer                   sBorder;        // Border size
+                prop::Integer                   sBorderRadius;  // Border radius
+                prop::Boolean                   sGlass;         // Draw glass
+                prop::Color                     sColor;         // Graph color
+                prop::Color                     sBorderColor;   // Color of the border
+                prop::Color                     sGlassColor;    // Color of the glass
+                prop::Padding                   sIPadding;      // Internal padding
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Graph for drawing 2D charts
          */
@@ -152,7 +167,6 @@ namespace lsp
                 virtual void                draw(ws::ISurface *s);
         };
 
-        STYLE_INITIALIZER_DEF(Graph, WidgetContainer);
     }
 }
 

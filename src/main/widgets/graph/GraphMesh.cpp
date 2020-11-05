@@ -29,19 +29,30 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(GraphMesh, GraphItem);
-
-            prop::Integer::init("origin", style, 0);
-            prop::Integer::init("haxis", style, 0);
-            prop::Integer::init("vaxis", style, 1);
-            prop::Integer::init("width", style, 3);
-            prop::Boolean::init("fill", style, false);
-            prop::Color::init("color", style, "#00ff00");
-            prop::Color::init("fill.color", style, "#8800ff00");
-            prop::GraphMeshData::init("data", style, 0);
-
-        STYLE_INITIALIZER_END(GraphMesh, "GraphMesh");
-        LSP_BUILTIN_STYLE_DEPRECATED(GraphMesh);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(GraphMesh, GraphItem)
+                // Bind
+                sOrigin.bind("origin", this);
+                sXAxis.bind("haxis", this);
+                sYAxis.bind("vaxis", this);
+                sWidth.bind("width", this);
+                sFill.bind("fill", this);
+                sColor.bind("color", this);
+                sFillColor.bind("fill.color", this);
+                sData.bind("data", this);
+                // Configure
+                sOrigin.set(0);
+                sXAxis.set(0);
+                sYAxis.set(1);
+                sWidth.set(3);
+                sFill.set(false);
+                sColor.set("#00ff00");
+                sFillColor.set("#8800ff00");
+                sData.set_size(0);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(GraphMesh, "GraphMesh");
+        }
 
         const w_class_t GraphMesh::metadata             = { "GraphMesh", &GraphItem::metadata };
 

@@ -26,12 +26,16 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(GraphItem, Widget);
-
-            prop::Boolean::init("smooth", style, true);
-
-        STYLE_INITIALIZER_END(GraphItem, "GraphItem");
-        LSP_BUILTIN_STYLE_DEPRECATED(GraphItem);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(GraphItem, Widget)
+                // Bind
+                sSmooth.bind("smooth", this);
+                // Configure
+                sSmooth.set(true);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(GraphItem, "Button");
+        }
 
         const w_class_t GraphItem::metadata     =   { "GraphItem", &Widget::metadata };
 

@@ -26,15 +26,22 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(GraphOrigin, GraphItem);
-
-            prop::RangeFloat::init("left", style, 0.0f, -1.0f, 1.0f);
-            prop::RangeFloat::init("top", style, 0.0f, -1.0f, 1.0f);
-            prop::Integer::init("radius", style, 4.0f);
-            prop::Color::init("color", style, "#ffffff");
-
-        STYLE_INITIALIZER_END(GraphOrigin, "GraphOrigin");
-        LSP_BUILTIN_STYLE_DEPRECATED(GraphOrigin);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(GraphOrigin, GraphItem)
+                // Bind
+                sLeft.bind("left", this);
+                sTop.bind("top", this);
+                sRadius.bind("radius", this);
+                sColor.bind("color", this);
+                // Configure
+                sLeft.set_all(0.0f, -1.0f, 1.0f);
+                sTop.set_all(0.0f, -1.0f, 1.0f);
+                sRadius.set(4.0f);
+                sColor.set("#ffffff");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(GraphOrigin, "GraphOrigin");
+        }
 
         const w_class_t GraphOrigin::metadata             = { "GraphOrigin", &GraphItem::metadata };
 

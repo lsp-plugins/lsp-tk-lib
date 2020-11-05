@@ -121,8 +121,10 @@ namespace lsp
 
                 void        set_fixed(ssize_t width, ssize_t height)        { set(width, height, width, height);    }
                 inline void set_fixed(ssize_t size)                         { set(size, size, size, size);          }
+                inline void set_all(ssize_t size)                           { set(size, size, size, size);          }
 
                 void        compute(ws::size_limit_t *limit, float scale);
+
 
                 static void apply(ws::size_limit_t *dst, const ws::size_limit_t *src, const ws::size_limit_t *rule);
 

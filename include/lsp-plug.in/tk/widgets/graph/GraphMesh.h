@@ -30,6 +30,21 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(GraphMesh, GraphItem)
+                prop::Integer               sOrigin;        // Index of origin
+                prop::Integer               sXAxis;         // Index of X axis
+                prop::Integer               sYAxis;         // Index of Y axis
+                prop::Integer               sWidth;         // Width of the mesh line
+                prop::Boolean               sFill;          // Fill poly
+                prop::Color                 sColor;         // Mesh color
+                prop::Color                 sFillColor;     // Fill color
+                prop::GraphMeshData         sData;          // Graph mesh data
+            LSP_TK_STYLE_DEF_END
+        }
+
         class GraphMesh: public GraphItem
         {
             public:
@@ -76,8 +91,6 @@ namespace lsp
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
-
-        STYLE_INITIALIZER_DEF(GraphMesh, GraphItem);
     }
 }
 

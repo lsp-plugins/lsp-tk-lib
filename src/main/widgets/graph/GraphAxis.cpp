@@ -28,20 +28,33 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(GraphAxis, GraphItem);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(GraphAxis, GraphItem)
+                // Bind
+                sDirection.bind("direction", this);
+                sMin.bind("min", this);
+                sMax.bind("max", this);
+                sLogScale.bind("log", this);
+                sBasis.bind("basis", this);
+                sWidth.bind("width", this);
+                sLength.bind("length", this);
+                sOrigin.bind("origin", this);
+                sColor.bind("color", this);
 
-            prop::Vector2D::init_cart("direction", style, 1.0f, 0.0f);
-            prop::Float::init("min", style, -1.0f);
-            prop::Float::init("max", style, 1.0f);
-            prop::Boolean::init("log", style, false);
-            prop::Boolean::init("basis", style, true);
-            prop::Integer::init("width", style, 1);
-            prop::Float::init("length", style, -1.0f);
-            prop::Integer::init("origin", style, 0);
-            prop::Color::init("color", style, "#ffffff");
-
-        STYLE_INITIALIZER_END(GraphAxis, "GraphAxis");
-        LSP_BUILTIN_STYLE_DEPRECATED(GraphAxis);
+                // Configure
+                sDirection.set_cart(1.0f, 0.0f);
+                sMin.set(-1.0f);
+                sMax.set(1.0f);
+                sLogScale.set(false);
+                sBasis.set(true);
+                sWidth.set(1);
+                sLength.set(-1.0f);
+                sOrigin.set(0);
+                sColor.set("#ffffff");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(GraphAxis, "GraphAxis");
+        }
 
         const w_class_t GraphAxis::metadata             = { "GraphAxis", &GraphItem::metadata };
 

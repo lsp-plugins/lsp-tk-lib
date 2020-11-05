@@ -28,20 +28,33 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(GraphFrameBuffer, GraphItem);
-
-            prop::GraphFrameData::init("data", style, 0, 0, 0.0f, 1.0f, 0.0f);
-            prop::Float::init("transparency", style, 0.5f);
-            prop::Integer::init("angle", style, 0);
-            prop::Float::init("hpos", style, -1.0f);
-            prop::Float::init("vpos", style, 1.0f);
-            prop::Float::init("hscale", style, 1.0f);
-            prop::Float::init("vscale", style, 1.0f);
-            prop::Color::init("color", style, "#ff0000");
-            prop::GraphFrameFunction::init("function", style, GFF_DEFAULT);
-
-        STYLE_INITIALIZER_END(GraphFrameBuffer, "GraphFrameBuffer");
-        LSP_BUILTIN_STYLE_DEPRECATED(GraphFrameBuffer);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(GraphFrameBuffer, GraphItem)
+                // Bind
+                sData.bind("data", this);
+                sTransparency.bind("transparency", this);
+                sAngle.bind("angle", this);
+                sHPos.bind("hpos", this);
+                sVPos.bind("vpos", this);
+                sHScale.bind("hscale", this);
+                sVScale.bind("vscale", this);
+                sColor.bind("color", this);
+                sFunction.bind("function", this);
+                // Configure
+                sData.set_size(0, 0);
+                sData.set_range(0.0f, 1.0f, 0.0f);
+                sTransparency.set(0.5f);
+                sAngle.set(0);
+                sHPos.set(-1.0f);
+                sVPos.set(1.0f);
+                sHScale.set(1.0f);
+                sVScale.set(1.0f);
+                sColor.set("#ff0000");
+                sFunction.set(GFF_DEFAULT);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(GraphFrameBuffer, "GraphFrameBuffer");
+        }
 
         const w_class_t GraphFrameBuffer::metadata             = { "GraphFrameBuffer", &GraphItem::metadata };
 

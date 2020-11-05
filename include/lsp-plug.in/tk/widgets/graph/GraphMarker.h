@@ -30,6 +30,33 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(GraphMarker, GraphItem)
+                prop::Integer               sOrigin;        // Origin
+                prop::Integer               sBasis;         // Index of basis axis
+                prop::Integer               sParallel;      // Index of parallel axis
+                prop::RangeFloat            sValue;         // Actual value
+                prop::Float                 sOffset;        // Offset
+                prop::StepFloat             sStep;          // Stepping value
+                prop::Vector2D              sDirection;     // Direction
+                prop::Integer               sWidth;         // Thickness
+                prop::Integer               sHWidth;        // Hover width
+                prop::Boolean               sEditable;      // Editable flag
+                prop::Integer               sLBorder;       // Highlighting border
+                prop::Integer               sRBorder;       // Highlighting border
+                prop::Integer               sHLBorder;      // Highlighting border for hover
+                prop::Integer               sHRBorder;      // Highlighting border for hover
+                prop::Color                 sColor;         // Color
+                prop::Color                 sHColor;        // Selected Color
+                prop::Color                 sLBorderColor;  // Border Color
+                prop::Color                 sRBorderColor;  // Border Color
+                prop::Color                 sHLBorderColor; // Border Hover Color
+                prop::Color                 sHRBorderColor; // Border Hover Color
+            LSP_TK_STYLE_DEF_END
+        }
+
         class GraphMarker: public GraphItem
         {
             public:
@@ -127,8 +154,6 @@ namespace lsp
 
                 virtual status_t            on_change();
         };
-
-        STYLE_INITIALIZER_DEF(GraphMarker, GraphItem);
     }
 }
 

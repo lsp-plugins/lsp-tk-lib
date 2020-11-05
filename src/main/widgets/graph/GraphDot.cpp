@@ -27,36 +27,81 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(GraphDot, GraphItem);
+        static const char *prop_editable[] =
+        {
+            "hvalue.editable",
+            "vvalue.editable"
+            "zvalue.editable"
+        };
 
-            prop::Integer::init("origin", style, 0);
-            prop::Integer::init("haxis", style, 0);
-            prop::Integer::init("vaxis", style, 1);
-            prop::Integer::init("size", style, 4);
-            prop::Integer::init("hover.size", style, 4);
-            prop::Integer::init("border.size", style, 0);
-            prop::Integer::init("hover.border.size", style, 12);
-            prop::Integer::init("gap", style, 1);
-            prop::Integer::init("hover.gap", style, 1);
-            prop::Color::init("color", style, "#cccccc");
-            prop::Color::init("hover.color", style, "#ffffff");
-            prop::Color::init("border.color", style, "#cccccc");
-            prop::Color::init("hover.border.color", style, "#ffffff");
-            prop::Color::init("gap.color", style, "#000000");
-            prop::Color::init("hover.gap.color", style, "#000000");
+        static const char *prop_value[] =
+        {
+            "hvalue.value",
+            "vvalue.value"
+            "zvalue.value"
+        };
 
-            prop::Boolean::init("hvalue.editable", style, false);
-            prop::RangeFloat::init("hvalue.value", style, 0.0f, -1.0f, 1.0f);
-            prop::StepFloat::init("hvalue.step", style, 1.0f, 10.0f, 0.1f);
-            prop::Boolean::init("vvalue.editable", style, false);
-            prop::RangeFloat::init("vvalue.value", style, 0.0f, -1.0f, 1.0f);
-            prop::StepFloat::init("vvalue.step", style, 1.0f, 10.0f, 0.1f);
-            prop::Boolean::init("zvalue.editable", style, false);
-            prop::RangeFloat::init("zvalue.value", style, 0.0f, -1.0f, 1.0f);
-            prop::StepFloat::init("zvalue.step", style, 1.0f, 10.0f, 0.1f);
+        static const char *prop_step[] =
+        {
+            "hvalue.step",
+            "vvalue.step"
+            "zvalue.step"
+        };
 
-        STYLE_INITIALIZER_END(GraphDot, "GraphDot");
-        LSP_BUILTIN_STYLE_DEPRECATED(GraphDot);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(GraphDot, GraphItem)
+                // bind
+                sOrigin.bind("origin", this);
+                sHAxis.bind("haxis", this);
+                sVAxis.bind("vaxis", this);
+                sSize.bind("size", this);
+                sHoverSize.bind("hover.size", this);
+                sBorderSize.bind("border.size", this);
+                sHoverBorderSize.bind("hover.border.size", this);
+                sGap.bind("gap", this);
+                sHoverGap.bind("hover.gap", this);
+                sColor.bind("color", this);
+                sHoverColor.bind("hover.color", this);
+                sBorderColor.bind("border.color", this);
+                sHoverBorderColor.bind("hover.border.color", this);
+                sGapColor.bind("gap.color", this);
+                sHoverGapColor.bind("hover.gap.color", this);
+
+                for (size_t i=0; i<3; ++i)
+                {
+                    sEditable[i].bind(prop_editable[i], this);
+                    sValue[i].bind(prop_value[i], this);
+                    sStep[i].bind(prop_step[i], this);
+                }
+
+                // Configure
+                sOrigin.set(0);
+                sHAxis.set(0);
+                sVAxis.set(1);
+                sSize.set(4);
+                sHoverSize.set(4);
+                sBorderSize.set(0);
+                sHoverBorderSize.set(12);
+                sGap.set(1);
+                sHoverGap.set(1);
+                sColor.set("#cccccc");
+                sHoverColor.set("#ffffff");
+                sBorderColor.set("#cccccc");
+                sHoverBorderColor.set("#ffffff");
+                sGapColor.set("#000000");
+                sHoverGapColor.set("#000000");
+
+                for (size_t i=0; i<3; ++i)
+                {
+                    sEditable[i].set(false);
+                    sValue[i].set_all(0.0f, -1.0f, 1.0f);
+                    sStep[i].set(1.0f, 0.1f, 10.0f);
+                }
+
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(GraphDot, "GraphDot");
+        }
 
         const w_class_t GraphDot::metadata             = { "GraphDot", &GraphItem::metadata };
 

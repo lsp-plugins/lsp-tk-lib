@@ -29,28 +29,31 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Graph, WidgetContainer);
-            prop::SizeConstraints           sConstraints;   // Size constraints
-            prop::Integer                   sBorder;        // Border size
-            prop::Integer                   sBorderRadius;  // Border radius
-            prop::Boolean                   sGlass;         // Draw glass
-            prop::Color                     sColor;         // Graph color
-            prop::Color                     sBorderColor;   // Color of the border
-            prop::Color                     sGlassColor;    // Color of the glass
-            prop::Padding                   sIPadding;      // Internal padding
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Graph, WidgetContainer)
+                // Bind
+                sConstraints.bind("size.constraints", this);
+                sBorder.bind("border.size", this);
+                sBorderRadius.bind("border.radius", this);
+                sGlass.bind("glass.visibility", this);
+                sColor.bind("color", this);
+                sBorderColor.bind("border.color", this);
+                sGlassColor.bind("glass.color", this);
+                sIPadding.bind("padding.internal", this);
 
-            // Init style
-            prop::SizeConstraints::init("size.constraints", style);
-            prop::Integer::init("border.size", style, 4);
-            prop::Integer::init("border.radius", style, 12);
-            prop::Boolean::init("glass.visibility", style, true);
-            prop::Color::init("color", style, "#000000");
-            prop::Color::init("border.color", style, "#000000");
-            prop::Color::init("glass.color", style, "#ffffff");
-            prop::Padding::init("padding.internal", style, 1);
-
-        STYLE_INITIALIZER_END(Graph, "Graph");
-        LSP_BUILTIN_STYLE_DEPRECATED(Graph);
+                // Configure
+                sConstraints.set_all(-1);
+                sBorder.set(4);
+                sBorderRadius.set(12);
+                sGlass.set(true);
+                sColor.set("#000000");
+                sBorderColor.set("#000000");
+                sGlassColor.set("#ffffff");
+                sIPadding.set(1);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Graph, "Graph");
+        }
 
         const w_class_t Graph::metadata         =   { "Graph", &WidgetContainer::metadata };
 

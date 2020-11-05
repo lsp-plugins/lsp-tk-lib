@@ -28,33 +28,56 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(GraphMarker, GraphItem);
-
-            prop::Integer::init("origin", style, 0);
-            prop::Integer::init("basis", style, 0);
-            prop::Integer::init("parallel", style, 1);
-            prop::RangeFloat::init("value", style, 0.0f, -1.0f, 1.0f);
-            prop::Float::init("value.offset", style, 0.0f);
-            prop::StepFloat::init("step", style, 1.0f, 10.0f, 0.1f);
-            prop::Vector2D::init_cart("direction", style, 1.0f, 0.0f);
-            prop::Integer::init("width", style, 1);
-            prop::Integer::init("hover.width", style, 3);
-            prop::Boolean::init("editable", style, false);
-            prop::Integer::init("border.left.size", style, 0);
-            prop::Integer::init("border.right.size", style, 0);
-            prop::Integer::init("hover.border.left.size", style, 0);
-            prop::Integer::init("hover.border.right.size", style, 0);
-            prop::Color::init("color", style, "#ffffff");
-            prop::Color::init("hover.color", style, "#ffffff");
-            prop::Color::init("border.left.color", style, "#ffffff");
-            prop::Color::init("border.right.color", style, "#ffffff");
-            prop::Color::init("hover.border.left.color", style, "#ffffff");
-            prop::Color::init("hover.border.right.color", style, "#ffffff");
-            // Overrides
-            prop::Boolean::override("smooth", style, false);
-
-        STYLE_INITIALIZER_END(GraphMarker, "GraphMarker");
-        LSP_BUILTIN_STYLE_DEPRECATED(GraphMarker);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(GraphMarker, GraphItem)
+                // Bind
+                sOrigin.bind("origin", this);
+                sBasis.bind("basis", this);
+                sParallel.bind("parallel", this);
+                sValue.bind("value", this);
+                sOffset.bind("value.offset", this);
+                sStep.bind("step", this);
+                sDirection.bind("direction", this);
+                sWidth.bind("width", this);
+                sHWidth.bind("hover.width", this);
+                sEditable.bind("editable", this);
+                sLBorder.bind("border.left.size", this);
+                sRBorder.bind("border.right.size", this);
+                sHLBorder.bind("hover.border.left.size", this);
+                sHRBorder.bind("hover.border.right.size", this);
+                sColor.bind("color", this);
+                sHColor.bind("hover.color", this);
+                sLBorderColor.bind("border.left.color", this);
+                sRBorderColor.bind("border.right.color", this);
+                sHLBorderColor.bind("hover.border.left.color", this);
+                sHRBorderColor.bind("hover.border.right.color", this);
+                // Configure
+                sOrigin.set(0);
+                sBasis.set(0);
+                sParallel.set(1);
+                sValue.set_all(0.0f, -1.0f, 1.0f);
+                sOffset.set(0.0f);
+                sStep.set(1.0f, 10.0f, 0.1f);
+                sDirection.set_cart(1.0f, 0.0f);
+                sWidth.set(1);
+                sHWidth.set(3);
+                sEditable.set(false);
+                sLBorder.set(0);
+                sRBorder.set(0);
+                sHLBorder.set(0);
+                sHRBorder.set(0);
+                sColor.set("#ffffff");
+                sHColor.set("#ffffff");
+                sLBorderColor.set("#ffffff");
+                sRBorderColor.set("#ffffff");
+                sHLBorderColor.set("#ffffff");
+                sHRBorderColor.set("#ffffff");
+                // Override
+                sSmooth.set(false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(GraphMarker, "GraphMarker");
+        }
 
         const w_class_t GraphMarker::metadata             = { "GraphMarker", &GraphItem::metadata };
 

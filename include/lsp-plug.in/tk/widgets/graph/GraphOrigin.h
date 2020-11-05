@@ -30,6 +30,17 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(GraphOrigin, GraphItem)
+                prop::RangeFloat            sLeft;
+                prop::RangeFloat            sTop;
+                prop::Integer               sRadius;
+                prop::Color                 sColor;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class GraphOrigin: public GraphItem
         {
             public:
@@ -62,8 +73,6 @@ namespace lsp
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
-
-        STYLE_INITIALIZER_DEF(GraphOrigin, GraphItem);
     }
 }
 

@@ -30,6 +30,22 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(GraphAxis, GraphItem)
+                prop::Vector2D              sDirection;     // Direction
+                prop::Float                 sMin;           // Minimum value
+                prop::Float                 sMax;           // Maximum value
+                prop::Boolean               sLogScale;      // Logarithmic flag
+                prop::Boolean               sBasis;         // Basis flag
+                prop::Integer               sWidth;         // Thickness
+                prop::Float                 sLength;        // Length of the axis
+                prop::Integer               sOrigin;        // Origin index
+                prop::Color                 sColor;         // Color of the axis
+            LSP_TK_STYLE_DEF_END
+        }
+
         class GraphAxis: public GraphItem
         {
             public:
@@ -80,8 +96,6 @@ namespace lsp
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
-
-        STYLE_INITIALIZER_DEF(GraphAxis, GraphItem);
     }
 }
 

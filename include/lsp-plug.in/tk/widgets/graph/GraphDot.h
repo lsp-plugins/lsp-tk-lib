@@ -30,6 +30,32 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(GraphDot, GraphItem)
+                prop::Integer               sOrigin;            // Index of origin widget
+                prop::Integer               sHAxis;             // Horizontal axis
+                prop::Integer               sVAxis;             // Vertical axis
+                prop::Integer               sSize;              // Size of the dot
+                prop::Integer               sHoverSize;         // Size of the dot (when hover)
+                prop::Integer               sBorderSize;        // Border size
+                prop::Integer               sHoverBorderSize;   // Border size (when hover)
+                prop::Integer               sGap;               // Gap size
+                prop::Integer               sHoverGap;          // Gap size (when hover)
+                prop::Color                 sColor;             // Color of the dot
+                prop::Color                 sHoverColor;        // Color of the dot (when hover)
+                prop::Color                 sBorderColor;       // Color of the border
+                prop::Color                 sHoverBorderColor;  // Color of the border (when hover)
+                prop::Color                 sGapColor;          // Gap color
+                prop::Color                 sHoverGapColor;     // Hover gap color
+
+                prop::Boolean               sEditable[3];       // Editable flag
+                prop::RangeFloat            sValue[3];          // Value
+                prop::StepFloat             sStep[3];           // Step
+            LSP_TK_STYLE_DEF_END
+        }
+
         class GraphDot: public GraphItem
         {
             public:
@@ -146,7 +172,6 @@ namespace lsp
                 virtual status_t            on_change();
         };
 
-        STYLE_INITIALIZER_DEF(GraphDot, GraphItem);
     }
 }
 

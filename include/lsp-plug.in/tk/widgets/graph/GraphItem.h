@@ -32,6 +32,14 @@ namespace lsp
     {
         class Graph;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(GraphItem, Widget)
+                prop::Boolean       sSmooth;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class GraphItem: public Widget
         {
             public:
@@ -75,7 +83,6 @@ namespace lsp
                 virtual bool        inside(ssize_t x, ssize_t y);
         };
 
-        STYLE_INITIALIZER_DEF(GraphItem, Widget);
     }
 }
 
