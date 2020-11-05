@@ -32,9 +32,13 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Void, Widget)
                 // Bind
                 sConstraints.bind("size.constraints", this);
+                sColor.bind("color", this);
+                sFill.bind("fill", this);
 
                 // Configure
                 sConstraints.set(-1, -1, -1, -1);
+                sColor.set("#ffffff");
+                sFill.set(false);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Void, "Void");
         }
@@ -60,12 +64,8 @@ namespace lsp
                 return res;
 
             sConstraints.bind("size.constraints", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sConstraints.init(sclass, -1, -1, -1, -1);
-//            }
+            sColor.bind("color", &sStyle);
+            sFill.bind("fill", &sStyle);
 
             return res;
         }
@@ -74,22 +74,14 @@ namespace lsp
         {
             if ((sSize.nWidth > 0) && (sSize.nHeight > 0))
             {
-                lsp::Color color(sBgColor);
+                lsp::Color color;
+                if (sFill.get())
+                    color.copy(sColor);
+                else
+                    color.copy(sBgColor);
                 s->clip_begin(area);
                 s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
                 s->clip_end();
-
-                // Debug bounds
-//                color.set_rgb24(0x000000);
-//                s->wire_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth-1, sSize.nHeight-1, 1);
-//                s->line(sSize.nLeft, sSize.nTop, sSize.nLeft + sSize.nWidth, sSize.nTop + sSize.nHeight, 1, color);
-//                s->line(sSize.nLeft, sSize.nTop + sSize.nHeight, sSize.nLeft + sSize.nWidth, sSize.nTop, 1, color);
-
-                // Debug padding
-//                ws::rectangle_t xr;
-//                bg_color.set_rgb24(0xcccccc);
-//                sPadding.enter(&xr, &sSize, sScaling.get());
-//                s->fill_frame(color, &sSize, &xr);
             }
         }
 

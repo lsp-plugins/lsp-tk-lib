@@ -30,21 +30,21 @@ namespace lsp
         static const char *prop_editable[] =
         {
             "hvalue.editable",
-            "vvalue.editable"
+            "vvalue.editable",
             "zvalue.editable"
         };
 
         static const char *prop_value[] =
         {
             "hvalue.value",
-            "vvalue.value"
+            "vvalue.value",
             "zvalue.value"
         };
 
         static const char *prop_step[] =
         {
             "hvalue.step",
-            "vvalue.step"
+            "vvalue.step",
             "zvalue.step"
         };
 

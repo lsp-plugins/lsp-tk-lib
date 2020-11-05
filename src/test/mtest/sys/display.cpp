@@ -41,9 +41,9 @@ MTEST_BEGIN("tk.sys", display)
             _this->printf("Key up: %c (0x%x)\n", (char)ev->nCode, int(ev->nCode));
 
             if ((ev->nCode == '+') || (ev->nCode == ws::WSK_KEYPAD_ADD))
-                wnd->scaling()->set(wnd->scaling()->get() + 0.25f);
+                wnd->style()->schema()->scaling()->add(0.25f);
             else if ((ev->nCode == '-') || (ev->nCode == ws::WSK_KEYPAD_SUBTRACT))
-                wnd->scaling()->set(wnd->scaling()->get() - 0.25f);
+                wnd->style()->schema()->scaling()->sub(0.25f);
         }
         return STATUS_OK;
     }

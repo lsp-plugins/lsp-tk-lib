@@ -283,7 +283,10 @@ namespace lsp
 
             // Duplicates are disallowed
             if (vStyles.contains(&name))
+            {
+                lsp_warn("Duplicate style name: %s", init->name());
                 return STATUS_ALREADY_EXISTS;
+            }
 
             // Create style
             lsp_trace("Creating style '%s'...", init->name());

@@ -34,7 +34,7 @@ namespace lsp
                 // Configure
                 sSmooth.set(true);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphItem, "Button");
+            LSP_TK_BUILTIN_STYLE(GraphItem, "GraphItem");
         }
 
         const w_class_t GraphItem::metadata     =   { "GraphItem", &Widget::metadata };

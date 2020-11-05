@@ -35,6 +35,8 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Void, Widget)
                 prop::SizeConstraints       sConstraints;
+                prop::Color                 sColor;
+                prop::Boolean               sFill;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -51,6 +53,8 @@ namespace lsp
 
             protected:
                 prop::SizeConstraints       sConstraints;
+                prop::Color                 sColor;
+                prop::Boolean               sFill;
 
             public:
                 explicit Void(Display *dpy);
@@ -58,6 +62,8 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sConstraints)
+                LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(Boolean,            fill,               &sFill)
 
             protected:
                 virtual void        size_request(ws::size_limit_t *r);
