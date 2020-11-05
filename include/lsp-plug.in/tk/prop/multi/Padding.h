@@ -107,13 +107,14 @@ namespace lsp
                 void            set_horizontal(size_t left, size_t right);
                 void            set_vertical(size_t top, size_t bottom);
 
-                inline void     set_horizontal(size_t h)    { set_horizontal(h, h);                 }
-                inline void     set_vertical(size_t v)      { set_vertical(v, v);                   }
-                inline void     set(size_t value)           { set_all(value);                       }
-
                 void            set(size_t left, size_t right, size_t top, size_t bottom);
                 void            set(const padding_t *p);
                 void            set(const Padding *p);
+
+                inline void     set_horizontal(size_t h)    { set_horizontal(h, h);                 }
+                inline void     set_vertical(size_t v)      { set_vertical(v, v);                   }
+                inline void     set(size_t value)           { set_all(value);                       }
+                inline void     set(size_t h, size_t v)     { set(h, h, v, v);                      }
 
                 void            compute(padding_t *padding, float scale);
                 void            add(ws::size_limit_t *dst, float scale);

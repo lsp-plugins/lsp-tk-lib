@@ -27,24 +27,46 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Fraction, Widget);
+        namespace style
+        {
+            static const char *prop_color[] =
+            {
+                "num.color",
+                "den.color"
+            };
 
-            prop::Color::init("num.color", style, "#000000");
-            prop::String::init("num.text", style);
-            prop::Boolean::init("num.opened", style, false);
+            static const char *prop_opened[] =
+            {
+                "num.opened",
+                "den.opened"
+            };
 
-            prop::Color::init("den.color", style, "#000000");
-            prop::String::init("den.text", style);
-            prop::Boolean::init("den.opened", style, false);
-
-            prop::Color::init("color", style, "#000000");
-            prop::Font::init("font", style, 14.0f);
-            prop::Float::init("angle", style, 60.0f);
-            prop::Integer::init("text.pad", style, 6);
-            prop::Integer::init("thick", style, 1);
-
-        STYLE_INITIALIZER_END(Fraction, "Fraction");
-        LSP_BUILTIN_STYLE_DEPRECATED(Fraction);
+            LSP_TK_STYLE_IMPL_BEGIN(Fraction, Widget)
+                // Bind
+                sColor.bind("color", this);
+                sFont.bind("font", this);
+                sAngle.bind("angle", this);
+                sTextPad.bind("text.pad", this);
+                sThick.bind("thick", this);
+                for (size_t i=0; i<2; ++i)
+                {
+                    sItemColor[i].bind(prop_color[i], this);
+                    sItemOpened[i].bind(prop_opened[i], this);
+                }
+                // Configure
+                sColor.set("#000000");
+                sFont.set_size(14.0f);
+                sAngle.set(60.0f);
+                sTextPad.set(6);
+                sThick.set(1);
+                for (size_t i=0; i<2; ++i)
+                {
+                    sItemColor[i].set("#000000");
+                    sItemOpened[i].set(false);
+                }
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Fraction, "Fraction");
+        }
 
         //-----------------------------------------------------------------------------
         // Fraction popup window implementation

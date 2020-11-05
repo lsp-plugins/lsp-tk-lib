@@ -27,28 +27,44 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(AudioChannel, Widget);
-
-            // Bind properties
-            prop::Integer::init("fade_in.length", style, 0);
-            prop::Integer::init("fade_out.length", style, 0);
-            prop::Integer::init("wave.border", style, 1);
-            prop::Integer::init("fade_in.border", style, 1);
-            prop::Integer::init("fade_out.border", style, 1);
-            prop::Integer::init("line.width", style, 1);
-            prop::Color::init("color", style, "#8800ff00");
-            prop::Color::init("line.color", style, "#ffffff");
-            prop::Color::init("wave.border.color", style, "#00ff00");
-            prop::Color::init("fade_in.color", style, "#88ffff00");
-            prop::Color::init("fade_out.color", style, "#88ffff00");
-            prop::Color::init("fade_in.border.color", style, "#ffff00");
-            prop::Color::init("fade_out.border.color", style, "#ffff00");
-            prop::SizeConstraints::init("size.constraints", style, 128, 32, -1, -1);
-            // Overrides
-            prop::Color::override("bg.color", style, "#000000");
-
-        STYLE_INITIALIZER_END(AudioChannel, "AudioChannel");
-        LSP_BUILTIN_STYLE_DEPRECATED(AudioChannel);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(AudioChannel, Widget)
+                // Bind
+                sFadeIn.bind("fade_in.length", this);
+                sFadeOut.bind("fade_out.length", this);
+                sWaveBorder.bind("wave.border", this);
+                sFadeInBorder.bind("fade_in.border", this);
+                sFadeOutBorder.bind("fade_out.border", this);
+                sLineWidth.bind("line.width", this);
+                sColor.bind("color", this);
+                sLineColor.bind("line.color", this);
+                sWaveBorderColor.bind("wave.border.color", this);
+                sFadeInColor.bind("fade_in.color", this);
+                sFadeOutColor.bind("fade_out.color", this);
+                sFadeInBorderColor.bind("fade_in.border.color", this);
+                sFadeOutBorderColor.bind("fade_out.border.color", this);
+                sConstraints.bind("size.constraints", this);
+                // Configure
+                sFadeIn.set(0);
+                sFadeOut.set(0);
+                sWaveBorder.set(1);
+                sFadeInBorder.set(1);
+                sFadeOutBorder.set(1);
+                sLineWidth.set(1);
+                sColor.set("#8800ff00");
+                sLineColor.set("#ffffff");
+                sWaveBorderColor.set("#00ff00");
+                sFadeInColor.set("#88ffff00");
+                sFadeOutColor.set("#88ffff00");
+                sFadeInBorderColor.set("#ffff00");
+                sFadeOutBorderColor.set("#ffff00");
+                sConstraints.set(128, 32, -1, -1);
+                // Override
+                sBgColor.set("#000000");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(AudioChannel, "AudioChannel");
+        }
 
         const w_class_t AudioChannel::metadata      = { "AudioChannel", &Widget::metadata };
 

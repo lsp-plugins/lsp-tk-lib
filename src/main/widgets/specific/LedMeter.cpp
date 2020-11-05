@@ -27,20 +27,30 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(LedMeter, WidgetContainer);
-
-            prop::SizeConstraints::init("constraints", style, 20, -1, 20, -1);
-            prop::Font::init("font", style, 9);
-            prop::Integer::init("border", style, 2);
-            prop::Integer::init("angle", style, 0);
-            prop::String::init("text.est", style);
-            prop::Boolean::init("stereo_groups", style, true);
-            prop::Boolean::init("text.visible", style, false);
-            prop::Color::init("color", style, "#000000");
-            prop::Integer::init("channel.width.min", style, 16);
-
-        STYLE_INITIALIZER_END(LedMeter, "LedMeter");
-        LSP_BUILTIN_STYLE_DEPRECATED(LedMeter);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(LedMeter, WidgetContainer)
+                // Bind
+                sConstraints.bind("constraints", this);
+                sFont.bind("font", this);
+                sBorder.bind("border", this);
+                sAngle.bind("angle", this);
+                sSGroups.bind("stereo_groups", this);
+                sTextVisible.bind("text.visible", this);
+                sColor.bind("color", this);
+                sMinChannelWidth.bind("channel.width.min", this);
+                // Configure
+                sConstraints.set(20, -1, 20, -1);
+                sFont.set_size(9.0f);
+                sBorder.set(2);
+                sAngle.set(0);
+                sSGroups.set(true);
+                sTextVisible.set(false);
+                sColor.set("#000000");
+                sMinChannelWidth.set(16);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(LedMeter, "LedMeter");
+        }
 
         const w_class_t LedMeter::metadata              = { "LedMeter", &WidgetContainer::metadata };
 

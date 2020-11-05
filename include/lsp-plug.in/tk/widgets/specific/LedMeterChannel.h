@@ -30,6 +30,36 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(LedMeterChannel, Widget)
+                prop::RangeFloat        sValue;
+                prop::Float             sPeak;
+                prop::Float             sBalance;
+                prop::Color             sColor;
+                prop::Color             sValueColor;
+                prop::ColorRanges       sValueRanges;
+                prop::Color             sPeakColor;
+                prop::ColorRanges       sPeakRanges;
+                prop::Color             sTextColor;
+                prop::ColorRanges       sTextRanges;
+                prop::Color             sBalanceColor;
+                prop::String            sText;
+                prop::String            sEstText;
+                prop::Boolean           sPeakVisible;
+                prop::Boolean           sBalanceVisible;
+                prop::Boolean           sTextVisible;
+                prop::Boolean           sReversive;
+                prop::Boolean           sActive;
+                prop::Integer           sMinSegments;
+                prop::SizeConstraints   sConstraints;
+                prop::Font              sFont;
+                prop::Integer           sBorder;
+                prop::Integer           sAngle;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class LedMeterChannel: public Widget
         {
             public:
@@ -113,8 +143,6 @@ namespace lsp
             public:
                 virtual void                draw(ws::ISurface *s);
         };
-
-        STYLE_INITIALIZER_DEF(LedMeterChannel, Widget);
     }
 }
 

@@ -47,7 +47,6 @@ namespace lsp
                 sFlat.bind("flat", this);
                 sTextClip.bind("text.clip", this);
                 sTextPadding.bind("text.padding", this);
-
                 // Configure
                 sColor.set("#cccccc");
                 sLightColor.set("#00cc00");

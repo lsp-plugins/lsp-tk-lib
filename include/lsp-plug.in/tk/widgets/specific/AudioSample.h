@@ -30,6 +30,45 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(AudioSample, WidgetContainer)
+                static const size_t LABELS      = 5;
+
+                prop::Integer           sWaveBorder;                // Wave border
+                prop::Integer           sFadeInBorder;              // Fade in border
+                prop::Integer           sFadeOutBorder;             // Fade out border
+                prop::Integer           sLineWidth;                 // Line width
+                prop::Color             sLineColor;                 // Line color
+                prop::SizeConstraints   sConstraints;               // Size constraints
+                prop::Boolean           sActive;                    // Active, allow button press
+                prop::Boolean           sSGroups;                   // Stereo groups enable
+
+                prop::String            sMainText;                  // Main text
+                prop::TextLayout        sMainTextLayout;            // Layout of main text
+                prop::Font              sMainFont;                  // Main font
+                prop::Color             sMainColor;                 // Main font color
+                prop::Boolean           sMainVisibility;            // Show main text
+                prop::String            sLabel[LABELS];             // Label
+                prop::Color             sLabelColor[LABELS];        // Label text color
+                prop::Layout            sLabelLayout[LABELS];       // Layout of each label
+                prop::TextLayout        sLabelTextLayout[LABELS];   // Text layout of each label
+                prop::Font              sLabelFont;                 // Font of label
+                prop::Color             sLabelBgColor;              // Background color of label
+                prop::Integer           sLabelRadius;               // Label radius
+                prop::Boolean           sLabelVisibility[LABELS];   // Visibility of label
+
+                prop::Integer           sBorder;                    // Border size
+                prop::Integer           sBorderRadius;              // Border radius
+                prop::Boolean           sGlass;                     // Draw glass
+                prop::Color             sColor;                     // Graph color
+                prop::Color             sBorderColor;               // Color of the border
+                prop::Color             sGlassColor;                // Color of the glass
+                prop::Padding           sIPadding;                  // Internal padding
+            LSP_TK_STYLE_DEF_END
+        }
+
         class AudioSample: public WidgetContainer
         {
             public:
@@ -180,8 +219,6 @@ namespace lsp
 
                 virtual status_t            on_popup(Menu *menu);
         };
-
-        STYLE_INITIALIZER_DEF(AudioSample, WidgetContainer);
     }
 }
 

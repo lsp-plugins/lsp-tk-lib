@@ -26,24 +26,36 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(FileButton, Widget);
-
-            prop::RangeFloat::init("value", style, 0.0f, 0.0f, 1.0f);
-            prop::String::init("text", style);
-            prop::StringList::init("text.list", style);
-            prop::Font::init("font", style, 10.0f);
-            prop::TextLayout::init("text.layout", style, 0.0f, 0.0f);
-            prop::Padding::init("text.padding", style, 2, 2, 2, 2);
-            prop::SizeConstraints::init("size.constraints", style);
-            prop::Color::init("color", style, "#cccccc");
-            prop::Color::init("inv.color", style, "#00cc00");
-            prop::Color::init("line.color", style, "#000000");
-            prop::Color::init("line.inv.color", style, "#000000");
-            prop::Color::init("text.color", style, "#cccccc");
-            prop::Color::init("text.inv.color", style, "#00cc00");
-
-        STYLE_INITIALIZER_END(FileButton, "FileButton");
-        LSP_BUILTIN_STYLE_DEPRECATED(FileButton);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(FileButton, Widget)
+                // Bind
+                sValue.bind("value", this);
+                sFont.bind("font", this);
+                sTextLayout.bind("text.layout", this);
+                sTextPadding.bind("text.padding", this);
+                sConstraints.bind("size.constraints", this);
+                sColor.bind("color", this);
+                sInvColor.bind("inv.color", this);
+                sLineColor.bind("line.color", this);
+                sInvLineColor.bind("line.inv.color", this);
+                sTextColor.bind("text.color", this);
+                sInvTextColor.bind("text.inv.color", this);
+                // Configure
+                sValue.set_all(0.0f, 0.0f, 1.0f);
+                sFont.set_size(10.0f);
+                sTextLayout.set(0.0f, 0.0f);
+                sTextPadding.set(2, 2, 2, 2);
+                sConstraints.set_all(-1);
+                sColor.set("#cccccc");
+                sInvColor.set("#00cc00");
+                sLineColor.set("#000000");
+                sInvLineColor.set("#000000");
+                sTextColor.set("#cccccc");
+                sInvTextColor.set("#00cc00");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileButton, "FileButton");
+        }
 
         #define NPOINTS 9
         static const float xx[NPOINTS] = { 0.5f, 7.0f, 8.0f, 8.0f, 7.5f, 0.5f, 0.0f, 0.0f, 0.5f };

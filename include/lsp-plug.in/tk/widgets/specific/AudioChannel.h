@@ -32,6 +32,27 @@ namespace lsp
     {
         class AudioSample;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(AudioChannel, Widget)
+                prop::Integer           sFadeIn;            // Number of samples for fade-in
+                prop::Integer           sFadeOut;           // Number of samples for fade-out
+                prop::Integer           sWaveBorder;        // Wave border
+                prop::Integer           sFadeInBorder;      // Fade in border
+                prop::Integer           sFadeOutBorder;     // Fade out border
+                prop::Integer           sLineWidth;         // Line width
+                prop::Color             sColor;             // Color of the audio channel
+                prop::Color             sLineColor;         // Line color
+                prop::Color             sWaveBorderColor;   // Color of the wave border
+                prop::Color             sFadeInColor;       // Color of fade-in
+                prop::Color             sFadeOutColor;      // Fade-out color
+                prop::Color             sFadeInBorderColor; // Color of fade-in
+                prop::Color             sFadeOutBorderColor;// Fade-out color
+                prop::SizeConstraints   sConstraints;       // Size constraints
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Audio channel: implements one single audio channel
          */
@@ -95,8 +116,6 @@ namespace lsp
             public:
                 virtual void            draw(ws::ISurface *s);
         };
-
-        STYLE_INITIALIZER_DEF(AudioChannel, Widget);
     }
 }
 

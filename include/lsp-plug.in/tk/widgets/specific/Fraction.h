@@ -30,6 +30,22 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Fraction, Widget)
+                prop::Color                 sColor;         // Fraction color
+                prop::Font                  sFont;          // Font
+                prop::Float                 sAngle;         // Fraction angle
+                prop::Integer               sTextPad;       // Text padding
+                prop::Integer               sThick;         // Thickness
+
+                prop::Color                 sItemColor[2];
+                prop::String                sItemText[2];
+                prop::Boolean               sItemOpened[2];
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Fraction widgets, implements A / B fraction drawn in the UI where A and B provides
          * dropdown lists of any value.
@@ -189,8 +205,6 @@ namespace lsp
 
                 virtual void                draw(ws::ISurface *s);
         };
-
-        STYLE_INITIALIZER_DEF(Fraction, Widget);
     }
 }
 

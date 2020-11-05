@@ -30,6 +30,27 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(FileButton, Widget)
+                prop::RangeFloat        sValue;             // The actual progress value
+                prop::String            sText;              // Text to display
+                prop::StringList        sTextList;          // Possible text values used for size estimation
+                prop::Font              sFont;              // Font parameters
+                prop::TextLayout        sTextLayout;        // Text layout
+                prop::Padding           sTextPadding;       // Text padding
+                prop::SizeConstraints   sConstraints;       // Size constraints
+                prop::Color             sColor;             // Color
+                prop::Color             sInvColor;          // Progress color
+                prop::Color             sLineColor;         // Color of lines
+                prop::Color             sInvLineColor;      // Inverse color of lines
+                prop::Color             sTextColor;         // Text color
+                prop::Color             sInvTextColor;      // Progress color for text
+                prop::WidgetPtr<Menu>   sPopup;             // Popup Menu
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * File button: widget for saving/loading files and showing the progress
          */
@@ -113,8 +134,6 @@ namespace lsp
 
                 virtual status_t    on_submit();
         };
-
-        STYLE_INITIALIZER_DEF(FileButton, Widget);
     }
 }
 

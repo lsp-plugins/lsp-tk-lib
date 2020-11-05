@@ -26,22 +26,34 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(RackEars, Widget);
-
-            prop::Font::init("font", style, 16, ws::FF_BOLD);
-            prop::String::init("text", style);
-            prop::Color::init("color", style, "#00ccff");
-            prop::Color::init("text.color", style, "#ffffff");
-            prop::Color::init("screw.color", style, "#444444");
-            prop::Color::init("hole.color", style, "#000000");
-            prop::Integer::init("angle", style, 0);
-            prop::Padding::init("button.padding", style, 2);
-            prop::Padding::init("screw.padding", style, 2);
-            prop::Integer::init("screw.size", style, 20);
-            prop::Padding::init("text.padding", style, 4, 2);
-
-        STYLE_INITIALIZER_END(RackEars, "RackEars");
-        LSP_BUILTIN_STYLE_DEPRECATED(RackEars);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(RackEars, Widget)
+                // Bind
+                sFont.bind("font", this);
+                sColor.bind("color", this);
+                sTextColor.bind("text.color", this);
+                sHoleColor.bind("hole.color", this);
+                sScrewColor.bind("screw.color", this);
+                sAngle.bind("angle", this);
+                sButtonPadding.bind("button.padding", this);
+                sScrewPadding.bind("screw.padding", this);
+                sScrewSize.bind("screw.size", this);
+                sTextPadding.bind("text.padding", this);
+                // Configure
+                sFont.set_params(16.0f, ws::FF_BOLD);
+                sColor.set("#00ccff");
+                sScrewColor.set("#444444");
+                sTextColor.set("#ffffff");
+                sHoleColor.set("#000000");
+                sAngle.set(0);
+                sButtonPadding.set(2);
+                sScrewPadding.set(2);
+                sScrewSize.set(20);
+                sTextPadding.set(4, 2);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(RackEars, "RackEars");
+        }
 
         const w_class_t RackEars::metadata              = { "RackEars", &Widget::metadata };
 

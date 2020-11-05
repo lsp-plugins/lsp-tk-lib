@@ -32,6 +32,22 @@ namespace lsp
     {
         class LedMeterChannel;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(LedMeter, WidgetContainer)
+                prop::SizeConstraints               sConstraints;
+                prop::Font                          sFont;
+                prop::Integer                       sBorder;
+                prop::Integer                       sAngle;
+                prop::String                        sEstText;
+                prop::Boolean                       sSGroups;
+                prop::Boolean                       sTextVisible;
+                prop::Color                         sColor;
+                prop::Integer                       sMinChannelWidth;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class LedMeter: public WidgetContainer
         {
             public:
@@ -103,8 +119,6 @@ namespace lsp
                 virtual status_t            remove_all();
 
         };
-
-        STYLE_INITIALIZER_DEF(LedMeter, WidgetContainer);
     }
 }
 

@@ -30,51 +30,113 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(AudioSample, WidgetContainer);
-
-            // Bind properties
-            prop::Integer::init("wave.border", style, 1);
-            prop::Integer::init("fade_in.border", style, 1);
-            prop::Integer::init("fade_out.border", style, 1);
-            prop::Integer::init("line.width", style, 1);
-            prop::Color::init("line.color", style, "#ffffff");
-            prop::SizeConstraints::init("size.constraints", style);
-            prop::Boolean::init("active", style, false);
-            prop::Boolean::init("stereo_groups", style, false);
-            prop::String::init("main.text", style);
-            prop::TextLayout::init("main.text.layout", style, 0.0f, 0.0f);
-            prop::Font::init("main.font", style, 16.0f, ws::FF_BOLD);
-            prop::Color::init("main.color", style, "#00ff00");
-            prop::Boolean::init("main.visibility", style, false);
-            prop::Font::init("label.font", style, 10.0f);
-            prop::Color::init("label.bg.color", style, "#44000000");
-            prop::Integer::init("label.radius", style, 4);
-            prop::Integer::init("border.size", style, 4);
-            prop::Integer::init("border.radius", style, 12);
-            prop::Boolean::init("glass", style, true);
-            prop::Color::init("color", style, "#000000");
-            prop::Color::init("border.color", style, "#000000");
-            prop::Color::init("glass.color", style, "#ffffff");
-            prop::Padding::init("padding.internal", style, 1);
-
-            for (size_t i=0; i<AudioSample::LABELS; ++i)
+        namespace style
+        {
+            static const char *label_colors[] =
             {
-                LSPString id;
+                "label.0.text.color",
+                "label.1.text.color",
+                "label.2.text.color",
+                "label.3.text.color",
+                "label.4.text.color"
+            };
 
-                id.fmt_ascii("label.%d.text", int(i));
-                prop::String::init(id.get_utf8(), style);
-                id.fmt_ascii("label.%d.text.color", int(i));
-                prop::Color::init(id.get_utf8(), style, "#ffffff");
-                id.fmt_ascii("label.%d.layout", int(i));
-                prop::Layout::init(id.get_utf8(), style, 0.0f, 0.0f, 0.0f, 0.0f);
-                id.fmt_ascii("label.%d.text.layout", int(i));
-                prop::TextLayout::init(id.get_utf8(), style, 0.0f, 0.0f);
-                id.fmt_ascii("label.%d.visibility", int(i));
-                prop::Boolean::init(id.get_utf8(), style, false);
-            }
+            static const char *label_layout[] =
+            {
+                "label.0.layout",
+                "label.1.layout",
+                "label.2.layout",
+                "label.3.layout",
+                "label.4.layout"
+            };
 
-        STYLE_INITIALIZER_END(AudioSample, "AudioSample");
-        LSP_BUILTIN_STYLE_DEPRECATED(AudioSample);
+            static const char *label_text_layout[] =
+            {
+                "label.0.text.layout",
+                "label.1.text.layout",
+                "label.2.text.layout",
+                "label.3.text.layout",
+                "label.4.text.layout"
+            };
+
+            static const char *label_visibile[] =
+            {
+                "label.0.visibile",
+                "label.1.visibile",
+                "label.2.visibile",
+                "label.3.visibile",
+                "label.4.visibile"
+            };
+
+            LSP_TK_STYLE_IMPL_BEGIN(AudioSample, WidgetContainer)
+                // Bind
+                sWaveBorder.bind("wave.border", this);
+                sFadeInBorder.bind("fade_in.border", this);
+                sFadeOutBorder.bind("fade_out.border", this);
+                sLineWidth.bind("line.width", this);
+                sLineColor.bind("line.color", this);
+                sConstraints.bind("size.constraints", this);
+                sActive.bind("active", this);
+                sSGroups.bind("stereo_groups", this);
+                sMainTextLayout.bind("main.text.layout", this);
+                sMainFont.bind("main.font", this);
+                sMainColor.bind("main.color", this);
+                sMainVisibility.bind("main.visibility", this);
+                sLabelFont.bind("label.font", this);
+                sLabelBgColor.bind("label.bg.color", this);
+                sLabelRadius.bind("label.radius", this);
+                sBorder.bind("border.size", this);
+                sBorderRadius.bind("border.radius", this);
+                sGlass.bind("glass", this);
+                sColor.bind("color", this);
+                sBorderColor.bind("border.color", this);
+                sGlassColor.bind("glass.color", this);
+                sIPadding.bind("padding.internal", this);
+
+                for (size_t i=0; i<LABELS; ++i)
+                {
+                    sLabelColor[i].bind(label_colors[i], this);
+                    sLabelLayout[i].bind(label_layout[i], this);
+                    sLabelTextLayout[i].bind(label_text_layout[i], this);
+                    sLabelVisibility[i].bind(label_visibile[i], this);
+                }
+
+                // Configure
+                sWaveBorder.set(1);
+                sFadeInBorder.set(1);
+                sFadeOutBorder.set(1);
+                sLineWidth.set(1);
+                sLineColor.set("#ffffff");
+                sConstraints.set_all(-1);
+                sActive.set(false);
+                sSGroups.set(false);
+
+                sMainTextLayout.set(0.0f, 0.0f);
+                sMainFont.set_params(16.0f, ws::FF_BOLD);
+                sMainColor.set("#00ff00");
+                sMainVisibility.set(false);
+                sLabelFont.set_size(10.0f);
+                sLabelBgColor.set("#44000000");
+                sLabelRadius.set(4);
+
+                sBorder.set(4);
+                sBorderRadius.set(12);
+                sGlass.set(true);
+                sColor.set("#000000");
+                sBorderColor.set("#000000");
+                sGlassColor.set("#ffffff");
+                sIPadding.set(1);
+
+                for (size_t i=0; i<LABELS; ++i)
+                {
+                    sLabelColor[i].set("#ffffff");
+                    sLabelLayout[i].set(0.0f, 0.0f, 0.0f, 0.0f);
+                    sLabelTextLayout[i].set(0.0f, 0.0f);
+                    sLabelVisibility[i].set(false);
+                }
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(AudioSample, "AudioSample");
+        }
 
         const w_class_t AudioSample::metadata           = { "AudioSample", &WidgetContainer::metadata };
 

@@ -30,6 +30,24 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(RackEars, Widget)
+                prop::Font          sFont;
+                prop::String        sText;
+                prop::Color         sColor;
+                prop::Color         sTextColor;
+                prop::Color         sScrewColor;
+                prop::Color         sHoleColor;
+                prop::Integer       sAngle;
+                prop::Padding       sButtonPadding;
+                prop::Padding       sScrewPadding;
+                prop::Integer       sScrewSize;
+                prop::Padding       sTextPadding;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class RackEars: public Widget
         {
             public:
@@ -103,8 +121,6 @@ namespace lsp
 
                 virtual status_t            on_submit();
         };
-
-        STYLE_INITIALIZER_DEF(RackEars, Widget);
     }
 }
 
