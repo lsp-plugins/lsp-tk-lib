@@ -30,6 +30,21 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Indicator, Widget)
+                prop::Color         sColor;         // Color of the indicator
+                prop::Color         sTextColor;     // Color of the text
+                prop::Integer       sRows;          // Number of rows
+                prop::Integer       sColumns;       // Number of columns
+                prop::Integer       sShift;         // Text shift
+                prop::Integer       sTextGap;       // Text gap for loop
+                prop::Boolean       sLoop;          // Loop flag
+                prop::String        sText;          // Actual text to display
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Indicator: public Widget
         {
             public:
@@ -73,8 +88,6 @@ namespace lsp
                 virtual void        draw(ws::ISurface *s);
         };
 
-        STYLE_INITIALIZER_DEF(Indicator, Widget);
-    
     } /* namespace tk */
 } /* namespace lsp */
 

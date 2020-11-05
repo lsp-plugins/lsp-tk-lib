@@ -30,6 +30,17 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Separator, Widget)
+                prop::Orientation       sOrientation;
+                prop::Color             sColor;
+                prop::SizeRange         sSizeRange;
+                prop::Integer           sThickness;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Simple separator widget
          */
@@ -64,8 +75,6 @@ namespace lsp
                 virtual void render(ws::ISurface *s, bool force);
 
         };
-
-        STYLE_INITIALIZER_DEF(Separator, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

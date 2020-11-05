@@ -27,19 +27,29 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Indicator, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Indicator, Widget)
+                // Bind
+                sColor.bind("color", this);
+                sTextColor.bind("text.color", this);
+                sRows.bind("rows", this);
+                sColumns.bind("columns", this);
+                sShift.bind("text.shift", this);
+                sTextGap.bind("text.gap", this);
+                sLoop.bind("text.loop", this);
 
-            prop::Color::init("color", style, "#111111");
-            prop::Color::init("text.color", style, "#00ff00");
-            prop::Integer::init("rows", style, 1);
-            prop::Integer::init("columns", style, 5);
-            prop::Integer::init("text.shift", style, 0);
-            prop::Integer::init("text.gap", style, 0);
-            prop::Boolean::init("text.loop", style, false);
-            prop::String::init("text", style);
-
-        STYLE_INITIALIZER_END(Indicator, "Indicator");
-        LSP_BUILTIN_STYLE_DEPRECATED(Indicator);
+                // Configure
+                sColor.set("#111111");
+                sTextColor.set("#00ff00");
+                sRows.set(1);
+                sColumns.set(5);
+                sShift.set(0);
+                sTextGap.set(0);
+                sLoop.set(false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Indicator, "Indicator");
+        }
 
         typedef struct rect_t
         {

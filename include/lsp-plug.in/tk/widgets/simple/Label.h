@@ -30,6 +30,18 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Label, Widget)
+                prop::TextLayout            sTextLayout;    // Text layout
+                prop::Font                  sFont;          // Font parameters
+                prop::Color                 sColor;         // Font color
+                prop::String                sText;          // Text to display
+                prop::SizeConstraints       sConstraints;   // Size constraints
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Label: public Widget
         {
             public:
@@ -62,8 +74,6 @@ namespace lsp
             public:
                 virtual void                    draw(ws::ISurface *s);
         };
-
-        STYLE_INITIALIZER_DEF(Label, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

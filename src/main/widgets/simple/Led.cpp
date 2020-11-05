@@ -26,18 +26,29 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Led, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Led, Widget)
+                // Bind
+                sColor.bind("color", this);
+                sLightColor.bind("led.color", this);
+                sHoleColor.bind("hole.color", this);
+                sSizeRange.bind("size", this);
+                sOn.bind("on", this);
+                sHole.bind("hole", this);
+                sLed.bind("led", this);
 
-            prop::Color::init("color", style, "#cccccc");
-            prop::Color::init("led.color", style, "#00cc00");
-            prop::Color::init("hole.color", style, "#000000");
-            prop::SizeRange::init("size", style, 8, -1);
-            prop::Boolean::init("on", style, false);
-            prop::Boolean::init("hole", style, true);
-            prop::Integer::init("led", style, 8);
-
-        STYLE_INITIALIZER_END(Led, "Led");
-        LSP_BUILTIN_STYLE_DEPRECATED(Led);
+                // Configure
+                sColor.set("#cccccc");
+                sLightColor.set("#00cc00");
+                sHoleColor.set("#000000");
+                sSizeRange.set(8, -1);
+                sOn.set(false);
+                sHole.set(true);
+                sLed.set(8);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Led, "Led");
+        }
 
         const w_class_t Led::metadata           = { "Led", &Widget::metadata };
 

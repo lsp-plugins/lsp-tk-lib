@@ -27,6 +27,30 @@ namespace lsp
 {
     namespace tk
     {
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Widget, Style)
+                // Bind
+                sAllocation.bind("allocation", this);
+                sScaling.bind("size.scaling", this);
+                sBrightness.bind("brightness", this);
+                sPadding.bind("padding", this);
+                sBgColor.bind("bg.color", this);
+                sVisibility.bind("visible", this);
+                sPointer.bind("pointer", this);
+
+                // Configure
+                sAllocation.set(true, false);
+                sScaling.set(1.0f);
+                sBrightness.set(1.0f);
+                sPadding.set_all(0);
+                sBgColor.set("#cccccc");
+                sVisibility.set(true);
+                sPointer.set(ws::MP_DEFAULT);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Widget, "Widget");
+        }
+
         STYLE_INITIALIZER_BEGIN(Widget, );
             prop::Float::init("scaling", style, 1.0f);
             prop::Allocation::init("allocation", style, true, false);

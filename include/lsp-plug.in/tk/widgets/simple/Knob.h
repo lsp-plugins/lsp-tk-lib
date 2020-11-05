@@ -30,6 +30,23 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Knob, Widget)
+                prop::Color         sColor;
+                prop::Color         sScaleColor;
+                prop::Color         sHoleColor;
+                prop::Color         sTipColor;
+                prop::SizeRange     sSizeRange;
+                prop::Float         sScale;
+                prop::RangeFloat    sValue;
+                prop::StepFloat     sStep;
+                prop::Float         sBalance;
+                prop::Boolean       sCycling;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Knob: public Widget
         {
             public:
@@ -103,8 +120,6 @@ namespace lsp
 
                 virtual void                    draw(ws::ISurface *s);
         };
-
-        STYLE_INITIALIZER_DEF(Knob, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

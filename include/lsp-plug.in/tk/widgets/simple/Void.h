@@ -30,6 +30,14 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Void, Widget)
+                prop::SizeConstraints       sConstraints;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Void widget that holds some allocated space and fills it with specified color
          */
@@ -60,8 +68,6 @@ namespace lsp
 
                 virtual void        render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
-
-        STYLE_INITIALIZER_DEF(Void, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

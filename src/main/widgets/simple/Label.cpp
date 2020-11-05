@@ -27,16 +27,24 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Label, Widget);
 
-            prop::TextLayout::init("text.layout", style, 0.0f, 0.0f);
-            prop::Font::init("font", style);
-            prop::Color::init("text.color", style, "#000000");
-            prop::String::init("text", style);
-            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Label, Widget)
+                // Bind
+                sTextLayout.bind("text.layout", this);
+                sFont.bind("font", this);
+                sColor.bind("text.color", this);
+                sConstraints.bind("size.constraints", this);
 
-        STYLE_INITIALIZER_END(Label, "Label");
-        LSP_BUILTIN_STYLE_DEPRECATED(Label);
+                // Configure
+                sTextLayout.set(0.0f, 0.0f);
+                sFont.set_size(12.0f);
+                sColor.set("#000000");
+                sConstraints.set(-1, -1, -1, -1);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Label, "Label");
+        }
 
         const w_class_t Label::metadata =       { "Label", &Widget::metadata };
 

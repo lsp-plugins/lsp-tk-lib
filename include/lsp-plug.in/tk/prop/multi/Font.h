@@ -107,6 +107,7 @@ namespace lsp
                 bool                set_antialiasing(bool on = true);
                 size_t              set_flags(size_t flags);
                 void                set(const char *name, size_t size, size_t flags = 0);
+                void                set_params(size_t size, size_t flags = 0);
                 void                set(const ws::Font *f);
 
             public:

@@ -28,21 +28,35 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Knob, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Knob, Widget)
+                // Bind
+                sColor.bind("color", this);
+                sScaleColor.bind("scale.color", this);
+                sHoleColor.bind("hole.color", this);
+                sTipColor.bind("tip.color", this);
+                sSizeRange.bind("size.range", this);
+                sScale.bind("scale.size", this);
+                sValue.bind("value", this);
+                sStep.bind("step", this);
+                sBalance.bind("value.balance", this);
+                sCycling.bind("value.cycling", this);
 
-            prop::Color::init("color", style, "#cccccc");
-            prop::Color::init("scale.color", style, "#00cc00");
-            prop::Color::init("hole.color", style, "#000000");
-            prop::Color::init("tip.color", style, "#000000");
-            prop::SizeRange::init("size.range", style, 8, -1);
-            prop::Float::init("scale.size", style, 4);
-            prop::RangeFloat::init("value", style, 0.5f, 0.0f, 1.0f);
-            prop::StepFloat::init("step", style, 0.01f);
-            prop::Float::init("value.balance", style, 0.5f);
-            prop::Boolean::init("value.cycling", style, false);
-
-        STYLE_INITIALIZER_END(Knob, "Knob");
-        LSP_BUILTIN_STYLE_DEPRECATED(Knob);
+                // Configure
+                sColor.set("#cccccc");
+                sScaleColor.set("#00cc00");
+                sHoleColor.set("#000000");
+                sTipColor.set("#000000");
+                sSizeRange.set(8, -1);
+                sScale.set(4);
+                sValue.set_all(0.5f, 0.0f, 1.0f);
+                sStep.set(0.01f);
+                sBalance.set(0.5f);
+                sCycling.set(false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Knob, "Knob");
+        }
 
         const w_class_t Knob::metadata      = { "Knob", &Widget::metadata };
 

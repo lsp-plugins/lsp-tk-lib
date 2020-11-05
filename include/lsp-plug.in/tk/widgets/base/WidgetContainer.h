@@ -30,6 +30,13 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(WidgetContainer, Widget)
+            LSP_TK_STYLE_DEF_END
+        }
+
         /** This is a basic widget class for any widget that contains sub-widgets
          *
          */

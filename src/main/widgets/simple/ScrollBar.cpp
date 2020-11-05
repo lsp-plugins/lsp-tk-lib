@@ -28,36 +28,65 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(ScrollBar, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(ScrollBar, Widget)
+                // Bind
+                sValue.bind("value", this);
+                sStep.bind("step", this);
+                sAccelStep.bind("accel.step", this);
+                sConstraints.bind("size", this);
+                sOrientation.bind("orientation", this);
+                sSliderPointer.bind("slider.pointer", this);
+                sIncPointer.bind("inc.pointer", this);
+                sDecPointer.bind("dec.pointer", this);
+                sBorderRadius.bind("border.radius", this);
+                sBorderSize.bind("border.size", this);
+                sBorderGap.bind("border.gap", this);
+                sSliderBorderSize.bind("slider.border.size", this);
+                sButtonColor.bind("button.color", this);
+                sButtonActiveColor.bind("button.active.color", this);
+                sIncColor.bind("inc.color", this);
+                sIncActiveColor.bind("inc.active.color", this);
+                sDecColor.bind("dec.color", this);
+                sDecActiveColor.bind("dec.active.color", this);
+                sBorderColor.bind("border.color", this);
+                sBorderGapColor.bind("border.gap.color", this);
+                sSliderColor.bind("slider.color", this);
+                sSliderBorderColor.bind("slider.border.color", this);
+                sSliderActiveColor.bind("slider.active.color", this);
+                sTextColor.bind("text.color", this);
+                sTextActiveColor.bind("text.active.color", this);
 
-            prop::RangeFloat::init("value", style, 0.5f);
-            prop::StepFloat::init("step", style, 0.01f);
-            prop::StepFloat::init("accel.step", style, 0.05f);
-            prop::SizeConstraints::init("size", style, 16, -1, 16, -1);
-            prop::Orientation::init("orientation", style, O_HORIZONTAL);
-            prop::Pointer::init("slider.pointer", style, ws::MP_DEFAULT);
-            prop::Pointer::init("inc.pointer", style, ws::MP_DEFAULT);
-            prop::Pointer::init("dec.pointer", style, ws::MP_DEFAULT);
-            prop::Integer::init("border.radius", style, 4);
-            prop::Integer::init("border.size", style, 1);
-            prop::Integer::init("border.gap", style, 1);
-            prop::Integer::init("slider.border.size", style, 1);
-            prop::Color::init("button.color", style, "#cccccc");
-            prop::Color::init("button.active.color", style, "#ffffff");
-            prop::Color::init("inc.color", style, "#888888");
-            prop::Color::init("inc.active.color", style, "#ffffff");
-            prop::Color::init("dec.color", style, "#888888");
-            prop::Color::init("dec.active.color", style, "#ffffff");
-            prop::Color::init("border.color", style, "#000000");
-            prop::Color::init("border.gap.color", style, "#888888");
-            prop::Color::init("slider.color", style, "#cccccc");
-            prop::Color::init("slider.border.color", style, "#000000");
-            prop::Color::init("slider.active.color", style, "#ffffff");
-            prop::Color::init("text.color", style, "#000000");
-            prop::Color::init("text.active.color", style, "#000000");
-
-        STYLE_INITIALIZER_END(ScrollBar, "ScrollBar");
-        LSP_BUILTIN_STYLE_DEPRECATED(ScrollBar);
+                // Configure
+                sValue.set(0.5f);
+                sStep.set(0.01f);
+                sAccelStep.set(0.05f);
+                sConstraints.set(16, -1, 16, -1);
+                sOrientation.set(O_HORIZONTAL);
+                sSliderPointer.set(ws::MP_DEFAULT);
+                sIncPointer.set(ws::MP_DEFAULT);
+                sDecPointer.set(ws::MP_DEFAULT);
+                sBorderRadius.set(4);
+                sBorderSize.set(1);
+                sBorderGap.set(1);
+                sSliderBorderSize.set(1);
+                sButtonColor.set("#cccccc");
+                sButtonActiveColor.set("#ffffff");
+                sIncColor.set("#888888");
+                sIncActiveColor.set("#ffffff");
+                sDecColor.set("#888888");
+                sDecActiveColor.set("#ffffff");
+                sBorderColor.set("#000000");
+                sBorderGapColor.set("#888888");
+                sSliderColor.set("#cccccc");
+                sSliderBorderColor.set("#000000");
+                sSliderActiveColor.set("#ffffff");
+                sTextColor.set("#000000");
+                sTextActiveColor.set("#000000");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(ScrollBar, "ScrollBar");
+        }
 
         const w_class_t ScrollBar::metadata         = { "ScrollBar", &Widget::metadata };
 

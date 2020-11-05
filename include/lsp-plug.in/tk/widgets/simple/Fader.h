@@ -30,6 +30,22 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Fader, Widget)
+                prop::Color                     sColor;
+                prop::Color                     sHoleColor;
+                prop::SizeRange                 sSizeRange;
+                prop::RangeFloat                sValue;
+                prop::StepFloat                 sStep;
+                prop::SizeRange                 sBtnWidth;
+                prop::Float                     sBtnAspect;
+                prop::Integer                   sAngle;
+                prop::Pointer                   sBtnPointer;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Fader widget
          */
@@ -132,8 +148,6 @@ namespace lsp
                 virtual void                    draw(ws::ISurface *s);
         };
 
-        STYLE_INITIALIZER_DEF(Fader, Widget);
-    
     } /* namespace tk */
 } /* namespace lsp */
 

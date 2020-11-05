@@ -27,12 +27,17 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Void, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Void, Widget)
+                // Bind
+                sConstraints.bind("size.constraints", this);
 
-            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
-
-        STYLE_INITIALIZER_END(Void, "Void");
-        LSP_BUILTIN_STYLE_DEPRECATED(Void);
+                // Configure
+                sConstraints.set(-1, -1, -1, -1);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Void, "Void");
+        }
 
         const w_class_t Void::metadata      = { "Void", &Widget::metadata };
         

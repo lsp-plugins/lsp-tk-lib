@@ -30,6 +30,38 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(ScrollBar, Widget)
+                prop::RangeFloat        sValue;
+                prop::StepFloat         sStep;
+                prop::StepFloat         sAccelStep;
+                prop::SizeConstraints   sConstraints;
+                prop::Orientation       sOrientation;
+                prop::Pointer           sSliderPointer;
+                prop::Pointer           sIncPointer;
+                prop::Pointer           sDecPointer;
+                prop::Integer           sBorderRadius;
+                prop::Integer           sBorderSize;
+                prop::Integer           sBorderGap;
+                prop::Integer           sSliderBorderSize;
+                prop::Color             sButtonColor;
+                prop::Color             sButtonActiveColor;
+                prop::Color             sIncColor;
+                prop::Color             sIncActiveColor;
+                prop::Color             sDecColor;
+                prop::Color             sDecActiveColor;
+                prop::Color             sBorderColor;
+                prop::Color             sBorderGapColor;
+                prop::Color             sSliderColor;
+                prop::Color             sSliderBorderColor;
+                prop::Color             sSliderActiveColor;
+                prop::Color             sTextColor;
+                prop::Color             sTextActiveColor;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Scroll bar implementation
          */
@@ -183,8 +215,6 @@ namespace lsp
                 virtual void                    draw(ws::ISurface *s);
         };
 
-        STYLE_INITIALIZER_DEF(ScrollBar, Widget);
-    
     } /* namespace tk */
 } /* namespace lsp */
 

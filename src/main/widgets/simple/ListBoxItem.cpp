@@ -26,18 +26,25 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(ListBoxItem, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(ListBoxItem, Widget)
+                // Bind
+                sBgSelectedColor.bind("bg.selected.color", this);
+                sTextColor.bind("text.color", this);
+                sTextSelectedColor.bind("text.selected.color", this);
 
-            prop::String::init("text", style);
-            prop::Color::init("bg.selected.color", style, "#00ccff");
-            prop::Color::init("text.color", style, "#000000");
-            prop::Color::init("text.selected.color", style, "#ffffff");
-            // Overrides
-            prop::Padding::override("padding", style, 2, 2, 0, 0);
-            prop::Color::override("bg.color", style, "#ffffff");
+                // Configure
+                sBgSelectedColor.set("#00ccff");
+                sTextColor.set("#000000");
+                sTextSelectedColor.set("#ffffff");
 
-        STYLE_INITIALIZER_END(ListBoxItem, "ListBoxItem");
-        LSP_BUILTIN_STYLE_DEPRECATED(ListBoxItem);
+                // Override
+                sPadding.set(2, 2, 0, 0);
+                sBgColor.set("#ffffff");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(ListBoxItem, "ListBoxItem");
+        }
 
         const w_class_t ListBoxItem::metadata       = { "ListBoxItem", &Widget::metadata };
 

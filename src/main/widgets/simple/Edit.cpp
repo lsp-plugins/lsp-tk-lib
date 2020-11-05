@@ -29,27 +29,44 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Edit, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Edit, Widget)
+                // Init
+                sSelection.bind("selection", this);
+                sFont.bind("font", this);
+                sColor.bind("color", this);
+                sBorderColor.bind("border.color", this);
+                sBorderGapColor.bind("border.gap.color", this);
+                sCursorColor.bind("cursor.color", this);
+                sTextColor.bind("text.color", this);
+                sTextSelectedColor.bind("text.selected.color", this);
+                sSelectionColor.bind("selection.color", this);
+                sBorderSize.bind("border.size", this);
+                sBorderGapSize.bind("border.gap.size", this);
+                sBorderRadius.bind("border.radius", this);
+                sConstraints.bind("size.constraints", this);
 
-            prop::String::init("text", style);
-            prop::TextSelection::init("selection", style);
-            prop::Font::init("font", style);
-            prop::Color::init("color", style, "#ffffff");
-            prop::Color::init("border.color", style, "#000000");
-            prop::Color::init("border.gap.color", style, "#cccccc");
-            prop::Color::init("cursor.color", style, "#000000");
-            prop::Color::init("text.color", style, "#000000");
-            prop::Color::init("text.selected.color", style, "#ffffff");
-            prop::Color::init("selection.color", style, "#00c0ff");
-            prop::Integer::init("border.size", style, 1);
-            prop::Integer::init("border.gap.size", style, 1);
-            prop::Integer::init("border.radius", style, 4);
-            prop::SizeConstraints::init("size.constraints", style,  -1, -1, -1, 8);
-            // Overrides
-            prop::Pointer::init("pointer", style, ws::MP_IBEAM);
+                // Configure
+                sSelection.set(-1, -1);
+                sFont.set_size(12.0f);
+                sColor.set("#ffffff");
+                sBorderColor.set("#000000");
+                sBorderGapColor.set("#cccccc");
+                sCursorColor.set("#000000");
+                sTextColor.set("#000000");
+                sTextSelectedColor.set("#ffffff");
+                sSelectionColor.set("#00c0ff");
+                sBorderSize.set(1);
+                sBorderGapSize.set(1);
+                sBorderRadius.set(4);
+                sConstraints.set(-1, -1, -1, 8);
 
-        STYLE_INITIALIZER_END(Edit, "Edit");
-        LSP_BUILTIN_STYLE_DEPRECATED(Edit);
+                // Override
+                sPointer.set(ws::MP_IBEAM);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Edit, "Edit");
+        }
 
         const w_class_t Edit::metadata      = { "Edit", &Widget::metadata };
 

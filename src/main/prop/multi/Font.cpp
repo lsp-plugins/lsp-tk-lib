@@ -225,6 +225,19 @@ namespace lsp
             return old;
         }
 
+        void Font::set_params(size_t size, size_t flags)
+        {
+            flags              &= ws::FF_ALL;
+
+            if ((flags == sValue.flags()) &&
+                (size == sValue.get_size()))
+                return;
+
+            sValue.set_size(size);
+            sValue.set_flags(flags);
+            sync();
+        }
+
         void Font::set(const char *name, size_t size, size_t flags)
         {
             bool changed = false;

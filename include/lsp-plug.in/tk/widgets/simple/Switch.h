@@ -30,6 +30,23 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Switch, Widget)
+                prop::Color                 sColor;
+                prop::Color                 sTextColor;
+                prop::Color                 sBorderColor;
+                prop::Color                 sHoleColor;
+                prop::Integer               sBorder;
+                prop::SizeRange             sSizeRange;
+                prop::Float                 sAspect;
+                prop::Integer               sAngle;
+                prop::Boolean               sDown;
+                prop::Pointer               sButtonPointer;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Switch: public Widget
         {
             public:
@@ -103,8 +120,6 @@ namespace lsp
 
                 virtual status_t            on_change(bool set);
         };
-
-        STYLE_INITIALIZER_DEF(Switch, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

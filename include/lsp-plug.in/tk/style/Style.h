@@ -663,7 +663,7 @@ namespace lsp
                 protected:
 
         #define LSP_TK_STYLE_DEF_END \
-            };
+            }; \
 
         #define LSP_TK_STYLE_IMPL_BEGIN(Name, Parent) \
             Name::Name(::lsp::tk::Schema *schema): Parent(schema) {} \
@@ -676,7 +676,7 @@ namespace lsp
 
         #define LSP_TK_STYLE_IMPL_END \
                 return res; \
-            }
+            } \
 
     } /* namespace tk */
 } /* namespace lsp */

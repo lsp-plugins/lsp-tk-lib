@@ -30,6 +30,20 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Led, Widget)
+                prop::Color             sColor;
+                prop::Color             sHoleColor;
+                prop::Color             sLightColor;
+                prop::SizeRange         sSizeRange;
+                prop::Boolean           sOn;
+                prop::Boolean           sHole;
+                prop::Integer           sLed;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Led: public Widget
         {
             public:
@@ -66,8 +80,6 @@ namespace lsp
             public:
                 virtual void                    draw(ws::ISurface *s);
         };
-
-        STYLE_INITIALIZER_DEF(Led, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

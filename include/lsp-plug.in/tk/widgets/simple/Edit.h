@@ -32,6 +32,27 @@ namespace lsp
     {
         class Menu;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Edit, Widget)
+                prop::String            sText;
+                prop::TextSelection     sSelection;
+                prop::Font              sFont;
+                prop::Color             sColor;
+                prop::Color             sBorderColor;
+                prop::Color             sBorderGapColor;
+                prop::Color             sCursorColor;
+                prop::Color             sTextColor;
+                prop::Color             sTextSelectedColor;
+                prop::Color             sSelectionColor;
+                prop::Integer           sBorderSize;
+                prop::Integer           sBorderGapSize;
+                prop::Integer           sBorderRadius;
+                prop::SizeConstraints   sConstraints;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Edit: public Widget
         {
             public:
@@ -194,8 +215,6 @@ namespace lsp
                 virtual status_t                on_popup(Menu *menu);
         };
 
-        STYLE_INITIALIZER_DEF(Edit, Widget);
-    
     } /* namespace tk */
 } /* namespace lsp */
 

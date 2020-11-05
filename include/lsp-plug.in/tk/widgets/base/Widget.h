@@ -32,6 +32,21 @@ namespace lsp
     {
         class Display;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Widget, Style)
+                prop::Allocation    sAllocation;    // Widget allocation
+                prop::Float         sScaling;       // UI scaling factor
+                prop::Float         sBrightness;    // Brightness
+                prop::Padding       sPadding;       // Widget padding
+                prop::Color         sBgColor;       // Widget color
+                prop::Boolean       sVisibility;    // Visibility
+                prop::Pointer       sPointer;       // Mouse pointer
+                prop::Integer       sTag;           // Some tag associated with widget
+            LSP_TK_STYLE_DEF_END
+        }
+
         /** Basic widget class for any widget in the toolkit
          *
          */

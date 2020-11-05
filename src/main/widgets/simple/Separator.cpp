@@ -26,15 +26,23 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Separator, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Separator, Widget)
+                // Bind
+                sOrientation.bind("orientation", this);
+                sColor.bind("color", this);
+                sSizeRange.bind("size", this);
+                sThickness.bind("thickness", this);
 
-            prop::Orientation::init("orientation", style, O_VERTICAL);
-            prop::Color::init("color", style, "#000000");
-            prop::SizeRange::init("size", style, -1, -1);
-            prop::Integer::init("thickness", style, 1);
-
-        STYLE_INITIALIZER_END(Separator, "Separator");
-        LSP_BUILTIN_STYLE_DEPRECATED(Separator);
+                // Configure
+                sOrientation.set(O_VERTICAL);
+                sColor.set("#000000");
+                sSizeRange.set(-1, -1);
+                sThickness.set(1);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Separator, "Separator");
+        }
 
         const w_class_t Separator::metadata = { "Separator", &Widget::metadata };
 

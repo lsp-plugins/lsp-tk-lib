@@ -29,20 +29,30 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Hyperlink, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Hyperlink, Widget)
+                // Bind
+                sTextLayout.bind("text.layout", this);
+                sFont.bind("font", this);
+                sColor.bind("text.color", this);
+                sHoverColor.bind("text.hover.color", this);
+                sConstraints.bind("size.constraints", this);
+                sFollow.bind("follow", this);
 
-            prop::TextLayout::init("text.layout", style, -1.0f, 0.0f);
-            prop::Font::init("font", style, 12.0f, ws::FF_UNDERLINE);
-            prop::Color::init("text.color", style, "#0000cc");
-            prop::Color::init("text.hover.color", style, "#ff0000");
-            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
-            prop::Boolean::init("follow", style, true);
-            prop::String::init("url", style);
-            // Overrides
-            prop::Pointer::init("pointer", style, ws::MP_HAND);
+                // Configure
+                sTextLayout.set(0.0f, 0.0f);
+                sFont.set_params(12.0f, ws::FF_UNDERLINE);
+                sColor.set("#0000cc");
+                sHoverColor.set("#ff0000");
+                sConstraints.set(-1, -1, -1, -1);
+                sFollow.set(true);
 
-        STYLE_INITIALIZER_END(Hyperlink, "Hyperlink");
-        LSP_BUILTIN_STYLE_DEPRECATED(Hyperlink);
+                // Override
+                sPointer.set(ws::MP_HAND);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Hyperlink, "Hyperlink");
+        }
 
         const w_class_t Hyperlink::metadata =        { "Hyperlink", &Widget::metadata };
 

@@ -26,6 +26,16 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(ListBoxItem, Widget)
+                prop::String                sText;
+                prop::Color                 sBgSelectedColor;
+                prop::Color                 sTextColor;
+                prop::Color                 sTextSelectedColor;
+            LSP_TK_STYLE_DEF_END
+        }
         
         class ListBoxItem: public Widget
         {
@@ -54,8 +64,6 @@ namespace lsp
             public:
                 virtual status_t            init();
         };
-
-        STYLE_INITIALIZER_DEF(ListBoxItem, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */

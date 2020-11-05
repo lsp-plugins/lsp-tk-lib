@@ -28,16 +28,19 @@ namespace lsp
 {
     namespace tk
     {
-        LSP_TK_STYLE_IMPL_BEGIN(RootStyle, Style)
-            // Bind
-            sScaling.bind("size.scaling", this);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Root, Style)
+                // Bind
+                sScaling.bind("size.scaling", this);
 
-            // Set defaults
-            sScaling.set(1.0f);
-        LSP_TK_STYLE_IMPL_END
+                // Configure
+                sScaling.set(1.0f);
+            LSP_TK_STYLE_IMPL_END
 
-        LSP_SYMBOL_HIDDEN
-        StyleFactory<RootStyle> RootStyleFactory(NULL);
+            LSP_SYMBOL_HIDDEN
+            StyleFactory<Root> RootFactory(NULL);
+        }
 
         Schema::Schema(Atoms *atoms)
         {
@@ -110,7 +113,7 @@ namespace lsp
             // Create root style
             if (pRoot == NULL)
             {
-                pRoot = RootStyleFactory.create(this);
+                pRoot = style::RootFactory.create(this);
                 if (pRoot == NULL)
                     return STATUS_NO_MEM;
             }

@@ -26,6 +26,15 @@ namespace lsp
 {
     namespace tk
     {
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(WidgetContainer, Widget)
+                // Bind
+                // Configure
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(WidgetContainer, "WidgetContainer");
+        }
+
         STYLE_INITIALIZER_BEGIN(WidgetContainer, Widget);
             // Nothing
         STYLE_INITIALIZER_END(WidgetContainer, "WidgetContainer");

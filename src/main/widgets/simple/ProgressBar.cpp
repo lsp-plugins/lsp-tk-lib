@@ -27,27 +27,46 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(ProgressBar, Widget);
-            prop::RangeFloat::init("value", style, 0.5f);
-            prop::SizeConstraints::init("size", style, -1, -1, -1, -1);
-            prop::String::init("text", style);
-            prop::TextLayout::init("text.layout", style, 0.0f, 0.0f);
-            prop::Boolean::init("text.show", style, true);
-            prop::Font::init("font", style, 12.0f);
-            prop::Color::init("border.color", style, "#444444");
-            prop::Color::init("border.gap.color", style, "#000000");
-            prop::Integer::init("border.size", style, 1);
-            prop::Integer::init("border.gap.size", style, 1);
-            prop::Integer::init("border.radius", style, 4);
-            prop::Color::init("color", style, "#008800");
-            prop::Color::init("text.color", style, "#ffffff");
-            prop::Color::init("inv.color", style, "#ffffff");
-            prop::Color::init("text.inv.color", style, "#000000");
-            // Overrides
-            prop::Allocation::override("allocation", style, true, false, false, false);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(ProgressBar, Widget)
+                // Bind
+                sValue.bind("value", this);
+                sConstraints.bind("size", this);
+                sTextLayout.bind("text.layout", this);
+                sShowText.bind("text.show", this);
+                sFont.bind("font", this);
+                sBorderColor.bind("border.color", this);
+                sBorderGapColor.bind("border.gap.color", this);
+                sBorderSize.bind("border.size", this);
+                sBorderGapSize.bind("border.gap.size", this);
+                sBorderRadius.bind("border.radius", this);
+                sColor.bind("color", this);
+                sTextColor.bind("text.color", this);
+                sInvColor.bind("inv.color", this);
+                sInvTextColor.bind("text.inv.color", this);
 
-        STYLE_INITIALIZER_END(ProgressBar, "ProgressBar");
-        LSP_BUILTIN_STYLE_DEPRECATED(ProgressBar);
+                // Configure
+                sValue.set(0.5f);
+                sConstraints.set(-1, -1, -1, -1);
+                sTextLayout.set(0.0f, 0.0f);
+                sShowText.set(true);
+                sFont.set_size(12.0f);
+                sBorderColor.set("#444444");
+                sBorderGapColor.set("#000000");
+                sBorderSize.set(1);
+                sBorderGapSize.set(1);
+                sBorderRadius.set(4);
+                sColor.set("#008800");
+                sTextColor.set("#ffffff");
+                sInvColor.set("#ffffff");
+                sInvTextColor.set("#000000");
+
+                // Override
+                sAllocation.set(true, false, false, false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(ProgressBar, "ProgressBar");
+        }
 
         const w_class_t ProgressBar::metadata           = { "ProgressBar", &Widget::metadata };
 

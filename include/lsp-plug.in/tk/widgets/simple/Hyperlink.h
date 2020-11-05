@@ -32,6 +32,21 @@ namespace lsp
     {
         class Menu;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Hyperlink, Widget)
+                prop::TextLayout            sTextLayout;    // Text layout
+                prop::Font                  sFont;          // Font parameters
+                prop::Color                 sColor;         // Font color
+                prop::Color                 sHoverColor;    // Hover font color
+                prop::String                sText;          // Text to display
+                prop::SizeConstraints       sConstraints;   // Size constraints
+                prop::Boolean               sFollow;        // Follow hyperlink
+                prop::String                sUrl;           // URL
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Hyperlink: public Widget
         {
             public:
@@ -116,8 +131,6 @@ namespace lsp
 
         };
 
-        STYLE_INITIALIZER_DEF(Hyperlink, Widget);
-    
     } /* namespace tk */
 } /* namespace lsp */
 

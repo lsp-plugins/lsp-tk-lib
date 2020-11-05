@@ -30,6 +30,30 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Button, Widget)
+                prop::Color             sColor;
+                prop::Color             sLightColor;
+                prop::Color             sTextColor;
+                prop::Color             sLTextColor;
+                prop::Color             sHoleColor;
+                prop::Font              sFont;
+                prop::String            sText;
+                prop::SizeConstraints   sConstraints;
+                prop::TextLayout        sTextLayout;
+                prop::ButtonMode        sMode;
+                prop::Boolean           sDown;
+                prop::Integer           sLed;
+                prop::Boolean           sEditable;
+                prop::Boolean           sHole;
+                prop::Boolean           sFlat;
+                prop::Boolean           sTextClip;
+                prop::Padding           sTextPadding;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Button control widget
          */
@@ -128,8 +152,6 @@ namespace lsp
                 virtual status_t    on_submit();
         };
 
-        STYLE_INITIALIZER_DEF(Button, Widget);
-    
     } /* namespace tk */
 } /* namespace lsp */
 

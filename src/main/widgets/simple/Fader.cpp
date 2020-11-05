@@ -27,20 +27,33 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Fader, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Fader, Widget)
+                // Init
+                sColor.bind("color", this);
+                sHoleColor.bind("hole.color", this);
+                sSizeRange.bind("size", this);
+                sValue.bind("value", this);
+                sStep.bind("step", this);
+                sBtnWidth.bind("button.width", this);
+                sBtnAspect.bind("button.aspect", this);
+                sAngle.bind("angle", this);
+                sBtnPointer.bind("button.pointer", this);
 
-            prop::Color::init("color", style, "#cccccc");
-            prop::Color::init("hole.color", style, "#000000");
-            prop::SizeRange::init("size", style, 64, -1);
-            prop::RangeFloat::init("value", style, 0.5f);
-            prop::StepFloat::init("step", style, 0.01f);
-            prop::SizeRange::init("button.width", style, 0);
-            prop::Float::init("button.aspect", style, 1.41f);
-            prop::Integer::init("angle", style, 0);
-            prop::Pointer::init("button.pointer", style, ws::MP_DEFAULT);
-
-        STYLE_INITIALIZER_END(Fader, "Fader");
-        LSP_BUILTIN_STYLE_DEPRECATED(Fader);
+                // Configure
+                sColor.set("#cccccc");
+                sHoleColor.set("#000000");
+                sSizeRange.set(64, -1);
+                sValue.set(0.5f);
+                sStep.set(0.01f);
+                sBtnWidth.set(0, 0);
+                sBtnAspect.set(1.41f);
+                sAngle.set(0);
+                sBtnPointer.set(ws::MP_DEFAULT);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Fader, "Fader");
+        }
 
         const w_class_t Fader::metadata         = { "Fader", &Widget::metadata };
         

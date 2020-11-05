@@ -27,28 +27,47 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Button, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Button, Widget)
+                // Bind
+                sColor.bind("color", this);
+                sLightColor.bind("led.color", this);
+                sTextColor.bind("text.color", this);
+                sLTextColor.bind("led.text.color", this);
+                sHoleColor.bind("hole.color", this);
+                sFont.bind("font", this);
+                sConstraints.bind("size.constraints", this);
+                sTextLayout.bind("text.layout", this);
+                sMode.bind("mode", this);
+                sDown.bind("down", this);
+                sLed.bind("led", this);
+                sEditable.bind("editable", this);
+                sHole.bind("hole", this);
+                sFlat.bind("flat", this);
+                sTextClip.bind("text.clip", this);
+                sTextPadding.bind("text.padding", this);
 
-            prop::Color::init("color", style, "#cccccc");
-            prop::Color::init("led.color", style, "#00cc00");
-            prop::Color::init("text.color", style, "#000000");
-            prop::Color::init("led.text.color", style, "#000000");
-            prop::Color::init("hole.color", style, "#000000");
-            prop::Font::init("font", style, 12.0f);
-            prop::String::init("text", style);
-            prop::SizeConstraints::init("size.constraints", style, 18, 18, -1, -1);
-            prop::TextLayout::init("text.layout", style, 0.0f, 0.0f);
-            prop::ButtonMode::init("mode", style, BM_NORMAL);
-            prop::Boolean::init("down", style, false);
-            prop::Integer::init("led", style, 0);
-            prop::Boolean::init("editable", style, true);
-            prop::Boolean::init("hole", style, true);
-            prop::Boolean::init("flat", style, false);
-            prop::Boolean::init("text.clip", style, false);
-            prop::Padding::init("text.padding", style, 2, 2, 2, 2);
-
-        STYLE_INITIALIZER_END(Button, "Button");
-        LSP_BUILTIN_STYLE_DEPRECATED(Button);
+                // Configure
+                sColor.set("#cccccc");
+                sLightColor.set("#00cc00");
+                sTextColor.set("#000000");
+                sLTextColor.set("#000000");
+                sHoleColor.set("#000000");
+                sFont.set_size(12.0f);
+                sConstraints.set(18, 18, -1, -1);
+                sTextLayout.set(0.0f, 0.0f);
+                sMode.set(BM_NORMAL);
+                sDown.set(false);
+                sLed.set(0);
+                sEditable.set(true);
+                sHole.set(true);
+                sFlat.set(false);
+                sTextClip.set(false);
+                sTextPadding.set(2, 2, 2, 2);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Button, "Button");
+        }
 
         const w_class_t Button::metadata        = { "Button", &Widget::metadata };
 

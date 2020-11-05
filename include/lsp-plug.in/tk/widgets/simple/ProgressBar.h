@@ -30,6 +30,27 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(ProgressBar, Widget)
+                prop::RangeFloat                sValue;             // The actual progress value
+                prop::SizeConstraints           sConstraints;       // Size constraings
+                prop::String                    sText;              // Text to display
+                prop::TextLayout                sTextLayout;        // Text layout
+                prop::Boolean                   sShowText;          // Show text
+                prop::Font                      sFont;              // Font of the text
+                prop::Color                     sBorderColor;       // Color of the border
+                prop::Color                     sBorderGapColor;    // Color of the border gap
+                prop::Integer                   sBorderSize;        // Size of the border
+                prop::Integer                   sBorderGapSize;     // Size of the border gap
+                prop::Integer                   sBorderRadius;      // Radius of the border
+                prop::Color                     sColor;             // Color of the progress slider
+                prop::Color                     sTextColor;         // Text color over the progress slider
+                prop::Color                     sInvColor;          // Inverse color of the progress slider
+                prop::Color                     sInvTextColor;      // Inverse text color over the progress slider
+            LSP_TK_STYLE_DEF_END
+        }
         
         class ProgressBar: public Widget
         {
@@ -89,8 +110,6 @@ namespace lsp
             public:
                 virtual void                    draw(ws::ISurface *s);
         };
-    
-        STYLE_INITIALIZER_DEF(ProgressBar, Widget);
 
     } /* namespace tk */
 } /* namespace lsp */

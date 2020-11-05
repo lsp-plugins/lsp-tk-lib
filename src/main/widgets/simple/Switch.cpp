@@ -28,21 +28,33 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Switch, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Switch, Widget)
+                // Bind
+                sColor.bind("color", this);
+                sTextColor.bind("text.color", this);
+                sBorderColor.bind("border.color", this);
+                sHoleColor.bind("hole.color", this);
+                sBorder.bind("border.size", this);
+                sSizeRange.bind("size.range", this);
+                sAspect.bind("size.aspect", this);
+                sAngle.bind("angle", this);
+                sDown.bind("down", this);
+                sButtonPointer.bind("button.pointer", this);
 
-            prop::Color::init("color", style, "#444444");
-            prop::Color::init("text.color", style, "#eeeeee");
-            prop::Color::init("border.color", style, "#444444");
-            prop::Color::init("hole.color", style, "#000000");
-            prop::Integer::init("border.size", style, 6);
-            prop::SizeRange::init("size.range", style, 24);
-            prop::Float::init("size.aspect", style, 1.41);
-            prop::Integer::init("angle", style, 0);
-            prop::Boolean::init("down", style, false);
-            prop::Pointer::init("button.pointer", style, ws::MP_DEFAULT);
-
-        STYLE_INITIALIZER_END(Switch, "Switch");
-        LSP_BUILTIN_STYLE_DEPRECATED(Switch);
+                // Configure
+                sColor.set("#444444");
+                sTextColor.set("#eeeeee");
+                sBorderColor.set("#444444");
+                sHoleColor.set("#000000");
+                sBorder.set(6);
+                sSizeRange.set(24);
+                sAspect.set(1.41);
+                sButtonPointer.set(ws::MP_DEFAULT);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Switch, "Switch");
+        }
 
         static const float ANGLE = 15.0f * M_PI / 180.0f;
         

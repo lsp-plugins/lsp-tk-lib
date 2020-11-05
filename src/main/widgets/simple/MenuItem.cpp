@@ -27,23 +27,36 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(MenuItem, Widget);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(MenuItem, Widget)
+                // Bind
+                sType.bind("type", this);
+                sChecked.bind("checked", this);
+                sBgSelectedColor.bind("bg.selected.color", this);
+                sTextColor.bind("text.color", this);
+                sTextSelectedColor.bind("text.selected.color", this);
+                sCheckColor.bind("check.color", this);
+                sCheckBgColor.bind("check.bg.color", this);
+                sCheckBorderColor.bind("check.border.color", this);
+                sShortcut.bind("shortcut", this);
 
-            prop::String::init("text", style);
-            prop::MenuItemType::init("type", style, MI_NORMAL);
-            prop::Boolean::init("checked", style, false);
-            prop::Color::init("bg.selected.color", style, "#000088");
-            prop::Color::init("text.color", style, "#000000");
-            prop::Color::init("text.selected.color", style, "#ffffff");
-            prop::Color::init("check.color", style, "#00ccff");
-            prop::Color::init("check.bg.color", style, "#ffffff");
-            prop::Color::init("check.border.color", style, "#000000");
-            prop::Shortcut::init("shortcut", style);
-            // Overrides
-            prop::Padding::override("padding", style, 16, 16, 2, 2);
+                // Configure
+                sType.set(MI_NORMAL);
+                sChecked.set(false);
+                sBgSelectedColor.set("#000088");
+                sTextColor.set("#000000");
+                sTextSelectedColor.set("#ffffff");
+                sCheckColor.set("#00ccff");
+                sCheckBgColor.set("#ffffff");
+                sCheckBorderColor.set("#000000");
+                sShortcut.clear();
 
-        STYLE_INITIALIZER_END(MenuItem, "MenuItem");
-        LSP_BUILTIN_STYLE_DEPRECATED(MenuItem);
+                // Override
+                sPadding.set(16, 16, 2, 2);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(MenuItem, "MenuItem");
+        }
 
         const w_class_t MenuItem::metadata      = { "MenuItem", &Widget::metadata };
 

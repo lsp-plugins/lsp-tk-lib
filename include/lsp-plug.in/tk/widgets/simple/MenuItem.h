@@ -32,6 +32,24 @@ namespace lsp
     {
         class Menu;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(MenuItem, Widget)
+                prop::String                sText;
+                prop::MenuItemType          sType;
+                prop::Boolean               sChecked;
+                prop::Color                 sBgSelectedColor;
+                prop::Color                 sTextColor;
+                prop::Color                 sTextSelectedColor;
+                prop::Color                 sCheckColor;
+                prop::Color                 sCheckBgColor;
+                prop::Color                 sCheckBorderColor;
+                prop::Color                 sCheckBorderGapColor;
+                prop::Shortcut              sShortcut;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class MenuItem: public Widget
         {
             public:
@@ -88,8 +106,6 @@ namespace lsp
 
                 virtual status_t            on_mouse_up(const ws::event_t *e);
         };
-
-        STYLE_INITIALIZER_DEF(MenuItem, Widget);
     
     } /* namespace tk */
 } /* namespace lsp */
