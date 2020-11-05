@@ -184,25 +184,32 @@ namespace lsp
             }
 
             // Iterate over named styles
-            lltl::parray<StyleSheet::style_t>  vss;
-            if (!sheet->vStyles.values(&vss))
+            lltl::parray<LSPString>  vss;
+            if (!vStyles.keys(&vss))
                 return STATUS_NO_MEM;
 
             for (size_t i=0, n=vss.size(); i<n; ++i)
             {
-                StyleSheet::style_t *xs = vss.uget(i);
-                Style *s = vStyles.get(&xs->name);
-                if ((s == NULL) || (xs == NULL))
+                LSPString *name         = vss.uget(i);
+                Style *s                = vStyles.get(name);
+                if (s == NULL)
                     continue;
 
-                lsp_trace("Applying stylesheet to style '%s'", xs->name.get_utf8());
-                res = apply_relations(s, xs);
-                if (res == STATUS_OK)
+                StyleSheet::style_t *xs = sheet->vStyles.get(name);
+                if (xs != NULL)
                 {
-                    s->set_sync_mode(true);
-                    res = apply_settings(s, xs);
-                    s->set_sync_mode(false);
+                    lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
+                    res = apply_relations(s, xs);
+                    if (res == STATUS_OK)
+                    {
+                        s->set_sync_mode(true);
+                        res = apply_settings(s, xs);
+                        s->set_sync_mode(false);
+                    }
                 }
+                else
+                    res = s->add_parent(pRoot);
+
                 if (res != STATUS_OK)
                     return res;
             }
