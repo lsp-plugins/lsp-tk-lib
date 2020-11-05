@@ -29,19 +29,28 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Area3D, Widget);
-
-            // Init style
-            prop::SizeConstraints::init("size.constraints", style);
-            prop::Integer::init("border.size", style, 4);
-            prop::Integer::init("border.radius", style, 12);
-            prop::Boolean::init("glass.visibility", style, true);
-            prop::Color::init("color", style, "#000000");
-            prop::Color::init("border.color", style, "#000000");
-            prop::Color::init("glass.color", style, "#ffffff");
-
-        STYLE_INITIALIZER_END(Area3D, "Area3D");
-        LSP_BUILTIN_STYLE_DEPRECATED(Area3D);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Area3D, Widget)
+                // Bind
+                sConstraints.bind("size.constraints", this);
+                sBorder.bind("border.size", this);
+                sBorderRadius.bind("border.radius", this);
+                sGlass.bind("glass.visibility", this);
+                sColor.bind("color", this);
+                sBorderColor.bind("border.color", this);
+                sGlassColor.bind("glass.color", this);
+                // Configure
+                sConstraints.set_all(-1);
+                sBorder.set(4);
+                sBorderRadius.set(12);
+                sGlass.set(true);
+                sColor.set("#000000");
+                sBorderColor.set("#000000");
+                sGlassColor.set("#ffffff");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Area3D, "Area3D");
+        }
 
         const w_class_t Area3D::metadata      = { "Area3D", &Widget::metadata };
 

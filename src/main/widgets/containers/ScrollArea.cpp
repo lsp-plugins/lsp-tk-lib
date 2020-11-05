@@ -27,17 +27,26 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(ScrollArea, WidgetContainer);
-
-            prop::Layout::init("layout", style, -1.0f, -1.0f, 0.0f, 0.0f);
-            prop::SizeConstraints::init("size.constraints", style);
-            prop::Scrolling::init("hscroll.mode", style, SCROLL_OPTIONAL);
-            prop::Scrolling::init("vscroll.mode", style, SCROLL_OPTIONAL);
-            prop::RangeFloat::init("hscroll", style, 0.0f, 0.0f, 0.0f);
-            prop::RangeFloat::init("vscroll", style, 0.0f, 0.0f, 0.0f);
-
-        STYLE_INITIALIZER_END(ScrollArea, "ScrollArea");
-        LSP_BUILTIN_STYLE_DEPRECATED(ScrollArea);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(ScrollArea, WidgetContainer)
+                // Bind
+                sLayout.bind("layout", this);
+                sSizeConstraints.bind("size.constraints", this);
+                sHScrollMode.bind("hscroll.mode", this);
+                sVScrollMode.bind("vscroll.mode", this);
+                sHScroll.bind("hscroll", this);
+                sVScroll.bind("vscroll", this);
+                // Configure
+                sLayout.set(-1.0f, -1.0f, 0.0f, 0.0f);
+                sSizeConstraints.set_all(-1);
+                sHScrollMode.set(SCROLL_OPTIONAL);
+                sVScrollMode.set(SCROLL_OPTIONAL);
+                sHScroll.set_all(0.0f, 0.0f, 0.0f);
+                sVScroll.set_all(0.0f, 0.0f, 0.0f);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(ScrollArea, "ScrollArea");
+        }
 
         const w_class_t ScrollArea::metadata    = { "ScrollArea", &WidgetContainer::metadata };
         

@@ -30,6 +30,17 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Box, WidgetContainer)
+                prop::Integer               sSpacing;
+                prop::Boolean               sHomogeneous;
+                prop::Orientation           sOrientation;
+                prop::SizeConstraints       sConstraints;        // Size constraints
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Implements widget container that allows to pack all elements
          * horizontally or vertically depending on settings
@@ -131,8 +142,6 @@ namespace lsp
                 virtual status_t            remove_all();
 
         };
-    
-        STYLE_INITIALIZER_DEF(Box, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

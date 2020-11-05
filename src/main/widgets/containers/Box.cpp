@@ -27,15 +27,22 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Box, WidgetContainer);
-
-            prop::Integer::init("spacing", style, 0);
-            prop::Boolean::init("homogeneous", style, false);
-            prop::Orientation::init("orientation", style, O_HORIZONTAL);
-            prop::SizeConstraints::init("size.constraints", style);
-
-        STYLE_INITIALIZER_END(Box, "Box");
-        LSP_BUILTIN_STYLE_DEPRECATED(Box);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Box, WidgetContainer)
+                // Bind
+                sSpacing.bind("spacing", this);
+                sHomogeneous.bind("homogeneous", this);
+                sOrientation.bind("orientation", this);
+                sConstraints.bind("size.constraints", this);
+                // Configure
+                sSpacing.set(0);
+                sHomogeneous.set(false);
+                sOrientation.set(O_HORIZONTAL);
+                sConstraints.set_all(-1);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Box, "Box");
+        }
 
         const w_class_t Box::metadata   =   { "Box", &WidgetContainer::metadata     };
 

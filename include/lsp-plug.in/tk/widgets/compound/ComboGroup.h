@@ -30,6 +30,27 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(ComboGroup, WidgetContainer)
+                prop::Font                  sFont;
+                prop::Color                 sColor;
+                prop::Color                 sTextColor;
+                prop::Color                 sSpinColor;
+                prop::String                sEmptyText;
+                prop::Boolean               sOpened;
+                prop::Integer               sBorder;
+                prop::Integer               sTextBorder;
+                prop::Integer               sRadius;
+                prop::Integer               sTextRadius;
+                prop::Integer               sSpinSize;
+                prop::Embedding             sEmbedding;
+                prop::Layout                sLayout;
+                prop::SizeConstraints       sSizeConstraints;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Widget group, implements a single widget container that aligns the child widget
          * according to the layout settings. The container ignores allocation() property
@@ -109,6 +130,7 @@ namespace lsp
                 prop::Embedding             sEmbedding;
                 prop::Layout                sLayout;
                 prop::SizeConstraints       sSizeConstraints;
+
                 prop::WidgetList<Widget>    vWidgets;
                 prop::WidgetPtr<ListBoxItem> sSelected;
                 prop::CollectionListener    sIListener;
@@ -187,8 +209,6 @@ namespace lsp
 
                 virtual status_t            on_key_down(const ws::event_t *e);
         };
-
-        STYLE_INITIALIZER_DEF(ComboGroup, WidgetContainer);
 
     } /* namespace tk */
 } /* namespace lsp */

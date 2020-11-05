@@ -26,11 +26,6 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(MessageBox, Window);
-
-        STYLE_INITIALIZER_END(MessageBox, "MessageBox");
-        LSP_BUILTIN_STYLE_DEPRECATED(MessageBox);
-
         const w_class_t MessageBox::metadata        = { "MessageBox", &Window::metadata };
 
         MessageBox::MessageBox(Display *dpy):

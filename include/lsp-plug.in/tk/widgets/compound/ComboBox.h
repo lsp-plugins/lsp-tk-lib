@@ -32,6 +32,30 @@ namespace lsp
     {
         class ListBoxItem;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(ComboBox, WidgetContainer)
+                prop::Integer               sBorderSize;
+                prop::Integer               sBorderGap;
+                prop::Integer               sBorderRadius;
+                prop::Integer               sSpinSize;
+                prop::Integer               sSpinSeparator;
+                prop::Color                 sColor;
+                prop::Color                 sSpinColor;
+                prop::Color                 sTextColor;
+                prop::Color                 sSpinTextColor;
+                prop::Color                 sBorderColor;
+                prop::Color                 sBorderGapColor;
+                prop::Boolean               sOpened;
+                prop::TextFitness           sTextFit;
+                prop::Font                  sFont;
+                prop::SizeConstraints       sConstraints;
+                prop::TextLayout            sTextLayout;
+                prop::String                sEmptyText;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class ComboBox: public WidgetContainer
         {
             private:
@@ -183,8 +207,6 @@ namespace lsp
 
                 virtual status_t            on_submit();
         };
-
-        STYLE_INITIALIZER_DEF(ComboBox, WidgetContainer);
     }
 }
 

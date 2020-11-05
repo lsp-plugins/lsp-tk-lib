@@ -27,13 +27,18 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Align, WidgetContainer);
-
-            prop::Layout::init("layout", style, 0.0f, 0.0f, 0.0f, 0.0f);
-            prop::SizeConstraints::init("size.constraints", style);
-
-        STYLE_INITIALIZER_END(Align, "Align");
-        LSP_BUILTIN_STYLE_DEPRECATED(Align);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Align, WidgetContainer)
+                // Bind
+                sLayout.bind("layout", this);
+                sSizeConstraints.bind("size.constraints", this);
+                // Configure
+                sLayout.set(0.0f, 0.0f, 0.0f, 0.0f);
+                sSizeConstraints.set_all(-1);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Align, "Align");
+        }
 
         const w_class_t Align::metadata         = { "Align", &WidgetContainer::metadata };
 

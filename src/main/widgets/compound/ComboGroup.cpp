@@ -28,25 +28,40 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(ComboGroup, WidgetContainer);
-
-            prop::Font::init("font", style);
-            prop::Color::init("color", style, "#000000");
-            prop::Color::init("text.color", style, "#ffffff");
-            prop::Color::init("spin.color", style, "#ffffff");
-            prop::String::init("text.empty", style);
-            prop::Boolean::init("opened", style, false);
-            prop::Integer::init("border.size", style, 2);
-            prop::Integer::init("text.border", style, 2);
-            prop::Integer::init("border.radius", style, 10);
-            prop::Integer::init("text.radius", style, 10);
-            prop::Integer::init("spin.size", style, 8);
-            prop::Embedding::init("embed", style, false);
-            prop::Layout::init("layout", style, 0.0f, 0.0f, 1.0f, 1.0f);
-            prop::SizeConstraints::init("size.constraints", style);
-
-        STYLE_INITIALIZER_END(ComboGroup, "ComboGroup");
-        LSP_BUILTIN_STYLE_DEPRECATED(ComboGroup);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(ComboGroup, WidgetContainer)
+                // Bind
+                sFont.bind("font", this);
+                sColor.bind("color", this);
+                sTextColor.bind("text.color", this);
+                sSpinColor.bind("spin.color", this);
+                sOpened.bind("opened", this);
+                sBorder.bind("border.size", this);
+                sTextBorder.bind("text.border", this);
+                sRadius.bind("border.radius", this);
+                sTextRadius.bind("text.radius", this);
+                sSpinSize.bind("spin.size", this);
+                sEmbedding.bind("embed", this);
+                sLayout.bind("layout", this);
+                sSizeConstraints.bind("size.constraints", this);
+                // Configure
+                sFont.set_size(12.0f);
+                sColor.set("#000000");
+                sTextColor.set("#ffffff");
+                sSpinColor.set("#ffffff");
+                sOpened.set(false);
+                sBorder.set(2);
+                sTextBorder.set(2);
+                sRadius.set(10);
+                sTextRadius.set(10);
+                sSpinSize.set(8);
+                sEmbedding.set(false);
+                sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
+                sSizeConstraints.set_all(-1);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(ComboGroup, "ComboGroup");
+        }
 
         //-----------------------------------------------------------------------------
         // ComboBox popup window implementation

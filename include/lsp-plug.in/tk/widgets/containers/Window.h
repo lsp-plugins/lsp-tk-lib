@@ -32,6 +32,25 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Window, WidgetContainer)
+                prop::String            sTitle;
+                prop::String            sRole;
+                prop::Color             sBorderColor;
+                prop::BorderStyle       sBorderStyle;
+                prop::Integer           sBorderSize;
+                prop::Float             sBorderRadius;
+                prop::WindowActions     sActions;
+                prop::Position          sPosition;
+                prop::Size              sWindowSize;
+                prop::SizeConstraints   sSizeConstraints;
+                prop::Layout            sLayout;
+                prop::WindowPolicy      sPolicy;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Window: public WidgetContainer
         {
             private:
@@ -231,9 +250,6 @@ namespace lsp
                  */
                 virtual status_t        set_icon(const void *bgra, size_t width, size_t height);
         };
-
-        STYLE_INITIALIZER_DEF(Window, WidgetContainer);
-    
     } /* namespace tk */
 } /* namespace lsp */
 

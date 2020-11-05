@@ -27,28 +27,46 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(ComboBox, WidgetContainer);
-
-            prop::Integer::init("border.size", style, 1);
-            prop::Integer::init("border.gap", style, 1);
-            prop::Integer::init("border.radius", style, 4);
-            prop::Integer::init("spin.size", style, 10);
-            prop::Integer::init("spin.separator", style, 1);
-            prop::Color::init("color", style, "#ffffff");
-            prop::Color::init("spin.color", style, "#ffffff");
-            prop::Color::init("text.color", style, "#000000");
-            prop::Color::init("spin.text.color", style, "#000000");
-            prop::Color::init("border.color", style, "#000000");
-            prop::Color::init("border.gap.color", style, "#cccccc");
-            prop::Boolean::init("opened", style, false);
-            prop::TextFitness::init("text.fit", style);
-            prop::Font::init("font", style);
-            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, 0);
-            prop::TextLayout::init("text.layout", style, -1.0f, 0.0f);
-            prop::String::init("text.empty", style);
-
-        STYLE_INITIALIZER_END(ComboBox, "ComboBox");
-        LSP_BUILTIN_STYLE_DEPRECATED(ComboBox);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(ComboBox, WidgetContainer)
+                // Bind
+                sBorderSize.bind("border.size", this);
+                sBorderGap.bind("border.gap", this);
+                sBorderRadius.bind("border.radius", this);
+                sSpinSize.bind("spin.size", this);
+                sSpinSeparator.bind("spin.separator", this);
+                sColor.bind("color", this);
+                sSpinColor.bind("spin.color", this);
+                sTextColor.bind("text.color", this);
+                sSpinTextColor.bind("spin.text.color", this);
+                sBorderColor.bind("border.color", this);
+                sBorderGapColor.bind("border.gap.color", this);
+                sOpened.bind("opened", this);
+                sTextFit.bind("text.fit", this);
+                sFont.bind("font", this);
+                sConstraints.bind("size.constraints", this);
+                sTextLayout.bind("text.layout", this);
+                // Configure
+                sBorderSize.set(1);
+                sBorderGap.set(1);
+                sBorderRadius.set(4);
+                sSpinSize.set(10);
+                sSpinSeparator.set(1);
+                sColor.set("#ffffff");
+                sSpinColor.set("#ffffff");
+                sTextColor.set("#000000");
+                sSpinTextColor.set("#000000");
+                sBorderColor.set("#000000");
+                sBorderGapColor.set("#cccccc");
+                sOpened.set(false);
+                sTextFit.set(false);
+                sFont.set_size(12.0f);
+                sConstraints.set(-1, -1, -1, 0);
+                sTextLayout.set(-1.0f, 0.0f);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(ComboBox, "ComboBox");
+        }
 
         //-----------------------------------------------------------------------------
         // ComboBox popup window implementation

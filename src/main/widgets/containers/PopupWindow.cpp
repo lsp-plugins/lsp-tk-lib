@@ -27,19 +27,25 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(PopupWindow, Window);
-
-            prop::Rectangle::init("trigger.area", style);
-            prop::Integer::init("trigger.screen", style, -1);
-            prop::Boolean::init("close.auto", style, true);
-            // Overrides
-            prop::BorderStyle::override("border.style", style, ws::BS_POPUP);
-            prop::WindowActions::override("actions", style, ws::WA_POPUP);
-
-        STYLE_INITIALIZER_END(PopupWindow, "PopupWindow");
-        LSP_BUILTIN_STYLE_DEPRECATED(PopupWindow);
-
         const w_class_t PopupWindow::metadata       = { "PopupWindow", &Window::metadata };
+
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(PopupWindow, Window)
+                // Bind
+                sTrgArea.bind("trigger.area", this);
+                sTrgScreen.bind("trigger.screen", this);
+                sAutoClose.bind("close.auto", this);
+                // Configure
+                sTrgArea.set(0, 0, 0, 0);
+                sTrgScreen.set(-1);
+                sAutoClose.set(true);
+                // Override
+                sBorderStyle.set(ws::BS_POPUP);
+                sActions.set(ws::WA_POPUP);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "PopupWindow");
+        }
 
         PopupWindow::PopupWindow(Display *dpy):
             Window(dpy, NULL, -1),

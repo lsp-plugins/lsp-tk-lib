@@ -85,8 +85,6 @@ namespace lsp
                 virtual status_t                remove(Widget *widget);
                 virtual status_t                remove_all();
         };
-
-        STYLE_INITIALIZER_DEF(MessageBox, Window);
     }
 }
 

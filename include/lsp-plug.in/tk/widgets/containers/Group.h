@@ -30,6 +30,23 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Group, Align)
+                prop::Font              sFont;
+                prop::Color             sColor;
+                prop::Color             sTextColor;
+                prop::String            sText;
+                prop::Boolean           sShowText;
+                prop::Integer           sBorder;
+                prop::Integer           sTextBorder;
+                prop::Integer           sRadius;
+                prop::Integer           sTextRadius;
+                prop::Embedding         sEmbedding;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Widget group, implements a single widget container that aligns the child widget
          * according to the layout settings. The container ignores allocation() property
@@ -93,8 +110,6 @@ namespace lsp
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
-
-        STYLE_INITIALIZER_DEF(Group, Align);
     } /* namespace tk */
 } /* namespace lsp */
 

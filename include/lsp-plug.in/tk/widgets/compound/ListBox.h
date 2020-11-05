@@ -32,6 +32,28 @@ namespace lsp
     {
         class ListBoxItem;
         
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(ListBox, WidgetContainer)
+                prop::SizeConstraints           sSizeConstraints;
+                prop::Scrolling                 sHScrollMode;
+                prop::Scrolling                 sVScrollMode;
+                prop::RangeFloat                sHScroll;
+                prop::RangeFloat                sVScroll;
+                prop::Font                      sFont;
+                prop::Integer                   sBorderSize;
+                prop::Integer                   sBorderGap;
+                prop::Integer                   sBorderRadius;
+                prop::Color                     sBorderColor;
+                prop::Color                     sListBgColor;
+                prop::Integer                   sSpacing;
+                prop::Boolean                   sMultiSelect;
+                prop::Integer                   sHScrollSpacing;
+                prop::Integer                   sVScrollSpacing;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class ListBox: public WidgetContainer
         {
             private:
@@ -218,8 +240,6 @@ namespace lsp
 
                 virtual status_t            on_submit();
         };
-    
-        STYLE_INITIALIZER_DEF(ListBox, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

@@ -32,6 +32,27 @@ namespace lsp
     {
         class MenuItem;
 
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Menu, WidgetContainer)
+                prop::Font              sFont;
+                prop::Float             sScrolling;
+                prop::Integer           sBorderSize;
+                prop::Color             sBorderColor;
+                prop::Color             sScrollColor;
+                prop::Color             sScrollSelectedColor;
+                prop::Color             sScrollTextColor;
+                prop::Color             sScrollTextSelectedColor;
+                prop::Integer           sCheckSize;
+                prop::Integer           sCheckBorder;
+                prop::Integer           sCheckBorderGap;
+                prop::Integer           sCheckBorderRadius;
+                prop::Integer           sSeparatorWidth;
+                prop::Integer           sSpacing;
+            LSP_TK_STYLE_DEF_END
+        }
+
         class Menu: public WidgetContainer
         {
             public:
@@ -247,8 +268,6 @@ namespace lsp
 
                 virtual status_t            on_key_up(const ws::event_t *e);
         };
-    
-        STYLE_INITIALIZER_DEF(Menu, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

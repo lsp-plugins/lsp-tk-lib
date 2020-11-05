@@ -30,6 +30,20 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Area3D, Widget)
+                prop::SizeConstraints       sConstraints;   // Size constraints
+                prop::Integer               sBorder;        // Border size
+                prop::Integer               sBorderRadius;  // Border radius
+                prop::Boolean               sGlass;         // Draw glass
+                prop::Color                 sColor;         // Graph color
+                prop::Color                 sBorderColor;   // Color of the border
+                prop::Color                 sGlassColor;    // Color of the glass
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * 3D Area for rendering 3D scenes
          */
@@ -91,8 +105,6 @@ namespace lsp
 
                 virtual status_t            on_draw3d(ws::IR3DBackend *r3d);
         };
-
-        STYLE_INITIALIZER_DEF(Area3D, Widget);
     }
 }
 

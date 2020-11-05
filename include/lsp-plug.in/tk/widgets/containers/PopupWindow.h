@@ -31,6 +31,16 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(PopupWindow, Window)
+                prop::Rectangle                 sTrgArea;           // The restricted area where window should never appear
+                prop::Integer                   sTrgScreen;         // The target screen to appear
+                prop::Boolean                   sAutoClose;         // Automatically close when the pointer delivers event ouside the window
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Popup window used for different pop-up elements like combo boxes, menus, etc
          */
@@ -47,6 +57,7 @@ namespace lsp
                 prop::WidgetPtr<Widget>         sTrgWidget;         // The widget triggered the show
                 prop::Integer                   sTrgScreen;         // The target screen to appear
                 prop::Boolean                   sAutoClose;         // Automatically close when the pointer delivers event ouside the window
+
                 lltl::darray<arrangement_t>     vArrangements;      // Arrangements
                 bool                            bInitialized;       // Initalization flag
 
@@ -82,8 +93,6 @@ namespace lsp
             public:
                 virtual status_t                handle_event(const ws::event_t *e);
         };
-
-        STYLE_INITIALIZER_DEF(PopupWindow, Window);
     }
 }
 

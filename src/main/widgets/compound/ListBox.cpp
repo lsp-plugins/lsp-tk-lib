@@ -27,26 +27,44 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(ListBox, WidgetContainer);
-
-            prop::SizeConstraints::init("size.constraints", style);
-            prop::Scrolling::init("hscroll.mode", style, SCROLL_OPTIONAL);
-            prop::Scrolling::init("vscroll.mode", style, SCROLL_OPTIONAL);
-            prop::RangeFloat::init("hscroll", style, 0.0f, 0.0f, 0.0f);
-            prop::RangeFloat::init("vscroll", style, 0.0f, 0.0f, 0.0f);
-            prop::Font::init("font", style);
-            prop::Integer::init("border.size", style, 1);
-            prop::Integer::init("border.gap", style, 1);
-            prop::Integer::init("border.radius", style, 4);
-            prop::Color::init("border.color", style, "#000000");
-            prop::Color::init("list.bg.color", style, "#ffffff");
-            prop::Integer::init("spacing", style, 0);
-            prop::Boolean::init("selection.multiple", style, false);
-            prop::Integer::init("hscroll.spacing", style, 1);
-            prop::Integer::init("vscroll.spacing", style, 1);
-
-        STYLE_INITIALIZER_END(ListBox, "ListBox");
-        LSP_BUILTIN_STYLE_DEPRECATED(ListBox);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(ListBox, WidgetContainer)
+                // Bind
+                sSizeConstraints.bind("size.constraints", this);
+                sHScrollMode.bind("hscroll.mode", this);
+                sVScrollMode.bind("vscroll.mode", this);
+                sHScroll.bind("hscroll", this);
+                sVScroll.bind("vscroll", this);
+                sFont.bind("font", this);
+                sBorderSize.bind("border.size", this);
+                sBorderGap.bind("border.gap", this);
+                sBorderRadius.bind("border.radius", this);
+                sBorderColor.bind("border.color", this);
+                sListBgColor.bind("list.bg.color", this);
+                sSpacing.bind("spacing", this);
+                sMultiSelect.bind("selection.multiple", this);
+                sHScrollSpacing.bind("hscroll.spacing", this);
+                sVScrollSpacing.bind("vscroll.spacing", this);
+                // Configure
+                sSizeConstraints.set_all(-1);
+                sHScrollMode.set(SCROLL_OPTIONAL);
+                sVScrollMode.set(SCROLL_OPTIONAL);
+                sHScroll.set_all(0.0f, 0.0f, 0.0f);
+                sVScroll.set_all(0.0f, 0.0f, 0.0f);
+                sFont.set_size(12.0f);
+                sBorderSize.set(1);
+                sBorderGap.set(1);
+                sBorderRadius.set(4);
+                sBorderColor.set("#000000");
+                sListBgColor.set("#ffffff");
+                sSpacing.set(0);
+                sMultiSelect.set(false);
+                sHScrollSpacing.set(1);
+                sVScrollSpacing.set(1);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(ListBox, "ListBox");
+        }
 
         const w_class_t ListBox::metadata               = { "ListBox", &WidgetContainer::metadata };
 

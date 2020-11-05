@@ -30,6 +30,15 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Align, WidgetContainer)
+                prop::Layout            sLayout;
+                prop::SizeConstraints   sSizeConstraints;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Alignment, implements a single widget container that aligns the child widget
          * according to the layout settings. The container ignores allocation() property
@@ -72,8 +81,6 @@ namespace lsp
 
                 virtual status_t        remove(Widget *widget);
         };
-
-        STYLE_INITIALIZER_DEF(Align, WidgetContainer);
     
     } /* namespace tk */
 } /* namespace lsp */

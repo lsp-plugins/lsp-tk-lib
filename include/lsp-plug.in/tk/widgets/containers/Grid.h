@@ -30,6 +30,18 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(Grid, WidgetContainer)
+                prop::Integer               sRows;
+                prop::Integer               sColumns;
+                prop::Integer               sHSpacing;
+                prop::Integer               sVSpacing;
+                prop::Orientation           sOrientation;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Grid widget
          */
@@ -215,8 +227,6 @@ namespace lsp
                  */
                 virtual status_t            remove(Widget *widget);
         };
-    
-        STYLE_INITIALIZER_DEF(Grid, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

@@ -28,30 +28,45 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Menu, WidgetContainer);
-
-            // Bind properties
-            prop::Font::init("font", style);
-            prop::Float::init("scrolling", style, 0.0f);
-            prop::Integer::init("border.size", style, 1);
-            prop::Color::init("border.color", style, "#000000");
-            prop::Color::init("scroll.color", style, "#cccccc");
-            prop::Color::init("scroll.text.color", style, "#000000");
-            prop::Color::init("scroll.selected.color", style, "#000088");
-            prop::Color::init("scroll.text.selected.color", style, "#ffffff");
-            prop::Integer::init("check.size", style, 12);
-            prop::Integer::init("check.border", style, 1);
-            prop::Integer::init("check.border.gap", style, 1);
-            prop::Integer::init("check.border.radius", style, 3);
-            prop::Integer::init("separator.width", style, 1);
-            prop::Integer::init("spacing", style, 4);
-
-            // Overrides
-            prop::Boolean::override("visible", style, false);
-            prop::Color::override("bg.color", style, "#cccccc");
-
-        STYLE_INITIALIZER_END(Menu, "Menu");
-        LSP_BUILTIN_STYLE_DEPRECATED(Menu);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Menu, WidgetContainer)
+                // Bind
+                sFont.bind("font", this);
+                sScrolling.bind("scrolling", this);
+                sBorderSize.bind("border.size", this);
+                sBorderColor.bind("border.color", this);
+                sScrollColor.bind("scroll.color", this);
+                sScrollTextColor.bind("scroll.text.color", this);
+                sScrollSelectedColor.bind("scroll.selected.color", this);
+                sScrollTextSelectedColor.bind("scroll.text.selected.color", this);
+                sCheckSize.bind("check.size", this);
+                sCheckBorder.bind("check.border", this);
+                sCheckBorderGap.bind("check.border.gap", this);
+                sCheckBorderRadius.bind("check.border.radius", this);
+                sSeparatorWidth.bind("separator.width", this);
+                sSpacing.bind("spacing", this);
+                // Configure
+                sFont.set_size(12.0f);
+                sScrolling.set(0.0f);
+                sBorderSize.set(1);
+                sBorderColor.set("#000000");
+                sScrollColor.set("#cccccc");
+                sScrollTextColor.set("#000000");
+                sScrollSelectedColor.set("#000088");
+                sScrollTextSelectedColor.set("#ffffff");
+                sCheckSize.set(12);
+                sCheckBorder.set(1);
+                sCheckBorderGap.set(1);
+                sCheckBorderRadius.set(3);
+                sSeparatorWidth.set(1);
+                sSpacing.set(4);
+                // Override
+                sVisibility.set(false);
+                sBgColor.set("#cccccc");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Menu, "Menu");
+        }
 
         //-----------------------------------------------------------------------------
         // Menu window implementation

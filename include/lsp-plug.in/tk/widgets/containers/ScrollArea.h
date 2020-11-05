@@ -30,6 +30,19 @@ namespace lsp
 {
     namespace tk
     {
+        // Style definition
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(ScrollArea, WidgetContainer)
+                prop::Layout            sLayout;
+                prop::SizeConstraints   sSizeConstraints;
+                prop::Scrolling         sHScrollMode;
+                prop::Scrolling         sVScrollMode;
+                prop::RangeFloat        sHScroll;
+                prop::RangeFloat        sVScroll;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Scrolling area widget, provides container that may scroll it's contents if it does not fit into
          * the window
@@ -109,8 +122,6 @@ namespace lsp
 
                 virtual status_t        on_mouse_scroll(const ws::event_t *e);
         };
-    
-        STYLE_INITIALIZER_DEF(ScrollArea, WidgetContainer);
     } /* namespace tk */
 } /* namespace lsp */
 

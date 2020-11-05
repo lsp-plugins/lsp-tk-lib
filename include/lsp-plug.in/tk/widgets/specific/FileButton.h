@@ -47,7 +47,6 @@ namespace lsp
                 prop::Color             sInvLineColor;      // Inverse color of lines
                 prop::Color             sTextColor;         // Text color
                 prop::Color             sInvTextColor;      // Progress color for text
-                prop::WidgetPtr<Menu>   sPopup;             // Popup Menu
             LSP_TK_STYLE_DEF_END
         }
 

@@ -27,18 +27,26 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Grid, WidgetContainer);
-
-            prop::Integer::init("rows", style, 1);
-            prop::Integer::init("columns", style, 1);
-            prop::Integer::init("hspacing", style, 0);
-            prop::Integer::init("vspacing", style, 0);
-            prop::Orientation::init("orientation", style, O_HORIZONTAL);
-            // Overrides
-            prop::Allocation::override("allocation", style, true, true, false, false);
-
-        STYLE_INITIALIZER_END(Grid, "Grid");
-        LSP_BUILTIN_STYLE_DEPRECATED(Grid);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Grid, WidgetContainer)
+                // Bind
+                sRows.bind("rows", this);
+                sColumns.bind("columns", this);
+                sHSpacing.bind("hspacing", this);
+                sVSpacing.bind("vspacing", this);
+                sOrientation.bind("orientation", this);
+                // Configure
+                sRows.set(1);
+                sColumns.set(1);
+                sHSpacing.set(0);
+                sVSpacing.set(0);
+                sOrientation.set(O_HORIZONTAL);
+                // Override
+                sAllocation.set(true, true, false, false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Grid, "Grid");
+        }
 
         const w_class_t Grid::metadata = { "Grid", &WidgetContainer::metadata };
         

@@ -29,25 +29,36 @@ namespace lsp
 {
     namespace tk
     {
-        STYLE_INITIALIZER_BEGIN(Window, WidgetContainer);
-
-            prop::String::init("title", style);
-            prop::String::init("role", style);
-            prop::Color::init("border.color", style, "#000000");
-            prop::BorderStyle::init("border.style", style, ws::BS_SIZEABLE);
-            prop::Integer::init("border.size", style, 0);
-            prop::Float::init("border.radius", style, 2);
-            prop::WindowActions::init("actions", style, ws::WA_ALL);
-            prop::Position::init("position", style, 0, 0);
-            prop::Size::init("size", style, 160, 100);
-            prop::SizeConstraints::init("size.constraints", style, -1, -1, -1, -1);
-            prop::Layout::init("layout", style, 0.0f, 0.0f, 0.0f, 0.0f);
-            prop::WindowPolicy::init("policy", style, WP_NORMAL);
-
-            prop::Boolean::override("visible", style, false);
-
-        STYLE_INITIALIZER_END(Window, "Window");
-        LSP_BUILTIN_STYLE_DEPRECATED(Window);
+        namespace style
+        {
+            LSP_TK_STYLE_IMPL_BEGIN(Window, WidgetContainer)
+                // Bind
+                sBorderColor.bind("border.color", this);
+                sBorderStyle.bind("border.style", this);
+                sBorderSize.bind("border.size", this);
+                sBorderRadius.bind("border.radius", this);
+                sActions.bind("actions", this);
+                sPosition.bind("position", this);
+                sWindowSize.bind("size", this);
+                sSizeConstraints.bind("size.constraints", this);
+                sLayout.bind("layout", this);
+                sPolicy.bind("policy", this);
+                // Configure
+                sBorderColor.set("#000000");
+                sBorderStyle.set(ws::BS_SIZEABLE);
+                sBorderSize.set(0);
+                sBorderRadius.set(2);
+                sActions.set(ws::WA_ALL);
+                sPosition.set(0, 0);
+                sWindowSize.set(160, 100);
+                sSizeConstraints.set(-1, -1, -1, -1);
+                sLayout.set(0.0f, 0.0f, 0.0f, 0.0f);
+                sPolicy.set(WP_NORMAL);
+                // Override
+                sVisibility.set(false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Window, "Window");
+        }
 
         const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };
 
