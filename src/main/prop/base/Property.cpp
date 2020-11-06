@@ -395,9 +395,9 @@ namespace lsp
             }
             else if (min > max)
             {
-                if (v <= min)
+                if (v <= max)
                     return 1.0f;
-                else if (v >= max)
+                else if (v >= min)
                     return 0.0f;
             }
             else // if (min == max)

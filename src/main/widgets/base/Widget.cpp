@@ -71,7 +71,7 @@ namespace lsp
             sPointer(&sProperties),
             sTag(&sProperties)
         {
-            nFlags                  = REDRAW_SURFACE | SIZE_INVALID;
+            nFlags                  = REDRAW_SURFACE | SIZE_INVALID | RESIZE_PENDING;
             pClass                  = &metadata;
             pDisplay                = dpy;
             pParent                 = NULL;

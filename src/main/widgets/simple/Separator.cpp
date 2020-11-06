@@ -72,15 +72,6 @@ namespace lsp
             sSizeRange.bind("size", &sStyle);
             sThickness.bind("thickness", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sOrientation.init(sclass, O_VERTICAL);
-//                sColor.init(sclass, "#000000");
-//                sSizeRange.init(sclass, -1, -1);
-//                sThickness.init(sclass, 1);
-//            }
-
             return STATUS_OK;
         }
 
@@ -100,7 +91,7 @@ namespace lsp
                 query_resize();
         }
 
-        void Separator::render(ws::ISurface *s, bool force)
+        void Separator::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             float bright    = sBrightness.get();
 
@@ -109,7 +100,9 @@ namespace lsp
             color.scale_lightness(bright);
 
             // Draw self
-            s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+            s->clip_begin(area);
+                s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+            s->clip_end();
         }
 
         void Separator::size_request(ws::size_limit_t *r)

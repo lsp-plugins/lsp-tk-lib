@@ -48,7 +48,7 @@ namespace lsp
                 sBorderStyle.set(ws::BS_SIZEABLE);
                 sBorderSize.set(0);
                 sBorderRadius.set(2);
-                sActions.set(ws::WA_ALL);
+                sActions.set_actions(ws::WA_ALL);
                 sPosition.set(0, 0);
                 sWindowSize.set(160, 100);
                 sSizeConstraints.set(-1, -1, -1, -1);

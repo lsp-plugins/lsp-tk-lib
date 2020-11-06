@@ -267,8 +267,9 @@ MTEST_BEGIN("tk.widgets.containers", scrollarea)
                 MTEST_ASSERT(init_widget(wv, vh, id.get_ascii()) == STATUS_OK);
                 MTEST_ASSERT(widgets.push(wv));
                 MTEST_ASSERT(grid->add(wv) == STATUS_OK);
-                wv->size_constraints()->set_min(64, 64);
+                wv->constraints()->set_min(64, 64);
                 wv->bg_color()->set_rgb24(next_color(col));
+                wv->fill()->set(true);
             }
         }
 

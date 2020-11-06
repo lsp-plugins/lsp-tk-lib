@@ -30,6 +30,12 @@ namespace lsp
 {
     namespace tk
     {
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(MessageBox, Window)
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * Message box
          */
@@ -44,11 +50,27 @@ namespace lsp
                 Box                         sVBox;
                 Align                       sBtnAlign;
                 Box                         sBtnBox;
-                Style                       sBtnStyle;
 
+                // Inner properties
                 prop::WidgetList<Button>    vButtons;
                 prop::CollectionListener    sBtnListener;
+
+                // Foreign properties
+                prop::Integer               sVSpacing;
+                prop::Boolean               sHeadingVisibility;
+                prop::Boolean               sMessageVisibility;
+                prop::Padding               sMessagePadding;
                 prop::SizeConstraints       sBtnConstraints;
+                prop::Integer               sBtnSpacing;
+                prop::Layout                sBtnLayout;
+
+                // Overrided styles
+                Style                      *pVBox;
+                Style                      *pHeadingStyle;
+                Style                      *pMessageStyle;
+                Style                      *pBtnAlign;
+                Style                      *pBtnBox;
+                Style                      *pBtnStyle;
 
             public:
                 explicit MessageBox(Display *dpy);
@@ -65,15 +87,18 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Label,                  heading_widget,             &sHeading)
-                LSP_TK_PROPERTY(Label,                  message_widget,             &sMessage)
                 LSP_TK_PROPERTY(String,                 heading,                    sHeading.text())
+                LSP_TK_PROPERTY(Boolean,                heading_visibiity,          &sHeadingVisibility)
+
+                LSP_TK_PROPERTY(Label,                  message_widget,             &sMessage)
                 LSP_TK_PROPERTY(String,                 message,                    sMessage.text())
-                LSP_TK_PROPERTY(Boolean,                heading_visibiity,          sHeading.visibility())
-                LSP_TK_PROPERTY(Boolean,                message_visibiity,          sMessage.visibility())
+                LSP_TK_PROPERTY(Boolean,                message_visibiity,          &sMessageVisibility)
+                LSP_TK_PROPERTY(Padding,                message_padding,            &sMessagePadding)
+
                 LSP_TK_PROPERTY(WidgetList<Button>,     buttons,                    &vButtons)
                 LSP_TK_PROPERTY(SizeConstraints,        button_constraints,         &sBtnConstraints)
-                LSP_TK_PROPERTY(Integer,                button_spacing,             sBtnBox.spacing())
-                LSP_TK_PROPERTY(Padding,                message_padding,            sMessage.padding())
+                LSP_TK_PROPERTY(Integer,                button_spacing,             &sBtnSpacing)
+                LSP_TK_PROPERTY(Layout,                 button_layout,              &sBtnLayout)
 
             public:
                 virtual status_t                add(const char *text, event_handler_t handler = NULL, void *arg = NULL);

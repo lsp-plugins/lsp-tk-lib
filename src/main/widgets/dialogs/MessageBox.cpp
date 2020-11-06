@@ -26,6 +26,92 @@ namespace lsp
 {
     namespace tk
     {
+        namespace style
+        {
+            //-----------------------------------------------------------------
+            // MessageBox style
+            LSP_TK_STYLE_IMPL_BEGIN(MessageBox, Window)
+                // Override
+                sPadding.set(16);
+                sBorderStyle.set(ws::BS_DIALOG);
+                sActions.set_actions(ws::WA_DIALOG);
+                sLayout.set_scale(1.0f);
+                sSizeConstraints.set_all(0);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(MessageBox, "MessageBox");
+
+            //-----------------------------------------------------------------
+            // MessageBox::VBox style
+            LSP_TK_STYLE_DEF_BEGIN(MessageBox__VBox, Box)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(MessageBox__VBox, Box)
+                // Override
+                sSpacing.set(8);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(MessageBox__VBox, "MessageBox::VBox");
+
+            //-----------------------------------------------------------------
+            // MessageBox::Heading style
+            LSP_TK_STYLE_DEF_BEGIN(MessageBox__Heading, Label)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(MessageBox__Heading, Label)
+                // Override
+                sFont.set_size(16.0f);
+                sFont.set_bold(true);
+                sAllocation.set_fill(true);
+                sTextLayout.set(-1.0f, 0.0f);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(MessageBox__Heading, "MessageBox::Heading");
+
+            //-----------------------------------------------------------------
+            // MessageBox::Message style
+            LSP_TK_STYLE_DEF_BEGIN(MessageBox__Message, Label)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(MessageBox__Message, Label)
+                // Override
+                sAllocation.set(true, true);
+                sTextLayout.set(-1.0f, 0.0f);
+                sPadding.set_bottom(8);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(MessageBox__Message, "MessageBox::Message");
+
+            //-----------------------------------------------------------------
+            // MessageBox::ButtonAlign style
+            LSP_TK_STYLE_DEF_BEGIN(MessageBox__ButtonAlign, Align)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(MessageBox__ButtonAlign, Align)
+                // Override
+                sLayout.set(0.0f, 0.0f);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(MessageBox__ButtonAlign, "MessageBox::ButtonAlign");
+
+            //-----------------------------------------------------------------
+            // MessageBox::ButtonBox style
+            LSP_TK_STYLE_DEF_BEGIN(MessageBox__ButtonBox, Box)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(MessageBox__ButtonBox, Box)
+                // Override
+                sSpacing.set(8);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(MessageBox__ButtonBox, "MessageBox::ButtonBox");
+
+            //-----------------------------------------------------------------
+            // MessageBox::Button style
+            LSP_TK_STYLE_DEF_BEGIN(MessageBox__Button, Button)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(MessageBox__Button, Button)
+                // Override
+                sConstraints.set(96, 0, 0, 0);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(MessageBox__Button, "MessageBox::Button");
+        }
+
         const w_class_t MessageBox::metadata        = { "MessageBox", &Window::metadata };
 
         MessageBox::MessageBox(Display *dpy):
@@ -35,9 +121,15 @@ namespace lsp
             sVBox(dpy),
             sBtnAlign(dpy),
             sBtnBox(dpy),
-            sBtnStyle(dpy->schema()),
             vButtons(&sProperties, &sBtnListener)
         {
+            pVBox           = NULL;
+            pHeadingStyle   = NULL;
+            pMessageStyle   = NULL;
+            pBtnAlign       = NULL;
+            pBtnBox         = NULL;
+            pBtnStyle       = NULL;
+
             pClass          = &metadata;
         }
 
@@ -75,83 +167,61 @@ namespace lsp
             // Init listener
             sBtnListener.bind_all(this, on_add_item, on_remove_item);
 
-            // Init button style
-            if (res == STATUS_OK)
-                res = sBtnStyle.init();
-            sBtnConstraints.bind("size.constraints", &sBtnStyle);
+            // Init Styles for nested widgets
+            pVBox           = pDisplay->schema()->get("MessageBox::VBox");
+            if (pVBox == NULL)
+                return STATUS_BAD_STATE;
+            pHeadingStyle   = pDisplay->schema()->get("MessageBox::Heading");
+            if (pHeadingStyle == NULL)
+                return STATUS_BAD_STATE;
+            pMessageStyle   = pDisplay->schema()->get("MessageBox::Message");
+            if (pMessageStyle == NULL)
+                return STATUS_BAD_STATE;
+            pBtnAlign       = pDisplay->schema()->get("MessageBox::ButtonAlign");
+            if (pBtnAlign == NULL)
+                return STATUS_BAD_STATE;
+            pBtnBox         = pDisplay->schema()->get("MessageBox::ButtonBox");
+            if (pBtnBox == NULL)
+                return STATUS_BAD_STATE;
+            pBtnStyle       = pDisplay->schema()->get("MessageBox::Button");
+            if (pBtnStyle == NULL)
+                return STATUS_BAD_STATE;
 
-//            // Override parameters
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                // Overrides
-//                sSizeConstraints.override(sclass, 0, 0, 0, 0);
-//            }
+            // Bind
+            sVSpacing.bind("spacing", pVBox);
+            sHeadingVisibility.bind("visible", pHeadingStyle);
+            sMessageVisibility.bind("visible", pMessageStyle);
+            sMessagePadding.bind("padding", pMessageStyle);
+            sBtnLayout.bind("layout", pBtnAlign);
+            sBtnSpacing.bind("spacing", pBtnBox);
+            sBtnConstraints.bind("size.constraints", pBtnStyle);
 
             // Initialize widgets
-            if (res == STATUS_OK)
-                res = sHeading.init();
-            if (res == STATUS_OK)
-            {
-                sHeading.font()->set_size(16);
-                sHeading.font()->set_bold(true);
-                sHeading.allocation()->set_fill(true);
-                sHeading.text_layout()->set(-1.0f, 0.0f);
-            }
-            if (res == STATUS_OK)
-                res = sMessage.init();
-            if (res == STATUS_OK)
-            {
-                sMessage.allocation()->set_fill(true);
-                sMessage.allocation()->set_expand(true);
-                sMessage.text_layout()->set(-1.0f, 0.0f);
-                sMessage.padding()->set_bottom(8);
-            }
+            LSP_STATUS_ASSERT(sHeading.init());
+            LSP_STATUS_ASSERT(sHeading.style()->add_parent(pHeadingStyle));
+            LSP_STATUS_ASSERT(sMessage.init());
+            LSP_STATUS_ASSERT(sMessage.style()->add_parent(pMessageStyle));
 
             // Initialize containers
-            if (res == STATUS_OK)
-            {
-                if ((res = sVBox.init()) == STATUS_OK)
-                {
-                    sVBox.orientation()->set_vertical();
-                    sVBox.spacing()->set(8);
-                }
-            }
-            if (res == STATUS_OK)
-            {
-                if ((res = sBtnBox.init()) == STATUS_OK)
-                {
-                    sBtnBox.orientation()->set_horizontal();
-                    sBtnBox.spacing()->set(8);
-                }
-            }
-            if (res == STATUS_OK)
-            {
-                if ((res = sBtnAlign.init()) == STATUS_OK)
-                    sBtnAlign.layout()->set(0.0f, 0.0f);
-            }
+            LSP_STATUS_ASSERT(sVBox.init());
+            LSP_STATUS_ASSERT(sVBox.style()->add_parent(pVBox));
+            sVBox.orientation()->set_vertical();
+
+            LSP_STATUS_ASSERT(sBtnAlign.init());
+            LSP_STATUS_ASSERT(sBtnAlign.style()->add_parent(pBtnAlign));
+
+            LSP_STATUS_ASSERT(sBtnBox.init());
+            LSP_STATUS_ASSERT(sBtnBox.style()->add_parent(pBtnBox));
+            sBtnBox.orientation()->set_horizontal();
 
             // Initialize structure
-            if (res == STATUS_OK)
-                res = sBtnAlign.add(&sBtnBox);
-            if (res == STATUS_OK)
-                res = sVBox.add(&sHeading);
-            if (res == STATUS_OK)
-                res = sVBox.add(&sMessage);
-            if (res == STATUS_OK)
-                res = sVBox.add(&sBtnAlign);
+            LSP_STATUS_ASSERT(sBtnAlign.add(&sBtnBox));
+            LSP_STATUS_ASSERT(sVBox.add(&sHeading));
+            LSP_STATUS_ASSERT(sVBox.add(&sMessage));
+            LSP_STATUS_ASSERT(sVBox.add(&sBtnAlign));
 
             // Add child
-            if (res == STATUS_OK)
-                res = Window::add(&sVBox);
-
-            if (res == STATUS_OK)
-            {
-                padding()->set(16);
-                border_style()->set(ws::BS_DIALOG);
-                actions()->set(ws::WA_DIALOG);
-                layout()->set_scale(1.0f);
-            }
+            LSP_STATUS_ASSERT(Window::add(&sVBox));
 
             return res;
         }
@@ -176,7 +246,7 @@ namespace lsp
             if (btn == NULL)
                 return;
 
-            btn->style()->add_parent(&_this->sBtnStyle);
+            btn->style()->add_parent(_this->pBtnStyle);
 
             ssize_t index = _this->vButtons.index_of(btn);
             if (index >= 0)
@@ -196,7 +266,7 @@ namespace lsp
             if (btn == NULL)
                 return;
 
-            btn->style()->remove_parent(&_this->sStyle);
+            btn->style()->remove_parent(_this->pBtnStyle);
 
             // Remove button from list
             btn->slot(SLOT_SUBMIT)->unbind(slot_on_button_submit, _this->self());

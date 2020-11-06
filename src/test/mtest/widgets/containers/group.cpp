@@ -250,7 +250,7 @@ MTEST_BEGIN("tk.widgets.containers", group)
             MTEST_ASSERT(init_widget(wv, vh, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(gr->add(wv) == STATUS_OK);
-            wv->size_constraints()->set_min(32, 32);
+            wv->constraints()->set_min(32, 32);
             wv->bg_color()->set_rgb24(next_color(col));
 
             // Create group with element and with embedding
@@ -270,7 +270,7 @@ MTEST_BEGIN("tk.widgets.containers", group)
             MTEST_ASSERT(init_widget(wv, vh, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(gr->add(wv) == STATUS_OK);
-            wv->size_constraints()->set_min(32, 32);
+            wv->constraints()->set_min(32, 32);
             wv->bg_color()->set_rgb24(next_color(col));
 
             // Create group with element and updated layout
@@ -291,7 +291,7 @@ MTEST_BEGIN("tk.widgets.containers", group)
             MTEST_ASSERT(init_widget(wv, vh, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(gr->add(wv) == STATUS_OK);
-            wv->size_constraints()->set_min(32, 32);
+            wv->constraints()->set_min(32, 32);
             wv->bg_color()->set_rgb24(next_color(col));
         }
 

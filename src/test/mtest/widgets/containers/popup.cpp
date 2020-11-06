@@ -249,7 +249,7 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(vw = new tk::Void(dpy));
                 MTEST_ASSERT(init_widget(vw, vh, NULL, id.get_ascii()) == STATUS_OK);
                 MTEST_ASSERT(widgets.push(vw));
-                vw->size_constraints()->set_min(16, 16);
+                vw->constraints()->set_min(16, 16);
                 vw->bg_color()->set_rgb24(next_color(col));
 
                 pw->add(vw);
@@ -279,7 +279,7 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(vw = new tk::Void(dpy));
                 MTEST_ASSERT(init_widget(vw, vh, NULL, id.get_ascii()) == STATUS_OK);
                 MTEST_ASSERT(widgets.push(vw));
-                vw->size_constraints()->set_min(16, 16);
+                vw->constraints()->set_min(16, 16);
                 vw->bg_color()->set_rgb24(next_color(col));
 
                 pw->add(vw);

@@ -61,7 +61,7 @@ namespace lsp
                 virtual ~Void();
 
             public:
-                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sConstraints)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Boolean,            fill,               &sFill)
 

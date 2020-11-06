@@ -218,7 +218,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void1-1") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(32, 32, -1, -1);
+            wv->constraints()->set(32, 32, -1, -1);
             wv->bg_color()->set_rgb(1.0f, 0.0f, 0.0f);
             wv->allocation()->set_expand();
             wv->pointer()->set(ws::MP_HAND);
@@ -228,7 +228,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void1-2") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(32, 32, 32, 32);
+            wv->constraints()->set(32, 32, 32, 32);
             wv->bg_color()->set_rgb(1.0f, 1.0f, 0.0f);
             wv->allocation()->set_fill();
 
@@ -237,7 +237,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void1-3") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(32, 32, 64, 64);
+            wv->constraints()->set(32, 32, 64, 64);
             wv->bg_color()->set_rgb(0.0f, 1.0f, 0.0f);
             wv->allocation()->set_expand();
         }
@@ -258,7 +258,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void2-1") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(32, 32, -1, -1);
+            wv->constraints()->set(32, 32, -1, -1);
             wv->bg_color()->set_rgb(1.0f, 1.0f, 0.0f);
             wv->allocation()->set_fill();
             wv->padding()->set_all(8);
@@ -268,7 +268,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void2-2") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(48, 32, 48, 32);
+            wv->constraints()->set(48, 32, 48, 32);
             wv->bg_color()->set_rgb(0.0f, 1.0f, 1.0f);
             wv->padding()->set_all(0);
             wv->allocation()->set_fill(false);
@@ -278,7 +278,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void2-3") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(32, 32, 64, 64);
+            wv->constraints()->set(32, 32, 64, 64);
             wv->bg_color()->set_rgb(0.0f, 0.0f, 1.0f);
             wv->allocation()->set_fill();
             wv->padding()->set_all(8);
@@ -297,7 +297,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void3-1") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(32, 32, -1, -1);
+            wv->constraints()->set(32, 32, -1, -1);
             wv->bg_color()->set_rgb(1.0f, 0.5f, 0.0f);
             wv->allocation()->set_fill(false);
 
@@ -306,7 +306,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void3-2") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(32, 32, 32, 32);
+            wv->constraints()->set(32, 32, 32, 32);
             wv->bg_color()->set_rgb(0.0f, 1.0f, 0.0f);
             wv->allocation()->set_fill(false);
 
@@ -315,7 +315,7 @@ MTEST_BEGIN("tk.widgets.containers", box)
             MTEST_ASSERT(init_widget(wv, vh, "void3-3") == STATUS_OK);
             MTEST_ASSERT(widgets.push(wv));
             MTEST_ASSERT(box->add(wv) == STATUS_OK);
-            wv->size_constraints()->set(32, 32, 64, 64);
+            wv->constraints()->set(32, 32, 64, 64);
             wv->bg_color()->set_rgb(0.0f, 1.0f, 1.0f);
             wv->allocation()->set_fill(false);
         }

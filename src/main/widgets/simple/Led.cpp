@@ -84,18 +84,6 @@ namespace lsp
             sHole.bind("hole", &sStyle);
             sLed.bind("led", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sColor.init(sclass, "#cccccc");
-//                sLightColor.init(sclass, "#00cc00");
-//                sHoleColor.init(sclass, "#000000");
-//                sSizeRange.init(sclass, 8, -1);
-//                sOn.init(sclass, false);
-//                sHole.init(sclass, true);
-//                sLed.init(sclass, 8);
-//            }
-
             return STATUS_OK;
         }
 

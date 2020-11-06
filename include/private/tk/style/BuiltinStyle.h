@@ -49,11 +49,9 @@ namespace lsp
         #define LSP_TK_BUILTIN_STYLE_VAR(Name) Style ## Builtin
 
         #define LSP_TK_BUILTIN_STYLE(Style, Name) \
-            LSP_SYMBOL_HIDDEN \
-            StyleFactory<Style> Style ## Factory(Name); \
+            static StyleFactory<Style> Style ## Factory(Name); \
             \
-            LSP_SYMBOL_HIDDEN \
-            BuiltinStyle Style ## Builtin(& Style ## Factory);
+            static BuiltinStyle Style ## Builtin(& Style ## Factory);
 
 
     }

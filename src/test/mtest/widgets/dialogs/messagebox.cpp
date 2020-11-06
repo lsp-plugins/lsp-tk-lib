@@ -151,6 +151,8 @@ MTEST_BEGIN("tk.widgets.dialogs", messagebox)
         mbox->message()->params()->add_cstring("name", h->label);
         mbox->add("OK", slot_ok_submitted, h);
         mbox->add("Cancel", slot_cancel_submitted, h);
+        mbox->buttons()->get(0)->color()->set("#00ff00");
+        mbox->button_layout()->set_halign(1.0f);
 
         mbox->button_constraints()->set_fixed(64, 16);
 

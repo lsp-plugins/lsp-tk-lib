@@ -42,7 +42,7 @@ namespace lsp
                 sAutoClose.set(true);
                 // Override
                 sBorderStyle.set(ws::BS_POPUP);
-                sActions.set(ws::WA_POPUP);
+                sActions.set_actions(ws::WA_POPUP);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(PopupWindow, "PopupWindow");
         }
@@ -73,18 +73,6 @@ namespace lsp
             sTrgWidget.bind(NULL);
             sTrgScreen.bind("trigger.screen", &sStyle);
             sAutoClose.bind("close.auto", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sTrgArea.init(sclass);
-//                sTrgScreen.set(-1);
-//                sAutoClose.init(sclass, true);
-//
-//                // Overrides
-//                sBorderStyle.override(sclass, ws::BS_POPUP);
-//                sActions.override(sclass, ws::WA_POPUP);
-//            }
 
             // Mark as initialized
             bInitialized = true;

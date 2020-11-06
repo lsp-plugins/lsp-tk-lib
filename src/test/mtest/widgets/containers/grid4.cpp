@@ -229,7 +229,7 @@ MTEST_BEGIN("tk.widgets.containers", grid4)
                 MTEST_ASSERT(widgets.push(wv));
                 MTEST_ASSERT(grid->attach(i, i, wv) == STATUS_OK);
                 wv->padding()->set(4);
-                wv->size_constraints()->set(32, 32, -1, -1);
+                wv->constraints()->set(32, 32, -1, -1);
                 wv->allocation()->set_fill(i & 1, i & 2);
                 wv->bg_color()->set_rgb24(next_color(col));
                 wv->pointer()->set(ws::MP_HAND);

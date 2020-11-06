@@ -130,7 +130,7 @@ namespace lsp
                     public:
                         explicit Combo(Display *dpy, Fraction *frac);
 
-                        status_t            init(const char *prefix);
+                        status_t            init(size_t idx);
                         void                destroy();
 
                     public:

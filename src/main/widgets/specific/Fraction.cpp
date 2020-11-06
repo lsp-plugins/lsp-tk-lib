@@ -148,19 +148,13 @@ namespace lsp
             sArea.nHeight   = 0;
         }
 
-        status_t Fraction::Combo::init(const char *prefix)
+        status_t Fraction::Combo::init(size_t idx)
         {
-            char buf[0x40], *end; // should be enough
-            size_t len      = strlen(prefix);
-            end             = &buf[len];
             Style *style    = &pFrac->sStyle;
 
-            memcpy(buf, prefix, len);
-            strcpy(end, ".color");
-            sColor.bind(buf, style);
+            sColor.bind(style::prop_color[idx], style);
             sText.bind(style, pFrac->display()->dictionary());
-            strcpy(end, ".opened");
-            sOpened.bind(buf, style);
+            sOpened.bind(style::prop_opened[idx], style);
 
             // Initialize widgets
             status_t result = sWindow.init();
@@ -323,25 +317,15 @@ namespace lsp
             // Initialize widget
             status_t res = Widget::init();
             if (res == STATUS_OK)
-                res     = sNum.init("num");
+                res     = sNum.init(0);
             if (res == STATUS_OK)
-                res     = sDen.init("den");
+                res     = sDen.init(1);
 
             sColor.bind("color", &sStyle);
             sFont.bind("font", &sStyle);
             sAngle.bind("angle", &sStyle);
             sTextPad.bind("text.pad", &sStyle);
             sThick.bind("thick", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sColor.init(sclass, "#000000");
-//                sFont.init(sclass, 14.0f);
-//                sAngle.init(sclass, 60.0f);
-//                sTextPad.init(sclass, 6);
-//                sThick.init(sclass, 1);
-//            }
 
             // Bind slots
             handler_id_t id;

@@ -261,27 +261,6 @@ namespace lsp
             sConstraints.bind("size.constraints", &sStyle);
             sPopup.bind(widget_ptrcast<Menu>(vMenu[0]));
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sSelection.init(sclass);
-//                sFont.init(sclass);
-//                sColor.init(sclass, "#ffffff");
-//                sBorderColor.init(sclass, "#000000");
-//                sBorderGapColor.init(sclass, "#cccccc");
-//                sCursorColor.init(sclass, "#000000");
-//                sTextColor.init(sclass, "#000000");
-//                sTextSelectedColor.init(sclass, "#ffffff");
-//                sSelectionColor.init(sclass, "#00c0ff");
-//                sBorderSize.init(sclass, 1);
-//                sBorderGapSize.init(sclass, 1);
-//                sBorderRadius.init(sclass, 4);
-//                sConstraints.init(sclass, -1, -1, -1, 8);
-//
-//                // Overrides
-//                sPointer.override(sclass, ws::MP_IBEAM);
-//            }
-
             // Bind slots
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)

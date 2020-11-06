@@ -115,22 +115,6 @@ namespace lsp
             sTextColor.bind("text.color", &sStyle);
             sInvTextColor.bind("text.inv.color", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sValue.init(sclass, 0.0f, 0.0f, 1.0f);
-//                sFont.init(sclass, 10.0f);
-//                sTextLayout.init(sclass, 0.0f, 0.0f);
-//                sTextPadding.init(sclass, 2, 2, 2, 2);
-//                sConstraints.init(sclass);
-//                sColor.init(sclass, "#cccccc");
-//                sInvColor.init(sclass, "#00cc00");
-//                sLineColor.init(sclass, "#000000");
-//                sInvLineColor.init(sclass, "#000000");
-//                sTextColor.init(sclass, "#cccccc");
-//                sInvTextColor.init(sclass, "#00cc00");
-//            }
-
             // Additional slots
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_submit, self());

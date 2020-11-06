@@ -242,7 +242,7 @@ MTEST_BEGIN("tk.widgets.compound", combogroup)
                 MTEST_ASSERT(init_widget(wv, vh, id.get_ascii()) == STATUS_OK);
                 MTEST_ASSERT(widgets.push(wv));
                 MTEST_ASSERT(cg->add(wv) == STATUS_OK);
-                wv->size_constraints()->set_min(32*(i+1), 32*(i+1));
+                wv->constraints()->set_min(32*(i+1), 32*(i+1));
                 wv->bg_color()->set_rgb24(next_color(col));
             }
         }

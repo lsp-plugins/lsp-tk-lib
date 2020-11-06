@@ -112,17 +112,6 @@ namespace lsp
             sHScroll.lock_range();
             sVScroll.lock_range();
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sLayout.init(sclass, -1.0f, -1.0f, 0.0f, 0.0f);
-//                sSizeConstraints.init(sclass);
-//                sHScrollMode.init(sclass, SCROLL_OPTIONAL);
-//                sVScrollMode.init(sclass, SCROLL_OPTIONAL);
-//                sHScroll.init(sclass, 0.0f, 0.0f, 0.0f);
-//                sVScroll.init(sclass, 0.0f, 0.0f, 0.0f);
-//            }
-
             return STATUS_OK;
         }
 

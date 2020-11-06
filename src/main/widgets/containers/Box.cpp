@@ -78,15 +78,6 @@ namespace lsp
             sOrientation.bind("orientation", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sSpacing.init(sclass, 0);
-//                sHomogeneous.init(sclass, false);
-//                sOrientation.init(sclass, O_HORIZONTAL);
-//                sConstraints.init(sclass);
-//            }
-
             // Override settings for hfill and vfill
             sAllocation.set(true, false);
 

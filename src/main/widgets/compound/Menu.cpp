@@ -66,6 +66,16 @@ namespace lsp
                 sBgColor.set("#cccccc");
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Menu, "Menu");
+
+            // Menu::Window style
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "Menu::Window");
+
+            // Menu::Scroll style
+            LSP_TK_STYLE_DEF_BEGIN(Menu__MenuScroll, Widget)
+            LSP_TK_STYLE_DEF_END
+            LSP_TK_STYLE_IMPL_BEGIN(Menu__MenuScroll, Widget)
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(Menu__MenuScroll, "Menu::MenuScroll");
         }
 
         //-----------------------------------------------------------------------------
@@ -349,29 +359,6 @@ namespace lsp
             sSeparatorWidth.bind("separator.width", &sStyle);
             sSpacing.bind("spacing", &sStyle);
             sSubmenu.bind(NULL);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sFont.init(sclass);
-//                sScrolling.init(sclass, 0.0f);
-//                sBorderSize.init(sclass, 1);
-//                sBorderColor.init(sclass, "#000000");
-//                sScrollColor.init(sclass, "#cccccc");
-//                sScrollTextColor.init(sclass, "#000000");
-//                sScrollSelectedColor.init(sclass, "#000088");
-//                sScrollTextSelectedColor.init(sclass, "#ffffff");
-//                sCheckSize.init(sclass, 12);
-//                sCheckBorder.init(sclass, 1);
-//                sCheckBorderGap.init(sclass, 1);
-//                sCheckBorderRadius.init(sclass, 3);
-//                sSeparatorWidth.init(sclass, 1);
-//                sSpacing.init(sclass, 4);
-//
-//                // Overrides
-//                sVisibility.override(sclass, false);
-//                sBgColor.override(sclass, "#cccccc");
-//            }
 
             return STATUS_OK;
         }

@@ -75,7 +75,7 @@ MTEST_BEGIN("tk.sys", display)
         // Initialize void widget
         MTEST_ASSERT(wVoid->init() == STATUS_OK);
         wVoid->bg_color()->set_rgb(0, 1.0, 0.0);
-        wVoid->size_constraints()->set(160, 100, 320, 200);
+        wVoid->constraints()->set(160, 100, 320, 200);
         wVoid->pointer()->set(ws::MP_DRAW);
         MTEST_ASSERT(wnd->add(wVoid) == STATUS_OK);
 

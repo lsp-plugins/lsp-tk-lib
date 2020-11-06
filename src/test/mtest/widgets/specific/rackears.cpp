@@ -259,7 +259,7 @@ MTEST_BEGIN("tk.widgets.specific", rackears)
             MTEST_ASSERT(widgets.push(vw));
             MTEST_ASSERT(grid->add(vw) == STATUS_OK);
 
-            vw->size_constraints()->set_min(320, 200);
+            vw->constraints()->set_min(320, 200);
             vw->allocation()->set_expand(true);
             vw->bg_color()->set_rgb24(0x1b1c22);
 
