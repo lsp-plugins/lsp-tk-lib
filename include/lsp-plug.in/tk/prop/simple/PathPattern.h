@@ -41,14 +41,11 @@ namespace lsp
                 PathPattern & operator = (const PathPattern &);
 
             protected:
-                io::PathPattern     sPattern;
-
-            protected:
-                void                            sync();
+                io::PathPattern                 sPattern;
 
             protected:
                 explicit PathPattern(prop::Listener *listener = NULL);
-                ~PathPattern();
+                virtual ~PathPattern();
 
             public:
                 const io::PathPattern          *pattern() const     { return &sPattern;             }

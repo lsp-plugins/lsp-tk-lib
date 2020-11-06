@@ -36,22 +36,6 @@ namespace lsp
             { NULL, -1 }
         };
 
-        namespace prop
-        {
-            status_t MenuItemType::init(const char *name, Style *style, menu_item_type_t value)
-            {
-                prop::MenuItemType v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init(value);
-            }
-
-            status_t MenuItemType::override(const char *name, Style *style, menu_item_type_t value)
-            {
-                prop::MenuItemType v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override(value);
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

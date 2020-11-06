@@ -25,16 +25,25 @@ namespace lsp
 {
     namespace tk
     {
-        void FileMask::Listener::notify(Property *prop)
+        FileMask::PListener::PListener(FileMask *prop)
         {
-            pMask->commit(prop);
+            nLocks  = 0;
+            pMask   = prop;
+        }
+
+        void FileMask::PListener::notify(Property *prop)
+        {
+            if ((pMask == NULL) || (nLocks > 0))
+                return;
+
+            pMask->sync();
         }
 
         FileMask::FileMask(prop::Listener *listener):
-            sTitle(&sListener),
-            sExtensions(&sListener),
-            sPattern(&sListener),
-            sListener(this)
+            sPListener(this),
+            sTitle(&sPListener),
+            sExtensions(&sPListener),
+            sPattern(&sPListener)
         {
         }
 
@@ -46,7 +55,7 @@ namespace lsp
         status_t FileMask::bind(atom_t property, Style *style, i18n::IDictionary *dict)
         {
             status_t res;
-            sListener.set_lock(true);
+            sPListener.lock();
             {
                 res = sTitle.bind(property, style, dict);
                 if (res == STATUS_OK)
@@ -56,7 +65,7 @@ namespace lsp
                         sTitle.unbind();
                 }
             }
-            sListener.set_lock(false);
+            sPListener.unlock();
 
             if (res == STATUS_OK)
                 sync();
@@ -67,7 +76,7 @@ namespace lsp
         status_t FileMask::bind(const char *property, Style *style, i18n::IDictionary *dict)
         {
             status_t res;
-            sListener.set_lock(true);
+            sPListener.lock();
             {
                 res = sTitle.bind(property, style, dict);
                 if (res == STATUS_OK)
@@ -77,7 +86,7 @@ namespace lsp
                         sTitle.unbind();
                 }
             }
-            sListener.set_lock(false);
+            sPListener.unlock();
 
             if (res == STATUS_OK)
                 sync();
@@ -88,7 +97,7 @@ namespace lsp
         status_t FileMask::bind(const LSPString *property, Style *style, i18n::IDictionary *dict)
         {
             status_t res;
-            sListener.set_lock(true);
+            sPListener.lock();
             {
                 res = sTitle.bind(property, style, dict);
                 if (res == STATUS_OK)
@@ -98,7 +107,7 @@ namespace lsp
                         sTitle.unbind();
                 }
             }
-            sListener.set_lock(false);
+            sPListener.unlock();
 
             if (res == STATUS_OK)
                 sync();
@@ -109,7 +118,7 @@ namespace lsp
         status_t FileMask::unbind()
         {
             status_t res;
-            sListener.set_lock(true);
+            sPListener.lock();
             {
                 res = sTitle.unbind();
                 if (res == STATUS_OK)
@@ -117,27 +126,12 @@ namespace lsp
                 else
                     sExtensions.unbind();
             }
-            sListener.set_lock(false);
+            sPListener.unlock();
 
             if (res == STATUS_OK)
                 sync();
 
             return res;
-        }
-
-        void FileMask::commit(Property *prop)
-        {
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
-        }
-
-        void FileMask::sync()
-        {
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         status_t FileMask::append_extension(LSPString *str)

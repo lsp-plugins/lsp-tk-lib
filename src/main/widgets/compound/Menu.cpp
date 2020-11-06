@@ -689,7 +689,7 @@ namespace lsp
             if ((scroll > st.max_scroll) && (scaling > 0.0f))
             {
                 scroll              = st.max_scroll;
-                sScrolling.commit(scroll / scaling);
+                sScrolling.commit_value(scroll / scaling);
             }
 
             // Allocate space for buttons

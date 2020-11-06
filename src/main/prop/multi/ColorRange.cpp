@@ -46,14 +46,9 @@ namespace lsp
             { NULL,             PT_UNKNOWN  }
         };
 
-        void ColorRange::Listener::notify(atom_t prop)
-        {
-            pValue->commit(prop);
-        }
 
         ColorRange::ColorRange(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             fMin        = 0.0f;
             fMax        = 1.0f;
@@ -65,85 +60,73 @@ namespace lsp
             MultiProperty::unbind(vAtoms, DESC, &sListener);
         }
 
-        void ColorRange::sync()
+        void ColorRange::push()
         {
-            if (pStyle != NULL)
+            char buf[32];
+            LSPString s;
+            lsp::Color &c = sColor;
+
+            // Min and max components
+            if (vAtoms[P_MIN] >= 0)
+                pStyle->set_float(vAtoms[P_MIN], fMin);
+            if (vAtoms[P_MAX] >= 0)
+                pStyle->set_float(vAtoms[P_MAX], fMax);
+
+            // R, G, B components
+            if (vAtoms[P_R] >= 0)
+                pStyle->set_float(vAtoms[P_R], c.red());
+            if (vAtoms[P_G] >= 0)
+                pStyle->set_float(vAtoms[P_G], c.green());
+            if (vAtoms[P_B] >= 0)
+                pStyle->set_float(vAtoms[P_B], c.blue());
+
+            // H, S, L components
+            if (vAtoms[P_H] >= 0)
+                pStyle->set_float(vAtoms[P_H], c.hue());
+            if (vAtoms[P_S] >= 0)
+                pStyle->set_float(vAtoms[P_S], c.saturation());
+            if (vAtoms[P_L] >= 0)
+                pStyle->set_float(vAtoms[P_L], c.lightness());
+
+            // Alpha component
+            if (vAtoms[P_A] >= 0)
+                pStyle->set_float(vAtoms[P_A], c.alpha());
+
+            // Mixed components
+            if (vAtoms[P_RGB] >= 0)
             {
-                pStyle->begin(&sListener);
-                {
-                    char buf[32];
-                    LSPString s;
-                    lsp::Color &c = sColor;
-
-                    // Min and max components
-                    if (vAtoms[P_MIN] >= 0)
-                        pStyle->set_float(vAtoms[P_MIN], fMin);
-                    if (vAtoms[P_MAX] >= 0)
-                        pStyle->set_float(vAtoms[P_MAX], fMax);
-
-                    // R, G, B components
-                    if (vAtoms[P_R] >= 0)
-                        pStyle->set_float(vAtoms[P_R], c.red());
-                    if (vAtoms[P_G] >= 0)
-                        pStyle->set_float(vAtoms[P_G], c.green());
-                    if (vAtoms[P_B] >= 0)
-                        pStyle->set_float(vAtoms[P_B], c.blue());
-
-                    // H, S, L components
-                    if (vAtoms[P_H] >= 0)
-                        pStyle->set_float(vAtoms[P_H], c.hue());
-                    if (vAtoms[P_S] >= 0)
-                        pStyle->set_float(vAtoms[P_S], c.saturation());
-                    if (vAtoms[P_L] >= 0)
-                        pStyle->set_float(vAtoms[P_L], c.lightness());
-
-                    // Alpha component
-                    if (vAtoms[P_A] >= 0)
-                        pStyle->set_float(vAtoms[P_A], c.alpha());
-
-                    // Mixed components
-                    if (vAtoms[P_RGB] >= 0)
-                    {
-                        c.format_rgb(buf, sizeof(buf)/sizeof(char));
-                        pStyle->set_string(vAtoms[P_RGB], buf);
-                    }
-                    if (vAtoms[P_RGBA] >= 0)
-                    {
-                        c.format_rgba(buf, sizeof(buf)/sizeof(char));
-                        pStyle->set_string(vAtoms[P_RGBA], buf);
-                    }
-                    if (vAtoms[P_HSL] >= 0)
-                    {
-                        c.format_hsl(buf, sizeof(buf)/sizeof(char));
-                        pStyle->set_string(vAtoms[P_HSL], buf);
-                    }
-                    if (vAtoms[P_HSLA] >= 0)
-                    {
-                        c.format_hsla(buf, sizeof(buf)/sizeof(char));
-                        pStyle->set_string(vAtoms[P_HSLA], buf);
-                    }
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (c.is_hsl())
-                            c.format_hsla(buf, sizeof(buf)/sizeof(char));
-                        else
-                            c.format_rgba(buf, sizeof(buf)/sizeof(char));
-
-                        s.fmt_ascii("%.10f %.10f %s", fMin, fMax, buf);
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+                c.format_rgb(buf, sizeof(buf)/sizeof(char));
+                pStyle->set_string(vAtoms[P_RGB], buf);
             }
-            if (pListener != NULL)
-                pListener->notify(this);
+            if (vAtoms[P_RGBA] >= 0)
+            {
+                c.format_rgba(buf, sizeof(buf)/sizeof(char));
+                pStyle->set_string(vAtoms[P_RGBA], buf);
+            }
+            if (vAtoms[P_HSL] >= 0)
+            {
+                c.format_hsl(buf, sizeof(buf)/sizeof(char));
+                pStyle->set_string(vAtoms[P_HSL], buf);
+            }
+            if (vAtoms[P_HSLA] >= 0)
+            {
+                c.format_hsla(buf, sizeof(buf)/sizeof(char));
+                pStyle->set_string(vAtoms[P_HSLA], buf);
+            }
+            if (vAtoms[P_VALUE] >= 0)
+            {
+                if (c.is_hsl())
+                    c.format_hsla(buf, sizeof(buf)/sizeof(char));
+                else
+                    c.format_rgba(buf, sizeof(buf)/sizeof(char));
+
+                s.fmt_ascii("%.10f %.10f %s", fMin, fMax, buf);
+                pStyle->set_string(vAtoms[P_VALUE], &s);
+            }
         }
 
         void ColorRange::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             float v;
             lsp::Color &c = sColor;
 
@@ -196,12 +179,6 @@ namespace lsp
                     }
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
         float ColorRange::set_min(float v)
@@ -546,369 +523,6 @@ namespace lsp
             sync();
             src->sync();
         }
-
-        status_t ColorRange::init()
-        {
-            char buf[32];
-
-            pStyle->begin();
-            {
-                // Min, max components
-                pStyle->create_float(vAtoms[P_MIN], fMin);
-                pStyle->create_float(vAtoms[P_MAX], fMax);
-
-                // R, G, B components
-                pStyle->create_float(vAtoms[P_R], sColor.red());
-                pStyle->create_float(vAtoms[P_G], sColor.green());
-                pStyle->create_float(vAtoms[P_B], sColor.blue());
-
-                // H, S, L components
-                pStyle->create_float(vAtoms[P_H], sColor.hue());
-                pStyle->create_float(vAtoms[P_S], sColor.saturation());
-                pStyle->create_float(vAtoms[P_L], sColor.lightness());
-
-                // Alpha component
-                pStyle->create_float(vAtoms[P_A], sColor.alpha());
-
-                // Mixed components
-                sColor.format_rgb(buf, sizeof(buf)/sizeof(char));
-                pStyle->create_string(vAtoms[P_RGB], buf);
-
-                sColor.format_rgba(buf, sizeof(buf)/sizeof(char));
-                pStyle->create_string(vAtoms[P_RGBA], buf);
-
-                sColor.format_hsl(buf, sizeof(buf)/sizeof(char));
-                pStyle->create_string(vAtoms[P_HSL], buf);
-
-                sColor.format_hsla(buf, sizeof(buf)/sizeof(char));
-                pStyle->create_string(vAtoms[P_HSLA], buf);
-
-                if (sColor.is_hsl())
-                    sColor.format_hsla(buf, sizeof(buf)/sizeof(char));
-                else
-                    sColor.format_rgba(buf, sizeof(buf)/sizeof(char));
-                pStyle->create_string(vAtoms[P_VALUE], buf);
-            }
-            pStyle->end();
-
-            return STATUS_OK;
-        }
-
-        status_t ColorRange::override()
-        {
-            char buf[32];
-
-            pStyle->begin();
-            {
-                // Min, max components
-                pStyle->override_float(vAtoms[P_MIN], fMin);
-                pStyle->override_float(vAtoms[P_MAX], fMax);
-
-                // R, G, B components
-                pStyle->override_float(vAtoms[P_R], sColor.red());
-                pStyle->override_float(vAtoms[P_G], sColor.green());
-                pStyle->override_float(vAtoms[P_B], sColor.blue());
-
-                // H, S, L components
-                pStyle->override_float(vAtoms[P_H], sColor.hue());
-                pStyle->override_float(vAtoms[P_S], sColor.saturation());
-                pStyle->override_float(vAtoms[P_L], sColor.lightness());
-
-                // Alpha component
-                pStyle->override_float(vAtoms[P_A], sColor.alpha());
-
-                // Mixed components
-                sColor.format_rgb(buf, sizeof(buf)/sizeof(char));
-                pStyle->override_string(vAtoms[P_RGB], buf);
-
-                sColor.format_rgba(buf, sizeof(buf)/sizeof(char));
-                pStyle->override_string(vAtoms[P_RGBA], buf);
-
-                sColor.format_hsl(buf, sizeof(buf)/sizeof(char));
-                pStyle->override_string(vAtoms[P_HSL], buf);
-
-                sColor.format_hsla(buf, sizeof(buf)/sizeof(char));
-                pStyle->override_string(vAtoms[P_HSLA], buf);
-
-                if (sColor.is_hsl())
-                    sColor.format_hsla(buf, sizeof(buf)/sizeof(char));
-                else
-                    sColor.format_rgba(buf, sizeof(buf)/sizeof(char));
-                pStyle->override_string(vAtoms[P_VALUE], buf);
-            }
-            pStyle->end();
-
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t ColorRange::init(Style *style, const char *value)
-            {
-                if ((style == NULL) || (value == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                ColorRange tmp;
-                status_t res = tmp.set(value);
-                return (res == STATUS_OK) ? init(style, tmp.fMin, tmp.fMax, &tmp.sColor) : res;
-            }
-
-            status_t ColorRange::init(Style *style, const LSPString *value)
-            {
-                if ((style == NULL) || (value == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                ColorRange tmp;
-                status_t res = tmp.set(value);
-                return (res == STATUS_OK) ? init(style, tmp.fMin, tmp.fMax, &tmp.sColor) : res;
-            }
-
-            status_t ColorRange::init(Style *style, const lsp::Color *value)
-            {
-                return init(style, 0.0f, 1.0f, value);
-            }
-
-            status_t ColorRange::init(Style *style, float min, float max, const char *c)
-            {
-                if ((style == NULL) || (c == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                lsp::Color tmp;
-                Color::parse(&tmp, c, style);
-                return init(style, min, max, &tmp);
-            }
-
-            status_t ColorRange::init(Style *style, float min, float max, const LSPString *c)
-            {
-                if ((style == NULL) || (c == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                lsp::Color tmp;
-                Color::parse(&tmp, c->get_utf8(), style);
-                return init(style, min, max, &tmp);
-            }
-
-            status_t ColorRange::init(Style *style, float min, float max, const lsp::Color *c)
-            {
-                if ((style == NULL) || (c == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                char buf[32];
-
-                style->begin();
-                {
-                    // Min, max components
-                    style->create_float(vAtoms[P_MIN], min);
-                    style->create_float(vAtoms[P_MAX], max);
-
-                    // R, G, B components
-                    style->create_float(vAtoms[P_R], c->red());
-                    style->create_float(vAtoms[P_G], c->green());
-                    style->create_float(vAtoms[P_B], c->blue());
-
-                    // H, S, L components
-                    style->create_float(vAtoms[P_H], c->hue());
-                    style->create_float(vAtoms[P_S], c->saturation());
-                    style->create_float(vAtoms[P_L], c->lightness());
-
-                    // Alpha component
-                    style->create_float(vAtoms[P_A], c->alpha());
-
-                    // Mixed components
-                    c->format_rgb(buf, sizeof(buf)/sizeof(char));
-                    style->create_string(vAtoms[P_RGB], buf);
-
-                    c->format_rgba(buf, sizeof(buf)/sizeof(char));
-                    style->create_string(vAtoms[P_RGBA], buf);
-
-                    c->format_hsl(buf, sizeof(buf)/sizeof(char));
-                    style->create_string(vAtoms[P_HSL], buf);
-
-                    c->format_hsla(buf, sizeof(buf)/sizeof(char));
-                    style->create_string(vAtoms[P_HSLA], buf);
-
-                    if (c->is_hsl())
-                        c->format_hsla(buf, sizeof(buf)/sizeof(char));
-                    else
-                        c->format_rgba(buf, sizeof(buf)/sizeof(char));
-                    style->create_string(vAtoms[P_VALUE], buf);
-                }
-                style->end();
-
-                return STATUS_OK;
-            }
-
-            status_t ColorRange::override(Style *style, const char *value)
-            {
-                if ((style == NULL) || (value == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                ColorRange tmp;
-                status_t res = tmp.set(value);
-                return (res == STATUS_OK) ? override(style, tmp.fMin, tmp.fMax, &tmp.sColor) : res;
-            }
-
-            status_t ColorRange::override(Style *style, const LSPString *value)
-            {
-                if ((style == NULL) || (value == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                ColorRange tmp;
-                status_t res = tmp.set(value);
-                return (res == STATUS_OK) ? override(style, tmp.fMin, tmp.fMax, &tmp.sColor) : res;
-            }
-
-            status_t ColorRange::override(Style *style, const lsp::Color *value)
-            {
-                return override(style, 0.0f, 1.0f, value);
-            }
-
-            status_t ColorRange::override(Style *style, float min, float max, const char *c)
-            {
-                if ((style == NULL) || (c == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                lsp::Color tmp;
-                Color::parse(&tmp, c, style);
-                return override(style, min, max, &tmp);
-            }
-
-            status_t ColorRange::override(Style *style, float min, float max, const LSPString *c)
-            {
-                if ((style == NULL) || (c == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                lsp::Color tmp;
-                Color::parse(&tmp, c->get_utf8(), style);
-                return override(style, min, max, &tmp);
-            }
-
-            status_t ColorRange::override(Style *style, float min, float max, const lsp::Color *c)
-            {
-                if ((style == NULL) || (c == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                else if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                char buf[32];
-
-                style->begin();
-                {
-                    // Min, max components
-                    style->override_float(vAtoms[P_MIN], min);
-                    style->override_float(vAtoms[P_MAX], max);
-
-                    // R, G, B components
-                    style->override_float(vAtoms[P_R], c->red());
-                    style->override_float(vAtoms[P_G], c->green());
-                    style->override_float(vAtoms[P_B], c->blue());
-
-                    // H, S, L components
-                    style->override_float(vAtoms[P_H], c->hue());
-                    style->override_float(vAtoms[P_S], c->saturation());
-                    style->override_float(vAtoms[P_L], c->lightness());
-
-                    // Alpha component
-                    style->override_float(vAtoms[P_A], c->alpha());
-
-                    // Mixed components
-                    c->format_rgb(buf, sizeof(buf)/sizeof(char));
-                    style->override_string(vAtoms[P_RGB], buf);
-
-                    c->format_rgba(buf, sizeof(buf)/sizeof(char));
-                    style->override_string(vAtoms[P_RGBA], buf);
-
-                    c->format_hsl(buf, sizeof(buf)/sizeof(char));
-                    style->override_string(vAtoms[P_HSL], buf);
-
-                    c->format_hsla(buf, sizeof(buf)/sizeof(char));
-                    style->override_string(vAtoms[P_HSLA], buf);
-
-                    if (c->is_hsl())
-                        c->format_hsla(buf, sizeof(buf)/sizeof(char));
-                    else
-                        c->format_rgba(buf, sizeof(buf)/sizeof(char));
-                    style->override_string(vAtoms[P_VALUE], buf);
-                }
-                style->end();
-
-                return STATUS_OK;
-            }
-
-            status_t ColorRange::init(const char *name, Style *style, float min, float max, const char *c)
-            {
-                prop::ColorRange v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_range(min, max);
-                v.set_color(c);
-                return v.init();
-            }
-
-            status_t ColorRange::init(const char *name, Style *style, float min, float max, const LSPString *c)
-            {
-                prop::ColorRange v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_range(min, max);
-                v.set_color(c);
-                return v.init();
-            }
-
-            status_t ColorRange::init(const char *name, Style *style, float min, float max, const lsp::Color *c)
-            {
-                prop::ColorRange v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_range(min, max);
-                v.set_color(c);
-                return v.init();
-            }
-
-            status_t ColorRange::override(const char *name, Style *style, float min, float max, const char *c)
-            {
-                prop::ColorRange v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_range(min, max);
-                v.set_color(c);
-                return v.override();
-            }
-
-            status_t ColorRange::override(const char *name, Style *style, float min, float max, const LSPString *c)
-            {
-                prop::ColorRange v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_range(min, max);
-                v.set_color(c);
-                return v.override();
-            }
-
-            status_t ColorRange::override(const char *name, Style *style, float min, float max, const lsp::Color *c)
-            {
-                prop::ColorRange v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_range(min, max);
-                v.set_color(c);
-                return v.override();
-            }
-
-        }
-
     }
 }
 

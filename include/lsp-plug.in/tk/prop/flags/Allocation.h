@@ -95,10 +95,6 @@ namespace lsp
                 public:
                     explicit Allocation(prop::Listener *listener = NULL): tk::Allocation(listener) {};
 
-                protected:
-                    using tk::Allocation::init;
-                    using tk::Allocation::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -111,23 +107,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Allocation::unbind(); };
-
-                    /**
-                     * Initialize default values
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand);
-                    inline status_t     init(Style *style, bool fill, bool expand)              { return init(style, fill, fill, expand, expand); }
-
-                    status_t            override(Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand);
-                    inline status_t     override(Style *style, bool fill, bool expand)              { return override(style, fill, fill, expand, expand); }
-
-
-                    static status_t             init(const char *name, Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand);
-                    static inline status_t      init(const char *name, Style *style, bool fill, bool expand)                { return init(name, style, fill, fill, expand, expand); }
-
-                    static status_t             override(const char *name, Style *style, bool hfill, bool vfill, bool hexpand, bool vexpand);
-                    static inline status_t      override(const char *name, Style *style, bool fill, bool expand)            { return override(name, style, fill, fill, expand, expand); }
             };
         }
     

@@ -49,18 +49,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        TextSelection        *pValue;
-
-                    public:
-                        inline Listener(TextSelection *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -69,18 +57,16 @@ namespace lsp
                 ssize_t             nFirst;             // First element in selection
                 ssize_t             nLast;              // Last element in selection
                 ssize_t             nLimit;             // Selection limit, invisible property
-                Listener            sListener;          // Listener
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
+                virtual void        push();
+                virtual void        commit(atom_t property);
+
                 void                parse(const LSPString *s);
-                status_t            init();
-                status_t            override();
 
             protected:
                 explicit TextSelection(prop::Listener *listener = NULL);
-                ~TextSelection();
+                virtual ~TextSelection();
 
             public:
                 inline ssize_t      first() const               { return nFirst;                            }
@@ -118,10 +104,6 @@ namespace lsp
                 public:
                     explicit TextSelection(prop::Listener *listener = NULL): tk::TextSelection(listener) {};
 
-                protected:
-                    using               tk::TextSelection::init;
-                    using               tk::TextSelection::override;
-
                 public:
                     void                set_limit(ssize_t limit);
 
@@ -136,22 +118,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::TextSelection::unbind(vAtoms, DESC, &sListener); };
-
-                    /**
-                     * Initialize default values
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, float first, float last);
-                    inline status_t     init(Style *style, float first)                 { return init(style, first, first);     }
-                    inline status_t     init(Style *style)                              { return init(style, -1, -1);           }
-
-                    static status_t            init(const char *name, Style *style, float first, float last);
-                    static inline status_t     init(const char *name, Style *style, float first)  { return init(name, style, first, first);     }
-                    static inline status_t     init(const char *name, Style *style)               { return init(name, style, -1, -1);           }
-
-                    static status_t            override(const char *name, Style *style, float first, float last);
-                    static inline status_t     override(const char *name, Style *style, float first)  { return override(name, style, first, first);     }
-                    static inline status_t     override(const char *name, Style *style)               { return override(name, style, -1, -1);           }
             };
         }
 

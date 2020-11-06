@@ -44,18 +44,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        TextFitness        *pValue;
-
-                    public:
-                        inline Listener(TextFitness *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -63,18 +51,16 @@ namespace lsp
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 float               hFit;               // Horizontal fitness
                 float               vFit;               // Vertical fitness
-                Listener            sListener;          // Listener
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
+                virtual void        push();
+                virtual void        commit(atom_t property);
+
                 void                parse(const LSPString *s);
-                status_t            init();
-                status_t            override();
 
             protected:
                 explicit TextFitness(prop::Listener *listener = NULL);
-                ~TextFitness();
+                virtual ~TextFitness();
 
             public:
                 inline float        hfit() const                { return hFit;      }
@@ -102,10 +88,6 @@ namespace lsp
                 public:
                     explicit TextFitness(prop::Listener *listener = NULL): tk::TextFitness(listener) {};
 
-                protected:
-                    using               tk::TextFitness::init;
-                    using               tk::TextFitness::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -118,22 +100,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::TextFitness::unbind(vAtoms, DESC, &sListener); };
-
-                    /**
-                     * Initialize default values
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, float hfit, float vfit);
-                    inline status_t     init(Style *style, float fit)                   { return init(style, fit, fit);         }
-                    inline status_t     init(Style *style)                              { return init(style, 1.0f, 1.0f);       }
-
-                    static status_t            init(const char *name, Style *style, float hfit, float vfit);
-                    static inline status_t     init(const char *name, Style *style, float fit)  { return init(name, style, fit, fit);         }
-                    static inline status_t     init(const char *name, Style *style)             { return init(name, style, 1.0f, 1.0f);       }
-
-                    static status_t            override(const char *name, Style *style, float hfit, float vfit);
-                    static inline status_t     override(const char *name, Style *style, float fit)  { return override(name, style, fit, fit);         }
-                    static inline status_t     override(const char *name, Style *style)             { return override(name, style, 1.0f, 1.0f);       }
             };
         }
     }

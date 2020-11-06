@@ -39,21 +39,7 @@ namespace lsp
                 BitEnum & operator = (const BitEnum &);
 
             protected:
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        BitEnum       *pValue;
-
-                    public:
-                        inline Listener(BitEnum *ptr)             { pValue = ptr;     }
-
-                    public:
-                        virtual void notify(atom_t property);
-                };
-
-            protected:
                 size_t              nValue;
-                Listener            sListener;
                 const prop::enum_t *pEnum;
 
             protected:
@@ -61,22 +47,18 @@ namespace lsp
                 status_t            bind(atom_t property, Style *style);
                 status_t            bind(const char *property, Style *style);
                 status_t            bind(const LSPString *property, Style *style);
-                void                commit();
-                void                sync();
                 size_t              xset(size_t v);
                 size_t              xset(size_t v, bool flag);
-                status_t            init(Style *style, size_t v);
-                status_t            override(Style *style, size_t v);
                 size_t              xunset(size_t v);
                 size_t              xtoggle(size_t v);
                 size_t              xset_all(size_t v);
 
-                status_t            init();
-                status_t            override();
+                virtual void        push();
+                virtual void        commit(atom_t property);
 
             protected:
                 explicit BitEnum(const prop::enum_t *xenum, prop::Listener *listener = NULL);
-                ~BitEnum();
+                virtual ~BitEnum();
 
         };
     }

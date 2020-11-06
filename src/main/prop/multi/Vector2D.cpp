@@ -40,14 +40,8 @@ namespace lsp
             { NULL,             PT_UNKNOWN  }
         };
 
-        void Vector2D::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Vector2D::Vector2D(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             fDX             = 1.0f;
             fDY             = 0.0f;
@@ -62,9 +56,6 @@ namespace lsp
 
         void Vector2D::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             LSPString s;
             float v;
             if ((property == vAtoms[P_DX]) && (pStyle->get_float(vAtoms[P_DX], &v) == STATUS_OK))
@@ -101,45 +92,30 @@ namespace lsp
             // Compound property
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
                 parse(&fDX, &fDY, &fRho, &fPhi, &s);
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Vector2D::sync()
+        void Vector2D::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                {
-                    LSPString s;
+            LSPString s;
 
-                    // Simple components
-                    if (vAtoms[P_DX] >= 0)
-                        pStyle->set_float(vAtoms[P_DX], fDX);
-                    if (vAtoms[P_DY] >= 0)
-                        pStyle->set_float(vAtoms[P_DY], fDY);
-                    if (vAtoms[P_RHO] >= 0)
-                        pStyle->set_float(vAtoms[P_RHO], fRho);
-                    if (vAtoms[P_PHI] >= 0)
-                        pStyle->set_float(vAtoms[P_PHI], fPhi);
-                    if (vAtoms[P_RPHI] >= 0)
-                        pStyle->set_float(vAtoms[P_RPHI], fPhi);
-                    if (vAtoms[P_DPHI] >= 0)
-                        pStyle->set_float(vAtoms[P_DPHI], fPhi * (180.0f / M_PI));
+            // Simple components
+            if (vAtoms[P_DX] >= 0)
+                pStyle->set_float(vAtoms[P_DX], fDX);
+            if (vAtoms[P_DY] >= 0)
+                pStyle->set_float(vAtoms[P_DY], fDY);
+            if (vAtoms[P_RHO] >= 0)
+                pStyle->set_float(vAtoms[P_RHO], fRho);
+            if (vAtoms[P_PHI] >= 0)
+                pStyle->set_float(vAtoms[P_PHI], fPhi);
+            if (vAtoms[P_RPHI] >= 0)
+                pStyle->set_float(vAtoms[P_RPHI], fPhi);
+            if (vAtoms[P_DPHI] >= 0)
+                pStyle->set_float(vAtoms[P_DPHI], fPhi * (180.0f / M_PI));
 
-                    // Compound properties
-                    s.fmt_ascii("{%.10f, %.10f}", fDX, fDY);
-                    if (vAtoms[P_VALUE] >= 0)
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
-                }
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
+            // Compound properties
+            s.fmt_ascii("{%.10f, %.10f}", fDX, fDY);
+            if (vAtoms[P_VALUE] >= 0)
+                pStyle->set_string(vAtoms[P_VALUE], &s);
         }
 
         void Vector2D::calc_cart(float *dx, float *dy, float rho, float phi)
@@ -365,133 +341,6 @@ namespace lsp
             sync();
         }
 
-        status_t Vector2D::init()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-                pStyle->create_float(vAtoms[P_DX], dx());
-                pStyle->create_float(vAtoms[P_DY], dy());
-                pStyle->create_float(vAtoms[P_RHO], rho());
-                pStyle->create_float(vAtoms[P_PHI], phi());
-                pStyle->create_float(vAtoms[P_RPHI], phi());
-                pStyle->create_float(vAtoms[P_DPHI], phi() * (180.0 / M_PI));
-
-                // Compound properties
-                s.fmt_ascii("{%.10f %.10f}", dx(), dy());
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Vector2D::override()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-                pStyle->create_float(vAtoms[P_DX], dx());
-                pStyle->create_float(vAtoms[P_DY], dy());
-                pStyle->create_float(vAtoms[P_RHO], rho());
-                pStyle->create_float(vAtoms[P_PHI], phi());
-                pStyle->create_float(vAtoms[P_RPHI], phi());
-                pStyle->create_float(vAtoms[P_DPHI], phi() * (180.0 / M_PI));
-
-                // Compound properties
-                s.fmt_ascii("{%.10f %.10f}", dx(), dy());
-                pStyle->set_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t Vector2D::init(Style *style, float dx, float dy, float rho, float phi)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    LSPString s;
-                    style->create_float(vAtoms[P_DX], dx);
-                    style->create_float(vAtoms[P_DY], dy);
-                    style->create_float(vAtoms[P_RHO], rho);
-                    style->create_float(vAtoms[P_PHI], phi);
-                    style->create_float(vAtoms[P_RPHI], phi);
-                    style->create_float(vAtoms[P_DPHI], phi * (180 / M_PI));
-
-                    // Compound properties
-                    s.fmt_ascii("{%.10f %.10f}", dx, dy);
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Vector2D::init_cart(Style *style, float dx, float dy)
-            {
-                float rho, phi;
-                calc_polar(&rho, &phi, dx, dy);
-                return init(style, dx, dy, rho, phi);
-            }
-
-            status_t Vector2D::init_rpolar(Style *style, float rho, float phi)
-            {
-                float dx, dy;
-                calc_cart(&dx, &dy, rho, phi);
-                return init(style, dx, dy, rho, phi);
-            }
-
-            status_t Vector2D::init_cart(const char *name, Style *style, float dx, float dy)
-            {
-                prop::Vector2D v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_cart(dx, dy);
-                return v.init();
-            }
-
-            status_t Vector2D::init_rpolar(const char *name, Style *style, float rho, float phi)
-            {
-                prop::Vector2D v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_rpolar(rho, phi);
-                return v.init();
-            }
-
-            status_t Vector2D::init_dpolar(const char *name, Style *style, float rho, float phi)
-            {
-                prop::Vector2D v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_dpolar(rho, phi);
-                return v.init();
-            }
-
-            status_t Vector2D::override_cart(const char *name, Style *style, float dx, float dy)
-            {
-                prop::Vector2D v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_cart(dx, dy);
-                return v.override();
-            }
-
-            status_t Vector2D::override_rpolar(const char *name, Style *style, float rho, float phi)
-            {
-                prop::Vector2D v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_rpolar(rho, phi);
-                return v.override();
-            }
-
-            status_t Vector2D::override_dpolar(const char *name, Style *style, float rho, float phi)
-            {
-                prop::Vector2D v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_dpolar(rho, phi);
-                return v.override();
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

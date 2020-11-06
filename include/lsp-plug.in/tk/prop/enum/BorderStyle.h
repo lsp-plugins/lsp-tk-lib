@@ -61,10 +61,6 @@ namespace lsp
                 public:
                     explicit BorderStyle(prop::Listener *listener = NULL): tk::BorderStyle(listener) {};
 
-                protected:
-                    using tk::Enum::init;
-                    using tk::Enum::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -77,18 +73,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::BorderStyle::unbind(); };
-
-                    /**
-                     * Initialize default value
-                     * @param style style
-                     * @param bs default value
-                     * @return status of operation
-                     */
-                    inline status_t     init(Style *style, ws::border_style_t bs)       { return tk::BorderStyle::init(style, bs);      };
-                    inline status_t     override(Style *style, ws::border_style_t bs)   { return tk::BorderStyle::override(style, bs);  };
-
-                    static status_t     init(const char *name, Style *style, ws::border_style_t value);
-                    static status_t     override(const char *name, Style *style, ws::border_style_t value);
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };

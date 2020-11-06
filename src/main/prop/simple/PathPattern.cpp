@@ -112,12 +112,6 @@ namespace lsp
             src->sync();
             sync();
         }
-
-        void PathPattern::sync()
-        {
-            if (pListener != NULL)
-                pListener->notify(this);
-        }
     }
 }
 

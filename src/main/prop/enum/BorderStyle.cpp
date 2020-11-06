@@ -36,22 +36,6 @@ namespace lsp
             { NULL,             -1                  }
         };
 
-        namespace prop
-        {
-            status_t BorderStyle::init(const char *name, Style *style, ws::border_style_t value)
-            {
-                prop::BorderStyle v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init(value);
-            }
-
-            status_t BorderStyle::override(const char *name, Style *style, ws::border_style_t value)
-            {
-                prop::BorderStyle v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override(value);
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

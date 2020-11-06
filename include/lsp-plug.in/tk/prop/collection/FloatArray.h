@@ -42,11 +42,8 @@ namespace lsp
                 lltl::darray<float>     vItems;
 
             protected:
-                void                sync();
-
-            protected:
                 explicit FloatArray(prop::Listener *listener = NULL);
-                ~FloatArray();
+                virtual ~FloatArray();
 
             public:
                 /**
@@ -213,7 +210,6 @@ namespace lsp
 
                 public:
                     explicit inline FloatArray(prop::Listener *listener = NULL): tk::FloatArray(listener) {}
-                    ~FloatArray() {}
             };
         }
     }

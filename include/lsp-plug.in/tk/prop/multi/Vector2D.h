@@ -54,18 +54,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        Vector2D      *pValue;
-
-                    public:
-                        inline Listener(Vector2D *ptr)             { pValue = ptr;     }
-
-                    public:
-                        virtual void notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -75,13 +63,10 @@ namespace lsp
                 float               fDY;                // Y axis projection
                 float               fRho;               // Length
                 float               fPhi;               // Angle
-                Listener            sListener;
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
-                status_t            init();
-                status_t            override();
+                virtual void        push();
+                virtual void        commit(atom_t property);
 
                 static void         calc_cart  (float *dx, float *dy, float rho, float phi);
                 static void         calc_polar (float *rho, float *phi, float dx, float dy);
@@ -89,7 +74,7 @@ namespace lsp
 
             protected:
                 explicit Vector2D(prop::Listener *listener = NULL);
-                ~Vector2D();
+                virtual ~Vector2D();
 
             public:
                 inline float        dx() const                  { return fDX;                   }
@@ -137,10 +122,6 @@ namespace lsp
                 protected:
                     status_t            init(Style *style, float dx, float dy, float rho, float phi);
 
-                protected:
-                    using               tk::Vector2D::init;
-                    using               tk::Vector2D::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -153,24 +134,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Vector2D::unbind(vAtoms, DESC, &sListener); };
-
-                    /**
-                     * Initialize
-                     * @param style style
-                     * @return status of operation
-                     */
-                    status_t            init_cart(Style *style, float dx, float dy);
-                    status_t            init_rpolar(Style *style, float rho, float phi);
-                    inline status_t     init_dpolar(Style *style, float rho, float phi)  { return init_rpolar(style, rho, phi * (M_PI / 180.0f));   }
-                    inline status_t     init_polar(Style *style, float rho, float phi)   { return init_rpolar(style, rho, phi);                     }
-
-                    static status_t     init_cart(const char *name, Style *style, float dx, float dy);
-                    static status_t     init_rpolar(const char *name, Style *style, float rho, float phi);
-                    static status_t     init_dpolar(const char *name, Style *style, float rho, float phi);
-
-                    static status_t     override_cart(const char *name, Style *style, float dx, float dy);
-                    static status_t     override_rpolar(const char *name, Style *style, float rho, float phi);
-                    static status_t     override_dpolar(const char *name, Style *style, float rho, float phi);
             };
         }
 

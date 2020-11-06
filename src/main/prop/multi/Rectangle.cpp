@@ -35,14 +35,8 @@ namespace lsp
             { NULL,             PT_UNKNOWN  }
         };
 
-        void Rectangle::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Rectangle::Rectangle(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             sRect.nLeft     = 0;
             sRect.nTop      = 0;
@@ -57,9 +51,6 @@ namespace lsp
 
         void Rectangle::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             LSPString s;
             ssize_t v;
             if ((property == vAtoms[P_LEFT]) && (pStyle->get_int(vAtoms[P_LEFT], &v) == STATUS_OK))
@@ -94,41 +85,26 @@ namespace lsp
                         break;
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Rectangle::sync()
+        void Rectangle::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                {
-                    LSPString s;
+            LSPString s;
 
-                    // Simple components
-                    if (vAtoms[P_LEFT] >= 0)
-                        pStyle->set_int(vAtoms[P_LEFT], sRect.nLeft);
-                    if (vAtoms[P_TOP] >= 0)
-                        pStyle->set_int(vAtoms[P_TOP], sRect.nTop);
-                    if (vAtoms[P_WIDTH] >= 0)
-                        pStyle->set_int(vAtoms[P_WIDTH], sRect.nWidth);
-                    if (vAtoms[P_HEIGHT] >= 0)
-                        pStyle->set_int(vAtoms[P_HEIGHT], sRect.nHeight);
+            // Simple components
+            if (vAtoms[P_LEFT] >= 0)
+                pStyle->set_int(vAtoms[P_LEFT], sRect.nLeft);
+            if (vAtoms[P_TOP] >= 0)
+                pStyle->set_int(vAtoms[P_TOP], sRect.nTop);
+            if (vAtoms[P_WIDTH] >= 0)
+                pStyle->set_int(vAtoms[P_WIDTH], sRect.nWidth);
+            if (vAtoms[P_HEIGHT] >= 0)
+                pStyle->set_int(vAtoms[P_HEIGHT], sRect.nHeight);
 
-                    // Compound properties
-                    s.fmt_ascii("%ld %ld %ld %ld", long(sRect.nLeft), long(sRect.nTop), long(sRect.nWidth), long(sRect.nHeight));
-                    if (vAtoms[P_VALUE] >= 0)
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
-                }
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
+            // Compound properties
+            s.fmt_ascii("%ld %ld %ld %ld", long(sRect.nLeft), long(sRect.nTop), long(sRect.nWidth), long(sRect.nHeight));
+            if (vAtoms[P_VALUE] >= 0)
+                pStyle->set_string(vAtoms[P_VALUE], &s);
         }
 
         ssize_t Rectangle::set_left(ssize_t v)
@@ -231,180 +207,6 @@ namespace lsp
             sync();
         }
 
-        status_t Rectangle::init()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-
-                pStyle->create_int(vAtoms[P_LEFT], left());
-                pStyle->create_int(vAtoms[P_TOP], top());
-                pStyle->create_int(vAtoms[P_WIDTH], width());
-                pStyle->create_int(vAtoms[P_HEIGHT], height());
-
-                // Compound properties
-                s.fmt_ascii("%ld %ld %ld %ld", long(left()), long(top()), long(width()), long(height()));
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Rectangle::override()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-
-                pStyle->override_int(vAtoms[P_LEFT], left());
-                pStyle->override_int(vAtoms[P_TOP], top());
-                pStyle->override_int(vAtoms[P_WIDTH], width());
-                pStyle->override_int(vAtoms[P_HEIGHT], height());
-
-                // Compound properties
-                s.fmt_ascii("%ld %ld %ld %ld", long(left()), long(top()), long(width()), long(height()));
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t Rectangle::init(Style *style)
-            {
-                ws::rectangle_t r;
-                r.nLeft     = 0;
-                r.nTop      = 0;
-                r.nWidth    = 0;
-                r.nHeight   = 0;
-
-                return init(style, &r);
-            }
-
-            status_t Rectangle::init(Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height)
-            {
-                ws::rectangle_t r;
-                r.nLeft     = left;
-                r.nTop      = top;
-                r.nWidth    = width;
-                r.nHeight   = height;
-
-                return init(style, &r);
-            }
-
-            status_t Rectangle::init(Style *style, const ws::rectangle_t *rect)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    LSPString s;
-
-                    style->create_int(vAtoms[P_LEFT], rect->nLeft);
-                    style->create_int(vAtoms[P_TOP], rect->nTop);
-                    style->create_int(vAtoms[P_WIDTH], rect->nWidth);
-                    style->create_int(vAtoms[P_HEIGHT], rect->nHeight);
-
-                    // Compound properties
-                    s.fmt_ascii("%ld %ld %ld %ld", long(rect->nLeft), long(rect->nTop), long(rect->nWidth), long(rect->nHeight));
-                    pStyle->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Rectangle::override(Style *style)
-            {
-                ws::rectangle_t r;
-                r.nLeft     = 0;
-                r.nTop      = 0;
-                r.nWidth    = 0;
-                r.nHeight   = 0;
-
-                return init(style, &r);
-            }
-
-            status_t Rectangle::override(Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height)
-            {
-                ws::rectangle_t r;
-                r.nLeft     = left;
-                r.nTop      = top;
-                r.nWidth    = width;
-                r.nHeight   = height;
-
-                return init(style, &r);
-            }
-
-            status_t Rectangle::override(Style *style, const ws::rectangle_t *rect)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    LSPString s;
-
-                    style->override_int(vAtoms[P_LEFT], rect->nLeft);
-                    style->override_int(vAtoms[P_TOP], rect->nTop);
-                    style->override_int(vAtoms[P_WIDTH], rect->nWidth);
-                    style->override_int(vAtoms[P_HEIGHT], rect->nHeight);
-
-                    // Compound properties
-                    s.fmt_ascii("%ld %ld %ld %ld", long(rect->nLeft), long(rect->nTop), long(rect->nWidth), long(rect->nHeight));
-                    pStyle->override_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Rectangle::init(const char *name, Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height)
-            {
-                prop::Rectangle v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(left, top, width, height);
-                return v.init();
-            }
-
-            status_t Rectangle::init(const char *name, Style *style, const ws::rectangle_t *rect)
-            {
-                prop::Rectangle v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(rect);
-                return v.init();
-            }
-
-            status_t Rectangle::init(const char *name, Style *style)
-            {
-                prop::Rectangle v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init();
-            }
-
-            status_t Rectangle::override(const char *name, Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height)
-            {
-                prop::Rectangle v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(left, top, width, height);
-                return v.override();
-            }
-
-            status_t Rectangle::override(const char *name, Style *style, const ws::rectangle_t *rect)
-            {
-                prop::Rectangle v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(rect);
-                return v.override();
-            }
-
-            status_t Rectangle::override(const char *name, Style *style)
-            {
-                prop::Rectangle v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override();
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

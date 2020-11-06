@@ -56,10 +56,6 @@ namespace lsp
                 public:
                     explicit WindowPolicy(prop::Listener *listener = NULL): tk::WindowPolicy(listener) {};
 
-                protected:
-                    using tk::Enum::init;
-                    using tk::Enum::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -72,17 +68,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::WindowPolicy::unbind(); };
-
-                    /**
-                     * Initialize default value
-                     * @param style style
-                     * @param wp default window policy
-                     * @return status of operation
-                     */
-                    inline status_t     init(Style *style, window_policy_t wp)          { return tk::WindowPolicy::init(style, wp);      };
-
-                    static status_t     init(const char *name, Style *style, window_policy_t value);
-                    static status_t     override(const char *name, Style *style, window_policy_t value);
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };

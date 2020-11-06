@@ -50,7 +50,11 @@ namespace lsp
                 }
             }
             style->end();
-            if (pListener != NULL)
+
+            // Push configuration to style if required
+            if ((pStyle != NULL) && (pStyle->sync()))
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
 
             return res;

@@ -26,11 +26,6 @@ namespace lsp
 {
     namespace tk
     {
-        void ColorRanges::Listener::notify(atom_t property)
-        {
-            pList->commit(property);
-        }
-
         void ColorRanges::Changes::notify(Property *prop)
         {
             if (bEnabled)
@@ -39,7 +34,6 @@ namespace lsp
 
         ColorRanges::ColorRanges(prop::Listener *listener):
             SimpleProperty(listener),
-            sListener(this),
             sChanges(this)
         {
         }
@@ -73,24 +67,14 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void ColorRanges::sync()
+        void ColorRanges::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                {
-                    LSPString s;
-                    build_ranges(&s);
+            LSPString s;
+            build_ranges(&s);
 
-                    // Min and max components
-                    if (nAtom >= 0)
-                        pStyle->set_string(nAtom, &s);
-                }
-                pStyle->end();
-            }
-
-            if (pListener != NULL)
-                pListener->notify(this);
+            // Min and max components
+            if (nAtom >= 0)
+                pStyle->set_string(nAtom, &s);
         }
 
         bool ColorRanges::deploy_items(lltl::parray<ColorRange> *out)
@@ -124,10 +108,6 @@ namespace lsp
 
         void ColorRanges::commit(atom_t property)
         {
-            // Handle change: remember new value
-            if (pStyle == NULL)
-                return;
-
             LSPString s;
             if (pStyle->get_string(nAtom, &s) != STATUS_OK)
                 return;
@@ -141,10 +121,6 @@ namespace lsp
                 destroy_items(&a);
             }
             sChanges.enable(true);
-
-            // Delegate event
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         status_t ColorRanges::parse_items(lltl::parray<ColorRange> *out, const LSPString *src)
@@ -340,111 +316,6 @@ namespace lsp
                 sync();
 
             return res;
-        }
-
-        status_t ColorRanges::init()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-                build_ranges(&s);
-                pStyle->create_string(nAtom, &s);
-            }
-            pStyle->end();
-
-            return STATUS_OK;
-        }
-
-        status_t ColorRanges::override()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-                build_ranges(&s);
-                pStyle->override_string(nAtom, &s);
-            }
-            pStyle->end();
-
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t ColorRanges::init(Style *style, const char *value)
-            {
-                if ((style == NULL) || (value == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->create_string(nAtom, value);
-                return STATUS_OK;
-            }
-
-            status_t ColorRanges::init(Style *style, const LSPString *value)
-            {
-                if ((style == NULL) || (value == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->create_string(nAtom, value);
-                return STATUS_OK;
-            }
-
-            status_t ColorRanges::override(Style *style, const char *value)
-            {
-                if ((style == NULL) || (value == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->override_string(nAtom, value);
-                return STATUS_OK;
-            }
-
-            status_t ColorRanges::override(Style *style, const LSPString *value)
-            {
-                if ((style == NULL) || (value == NULL))
-                    return STATUS_BAD_ARGUMENTS;
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->override_string(nAtom, value);
-                return STATUS_OK;
-            }
-
-            status_t ColorRanges::init(const char *name, Style *style, const char *value)
-            {
-                prop::ColorRanges v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_all(value);
-                return v.init();
-            }
-
-            status_t ColorRanges::init(const char *name, Style *style, const LSPString *value)
-            {
-                prop::ColorRanges v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_all(value);
-                return v.init();
-            }
-
-            status_t ColorRanges::override(const char *name, Style *style, const char *value)
-            {
-                prop::ColorRanges v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_all(value);
-                return v.override();
-            }
-
-            status_t ColorRanges::override(const char *name, Style *style, const LSPString *value)
-            {
-                prop::ColorRanges v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_all(value);
-                return v.override();
-            }
         }
     }
 }

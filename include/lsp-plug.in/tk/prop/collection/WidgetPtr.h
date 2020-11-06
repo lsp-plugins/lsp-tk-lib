@@ -53,7 +53,7 @@ namespace lsp
                         pMeta   = &widget_t::metadata;
                     }
 
-                    ~WidgetPtr()
+                    virtual ~WidgetPtr()
                     {
                         pMeta   = NULL;
                     }

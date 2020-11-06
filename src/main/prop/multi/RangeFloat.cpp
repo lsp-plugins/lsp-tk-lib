@@ -35,14 +35,8 @@ namespace lsp
             { NULL,             PT_UNKNOWN  }
         };
 
-        void RangeFloat::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         RangeFloat::RangeFloat(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             fMin        = 0.0f;
             fMax        = 1.0f;
@@ -57,9 +51,6 @@ namespace lsp
 
         void RangeFloat::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             LSPString s;
             float v;
             if ((property == vAtoms[P_RVALUE]) && (pStyle->get_float(vAtoms[P_RVALUE], &v) == STATUS_OK))
@@ -99,39 +90,24 @@ namespace lsp
                         break;
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void RangeFloat::sync()
+        void RangeFloat::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                {
-                    LSPString s;
+            LSPString s;
 
-                    // Simple components
-                    if (vAtoms[P_RVALUE] >= 0)
-                        pStyle->set_float(vAtoms[P_RVALUE], fValue);
-                    if (vAtoms[P_MIN] >= 0)
-                        pStyle->set_float(vAtoms[P_MIN], fMin);
-                    if (vAtoms[P_MAX] >= 0)
-                        pStyle->set_float(vAtoms[P_MAX], fMax);
+            // Simple components
+            if (vAtoms[P_RVALUE] >= 0)
+                pStyle->set_float(vAtoms[P_RVALUE], fValue);
+            if (vAtoms[P_MIN] >= 0)
+                pStyle->set_float(vAtoms[P_MIN], fMin);
+            if (vAtoms[P_MAX] >= 0)
+                pStyle->set_float(vAtoms[P_MAX], fMax);
 
-                    // Compound properties
-                    s.fmt_ascii("%.10f %.10f %.10f", fValue, fMin, fMax);
-                    if (vAtoms[P_VALUE] >= 0)
-                        pStyle->set_string(vAtoms[P_VALUE], &s);
-                }
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
+            // Compound properties
+            s.fmt_ascii("%.10f %.10f %.10f", fValue, fMin, fMax);
+            if (vAtoms[P_VALUE] >= 0)
+                pStyle->set_string(vAtoms[P_VALUE], &s);
         }
 
         float RangeFloat::set_min(float value)
@@ -292,42 +268,6 @@ namespace lsp
             return old;
         }
 
-        status_t RangeFloat::init()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-
-                pStyle->create_float(vAtoms[P_RVALUE], get());
-                pStyle->create_float(vAtoms[P_MIN], min());
-                pStyle->create_float(vAtoms[P_MAX], max());
-
-                // Compound properties
-                s.fmt_ascii("%.10f %.10f %.10f", get(), min(), max());
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t RangeFloat::override()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-
-                pStyle->override_float(vAtoms[P_RVALUE], get());
-                pStyle->override_float(vAtoms[P_MIN], min());
-                pStyle->override_float(vAtoms[P_MAX], max());
-
-                // Compound properties
-                s.fmt_ascii("%.10f %.10f %.10f", get(), min(), max());
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
         namespace prop
         {
             bool RangeFloat::lock_range(bool lock)
@@ -403,48 +343,11 @@ namespace lsp
                 return old;
             }
 
-            float RangeFloat::commit(float value)
+            float RangeFloat::commit_value(float value)
             {
                 float old   = fValue;
                 fValue      = limit(value);
                 return old;
-            }
-
-            status_t RangeFloat::init(Style *style, float value, float min, float max)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    LSPString s;
-
-                    style->create_float(vAtoms[P_RVALUE], value);
-                    style->create_float(vAtoms[P_MIN], min);
-                    style->create_float(vAtoms[P_MAX], max);
-
-                    // Compound properties
-                    s.fmt_ascii("%.10f %.10f %.10f", value, min, max);
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t RangeFloat::init(const char *name, Style *style, float value, float min, float max)
-            {
-                prop::RangeFloat v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_all(value, min, max);
-                return v.init();
-            }
-
-            status_t RangeFloat::override(const char *name, Style *style, float value, float min, float max)
-            {
-                prop::RangeFloat v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_all(value, min, max);
-                return v.override();
             }
         }
     } /* namespace tk */

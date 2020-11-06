@@ -113,10 +113,6 @@ namespace lsp
                 public:
                     explicit WindowActions(prop::Listener *listener = NULL): tk::WindowActions(listener) {};
 
-                protected:
-                    using tk::WindowActions::init;
-                    using tk::WindowActions::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -129,18 +125,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::WindowActions::unbind(); };
-
-                    /**
-                     * Initialize default value
-                     * @param style style
-                     * @param actions set of actions
-                     * @return status of operation
-                     */
-                    inline status_t     init(Style *style, size_t actions)              { return tk::WindowActions::init(style, actions);       }
-                    inline status_t     override(Style *style, size_t actions)          { return tk::WindowActions::override(style, actions);   }
-
-                    static status_t     init(const char *name, Style *style, size_t actions);
-                    static status_t     override(const char *name, Style *style, size_t actions);
             };
         }
     }

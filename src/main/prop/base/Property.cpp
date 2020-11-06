@@ -27,7 +27,62 @@ namespace lsp
 {
     namespace tk
     {
+        Property::Listener::Listener(Property *p)
+        {
+            nLocks      = 0;
+            pProperty   = p;
+        }
+
+        void Property::Listener::notify(atom_t property)
+        {
+            if ((pProperty == NULL) || (property < 0) || (nLocks > 0))
+                return;
+
+            Style *s = pProperty->pStyle;
+            if (s == NULL)
+                return;
+
+            // Commit the change
+            pProperty->commit(property);
+
+            // Push data to style if required
+            if (s->sync())
+                pProperty->sync();
+            else if (pProperty->pListener != NULL)
+                pProperty->pListener->notify(pProperty);
+        }
+
+        Property::Property(prop::Listener *listener) :
+            sListener(this)
+        {
+            pStyle          = NULL;
+            pListener       = listener;
+        }
+
         Property::~Property()
+        {
+        }
+
+        void Property::sync(bool notify)
+        {
+            // Push changes to style
+            if (pStyle != NULL)
+            {
+                pStyle->begin(&sListener);
+                    push();
+                pStyle->end();
+            }
+
+            // Notify listeners about changes
+            if ((pListener != NULL) && (notify))
+                pListener->notify(this);
+        }
+
+        void Property::push()
+        {
+        }
+
+        void Property::commit(atom_t property)
         {
         }
 

@@ -64,8 +64,6 @@ namespace lsp
                 i18n::IDictionary              *pDict;
 
             protected:
-                void                sync();
-                void                commit(Property *prop);
                 status_t            bind(atom_t property, Style *style, i18n::IDictionary *dict);
                 status_t            bind(const char *property, Style *style, i18n::IDictionary *dict);
                 status_t            bind(const LSPString *property, Style *style, i18n::IDictionary *dict);
@@ -77,7 +75,7 @@ namespace lsp
 
             protected:
                 explicit FileFilters(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL);
-                ~FileFilters();
+                virtual ~FileFilters();
 
             public:
                 /**
@@ -200,9 +198,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                            { return tk::FileFilters::unbind();             }
-
-                    static status_t     init(const char *name, Style *style);
-                    static status_t     override(const char *name, Style *style);
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                         }
             };

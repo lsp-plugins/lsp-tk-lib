@@ -55,18 +55,6 @@ namespace lsp
                     F_AUTO_LIMIT    = 1 << 1
                 };
 
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        RangeFloat      *pValue;
-
-                    public:
-                        inline Listener(RangeFloat *ptr)             { pValue = ptr;     }
-
-                    public:
-                        virtual void notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -76,20 +64,18 @@ namespace lsp
                 float               fMin;
                 float               fMax;
                 size_t              nFlags;
-                Listener            sListener;
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
+                virtual void        push();
+                virtual void        commit(atom_t property);
+
                 float               climited(float v) const;
                 float               change(float k, float step);
                 float               do_limit(float v) const;
-                status_t            init();
-                status_t            override();
 
             protected:
                 explicit RangeFloat(prop::Listener *listener = NULL);
-                ~RangeFloat();
+                virtual ~RangeFloat();
 
             public:
                 inline float        get() const             { return do_limit(fValue);      }
@@ -132,10 +118,6 @@ namespace lsp
                 public:
                     explicit RangeFloat(prop::Listener *listener = NULL): tk::RangeFloat(listener) {};
 
-                protected:
-                    using               tk::RangeFloat::init;
-                    using               tk::RangeFloat::override;
-
                 public:
                     bool                lock_range(bool lock = true);
                     inline bool         unlock_range()                                  { return lock_range(false);     }
@@ -145,7 +127,7 @@ namespace lsp
                     void                set_range(float min, float max);
                     float               set_all(float v, float min, float max);
 
-                    float               commit(float v);
+                    float               commit_value(float v);
 
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -158,20 +140,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::RangeFloat::unbind(vAtoms, DESC, &sListener); };
-
-                    /**
-                     * Initialize
-                     * @param style style
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, float value, float min, float max);
-                    inline status_t     init(Style *style, float value)                 { return init(style, value, 0.0f, 1.0f); }
-
-                    static status_t            init(const char *name, Style *style, float value, float min, float max);
-                    static inline status_t     init(const char *name, Style *style, float value)                 { return init(name, style, value, 0.0f, 1.0f); }
-
-                    static status_t            override(const char *name, Style *style, float value, float min, float max);
-                    static inline status_t     override(const char *name, Style *style, float value)             { return override(name, style, value, 0.0f, 1.0f); }
             };
         }
 

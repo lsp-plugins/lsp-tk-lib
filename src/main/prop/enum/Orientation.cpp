@@ -31,22 +31,5 @@ namespace lsp
             { "vertical",   O_VERTICAL },
             { NULL, -1 }
         };
-
-        namespace prop
-        {
-            status_t Orientation::init(const char *name, Style *style, orientation_t value)
-            {
-                prop::Orientation v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init(value);
-            }
-
-            status_t Orientation::override(const char *name, Style *style, orientation_t value)
-            {
-                prop::Orientation v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override(value);
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */

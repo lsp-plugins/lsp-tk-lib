@@ -33,14 +33,8 @@ namespace lsp
             { NULL,         PT_UNKNOWN  }
         };
 
-        void TextFitness::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         TextFitness::TextFitness(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             hFit        = 1.0f;
             vFit        = 1.0f;
@@ -51,7 +45,7 @@ namespace lsp
             MultiProperty::unbind(vAtoms, DESC, &sListener);
         }
 
-        void TextFitness::sync()
+        void TextFitness::push()
         {
             if (pStyle != NULL)
             {
@@ -101,9 +95,6 @@ namespace lsp
 
         void TextFitness::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             float v;
             if ((property == vAtoms[P_HFIT]) && (pStyle->get_float(vAtoms[P_HFIT], &v) == STATUS_OK))
                 hFit        = lsp_limit(v, -1.0f, 1.0f);
@@ -113,12 +104,6 @@ namespace lsp
             LSPString s;
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
                 parse(&s);
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
         float TextFitness::set_hfit(float v)
@@ -163,77 +148,6 @@ namespace lsp
         {
             r->nWidth   = lsp_max(0.0f, hFit * r->nWidth);
             r->nHeight  = lsp_max(0.0f, hFit * r->nHeight);
-        }
-
-        status_t TextFitness::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_float(vAtoms[P_HFIT], hfit());
-                pStyle->create_float(vAtoms[P_VFIT], vfit());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%.4f %.4f", hfit(), vfit());
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t TextFitness::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_float(vAtoms[P_HFIT], hfit());
-                pStyle->override_float(vAtoms[P_VFIT], vfit());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%.4f %.4f", hfit(), vfit());
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t TextFitness::init(Style *style, float halign, float valign)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_float(vAtoms[P_HFIT], halign);
-                    style->create_float(vAtoms[P_VFIT], valign);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%.4f %.4f", halign, valign);
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t TextFitness::init(const char *name, Style *style, float hfit, float vfit)
-            {
-                prop::TextFitness v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(hfit, vfit);
-                return v.init();
-            }
-
-            status_t TextFitness::override(const char *name, Style *style, float hfit, float vfit)
-            {
-                prop::TextFitness v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(hfit, vfit);
-                return v.override();
-            }
-
         }
 
     } /* namespace tk */

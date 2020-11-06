@@ -64,10 +64,6 @@ namespace lsp
                 public:
                     explicit ButtonMode(prop::Listener *listener = NULL): tk::ButtonMode(listener) {};
 
-                protected:
-                    using tk::Enum::init;
-                    using tk::Enum::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -80,17 +76,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::ButtonMode::unbind(); };
-
-                    /**
-                     * Initialize default value
-                     * @param style style
-                     * @param bm default button mode
-                     * @return status of operation
-                     */
-                    inline status_t     init(Style *style, button_mode_t bm)            { return tk::ButtonMode::init(style, bm);       };
-
-                    static status_t     init(const char *name, Style *style, button_mode_t value);
-                    static status_t     override(const char *name, Style *style, button_mode_t value);
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };

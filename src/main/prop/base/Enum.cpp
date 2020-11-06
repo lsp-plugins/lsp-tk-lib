@@ -25,15 +25,8 @@ namespace lsp
 {
     namespace tk
     {
-        void Enum::Listener::notify(atom_t property)
-        {
-            if (property == pValue->nAtom)
-                pValue->commit();
-        }
-
         Enum::Enum(const prop::enum_t *xenum, prop::Listener *listener):
-            SimpleProperty(listener),
-            sListener(this)
+            SimpleProperty(listener)
         {
             nValue      = 0.0f;
             pEnum       = xenum;
@@ -64,12 +57,8 @@ namespace lsp
             return SimpleProperty::bind(property, style, PT_STRING, &sListener);
         }
 
-        void Enum::commit()
+        void Enum::commit(atom_t property)
         {
-            // Handle change: remember new value
-            if (pStyle == NULL)
-                return;
-
             LSPString s;
             if (pStyle->get_string(nAtom, &s) != STATUS_OK)
                 return;
@@ -82,28 +71,16 @@ namespace lsp
 
             // Apply successfully parsed value
             nValue = v;
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Enum::sync()
+        void Enum::push()
         {
             for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
             {
                 if (nValue == e->value)
                 {
-                    if (pStyle != NULL)
-                    {
-                        pStyle->begin(&sListener);
-                            pStyle->set_string(nAtom, e->name);
-                        pStyle->end();
-                    }
-                    if (pListener != NULL)
-                        pListener->notify(this);
+                    pStyle->set_string(nAtom, e->name);
+                    break;
                 }
             }
         }
@@ -119,72 +96,12 @@ namespace lsp
                 if (v == e->value)
                 {
                     nValue  = v;
-                    if (pStyle != NULL)
-                    {
-                        pStyle->begin(&sListener);
-                            pStyle->set_string(nAtom, e->name);
-                        pStyle->end();
-                    }
-                    if (pListener != NULL)
-                        pListener->notify(this);
-                    return prev;
+                    sync();
+                    break;
                 }
             }
 
             return prev;
-        }
-
-        ssize_t Enum::init(Style *style, ssize_t v)
-        {
-            if (pStyle == NULL)
-                return STATUS_BAD_STATE;
-
-            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
-            {
-                if (v == e->value)
-                    style->create_string(nAtom, e->name);
-            }
-            return STATUS_OK;
-        }
-
-        ssize_t Enum::override(Style *style, ssize_t v)
-        {
-            if (pStyle == NULL)
-                return STATUS_BAD_STATE;
-
-            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
-            {
-                if (v == e->value)
-                    style->override_string(nAtom, e->name);
-            }
-            return STATUS_OK;
-        }
-
-
-        ssize_t Enum::init(ssize_t v)
-        {
-            if (pStyle == NULL)
-                return STATUS_BAD_STATE;
-
-            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
-            {
-                if (v == e->value)
-                    pStyle->create_string(nAtom, e->name);
-            }
-            return STATUS_OK;
-        }
-
-        ssize_t Enum::override(ssize_t v)
-        {
-            if (pStyle == NULL)
-                return STATUS_BAD_STATE;
-
-            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
-            {
-                if (v == e->value)
-                    pStyle->override_string(nAtom, e->name);
-            }
-            return STATUS_OK;
         }
 
     } /* namespace tk */

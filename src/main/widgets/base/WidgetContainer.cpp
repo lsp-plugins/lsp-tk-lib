@@ -35,11 +35,6 @@ namespace lsp
             LSP_TK_BUILTIN_STYLE(WidgetContainer, "WidgetContainer");
         }
 
-        STYLE_INITIALIZER_BEGIN(WidgetContainer, Widget);
-            // Nothing
-        STYLE_INITIALIZER_END(WidgetContainer, "WidgetContainer");
-        LSP_BUILTIN_STYLE_DEPRECATED(WidgetContainer);
-
         const w_class_t WidgetContainer::metadata = { "WidgetContainer", &Widget::metadata };
 
         WidgetContainer::WidgetContainer(Display *dpy):

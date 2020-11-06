@@ -52,18 +52,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        Font           *pValue;
-
-                    public:
-                        inline Listener(Font *font)     { pValue = font;    }
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
                 static const prop::enum_t   FLAGS[];
@@ -71,18 +59,15 @@ namespace lsp
             protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 ws::Font            sValue;             // Font parameters
-                Listener            sListener;          // Listener
                 mutable ws::font_parameters_t   sFP;    // Cached font parameters
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
-                status_t            init();
-                status_t            override();
+                virtual void        push();
+                virtual void        commit(atom_t property);
 
             protected:
                 explicit Font(prop::Listener *listener = NULL);
-                ~Font();
+                virtual ~Font();
 
             public:
                 inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); }
@@ -153,10 +138,6 @@ namespace lsp
                 public:
                     explicit Font(prop::Listener *listener = NULL): tk::Font(listener) {};
 
-                protected:
-                    using               tk::Font::init;
-                    using               tk::Font::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -169,22 +150,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Font::unbind(vAtoms, DESC, &sListener); };
-
-                    /**
-                     * Initialize default values
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style);
-                    status_t            init(Style *style, const char *name, float size, size_t flags = 0);
-                    status_t            init(Style *style, float size, size_t flags = 0);
-
-                    static status_t     init(const char *name, Style *style);
-                    static status_t     init(const char *name, Style *style, const char *fname, float size, size_t flags = 0);
-                    static status_t     init(const char *name, Style *style, float size, size_t flags = 0);
-
-                    static status_t     override(const char *name, Style *style);
-                    static status_t     override(const char *name, Style *style, const char *fname, float size, size_t flags = 0);
-                    static status_t     override(const char *name, Style *style, float size, size_t flags = 0);
             };
         }
 

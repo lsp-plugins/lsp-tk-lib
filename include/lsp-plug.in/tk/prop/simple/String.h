@@ -62,23 +62,10 @@ namespace lsp
                         inline void         set_lock(bool lock) { bLock = lock; }
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        String  *pString;
-
-                    public:
-                        explicit inline Listener(String *ps) { pString = ps; }
-
-                    protected:
-                        virtual void        notify(atom_t property);
-                };
-
             protected:
                 LSPString           sText;      // Text used for rendering
                 mutable LSPString   sCache;     // Cache
                 Params              sParams;    // Parameters
-                Listener            sListener;  // Style listener
                 mutable size_t      nFlags;     // Different flags
                 i18n::IDictionary  *pDict;      // Related dictionary
 
@@ -92,15 +79,16 @@ namespace lsp
                 status_t            bind(const char *property, Style *style, i18n::IDictionary *dict);
                 status_t            bind(const LSPString *property, Style *style, i18n::IDictionary *dict);
                 status_t            unbind();
-                void                sync();
                 void                invalidate();
-                void                commit(atom_t property);
                 status_t            commit_raw(const LSPString *s);
                 status_t            commit(const LSPString *s, const expr::Parameters *params);
 
+                virtual void        push();
+                virtual void        commit(atom_t property);
+
             protected:
                 explicit String(prop::Listener *listener = NULL);
-                ~String();
+                virtual ~String();
 
             public:
                 /**
@@ -260,7 +248,6 @@ namespace lsp
                      */
                     inline LSPString   *formatted()                         { return tk::String::fmt_for_update();      }
                     bool                invalidate();
-                    inline void         sync()                              { tk::String::sync();                       }
                     inline status_t     commit_raw(const LSPString *s)      { return tk::String::commit_raw(s);         }
                     inline status_t     commit(const LSPString *s, const expr::Parameters *params = NULL)   { return tk::String::commit(s, params);     }
 
@@ -276,9 +263,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                            { return tk::String::unbind();              }
-
-                    static status_t     init(const char *name, Style *style);
-                    static status_t     override(const char *name, Style *style);
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };

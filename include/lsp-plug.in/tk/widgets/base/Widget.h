@@ -668,8 +668,6 @@ namespace lsp
                  */
                 virtual status_t        on_realized(const ws::rectangle_t *size);
         };
-
-        STYLE_INITIALIZER_DEF(Widget, );
     }
 
     // LLTL interface specifications for widget

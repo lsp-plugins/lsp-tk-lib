@@ -35,14 +35,8 @@ namespace lsp
             { NULL,             PT_UNKNOWN  }
         };
 
-        void SizeConstraints::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         SizeConstraints::SizeConstraints(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             sValue.nMinWidth    = -1;
             sValue.nMinHeight   = -1;
@@ -59,9 +53,6 @@ namespace lsp
 
         void SizeConstraints::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             ws::size_limit_t &p   = sValue;
 
             ssize_t v;
@@ -94,44 +85,29 @@ namespace lsp
                     p.nMaxHeight    = lsp_max(xv[1], -1);
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void SizeConstraints::sync()
+        void SizeConstraints::push()
         {
-            if (pStyle != NULL)
+            ws::size_limit_t &p       = sValue;
+
+            // Simple components
+            if (vAtoms[P_MIN_WIDTH] >= 0)
+                pStyle->set_int(vAtoms[P_MIN_WIDTH], p.nMinWidth);
+            if (vAtoms[P_MIN_HEIGHT] >= 0)
+                pStyle->set_int(vAtoms[P_MIN_HEIGHT], p.nMinHeight);
+            if (vAtoms[P_MAX_WIDTH] >= 0)
+                pStyle->set_int(vAtoms[P_MAX_WIDTH], p.nMaxWidth);
+            if (vAtoms[P_MAX_HEIGHT] >= 0)
+                pStyle->set_int(vAtoms[P_MAX_HEIGHT], p.nMaxHeight);
+
+            // Compound objects
+            LSPString s;
+            if (vAtoms[P_VALUE] >= 0)
             {
-                pStyle->begin(&sListener);
-                {
-                    ws::size_limit_t &p       = sValue;
-
-                    // Simple components
-                    if (vAtoms[P_MIN_WIDTH] >= 0)
-                        pStyle->set_int(vAtoms[P_MIN_WIDTH], p.nMinWidth);
-                    if (vAtoms[P_MIN_HEIGHT] >= 0)
-                        pStyle->set_int(vAtoms[P_MIN_HEIGHT], p.nMinHeight);
-                    if (vAtoms[P_MAX_WIDTH] >= 0)
-                        pStyle->set_int(vAtoms[P_MAX_WIDTH], p.nMaxWidth);
-                    if (vAtoms[P_MAX_HEIGHT] >= 0)
-                        pStyle->set_int(vAtoms[P_MAX_HEIGHT], p.nMaxHeight);
-
-                    // Compound objects
-                    LSPString s;
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nMinWidth), long(p.nMinHeight), long(p.nMaxWidth), long(p.nMaxHeight)))
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+                if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nMinWidth), long(p.nMinHeight), long(p.nMaxWidth), long(p.nMaxHeight)))
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         void SizeConstraints::get(ssize_t *min_width, ssize_t *min_height, ssize_t *max_width, ssize_t *max_height) const
@@ -461,176 +437,6 @@ namespace lsp
                 dst->nHeight    = sc->nMinWidth;
         }
 
-        status_t SizeConstraints::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_int(vAtoms[P_MIN_WIDTH], min_width());
-                pStyle->create_int(vAtoms[P_MIN_HEIGHT], min_height());
-                pStyle->create_int(vAtoms[P_MAX_WIDTH], max_width());
-                pStyle->create_int(vAtoms[P_MAX_HEIGHT], max_height());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld %ld %ld", long(min_width()), long(min_height()), long(max_width()), long(max_height()));
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t SizeConstraints::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_int(vAtoms[P_MIN_WIDTH], min_width());
-                pStyle->override_int(vAtoms[P_MIN_HEIGHT], min_height());
-                pStyle->override_int(vAtoms[P_MAX_WIDTH], max_width());
-                pStyle->override_int(vAtoms[P_MAX_HEIGHT], max_height());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld %ld %ld", long(min_width()), long(min_height()), long(max_width()), long(max_height()));
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t SizeConstraints::init(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
-            {
-                ws::size_limit_t sl;
-                sl.nMinWidth    = min_width;
-                sl.nMinHeight   = min_height;
-                sl.nMaxWidth    = max_width;
-                sl.nMaxHeight   = max_height;
-
-                return init(style, &sl);
-            }
-
-            status_t SizeConstraints::init(Style *style)
-            {
-                ws::size_limit_t sl;
-                sl.nMinWidth    = -1;
-                sl.nMinHeight   = -1;
-                sl.nMaxWidth    = -1;
-                sl.nMaxHeight   = -1;
-
-                return init(style, &sl);
-            }
-
-            status_t SizeConstraints::init(Style *style, const ws::size_limit_t *p)
-            {
-                if ((pStyle == NULL) || (p == NULL))
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_int(vAtoms[P_MIN_WIDTH], p->nMinWidth);
-                    style->create_int(vAtoms[P_MIN_HEIGHT], p->nMinHeight);
-                    style->create_int(vAtoms[P_MAX_WIDTH], p->nMaxWidth);
-                    style->create_int(vAtoms[P_MAX_HEIGHT], p->nMaxHeight);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nMinWidth), long(p->nMinHeight), long(p->nMaxWidth), long(p->nMaxHeight));
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t SizeConstraints::override(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
-            {
-                ws::size_limit_t sl;
-                sl.nMinWidth    = min_width;
-                sl.nMinHeight   = min_height;
-                sl.nMaxWidth    = max_width;
-                sl.nMaxHeight   = max_height;
-
-                return override(style, &sl);
-            }
-
-            status_t SizeConstraints::override(Style *style)
-            {
-                ws::size_limit_t sl;
-                sl.nMinWidth    = -1;
-                sl.nMinHeight   = -1;
-                sl.nMaxWidth    = -1;
-                sl.nMaxHeight   = -1;
-
-                return override(style, &sl);
-            }
-
-            status_t SizeConstraints::override(Style *style, const ws::size_limit_t *p)
-            {
-                if ((pStyle == NULL) || (p == NULL))
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->override_int(vAtoms[P_MIN_WIDTH], p->nMinWidth);
-                    style->override_int(vAtoms[P_MIN_HEIGHT], p->nMinHeight);
-                    style->override_int(vAtoms[P_MAX_WIDTH], p->nMaxWidth);
-                    style->override_int(vAtoms[P_MAX_HEIGHT], p->nMaxHeight);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nMinWidth), long(p->nMinHeight), long(p->nMaxWidth), long(p->nMaxHeight));
-                    style->override_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t SizeConstraints::init(const char *name, Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
-            {
-                prop::SizeConstraints v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(min_width, min_height, max_width, max_height);
-                return v.init();
-            }
-
-            status_t SizeConstraints::init(const char *name, Style *style, const ws::size_limit_t *p)
-            {
-                prop::SizeConstraints v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(p);
-                return v.init();
-            }
-
-            status_t SizeConstraints::init(const char *name, Style *style)
-            {
-                prop::SizeConstraints v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init();
-            }
-
-            status_t SizeConstraints::override(const char *name, Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height)
-            {
-                prop::SizeConstraints v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(min_width, min_height, max_width, max_height);
-                return v.override();
-            }
-
-            status_t SizeConstraints::override(const char *name, Style *style, const ws::size_limit_t *p)
-            {
-                prop::SizeConstraints v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(p);
-                return v.override();
-            }
-
-            status_t SizeConstraints::override(const char *name, Style *style)
-            {
-                prop::SizeConstraints v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override();
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

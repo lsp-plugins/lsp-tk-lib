@@ -32,22 +32,6 @@ namespace lsp
             { NULL,             -1                  }
         };
 
-        namespace prop
-        {
-            status_t FileDialogMode::init(const char *name, Style *style, file_dialog_mode_t value)
-            {
-                prop::FileDialogMode v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init(value);
-            }
-
-            status_t FileDialogMode::override(const char *name, Style *style, file_dialog_mode_t value)
-            {
-                prop::FileDialogMode v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override(value);
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

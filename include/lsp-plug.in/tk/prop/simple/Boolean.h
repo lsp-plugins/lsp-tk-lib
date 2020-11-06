@@ -39,32 +39,15 @@ namespace lsp
                 Boolean & operator = (const Boolean &);
 
             protected:
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        Boolean      *pValue;
-
-                    public:
-                        inline Listener(Boolean *ptr)             { pValue = ptr;     }
-
-                    public:
-                        virtual void notify(atom_t property);
-                };
-
-            protected:
                 bool                bValue;
-                Listener            sListener;
-
-                status_t            init(bool value);
-                status_t            override(bool value);
 
             protected:
-                void                commit();
-                void                sync();
+                virtual void        commit(atom_t property);
+                virtual void        push();
 
             protected:
                 explicit Boolean(prop::Listener *listener = NULL);
-                ~Boolean();
+                virtual ~Boolean();
 
             public:
                 /**
@@ -120,10 +103,6 @@ namespace lsp
                 public:
                     explicit inline Boolean(prop::Listener *listener = NULL): tk::Boolean(listener) {};
 
-                protected:
-                    using tk::Boolean::init;
-                    using tk::Boolean::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -138,25 +117,11 @@ namespace lsp
                     inline status_t     unbind()                                        { return SimpleProperty::unbind(&sListener); };
 
                     /**
-                     * Init default value
-                     * @param style style
-                     * @param value default value
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, bool value);
-                    status_t            override(Style *style, bool value);
-
-                    static status_t     init(const char *name, Style *style, bool value);
-                    static status_t     override(const char *name, Style *style, bool value);
-
-                    status_t            create(const char *name, Style *style, bool value);
-
-                    /**
                      * Commit value
                      * @param value value to commit
                      * @return previous value
                      */
-                    bool                commit(bool value);
+                    bool                commit_value(bool value);
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };

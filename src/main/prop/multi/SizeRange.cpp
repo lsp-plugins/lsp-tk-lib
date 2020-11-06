@@ -33,14 +33,8 @@ namespace lsp
             { NULL,             PT_UNKNOWN  }
         };
 
-        void SizeRange::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         SizeRange::SizeRange(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             nMin            = -1;
             nMax            = -1;
@@ -53,9 +47,6 @@ namespace lsp
 
         void SizeRange::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             ssize_t v;
             if ((property == vAtoms[P_MIN]) && (pStyle->get_int(vAtoms[P_MIN], &v) == STATUS_OK))
                 nMin            = lsp_max(v, -1);
@@ -78,38 +69,23 @@ namespace lsp
                     nMax            = nMin;
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void SizeRange::sync()
+        void SizeRange::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                {
-                    // Simple components
-                    if (vAtoms[P_MIN] >= 0)
-                        pStyle->set_int(vAtoms[P_MIN], nMin);
-                    if (vAtoms[P_MAX] >= 0)
-                        pStyle->set_int(vAtoms[P_MAX], nMax);
+            // Simple components
+            if (vAtoms[P_MIN] >= 0)
+                pStyle->set_int(vAtoms[P_MIN], nMin);
+            if (vAtoms[P_MAX] >= 0)
+                pStyle->set_int(vAtoms[P_MAX], nMax);
 
-                    // Compound objects
-                    LSPString s;
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (s.fmt_ascii("%ld %ld ", long(nMin), long(nMax)))
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+            // Compound objects
+            LSPString s;
+            if (vAtoms[P_VALUE] >= 0)
+            {
+                if (s.fmt_ascii("%ld %ld ", long(nMin), long(nMax)))
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         ssize_t SizeRange::set_min(ssize_t value)
@@ -183,75 +159,6 @@ namespace lsp
             r->nMinHeight       = r->nMinWidth;
         }
 
-        status_t SizeRange::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_int(vAtoms[P_MIN], min());
-                pStyle->create_int(vAtoms[P_MAX], max());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld ", long(min()), long(max()));
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t SizeRange::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_int(vAtoms[P_MIN], min());
-                pStyle->override_int(vAtoms[P_MAX], max());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld ", long(min()), long(max()));
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t SizeRange::init(Style *style, ssize_t min, ssize_t max)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_int(vAtoms[P_MIN], min);
-                    style->create_int(vAtoms[P_MAX], max);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%ld %ld ", long(min), long(max));
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t SizeRange::init(const char *name, Style *style, ssize_t min, ssize_t max)
-            {
-                prop::SizeRange v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(min, max);
-                return v.init();
-            }
-
-            status_t SizeRange::override(const char *name, Style *style, ssize_t min, ssize_t max)
-            {
-                prop::SizeRange v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(min, max);
-                return v.override();
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

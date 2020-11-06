@@ -61,22 +61,6 @@ namespace lsp
             { "table_cell",     ws::MP_TABLE_CELL       },
             { NULL,             -1 }
         };
-        
-        namespace prop
-        {
-            status_t Pointer::init(const char *name, Style *style, ws::mouse_pointer_t value)
-            {
-                prop::Pointer v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init(value);
-            }
 
-            status_t Pointer::override(const char *name, Style *style, ws::mouse_pointer_t value)
-            {
-                prop::Pointer v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override(value);
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */

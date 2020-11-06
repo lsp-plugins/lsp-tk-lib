@@ -204,15 +204,8 @@ namespace lsp
             { ws::WSK_UNKNOWN, NULL }
         };
 
-
-        void Shortcut::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Shortcut::Shortcut(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             nMod        = 0;
             nKey        = ws::WSK_UNKNOWN;
@@ -223,43 +216,30 @@ namespace lsp
             MultiProperty::unbind(vAtoms, DESC, &sListener);
         }
 
-        void Shortcut::sync()
+        void Shortcut::push()
         {
-            if (pStyle != NULL)
+            LSPString s;
+
+            // Simple components
+            if (vAtoms[P_VALUE] >= 0)
             {
-                pStyle->begin(&sListener);
-                {
-                    LSPString s;
-
-                    // Simple components
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (format_value(&s, nKey, nMod) == STATUS_OK)
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                    if (vAtoms[P_MOD] >= 0)
-                    {
-                        if (format_modifiers(&s, nMod) == STATUS_OK)
-                            pStyle->set_string(vAtoms[P_MOD], &s);
-                    }
-                    if (vAtoms[P_KEY] >= 0)
-                    {
-                        if (format_key(&s, nKey) == STATUS_OK)
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+                if (format_value(&s, nKey, nMod) == STATUS_OK)
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-
-            if (pListener != NULL)
-                pListener->notify(this);
+            if (vAtoms[P_MOD] >= 0)
+            {
+                if (format_modifiers(&s, nMod) == STATUS_OK)
+                    pStyle->set_string(vAtoms[P_MOD], &s);
+            }
+            if (vAtoms[P_KEY] >= 0)
+            {
+                if (format_key(&s, nKey) == STATUS_OK)
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
+            }
         }
 
         void Shortcut::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             LSPString s;
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
                 parse_value(&s);
@@ -267,12 +247,6 @@ namespace lsp
                 nMod = parse_modifiers(&s);
             if ((property == vAtoms[P_KEY]) && (pStyle->get_string(vAtoms[P_KEY], &s) == STATUS_OK))
                 nKey = parse_key(&s);
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
         ws::code_t Shortcut::set(ws::code_t key)
@@ -495,100 +469,6 @@ namespace lsp
             return format_value(s, nKey, nMod);
         }
 
-        status_t Shortcut::init()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-
-                // Simple components
-                if (format_value(&s, key(), modifiers()) == STATUS_OK)
-                    pStyle->create_string(vAtoms[P_VALUE], &s);
-                if (format_modifiers(&s, modifiers()) == STATUS_OK)
-                    pStyle->create_string(vAtoms[P_MOD], &s);
-                if (format_key(&s, key()) == STATUS_OK)
-                    pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Shortcut::override()
-        {
-            pStyle->begin();
-            {
-                LSPString s;
-
-                // Simple components
-                if (format_value(&s, key(), modifiers()) == STATUS_OK)
-                    pStyle->override_string(vAtoms[P_VALUE], &s);
-                if (format_modifiers(&s, modifiers()) == STATUS_OK)
-                    pStyle->override_string(vAtoms[P_MOD], &s);
-                if (format_key(&s, key()) == STATUS_OK)
-                    pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t Shortcut::init(Style *style)
-            {
-                return init(style, ws::WSK_UNKNOWN, 0);
-            }
-
-            status_t Shortcut::init(Style *style, ws::code_t key, size_t mod)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    LSPString s;
-
-                    // Simple components
-                    if (format_value(&s, key, mod) == STATUS_OK)
-                        pStyle->create_string(vAtoms[P_VALUE], &s);
-                    if (format_modifiers(&s, mod) == STATUS_OK)
-                        pStyle->create_string(vAtoms[P_MOD], &s);
-                    if (format_key(&s, key) == STATUS_OK)
-                        pStyle->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Shortcut::init(const char *name, Style *style, ws::code_t key, size_t mod)
-            {
-                prop::Shortcut v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(key, mod);
-                return v.init();
-            }
-
-            status_t Shortcut::init(const char *name, Style *style)
-            {
-                prop::Shortcut v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init();
-            }
-
-            status_t Shortcut::override(const char *name, Style *style, ws::code_t key, size_t mod)
-            {
-                prop::Shortcut v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(key, mod);
-                return v.override();
-            }
-
-            status_t Shortcut::override(const char *name, Style *style)
-            {
-                prop::Shortcut v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override();
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */
 

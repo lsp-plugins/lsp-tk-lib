@@ -51,18 +51,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        TextLayout        *pValue;
-
-                    public:
-                        inline Listener(TextLayout *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -70,18 +58,16 @@ namespace lsp
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 float               hAlign;             // Horizontal alignment
                 float               vAlign;             // Vertical alignment
-                Listener            sListener;          // Listener
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
+                virtual void        push();
+                virtual void        commit(atom_t property);
+
                 void                parse(const LSPString *s);
-                status_t            init();
-                status_t            override();
 
             protected:
                 explicit TextLayout(prop::Listener *listener = NULL);
-                ~TextLayout();
+                virtual ~TextLayout();
 
             public:
                 inline float        halign() const              { return hAlign;    }
@@ -108,10 +94,6 @@ namespace lsp
                 public:
                     explicit TextLayout(prop::Listener *listener = NULL): tk::TextLayout(listener) {};
 
-                protected:
-                    using               tk::TextLayout::init;
-                    using               tk::TextLayout::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -125,16 +107,7 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::TextLayout::unbind(vAtoms, DESC, &sListener); };
 
-                    /**
-                     * Initialize default values
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, float halign, float valign);
-
-                    static status_t     init(const char *name, Style *style, float halign, float valign);
-                    static status_t     override(const char *name, Style *style, float halign, float valign);
-
-                    inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
         }
 

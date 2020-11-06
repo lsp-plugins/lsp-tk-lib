@@ -25,12 +25,6 @@ namespace lsp
 {
     namespace tk
     {
-        void Integer::Listener::notify(atom_t property)
-        {
-            if (property == pValue->nAtom)
-                pValue->commit();
-        }
-
         Integer::Integer(prop::Listener *listener):
             SimpleProperty(listener),
             sListener(this)
@@ -44,42 +38,15 @@ namespace lsp
             unbind(&sListener);
         }
 
-        status_t Integer::init(ssize_t value)
+        void Integer::commit(atom_t property)
         {
-            return pStyle->create_int(nAtom, value);
-        }
-
-        status_t Integer::override(ssize_t value)
-        {
-            return pStyle->override_int(nAtom, value);
-        }
-
-        void Integer::commit()
-        {
-            // Handle change: remember new value
-            if (pStyle == NULL)
-                return;
-
             if (pStyle->get_int(nAtom, &nValue) != STATUS_OK)
                 return;
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Integer::sync()
+        void Integer::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                    pStyle->set_int(nAtom, nValue);
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
+            pStyle->set_int(nAtom, nValue);
         }
 
         ssize_t Integer::set(ssize_t v)
@@ -105,48 +72,11 @@ namespace lsp
     
         namespace prop
         {
-            status_t Integer::init(Style *style, ssize_t value)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-                style->create_int(nAtom, value);
-                return STATUS_OK;
-            }
-
-            status_t Integer::override(Style *style, ssize_t value)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-                style->override_int(nAtom, value);
-                return STATUS_OK;
-            }
-
-            ssize_t Integer::commit(ssize_t value)
+            ssize_t Integer::commit_value(ssize_t value)
             {
                 ssize_t old = nValue;
                 value       = nValue;
                 return old;
-            }
-
-            status_t Integer::create(const char *name, Style *style, ssize_t value)
-            {
-                LSP_STATUS_ASSERT(bind(name, style));
-                set(value);
-                return STATUS_OK;
-            }
-
-            status_t Integer::init(const char *name, Style *style, ssize_t value)
-            {
-                prop::Integer v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init(value);
-            }
-
-            status_t Integer::override(const char *name, Style *style, ssize_t value)
-            {
-                prop::Integer v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override(value);
             }
         }
     } /* namespace tk */

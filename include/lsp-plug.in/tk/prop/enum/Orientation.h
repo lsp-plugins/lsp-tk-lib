@@ -61,10 +61,6 @@ namespace lsp
                 public:
                     explicit Orientation(prop::Listener *listener = NULL): tk::Orientation(listener) {};
 
-                protected:
-                    using tk::Enum::init;
-                    using tk::Enum::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -77,17 +73,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Orientation::unbind(); };
-
-                    /**
-                     * Initialize default value
-                     * @param style style
-                     * @param o default orientation
-                     * @return status of operation
-                     */
-                    inline status_t     init(Style *style, orientation_t o)             { return tk::Orientation::init(style, o);      };
-
-                    static status_t     init(const char *name, Style *style, orientation_t value);
-                    static status_t     override(const char *name, Style *style, orientation_t value);
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };

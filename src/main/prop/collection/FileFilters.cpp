@@ -28,7 +28,7 @@ namespace lsp
         void FileFilters::Listener::notify(Property *prop)
         {
             if (pFilters != NULL)
-                pFilters->commit(prop);
+                pFilters->sync();
         }
 
         FileFilters::FileFilters(prop::Listener *listener, prop::CollectionListener *clistener):
@@ -51,18 +51,6 @@ namespace lsp
             for (size_t i=0, n=list->size(); i<n; ++i)
                 destroy_item(list->uget(i));
             list->flush();
-        }
-
-        void FileFilters::sync()
-        {
-            if (pListener != NULL)
-                pListener->notify(this);
-        }
-
-        void FileFilters::commit(Property *prop)
-        {
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         status_t FileFilters::bind(const char *property, Style *style, i18n::IDictionary *dict)
@@ -329,19 +317,6 @@ namespace lsp
             sListener.set_lock(false);
 
             sync();
-        }
-
-        namespace prop
-        {
-            status_t FileFilters::init(const char *name, Style *style)
-            {
-                return STATUS_OK;
-            }
-
-            status_t FileFilters::override(const char *name, Style *style)
-            {
-                return STATUS_OK;
-            }
         }
     }
 }

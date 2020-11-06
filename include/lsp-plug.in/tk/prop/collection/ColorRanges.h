@@ -39,18 +39,6 @@ namespace lsp
                 ColorRanges & operator = (const ColorRanges &);
 
             protected:
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        ColorRanges        *pList;
-
-                    public:
-                        explicit Listener(ColorRanges *lst)     { pList = lst; }
-
-                    public:
-                        virtual void        notify(atom_t property);
-                };
-
                 class Changes: public prop::Listener
                 {
                     protected:
@@ -72,23 +60,21 @@ namespace lsp
 
             protected:
                 lltl::parray<ColorRange>        vItems;         // List of strings
-                Listener                        sListener;      // Style listener
                 Changes                         sChanges;       // Change listener
 
             protected:
                 ColorRange         *create_item();
-                void                sync();
-                void                commit(atom_t property);
                 status_t            parse_items(lltl::parray<ColorRange> *out, const LSPString *src);
                 void                destroy_items(lltl::parray<ColorRange> *out);
                 bool                deploy_items(lltl::parray<ColorRange> *out);
-                status_t            init();
-                status_t            override();
                 status_t            build_ranges(LSPString *dst);
+
+                virtual void        push();
+                virtual void        commit(atom_t property);
 
             protected:
                 explicit ColorRanges(prop::Listener *listener = NULL);
-                ~ColorRanges();
+                virtual ~ColorRanges();
 
             public:
                 /**
@@ -168,10 +154,6 @@ namespace lsp
                 public:
                     explicit ColorRanges(prop::Listener *listener = NULL): tk::ColorRanges(listener) {};
 
-                protected:
-                    using tk::ColorRanges::init;
-                    using tk::ColorRanges::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -185,23 +167,6 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::ColorRanges::unbind(&sListener); };
 
-                    /**
-                     * Init default value
-                     * @param style style
-                     * @param value default value
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, const char *value);
-                    status_t            init(Style *style, const LSPString *value);
-
-                    status_t            override(Style *style, const char *value);
-                    status_t            override(Style *style, const LSPString *value);
-
-                    static status_t     init(const char *name, Style *style, const char *value);
-                    static status_t     init(const char *name, Style *style, const LSPString *value);
-
-                    static status_t     override(const char *name, Style *style, const char *value);
-                    static status_t     override(const char *name, Style *style, const LSPString *value);
             };
         }
     }

@@ -37,14 +37,8 @@ namespace lsp
             { NULL,         PT_UNKNOWN  }
         };
 
-        void Padding::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Padding::Padding(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             sValue.nLeft      = 0;
             sValue.nRight     = 0;
@@ -147,9 +141,6 @@ namespace lsp
 
         void Padding::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             padding_t &p    = sValue;
 
             ssize_t v;
@@ -167,96 +158,34 @@ namespace lsp
                 parse_css(&s);
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
                 parse(&s);
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Padding::sync()
+        void Padding::push()
         {
-            if (pStyle != NULL)
+            padding_t &p    = sValue;
+
+            // Simple components
+            if (vAtoms[P_LEFT] >= 0)
+                pStyle->set_int(vAtoms[P_LEFT], p.nLeft);
+            if (vAtoms[P_RIGHT] >= 0)
+                pStyle->set_int(vAtoms[P_RIGHT], p.nRight);
+            if (vAtoms[P_TOP] >= 0)
+                pStyle->set_int(vAtoms[P_TOP], p.nTop);
+            if (vAtoms[P_BOTTOM] >= 0)
+                pStyle->set_int(vAtoms[P_BOTTOM], p.nBottom);
+
+            // Compound objects
+            LSPString s;
+            if (vAtoms[P_CSS] >= 0)
             {
-                pStyle->begin(&sListener);
-                {
-                    padding_t &p    = sValue;
-
-                    // Simple components
-                    if (vAtoms[P_LEFT] >= 0)
-                        pStyle->set_int(vAtoms[P_LEFT], p.nLeft);
-                    if (vAtoms[P_RIGHT] >= 0)
-                        pStyle->set_int(vAtoms[P_RIGHT], p.nRight);
-                    if (vAtoms[P_TOP] >= 0)
-                        pStyle->set_int(vAtoms[P_TOP], p.nTop);
-                    if (vAtoms[P_BOTTOM] >= 0)
-                        pStyle->set_int(vAtoms[P_BOTTOM], p.nBottom);
-
-                    // Compound objects
-                    LSPString s;
-                    if (vAtoms[P_CSS] >= 0)
-                    {
-                        if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nTop), long(p.nRight), long(p.nBottom), long(p.nLeft)))
-                            pStyle->set_string(vAtoms[P_CSS], &s);
-                    }
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nLeft), long(p.nRight), long(p.nTop), long(p.nBottom)))
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+                if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nTop), long(p.nRight), long(p.nBottom), long(p.nLeft)))
+                    pStyle->set_string(vAtoms[P_CSS], &s);
             }
-
-            if (pListener != NULL)
-                pListener->notify(this);
-        }
-
-        status_t Padding::init()
-        {
-            pStyle->begin(&sListener);
+            if (vAtoms[P_VALUE] >= 0)
             {
-                padding_t &p    = sValue;
-
-                pStyle->create_int(vAtoms[P_LEFT], p.nLeft);
-                pStyle->create_int(vAtoms[P_RIGHT], p.nRight);
-                pStyle->create_int(vAtoms[P_TOP], p.nTop);
-                pStyle->create_int(vAtoms[P_BOTTOM], p.nBottom);
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld %ld %ld", long(p.nTop), long(p.nRight), long(p.nBottom), long(p.nLeft));
-                pStyle->create_string(vAtoms[P_CSS], &s);
-
-                s.fmt_ascii("%ld %ld %ld %ld", long(p.nLeft), long(p.nRight), long(p.nTop), long(p.nBottom));
-                pStyle->create_string(vAtoms[P_VALUE], &s);
+                if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nLeft), long(p.nRight), long(p.nTop), long(p.nBottom)))
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Padding::override()
-        {
-            pStyle->begin(&sListener);
-            {
-                padding_t &p    = sValue;
-
-                pStyle->override_int(vAtoms[P_LEFT], p.nLeft);
-                pStyle->override_int(vAtoms[P_RIGHT], p.nRight);
-                pStyle->override_int(vAtoms[P_TOP], p.nTop);
-                pStyle->override_int(vAtoms[P_BOTTOM], p.nBottom);
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld %ld %ld", long(p.nTop), long(p.nRight), long(p.nBottom), long(p.nLeft));
-                pStyle->override_string(vAtoms[P_CSS], &s);
-
-                s.fmt_ascii("%ld %ld %ld %ld", long(p.nLeft), long(p.nRight), long(p.nTop), long(p.nBottom));
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
         }
 
         void Padding::get(size_t *left, size_t *right, size_t *top, size_t *bottom) const
@@ -513,115 +442,5 @@ namespace lsp
                 dst->nMaxHeight     = dst->nMinHeight;
         }
 
-        namespace prop
-        {
-            status_t Padding::init(Style *style, size_t left, size_t right, size_t top, size_t bottom)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                padding_t p;
-                p.nLeft     = left;
-                p.nRight    = right;
-                p.nTop      = top;
-                p.nBottom   = bottom;
-
-                return init(style, &p);
-            }
-
-            status_t Padding::init(Style *style, const padding_t *p)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_int(vAtoms[P_LEFT], p->nLeft);
-                    style->create_int(vAtoms[P_RIGHT], p->nRight);
-                    style->create_int(vAtoms[P_TOP], p->nTop);
-                    style->create_int(vAtoms[P_BOTTOM], p->nBottom);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nTop), long(p->nRight), long(p->nBottom), long(p->nLeft));
-                    style->create_string(vAtoms[P_CSS], &s);
-
-                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nLeft), long(p->nRight), long(p->nTop), long(p->nBottom));
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Padding::override(Style *style, size_t left, size_t right, size_t top, size_t bottom)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                padding_t p;
-                p.nLeft     = left;
-                p.nRight    = right;
-                p.nTop      = top;
-                p.nBottom   = bottom;
-
-                return override(style, &p);
-            }
-
-            status_t Padding::override(Style *style, const padding_t *p)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->override_int(vAtoms[P_LEFT], p->nLeft);
-                    style->override_int(vAtoms[P_RIGHT], p->nRight);
-                    style->override_int(vAtoms[P_TOP], p->nTop);
-                    style->override_int(vAtoms[P_BOTTOM], p->nBottom);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nTop), long(p->nRight), long(p->nBottom), long(p->nLeft));
-                    style->override_string(vAtoms[P_CSS], &s);
-
-                    s.fmt_ascii("%ld %ld %ld %ld", long(p->nLeft), long(p->nRight), long(p->nTop), long(p->nBottom));
-                    style->override_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Padding::init(const char *name, Style *style, size_t left, size_t right, size_t top, size_t bottom)
-            {
-                prop::Padding v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(left, right, top, bottom);
-                return v.init();
-            }
-
-            status_t Padding::init(const char *name, Style *style, const padding_t *p)
-            {
-                prop::Padding v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(p);
-                return v.init();
-            }
-
-            status_t Padding::override(const char *name, Style *style, size_t left, size_t right, size_t top, size_t bottom)
-            {
-                prop::Padding v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(left, right, top, bottom);
-                return v.override();
-            }
-
-            status_t Padding::override(const char *name, Style *style, const padding_t *p)
-            {
-                prop::Padding v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(p);
-                return v.override();
-            }
-        }
     } /* namespace tk */
 } /* namespace lsp */

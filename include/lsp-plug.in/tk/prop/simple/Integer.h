@@ -39,31 +39,16 @@ namespace lsp
                 Integer & operator = (const Integer &);
 
             protected:
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        Integer      *pValue;
-
-                    public:
-                        inline Listener(Integer *ptr)             { pValue = ptr;     }
-
-                    public:
-                        virtual void notify(atom_t property);
-                };
-
-            protected:
                 ssize_t             nValue;
                 Listener            sListener;
 
             protected:
-                void                commit();
-                void                sync();
-                status_t            init(ssize_t value);
-                status_t            override(ssize_t value);
+                virtual void        commit(atom_t property);
+                virtual void        push();
 
             protected:
                 explicit Integer(prop::Listener *listener = NULL);
-                ~Integer();
+                virtual ~Integer();
 
             public:
                 /**
@@ -103,12 +88,8 @@ namespace lsp
                 public:
                     explicit Integer(prop::Listener *listener = NULL): tk::Integer(listener) {};
 
-                protected:
-                    using tk::Integer::init;
-                    using tk::Integer::override;
-
                 public:
-                    ssize_t             commit(ssize_t value);
+                    ssize_t             commit_value(ssize_t value);
 
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -121,20 +102,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return SimpleProperty::unbind(&sListener); };
-
-                    /**
-                     * Init default value
-                     * @param style style
-                     * @param value default value
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, ssize_t value);
-                    status_t            override(Style *style, ssize_t value);
-
-                    static status_t     init(const char *name, Style *style, ssize_t value);
-                    static status_t     override(const char *name, Style *style, ssize_t value);
-
-                    status_t            create(const char *name, Style *style, ssize_t value);
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };

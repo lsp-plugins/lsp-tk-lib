@@ -55,18 +55,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        ColorRange      *pValue;
-
-                    public:
-                        inline Listener(ColorRange *ptr)                { pValue = ptr;         }
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -76,18 +64,16 @@ namespace lsp
                 float                   fMin;               // Minimum value
                 float                   fMax;               // Maximum value
                 size_t                  nFlags;             // Flags
-                Listener                sListener;
 
             protected:
-                void                    sync();
-                void                    commit(atom_t property);
+                virtual void            push();
+                virtual void            commit(atom_t property);
+
                 status_t                parse_range(ColorRange *range, io::IInSequence *s);
-                status_t                init();
-                status_t                override();
 
             public:
                 explicit ColorRange(prop::Listener *listener = NULL);
-                ~ColorRange();
+                virtual ~ColorRange();
 
             public:
                 inline float            min() const         { return fMin;                  }
@@ -178,10 +164,6 @@ namespace lsp
                 public:
                     explicit inline ColorRange(prop::Listener *listener = NULL): tk::ColorRange(listener) {};
 
-                protected:
-                    using               tk::ColorRange::init;
-                    using               tk::ColorRange::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -195,40 +177,6 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::ColorRange::unbind(vAtoms, DESC, &sListener);                  };
 
-                    /**
-                     * Initialize style with default values
-                     * @param style style to initialize
-                     * @param value default value
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, const char *value);
-                    status_t            init(Style *style, const LSPString *value);
-                    status_t            init(Style *style, const lsp::Color *value);
-                    status_t            init(Style *style, float min, float max, const char *c);
-                    status_t            init(Style *style, float min, float max, const LSPString *c);
-                    status_t            init(Style *style, float min, float max, const lsp::Color *c);
-
-                    status_t            override(Style *style, const char *value);
-                    status_t            override(Style *style, const LSPString *value);
-                    status_t            override(Style *style, const lsp::Color *value);
-                    status_t            override(Style *style, float min, float max, const char *c);
-                    status_t            override(Style *style, float min, float max, const LSPString *c);
-                    status_t            override(Style *style, float min, float max, const lsp::Color *c);
-
-
-                    static status_t     init(const char *name, Style *style, float min, float max, const char *c);
-                    static status_t     init(const char *name, Style *style, float min, float max, const LSPString *c);
-                    static status_t     init(const char *name, Style *style, float min, float max, const lsp::Color *c);
-                    static inline status_t     init(const char *name, Style *style, const char *value) { return init(name, style, 0.0f, 1.0f, value); }
-                    static inline status_t     init(const char *name, Style *style, const LSPString *value) { return init(name, style, 0.0f, 1.0f, value); }
-                    static inline status_t     init(const char *name, Style *style, const lsp::Color *value) { return init(name, style, 0.0f, 1.0f, value); }
-
-                    static status_t     override(const char *name, Style *style, float min, float max, const char *c);
-                    static status_t     override(const char *name, Style *style, float min, float max, const LSPString *c);
-                    static status_t     override(const char *name, Style *style, float min, float max, const lsp::Color *c);
-                    static inline status_t     override(const char *name, Style *style, const char *value) { return override(name, style, 0.0f, 1.0f, value); }
-                    static inline status_t     override(const char *name, Style *style, const LSPString *value) { return override(name, style, 0.0f, 1.0f, value); }
-                    static inline status_t     override(const char *name, Style *style, const lsp::Color *value) { return override(name, style, 0.0f, 1.0f, value); }
             };
         }
     }

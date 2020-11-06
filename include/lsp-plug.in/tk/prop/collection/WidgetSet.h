@@ -44,7 +44,7 @@ namespace lsp
 
             public:
                 explicit GenericWidgetSet(const w_class_t *meta, prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL);
-                ~GenericWidgetSet();
+                virtual ~GenericWidgetSet();
 
             public:
                 status_t        add(Widget *w);
@@ -70,7 +70,6 @@ namespace lsp
 
                 public:
                     explicit WidgetSet(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): GenericWidgetSet(&widget_t::metadata, listener, clistener) {}
-                    ~WidgetSet() {}
 
                 public:
                     inline size_t       size() const                        { return sSet.size();                           }
@@ -113,7 +112,6 @@ namespace lsp
 
                     public:
                         explicit WidgetSet(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::WidgetSet<widget_t>(listener, clistener) {}
-                        ~WidgetSet() {}
 
                     public:
                         inline void         flush()                             { this->sSet.flush();                                               }

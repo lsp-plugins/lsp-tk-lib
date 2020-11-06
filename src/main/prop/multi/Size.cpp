@@ -33,14 +33,8 @@ namespace lsp
             { NULL,         PT_UNKNOWN  }
         };
 
-        void Size::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Size::Size(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             nWidth              = 0;
             nHeight             = 0;
@@ -53,9 +47,6 @@ namespace lsp
 
         void Size::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             ssize_t v;
             if ((property == vAtoms[P_WIDTH]) && (pStyle->get_int(vAtoms[P_WIDTH], &v) == STATUS_OK))
                 nWidth      = lsp_max(v, 0);
@@ -73,38 +64,23 @@ namespace lsp
                     nHeight     = lsp_max(xv[1], 0);
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync(true);
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Size::sync(bool notify)
+        void Size::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                {
-                    // Simple components
-                    if (vAtoms[P_WIDTH] >= 0)
-                        pStyle->set_int(vAtoms[P_WIDTH], nWidth);
-                    if (vAtoms[P_HEIGHT] >= 0)
-                        pStyle->set_int(vAtoms[P_HEIGHT], nHeight);
+            // Simple components
+            if (vAtoms[P_WIDTH] >= 0)
+                pStyle->set_int(vAtoms[P_WIDTH], nWidth);
+            if (vAtoms[P_HEIGHT] >= 0)
+                pStyle->set_int(vAtoms[P_HEIGHT], nHeight);
 
-                    // Compound objects
-                    LSPString s;
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (s.fmt_ascii("%ld %ld", long(nWidth), long(nHeight)))
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+            // Compound objects
+            LSPString s;
+            if (vAtoms[P_VALUE] >= 0)
+            {
+                if (s.fmt_ascii("%ld %ld", long(nWidth), long(nHeight)))
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-            if ((pListener != NULL) && (notify))
-                pListener->notify(this);
         }
 
         size_t Size::set_width(size_t value)
@@ -114,7 +90,7 @@ namespace lsp
                 return value;
 
             nWidth          = value;
-            sync(true);
+            sync();
             return old;
         }
 
@@ -125,7 +101,7 @@ namespace lsp
                 return value;
 
             nHeight         = value;
-            sync(true);
+            sync();
             return old;
         }
 
@@ -137,7 +113,7 @@ namespace lsp
 
             nWidth      = width;
             nHeight     = height;
-            sync(true);
+            sync();
         }
 
         void Size::set(size_t width, size_t height, float scale)
@@ -166,7 +142,7 @@ namespace lsp
 
             nWidth      = p->nWidth;
             nHeight     = p->nHeight;
-            sync(true);
+            sync();
         }
 
         bool Size::intersection(ws::rectangle_t *dst, const ws::rectangle_t *a, const ws::rectangle_t *b)
@@ -254,60 +230,9 @@ namespace lsp
             return (r->nWidth <= 0) || (r->nHeight <= 0);
         }
 
-        status_t Size::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_int(vAtoms[P_WIDTH], width());
-                pStyle->create_int(vAtoms[P_HEIGHT], height());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld", long(width()), long(height()));
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Size::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_int(vAtoms[P_WIDTH], width());
-                pStyle->override_int(vAtoms[P_HEIGHT], height());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld", long(width()), long(height()));
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
         namespace prop
         {
-            status_t Size::init(Style *style, size_t width, size_t height)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_int(vAtoms[P_WIDTH], width);
-                    style->create_int(vAtoms[P_HEIGHT], height);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%ld %ld", long(width), long(height));
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            void Size::commit(size_t width, size_t height, float scale)
+            void Size::commit_value(size_t width, size_t height, float scale)
             {
                 if (scale > 0.0f)
                 {
@@ -322,25 +247,9 @@ namespace lsp
                 sync(false);
             }
 
-            void Size::commit(const ws::rectangle_t *rect, float scale)
+            void Size::commit_value(const ws::rectangle_t *rect, float scale)
             {
-                commit(rect->nWidth, rect->nHeight, scale);
-            }
-
-            status_t Size::init(const char *name, Style *style, size_t width, size_t height)
-            {
-                prop::Size v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(width, height);
-                return v.init();
-            }
-
-            status_t Size::override(const char *name, Style *style, size_t width, size_t height)
-            {
-                prop::Size v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(width, height);
-                return v.override();
+                commit_value(rect->nWidth, rect->nHeight, scale);
             }
         }
     } /* namespace tk */

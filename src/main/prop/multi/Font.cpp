@@ -46,14 +46,8 @@ namespace lsp
             { NULL,         0                       }
         };
 
-        void Font::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Font::Font(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
         }
 
@@ -62,49 +56,35 @@ namespace lsp
             MultiProperty::unbind(vAtoms, DESC, &sListener);
         }
 
-        void Font::sync()
+        void Font::push()
         {
-            if (pStyle != NULL)
+            ws::Font &f = sValue;
+
+            // Simple components
+            if (vAtoms[P_NAME] >= 0)
+                pStyle->set_string(vAtoms[P_NAME], f.get_name());
+            if (vAtoms[P_SIZE] >= 0)
+                pStyle->set_float(vAtoms[P_SIZE], f.get_size());
+            if (vAtoms[P_BOLD] >= 0)
+                pStyle->set_bool(vAtoms[P_BOLD], f.is_bold());
+            if (vAtoms[P_ITALIC] >= 0)
+                pStyle->set_bool(vAtoms[P_ITALIC], f.is_italic());
+            if (vAtoms[P_UNDERLINE] >= 0)
+                pStyle->set_bool(vAtoms[P_UNDERLINE], f.is_underline());
+            if (vAtoms[P_ANTIALIAS] >= 0)
+                pStyle->set_bool(vAtoms[P_ANTIALIAS], f.is_antialiasing());
+
+            // Complicated properties
+            LSPString s;
+            if (vAtoms[P_FLAGS] >= 0)
             {
-                pStyle->begin(&sListener);
-                {
-                    ws::Font &f = sValue;
-
-                    // Simple components
-                    if (vAtoms[P_NAME] >= 0)
-                        pStyle->set_string(vAtoms[P_NAME], f.get_name());
-                    if (vAtoms[P_SIZE] >= 0)
-                        pStyle->set_float(vAtoms[P_SIZE], f.get_size());
-                    if (vAtoms[P_BOLD] >= 0)
-                        pStyle->set_bool(vAtoms[P_BOLD], f.is_bold());
-                    if (vAtoms[P_ITALIC] >= 0)
-                        pStyle->set_bool(vAtoms[P_ITALIC], f.is_italic());
-                    if (vAtoms[P_UNDERLINE] >= 0)
-                        pStyle->set_bool(vAtoms[P_UNDERLINE], f.is_underline());
-                    if (vAtoms[P_ANTIALIAS] >= 0)
-                        pStyle->set_bool(vAtoms[P_ANTIALIAS], f.is_antialiasing());
-
-                    // Complicated properties
-                    LSPString s;
-                    if (vAtoms[P_FLAGS] >= 0)
-                    {
-                        Property::fmt_bit_enums(&s, FLAGS, f.flags());
-                        pStyle->set_float(vAtoms[P_SIZE], f.get_size());
-                    }
-
-                }
-                pStyle->end();
+                Property::fmt_bit_enums(&s, FLAGS, f.flags());
+                pStyle->set_float(vAtoms[P_SIZE], f.get_size());
             }
-
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         void Font::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             ws::Font &f = sValue;
 
             const char *sname;
@@ -133,12 +113,6 @@ namespace lsp
                 if (Property::parse_bit_enums(&flags, &s, FLAGS) >= 0)
                     f.set_flags(flags);
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
         void Font::get(ws::Font *f, float scaling) const
@@ -485,131 +459,6 @@ namespace lsp
             ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
             s->out_text(f, c, x, y, text, first, last);
         }
-
-        status_t Font::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_string(vAtoms[P_NAME], name());
-                pStyle->create_float(vAtoms[P_SIZE], size());
-                pStyle->create_bool(vAtoms[P_BOLD], bold());
-                pStyle->create_bool(vAtoms[P_ITALIC], italic());
-                pStyle->create_bool(vAtoms[P_UNDERLINE], underline());
-                pStyle->create_bool(vAtoms[P_ANTIALIAS], antialiasing());
-
-                // Complicated properties
-                LSPString s;
-                Property::fmt_bit_enums(&s, FLAGS, flags());
-                pStyle->create_string(vAtoms[P_FLAGS], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Font::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_string(vAtoms[P_NAME], name());
-                pStyle->override_float(vAtoms[P_SIZE], size());
-                pStyle->override_bool(vAtoms[P_BOLD], bold());
-                pStyle->override_bool(vAtoms[P_ITALIC], italic());
-                pStyle->override_bool(vAtoms[P_UNDERLINE], underline());
-                pStyle->override_bool(vAtoms[P_ANTIALIAS], antialiasing());
-
-                // Complicated properties
-                LSPString s;
-                Property::fmt_bit_enums(&s, FLAGS, flags());
-                pStyle->override_string(vAtoms[P_FLAGS], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t Font::init(Style *style)
-            {
-                return init(style, "Sans", 12.0f, 0);
-            }
-
-            status_t Font::init(Style *style, float size, size_t flags)
-            {
-                return init(style, "Sans", size, flags);
-            }
-
-            status_t Font::init(Style *style, const char *name, float size, size_t flags)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_string(vAtoms[P_NAME], name);
-                    style->create_float(vAtoms[P_SIZE], size);
-                    style->create_bool(vAtoms[P_BOLD], flags & ws::FF_BOLD);
-                    style->create_bool(vAtoms[P_ITALIC], flags & ws::FF_ITALIC);
-                    style->create_bool(vAtoms[P_UNDERLINE], flags & ws::FF_UNDERLINE);
-                    style->create_bool(vAtoms[P_ANTIALIAS], flags & ws::FF_ANTIALIASING);
-
-                    // Complicated properties
-                    LSPString s;
-                    Property::fmt_bit_enums(&s, FLAGS, flags);
-                    style->create_string(vAtoms[P_FLAGS], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Font::init(const char *name, Style *style)
-            {
-                prop::Font v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init();
-            }
-
-            status_t Font::init(const char *name, Style *style, const char *fname, float size, size_t flags)
-            {
-                prop::Font v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(fname, size, flags);
-                return v.init();
-            }
-
-            status_t Font::init(const char *name, Style *style, float size, size_t flags)
-            {
-                prop::Font v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_size(size);
-                v.set_flags(flags);
-                return v.init();
-            }
-
-            status_t Font::override(const char *name, Style *style)
-            {
-                prop::Font v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override();
-            }
-
-            status_t Font::override(const char *name, Style *style, const char *fname, float size, size_t flags)
-            {
-                prop::Font v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(fname, size, flags);
-                return v.override();
-            }
-
-            status_t Font::override(const char *name, Style *style, float size, size_t flags)
-            {
-                prop::Font v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set_size(size);
-                v.set_flags(flags);
-                return v.override();
-            }
-        }
-
     }
 }
 

@@ -33,14 +33,8 @@ namespace lsp
             { NULL,         PT_UNKNOWN  }
         };
 
-        void TextSelection::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         TextSelection::TextSelection(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             nFirst      = -1;
             nLast       = -1;
@@ -52,31 +46,21 @@ namespace lsp
             MultiProperty::unbind(vAtoms, DESC, &sListener);
         }
 
-        void TextSelection::sync()
+        void TextSelection::push()
         {
-            if (pStyle != NULL)
+            // Simple components
+            if (vAtoms[P_FIRST] >= 0)
+                pStyle->set_int(vAtoms[P_FIRST], nFirst);
+            if (vAtoms[P_LAST] >= 0)
+                pStyle->set_int(vAtoms[P_LAST], nLast);
+
+            // Compound objects
+            LSPString s;
+            if (vAtoms[P_VALUE] >= 0)
             {
-                pStyle->begin(&sListener);
-                {
-                    // Simple components
-                    if (vAtoms[P_FIRST] >= 0)
-                        pStyle->set_int(vAtoms[P_FIRST], nFirst);
-                    if (vAtoms[P_LAST] >= 0)
-                        pStyle->set_int(vAtoms[P_LAST], nLast);
-
-                    // Compound objects
-                    LSPString s;
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (s.fmt_ascii("%ld %ld", long(nFirst), long(nLast)))
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+                if (s.fmt_ascii("%ld %ld", long(nFirst), long(nLast)))
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         void TextSelection::parse(const LSPString *s)
@@ -102,9 +86,6 @@ namespace lsp
 
         void TextSelection::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             ssize_t v;
             if ((property == vAtoms[P_FIRST]) && (pStyle->get_int(vAtoms[P_FIRST], &v) == STATUS_OK))
                 nFirst      = lsp_limit(v, -1, nLimit);
@@ -114,12 +95,6 @@ namespace lsp
             LSPString s;
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
                 parse(&s);
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
         void TextSelection::set(ssize_t first, ssize_t last)
@@ -209,79 +184,12 @@ namespace lsp
             sync();
         }
 
-        status_t TextSelection::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_int(vAtoms[P_FIRST], first());
-                pStyle->create_int(vAtoms[P_LAST], last());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld", long(first()), long(last()));
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t TextSelection::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_int(vAtoms[P_FIRST], first());
-                pStyle->override_int(vAtoms[P_LAST], last());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld", long(first()), long(last()));
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
         namespace prop
         {
             void TextSelection::set_limit(ssize_t limit)
             {
                 nLimit      = limit;
                 set(nFirst, nLast);
-            }
-
-            status_t TextSelection::init(Style *style, float first, float last)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_int(vAtoms[P_FIRST], first);
-                    style->create_int(vAtoms[P_LAST], last);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%ld %ld", long(first), long(last));
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t TextSelection::init(const char *name, Style *style, float first, float last)
-            {
-                prop::TextSelection v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(first, last);
-                return v.init();
-            }
-
-            status_t TextSelection::override(const char *name, Style *style, float first, float last)
-            {
-                prop::TextSelection v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(first, last);
-                return v.override();
             }
         }
 

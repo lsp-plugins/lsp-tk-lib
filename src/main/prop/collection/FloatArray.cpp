@@ -26,12 +26,6 @@ namespace lsp
 {
     namespace tk
     {
-        void FloatArray::sync()
-        {
-            if (pListener != NULL)
-                pListener->notify(this);
-        }
-
         FloatArray::FloatArray(prop::Listener *listener):
             Property(listener)
         {

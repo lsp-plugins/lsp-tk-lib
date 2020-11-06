@@ -25,14 +25,8 @@ namespace lsp
 {
     namespace tk
     {
-        void Flags::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Flags::Flags(const char * const *flags, atom_t *atoms, prop::Listener *listener):
-            Property(listener),
-            sListener(this)
+            Property(listener)
         {
             nFlags      = 0;
             pFlags      = flags;
@@ -112,7 +106,10 @@ namespace lsp
             }
             style->end();
 
-            if (pListener != NULL)
+            // Push configuration to style if required
+            if ((pStyle != NULL) && (pStyle->sync()))
+                this->sync();
+            else if (pListener != NULL)
                 pListener->notify(this);
 
             return res;
@@ -134,9 +131,6 @@ namespace lsp
 
         void Flags::commit(atom_t property)
         {
-            if (pStyle == NULL)
-                return;
-
             // Parse property
             atom_t *atoms = vAtoms;
             size_t bit = 1;
@@ -150,15 +144,9 @@ namespace lsp
                     break;
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Flags::sync(atom_t atom, bool value)
+        void Flags::psync(atom_t atom, bool value)
         {
             // Commit data to the style
             if (pStyle != NULL)
@@ -173,7 +161,7 @@ namespace lsp
                 pListener->notify(this);
         }
 
-        void Flags::sync(size_t mask)
+        void Flags::psync(size_t mask)
         {
             // Update flags
             size_t changes  = nFlags ^ mask;
@@ -198,38 +186,9 @@ namespace lsp
                 pListener->notify(this);
         }
 
-        void Flags::sync()
+        void Flags::push()
         {
-            sync(size_t(0) - 1); // Sync all items
-        }
-
-        status_t Flags::init()
-        {
-            pStyle->begin(&sListener);
-                atom_t *atoms = vAtoms;
-                size_t bit = 1;
-                for (const char * const *flags = pFlags; *flags != NULL; ++atoms, ++flags, bit <<= 1)
-                {
-                    if (*atoms >= 0)
-                        pStyle->create_bool(*atoms, nFlags & bit);
-                }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Flags::override()
-        {
-            pStyle->begin(&sListener);
-                atom_t *atoms = vAtoms;
-                size_t bit = 1;
-                for (const char * const *flags = pFlags; *flags != NULL; ++atoms, ++flags, bit <<= 1)
-                {
-                    if (*atoms >= 0)
-                        pStyle->override_bool(*atoms, nFlags & bit);
-                }
-            pStyle->end();
-
-            return STATUS_OK;
+            psync(size_t(0) - 1); // Sync all items
         }
 
         void Flags::set_default()
@@ -273,7 +232,7 @@ namespace lsp
                 return on;
 
             nFlags      = v;
-            sync(atom, on);
+            psync(atom, on);
 
             return ! on;
         }
@@ -290,7 +249,7 @@ namespace lsp
                 return false;
 
             nFlags      = v;
-            sync(atom, false);
+            psync(atom, false);
 
             return true;
         }
@@ -304,7 +263,7 @@ namespace lsp
             ordinal     = 1 << ordinal;
             bool prev   = nFlags & ordinal;
             nFlags     ^= ordinal;
-            sync(atom, !prev);
+            psync(atom, !prev);
 
             return prev;
         }

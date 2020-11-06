@@ -69,33 +69,19 @@ namespace lsp
                     M_ALL       = M_LEFT | M_RIGHT | M_TOP | M_BOTTOM
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        Embedding      *pValue;
-
-                    public:
-                        inline Listener(Embedding *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 atom_t          vAtoms[P_COUNT];    // Atoms
                 size_t          nFlags;             // Flags
-                Listener        sListener;          // Listener
 
             protected:
                 bool            set_flag(size_t flag, bool set);
-                void            sync();
-                void            commit(atom_t property);
-                status_t        init();
-                status_t        override();
+
+                virtual void    push();
+                virtual void    commit(atom_t property);
 
             protected:
                 Embedding(prop::Listener *listener = NULL);
-                ~Embedding();
+                virtual ~Embedding();
 
             public:
                 inline bool     left() const                    { return nFlags & M_LEFT;               }
@@ -126,10 +112,6 @@ namespace lsp
                 public:
                     explicit Embedding(prop::Listener *listener = NULL): tk::Embedding(listener) {}
 
-                protected:
-                    using               tk::Embedding::init;
-                    using               tk::Embedding::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -143,25 +125,6 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Embedding::unbind(vAtoms, DESC, &sListener); };
 
-                    /**
-                     * Initialize default values
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, bool left, bool right, bool top, bool bottom);
-                    inline status_t     init(Style *style, bool hor, bool vert)         { return init(style, hor, hor, vert, vert);         }
-                    inline status_t     init(Style *style, bool on)                     { return init(style, on, on, on, on);               }
-
-                    status_t            override(Style *style, bool left, bool right, bool top, bool bottom);
-                    inline status_t     override(Style *style, bool hor, bool vert)     { return override(style, hor, hor, vert, vert);     }
-                    inline status_t     override(Style *style, bool on)                 { return override(style, on, on, on, on);           }
-
-                    static status_t            init(const char *name, Style *style, bool left, bool right, bool top, bool bottom);
-                    static inline status_t     init(const char *name, Style *style, bool hor, bool vert)         { return init(name, style, hor, hor, vert, vert);         }
-                    static inline status_t     init(const char *name, Style *style, bool on)                     { return init(name, style, on, on, on, on);               }
-
-                    static status_t            override(const char *name, Style *style, bool left, bool right, bool top, bool bottom);
-                    static inline status_t     override(const char *name, Style *style, bool hor, bool vert)     { return override(name, style, hor, hor, vert, vert);     }
-                    static inline status_t     override(const char *name, Style *style, bool on)                 { return override(name, style, on, on, on, on);           }
             };
         }
 

@@ -44,15 +44,34 @@ namespace lsp
                 Property & operator = (const Property &);
 
             protected:
-                Style              *pStyle;
-                prop::Listener     *pListener;
+                class Listener: public IStyleListener
+                {
+                    private:
+                        Property   *pProperty;
+                        ssize_t     nLocks;
+
+                    public:
+                        explicit Listener(Property *p);
+
+                    public:
+                        virtual void    notify(atom_t property);
+
+                        inline ssize_t  lock()      { return ++nLocks; }
+                        inline ssize_t  unlock()    { return --nLocks; }
+                };
 
             protected:
-                explicit inline Property(prop::Listener *listener = NULL)
-                {
-                    pStyle          = NULL;
-                    pListener       = listener;
-                }
+                Style              *pStyle;                     // Bound style
+                prop::Listener     *pListener;                  // Nested client listener
+                Listener            sListener;                  // Listener
+
+            protected:
+                void                sync(bool notify = true);   // Save property to style
+                virtual void        push();                     // Push implementation-specific data to style
+                virtual void        commit(atom_t property);    // Commit changes from style
+
+            protected:
+                explicit Property(prop::Listener *listener = NULL);
 
             public:
                 virtual            ~Property();

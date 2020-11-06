@@ -25,15 +25,8 @@ namespace lsp
 {
     namespace tk
     {
-        void BitEnum::Listener::notify(atom_t property)
-        {
-            if (property == pValue->nAtom)
-                pValue->commit();
-        }
-
         BitEnum::BitEnum(const prop::enum_t *xenum, prop::Listener *listener):
-            SimpleProperty(listener),
-            sListener(this)
+            SimpleProperty(listener)
         {
             nValue      = 0.0f;
             pEnum       = xenum;
@@ -64,12 +57,8 @@ namespace lsp
             return SimpleProperty::bind(property, style, PT_STRING, &sListener);
         }
 
-        void BitEnum::commit()
+        void BitEnum::commit(atom_t property)
         {
-            // Handle change: remember new value
-            if (pStyle == NULL)
-                return;
-
             LSPString s;
             if (pStyle->get_string(nAtom, &s) != STATUS_OK)
                 return;
@@ -78,78 +67,13 @@ namespace lsp
             size_t v = 0;
             if (Property::parse_bit_enums(&v, &s, pEnum) >= 0)
                 nValue      = v;
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void BitEnum::sync()
+        void BitEnum::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                {
-                    LSPString s;
-                    if (Property::fmt_bit_enums(&s, pEnum, nValue))
-                        pStyle->set_string(nAtom, &s);
-                }
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
-        }
-
-        status_t BitEnum::init()
-        {
-            pStyle->begin(&sListener);
-            {
-                LSPString s;
-                if (Property::fmt_bit_enums(&s, pEnum, nValue))
-                    pStyle->create_string(nAtom, &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t BitEnum::override()
-        {
-            pStyle->begin(&sListener);
-            {
-                LSPString s;
-                if (Property::fmt_bit_enums(&s, pEnum, nValue))
-                    pStyle->override_string(nAtom, &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t BitEnum::init(Style *style, size_t v)
-        {
-            if (pStyle == NULL)
-                return STATUS_BAD_STATE;
-
             LSPString s;
-            if (!Property::fmt_bit_enums(&s, pEnum, v))
-                return STATUS_NO_MEM;
-
-            style->create_string(nAtom, &s);
-            return STATUS_OK;
-        }
-
-        status_t BitEnum::override(Style *style, size_t v)
-        {
-            if (pStyle == NULL)
-                return STATUS_BAD_STATE;
-
-            LSPString s;
-            if (!Property::fmt_bit_enums(&s, pEnum, v))
-                return STATUS_NO_MEM;
-
-            style->override_string(nAtom, &s);
-            return STATUS_OK;
+            if (Property::fmt_bit_enums(&s, pEnum, nValue))
+                pStyle->set_string(nAtom, &s);
         }
 
         size_t BitEnum::xset_all(size_t v)

@@ -41,7 +41,7 @@ namespace lsp
 
             protected:
                 explicit Ptr(prop::Listener *listener = NULL);
-                ~Ptr();
+                virtual ~Ptr();
 
             protected:
                 void                       *set(void *ptr);

@@ -46,37 +46,23 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        Rectangle      *pValue;
-
-                    public:
-                        inline Listener(Rectangle *ptr)             { pValue = ptr;     }
-
-                    public:
-                        virtual void notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
             protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 ws::rectangle_t     sRect;
-                Listener            sListener;
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
+                virtual void        push();
+                virtual void        commit(atom_t property);
+
                 float               climited(float v) const;
                 float               change(float k, float step);
-                status_t            init();
-                status_t            override();
 
             protected:
                 explicit Rectangle(prop::Listener *listener = NULL);
-                ~Rectangle();
+                virtual ~Rectangle();
 
             public:
                 inline ssize_t      left() const                    { return sRect.nLeft;           }
@@ -109,10 +95,6 @@ namespace lsp
                 public:
                     explicit Rectangle(prop::Listener *listener = NULL): tk::Rectangle(listener) {};
 
-                protected:
-                    using               tk::Rectangle::init;
-                    using               tk::Rectangle::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -125,22 +107,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::Rectangle::unbind(vAtoms, DESC, &sListener); };
-
-                    status_t            init(Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
-                    status_t            init(Style *style, const ws::rectangle_t *rect);
-                    status_t            init(Style *style);
-
-                    status_t            override(Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
-                    status_t            override(Style *style, const ws::rectangle_t *rect);
-                    status_t            override(Style *style);
-
-                    static status_t     init(const char *name, Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
-                    static status_t     init(const char *name, Style *style, const ws::rectangle_t *rect);
-                    static status_t     init(const char *name, Style *style);
-
-                    static status_t     override(const char *name, Style *style, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
-                    static status_t     override(const char *name, Style *style, const ws::rectangle_t *rect);
-                    static status_t     override(const char *name, Style *style);
             };
         }
 

@@ -48,35 +48,20 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        SizeConstraints        *pValue;
-
-                    public:
-                        inline Listener(SizeConstraints *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
             protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 ws::size_limit_t    sValue;             // Value
-                Listener            sListener;          // Listener
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
-                status_t            init();
-                status_t            override();
+                virtual void        push();
+                virtual void        commit(atom_t property);
 
             protected:
                 explicit SizeConstraints(prop::Listener *listener = NULL);
-                ~SizeConstraints();
+                virtual ~SizeConstraints();
 
             public:
                 inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); };
@@ -159,10 +144,6 @@ namespace lsp
                 public:
                     explicit SizeConstraints(prop::Listener *listener = NULL): tk::SizeConstraints(listener) {};
 
-                protected:
-                    using               tk::SizeConstraints::init;
-                    using               tk::SizeConstraints::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -175,27 +156,6 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::SizeConstraints::unbind(vAtoms, DESC, &sListener); };
-
-                    /**
-                     * Initialize
-                     * @param style style
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
-                    status_t            init(Style *style, const ws::size_limit_t *p);
-                    status_t            init(Style *style);
-
-                    status_t            override(Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
-                    status_t            override(Style *style, const ws::size_limit_t *p);
-                    status_t            override(Style *style);
-
-                    static status_t     init(const char *name, Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
-                    static status_t     init(const char *name, Style *style, const ws::size_limit_t *p);
-                    static status_t     init(const char *name, Style *style);
-
-                    static status_t     override(const char *name, Style *style, ssize_t min_width, ssize_t min_height, ssize_t max_width, ssize_t max_height);
-                    static status_t     override(const char *name, Style *style, const ws::size_limit_t *p);
-                    static status_t     override(const char *name, Style *style);
             };
         }
 

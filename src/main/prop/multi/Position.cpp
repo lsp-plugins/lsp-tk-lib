@@ -33,14 +33,8 @@ namespace lsp
             { NULL,         PT_UNKNOWN  }
         };
 
-        void Position::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Position::Position(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             nLeft           = 0;
             nTop            = 0;
@@ -53,9 +47,6 @@ namespace lsp
 
         void Position::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             ssize_t v;
             if ((property == vAtoms[P_LEFT]) && (pStyle->get_int(vAtoms[P_LEFT], &v) == STATUS_OK))
                 nLeft       = v;
@@ -73,39 +64,23 @@ namespace lsp
                     nTop        = xv[1];
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync(true);
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Position::sync(bool notify)
+        void Position::push()
         {
-            if (pStyle != NULL)
+            // Simple components
+            if (vAtoms[P_LEFT] >= 0)
+                pStyle->set_int(vAtoms[P_LEFT], nLeft);
+            if (vAtoms[P_TOP] >= 0)
+                pStyle->set_int(vAtoms[P_TOP], nTop);
+
+            // Compound objects
+            LSPString s;
+            if (vAtoms[P_VALUE] >= 0)
             {
-                pStyle->begin(&sListener);
-                {
-                    // Simple components
-                    if (vAtoms[P_LEFT] >= 0)
-                        pStyle->set_int(vAtoms[P_LEFT], nLeft);
-                    if (vAtoms[P_TOP] >= 0)
-                        pStyle->set_int(vAtoms[P_TOP], nTop);
-
-                    // Compound objects
-                    LSPString s;
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (s.fmt_ascii("%ld %ld", long(nLeft), long(nTop)))
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+                if (s.fmt_ascii("%ld %ld", long(nLeft), long(nTop)))
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-
-            if ((pListener != NULL) && (notify))
-                pListener->notify(this);
         }
 
         ssize_t Position::set_left(ssize_t value)
@@ -205,80 +180,13 @@ namespace lsp
             return true;
         }
 
-        status_t Position::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_int(vAtoms[P_LEFT], left());
-                pStyle->create_int(vAtoms[P_TOP], top());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld", long(left()), long(top()));
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Position::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_int(vAtoms[P_LEFT], left());
-                pStyle->override_int(vAtoms[P_TOP], top());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%ld %ld", long(left()), long(top()));
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
         namespace prop
         {
-            status_t Position::init(Style *style, ssize_t left, ssize_t top)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_int(vAtoms[P_LEFT], left);
-                    style->create_int(vAtoms[P_TOP], top);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%ld %ld", long(left), long(top));
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            void Position::commit(ssize_t left, ssize_t top)
+            void Position::commit_value(ssize_t left, ssize_t top)
             {
                 nLeft   = left;
                 nTop    = top;
                 sync(false);
-            }
-
-            status_t Position::init(const char *name, Style *style, ssize_t left, ssize_t top)
-            {
-                prop::Position v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(left, top);
-                return v.init();
-            }
-
-            status_t Position::override(const char *name, Style *style, ssize_t left, ssize_t top)
-            {
-                prop::Position v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(left, top);
-                return v.override();
             }
         }
     } /* namespace tk */

@@ -49,18 +49,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        Position        *pValue;
-
-                    public:
-                        inline Listener(Position *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -68,18 +56,15 @@ namespace lsp
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 ssize_t             nLeft;              // Left
                 ssize_t             nTop;               // Top
-                Listener            sListener;          // Listener
 
             protected:
-                void                sync(bool notify);
-                void                commit(atom_t property);
+                virtual void        push();
+                virtual void        commit(atom_t property);
                 void                parse(const LSPString *s);
-                status_t            init();
-                status_t            override();
 
             protected:
                 explicit Position(prop::Listener *listener = NULL);
-                ~Position();
+                virtual ~Position();
 
             public:
                 inline void         set_default()                   { MultiProperty::set_default(vAtoms, DESC);     }
@@ -117,10 +102,6 @@ namespace lsp
                 public:
                     explicit Position(prop::Listener *listener = NULL): tk::Position(listener) {};
 
-                protected:
-                    using               tk::Position::init;
-                    using               tk::Position::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -135,24 +116,12 @@ namespace lsp
                     inline status_t     unbind()                                        { return tk::Position::unbind(vAtoms, DESC, &sListener); };
 
                     /**
-                     * Init default position
-                     * @param style style
-                     * @param left left
-                     * @param top top
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, ssize_t left, ssize_t top);
-
-                    static status_t     init(const char *name, Style *style, ssize_t left, ssize_t top);
-                    static status_t     override(const char *name, Style *style, ssize_t left, ssize_t top);
-
-                    /**
                      * Commit new position
                      * @param left left
                      * @param top top
                      * @param scale
                      */
-                    void                commit(ssize_t left, ssize_t top);
+                    void                commit_value(ssize_t left, ssize_t top);
             };
         }
     }

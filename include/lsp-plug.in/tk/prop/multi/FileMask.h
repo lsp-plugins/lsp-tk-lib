@@ -39,32 +39,28 @@ namespace lsp
                 FileMask & operator = (const FileMask &);
 
             protected:
-                class Listener: public prop::Listener
+                class PListener: public prop::Listener
                 {
                     protected:
-                        bool        bLock;
+                        ssize_t     nLocks;
                         FileMask   *pMask;
 
                     public:
-                        inline Listener(FileMask *prop)
-                        {
-                            bLock   = false;
-                            pMask   = prop;
-                        }
+                        explicit PListener(FileMask *prop);
 
+                    public:
                         virtual void    notify(Property *prop);
-                        inline void     set_lock(bool lock)     { bLock = lock;             }
+                        inline ssize_t  lock()      { return ++nLocks; }
+                        inline ssize_t  unlock()    { return --nLocks; }
                 };
 
             protected:
+                PListener           sPListener;
                 prop::String        sTitle;
                 prop::String        sExtensions;
                 prop::PathPattern   sPattern;
-                Listener            sListener;
 
             protected:
-                void                        sync();
-                void                        commit(Property *prop);
                 status_t                    bind(atom_t property, Style *style, i18n::IDictionary *dict);
                 status_t                    bind(const char *property, Style *style, i18n::IDictionary *dict);
                 status_t                    bind(const LSPString *property, Style *style, i18n::IDictionary *dict);
@@ -72,7 +68,7 @@ namespace lsp
 
             protected:
                 explicit FileMask(prop::Listener *listener = NULL);
-                ~FileMask();
+                virtual ~FileMask();
 
             public:
                 LSP_TK_PROPERTY(String,             title,                  &sTitle);

@@ -39,21 +39,7 @@ namespace lsp
                 Enum & operator = (const Enum &);
 
             protected:
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        Enum       *pValue;
-
-                    public:
-                        inline Listener(Enum *ptr)             { pValue = ptr;     }
-
-                    public:
-                        virtual void notify(atom_t property);
-                };
-
-            protected:
                 ssize_t             nValue;
-                Listener            sListener;
                 const prop::enum_t *pEnum;
 
             protected:
@@ -61,17 +47,16 @@ namespace lsp
                 status_t            bind(atom_t property, Style *style);
                 status_t            bind(const char *property, Style *style);
                 status_t            bind(const LSPString *property, Style *style);
-                void                commit();
-                void                sync();
                 ssize_t             set(ssize_t v);
                 ssize_t             init(Style *style, ssize_t v);
                 ssize_t             override(Style *style, ssize_t v);
-                ssize_t             init(ssize_t v);
-                ssize_t             override(ssize_t v);
+
+                virtual void        push();
+                virtual void        commit(atom_t property);
 
             protected:
                 explicit Enum(const prop::enum_t *xenum, prop::Listener *listener = NULL);
-                ~Enum();
+                virtual ~Enum();
 
         };
     }

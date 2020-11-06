@@ -48,38 +48,23 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        Padding        *pValue;
-
-                    public:
-                        inline Listener(Padding *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
             protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 padding_t           sValue;             // Padding value
-                Listener            sListener;          // Listener
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
+                virtual void        push();
+                virtual void        commit(atom_t property);
+
                 void                parse(const LSPString *s);
                 void                parse_css(const LSPString *s);
 
-                status_t            init();
-                status_t            override();
-
             protected:
                 explicit Padding(prop::Listener *listener = NULL);
-                ~Padding();
+                virtual ~Padding();
 
             public:
                 inline void         set_default()       { MultiProperty::set_default(vAtoms, DESC); };
@@ -156,10 +141,6 @@ namespace lsp
                 public:
                     explicit Padding(prop::Listener *listener = NULL): tk::Padding(listener) {};
 
-                protected:
-                    using tk::Padding::init;
-                    using tk::Padding::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -173,29 +154,6 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Padding::unbind(vAtoms, DESC, &sListener); };
 
-                    /**
-                     * Initialize default values
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, size_t left, size_t right, size_t top, size_t bottom);
-                    status_t            init(Style *style, const padding_t *p);
-                    inline status_t     init(Style *style, size_t all)                  { return init(style, all, all, all, all);               }
-                    inline status_t     init(Style *style, size_t hor, size_t vert)     { return init(style, hor, hor, vert, vert);             }
-
-                    status_t            override(Style *style, size_t left, size_t right, size_t top, size_t bottom);
-                    status_t            override(Style *style, const padding_t *p);
-                    inline status_t     override(Style *style, size_t all)              { return override(style, all, all, all, all);           }
-                    inline status_t     override(Style *style, size_t hor, size_t vert) { return override(style, hor, hor, vert, vert);         }
-
-                    static status_t             init(const char *name, Style *style, size_t left, size_t right, size_t top, size_t bottom);
-                    static status_t             init(const char *name, Style *style, const padding_t *p);
-                    static inline status_t      init(const char *name, Style *style, size_t all)                  { return init(name, style, all, all, all, all);               }
-                    static inline status_t      init(const char *name, Style *style, size_t hor, size_t vert)     { return init(name, style, hor, hor, vert, vert);             }
-
-                    static status_t             override(const char *name, Style *style, size_t left, size_t right, size_t top, size_t bottom);
-                    static status_t             override(const char *name, Style *style, const padding_t *p);
-                    static inline status_t      override(const char *name, Style *style, size_t all)              { return override(name, style, all, all, all, all);           }
-                    static inline status_t      override(const char *name, Style *style, size_t hor, size_t vert) { return override(name, style, hor, hor, vert, vert);         }
             };
         }
     

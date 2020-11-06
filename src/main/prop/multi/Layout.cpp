@@ -36,14 +36,8 @@ namespace lsp
             { NULL,         PT_UNKNOWN  }
         };
 
-        void Layout::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Layout::Layout(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             hAlign      = 0.0f;
             vAlign      = 0.0f;
@@ -56,35 +50,25 @@ namespace lsp
             MultiProperty::unbind(vAtoms, DESC, &sListener);
         }
 
-        void Layout::sync()
+        void Layout::push()
         {
-            if (pStyle != NULL)
+            // Simple components
+            if (vAtoms[P_HALIGN] >= 0)
+                pStyle->set_float(vAtoms[P_HALIGN], hAlign);
+            if (vAtoms[P_VALIGN] >= 0)
+                pStyle->set_float(vAtoms[P_VALIGN], vAlign);
+            if (vAtoms[P_HSCALE] >= 0)
+                pStyle->set_float(vAtoms[P_HSCALE], hScale);
+            if (vAtoms[P_VSCALE] >= 0)
+                pStyle->set_float(vAtoms[P_VSCALE], vScale);
+
+            // Compound objects
+            LSPString s;
+            if (vAtoms[P_VALUE] >= 0)
             {
-                pStyle->begin(&sListener);
-                {
-                    // Simple components
-                    if (vAtoms[P_HALIGN] >= 0)
-                        pStyle->set_float(vAtoms[P_HALIGN], hAlign);
-                    if (vAtoms[P_VALIGN] >= 0)
-                        pStyle->set_float(vAtoms[P_VALIGN], vAlign);
-                    if (vAtoms[P_HSCALE] >= 0)
-                        pStyle->set_float(vAtoms[P_HSCALE], hScale);
-                    if (vAtoms[P_VSCALE] >= 0)
-                        pStyle->set_float(vAtoms[P_VSCALE], vScale);
-
-                    // Compound objects
-                    LSPString s;
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (s.fmt_ascii("%.4f %.4f %.4f %.4f", hAlign, vAlign, hScale, vScale))
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+                if (s.fmt_ascii("%.4f %.4f %.4f %.4f", hAlign, vAlign, hScale, vScale))
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         void Layout::parse(const LSPString *s)
@@ -128,9 +112,6 @@ namespace lsp
 
         void Layout::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             float v;
             if ((property == vAtoms[P_HALIGN]) && (pStyle->get_float(vAtoms[P_HALIGN], &v) == STATUS_OK))
                 hAlign      = lsp_limit(v, -1.0f, 1.0f);
@@ -144,12 +125,6 @@ namespace lsp
             LSPString s;
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
                 parse(&s);
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
         float Layout::set_halign(float v)
@@ -273,103 +248,6 @@ namespace lsp
             dst->nWidth     = w;
             dst->nHeight    = h;
 //            lsp_trace("after: x=%d, y=%d, w=%d, h=%d", int(dst->nLeft), int(dst->nTop), int(dst->nWidth), int(dst->nHeight));
-        }
-
-        status_t Layout::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_float(vAtoms[P_HALIGN], halign());
-                pStyle->create_float(vAtoms[P_VALIGN], valign());
-                pStyle->create_float(vAtoms[P_HSCALE], hscale());
-                pStyle->create_float(vAtoms[P_VSCALE], vscale());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%.4f %.4f %.4f %.4f", halign(), valign(), hscale(), vscale());
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        status_t Layout::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_float(vAtoms[P_HALIGN], halign());
-                pStyle->override_float(vAtoms[P_VALIGN], valign());
-                pStyle->override_float(vAtoms[P_HSCALE], hscale());
-                pStyle->override_float(vAtoms[P_VSCALE], vscale());
-
-                // Compound objects
-                LSPString s;
-                s.fmt_ascii("%.4f %.4f %.4f %.4f", halign(), valign(), hscale(), vscale());
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t Layout::init(Style *style, float halign, float valign, float hscale, float vscale)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_float(vAtoms[P_HALIGN], halign);
-                    style->create_float(vAtoms[P_VALIGN], valign);
-                    style->create_float(vAtoms[P_HSCALE], hscale);
-                    style->create_float(vAtoms[P_VSCALE], vscale);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%.4f %.4f %.4f %.4f", halign, valign, hscale, vscale);
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Layout::override(Style *style, float halign, float valign, float hscale, float vscale)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->override_float(vAtoms[P_HALIGN], halign);
-                    style->override_float(vAtoms[P_VALIGN], valign);
-                    style->override_float(vAtoms[P_HSCALE], hscale);
-                    style->override_float(vAtoms[P_VSCALE], vscale);
-
-                    // Compound objects
-                    LSPString s;
-                    s.fmt_ascii("%.4f %.4f %.4f %.4f", halign, valign, hscale, vscale);
-                    style->override_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Layout::init(const char *name, Style *style, float halign, float valign, float hscale, float vscale)
-            {
-                prop::Layout v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(halign, valign, hscale, vscale);
-                return v.init();
-            }
-
-            status_t Layout::override(const char *name, Style *style, float halign, float valign, float hscale, float vscale)
-            {
-                prop::Layout v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(halign, valign, hscale, vscale);
-                return v.override();
-            }
         }
 
     } /* namespace tk */

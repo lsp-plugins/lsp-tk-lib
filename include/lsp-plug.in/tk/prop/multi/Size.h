@@ -45,18 +45,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        Size        *pValue;
-
-                    public:
-                        inline Listener(Size *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -64,17 +52,14 @@ namespace lsp
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 size_t              nWidth;             // Width
                 size_t              nHeight;            // Height
-                Listener            sListener;          // Listener
 
             protected:
-                void                sync(bool notify);
-                void                commit(atom_t property);
-                status_t            init();
-                status_t            override();
+                virtual void        push();
+                virtual void        commit(atom_t property);
 
             protected:
                 explicit Size(prop::Listener *listener = NULL);
-                ~Size();
+                virtual ~Size();
 
             public:
                 inline void         set_default()       { MultiProperty::set_default(vAtoms, DESC); };
@@ -114,10 +99,6 @@ namespace lsp
                 public:
                     explicit Size(prop::Listener *listener = NULL): tk::Size(listener) {};
 
-                protected:
-                    using               tk::Size::init;
-                    using               tk::Size::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -132,25 +113,13 @@ namespace lsp
                     inline status_t     unbind()                                        { return tk::Size::unbind(vAtoms, DESC, &sListener); };
 
                     /**
-                     * Initialize default size
-                     * @param style style
-                     * @param width width
-                     * @param height height
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, size_t width, size_t height);
-
-                    static status_t     init(const char *name, Style *style, size_t width, size_t height);
-                    static status_t     override(const char *name, Style *style, size_t width, size_t height);
-
-                    /**
                      * Commit new size
                      * @param width new width
                      * @param height new height
                      * @param scale scaling factor
                      */
-                    void                commit(size_t width, size_t height, float scale);
-                    void                commit(const ws::rectangle_t *rect, float scale);
+                    void                commit_value(size_t width, size_t height, float scale);
+                    void                commit_value(const ws::rectangle_t *rect, float scale);
             };
         }
     }

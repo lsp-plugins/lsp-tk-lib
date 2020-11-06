@@ -45,18 +45,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        Shortcut        *pValue;
-
-                    public:
-                        inline Listener(Shortcut *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
                 static const prop::enum_t   MODLIST[];
@@ -65,7 +53,6 @@ namespace lsp
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 size_t              nMod;               // Modifiers
                 ws::code_t          nKey;               // Key
-                Listener            sListener;          // Listener
 
             protected:
                 static status_t     append_modifier(LSPString *s, size_t mod, size_t index);
@@ -76,18 +63,17 @@ namespace lsp
                 static status_t     format_key(LSPString *s, ws::code_t key);
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
+                virtual void        push();
+                virtual void        commit(atom_t property);
+
                 void                parse_value(const LSPString *s);
                 static ws::code_t   parse_key(const LSPString *s);
                 static size_t       parse_modifiers(const LSPString *s);
                 static size_t       parse_modifier(const LSPString *s);
-                status_t            init();
-                status_t            override();
 
             protected:
                 explicit Shortcut(prop::Listener *listener = NULL);
-                ~Shortcut();
+                virtual ~Shortcut();
 
             public:
                 inline bool         modifier(key_modifier_t v) const    { return (nMod & v) == v;               }
@@ -158,10 +144,6 @@ namespace lsp
                     inline Shortcut(prop::Listener *listener = NULL): tk::Shortcut(listener) {}
                     inline ~Shortcut() {}
 
-                protected:
-                    using               tk::Shortcut::init;
-                    using               tk::Shortcut::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -169,15 +151,6 @@ namespace lsp
                     inline status_t     bind(atom_t property, Style *style)             { return tk::Shortcut::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const char *property, Style *style)        { return tk::Shortcut::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::Shortcut::bind(property, style, vAtoms, DESC, &sListener); }
-
-                    status_t            init(Style *style, ws::code_t key, size_t mod);
-                    status_t            init(Style *style);
-
-                    static status_t     init(const char *name, Style *style, ws::code_t key, size_t mod);
-                    static status_t     init(const char *name, Style *style);
-
-                    static status_t     override(const char *name, Style *style, ws::code_t key, size_t mod);
-                    static status_t     override(const char *name, Style *style);
             };
         }
     }

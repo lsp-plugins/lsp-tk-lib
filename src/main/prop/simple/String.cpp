@@ -33,15 +33,9 @@ namespace lsp
             pString->sync();
         }
 
-        void String::Listener::notify(atom_t property)
-        {
-            pString->commit(property);
-        }
-
         String::String(prop::Listener *listener):
             SimpleProperty(listener),
-            sParams(this),
-            sListener(this)
+            sParams(this)
         {
             pDict       = NULL;
             nFlags      = 0;
@@ -114,15 +108,9 @@ namespace lsp
 
         void String::commit(atom_t property)
         {
-            if (pStyle != NULL)
-            {
-                const char *lang;
-                if ((property == nAtom) && (pStyle->get_string(property, &lang) == STATUS_OK))
-                    invalidate();
-            }
-
-            if (pListener != NULL)
-                pListener->notify(this);
+            const char *lang;
+            if ((property == nAtom) && (pStyle->get_string(property, &lang) == STATUS_OK))
+                invalidate();
         }
 
         void String::invalidate()
@@ -131,12 +119,9 @@ namespace lsp
             nFlags &= ~F_MATCHING;
         }
 
-        void String::sync()
+        void String::push()
         {
             invalidate();
-
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         status_t String::set_raw(const LSPString *value)
@@ -528,16 +513,6 @@ namespace lsp
                 // This is raw string, just return
                 sync();
                 return true;
-            }
-
-            status_t String::init(const char *name, Style *style)
-            {
-                return STATUS_OK;
-            }
-
-            status_t String::override(const char *name, Style *style)
-            {
-                return STATUS_OK;
             }
         }
 

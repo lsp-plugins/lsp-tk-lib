@@ -25,15 +25,8 @@ namespace lsp
 {
     namespace tk
     {
-        void Float::Listener::notify(atom_t property)
-        {
-            if (pValue->nAtom == property)
-                pValue->commit();
-        }
-
         Float::Float(prop::Listener *listener):
-            SimpleProperty(listener),
-            sListener(this)
+            SimpleProperty(listener)
         {
             fValue      = 0.0f;
         }
@@ -43,42 +36,16 @@ namespace lsp
             SimpleProperty::unbind(&sListener);
         }
 
-        status_t Float::init(float value)
-        {
-            return pStyle->create_float(nAtom, value);
-        }
-
-        status_t Float::override(float value)
-        {
-            return pStyle->override_float(nAtom, value);
-        }
-
-        void Float::commit()
+        void Float::commit(atom_t property)
         {
             // Handle change: remember new value
-            if (pStyle == NULL)
-                return;
-
             if (pStyle->get_float(nAtom, &fValue) != STATUS_OK)
                 return;
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Float::sync()
+        void Float::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                    pStyle->set_float(nAtom, fValue);
-                pStyle->end();
-            }
-            if (pListener != NULL)
-                pListener->notify(this);
+            pStyle->set_float(nAtom, fValue);
         }
 
         float Float::set(float v)
@@ -102,29 +69,5 @@ namespace lsp
             set(tmp);
         }
 
-        namespace prop
-        {
-            status_t Float::create(const char *name, Style *style, float value)
-            {
-                LSP_STATUS_ASSERT(bind(name, style));
-                set(value);
-                return STATUS_OK;
-            }
-
-            status_t Float::init(const char *name, Style *style, float value)
-            {
-                prop::Float v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.init(value);
-            }
-
-            status_t Float::override(const char *name, Style *style, float value)
-            {
-                prop::Float v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                return v.override(value);
-            }
-        }
-    
     } /* namespace calc */
 } /* namespace lsp */

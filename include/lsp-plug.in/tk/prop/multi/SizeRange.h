@@ -45,18 +45,6 @@ namespace lsp
                     P_COUNT
                 };
 
-                class Listener: public IStyleListener
-                {
-                    private:
-                        SizeRange        *pValue;
-
-                    public:
-                        inline Listener(SizeRange *color)   { pValue = color; };
-
-                    public:
-                        virtual void    notify(atom_t property);
-                };
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -64,17 +52,14 @@ namespace lsp
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 ssize_t             nMin;               // Minimum size
                 ssize_t             nMax;               // Maximum size
-                Listener            sListener;          // Listener
 
             protected:
-                void                sync();
-                void                commit(atom_t property);
-                status_t            init();
-                status_t            override();
+                virtual void        push();
+                virtual void        commit(atom_t property);
 
             protected:
                 explicit SizeRange(prop::Listener *listener = NULL);
-                ~SizeRange();
+                virtual ~SizeRange();
 
             public:
                 inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); };
@@ -110,10 +95,6 @@ namespace lsp
                 public:
                     explicit SizeRange(prop::Listener *listener = NULL): tk::SizeRange(listener) {};
 
-                protected:
-                    using               tk::SizeRange::init;
-                    using               tk::SizeRange::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -127,19 +108,6 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::SizeRange::unbind(vAtoms, DESC, &sListener); };
 
-                    /**
-                     * Initialize
-                     * @param style style
-                     * @return status of operation
-                     */
-                    status_t            init(Style *style, ssize_t min, ssize_t max);
-                    inline status_t     init(Style *style, ssize_t value)               { return init(style, value, value); }
-
-                    static status_t            init(const char *name, Style *style, ssize_t min, ssize_t max);
-                    static inline status_t     init(const char *name, Style *style, ssize_t value)  { return init(name, style, value, value); }
-
-                    static status_t            override(const char *name, Style *style, ssize_t min, ssize_t max);
-                    static inline status_t     override(const char *name, Style *style, ssize_t value)  { return override(name, style, value, value); }
             };
         }
 

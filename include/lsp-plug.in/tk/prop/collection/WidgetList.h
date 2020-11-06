@@ -51,7 +51,7 @@ namespace lsp
 
             public:
                 explicit GenericWidgetList(const w_class_t *meta, prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL);
-                ~GenericWidgetList();
+                virtual ~GenericWidgetList();
 
             public:
                 status_t        add(Widget *w, bool manage);
@@ -81,7 +81,6 @@ namespace lsp
 
                 public:
                     explicit WidgetList(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): GenericWidgetList(&widget_t::metadata, listener, clistener) {}
-                    ~WidgetList() {}
 
                 public:
                     inline size_t       size() const                        { return sList.size();                                  }
@@ -107,7 +106,6 @@ namespace lsp
 
                     public:
                         explicit WidgetList(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::WidgetList<widget_t>(listener, clistener) {}
-                        ~WidgetList() {}
 
                     public:
                         inline void         flush()                             { tk::WidgetList<widget_t>::flush();                }

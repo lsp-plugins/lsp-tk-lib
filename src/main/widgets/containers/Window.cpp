@@ -718,8 +718,8 @@ namespace lsp
 
                         lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
 
-                        sPosition.commit(e->nLeft, e->nTop);
-                        sWindowSize.commit(e->nWidth, e->nHeight, sScaling.get());
+                        sPosition.commit_value(e->nLeft, e->nTop);
+                        sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
 
                         r.nLeft     = e->nLeft;
                         r.nTop      = e->nTop;
@@ -1005,8 +1005,8 @@ namespace lsp
         void Window::realize(const ws::rectangle_t *r)
         {
             lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
-            sPosition.commit(r->nLeft, r->nTop);
-            sWindowSize.commit(r->nWidth, r->nHeight, sScaling.get());
+            sPosition.commit_value(r->nLeft, r->nTop);
+            sWindowSize.commit_value(r->nWidth, r->nHeight, sScaling.get());
 
             WidgetContainer::realize(r);
             if ((pChild == NULL) || (!pChild->visibility()->get()))

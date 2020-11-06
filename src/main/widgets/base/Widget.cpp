@@ -51,17 +51,6 @@ namespace lsp
             LSP_TK_BUILTIN_STYLE(Widget, "Widget");
         }
 
-        STYLE_INITIALIZER_BEGIN(Widget, );
-            prop::Float::init("scaling", style, 1.0f);
-            prop::Allocation::init("allocation", style, true, false);
-            prop::Padding::init("padding", style, 0, 0, 0, 0);
-            prop::Float::init("brightness", style, 1.0f);
-            prop::Color::init("bg.color", style, "#cccccc");
-            prop::Boolean::init("visible", style, true);
-            prop::Pointer::init("pointer", style, ws::MP_DEFAULT);
-        STYLE_INITIALIZER_END(Widget, "Widget");
-        LSP_BUILTIN_STYLE_DEPRECATED(Widget);
-
         void Widget::PropListener::notify(Property *prop)
         {
             if (pWidget->valid())

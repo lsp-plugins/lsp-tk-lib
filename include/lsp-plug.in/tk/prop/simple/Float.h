@@ -39,31 +39,15 @@ namespace lsp
                 Float & operator = (const Float &);
 
             protected:
-                class Listener: public IStyleListener
-                {
-                    protected:
-                        Float      *pValue;
-
-                    public:
-                        inline Listener(Float *ptr)             { pValue = ptr;     }
-
-                    public:
-                        virtual void notify(atom_t property);
-                };
-
-            protected:
                 float               fValue;
-                Listener            sListener;
 
             protected:
-                void                commit();
-                void                sync();
-                status_t            init(float value);
-                status_t            override(float value);
+                virtual void        commit(atom_t property);
+                virtual void        push();
 
             protected:
                 explicit Float(prop::Listener *listener = NULL);
-                ~Float();
+                virtual ~Float();
 
             public:
                 /**
@@ -102,10 +86,6 @@ namespace lsp
                 public:
                     explicit inline Float(prop::Listener *listener = NULL): tk::Float(listener) {};
 
-                protected:
-                    using tk::Float::init;
-                    using tk::Float::override;
-
                 public:
                     /**
                      * Bind property with specified name to the style of linked widget
@@ -119,19 +99,11 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return SimpleProperty::unbind(&sListener); };
 
-                    inline status_t     init(float value)                               { return tk::Float::init(value);        }
-                    inline status_t     override(float value)                           { return tk::Float::override(value);    }
-
-                    static status_t     init(const char *name, Style *style, float value);
-                    static status_t     override(const char *name, Style *style, float value);
-
-                    status_t            create(const char *name, Style *style, float value);
-
                     /**
                      * Change value without notification of any listener
                      * @param value value to set
                      */
-                    inline void         commit(float value)                             { fValue        = value; }
+                    inline void         commit_value(float value)                       { fValue        = value; }
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };

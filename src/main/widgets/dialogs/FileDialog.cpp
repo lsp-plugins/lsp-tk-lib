@@ -360,8 +360,8 @@ namespace lsp
             sBMSelected.init();
             sBMSelTextColor.bind("text.color", &sBMSelected);
             sBMSelBgColor.bind("bg.color", &sBMSelected);
-            sBMSelTextColor.init(&sBMSelected, "#ffffff");
-            sBMSelBgColor.init(&sBMSelected, "#888888");
+            sBMSelTextColor.set("#ffffff");
+            sBMSelBgColor.set("#888888");
 
             // Sync mode
             sync_mode();
@@ -1712,7 +1712,7 @@ namespace lsp
             // Update index
             ListBoxItem *sel = (index >= 0) ? sWFilter.items()->get(index) : NULL;
             sWFilter.selected()->set(sel);
-            sSelFilter.commit(index);
+            sSelFilter.commit_value(index);
 
             return STATUS_OK;
         }

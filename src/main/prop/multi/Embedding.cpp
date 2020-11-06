@@ -35,14 +35,8 @@ namespace lsp
             NULL
         };
 
-        void Embedding::Listener::notify(atom_t property)
-        {
-            pValue->commit(property);
-        }
-
         Embedding::Embedding(prop::Listener *listener):
-            MultiProperty(vAtoms, P_COUNT, listener),
-            sListener(this)
+            MultiProperty(vAtoms, P_COUNT, listener)
         {
             nFlags      = 0;
         }
@@ -54,9 +48,6 @@ namespace lsp
 
         void Embedding::commit(atom_t property)
         {
-            if ((pStyle == NULL) || (property < 0))
-                return;
-
             bool v;
             if ((property == vAtoms[P_LEFT]) && (pStyle->get_bool(vAtoms[P_LEFT], &v) == STATUS_OK))
                 nFlags      = lsp_setflag(nFlags, M_LEFT, v);
@@ -96,47 +87,32 @@ namespace lsp
                         break;
                 }
             }
-
-            // Update/notify listeners
-            if (pStyle->sync())
-                this->sync();
-            else if (pListener != NULL)
-                pListener->notify(this);
         }
 
-        void Embedding::sync()
+        void Embedding::push()
         {
-            if (pStyle != NULL)
-            {
-                pStyle->begin(&sListener);
-                {
-                    // Simple components
-                    if (vAtoms[P_LEFT] >= 0)
-                        pStyle->set_bool(vAtoms[P_LEFT], left());
-                    if (vAtoms[P_RIGHT] >= 0)
-                        pStyle->set_bool(vAtoms[P_RIGHT], right());
-                    if (vAtoms[P_TOP] >= 0)
-                        pStyle->set_bool(vAtoms[P_TOP], top());
-                    if (vAtoms[P_BOTTOM] >= 0)
-                        pStyle->set_bool(vAtoms[P_BOTTOM], bottom());
+            // Simple components
+            if (vAtoms[P_LEFT] >= 0)
+                pStyle->set_bool(vAtoms[P_LEFT], left());
+            if (vAtoms[P_RIGHT] >= 0)
+                pStyle->set_bool(vAtoms[P_RIGHT], right());
+            if (vAtoms[P_TOP] >= 0)
+                pStyle->set_bool(vAtoms[P_TOP], top());
+            if (vAtoms[P_BOTTOM] >= 0)
+                pStyle->set_bool(vAtoms[P_BOTTOM], bottom());
 
-                    // Compound objects
-                    LSPString s;
-                    if (vAtoms[P_VALUE] >= 0)
-                    {
-                        if (s.fmt_ascii("%s %s %s %s",
-                                (left()) ? "true" : "false",
-                                (right()) ? "true" : "false",
-                                (top()) ? "true" : "false",
-                                (bottom()) ? "true" : "false"
-                            ))
-                            pStyle->set_string(vAtoms[P_VALUE], &s);
-                    }
-                }
-                pStyle->end();
+            // Compound objects
+            LSPString s;
+            if (vAtoms[P_VALUE] >= 0)
+            {
+                if (s.fmt_ascii("%s %s %s %s",
+                        (left()) ? "true" : "false",
+                        (right()) ? "true" : "false",
+                        (top()) ? "true" : "false",
+                        (bottom()) ? "true" : "false"
+                    ))
+                    pStyle->set_string(vAtoms[P_VALUE], &s);
             }
-            if (pListener != NULL)
-                pListener->notify(this);
         }
 
         void Embedding::set(bool left, bool right, bool top, bool bottom)
@@ -188,121 +164,6 @@ namespace lsp
             sync();
 
             return old;
-        }
-
-        status_t Embedding::init()
-        {
-            pStyle->begin();
-            {
-                pStyle->create_bool(vAtoms[P_LEFT],   left());
-                pStyle->create_bool(vAtoms[P_RIGHT],  right());
-                pStyle->create_bool(vAtoms[P_TOP],    top());
-                pStyle->create_bool(vAtoms[P_BOTTOM], bottom());
-
-                LSPString s;
-                s.fmt_ascii("%s %s %s %s",
-                            (left()) ? "true" : "false",
-                            (right()) ? "true" : "false",
-                            (top()) ? "true" : "false",
-                            (bottom()) ? "true" : "false"
-                    );
-                pStyle->create_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-
-            return STATUS_OK;
-        }
-
-        status_t Embedding::override()
-        {
-            pStyle->begin();
-            {
-                pStyle->override_bool(vAtoms[P_LEFT],   left());
-                pStyle->override_bool(vAtoms[P_RIGHT],  right());
-                pStyle->override_bool(vAtoms[P_TOP],    top());
-                pStyle->override_bool(vAtoms[P_BOTTOM], bottom());
-
-                LSPString s;
-                s.fmt_ascii("%s %s %s %s",
-                            (left()) ? "true" : "false",
-                            (right()) ? "true" : "false",
-                            (top()) ? "true" : "false",
-                            (bottom()) ? "true" : "false"
-                    );
-                pStyle->override_string(vAtoms[P_VALUE], &s);
-            }
-            pStyle->end();
-
-            return STATUS_OK;
-        }
-
-        namespace prop
-        {
-            status_t Embedding::init(Style *style, bool left, bool right, bool top, bool bottom)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->create_bool(vAtoms[P_LEFT],   left);
-                    style->create_bool(vAtoms[P_RIGHT],  right);
-                    style->create_bool(vAtoms[P_TOP],    top);
-                    style->create_bool(vAtoms[P_BOTTOM], bottom);
-
-                    LSPString s;
-                    s.fmt_ascii("%s %s %s %s",
-                                (left) ? "true" : "false",
-                                (right) ? "true" : "false",
-                                (top) ? "true" : "false",
-                                (bottom) ? "true" : "false"
-                        );
-                    style->create_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Embedding::override(Style *style, bool left, bool right, bool top, bool bottom)
-            {
-                if (pStyle == NULL)
-                    return STATUS_BAD_STATE;
-
-                style->begin();
-                {
-                    style->override_bool(vAtoms[P_LEFT],   left);
-                    style->override_bool(vAtoms[P_RIGHT],  right);
-                    style->override_bool(vAtoms[P_TOP],    top);
-                    style->override_bool(vAtoms[P_BOTTOM], bottom);
-
-                    LSPString s;
-                    s.fmt_ascii("%s %s %s %s",
-                                (left) ? "true" : "false",
-                                (right) ? "true" : "false",
-                                (top) ? "true" : "false",
-                                (bottom) ? "true" : "false"
-                        );
-                    style->override_string(vAtoms[P_VALUE], &s);
-                }
-                style->end();
-                return STATUS_OK;
-            }
-
-            status_t Embedding::init(const char *name, Style *style, bool left, bool right, bool top, bool bottom)
-            {
-                prop::Embedding v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(left, right, top, bottom);
-                return v.init();
-            }
-
-            status_t Embedding::override(const char *name, Style *style, bool left, bool right, bool top, bool bottom)
-            {
-                prop::Embedding v;
-                LSP_STATUS_ASSERT(v.bind(name, style));
-                v.set(left, right, top, bottom);
-                return v.override();
-            }
         }
 
     }
