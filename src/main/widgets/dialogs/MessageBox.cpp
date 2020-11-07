@@ -198,20 +198,20 @@ namespace lsp
 
             // Initialize widgets
             LSP_STATUS_ASSERT(sHeading.init());
-            LSP_STATUS_ASSERT(sHeading.style()->add_parent(pHeadingStyle));
+            LSP_STATUS_ASSERT(sHeading.style()->inject_parent(pHeadingStyle));
             LSP_STATUS_ASSERT(sMessage.init());
-            LSP_STATUS_ASSERT(sMessage.style()->add_parent(pMessageStyle));
+            LSP_STATUS_ASSERT(sMessage.style()->inject_parent(pMessageStyle));
 
             // Initialize containers
             LSP_STATUS_ASSERT(sVBox.init());
-            LSP_STATUS_ASSERT(sVBox.style()->add_parent(pVBox));
+            LSP_STATUS_ASSERT(sVBox.style()->inject_parent(pVBox));
             sVBox.orientation()->set_vertical();
 
             LSP_STATUS_ASSERT(sBtnAlign.init());
-            LSP_STATUS_ASSERT(sBtnAlign.style()->add_parent(pBtnAlign));
+            LSP_STATUS_ASSERT(sBtnAlign.style()->inject_parent(pBtnAlign));
 
             LSP_STATUS_ASSERT(sBtnBox.init());
-            LSP_STATUS_ASSERT(sBtnBox.style()->add_parent(pBtnBox));
+            LSP_STATUS_ASSERT(sBtnBox.style()->inject_parent(pBtnBox));
             sBtnBox.orientation()->set_horizontal();
 
             // Initialize structure
@@ -246,7 +246,7 @@ namespace lsp
             if (btn == NULL)
                 return;
 
-            btn->style()->add_parent(_this->pBtnStyle);
+            btn->style()->inject_parent(_this->pBtnStyle);
 
             ssize_t index = _this->vButtons.index_of(btn);
             if (index >= 0)

@@ -29,6 +29,104 @@ namespace lsp
 {
     namespace tk
     {
+        namespace style
+        {
+            //-----------------------------------------------------------------
+            // FileDialog style
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog, Window)
+                sMode.bind("mode", this);
+                sCustomAction.bind("custom.action", this);
+                sSelFilter.bind("filter.selected", this);
+                sUseConfirm.bind("confirm", this);
+                // Configure
+                sMode.set(FDM_OPEN_FILE);
+                sCustomAction.set(false);
+                sSelFilter.set(0);
+                sUseConfirm.set(false);
+                // Override
+                sPadding.set_all(8);
+                sBorderStyle.set(ws::BS_DIALOG);
+                sActions.set_actions(ws::WA_DIALOG | ws::WA_RESIZE | ws::WA_CLOSE);
+                sLayout.set(0.0f, 1.0f);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog, "FileDialog");
+
+            //-----------------------------------------------------------------
+            // FileDialog::NavButton style
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__NavButton, Button)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__NavButton, Button)
+                // Override
+                sConstraints.set_min_width(32);
+                sAllocation.set_fill(false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__NavButton, "FileDialog::NavButton");
+
+            //-----------------------------------------------------------------
+            // FileDialog::ActionButton style
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__ActionButton, Button)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ActionButton, Button)
+                // Override
+                sConstraints.set_min_width(96);
+                sAllocation.set_fill(false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionButton, "FileDialog::ActionButton");
+
+            //-----------------------------------------------------------------
+            // FileDialog::Bookmark style
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__Bookmark, Hyperlink)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Bookmark, Hyperlink)
+                // Override
+                sPadding.set(2, 8);
+                sTextLayout.set_halign(-1.0f);
+                sFollow.set(false);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark, "FileDialog::Bookmark");
+
+            //-----------------------------------------------------------------
+            // FileDialog::Bookmark.selected style
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__Bookmark_selected, FileDialog__Bookmark)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Bookmark_selected, FileDialog__Bookmark)
+                // Override
+                sColor.set("#ffffff");
+                sBgColor.set("#888888");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark_selected, "FileDialog::Bookmark.selected");
+
+            //-----------------------------------------------------------------
+            // FileDialog::Warning
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__Warning, Label)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Warning, Label)
+                // Override
+                sTextLayout.set(1.0f, 0.5f);
+                sColor.set("#ff0000");
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__Warning, "FileDialog::Warning");
+
+            //-----------------------------------------------------------------
+            // FileDialog::ExtCheck
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__ExtCheck, Button)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ExtCheck, Button)
+                // Override
+                sMode.set_toggle();
+                sColor.set("#00ff00");
+                sLed.set(true);
+                sDown.set(true);
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck");
+        }
+
         const w_class_t FileDialog::metadata            = { "FileDialog", &Window::metadata };
 
         FileDialog::FileDialog(Display *dpy):
@@ -55,13 +153,10 @@ namespace lsp
             wPathBox(dpy),
             sWWarning(dpy),
 
-            sBMSelected(dpy->schema()),
             sMode(&sProperties),
             sCustomAction(&sProperties),
             sActionText(&sProperties),
             sPath(&sProperties),
-            sBMSelTextColor(&sProperties),
-            sBMSelBgColor(&sProperties),
             sFilter(&sProperties),
             sSelFilter(&sProperties),
             sSelected(&sProperties),
@@ -74,6 +169,13 @@ namespace lsp
 
             pSelBookmark    = NULL;
             pPopupBookmark  = NULL;
+
+            pNavButton      = NULL;
+            pActButton      = NULL;
+            pBMNormal       = NULL;
+            pBMSel          = NULL;
+            pWarning        = NULL;
+            pExtCheck       = NULL;
 
             pClass          = &metadata;
         }
@@ -123,8 +225,6 @@ namespace lsp
             wGo.destroy();
             wUp.destroy();
             wPathBox.destroy();
-
-            sBMSelected.destroy();
 
             pWSearch = NULL;
 
@@ -183,49 +283,66 @@ namespace lsp
 
             lsp_trace("Scaling factor: %f", sScaling.get());
 
-            // Initialize labels
+            // Init styles
+            pNavButton      = pDisplay->schema()->get("FileDialog::NavButton");
+            if (pNavButton == NULL)
+                return STATUS_BAD_STATE;
+            pActButton      = pDisplay->schema()->get("FileDialog::ActionButton");
+            if (pActButton == NULL)
+                return STATUS_BAD_STATE;
+            pBMNormal       = pDisplay->schema()->get("FileDialog::Bookmark");
+            if (pBMNormal == NULL)
+                return STATUS_BAD_STATE;
+            pBMSel          = pDisplay->schema()->get("FileDialog::Bookmark.selected");
+            if (pBMSel == NULL)
+                return STATUS_BAD_STATE;
+            pWarning        = pDisplay->schema()->get("FileDialog::Warning");
+            if (pWarning == NULL)
+                return STATUS_BAD_STATE;
+            pExtCheck       = pDisplay->schema()->get("FileDialog::ExtCheck");
+            if (pExtCheck == NULL)
+                return STATUS_BAD_STATE;
+
+            // Initialize widgets
             LSP_STATUS_ASSERT(sWPath.init());
             sWPath.allocation()->set_hexpand(true);
+
             LSP_STATUS_ASSERT(sWSearch.init());
+
             LSP_STATUS_ASSERT(sWFilter.init());
-            sWFilter.allocation()->set_fill(true);
+
             LSP_STATUS_ASSERT(sWFiles.init());
             sWFiles.constraints()->set_min(400, 320);
             sWFiles.allocation()->set_hexpand(true);
+
             LSP_STATUS_ASSERT(sWAction.init());
-            sWAction.constraints()->set_min_width(96);
-            sWAction.allocation()->set_fill(false);
-            sWAction.flat()->set(true);
+            LSP_STATUS_ASSERT(sWAction.style()->inject_parent(pActButton));
+
             LSP_STATUS_ASSERT(sWCancel.init());
+            LSP_STATUS_ASSERT(sWCancel.style()->inject_parent(pActButton));
             LSP_STATUS_ASSERT(sWCancel.text()->set("actions.cancel"));
-            sWCancel.constraints()->set_min_width(96);
-            sWCancel.allocation()->set_fill(false);
-            sWCancel.flat()->set(true);
+
             LSP_STATUS_ASSERT(sWWarning.init());
+            LSP_STATUS_ASSERT(sWWarning.style()->inject_parent(pWarning));
             sWWarning.visibility()->set(false);
             sWWarning.allocation()->set_hexpand(true);
-            sWWarning.text_layout()->set(1.0f, 0.5f);
 
             LSP_STATUS_ASSERT(wGo.init());
+            LSP_STATUS_ASSERT(wGo.style()->inject_parent(pNavButton));
             LSP_STATUS_ASSERT(wGo.text()->set("actions.nav.go"));
-            wGo.allocation()->set_fill(false);
-            wGo.constraints()->set_min_width(32);
-            wGo.flat()->set(true);
+
             LSP_STATUS_ASSERT(wUp.init());
+            LSP_STATUS_ASSERT(wUp.style()->inject_parent(pNavButton));
             LSP_STATUS_ASSERT(wUp.text()->set("actions.nav.up"));
-            wUp.allocation()->set_fill(false);
-            wUp.constraints()->set_min_width(32);
-            wUp.flat()->set(true);
+
             LSP_STATUS_ASSERT(sBMAdd.init());
+            LSP_STATUS_ASSERT(sBMAdd.style()->inject_parent(pNavButton));
             LSP_STATUS_ASSERT(sBMAdd.text()->set("actions.to_bookmarks"));
-            sBMAdd.allocation()->set_fill(false);
-            sBMAdd.constraints()->set_min_width(32);
-            sBMAdd.flat()->set(true);
 
             LSP_STATUS_ASSERT(wPathBox.init());
             wPathBox.orientation()->set_horizontal();
-            wPathBox.spacing()->set(2);
             wPathBox.allocation()->set_fill(true);
+            wPathBox.spacing()->set(2);
 
             LSP_STATUS_ASSERT(sMainGrid.init());
             sMainGrid.rows()->set(7);
@@ -255,7 +372,6 @@ namespace lsp
 
             LSP_STATUS_ASSERT(sBookmarks.init());
             sBookmarks.orientation()->set_vertical();
-            sBookmarks.spacing()->set(4);
             sBookmarks.allocation()->set_expand(true);
             LSP_STATUS_ASSERT(sSBAlign.add(&sBookmarks));
 
@@ -300,12 +416,8 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
             LSP_STATUS_ASSERT(sMainGrid.add(&sHBox)); // Action button box
 
-            // Initialize structure
-            wAutoExt.led()->set(true);
-            wAutoExt.mode()->set_toggle();
-            wAutoExt.down()->set(true);
-
-            LSP_STATUS_ASSERT(add(&sMainGrid));
+            // Add the whole structure
+            LSP_STATUS_ASSERT(this->add(&sMainGrid));
 
             // Add slots
             handler_id_t id = 0;
@@ -331,11 +443,6 @@ namespace lsp
             if (id < 0)
                 return -id;
 
-            padding()->set_all(8);
-            border_style()->set(ws::BS_DIALOG);
-            actions()->set_actions(ws::WA_DIALOG | ws::WA_RESIZE | ws::WA_CLOSE);
-            layout()->set(0.0f, 1.0f);
-
             // Bind properties
             sMode.bind("mode", &sStyle);
             sCustomAction.bind("custom.action", &sStyle);
@@ -347,21 +454,13 @@ namespace lsp
             sUseConfirm.bind("confirm", &sStyle);
             sConfirmMsg.bind(&sStyle, pDisplay->dictionary());
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sMode.init(sclass, FDM_OPEN_FILE);
-//                sCustomAction.init(sclass, false);
-//                sSelFilter.init(sclass, 0);
-//                sUseConfirm.init(sclass, false);
-//            }
-
-            // Init selected bookmark
-            sBMSelected.init();
-            sBMSelTextColor.bind("text.color", &sBMSelected);
-            sBMSelBgColor.bind("bg.color", &sBMSelected);
-            sBMSelTextColor.set("#ffffff");
-            sBMSelBgColor.set("#888888");
+            // Bind foreign properties
+            sBMTextColor.bind("text.color", pBMNormal);
+            sBMBgColor.bind("bg.color", pBMNormal);
+            sBMSelTextColor.bind("text.color", pBMSel);
+            sBMSelBgColor.bind("bg.color", pBMSel);
+            sWarnColor.bind("text.color", pWarning);
+            sExtColor.bind("color", pExtCheck);
 
             // Sync mode
             sync_mode();
@@ -500,6 +599,7 @@ namespace lsp
         {
             LSP_STATUS_ASSERT(sAppendExt.init());
             LSP_STATUS_ASSERT(wAutoExt.init());
+            LSP_STATUS_ASSERT(wAutoExt.style()->inject_parent(pExtCheck));
 
             Label *lbl = new Label(pDisplay);
             if (lbl == NULL)
@@ -1219,11 +1319,9 @@ namespace lsp
                 if (res != STATUS_OK)
                     break;
 
-                ent->sHlink.padding()->set_vertical(2, 2);
-                ent->sHlink.text_layout()->set_halign(-1.0f);
-                ent->sHlink.follow()->set(false);
+                ent->sHlink.style()->inject_parent(pBMNormal);
                 ent->sHlink.url()->set_raw(&url);
-                ent->sHlink.padding()->set_horizontal(8, 8);
+
                 ent->sHlink.slots()->bind(SLOT_SUBMIT, slot_on_bm_submit, self());
                 ent->sHlink.slots()->bind(SLOT_BEFORE_POPUP, slot_on_bm_popup, self());
                 ent->sHlink.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll);
@@ -1353,10 +1451,16 @@ namespace lsp
 
             // Deactivate selected bookmark
             if (pSelBookmark != NULL)
-                pSelBookmark->sHlink.style()->remove_parent(&sBMSelected);
+            {
+                pSelBookmark->sHlink.style()->remove_parent(pBMSel);
+                pSelBookmark->sHlink.style()->inject_parent(pBMNormal);
+            }
             pSelBookmark = found;
             if (pSelBookmark != NULL)
-                pSelBookmark->sHlink.style()->add_parent(&sBMSelected);
+            {
+                pSelBookmark->sHlink.style()->remove_parent(pBMNormal);
+                pSelBookmark->sHlink.style()->inject_parent(pBMSel);
+            }
 
             return STATUS_OK;
         }

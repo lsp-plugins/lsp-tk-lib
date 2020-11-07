@@ -249,7 +249,6 @@ namespace lsp
                 pWindow->resize(r.nWidth, r.nHeight);
 
             // Realize widget container
-            sPadding.enter(&r, scaling);
             WidgetContainer::realize_widget(&r);
 
             return STATUS_OK;

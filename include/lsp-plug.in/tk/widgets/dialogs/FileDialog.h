@@ -33,6 +33,21 @@ namespace lsp
 {
     namespace tk
     {
+        namespace style
+        {
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog, Window)
+                prop::FileDialogMode        sMode;
+                prop::Boolean               sCustomAction;
+                prop::String                sActionText;
+                prop::String                sPath;
+                prop::FileFilters           sFilter;
+                prop::Integer               sSelFilter;
+                prop::String                sSelected;
+                prop::Boolean               sUseConfirm;
+                prop::String                sConfirmMsg;
+            LSP_TK_STYLE_DEF_END
+        }
+
         /**
          * File load/save dialog
          */
@@ -103,19 +118,31 @@ namespace lsp
                 bm_entry_t                 *pSelBookmark;
                 bm_entry_t                 *pPopupBookmark;
 
-                Style                       sBMSelected;
-
                 prop::FileDialogMode        sMode;
                 prop::Boolean               sCustomAction;
                 prop::String                sActionText;
                 prop::String                sPath;
-                prop::Color                 sBMSelTextColor;
-                prop::Color                 sBMSelBgColor;
                 prop::FileFilters           sFilter;
                 prop::Integer               sSelFilter;
                 prop::String                sSelected;
                 prop::Boolean               sUseConfirm;
                 prop::String                sConfirmMsg;
+
+                // External properties
+                prop::Color                 sBMTextColor;
+                prop::Color                 sBMBgColor;
+                prop::Color                 sBMSelTextColor;
+                prop::Color                 sBMSelBgColor;
+                prop::Color                 sWarnColor;
+                prop::Color                 sExtColor;
+
+                // Styles
+                Style                      *pNavButton;
+                Style                      *pActButton;
+                Style                      *pBMNormal;
+                Style                      *pBMSel;
+                Style                      *pWarning;
+                Style                      *pExtCheck;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -213,15 +240,19 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                    custom_action,                  &sCustomAction);
                 LSP_TK_PROPERTY(String,                     action_text,                    &sActionText);
                 LSP_TK_PROPERTY(String,                     path,                           &sPath);
-                LSP_TK_PROPERTY(Color,                      warn_color,                     sWWarning.color());
-                LSP_TK_PROPERTY(Color,                      auto_ext_color,                 wAutoExt.color());
-                LSP_TK_PROPERTY(Color,                      bookmark_selected_bg_color,     &sBMSelBgColor);
-                LSP_TK_PROPERTY(Color,                      bookmark_selected_text_color,   &sBMSelTextColor);
                 LSP_TK_PROPERTY(FileFilters,                filter,                         &sFilter);
                 LSP_TK_PROPERTY(Integer,                    selected_filter,                &sSelFilter);
                 LSP_TK_PROPERTY(String,                     selected_file,                  &sSelected);
                 LSP_TK_PROPERTY(Boolean,                    use_confirm,                    &sUseConfirm);
                 LSP_TK_PROPERTY(String,                     confirm_message,                &sConfirmMsg);
+
+                LSP_TK_PROPERTY(Color,                      warn_color,                     &sWarnColor);
+                LSP_TK_PROPERTY(Color,                      auto_ext_color,                 &sExtColor);
+
+                LSP_TK_PROPERTY(Color,                      bookmark_bg_color,              &sBMBgColor);
+                LSP_TK_PROPERTY(Color,                      bookmark_text_color,            &sBMTextColor);
+                LSP_TK_PROPERTY(Color,                      bookmark_selected_bg_color,     &sBMSelBgColor);
+                LSP_TK_PROPERTY(Color,                      bookmark_selected_text_color,   &sBMSelTextColor);
 
             public:
                 virtual status_t        on_show();

@@ -147,7 +147,7 @@ namespace lsp
         void TextFitness::apply(ws::rectangle_t *r)
         {
             r->nWidth   = lsp_max(0.0f, hFit * r->nWidth);
-            r->nHeight  = lsp_max(0.0f, hFit * r->nHeight);
+            r->nHeight  = lsp_max(0.0f, vFit * r->nHeight);
         }
 
     } /* namespace tk */

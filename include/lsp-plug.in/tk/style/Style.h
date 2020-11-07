@@ -191,6 +191,13 @@ namespace lsp
                 status_t                add_parent(Style *parent, ssize_t idx = -1);
 
                 /**
+                 * Inject parent style as having most priority against others
+                 * @param parent parent style to inject
+                 * @return status of operation
+                 */
+                inline status_t         inject_parent(Style *parent)    { return add_parent(parent, -1);    }
+
+                /**
                  * Remove the parent style
                  * @param parent parent style to remove
                  * @return status of operation

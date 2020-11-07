@@ -60,7 +60,7 @@ namespace lsp
                 sBorderColor.set("#000000");
                 sBorderGapColor.set("#cccccc");
                 sOpened.set(false);
-                sTextFit.set(false);
+                sTextFit.set(false, true);
                 sFont.set_size(12.0f);
                 sConstraints.set(-1, -1, -1, 0);
                 sTextLayout.set(-1.0f, 0.0f);
