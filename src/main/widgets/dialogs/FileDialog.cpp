@@ -369,10 +369,11 @@ namespace lsp
             sWarnBox.spacing()->set(8);
 
             LSP_STATUS_ASSERT(sSBBookmarks.init());
-            sSBBookmarks.hscroll_mode()->set(SCROLL_NONE);
+            sSBBookmarks.hscroll_mode()->set(SCROLL_OPTIONAL);
             sSBBookmarks.vscroll_mode()->set(SCROLL_OPTIONAL);
             sSBBookmarks.allocation()->set_expand(true);
             sSBBookmarks.constraints()->set_min_width(192);
+            sSBBookmarks.layout()->set(-1.0f, -1.0f, 1.0f, 1.0f);
 
             LSP_STATUS_ASSERT(sSBAlign.init());
             sSBAlign.layout()->set_align(0.0f, -1.0f); // Middle, Top
@@ -718,6 +719,7 @@ namespace lsp
                 return n;
             float delta = (4.0f * list->vscroll()->range()) / n;
             list->vstep()->set(delta);
+            list->vaccel_step()->set(delta * 2.0f);
             return STATUS_OK;
         }
 
@@ -964,7 +966,9 @@ namespace lsp
             float smax      = _area->vscroll()->max();
             float sdelta    = (smax - smin) / n;
 
-            _area->vstep()->set(lsp_max(sdelta, ydelta));
+            float step      = lsp_max(sdelta, ydelta);
+            _area->vstep()->set(step);
+            _area->vaccel_step()->set(step * 2.0f);
 
             return STATUS_OK;
         }

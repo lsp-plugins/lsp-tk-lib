@@ -74,7 +74,7 @@ namespace lsp
                 resize_buffer(v);
 
             // Update/notify listeners
-            if (pStyle->sync_mode())
+            if (pStyle->config_mode())
                 this->sync();
             else if (pListener != NULL)
                 pListener->notify(this);

@@ -35,7 +35,7 @@ namespace lsp
                 sValue.bind("value", this);
                 sStep.bind("step", this);
                 sAccelStep.bind("accel.step", this);
-                sConstraints.bind("size", this);
+                sConstraints.bind("size.constraints", this);
                 sOrientation.bind("orientation", this);
                 sSliderPointer.bind("slider.pointer", this);
                 sIncPointer.bind("inc.pointer", this);
@@ -173,7 +173,7 @@ namespace lsp
             sValue.bind("value", &sStyle);
             sStep.bind("step", &sStyle);
             sAccelStep.bind("accel.step", &sStyle);
-            sConstraints.bind("size", &sStyle);
+            sConstraints.bind("size.constraints", &sStyle);
             sOrientation.bind("orientation", &sStyle);
             sSliderPointer.bind("slider.pointer", &sStyle);
             sIncPointer.bind("inc.pointer", &sStyle);

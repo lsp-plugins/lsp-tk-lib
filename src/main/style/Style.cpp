@@ -110,25 +110,21 @@ namespace lsp
             property->type = PT_UNKNOWN;
         }
 
-        void Style::set_init_mode(bool init)
+        bool Style::config_mode() const
         {
-            if (init)
-                nFlags     |= S_INIT;
-            else
-                nFlags     &= ~S_INIT;
+            return (pSchema != NULL) ? pSchema->config_mode() : false;
         }
 
-        void Style::set_sync_mode(bool init)
+        bool Style::set_override(bool set)
         {
-            if (init)
-                nFlags     |= S_SYNC;
-            else
-                nFlags     &= ~S_SYNC;
+            bool res = nFlags & S_OVERRIDE;
+            nFlags = lsp_setflag(nFlags, S_OVERRIDE, set);
+            return res;
         }
 
-        bool Style::sync_mode() const
+        bool Style::override_mode() const
         {
-            return (pSchema != NULL) ? pSchema->sync_mode() : false;
+            return (nFlags & S_OVERRIDE) ? true : !config_mode();
         }
 
         status_t Style::copy_property(property_t *dst, const property_t *src)
@@ -148,7 +144,7 @@ namespace lsp
                     }
 
                     // Copy default value in INIT mode
-                    if ((nFlags & S_INIT) && (dst->dv.iValue != src->dv.iValue))
+                    if ((config_mode()) && (dst->dv.iValue != src->dv.iValue))
                     {
                         ++dst->changes;
                         dst->dv.iValue  = src->dv.iValue;
@@ -162,7 +158,7 @@ namespace lsp
                     }
 
                     // Copy default value in INIT mode
-                    if ((nFlags & S_INIT) && (dst->dv.fValue != src->dv.fValue))
+                    if ((config_mode()) && (dst->dv.fValue != src->dv.fValue))
                     {
                         ++dst->changes;
                         dst->dv.fValue  = src->dv.fValue;
@@ -176,7 +172,7 @@ namespace lsp
                     }
 
                     // Copy default value in INIT mode
-                    if ((nFlags & S_INIT) && (dst->dv.bValue != src->dv.bValue))
+                    if ((config_mode()) && (dst->dv.bValue != src->dv.bValue))
                     {
                         ++dst->changes;
                         dst->dv.bValue  = src->dv.bValue;
@@ -196,7 +192,7 @@ namespace lsp
                     }
 
                     // Copy default value in INIT mode
-                    if ((nFlags & S_INIT) && (::strcmp(dst->dv.sValue, src->dv.sValue) != 0))
+                    if ((config_mode()) && (::strcmp(dst->dv.sValue, src->dv.sValue) != 0))
                     {
                         char *tmp = ::strdup(src->dv.sValue);
                         if (tmp == NULL)
@@ -320,7 +316,7 @@ namespace lsp
 
         status_t Style::sync_property(property_t *p)
         {
-            lsp_trace("name=%s, flags=0x%x", atom_name(p->id), p->flags);
+            lsp_trace("name = %s, flags=0x%x", atom_name(p->id), p->flags);
 
             // Local-overridden properties can not be changed by parent ones
             if (p->flags & F_OVERRIDDEN)
@@ -1183,7 +1179,7 @@ namespace lsp
 
             if (p == NULL)
             {
-                p = create_property(id, src, (nFlags & S_INIT) ? 0 : F_OVERRIDDEN);
+                p = create_property(id, src, (override_mode()) ? F_OVERRIDDEN : 0);
                 if (p != NULL)
                 {
                     notify_listeners(p);
@@ -1200,7 +1196,7 @@ namespace lsp
 
                 if (res == STATUS_OK)
                 {
-                    if (!(nFlags & S_INIT))
+                    if (override_mode())
                         p->flags   |= F_OVERRIDDEN;
 
                     if (change != p->changes)

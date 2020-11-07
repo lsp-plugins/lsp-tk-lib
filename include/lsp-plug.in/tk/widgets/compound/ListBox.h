@@ -195,8 +195,10 @@ namespace lsp
 
                 LSP_TK_PROPERTY(RangeFloat,         hscroll,            &sHScroll)
                 LSP_TK_PROPERTY(RangeFloat,         vscroll,            &sVScroll)
-                LSP_TK_PROPERTY(StepFloat,          hstep,               sHBar.step())
-                LSP_TK_PROPERTY(StepFloat,          vstep,               sVBar.step())
+                LSP_TK_PROPERTY(StepFloat,          hstep,              sHBar.step())
+                LSP_TK_PROPERTY(StepFloat,          vstep,              sVBar.step())
+                LSP_TK_PROPERTY(StepFloat,          haccel_step,        sHBar.accel_step())
+                LSP_TK_PROPERTY(StepFloat,          vaccel_step,        sVBar.accel_step())
 
                 LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,      &vItems)
                 LSP_TK_PROPERTY(WidgetSet<ListBoxItem>,     selected,   &vSelected)

@@ -45,8 +45,7 @@ namespace lsp
         Schema::Schema(Atoms *atoms)
         {
             pAtoms          = atoms;
-            bSyncMode       = false;
-            bInitialized    = false;
+            nFlags          = 0;
             pRoot           = NULL;
         }
     
@@ -107,9 +106,9 @@ namespace lsp
         status_t Schema::init(IStyleFactory **list, size_t n)
         {
             // Check for initialize state
-            if (bInitialized)
+            if (nFlags & S_INITIALIZED)
                 return STATUS_BAD_STATE;
-            bInitialized = true;
+            nFlags = S_INITIALIZED | S_CONFIGURING;
 
             // Create root style
             if (pRoot == NULL)
@@ -123,17 +122,15 @@ namespace lsp
             bind(pRoot);
 
             // Create all necessary styles
-            status_t res = STATUS_OK;
             for (size_t i=0; i<n; ++i)
             {
-                bSyncMode = true;
-                res = create_style(list[i]);
-                if (res != STATUS_OK)
-                    break;
-                bSyncMode = false;
+                LSP_STATUS_ASSERT(create_style(list[i]));
             }
 
-            return res;
+            // Unset 'configuring' mode
+            nFlags &= ~S_CONFIGURING;
+
+            return STATUS_OK;
         }
 
         status_t Schema::apply(StyleSheet *sheet)
@@ -141,6 +138,16 @@ namespace lsp
             if (sheet == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
+            // Apply settings in configuration mode
+            nFlags |= S_CONFIGURING;
+            status_t res = apply_internal(sheet);
+            nFlags &= ~S_CONFIGURING;
+
+            return res;
+        }
+
+        status_t Schema::apply_internal(StyleSheet *sheet)
+        {
             // Destroy colors
             destroy_colors();
 
@@ -182,13 +189,11 @@ namespace lsp
             lsp_trace("Applying stylesheet to root style");
             if (sheet->pRoot != NULL)
             {
-                bSyncMode = true;
                 res = apply_settings(pRoot, sheet->pRoot);
                 if (res == STATUS_OK)
                     res = apply_relations(pRoot, sheet->pRoot);
                 if (res != STATUS_OK)
                     return res;
-                bSyncMode = false;
             }
 
             // Iterate over named styles
@@ -204,7 +209,6 @@ namespace lsp
                     continue;
 
                 StyleSheet::style_t *xs = sheet->vStyles.get(name);
-                bSyncMode = true;
                 if (xs != NULL)
                 {
                     lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
@@ -215,7 +219,6 @@ namespace lsp
                 }
                 else
                     res = s->add_parent(pRoot);
-                bSyncMode = false;
 
                 if (res != STATUS_OK)
                     return res;
@@ -243,6 +246,7 @@ namespace lsp
 
                 if (parse_property_value(&v, value, type) == STATUS_OK)
                 {
+                    bool over = s->set_override(true);
                     switch (v.type)
                     {
                         case PT_BOOL:   res = s->set_bool(name, v.bvalue);      break;
@@ -251,6 +255,7 @@ namespace lsp
                         case PT_STRING: res = s->set_string(name, &v.svalue);   break;
                         default:        res = STATUS_OK;
                     }
+                    s->set_override(over);
 
                     if (res != STATUS_OK)
                         return res;
@@ -302,9 +307,7 @@ namespace lsp
                 return STATUS_NO_MEM;
 
             // Initialize style and bind to Root by default
-            style->set_init_mode(true);
             status_t res    = style->add_parent(pRoot);
-            style->set_init_mode(false);
             if (res != STATUS_OK)
             {
                 delete style;

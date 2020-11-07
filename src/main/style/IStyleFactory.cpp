@@ -46,14 +46,12 @@ namespace lsp
                 return NULL;
 
             // Initialize style
-            s->set_init_mode(true);     // Set initialization mode
             status_t res = s->init();
             if (res != STATUS_OK)
             {
                 delete s;
                 return NULL;
             }
-            s->set_init_mode(false);    // Unset initialization mode
 
             // Return initialized style
             return s;

@@ -7,12 +7,12 @@
 		<bg value="#1b1c22" />
 		<bg2 value="#2f3037" />
 		<bg3 value="#45464d" />
-		<bg4 value="#dae0ff" />
+		<fg value="#ebecee" />
 		<hole value="#000000" />
 		<glass value="#101010" />
 		
 		<!-- Label colors -->
-		<main_text value="#dae0ff" />
+		<main_text value="#ebecee" />
 		<dark_text value="#1b1c22" />
 		<invalid_input value="#880000" />
 		
@@ -23,6 +23,9 @@
 		<!-- Hyperlink -->
 		<hlink_text value="#80ffff" />
 		<hlink_hover value="#ff8080" />
+		
+		<!-- Misc -->
+		<activity value="#0797c8" />
 	</colors>
 	
 	<!-- Root style -->
@@ -45,22 +48,62 @@
 	
 	<!-- Simple widgets -->
 	<style class="Label" parents="root">
-		<text.color value="main_text" />
+		<text.color value="fg" />
 	</style>
 	
 	<style class="Edit" parents="root">
-		<text.color value="dark_text" />
-		<color value="bg4" />
+		<text.color value="bg" />
+		<color value="fg" />
 		<border.size value="0" />
 	</style>
 	
 	<style class="ComboBox" parents="root">
-		<text.color value="dark_text" />
-		<color value="bg4" />
+		<text.color value="bg" />
+		<color value="fg" />
 		<border.size value="0" />
 	</style>
 	
 	<style class="Button" parents="root">
-		<text.color value="dark_text" />
+		<text.color value="bg" />
+	</style>
+	
+	<style class="ListBox" parents="root">
+		<bg.color value="bg" />
+		<border.color value="fg" />
+	</style>
+	
+	<style class="ListBoxItem" parents="root">
+		<bg.color value="bg" />
+		<bg.selected.color value="fg" />
+		<text.color value="fg" />
+		<text.selected.color value="bg" />
+	</style>
+	
+	<style class="ScrollBar" parents="root">
+		<border.color value="fg" />
+		<inc.color value="bg" />
+		<inc.active.color value="activity" />
+		<dec.color value="bg" />
+		<dec.active.color value="activity" />
+		<button.color value="fg" />
+		<button.active.color value="activity" />
+		<slider.color value="fg" />
+		<slider.border.color value="fg" />
+		<slider.active.color value="activity" />
+		<border.gap.color value="bg" />
+		<size.constraints.width.min value="14" />
+		<size.constraints.height.min value="14" />
+	</style>
+	
+	<!-- FileDialog widgets -->
+	<style class="FileDialog::Bookmark" parents="root">
+		<text.color value="hlink_text" />
+		<text.hover.color value="hlink_text" />
+	</style>
+	
+	<style class="FileDialog::Bookmark.selected" parents="FileDialog::Bookmark">
+		<bg.color value="bg2" />
 	</style>
 </schema>
+
+

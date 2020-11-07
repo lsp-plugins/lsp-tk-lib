@@ -471,54 +471,95 @@ namespace lsp
 
         status_t StyleSheet::parse_style_class(LSPString *cname, const LSPString *text)
         {
-            io::InStringSequence is(text);
-            expr::Tokenizer tok(&is);
-
-            if (tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS) != expr::TT_BAREWORD)
-                return STATUS_BAD_FORMAT;
-            else if (!cname->set(tok.text_value()))
+            if (!cname->set(text))
                 return STATUS_NO_MEM;
 
-            return (tok.get_token(expr::TF_GET) == expr::TT_EOF) ? STATUS_OK : STATUS_BAD_FORMAT;
+            cname->trim();
+            if (cname->length() <= 0)
+                return STATUS_BAD_FORMAT;
+
+            for (size_t i=0, n=cname->length(); i<n; ++i)
+            {
+                lsp_wchar_t ch = cname->char_at(i);
+                if ((ch >= 'a') && (ch <= 'z'))
+                    continue;
+                if ((ch >= 'A') && (ch <= 'Z'))
+                    continue;
+                if ((ch >= '0') && (ch <= '9'))
+                    continue;
+                switch (ch)
+                {
+                    case '_':
+                    case ':':
+                    case '.':
+                        break;
+                    default:
+                        return STATUS_BAD_FORMAT;
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t StyleSheet::add_parent(style_t *style, const LSPString *text)
+        {
+            LSPString cname;
+            status_t res = parse_style_class(&cname, text);
+            if (res != STATUS_OK)
+                return res;
+
+            // Check for duplicates
+            for (size_t i=0, n=style->parents.size(); i<n; ++i)
+                if (cname.equals(style->parents.uget(i)))
+                {
+                    sError.fmt_utf8("Duplicate parent style '%s' for style '%s'", cname.get_utf8(), style->name.get_utf8());
+                    return STATUS_DUPLICATED;
+                }
+
+            // Add item to list
+            LSPString *parent = cname.clone();
+            if (parent == NULL)
+                return STATUS_NO_MEM;
+
+            if (!style->parents.add(parent))
+            {
+                delete parent;
+                return STATUS_NO_MEM;
+            }
+
+            return STATUS_OK;
         }
 
         status_t StyleSheet::parse_style_parents(style_t *style, const LSPString *text)
         {
-            io::InStringSequence is(text);
-            expr::Tokenizer tok(&is);
-            expr::token_t t;
+            LSPString cname;
+            status_t res;
+            ssize_t first = 0, last = -1, len = text->length();
 
-            while ((t = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS)) != expr::TT_EOF)
+            while (true)
             {
-                // Require comma if there is more than one parent
-                if (style->parents.size() > 0)
+                last = text->index_of(',');
+                if (last < 0)
                 {
-                    if (t != expr::TT_COMMA)
-                        return STATUS_BAD_FORMAT;
-                    t = tok.get_token(expr::TF_GET | expr::TF_XKEYWORDS);
+                    last = len;
+                    break;
                 }
-                if (t != expr::TT_BAREWORD)
-                    return STATUS_BAD_FORMAT;
 
-                // Check for duplicates
-                LSPString *parent = tok.text_value()->clone();
-                if (parent == NULL)
+                if (!cname.set(text, first, last))
                     return STATUS_NO_MEM;
+                if ((res = add_parent(style, &cname)) != STATUS_OK)
+                    return res;
 
-                for (size_t i=0, n=style->parents.size(); i<n; ++i)
-                    if (tok.text_value()->equals(style->parents.uget(i)))
-                    {
-                        sError.fmt_utf8("Duplicate parent style '%s' for style '%s'", parent->get_utf8(), style->name.get_utf8());
-                        delete parent;
-                        return STATUS_DUPLICATED;
-                    }
+                first = last + 1;
+            }
 
-                // Add to list
-                if (!style->parents.add(parent))
-                {
-                    delete parent;
+            // Last token pending?
+            if (last > first)
+            {
+                if (!cname.set(text, first, last))
                     return STATUS_NO_MEM;
-                }
+                if ((res = add_parent(style, &cname)) != STATUS_OK)
+                    return res;
             }
 
             // Check that styles are defined

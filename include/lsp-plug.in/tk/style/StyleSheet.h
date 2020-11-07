@@ -88,6 +88,7 @@ namespace lsp
                 status_t            parse_style_class(LSPString *cname, const LSPString *text);
                 status_t            parse_style_parents(style_t *style, const LSPString *text);
                 status_t            parse_property_type(property_type_t *pt, const LSPString *text);
+                status_t            add_parent(style_t *style, const LSPString *text);
 
                 status_t            validate();
                 status_t            validate_style(style_t *s);

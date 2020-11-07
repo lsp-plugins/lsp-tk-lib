@@ -57,7 +57,7 @@ namespace lsp
             protected:
                 enum flags_t
                 {
-                    S_CONFIGURE     = 1 << 0,       // Schema is in configuration state
+                    S_CONFIGURING   = 1 << 0,       // Schema is in configuration state
                     S_INITIALIZED   = 1 << 1,       // Schema is initialized
                 };
 
@@ -75,8 +75,7 @@ namespace lsp
 
             protected:
                 mutable Atoms                      *pAtoms;
-                bool                                bInitialized;
-                bool                                bSyncMode;
+                size_t                              nFlags;
                 Style                              *pRoot;
                 lltl::pphash<LSPString, Style>      vStyles;
                 lltl::pphash<LSPString, lsp::Color> vColors;
@@ -92,6 +91,8 @@ namespace lsp
                 static status_t     parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt);
 
                 void                bind(Style *root);
+
+                status_t            apply_internal(StyleSheet *sheet);
 
             public:
                 explicit Schema(Atoms *atoms);
@@ -185,7 +186,13 @@ namespace lsp
                  */
                 const char         *atom_name(atom_t id) const;
 
-                inline bool         sync_mode() const           { return bSyncMode;         }
+                /**
+                 * Check that schema is in configuration mode:
+                 *   - no implicit overrides of style properties are allowed
+                 *   - automatic property synchronization on change is enabled
+                 * @return
+                 */
+                inline bool         config_mode() const           { return nFlags & S_CONFIGURING;  }
         };
     
     } /* namespace tk */

@@ -60,9 +60,8 @@ namespace lsp
 
                 enum style_flags_t
                 {
-                    S_INIT              = 1 << 0,   // Initialization flag
-                    S_SYNC              = 1 << 1,   // Value injection
-                    S_DELAYED           = 1 << 2    // Delayed notification
+                    S_DELAYED           = 1 << 0,   // Delayed notification
+                    S_OVERRIDE          = 1 << 1    // Force overrides
                 };
 
                 typedef struct property_t
@@ -148,8 +147,7 @@ namespace lsp
                 size_t              notify_listeners_delayed(property_t *prop);
                 void                deref_property(property_t *prop);
 
-                void                set_init_mode(bool init);
-                void                set_sync_mode(bool sync);
+                bool                set_override(bool set);
 
             public:
                 /**
@@ -181,13 +179,13 @@ namespace lsp
                  * Check sync mode
                  * @return true if sync mode
                  */
-                bool                    sync_mode() const;
+                bool                    config_mode() const;
 
                 /**
-                 * Check init mode
-                 * @return true if init mode
+                 * Check sync mode
+                 * @return true if sync mode
                  */
-                inline bool             init_mode() const   { return nFlags & S_INIT; }
+                bool                    override_mode() const;
 
                 /**
                  * Set parent style

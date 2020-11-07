@@ -46,7 +46,7 @@ namespace lsp
             pProperty->commit(property);
 
             // Push data to style if required
-            if (s->sync_mode())
+            if (s->config_mode())
                 pProperty->sync();
             else if (pProperty->pListener != NULL)
                 pProperty->pListener->notify(pProperty);
@@ -65,12 +65,12 @@ namespace lsp
 
         void Property::override()
         {
-            if (!pStyle->init_mode())
+            if (!pStyle->config_mode())
                 return;
 
-            pStyle->set_init_mode(false);
+            bool over = pStyle->set_override(true);
             sync();
-            pStyle->set_init_mode(true);
+            pStyle->set_override(over);
         }
 
         void Property::sync(bool notify)
