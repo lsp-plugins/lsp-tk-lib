@@ -119,7 +119,7 @@
 	<!-- FileDialog widgets -->
 	<style class="FileDialog::Bookmark" parents="root">
 		<text.color value="hlink_text" />
-		<text.hover.color value="hlink_text" />
+		<text.hover.color value="hlink_hover" />
 	</style>
 	
 	<style class="FileDialog::Bookmark.selected" parents="FileDialog::Bookmark">
