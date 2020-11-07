@@ -134,7 +134,8 @@ namespace lsp
                     }
 
                     // We're root menu
-                    get_screen_rectangle(&xr);
+                    if (get_screen_rectangle(&xr) != STATUS_OK)
+                        break;
                     lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
                     xe.nLeft       += xr.nLeft;
                     xe.nTop        += xr.nTop;
@@ -166,7 +167,8 @@ namespace lsp
                     }
 
                     // We're root menu
-                    get_screen_rectangle(&xr);
+                    if (get_screen_rectangle(&xr) != STATUS_OK)
+                        break;
                     lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
                     xe.nLeft       += xr.nLeft;
                     xe.nTop        += xr.nTop;
@@ -1157,7 +1159,7 @@ namespace lsp
             // Take focus if there is no parent menu
             if (pParentMenu == NULL)
             {
-                sWindow.grab_events(ws::GRAB_MENU);
+//                sWindow.grab_events(ws::GRAB_MENU);
                 sWindow.take_focus();
             }
         }

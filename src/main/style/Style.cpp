@@ -316,7 +316,7 @@ namespace lsp
 
         status_t Style::sync_property(property_t *p)
         {
-            lsp_trace("name = %s, flags=0x%x", atom_name(p->id), p->flags);
+//            lsp_trace("name = %s, flags=0x%x", atom_name(p->id), p->flags);
 
             // Local-overridden properties can not be changed by parent ones
             if (p->flags & F_OVERRIDDEN)

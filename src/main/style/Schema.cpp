@@ -83,7 +83,7 @@ namespace lsp
 
             lltl::parray<lsp::Color> vc;
             vColors.values(&vc);
-            vc.flush();
+            vColors.flush();
 
             for (size_t i=0, n=vc.size(); i<n; ++i)
             {

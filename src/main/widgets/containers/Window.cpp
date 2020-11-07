@@ -40,7 +40,7 @@ namespace lsp
                 sActions.bind("actions", this);
                 sPosition.bind("position", this);
                 sWindowSize.bind("size", this);
-                sSizeConstraints.bind("size.constraints", this);
+                sConstraints.bind("size.constraints", this);
                 sLayout.bind("layout", this);
                 sPolicy.bind("policy", this);
                 // Configure
@@ -51,7 +51,7 @@ namespace lsp
                 sActions.set_actions(ws::WA_ALL);
                 sPosition.set(0, 0);
                 sWindowSize.set(160, 100);
-                sSizeConstraints.set(-1, -1, -1, -1);
+                sConstraints.set(-1, -1, -1, -1);
                 sLayout.set(0.0f, 0.0f, 0.0f, 0.0f);
                 sPolicy.set(WP_NORMAL);
                 // Override

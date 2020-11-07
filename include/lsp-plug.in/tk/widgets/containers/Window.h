@@ -45,7 +45,7 @@ namespace lsp
                 prop::WindowActions     sActions;
                 prop::Position          sPosition;
                 prop::Size              sWindowSize;
-                prop::SizeConstraints   sSizeConstraints;
+                prop::SizeConstraints   sConstraints;
                 prop::Layout            sLayout;
                 prop::WindowPolicy      sPolicy;
             LSP_TK_STYLE_DEF_END

@@ -10,6 +10,7 @@
 		<fg value="#ebecee" />
 		<hole value="#000000" />
 		<glass value="#101010" />
+		<fgwarn value="#ffff00" />
 		
 		<!-- Label colors -->
 		<main_text value="#ebecee" />
@@ -25,7 +26,7 @@
 		<hlink_hover value="#ff8080" />
 		
 		<!-- Misc -->
-		<activity value="#0797c8" />
+		<activity value="#00ccff" />
 	</colors>
 	
 	<!-- Root style -->
@@ -40,6 +41,9 @@
 	</style>
 	
 	<style class="FileDialog" parents="Window">
+	</style>
+	
+	<style class="MessageBox" parents="Window">
 	</style>
 	
 	<!-- Containers -->
@@ -63,13 +67,30 @@
 		<border.size value="0" />
 	</style>
 	
+	<style class="ComboBox::List" parents="root">
+		<border.radius value="2" />
+		<list.bg.color value="bg" />
+		<border.color value="fg" />
+	</style>
+	
 	<style class="Button" parents="root">
 		<text.color value="bg" />
 	</style>
 	
 	<style class="ListBox" parents="root">
-		<bg.color value="bg" />
+		<list.bg.color value="bg" />
 		<border.color value="fg" />
+	</style>
+	
+	<style class="Menu" parents="root">
+		<bg.color value="fg" />
+		<text.color value="bg" />
+	</style>
+	
+	<style class="MenuItem" parents="root">
+		<bg.selected.color value="activity" />
+		<text.color value="bg" />
+		<text.selected.color value="fg" />
 	</style>
 	
 	<style class="ListBoxItem" parents="root">
@@ -103,6 +124,17 @@
 	
 	<style class="FileDialog::Bookmark.selected" parents="FileDialog::Bookmark">
 		<bg.color value="bg2" />
+	</style>
+	
+	<style class="FileDialog::Warning" parents="root">
+		<text.color value="fgwarn" />
+	</style>
+	
+	<!-- MessageBox widgets -->
+	<style class="MessageBox::Message" parents="Label">
+	</style>
+	
+	<style class="MessageBox::Heading" parents="Label">
 	</style>
 </schema>
 

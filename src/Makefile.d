@@ -11571,7 +11571,8 @@ $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/dialogs/MessageBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/dialogs/FileDialog.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h
 $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
