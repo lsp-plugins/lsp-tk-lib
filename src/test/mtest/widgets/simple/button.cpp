@@ -288,9 +288,10 @@ MTEST_BEGIN("tk.widgets.simple", button)
                 btn->led()->set((x + 1) * 4);
                 btn->text()->set_raw(&id);
                 btn->text_clip()->set(true);
-                btn->constraints()->set_fixed((x + 1) * 12);
+//                btn->constraints()->set_fixed((x + 1) * 12);
                 btn->led_color()->set_rgb24(next_color(col));
                 btn->hole()->set(x & 1);
+                btn->hover()->set(true);
             }
         }
 

@@ -35,8 +35,10 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Button, Widget)
                 prop::Color             sColor;
+                prop::Color             sHoverColor;
                 prop::Color             sLightColor;
                 prop::Color             sTextColor;
+                prop::Color             sHoverTextColor;
                 prop::Color             sLTextColor;
                 prop::Color             sHoleColor;
                 prop::Font              sFont;
@@ -51,6 +53,7 @@ namespace lsp
                 prop::Boolean           sFlat;
                 prop::Boolean           sTextClip;
                 prop::Padding           sTextPadding;
+                prop::Boolean           sHover;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -74,7 +77,8 @@ namespace lsp
                     S_DOWN      = (1 << 6),
                     S_EDITABLE  = (1 << 7),
                     S_HOLE      = (1 << 8),
-                    S_FLAT      = (1 << 9)
+                    S_FLAT      = (1 << 9),
+                    S_HOVER     = (1 << 10)
                 };
 
             protected:
@@ -84,8 +88,10 @@ namespace lsp
                 ws::rectangle_t         sButton;
 
                 prop::Color             sColor;
+                prop::Color             sHoverColor;
                 prop::Color             sLightColor;
                 prop::Color             sTextColor;
+                prop::Color             sHoverTextColor;
                 prop::Color             sLTextColor;
                 prop::Color             sHoleColor;
                 prop::Font              sFont;
@@ -100,6 +106,7 @@ namespace lsp
                 prop::Boolean           sFlat;
                 prop::Boolean           sTextClip;
                 prop::Padding           sTextPadding;
+                prop::Boolean           sHover;
 
             protected:
                 void                update_mode(button_mode_t mode);
@@ -121,8 +128,10 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(Color,              hover_color,        &sColor)
                 LSP_TK_PROPERTY(Color,              led_color,          &sLightColor)
                 LSP_TK_PROPERTY(Color,              text_color,         &sTextColor)
+                LSP_TK_PROPERTY(Color,              hover_text_color,   &sTextColor)
                 LSP_TK_PROPERTY(Color,              led_text_color,     &sLTextColor)
                 LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
@@ -137,6 +146,7 @@ namespace lsp
                 LSP_TK_PROPERTY(TextLayout,         text_layouts,       &sTextLayout)
                 LSP_TK_PROPERTY(Boolean,            text_clip,          &sTextClip)
                 LSP_TK_PROPERTY(Padding,            text_padding,       &sTextPadding)
+                LSP_TK_PROPERTY(Boolean,            hover,              &sHover)
 
             public:
                 virtual void        draw(ws::ISurface *s);
@@ -146,6 +156,8 @@ namespace lsp
                 virtual status_t    on_mouse_up(const ws::event_t *e);
 
                 virtual status_t    on_mouse_move(const ws::event_t *e);
+
+                virtual status_t    on_mouse_out(const ws::event_t *e);
 
                 virtual status_t    on_change();
 

@@ -32,8 +32,10 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Button, Widget)
                 // Bind
                 sColor.bind("color", this);
+                sHoverColor.bind("hover.color", this);
                 sLightColor.bind("led.color", this);
                 sTextColor.bind("text.color", this);
+                sHoverTextColor.bind("text.hover.color", this);
                 sLTextColor.bind("led.text.color", this);
                 sHoleColor.bind("hole.color", this);
                 sFont.bind("font", this);
@@ -47,10 +49,13 @@ namespace lsp
                 sFlat.bind("flat", this);
                 sTextClip.bind("text.clip", this);
                 sTextPadding.bind("text.padding", this);
+                sHover.bind("hover", this);
                 // Configure
                 sColor.set("#cccccc");
+                sHoverColor.set("#ffffff");
                 sLightColor.set("#00cc00");
                 sTextColor.set("#000000");
+                sHoverTextColor.set("#000000");
                 sLTextColor.set("#000000");
                 sHoleColor.set("#000000");
                 sFont.set_size(12.0f);
@@ -73,8 +78,10 @@ namespace lsp
         Button::Button(Display *dpy):
             Widget(dpy),
             sColor(&sProperties),
+            sHoverColor(&sProperties),
             sLightColor(&sProperties),
             sTextColor(&sProperties),
+            sHoverTextColor(&sProperties),
             sLTextColor(&sProperties),
             sHoleColor(&sProperties),
             sFont(&sProperties),
@@ -88,7 +95,8 @@ namespace lsp
             sHole(&sProperties),
             sFlat(&sProperties),
             sTextClip(&sProperties),
-            sTextPadding(&sProperties)
+            sTextPadding(&sProperties),
+            sHover(&sProperties)
         {
             nState          = 0;
             nBMask          = 0;
@@ -113,8 +121,10 @@ namespace lsp
                 return result;
 
             sColor.bind("color", &sStyle);
+            sHoverColor.bind("hover.color", &sStyle);
             sLightColor.bind("led.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
+            sHoverTextColor.bind("hover.text.color", &sStyle);
             sLTextColor.bind("led.text.color", &sStyle);
             sHoleColor.bind("hole.color", &sStyle);
             sFont.bind("font", &sStyle);
@@ -129,6 +139,7 @@ namespace lsp
             sFlat.bind("flat", &sStyle);
             sTextClip.bind("text.clip", &sStyle);
             sTextPadding.bind("text.padding", &sStyle);
+            sHover.bind("hover", &sStyle);
 
             // Additional slots
             handler_id_t id = 0;
@@ -160,16 +171,19 @@ namespace lsp
             return STATUS_OK;
         }
 
-
         void Button::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
 
             if (sColor.is(prop))
                 query_draw();
+            if ((sHoverColor.is(prop)) && (sHover.get()))
+                query_draw();
             if (sLightColor.is(prop))
                 query_draw();
             if (sTextColor.is(prop))
+                query_draw();
+            if ((sHoverTextColor.is(prop)) && (sHover.get()))
                 query_draw();
             if (sLTextColor.is(prop))
                 query_draw();
@@ -232,6 +246,9 @@ namespace lsp
                 nState = sEditable.add_as_flag(nState, S_EDITABLE);
                 query_draw();
             }
+
+            if (sHover.is(prop))
+                query_draw();
         }
 
         void Button::update_mode(button_mode_t mode)
@@ -295,17 +312,30 @@ namespace lsp
             lsp::Color bg_color(sBgColor);
             lsp::Color color(sColor);
             lsp::Color tcolor(sTextColor);
+
+            if ((sHover.get()) && (pressed & S_HOVER))
+            {
+                color.copy(sHoverColor);
+                tcolor.copy(sHoverTextColor);
+            }
+
             if (pressed & S_LED)
             {
                 if (pressed & S_DOWN)
                 {
                     color.copy(sLightColor);
                     tcolor.copy(sLTextColor);
+
+                    if ((sHover.get()) && (pressed & S_HOVER))
+                    {
+                        color.scale_lightness(1.25f);
+                        tcolor.scale_lightness(1.25f);
+                    }
                 }
                 else
                 {
-                    color.scale_lightness(0.5f);
-                    tcolor.scale_lightness(0.5f);
+                    color.scale_lightness(0.75f);
+                    tcolor.scale_lightness(0.75f);
                 }
             }
 
@@ -571,6 +601,7 @@ namespace lsp
 
             // Update state according to mouse position and mouse button state
             size_t state        = nState;
+            nState              = lsp_setflag(nState, S_HOVER, m_over);
             if ((nBMask == (1 << ws::MCB_LEFT)) && (m_over))
                 nState     |= S_PRESSED;
             else
@@ -619,6 +650,7 @@ namespace lsp
 
             size_t state        = nState;
             bool m_over         = Position::inside(&sButton, e->nLeft, e->nTop);
+            nState              = lsp_setflag(nState, S_HOVER, m_over);
 
             if (nState & S_TRIGGER)
             {
@@ -711,10 +743,12 @@ namespace lsp
             // Mouse button was initially pressed out of the button area, ignore this case
             if (nState & S_OUT)
                 return STATUS_OK;
+            size_t state        = nState;
 
             // Update state according to mouse position and mouse button state
-            size_t state        = nState;
-            if ((nBMask == (1 << ws::MCB_LEFT)) && (Position::inside(&sButton, e->nLeft, e->nTop)))
+            bool m_over         = Position::inside(&sButton, e->nLeft, e->nTop);
+            nState              = lsp_setflag(nState, S_HOVER, m_over);
+            if ((nBMask == (1 << ws::MCB_LEFT)) && (m_over))
                 nState     |= S_PRESSED;
             else
                 nState     &= ~S_PRESSED;
@@ -742,6 +776,16 @@ namespace lsp
             if (state != nState)
                 query_draw();
 
+            return STATUS_OK;
+        }
+
+        status_t Button::on_mouse_out(const ws::event_t *e)
+        {
+            if (nState & S_HOVER)
+            {
+                nState             &= ~S_HOVER;
+                query_draw();
+            }
             return STATUS_OK;
         }
 
