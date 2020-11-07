@@ -34,7 +34,6 @@ namespace lsp
                 sConstraints.bind("size.constraints", this);
                 sColor.bind("color", this);
                 sFill.bind("fill", this);
-
                 // Configure
                 sConstraints.set(-1, -1, -1, -1);
                 sColor.set("#ffffff");

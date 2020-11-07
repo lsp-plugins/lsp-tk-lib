@@ -56,6 +56,8 @@ namespace lsp
                 sPolicy.set(WP_NORMAL);
                 // Override
                 sVisibility.set(false);
+                // Commit
+                sVisibility.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Window, "Window");
         }

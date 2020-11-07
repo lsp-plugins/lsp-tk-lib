@@ -51,6 +51,8 @@ namespace lsp
                 sOrigin.set(0);
                 // Override
                 sPadding.set(2);
+                // Commit
+                sPadding.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(GraphText, "GraphText");
         }

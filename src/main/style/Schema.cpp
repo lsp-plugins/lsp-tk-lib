@@ -45,6 +45,7 @@ namespace lsp
         Schema::Schema(Atoms *atoms)
         {
             pAtoms          = atoms;
+            bSyncMode       = false;
             bInitialized    = false;
             pRoot           = NULL;
         }
@@ -122,12 +123,17 @@ namespace lsp
             bind(pRoot);
 
             // Create all necessary styles
+            status_t res = STATUS_OK;
             for (size_t i=0; i<n; ++i)
             {
-                LSP_STATUS_ASSERT(create_style(list[i]));
+                bSyncMode = true;
+                res = create_style(list[i]);
+                if (res != STATUS_OK)
+                    break;
+                bSyncMode = false;
             }
 
-            return STATUS_OK;
+            return res;
         }
 
         status_t Schema::apply(StyleSheet *sheet)
@@ -176,11 +182,13 @@ namespace lsp
             lsp_trace("Applying stylesheet to root style");
             if (sheet->pRoot != NULL)
             {
-                res = apply_relations(pRoot, sheet->pRoot);
+                bSyncMode = true;
+                res = apply_settings(pRoot, sheet->pRoot);
                 if (res == STATUS_OK)
-                    res = apply_settings(pRoot, sheet->pRoot);
+                    res = apply_relations(pRoot, sheet->pRoot);
                 if (res != STATUS_OK)
                     return res;
+                bSyncMode = false;
             }
 
             // Iterate over named styles
@@ -196,19 +204,18 @@ namespace lsp
                     continue;
 
                 StyleSheet::style_t *xs = sheet->vStyles.get(name);
+                bSyncMode = true;
                 if (xs != NULL)
                 {
                     lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
-                    res = apply_relations(s, xs);
+                    res = apply_settings(s, xs);
+
                     if (res == STATUS_OK)
-                    {
-                        s->set_sync_mode(true);
-                        res = apply_settings(s, xs);
-                        s->set_sync_mode(false);
-                    }
+                        res = apply_relations(s, xs);
                 }
                 else
                     res = s->add_parent(pRoot);
+                bSyncMode = false;
 
                 if (res != STATUS_OK)
                     return res;
@@ -295,7 +302,9 @@ namespace lsp
                 return STATUS_NO_MEM;
 
             // Initialize style and bind to Root by default
+            style->set_init_mode(true);
             status_t res    = style->add_parent(pRoot);
+            style->set_init_mode(false);
             if (res != STATUS_OK)
             {
                 delete style;

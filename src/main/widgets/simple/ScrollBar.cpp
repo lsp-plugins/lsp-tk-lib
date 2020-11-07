@@ -57,7 +57,6 @@ namespace lsp
                 sSliderActiveColor.bind("slider.active.color", this);
                 sTextColor.bind("text.color", this);
                 sTextActiveColor.bind("text.active.color", this);
-
                 // Configure
                 sValue.set(0.5f);
                 sStep.set(0.01f);

@@ -40,7 +40,6 @@ namespace lsp
                 sCheckBgColor.bind("check.bg.color", this);
                 sCheckBorderColor.bind("check.border.color", this);
                 sShortcut.bind("shortcut", this);
-
                 // Configure
                 sType.set(MI_NORMAL);
                 sChecked.set(false);
@@ -51,9 +50,10 @@ namespace lsp
                 sCheckBgColor.set("#ffffff");
                 sCheckBorderColor.set("#000000");
                 sShortcut.clear();
-
                 // Override
                 sPadding.set(16, 16, 2, 2);
+                // Commit
+                sPadding.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(MenuItem, "MenuItem");
         }

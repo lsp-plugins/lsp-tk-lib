@@ -36,7 +36,6 @@ namespace lsp
                 sFont.bind("font", this);
                 sColor.bind("text.color", this);
                 sConstraints.bind("size.constraints", this);
-
                 // Configure
                 sTextLayout.set(0.0f, 0.0f);
                 sFont.set_size(12.0f);

@@ -75,6 +75,8 @@ namespace lsp
                 sHRBorderColor.set("#ffffff");
                 // Override
                 sSmooth.set(false);
+                // Commit
+                sSmooth.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(GraphMarker, "GraphMarker");
         }

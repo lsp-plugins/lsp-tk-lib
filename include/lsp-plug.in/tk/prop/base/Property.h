@@ -96,6 +96,8 @@ namespace lsp
                 static bool         matches(float value, float min, float max);
 
             public:
+                void                override();                 // Override property
+
                 /**
                  * Check that property matches another property
                  * @param prop pointer to property to check

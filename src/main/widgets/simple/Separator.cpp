@@ -34,7 +34,6 @@ namespace lsp
                 sColor.bind("color", this);
                 sSizeRange.bind("size", this);
                 sThickness.bind("thickness", this);
-
                 // Configure
                 sOrientation.set(O_VERTICAL);
                 sColor.set("#000000");

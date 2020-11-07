@@ -55,6 +55,12 @@ namespace lsp
                 Schema & operator = (const Schema &);
 
             protected:
+                enum flags_t
+                {
+                    S_CONFIGURE     = 1 << 0,       // Schema is in configuration state
+                    S_INITIALIZED   = 1 << 1,       // Schema is initialized
+                };
+
                 typedef struct property_value_t
                 {
                     property_type_t     type;
@@ -70,6 +76,7 @@ namespace lsp
             protected:
                 mutable Atoms                      *pAtoms;
                 bool                                bInitialized;
+                bool                                bSyncMode;
                 Style                              *pRoot;
                 lltl::pphash<LSPString, Style>      vStyles;
                 lltl::pphash<LSPString, lsp::Color> vColors;
@@ -177,6 +184,8 @@ namespace lsp
                  * @return atom identifier
                  */
                 const char         *atom_name(atom_t id) const;
+
+                inline bool         sync_mode() const           { return bSyncMode;         }
         };
     
     } /* namespace tk */

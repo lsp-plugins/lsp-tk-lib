@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/string.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -123,6 +124,11 @@ namespace lsp
                 nFlags     |= S_SYNC;
             else
                 nFlags     &= ~S_SYNC;
+        }
+
+        bool Style::sync_mode() const
+        {
+            return (pSchema != NULL) ? pSchema->sync_mode() : false;
         }
 
         status_t Style::copy_property(property_t *dst, const property_t *src)
@@ -314,6 +320,8 @@ namespace lsp
 
         status_t Style::sync_property(property_t *p)
         {
+            lsp_trace("name=%s, flags=0x%x", atom_name(p->id), p->flags);
+
             // Local-overridden properties can not be changed by parent ones
             if (p->flags & F_OVERRIDDEN)
                 return STATUS_OK;

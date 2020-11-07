@@ -33,15 +33,16 @@ namespace lsp
                 sBgSelectedColor.bind("bg.selected.color", this);
                 sTextColor.bind("text.color", this);
                 sTextSelectedColor.bind("text.selected.color", this);
-
                 // Configure
                 sBgSelectedColor.set("#00ccff");
                 sTextColor.set("#000000");
                 sTextSelectedColor.set("#ffffff");
-
                 // Override
                 sPadding.set(2, 2, 0, 0);
                 sBgColor.set("#ffffff");
+                // Commit
+                sPadding.override();
+                sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ListBoxItem, "ListBoxItem");
         }

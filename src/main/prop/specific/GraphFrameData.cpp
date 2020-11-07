@@ -126,7 +126,7 @@ namespace lsp
             }
 
             // Update/notify listeners
-            if (pStyle->sync())
+            if (pStyle->sync_mode())
                 this->sync();
             else if (pListener != NULL)
                 pListener->notify(this);

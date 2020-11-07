@@ -37,7 +37,6 @@ namespace lsp
                 sOn.bind("on", this);
                 sHole.bind("hole", this);
                 sLed.bind("led", this);
-
                 // Configure
                 sColor.set("#cccccc");
                 sLightColor.set("#00cc00");

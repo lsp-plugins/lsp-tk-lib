@@ -48,6 +48,15 @@ namespace lsp
                 sBorderStyle.set(ws::BS_DIALOG);
                 sActions.set_actions(ws::WA_DIALOG | ws::WA_RESIZE | ws::WA_CLOSE);
                 sLayout.set(0.0f, 1.0f);
+                // Commit
+                sMode.override();
+                sCustomAction.override();
+                sSelFilter.override();
+                sUseConfirm.override();
+                sPadding.override();
+                sBorderStyle.override();
+                sActions.override();
+                sLayout.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog, "FileDialog");
 

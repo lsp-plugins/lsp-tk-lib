@@ -39,7 +39,6 @@ namespace lsp
                 sHoverColor.bind("text.hover.color", this);
                 sConstraints.bind("size.constraints", this);
                 sFollow.bind("follow", this);
-
                 // Configure
                 sTextLayout.set(0.0f, 0.0f);
                 sFont.set_params(12.0f, ws::FF_UNDERLINE);
@@ -47,9 +46,10 @@ namespace lsp
                 sHoverColor.set("#ff0000");
                 sConstraints.set(-1, -1, -1, -1);
                 sFollow.set(true);
-
                 // Override
                 sPointer.set(ws::MP_HAND);
+                // Commit
+                sPointer.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Hyperlink, "Hyperlink");
         }

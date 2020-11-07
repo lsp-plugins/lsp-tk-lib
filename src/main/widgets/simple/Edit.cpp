@@ -46,7 +46,6 @@ namespace lsp
                 sBorderGapSize.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sConstraints.bind("size.constraints", this);
-
                 // Configure
                 sSelection.set(-1, -1);
                 sFont.set_size(12.0f);
@@ -61,9 +60,10 @@ namespace lsp
                 sBorderGapSize.set(1);
                 sBorderRadius.set(4);
                 sConstraints.set(-1, -1, -1, 8);
-
                 // Override
                 sPointer.set(ws::MP_IBEAM);
+                // Commit
+                sPointer.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Edit, "Edit");
         }

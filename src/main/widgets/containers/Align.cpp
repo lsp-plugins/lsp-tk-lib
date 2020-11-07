@@ -32,10 +32,13 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Align, WidgetContainer)
                 // Bind
                 sLayout.bind("layout", this);
-                sSizeConstraints.bind("size.constraints", this);
+                sConstraints.bind("size.constraints", this);
                 // Configure
                 sLayout.set(0.0f, 0.0f, 0.0f, 0.0f);
-                sSizeConstraints.set_all(-1);
+                sConstraints.set_all(-1);
+                // Override
+                sLayout.override();
+                sConstraints.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Align, "Align");
         }
@@ -45,7 +48,7 @@ namespace lsp
         Align::Align(Display *dpy):
             WidgetContainer(dpy),
             sLayout(&sProperties),
-            sSizeConstraints(&sProperties)
+            sConstraints(&sProperties)
         {
             pWidget         = NULL;
 
@@ -65,7 +68,7 @@ namespace lsp
                 return result;
 
             sLayout.bind("layout", &sStyle);
-            sSizeConstraints.bind("size.constraints", &sStyle);
+            sConstraints.bind("size.constraints", &sStyle);
 
             return STATUS_OK;
         }
@@ -99,7 +102,7 @@ namespace lsp
             WidgetContainer::property_changed(prop);
             if (sLayout.is(prop))
                 query_resize();
-            if (sSizeConstraints.is(prop))
+            if (sConstraints.is(prop))
                 query_resize();
         }
 
@@ -194,7 +197,7 @@ namespace lsp
             r->nPreWidth    = -1;
             r->nPreHeight   = -1;
 
-            sSizeConstraints.apply(r, scaling);
+            sConstraints.apply(r, scaling);
         }
 
         void Align::realize(const ws::rectangle_t *r)

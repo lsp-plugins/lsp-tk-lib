@@ -42,6 +42,9 @@ namespace lsp
                 ssize_t             nValue;
                 const prop::enum_t *pEnum;
 
+            public:
+                using SimpleProperty::override;
+
             protected:
                 status_t            unbind();
                 status_t            bind(atom_t property, Style *style);

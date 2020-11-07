@@ -43,6 +43,9 @@ namespace lsp
                 // Override
                 sBorderStyle.set(ws::BS_POPUP);
                 sActions.set_actions(ws::WA_POPUP);
+                // Commit
+                sBorderStyle.override();
+                sActions.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(PopupWindow, "PopupWindow");
         }

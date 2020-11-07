@@ -107,7 +107,7 @@ namespace lsp
             style->end();
 
             // Push configuration to style if required
-            if ((pStyle != NULL) && (pStyle->sync()))
+            if ((pStyle != NULL) && (pStyle->sync_mode()))
                 this->sync();
             else if (pListener != NULL)
                 pListener->notify(this);

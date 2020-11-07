@@ -35,7 +35,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Align, WidgetContainer)
                 prop::Layout            sLayout;
-                prop::SizeConstraints   sSizeConstraints;
+                prop::SizeConstraints   sConstraints;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -52,7 +52,7 @@ namespace lsp
             protected:
                 Widget                 *pWidget;
                 prop::Layout            sLayout;
-                prop::SizeConstraints   sSizeConstraints;
+                prop::SizeConstraints   sConstraints;
 
             protected:
                 void                    do_destroy();
@@ -72,7 +72,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
-                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sSizeConstraints)
+                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sConstraints)
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

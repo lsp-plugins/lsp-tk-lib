@@ -47,6 +47,7 @@ namespace lsp
 
                 friend class IStyleFactory;
                 friend class Schema;
+                friend class Property;
 
             protected:
                 enum flags_t
@@ -60,7 +61,7 @@ namespace lsp
                 enum style_flags_t
                 {
                     S_INIT              = 1 << 0,   // Initialization flag
-                    S_SYNC            = 1 << 1,   // Value injection
+                    S_SYNC              = 1 << 1,   // Value injection
                     S_DELAYED           = 1 << 2    // Delayed notification
                 };
 
@@ -180,7 +181,13 @@ namespace lsp
                  * Check sync mode
                  * @return true if sync mode
                  */
-                inline bool             sync() const        { return nFlags & S_SYNC; }
+                bool                    sync_mode() const;
+
+                /**
+                 * Check init mode
+                 * @return true if init mode
+                 */
+                inline bool             init_mode() const   { return nFlags & S_INIT; }
 
                 /**
                  * Set parent style

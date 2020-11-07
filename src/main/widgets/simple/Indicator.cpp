@@ -38,7 +38,6 @@ namespace lsp
                 sShift.bind("text.shift", this);
                 sTextGap.bind("text.gap", this);
                 sLoop.bind("text.loop", this);
-
                 // Configure
                 sColor.set("#111111");
                 sTextColor.set("#00ff00");

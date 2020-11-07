@@ -53,6 +53,8 @@ namespace lsp
                 sEmbedding.set(false);
                 // Override
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
+                // Commit
+                sLayout.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Group, "Group");
         }
@@ -231,7 +233,7 @@ namespace lsp
             r->nMinHeight       = lsp_max(r->nMinHeight, vpad);
 
             // Apply size constraints
-            sSizeConstraints.apply(r, scaling);
+            sConstraints.apply(r, scaling);
         }
 
         void Group::realize(const ws::rectangle_t *r)

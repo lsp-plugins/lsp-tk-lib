@@ -7,6 +7,7 @@
 		<bg value="#1b1c22" />
 		<bg2 value="#2f3037" />
 		<bg3 value="#45464d" />
+		<bg4 value="#dae0ff" />
 		<hole value="#000000" />
 		<glass value="#101010" />
 		
@@ -35,11 +36,31 @@
 	<style class="Window" parents="root">
 	</style>
 	
+	<style class="FileDialog" parents="Window">
+	</style>
+	
+	<!-- Containers -->
+	<style class="Align" parents="root">
+	</style>
+	
+	<!-- Simple widgets -->
 	<style class="Label" parents="root">
 		<text.color value="main_text" />
 	</style>
 	
+	<style class="Edit" parents="root">
+		<text.color value="dark_text" />
+		<color value="bg4" />
+		<border.size value="0" />
+	</style>
+	
+	<style class="ComboBox" parents="root">
+		<text.color value="dark_text" />
+		<color value="bg4" />
+		<border.size value="0" />
+	</style>
+	
 	<style class="Button" parents="root">
-		<text.color value="main_text" />
+		<text.color value="dark_text" />
 	</style>
 </schema>

@@ -38,7 +38,6 @@ namespace lsp
                 sBgColor.bind("bg.color", this);
                 sVisibility.bind("visible", this);
                 sPointer.bind("pointer", this);
-
                 // Configure
                 sAllocation.set(true, false);
                 sScaling.set(1.0f);
@@ -47,6 +46,8 @@ namespace lsp
                 sBgColor.set("#cccccc");
                 sVisibility.set(true);
                 sPointer.set(ws::MP_DEFAULT);
+                // Commit
+                sVisibility.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Widget, "Widget");
         }

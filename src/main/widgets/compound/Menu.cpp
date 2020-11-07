@@ -64,6 +64,9 @@ namespace lsp
                 // Override
                 sVisibility.set(false);
                 sBgColor.set("#cccccc");
+                // Commit
+                sVisibility.override();
+                sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Menu, "Menu");
 

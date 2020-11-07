@@ -45,7 +45,6 @@ namespace lsp
                 sTextColor.bind("text.color", this);
                 sInvColor.bind("inv.color", this);
                 sInvTextColor.bind("text.inv.color", this);
-
                 // Configure
                 sValue.set(0.5f);
                 sConstraints.set(-1, -1, -1, -1);
@@ -61,9 +60,10 @@ namespace lsp
                 sTextColor.set("#ffffff");
                 sInvColor.set("#ffffff");
                 sInvTextColor.set("#000000");
-
                 // Override
                 sAllocation.set(true, false, false, false);
+                // Commit
+                sAllocation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ProgressBar, "ProgressBar");
         }

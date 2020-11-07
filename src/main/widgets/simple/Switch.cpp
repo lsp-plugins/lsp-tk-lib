@@ -42,7 +42,6 @@ namespace lsp
                 sAngle.bind("angle", this);
                 sDown.bind("down", this);
                 sButtonPointer.bind("button.pointer", this);
-
                 // Configure
                 sColor.set("#444444");
                 sTextColor.set("#eeeeee");

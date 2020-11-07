@@ -62,6 +62,8 @@ namespace lsp
                 sConstraints.set(128, 32, -1, -1);
                 // Override
                 sBgColor.set("#000000");
+                // Commit
+                sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(AudioChannel, "AudioChannel");
         }

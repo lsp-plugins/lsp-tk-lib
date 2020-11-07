@@ -44,6 +44,8 @@ namespace lsp
                 sOrientation.set(O_HORIZONTAL);
                 // Override
                 sAllocation.set(true, true, false, false);
+                // Commit
+                sAllocation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Grid, "Grid");
         }

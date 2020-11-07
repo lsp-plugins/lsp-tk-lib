@@ -40,7 +40,6 @@ namespace lsp
                 sBtnAspect.bind("button.aspect", this);
                 sAngle.bind("angle", this);
                 sBtnPointer.bind("button.pointer", this);
-
                 // Configure
                 sColor.set("#cccccc");
                 sHoleColor.set("#000000");

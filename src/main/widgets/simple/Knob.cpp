@@ -42,7 +42,6 @@ namespace lsp
                 sStep.bind("step", this);
                 sBalance.bind("value.balance", this);
                 sCycling.bind("value.cycling", this);
-
                 // Configure
                 sColor.set("#cccccc");
                 sScaleColor.set("#00cc00");
