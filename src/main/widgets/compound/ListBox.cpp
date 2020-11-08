@@ -38,7 +38,7 @@ namespace lsp
                 sVScroll.bind("vscroll", this);
                 sFont.bind("font", this);
                 sBorderSize.bind("border.size", this);
-                sBorderGap.bind("border.gap", this);
+                sBorderGap.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sBorderColor.bind("border.color", this);
                 sListBgColor.bind("list.bg.color", this);
@@ -189,7 +189,7 @@ namespace lsp
             sVScroll.bind("vscroll", &sStyle);
             sFont.bind("font", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
-            sBorderGap.bind("border.gap", &sStyle);
+            sBorderGap.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sListBgColor.bind("list.bg.color", &sStyle);
@@ -322,12 +322,12 @@ namespace lsp
             scrolling_t hscroll = sHScrollMode.get();
             scrolling_t vscroll = sVScrollMode.get();
             ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
-            if (border > 0)
-                border             += (sBorderGap.get() > 0) ? lsp_max(0.0f, sBorderGap.get() * scaling) : 0;
+            border             += (sBorderGap.get() > 0) ? lsp_max(0.0f, sBorderGap.get() * scaling) : 0;
             ssize_t radius      = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t rgap        = radius - lsp_max(0.0f, truncf(M_SQRT1_2 * (radius - border)));
             ssize_t hsspacing   = lsp_max(0.0f, sHScrollSpacing.get() * scaling);
             ssize_t vsspacing   = lsp_max(0.0f, sVScrollSpacing.get() * scaling);
+            rgap                = lsp_max(border, rgap);
 
             // Estimate size of each scroll bar
             ws::size_limit_t hb, vb;

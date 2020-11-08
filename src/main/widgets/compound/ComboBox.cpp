@@ -32,7 +32,7 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(ComboBox, WidgetContainer)
                 // Bind
                 sBorderSize.bind("border.size", this);
-                sBorderGap.bind("border.gap", this);
+                sBorderGap.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sSpinSize.bind("spin.size", this);
                 sSpinSeparator.bind("spin.separator", this);
@@ -219,7 +219,7 @@ namespace lsp
             sWindow.layout()->set_scale(1.0f);
 
             sBorderSize.bind("border.size", &sStyle);
-            sBorderGap.bind("border.gap", &sStyle);
+            sBorderGap.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sSpinSize.bind("spin.size", &sStyle);
             sSpinSeparator.bind("spin.separator", &sStyle);
@@ -320,7 +320,7 @@ namespace lsp
         {
             alloc->radius       = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             alloc->border       = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
-            alloc->bgap         = ((alloc->border > 0) && (sBorderGap.get() > 0)) ? lsp_max(0.0f, sBorderGap.get()) : 0;
+            alloc->bgap         = (sBorderGap.get() > 0) ? lsp_max(0.0f, sBorderGap.get() * scaling) : 0;
             alloc->bsize        = alloc->border + alloc->bgap;
             alloc->swidth       = (sSpinSize.get() > 0) ? lsp_max(1.0f, sSpinSize.get() * scaling) : 0;
             alloc->sborder      = ((alloc->swidth > 0) && (sSpinSeparator.get() > 0)) ? lsp_max(1.0f, sSpinSeparator.get() * scaling) : 0;

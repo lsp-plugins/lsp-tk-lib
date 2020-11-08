@@ -361,8 +361,8 @@ namespace lsp
         void Edit::size_request(ws::size_limit_t *r)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
-            size_t radius   = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
-            size_t border   = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             if (border > 0)
                 border         += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
 
@@ -372,7 +372,8 @@ namespace lsp
             r->nMinHeight   = extra*2;
 
             // Compute text parameters
-            size_t rgap     = radius - lsp_max(0.0f, truncf(M_SQRT1_2 * (radius - border)));
+            ssize_t rgap    = radius - lsp_max(0.0f, truncf(M_SQRT1_2 * (radius - border)));
+            rgap            = lsp_max(rgap, border);
 
             // Estimate sizes
             ws::font_parameters_t fp;

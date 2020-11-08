@@ -33,6 +33,8 @@ namespace lsp
                 // Bind
                 sColor.bind("color", this);
                 sHoverColor.bind("hover.color", this);
+                sBorderColor.bind("border.color", this);
+                sBorderHoverColor.bind("border.hover.color", this);
                 sLightColor.bind("led.color", this);
                 sTextColor.bind("text.color", this);
                 sHoverTextColor.bind("text.hover.color", this);
@@ -44,15 +46,21 @@ namespace lsp
                 sMode.bind("mode", this);
                 sDown.bind("down", this);
                 sLed.bind("led", this);
+                sBorderSize.bind("border.size", this);
+                sBorderPressedSize.bind("border.pressed.size", this);
+                sBorderDownSize.bind("border.down.size", this);
                 sEditable.bind("editable", this);
                 sHole.bind("hole", this);
                 sFlat.bind("flat", this);
                 sTextClip.bind("text.clip", this);
                 sTextPadding.bind("text.padding", this);
                 sHover.bind("hover", this);
+                sGradient.bind("gradient", this);
                 // Configure
                 sColor.set("#cccccc");
                 sHoverColor.set("#ffffff");
+                sBorderColor.set("#888888");
+                sBorderHoverColor.set("#cccccc");
                 sLightColor.set("#00cc00");
                 sTextColor.set("#000000");
                 sHoverTextColor.set("#000000");
@@ -64,11 +72,15 @@ namespace lsp
                 sMode.set(BM_NORMAL);
                 sDown.set(false);
                 sLed.set(0);
+                sBorderSize.set(3);
+                sBorderPressedSize.set(3);
+                sBorderDownSize.set(2);
                 sEditable.set(true);
                 sHole.set(true);
                 sFlat.set(false);
                 sTextClip.set(false);
                 sTextPadding.set(2, 2, 2, 2);
+                sGradient.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Button, "Button");
         }
@@ -79,6 +91,8 @@ namespace lsp
             Widget(dpy),
             sColor(&sProperties),
             sHoverColor(&sProperties),
+            sBorderColor(&sProperties),
+            sBorderHoverColor(&sProperties),
             sLightColor(&sProperties),
             sTextColor(&sProperties),
             sHoverTextColor(&sProperties),
@@ -91,12 +105,16 @@ namespace lsp
             sMode(&sProperties),
             sDown(&sProperties),
             sLed(&sProperties),
+            sBorderSize(&sProperties),
+            sBorderPressedSize(&sProperties),
+            sBorderDownSize(&sProperties),
             sEditable(&sProperties),
             sHole(&sProperties),
             sFlat(&sProperties),
             sTextClip(&sProperties),
             sTextPadding(&sProperties),
-            sHover(&sProperties)
+            sHover(&sProperties),
+            sGradient(&sProperties)
         {
             nState          = 0;
             nBMask          = 0;
@@ -122,9 +140,11 @@ namespace lsp
 
             sColor.bind("color", &sStyle);
             sHoverColor.bind("hover.color", &sStyle);
+            sBorderColor.bind("border.color", &sStyle);
+            sBorderHoverColor.bind("border.hover.color", &sStyle);
             sLightColor.bind("led.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
-            sHoverTextColor.bind("hover.text.color", &sStyle);
+            sHoverTextColor.bind("text.hover.color", &sStyle);
             sLTextColor.bind("led.text.color", &sStyle);
             sHoleColor.bind("hole.color", &sStyle);
             sFont.bind("font", &sStyle);
@@ -134,12 +154,16 @@ namespace lsp
             sMode.bind("mode", &sStyle);
             sDown.bind("down", &sStyle);
             sLed.bind("led", &sStyle);
+            sBorderSize.bind("border.size", &sStyle);
+            sBorderPressedSize.bind("border.pressed.size", &sStyle);
+            sBorderDownSize.bind("border.down.size", &sStyle);
             sEditable.bind("editable", &sStyle);
             sHole.bind("hole", &sStyle);
             sFlat.bind("flat", &sStyle);
             sTextClip.bind("text.clip", &sStyle);
             sTextPadding.bind("text.padding", &sStyle);
             sHover.bind("hover", &sStyle);
+            sGradient.bind("gradient", &sStyle);
 
             // Additional slots
             handler_id_t id = 0;
@@ -179,6 +203,10 @@ namespace lsp
                 query_draw();
             if ((sHoverColor.is(prop)) && (sHover.get()))
                 query_draw();
+            if (sBorderColor.is(prop))
+                query_draw();
+            if ((sBorderHoverColor.is(prop)) && (sHover.get()))
+                query_draw();
             if (sLightColor.is(prop))
                 query_draw();
             if (sTextColor.is(prop))
@@ -212,6 +240,12 @@ namespace lsp
                     query_resize();
                 }
             }
+            if (sBorderSize.is(prop))
+                query_resize();
+            if (sBorderPressedSize.is(prop))
+                query_resize();
+            if (sBorderDownSize.is(prop))
+                query_resize();
 
             if (sHole.is(prop))
             {
@@ -248,6 +282,8 @@ namespace lsp
             }
 
             if (sHover.is(prop))
+                query_draw();
+            if (sGradient.is(prop))
                 query_draw();
         }
 
@@ -312,11 +348,13 @@ namespace lsp
             lsp::Color bg_color(sBgColor);
             lsp::Color color(sColor);
             lsp::Color tcolor(sTextColor);
+            lsp::Color border_color(sBorderColor);
 
             if ((sHover.get()) && (pressed & S_HOVER))
             {
                 color.copy(sHoverColor);
                 tcolor.copy(sHoverTextColor);
+                border_color.copy(sBorderHoverColor);
             }
 
             if (pressed & S_LED)
@@ -329,18 +367,21 @@ namespace lsp
                     if ((sHover.get()) && (pressed & S_HOVER))
                     {
                         color.scale_lightness(1.25f);
-                        tcolor.scale_lightness(1.25f);
+                        tcolor.scale_lightness(0.75f);
+                        border_color.scale_lightness(0.75f);
                     }
                 }
                 else
                 {
                     color.scale_lightness(0.75f);
                     tcolor.scale_lightness(0.75f);
+                    border_color.scale_lightness(0.75f);
                 }
             }
 
             color.scale_lightness(brightness);
             tcolor.scale_lightness(brightness);
+            border_color.scale_lightness(brightness);
 
             // Draw background
             bool aa     = s->set_antialiasing(false);
@@ -404,42 +445,64 @@ namespace lsp
             {
                 float delta         = sqrtf(r.nWidth * r.nWidth + r.nHeight * r.nHeight);
                 float xb            = color.lightness();
-                size_t max_chamfer  = lsp_max(1, scaling * 3.0f);
-                size_t chamfer      = (pressed & S_PRESSED) ? lsp_max(1, scaling * 2.0f) : max_chamfer;
+                float max_border    = lsp_max(0.0f, sBorderSize.get() * scaling);
+                max_border          = lsp_max(max_border, sBorderPressedSize.get() * scaling);
+                max_border          = lsp_max(max_border, sBorderDownSize.get() * scaling);
+                ssize_t max_chamfer = max_border;
+                ssize_t chamfer     = (pressed & S_PRESSED) ? lsp_max(0.0f, sBorderDownSize.get() * scaling) :
+                                      (pressed & S_DOWN) ? lsp_max(0.0f, sBorderPressedSize.get() * scaling) :
+                                      lsp_max(0.0f, sBorderSize.get() * scaling);
+                bool gradient       = sGradient.get();
 
-                // Draw champfer
+                // Draw chamfer
                 if ((!(pressed & S_FLAT)) || ((pressed & (S_PRESSED | S_DOWN)) != 0))
                 {
-                    for (size_t i=0; i<chamfer; ++i)
+                    if (gradient)
                     {
-                        // Compute color
-                        float bright = float(i + 1.0f) / (chamfer + 1);
+                        for (ssize_t i=0; i<chamfer; ++i)
+                        {
+                            // Compute color
+                            float bright = float(i + 1.0f) / (chamfer + 1);
 
-                        // Create gradient
-                        g = create_gradient(s, r, pressed, 0, delta);
-                        color.lightness(bright);
-                        g->add_color(0.0, color.red(), color.green(), color.blue());
-                        color.lightness(xb * bright);
-                        g->add_color(1.0, color.red(), color.green(), color.blue());
-                        s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
-                        delete g;
+                            // Create gradient
+                            g = create_gradient(s, r, pressed, 0, delta);
+                            color.lightness(bright);
+                            g->add_color(0.0, color.red(), color.green(), color.blue());
+                            color.lightness(xb * bright);
+                            g->add_color(1.0, color.red(), color.green(), color.blue());
+                            s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                            delete g;
 
-                        // Update rect
-                        r.nLeft        += 1;
-                        r.nTop         += 1;
-                        r.nWidth       -= 2;
-                        r.nHeight      -= 2;
+                            // Update rect
+                            r.nLeft        += 1;
+                            r.nTop         += 1;
+                            r.nWidth       -= 2;
+                            r.nHeight      -= 2;
+                        }
+                    }
+                    else
+                    {
+                        s->fill_rect(border_color, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                        r.nLeft        += chamfer;
+                        r.nTop         += chamfer;
+                        r.nWidth       -= chamfer * 2;
+                        r.nHeight      -= chamfer * 2;
                     }
                 }
 
                 // Draw button face
-                g = create_gradient(s, r, pressed, 0, delta);
-                color.lightness(1.0f);
-                g->add_color(0.0, color.red(), color.green(), color.blue());
-                color.lightness(xb);
-                g->add_color(1.0, color.red(), color.green(), color.blue());
-                s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
-                delete g;
+                if (gradient)
+                {
+                    g = create_gradient(s, r, pressed, 0, delta);
+                    color.lightness(1.0f);
+                    g->add_color(0.0, color.red(), color.green(), color.blue());
+                    color.lightness(xb);
+                    g->add_color(1.0, color.red(), color.green(), color.blue());
+                    s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                    delete g;
+                }
+                else
+                    s->fill_rect(color, r.nLeft, r.nTop, r.nWidth, r.nHeight);
 
                 // Do we have a text?
                 LSPString text;
@@ -540,10 +603,14 @@ namespace lsp
                 sTextPadding.add(&xr, scaling);
             }
 
-            size_t chamfer      = lsp_max(1, scaling * 3.0f);
-            size_t hole         = (nState & S_HOLE) ? lsp_max(1, scaling) : 0;
-            size_t light        = (nState & S_LED)  ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
-            size_t outer        = lsp_max(hole, light);
+            float border        = sBorderSize.get() * scaling;
+            border              = lsp_max(border, sBorderPressedSize.get() * scaling);
+            border              = lsp_max(border, sBorderDownSize.get() * scaling);
+
+            ssize_t chamfer     = lsp_max(0.0f, border);
+            ssize_t hole        = (nState & S_HOLE) ? lsp_max(1, scaling) : 0;
+            ssize_t light       = (nState & S_LED)  ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
+            ssize_t outer       = lsp_max(hole, light);
 
             xr.nWidth          += (chamfer + outer) * 2;
             xr.nHeight         += (chamfer + outer) * 2;

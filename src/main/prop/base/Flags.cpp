@@ -140,7 +140,7 @@ namespace lsp
                 if (*atoms == property)
                 {
                     if (pStyle->get_bool(property, &b) == STATUS_OK)
-                        nFlags  = (b) ? (nFlags | bit) : (nFlags & (~bit));
+                        nFlags  = lsp_setflag(nFlags, bit, b);
                     break;
                 }
             }
@@ -188,7 +188,10 @@ namespace lsp
 
         void Flags::push()
         {
-            psync(size_t(0) - 1); // Sync all items
+            atom_t *atoms = vAtoms;
+            size_t bit = 1;
+            for (const char * const *flags = pFlags; *flags != NULL; ++atoms, ++flags, bit <<= 1)
+                pStyle->set_bool(*atoms, nFlags & bit);
         }
 
         void Flags::set_default()

@@ -62,9 +62,11 @@
 	</style>
 	
 	<style class="ComboBox" parents="root">
+		<border.size value="0" />
+	
 		<text.color value="bg" />
 		<color value="fg" />
-		<border.size value="0" />
+		<border.gap.color value="fg" />
 	</style>
 	
 	<style class="ComboBox::List" parents="root">
@@ -101,6 +103,9 @@
 	</style>
 	
 	<style class="ScrollBar" parents="root">
+		<size.constraints.width.min value="14" />
+		<size.constraints.height.min value="14" />
+		
 		<border.color value="fg" />
 		<inc.color value="bg" />
 		<inc.active.color value="activity" />
@@ -112,8 +117,8 @@
 		<slider.border.color value="fg" />
 		<slider.active.color value="activity" />
 		<border.gap.color value="bg" />
-		<size.constraints.width.min value="14" />
-		<size.constraints.height.min value="14" />
+		<text.color value="bg" />
+		<text.active.color value="bg" />
 	</style>
 	
 	<!-- FileDialog widgets -->

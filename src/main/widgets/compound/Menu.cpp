@@ -1159,7 +1159,7 @@ namespace lsp
             // Take focus if there is no parent menu
             if (pParentMenu == NULL)
             {
-//                sWindow.grab_events(ws::GRAB_MENU);
+                sWindow.grab_events(ws::GRAB_MENU);
                 sWindow.take_focus();
             }
         }

@@ -36,6 +36,8 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(Button, Widget)
                 prop::Color             sColor;
                 prop::Color             sHoverColor;
+                prop::Color             sBorderColor;
+                prop::Color             sBorderHoverColor;
                 prop::Color             sLightColor;
                 prop::Color             sTextColor;
                 prop::Color             sHoverTextColor;
@@ -48,12 +50,16 @@ namespace lsp
                 prop::ButtonMode        sMode;
                 prop::Boolean           sDown;
                 prop::Integer           sLed;
+                prop::Integer           sBorderSize;
+                prop::Integer           sBorderPressedSize;
+                prop::Integer           sBorderDownSize;
                 prop::Boolean           sEditable;
                 prop::Boolean           sHole;
                 prop::Boolean           sFlat;
                 prop::Boolean           sTextClip;
                 prop::Padding           sTextPadding;
                 prop::Boolean           sHover;
+                prop::Boolean           sGradient;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -89,6 +95,8 @@ namespace lsp
 
                 prop::Color             sColor;
                 prop::Color             sHoverColor;
+                prop::Color             sBorderColor;
+                prop::Color             sBorderHoverColor;
                 prop::Color             sLightColor;
                 prop::Color             sTextColor;
                 prop::Color             sHoverTextColor;
@@ -101,12 +109,16 @@ namespace lsp
                 prop::ButtonMode        sMode;
                 prop::Boolean           sDown;
                 prop::Integer           sLed;
+                prop::Integer           sBorderSize;
+                prop::Integer           sBorderPressedSize;
+                prop::Integer           sBorderDownSize;
                 prop::Boolean           sEditable;
                 prop::Boolean           sHole;
                 prop::Boolean           sFlat;
                 prop::Boolean           sTextClip;
                 prop::Padding           sTextPadding;
                 prop::Boolean           sHover;
+                prop::Boolean           sGradient;
 
             protected:
                 void                update_mode(button_mode_t mode);

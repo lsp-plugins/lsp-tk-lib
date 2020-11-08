@@ -69,6 +69,9 @@ namespace lsp
                 // Override
                 sConstraints.set_min_width(32);
                 sAllocation.set_fill(false);
+                // Commit
+                sConstraints.override();
+                sAllocation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__NavButton, "FileDialog::NavButton");
 
@@ -81,6 +84,9 @@ namespace lsp
                 // Override
                 sConstraints.set_min_width(96);
                 sAllocation.set_fill(false);
+                // Commit
+                sConstraints.override();
+                sAllocation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__ActionButton, "FileDialog::ActionButton");
 
@@ -94,6 +100,10 @@ namespace lsp
                 sPadding.set(2, 8);
                 sTextLayout.set_halign(-1.0f);
                 sFollow.set(false);
+                // Commit
+                sPadding.override();
+                sTextLayout.override();
+                sFollow.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark, "FileDialog::Bookmark");
 
@@ -106,6 +116,9 @@ namespace lsp
                 // Override
                 sColor.set("#ffffff");
                 sBgColor.set("#888888");
+                // Commit
+                sColor.override();
+                sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark_selected, "FileDialog::Bookmark.selected");
 
@@ -118,6 +131,9 @@ namespace lsp
                 // Override
                 sTextLayout.set(1.0f, 0.5f);
                 sColor.set("#ff0000");
+                // Commit
+                sTextLayout.override();
+                sColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__Warning, "FileDialog::Warning");
 
@@ -132,6 +148,11 @@ namespace lsp
                 sColor.set("#00ff00");
                 sLed.set(true);
                 sDown.set(true);
+                // Commit
+                sMode.override();
+                sColor.override();
+                sLed.override();
+                sDown.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck");
         }
