@@ -98,9 +98,9 @@
 	
 	<style class="ListBoxItem" parents="root">
 		<bg.color value="bg2" />
-		<bg.selected.color value="fg" />
+		<bg.selected.color value="bc" />
 		<text.color value="fg2" />
-		<text.selected.color value="bg" />
+		<text.selected.color value="fg2" />
 	</style>
 	
 	<style class="ScrollBar" parents="root">
