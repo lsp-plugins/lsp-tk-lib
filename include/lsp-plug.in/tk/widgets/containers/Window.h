@@ -133,7 +133,6 @@ namespace lsp
                 virtual void        show_widget();
                 virtual void        size_request(ws::size_limit_t *r);
                 virtual void        realize(const ws::rectangle_t *r);
-                virtual status_t    post_init();
 
                 /**
                  * Discard widget: notify window that widget has been removed from the widget tree
@@ -192,6 +191,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(WindowPolicy,       policy,             &sPolicy)
                 LSP_TK_PROPERTY(Widget,             child,              pChild)
+                LSP_TK_PROPERTY(Position,           position,           &sPosition)
 
             //---------------------------------------------------------------------------------
             // Manipulation

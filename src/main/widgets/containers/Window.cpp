@@ -115,48 +115,6 @@ namespace lsp
             if ((result = WidgetContainer::init()) != STATUS_OK)
                 return result;
 
-            // Bind properties
-            sTitle.bind(&sStyle, pDisplay->dictionary());
-            sRole.bind(&sStyle, pDisplay->dictionary());
-            sBorderColor.bind("border.color", &sStyle);
-            sBorderStyle.bind("border.style", &sStyle);
-            sBorderSize.bind("border.size", &sStyle);
-            sBorderRadius.bind("border.radius", &sStyle);
-            sActions.bind("actions", &sStyle);
-            sPosition.bind("position", &sStyle);
-            sWindowSize.bind("size", &sStyle);
-            sSizeConstraints.bind("size.constraints", &sStyle);
-            sLayout.bind("layout", &sStyle);
-            sPolicy.bind("policy", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sBorderColor.init(sclass, "#000000");
-//                sBorderStyle.init(sclass, ws::BS_SIZEABLE);
-//                sBorderSize.init(sclass, 0);
-//                sBorderRadius.init(sclass, 2);
-//                sActions.init(sclass, ws::WA_ALL);
-//                sPosition.init(sclass, 0, 0);
-//                sWindowSize.init(sclass, 160, 100);
-//                sSizeConstraints.init(sclass, -1, -1, -1, -1);
-//                sLayout.init(sclass, 0.0f, 0.0f, 0.0f, 0.0f);
-//                sPolicy.init(sclass, WP_NORMAL);
-//
-//                // Overrides
-//                sVisibility.override(sclass, false);
-//            }
-
-            // Cache the actual scaling factor
-            fScaling    = sScaling.get();
-
-            return post_init();
-        }
-
-        status_t Window::post_init()
-        {
-            status_t result;
-
             // Initialize display
             ws::IDisplay *dpy   = pDisplay->display();
             if (dpy == NULL)
@@ -171,13 +129,32 @@ namespace lsp
             // Initialize
             if ((result = pWindow->init()) != STATUS_SUCCESS)
                 return result;
-            pWindow->set_handler(this);
+
+            // Bind properties
+            sTitle.bind(&sStyle, pDisplay->dictionary());
+            sRole.bind(&sStyle, pDisplay->dictionary());
+            sBorderColor.bind("border.color", &sStyle);
+            sBorderStyle.bind("border.style", &sStyle);
+            sBorderSize.bind("border.size", &sStyle);
+            sBorderRadius.bind("border.radius", &sStyle);
+            sActions.bind("actions", &sStyle);
+            sPosition.bind("position", &sStyle);
+            sWindowSize.bind("size", &sStyle);
+            sSizeConstraints.bind("size.constraints", &sStyle);
+            sLayout.bind("layout", &sStyle);
+            sPolicy.bind("policy", &sStyle);
+
+            // Cache the actual scaling factor
+            fScaling    = sScaling.get();
 
             // Add slot(s)
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CLOSE, slot_window_close, self());
             if (id < 0)
                 return - id;
+
+            // Set self event handler
+            pWindow->set_handler(this);
 
             // Bind redraw handler
             sRedraw.bind(dpy);
@@ -852,6 +829,34 @@ namespace lsp
                         WidgetContainer::handle_event(e);
                     else if (h != NULL)
                         h->handle_event(e);
+                    break;
+                }
+
+                //-------------------------------------------------------------
+                // Focus events
+                case ws::UIE_FOCUS_OUT:
+                {
+                    Widget *h = hMouse.pWidget;
+                    if (h != NULL)
+                    {
+                        // Create UIE_MOUSE_OUT event
+                        ws::event_t ev;
+                        ws::init_event(&ev);
+                        ev.nType        = ws::UIE_MOUSE_OUT;
+                        ev.nLeft        = hMouse.nLeft;
+                        ev.nTop         = hMouse.nLeft;
+
+                        // Reset state of mouse handler
+                        hMouse.nState   = 0;
+                        hMouse.nLeft    = 0;
+                        hMouse.nTop     = 0;
+                        hMouse.pWidget  = NULL;
+
+                        // Send event to the handler
+                        h->handle_event(&ev);
+                    }
+
+                    kill_focus(pFocused);
                     break;
                 }
 

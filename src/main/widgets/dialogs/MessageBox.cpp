@@ -36,7 +36,7 @@ namespace lsp
                 sBorderStyle.set(ws::BS_DIALOG);
                 sActions.set_actions(ws::WA_DIALOG);
                 sLayout.set_scale(1.0f);
-                sConstraints.set_all(0);
+                sConstraints.set(320, -1, -1, -1);
                 // Commit
                 sPadding.override();
                 sBorderStyle.override();

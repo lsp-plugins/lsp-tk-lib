@@ -287,6 +287,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
         wnd->pointer()->set(ws::MP_TABLE_CELL);
         wnd->layout()->set(-0.5, 0.5, 0.5, 0.5);
+        wnd->position()->set(200, 200);
         MTEST_ASSERT(widgets.push(wnd));
 
         // Create Grid
