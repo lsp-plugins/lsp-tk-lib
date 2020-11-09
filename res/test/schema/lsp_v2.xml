@@ -47,6 +47,12 @@
 		<text.color value="fg" />
 	</style>
 	
+	<style class="Align" parents="root">
+	</style>
+	
+	<style class="Box" parents="root">
+	</style>
+	
 	<style class="Edit" parents="root">
 		<border.size value="1" />
 		<border.gap.size value="2" />
@@ -124,6 +130,9 @@
 		<gradient value="false" />
 		<hole value="false" />
 		<hover value="true" />
+		<text.shift value="0 0" />
+		<text.down.shift value="0 0" />
+		<text.pressed.shift value="1 1" />
 		
 		<border.color value="bc" />
 		<border.hover.color value="hv.border" />
@@ -134,13 +143,15 @@
 	</style>
 	
 	<style class="Menu" parents="root">
-		<bg.color value="fg2" />
-		<text.color value="bg2" />
+		<border.size value="1" />
+		
+		<border.color value="bc" />
+		<bg.color value="bg2" />
 	</style>
 	
 	<style class="MenuItem" parents="root">
 		<bg.selected.color value="bg" />
-		<text.color value="bg" />
+		<text.color value="fg" />
 		<text.selected.color value="fg" />
 	</style>
 	
@@ -163,6 +174,19 @@
 	</style>
 	
 	<style class="FileDialog::NavButton" parents="Button">
+	</style>
+	
+	<style class="FileDialog::ActionAlign" parents="Align">
+		<layout.hscale value="0.0" />
+		<layout.halign value="1.0" />
+	</style>
+	
+	<style class="FileDialog::ActionBox" parents="Box">
+		<spacing value="4" />
+	</style>
+	
+	<style class="FileDialog::NavBox" parents="Box">
+		<spacing value="2" />
 	</style>
 
 	<!-- MessageBox widgets -->

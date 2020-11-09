@@ -98,14 +98,15 @@ namespace lsp
                 Align                       sSBAlign;
                 Box                         sBookmarks;
                 Menu                        sBMPopup;
-                Button                      sBMAdd;
-                Box                         sHBox;
+                Button                      wBMAdd;
+                Box                         sActionBox;
+                Align                       sActionAlign;
                 Box                         sWarnBox;
                 Align                       sAppendExt;
                 Button                      wAutoExt;
                 Button                      wGo;
                 Button                      wUp;
-                Box                         wPathBox;
+                Box                         wNavBox;
                 MessageBox                 *pWConfirm;
                 MessageBox                 *pWMessage;
                 Label                       sWWarning;
@@ -143,6 +144,9 @@ namespace lsp
                 Style                      *pBMSel;
                 Style                      *pWarning;
                 Style                      *pExtCheck;
+                Style                      *pActionBox;
+                Style                      *pActionAlign;
+                Style                      *pNavBox;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);

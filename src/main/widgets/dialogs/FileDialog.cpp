@@ -76,6 +76,21 @@ namespace lsp
             LSP_TK_BUILTIN_STYLE(FileDialog__NavButton, "FileDialog::NavButton");
 
             //-----------------------------------------------------------------
+            // FileDialog::NavBox style
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__NavBox, Box)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__NavBox, Box)
+                // Override
+                sSpacing.set(2);
+                sAllocation.set(true, false);
+                // Commit
+                sSpacing.override();
+                sAllocation.override();
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__NavBox, "FileDialog::NavBox");
+
+            //-----------------------------------------------------------------
             // FileDialog::ActionButton style
             LSP_TK_STYLE_DEF_BEGIN(FileDialog__ActionButton, Button)
             LSP_TK_STYLE_DEF_END
@@ -91,13 +106,39 @@ namespace lsp
             LSP_TK_BUILTIN_STYLE(FileDialog__ActionButton, "FileDialog::ActionButton");
 
             //-----------------------------------------------------------------
+            // FileDialog::ActionBox style
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__ActionBox, Box)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ActionBox, Box)
+                // Override
+                sSpacing.set(8);
+                // Commit
+                sSpacing.override();
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionBox, "FileDialog::ActionBox");
+
+            //-----------------------------------------------------------------
+            // FileDialog::ActionAlign style
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__ActionAlign, Align)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ActionAlign, Align)
+                // Override
+                sLayout.set(0.0f, 0.0f, 1.0f, 0.0f);
+                // Commit
+                sLayout.override();
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionAlign, "FileDialog::ActionAlign");
+
+            //-----------------------------------------------------------------
             // FileDialog::Bookmark style
             LSP_TK_STYLE_DEF_BEGIN(FileDialog__Bookmark, Hyperlink)
             LSP_TK_STYLE_DEF_END
 
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Bookmark, Hyperlink)
                 // Override
-                sPadding.set(2, 8);
+                sPadding.set(2, 4);
                 sTextLayout.set_halign(-1.0f);
                 sFollow.set(false);
                 // Commit
@@ -173,14 +214,15 @@ namespace lsp
             sSBAlign(dpy),
             sBookmarks(dpy),
             sBMPopup(dpy),
-            sBMAdd(dpy),
-            sHBox(dpy),
+            wBMAdd(dpy),
+            sActionBox(dpy),
+            sActionAlign(dpy),
             sWarnBox(dpy),
             sAppendExt(dpy),
             wAutoExt(dpy),
             wGo(dpy),
             wUp(dpy),
-            wPathBox(dpy),
+            wNavBox(dpy),
             sWWarning(dpy),
 
             sMode(&sProperties),
@@ -206,6 +248,9 @@ namespace lsp
             pBMSel          = NULL;
             pWarning        = NULL;
             pExtCheck       = NULL;
+            pActionBox      = NULL;
+            pActionAlign    = NULL;
+            pNavBox         = NULL;
 
             pClass          = &metadata;
         }
@@ -241,20 +286,21 @@ namespace lsp
             sWFiles.destroy();
             sWAction.destroy();
             sWCancel.destroy();
-            sHBox.destroy();
+            sActionBox.destroy();
+            sActionAlign.destroy();
             sWarnBox.destroy();
             sSBBookmarks.destroy();
             sSBAlign.destroy();
             sBookmarks.destroy();
             sBMPopup.destroy();
-            sBMAdd.destroy();
+            wBMAdd.destroy();
             sMainGrid.destroy();
             sWWarning.destroy();
             sAppendExt.destroy();
             wAutoExt.destroy();
             wGo.destroy();
             wUp.destroy();
-            wPathBox.destroy();
+            wNavBox.destroy();
 
             pWSearch = NULL;
 
@@ -332,6 +378,15 @@ namespace lsp
             pExtCheck       = pDisplay->schema()->get("FileDialog::ExtCheck");
             if (pExtCheck == NULL)
                 return STATUS_BAD_STATE;
+            pActionBox      = pDisplay->schema()->get("FileDialog::ActionBox");
+            if (pActionBox == NULL)
+                return STATUS_BAD_STATE;
+            pActionAlign    = pDisplay->schema()->get("FileDialog::ActionAlign");
+            if (pActionBox == NULL)
+                return STATUS_BAD_STATE;
+            pNavBox         = pDisplay->schema()->get("FileDialog::NavBox");
+            if (pNavBox == NULL)
+                return STATUS_BAD_STATE;
 
             // Initialize widgets
             LSP_STATUS_ASSERT(sWPath.init());
@@ -365,14 +420,13 @@ namespace lsp
             LSP_STATUS_ASSERT(wUp.style()->inject_parent(pNavButton));
             LSP_STATUS_ASSERT(wUp.text()->set("actions.nav.up"));
 
-            LSP_STATUS_ASSERT(sBMAdd.init());
-            LSP_STATUS_ASSERT(sBMAdd.style()->inject_parent(pNavButton));
-            LSP_STATUS_ASSERT(sBMAdd.text()->set("actions.to_bookmarks"));
+            LSP_STATUS_ASSERT(wBMAdd.init());
+            LSP_STATUS_ASSERT(wBMAdd.style()->inject_parent(pNavButton));
+            LSP_STATUS_ASSERT(wBMAdd.text()->set("actions.to_bookmarks"));
 
-            LSP_STATUS_ASSERT(wPathBox.init());
-            wPathBox.orientation()->set_horizontal();
-            wPathBox.allocation()->set_fill(true);
-            wPathBox.spacing()->set(2);
+            LSP_STATUS_ASSERT(wNavBox.init());
+            LSP_STATUS_ASSERT(wNavBox.style()->inject_parent(pNavBox));
+            wNavBox.orientation()->set_horizontal();
 
             LSP_STATUS_ASSERT(sMainGrid.init());
             sMainGrid.rows()->set(7);
@@ -381,9 +435,12 @@ namespace lsp
             sMainGrid.vspacing()->set(4);
             sMainGrid.orientation()->set(O_HORIZONTAL);
 
-            LSP_STATUS_ASSERT(sHBox.init());
-            sHBox.orientation()->set_horizontal();
-            sHBox.spacing()->set(8);
+            LSP_STATUS_ASSERT(sActionBox.init());
+            LSP_STATUS_ASSERT(sActionBox.style()->inject_parent(pActionBox));
+            sActionBox.orientation()->set_horizontal();
+
+            LSP_STATUS_ASSERT(sActionAlign.init());
+            LSP_STATUS_ASSERT(sActionAlign.style()->inject_parent(pActionAlign));
 
             LSP_STATUS_ASSERT(sWarnBox.init());
             sWarnBox.orientation()->set_horizontal();
@@ -410,23 +467,24 @@ namespace lsp
 
             // Initialize supplementary elements
             // Path box
-            sBMAdd.allocation()->set_fill(true);
-            LSP_STATUS_ASSERT(wPathBox.add(&sBMAdd));
-            LSP_STATUS_ASSERT(wPathBox.add(&wUp));
-            LSP_STATUS_ASSERT(wPathBox.add(&wGo));
-            LSP_STATUS_ASSERT(add_label(&wPathBox, "labels.location", 1.0f, &l));
+            wBMAdd.allocation()->set_fill(true);
+            LSP_STATUS_ASSERT(wNavBox.add(&wBMAdd));
+            LSP_STATUS_ASSERT(wNavBox.add(&wUp));
+            LSP_STATUS_ASSERT(wNavBox.add(&wGo));
+            LSP_STATUS_ASSERT(add_label(&wNavBox, "labels.location", 1.0f, &l));
             l->allocation()->set(true, true);
             l->padding()->set_left(8);
             // Button box
-            LSP_STATUS_ASSERT(sHBox.add(&sWAction));
-            LSP_STATUS_ASSERT(sHBox.add(&sWCancel));
+            LSP_STATUS_ASSERT(sActionBox.add(&sWAction));
+            LSP_STATUS_ASSERT(sActionBox.add(&sWCancel));
+            LSP_STATUS_ASSERT(sActionAlign.add(&sActionBox));
             // Warning box
             LSP_STATUS_ASSERT(add_label(&sWarnBox, "labels.file_list"));
             LSP_STATUS_ASSERT(sWarnBox.add(&sWWarning));
 
             // Initialize grid
             // Row 1
-            LSP_STATUS_ASSERT(sMainGrid.add(&wPathBox));
+            LSP_STATUS_ASSERT(sMainGrid.add(&wNavBox));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWPath));
             // Row 2
             LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.bookmark_list"));
@@ -445,7 +503,7 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.add(&sWFilter));
             // Row 7
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
-            LSP_STATUS_ASSERT(sMainGrid.add(&sHBox)); // Action button box
+            LSP_STATUS_ASSERT(sMainGrid.add(&sActionAlign)); // Action button box
 
             // Add the whole structure
             LSP_STATUS_ASSERT(this->add(&sMainGrid));
@@ -466,7 +524,7 @@ namespace lsp
             if (id >= 0) id = sWFiles.slots()->bind(SLOT_KEY_DOWN, slot_on_list_key_down, self());
             if (id >= 0) id = wGo.slots()->bind(SLOT_SUBMIT, slot_on_go, self());
             if (id >= 0) id = wUp.slots()->bind(SLOT_SUBMIT, slot_on_up, self());
-            if (id >= 0) id = sBMAdd.slots()->bind(SLOT_SUBMIT, slot_on_bm_add, self());
+            if (id >= 0) id = wBMAdd.slots()->bind(SLOT_SUBMIT, slot_on_bm_add, self());
             if (id >= 0) id = sWPath.slots()->bind(SLOT_KEY_UP, slot_on_path_key_up, self());
             if (id >= 0) id = sBookmarks.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll, self());
             if (id >= 0) id = sSBBookmarks.slots()->bind(SLOT_REALIZED, slot_on_bm_realized, self());

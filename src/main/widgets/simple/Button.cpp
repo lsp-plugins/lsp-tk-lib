@@ -56,6 +56,9 @@ namespace lsp
                 sTextPadding.bind("text.padding", this);
                 sHover.bind("hover", this);
                 sGradient.bind("gradient", this);
+                sTextShift.bind("text.shift", this);
+                sTextDownShift.bind("text.down.shift", this);
+                sTextPressedShift.bind("text.pressed.shift", this);
                 // Configure
                 sColor.set("#cccccc");
                 sHoverColor.set("#ffffff");
@@ -81,6 +84,9 @@ namespace lsp
                 sTextClip.set(false);
                 sTextPadding.set(2, 2, 2, 2);
                 sGradient.set(true);
+                sTextShift.set(-1, -1);
+                sTextDownShift.set(0, 0);
+                sTextPressedShift.set(1, 1);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Button, "Button");
         }
@@ -114,7 +120,10 @@ namespace lsp
             sTextClip(&sProperties),
             sTextPadding(&sProperties),
             sHover(&sProperties),
-            sGradient(&sProperties)
+            sGradient(&sProperties),
+            sTextShift(&sProperties),
+            sTextDownShift(&sProperties),
+            sTextPressedShift(&sProperties)
         {
             nState          = 0;
             nBMask          = 0;
@@ -164,6 +173,9 @@ namespace lsp
             sTextPadding.bind("text.padding", &sStyle);
             sHover.bind("hover", &sStyle);
             sGradient.bind("gradient", &sStyle);
+            sTextShift.bind("text.shift", &sStyle);
+            sTextDownShift.bind("text.down.shift", &sStyle);
+            sTextPressedShift.bind("text.pressed.shift", &sStyle);
 
             // Additional slots
             handler_id_t id = 0;
@@ -516,10 +528,21 @@ namespace lsp
                     r.nHeight      -= chamfer * 2;
 
                     sTextPadding.enter(&r, scaling);
-                    if (!(pressed & S_PRESSED))
+
+                    if (pressed & S_PRESSED)
                     {
-                        r.nLeft    += (pressed & S_TOGGLED) ? scaling : -scaling;
-                        r.nTop     += (pressed & S_TOGGLED) ? scaling : -scaling;
+                        r.nLeft        += sTextPressedShift.left() * scaling;
+                        r.nTop         += sTextPressedShift.top()  * scaling;
+                    }
+                    else if (pressed & S_TOGGLED)
+                    {
+                        r.nLeft        += sTextDownShift.left() * scaling;
+                        r.nTop         += sTextDownShift.top()  * scaling;
+                    }
+                    else
+                    {
+                        r.nLeft        += sTextShift.left() * scaling;
+                        r.nTop         += sTextShift.top()  * scaling;
                     }
 
                     s->clip_begin(r.nLeft, r.nTop, r.nWidth, r.nHeight);
@@ -562,7 +585,7 @@ namespace lsp
                         y          += fp.Height;
 
                         sFont.draw(s, tcolor, x, y, scaling, &text, last, tail);
-                        last    = curr + 1;
+                        last        = curr + 1;
                     }
 
                     s->clip_end();

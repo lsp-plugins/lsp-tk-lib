@@ -60,6 +60,9 @@ namespace lsp
                 prop::Padding           sTextPadding;
                 prop::Boolean           sHover;
                 prop::Boolean           sGradient;
+                prop::Position          sTextShift;
+                prop::Position          sTextDownShift;
+                prop::Position          sTextPressedShift;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -119,6 +122,9 @@ namespace lsp
                 prop::Padding           sTextPadding;
                 prop::Boolean           sHover;
                 prop::Boolean           sGradient;
+                prop::Position          sTextShift;
+                prop::Position          sTextDownShift;
+                prop::Position          sTextPressedShift;
 
             protected:
                 void                update_mode(button_mode_t mode);
