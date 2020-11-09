@@ -9,6 +9,7 @@
 		<fg value="#8088b3" />
 		<fg2 value="#a8aed3" />
 		<bc value="#373943" />
+		<bc2 value="#40424e" />
 		
 		<!-- Hyperlinks -->
 		<hl.text value="#239db5" />
@@ -71,7 +72,7 @@
 		<border.radius value="0" />
 		
 		<color value="bg2" />		
-		<text.color value="fg2" />
+		<text.color value="fg" />
 		<spin.color value="bg2" />		
 		<spin.text.color value="fg2" />
 		<border.color value="bc" />
@@ -124,7 +125,7 @@
 		<slider.border.color value="bc" />
 		<slider.active.color value="activity" />
 		<border.gap.color value="bg" />
-		<text.color value="fg2" />
+		<text.color value="fg" />
 		<text.active.color value="bg2" />
 	</style>
 	
