@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <private/tk/style/BuiltinStyle.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -107,6 +108,19 @@ namespace lsp
 
             sFont.get_parameters(s, scaling, &fp);
             sFont.get_multitext_parameters(s, &tp, scaling, &text);
+
+            lsp_trace(
+                "this=%p, text=%s, font parameters: "
+                "ascent=%.1f, descent=%.1f, height=%.1f, x_adv=%.1f, y_adv=%.1f",
+                this, text.get_utf8(),
+                fp.Ascent, fp.Descent, fp.Height, fp.MaxXAdvance, fp.MaxYAdvance
+            );
+            lsp_trace(
+                "this=%p, text=%s, text parameters: "
+                "xbearing=%.1f, ybearing=%.1f, width=%.1f, height=%.1f, x_adv=%.1f, y_adv=%.1f",
+                this, text.get_utf8(),
+                tp.XBearing, tp.YBearing, tp.Width, tp.Height, tp.XAdvance, tp.YAdvance
+            );
 
             // Estimate drawing area
             tp.Height       = lsp_max(tp.Height, fp.Height);
@@ -195,6 +209,18 @@ namespace lsp
 
             sFont.get_parameters(pDisplay, scaling, &fp);
             sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+            lsp_trace(
+                "this=%p, text=%s, font parameters: "
+                "ascent=%.1f, descent=%.1f, height=%.1f, x_adv=%.1f, y_adv=%.1f",
+                this, text.get_utf8(),
+                fp.Ascent, fp.Descent, fp.Height, fp.MaxXAdvance, fp.MaxYAdvance
+            );
+            lsp_trace(
+                "this=%p, text=%s, text parameters: "
+                "xbearing=%.1f, ybearing=%.1f, width=%.1f, height=%.1f, x_adv=%.1f, y_adv=%.1f",
+                this, text.get_utf8(),
+                tp.XBearing, tp.YBearing, tp.Width, tp.Height, tp.XAdvance, tp.YAdvance
+            );
 
             r->nMinWidth    = ceil(tp.Width);
             r->nMinHeight   = ceil(lsp_max(tp.Height, fp.Height));
