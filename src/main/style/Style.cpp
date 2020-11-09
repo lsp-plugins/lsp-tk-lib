@@ -1177,6 +1177,8 @@ namespace lsp
             status_t res = STATUS_OK;
             property_t *p = get_property(id);
 
+//            lsp_trace("name=%s, override=%d", atom_name(id), override_mode());
+
             if (p == NULL)
             {
                 p = create_property(id, src, (override_mode()) ? F_OVERRIDDEN : 0);

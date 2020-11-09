@@ -96,7 +96,10 @@ namespace lsp
                 static bool         matches(float value, float min, float max);
 
             public:
-                void                override();                 // Override property
+                /**
+                 * Override property for the style
+                 */
+                virtual void        override();                 // Override property
 
                 /**
                  * Check that property matches another property

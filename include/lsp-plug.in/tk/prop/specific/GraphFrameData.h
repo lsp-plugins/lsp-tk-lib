@@ -83,12 +83,10 @@ namespace lsp
                 void            commit(atom_t property);
                 bool            resize_buffer(size_t rows, size_t cols);
                 ssize_t         row_index(uint32_t id, size_t range) const;
-                status_t        init();
-                status_t        override();
 
             public:
                 explicit GraphFrameData(prop::Listener *listener);
-                ~GraphFrameData();
+                virtual ~GraphFrameData();
 
             public:
                 size_t          rows() const                { return nRows;                     }
@@ -132,30 +130,11 @@ namespace lsp
                 public:
                     explicit inline GraphFrameData(prop::Listener *listener = NULL): tk::GraphFrameData(listener) {}
 
-                protected:
-                    using               tk::GraphFrameData::init;
-                    using               tk::GraphFrameData::override;
-
                 public:
                     inline status_t     bind(atom_t property, Style *style)             { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const char *property, Style *style)        { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
 
-                    status_t            init(Style *style, size_t rows, size_t cols, float min, float max, float dfl);
-                    inline status_t     init(Style *style, size_t rows, size_t cols) { return init(style, rows, cols, 0.0f, 1.0f, 0.0f);   }
-                    inline status_t     init(Style *style, size_t rows, float min, float max, float dfl) { return init(style, 0, 0, min, max, dfl); }
-
-                    status_t            override(Style *style, size_t rows, size_t cols, float min, float max, float dfl);
-                    inline status_t     override(Style *style, float min, float max, float dfl)  { return override(style, 0, 0, min, max, dfl);     }
-                    inline status_t     override(Style *style, size_t rows, size_t cols) { return override(style, rows, cols, 0.0f, 1.0f, 0.0f);    }
-
-                    static status_t            init(const char *name, Style *style, size_t rows, size_t cols, float min, float max, float dfl);
-                    static inline status_t     init(const char *name, Style *style, size_t rows, size_t cols) { return init(name, style, rows, cols, 0.0f, 1.0f, 0.0f);   }
-                    static inline status_t     init(const char *name, Style *style, size_t rows, float min, float max, float dfl) { return init(name, style, 0, 0, min, max, dfl); }
-
-                    static status_t            override(const char *name, Style *style, size_t rows, size_t cols, float min, float max, float dfl);
-                    static inline status_t     override(const char *name, Style *style, float min, float max, float dfl)  { return override(name, style, 0, 0, min, max, dfl);     }
-                    static inline status_t     override(const char *name, Style *style, size_t rows, size_t cols) { return override(name, style, rows, cols, 0.0f, 1.0f, 0.0f);    }
             };
         };
     }

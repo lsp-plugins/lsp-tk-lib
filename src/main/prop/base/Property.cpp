@@ -65,6 +65,8 @@ namespace lsp
 
         void Property::override()
         {
+            if (pStyle == NULL)
+                return;
             if (!pStyle->config_mode())
                 return;
 

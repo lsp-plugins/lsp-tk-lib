@@ -112,7 +112,8 @@ namespace lsp
                 sSGroups.set(false);
 
                 sMainTextLayout.set(0.0f, 0.0f);
-                sMainFont.set_params(16.0f, ws::FF_BOLD);
+                sMainFont.set_size(16.0f);
+                sMainFont.set_bold(true);
                 sMainColor.set("#00ff00");
                 sMainVisibility.set(false);
                 sLabelFont.set_size(10.0f);
@@ -134,6 +135,9 @@ namespace lsp
                     sLabelTextLayout[i].set(0.0f, 0.0f);
                     sLabelVisibility[i].set(false);
                 }
+                // Override
+                sMainFont.override();
+                sLabelFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(AudioSample, "AudioSample");
         }

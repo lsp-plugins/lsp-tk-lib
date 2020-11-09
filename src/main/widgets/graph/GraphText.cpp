@@ -41,7 +41,6 @@ namespace lsp
                 sOrigin.bind("origin", this);
                 // Configure
                 sFont.set_size(10.0f);
-                sColor.set("#ffffff");
                 sLayout.set(1.0f, 1.0f, 0.0f, 0.0f);
                 sTextLayout.set(0.5f, 0.5f);
                 sHValue.set(0.0f);
@@ -52,6 +51,7 @@ namespace lsp
                 // Override
                 sPadding.set(2);
                 // Commit
+                sFont.override();
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(GraphText, "GraphText");

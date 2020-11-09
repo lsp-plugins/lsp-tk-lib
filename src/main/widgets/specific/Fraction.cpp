@@ -64,6 +64,8 @@ namespace lsp
                     sItemColor[i].set("#000000");
                     sItemOpened[i].set(false);
                 }
+                // Override
+                sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Fraction, "Fraction");
         }

@@ -31,6 +31,7 @@
 		<size.scaling value="1.0" />
 		<lang value="en_US" />
 		<bg.color value="bg" />
+		<font.size value="12.0" />
 	</root>
 	
 	<!-- Windows -->
@@ -52,6 +53,11 @@
 	</style>
 	
 	<style class="Box" parents="root">
+	</style>
+	
+	<style class="Hyperlink" parents="root">
+		<text.color value="hl.text" />
+		<text.hover.color value="hl.hover" />
 	</style>
 	
 	<style class="Edit" parents="root">
@@ -162,9 +168,7 @@
 	</style>
 	
 	<!-- FileDialog widgets -->
-	<style class="FileDialog::Bookmark" parents="root">
-		<text.color value="hl.text" />
-		<text.hover.color value="hl.hover" />
+	<style class="FileDialog::Bookmark" parents="Hyperlink">
 	</style>
 	
 	<style class="FileDialog::Bookmark.selected" parents="FileDialog::Bookmark">

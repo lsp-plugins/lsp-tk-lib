@@ -46,6 +46,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Root, Style)
                 prop::Float                         sScaling;
+                prop::Font                          sFont;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -81,6 +82,7 @@ namespace lsp
                 lltl::pphash<LSPString, lsp::Color> vColors;
 
                 prop::Float                         sScaling;
+                prop::Font                          sFont;
 
             protected:
                 status_t            create_style(IStyleFactory *init);
@@ -129,6 +131,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Float,          scaling,            &sScaling)
+                LSP_TK_PROPERTY(Font,           font,               &sFont)
 
             public:
                 /**

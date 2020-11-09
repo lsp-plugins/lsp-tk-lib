@@ -49,6 +49,7 @@ namespace lsp
         Font::Font(prop::Listener *listener):
             MultiProperty(vAtoms, P_COUNT, listener)
         {
+            nOverride       = 0;
         }
 
         Font::~Font()
@@ -56,31 +57,56 @@ namespace lsp
             MultiProperty::unbind(vAtoms, DESC, &sListener);
         }
 
-        void Font::push()
+        void Font::push_masked(size_t mask)
         {
             ws::Font &f = sValue;
 
             // Simple components
-            if (vAtoms[P_NAME] >= 0)
+            if ((mask & O_NAME) && (vAtoms[P_NAME] >= 0))
                 pStyle->set_string(vAtoms[P_NAME], f.get_name());
-            if (vAtoms[P_SIZE] >= 0)
+            if ((mask & O_SIZE) && (vAtoms[P_SIZE] >= 0))
                 pStyle->set_float(vAtoms[P_SIZE], f.get_size());
-            if (vAtoms[P_BOLD] >= 0)
+            if ((mask & O_BOLD) && (vAtoms[P_BOLD] >= 0))
                 pStyle->set_bool(vAtoms[P_BOLD], f.is_bold());
-            if (vAtoms[P_ITALIC] >= 0)
+            if ((mask & O_ITALIC) && (vAtoms[P_ITALIC] >= 0))
                 pStyle->set_bool(vAtoms[P_ITALIC], f.is_italic());
-            if (vAtoms[P_UNDERLINE] >= 0)
+            if ((mask & O_UNDERLINE) && (vAtoms[P_UNDERLINE] >= 0))
                 pStyle->set_bool(vAtoms[P_UNDERLINE], f.is_underline());
-            if (vAtoms[P_ANTIALIAS] >= 0)
+            if ((mask & O_ANTIALIAS) && (vAtoms[P_ANTIALIAS] >= 0))
                 pStyle->set_bool(vAtoms[P_ANTIALIAS], f.is_antialiasing());
 
             // Complicated properties
             LSPString s;
-            if (vAtoms[P_FLAGS] >= 0)
+            if ((mask & O_FLAGS) && (vAtoms[P_FLAGS] >= 0))
             {
                 Property::fmt_bit_enums(&s, FLAGS, f.flags());
-                pStyle->set_float(vAtoms[P_SIZE], f.get_size());
+                pStyle->set_string(vAtoms[P_FLAGS], &s);
             }
+        }
+
+        void Font::push()
+        {
+            push_masked(O_ALL);
+        }
+
+        void Font::override()
+        {
+            if (pStyle == NULL)
+                return;
+            if (!pStyle->config_mode())
+                return;
+
+            // Push changes to style
+            pStyle->begin(&sListener);
+                bool over = pStyle->set_override(true);
+                push_masked(nOverride);
+                nOverride = 0;
+                pStyle->set_override(over);
+            pStyle->end();
+
+            // Notify listeners about changes
+            if (pListener != NULL)
+                pListener->notify(this);
         }
 
         void Font::commit(atom_t property)
@@ -122,6 +148,7 @@ namespace lsp
 
         void Font::set_name(const char *name)
         {
+            nOverride      |= O_NAME;
             const char *old = sValue.get_name();
             if (old == name)
                 return;
@@ -134,6 +161,7 @@ namespace lsp
 
         float Font::set_size(float size)
         {
+            nOverride      |= O_SIZE;
             float old = sValue.get_size();
             if (old == size)
                 return old;
@@ -145,6 +173,7 @@ namespace lsp
 
         bool Font::set_bold(bool on)
         {
+            nOverride      |= O_FLAGS | O_BOLD;
             bool old = sValue.is_bold();
             if (old == on)
                 return old;
@@ -156,6 +185,7 @@ namespace lsp
 
         bool Font::set_italic(bool on)
         {
+            nOverride      |= O_FLAGS | O_ITALIC;
             bool old = sValue.is_italic();
             if (old == on)
                 return old;
@@ -167,6 +197,7 @@ namespace lsp
 
         bool Font::set_underline(bool on)
         {
+            nOverride      |= O_FLAGS | O_UNDERLINE;
             bool old = sValue.is_underline();
             if (old == on)
                 return old;
@@ -178,6 +209,7 @@ namespace lsp
 
         bool Font::set_antialiasing(bool on)
         {
+            nOverride      |= O_FLAGS | O_ANTIALIAS;
             bool old = sValue.is_antialiasing();
             if (old == on)
                 return old;
@@ -189,6 +221,7 @@ namespace lsp
 
         size_t Font::set_flags(size_t flags)
         {
+            nOverride      |= O_ALL_FLAGS;
             flags      &= ws::FF_ALL;
             size_t old  = sValue.flags();
             if (old == flags)
@@ -201,6 +234,7 @@ namespace lsp
 
         void Font::set_params(size_t size, size_t flags)
         {
+            nOverride      |= O_SIZE | O_ALL_FLAGS;
             flags              &= ws::FF_ALL;
 
             if ((flags == sValue.flags()) &&
@@ -214,6 +248,7 @@ namespace lsp
 
         void Font::set(const char *name, size_t size, size_t flags)
         {
+            nOverride      |= O_ALL;
             bool changed = false;
 
             // Change name

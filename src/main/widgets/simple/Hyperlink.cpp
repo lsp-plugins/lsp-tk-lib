@@ -41,7 +41,7 @@ namespace lsp
                 sFollow.bind("follow", this);
                 // Configure
                 sTextLayout.set(0.0f, 0.0f);
-                sFont.set_params(12.0f, ws::FF_UNDERLINE);
+                sFont.set_underline();
                 sColor.set("#0000cc");
                 sHoverColor.set("#ff0000");
                 sConstraints.set(-1, -1, -1, -1);
@@ -50,6 +50,7 @@ namespace lsp
                 sPointer.set(ws::MP_HAND);
                 // Commit
                 sPointer.override();
+                sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Hyperlink, "Hyperlink");
         }

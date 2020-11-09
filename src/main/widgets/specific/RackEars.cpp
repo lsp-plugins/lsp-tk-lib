@@ -41,7 +41,9 @@ namespace lsp
                 sScrewSize.bind("screw.size", this);
                 sTextPadding.bind("text.padding", this);
                 // Configure
-                sFont.set_params(16.0f, ws::FF_BOLD);
+                sFont.set_size(16.0f);
+                sFont.set_bold(true);
+                sFont.set_antialiasing(true);
                 sColor.set("#00ccff");
                 sScrewColor.set("#444444");
                 sTextColor.set("#ffffff");
@@ -51,6 +53,8 @@ namespace lsp
                 sScrewPadding.set(2);
                 sScrewSize.set(20);
                 sTextPadding.set(4, 2);
+                // Override
+                sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(RackEars, "RackEars");
         }

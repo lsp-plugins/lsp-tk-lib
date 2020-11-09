@@ -147,9 +147,14 @@ namespace lsp
                 size_t              notify_listeners_delayed(property_t *prop);
                 void                deref_property(property_t *prop);
 
+            public:
+                /** Set override mode for the style
+                 *
+                 * @param set overide mode (true/false)
+                 * @return previous mode
+                 */
                 bool                set_override(bool set);
 
-            public:
                 /**
                  * Get associated schema
                  * @return schema

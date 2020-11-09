@@ -52,6 +52,20 @@ namespace lsp
                     P_COUNT
                 };
 
+                enum over_flags_t
+                {
+                    O_NAME      = 1 << P_NAME,
+                    O_SIZE      = 1 << P_SIZE,
+                    O_FLAGS     = 1 << P_FLAGS,
+                    O_BOLD      = 1 << P_BOLD,
+                    O_ITALIC    = 1 << P_ITALIC,
+                    O_UNDERLINE = 1 << P_UNDERLINE,
+                    O_ANTIALIAS = 1 << P_ANTIALIAS,
+
+                    O_ALL_FLAGS = O_FLAGS | O_BOLD | O_ITALIC | O_UNDERLINE | O_ANTIALIAS,
+                    O_ALL       = O_ALL_FLAGS | O_NAME | O_SIZE
+                };
+
             protected:
                 static const prop::desc_t   DESC[];
                 static const prop::enum_t   FLAGS[];
@@ -59,9 +73,11 @@ namespace lsp
             protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 ws::Font            sValue;             // Font parameters
+                size_t              nOverride;          // Override flags
                 mutable ws::font_parameters_t   sFP;    // Cached font parameters
 
             protected:
+                void                push_masked(size_t mask);
                 virtual void        push();
                 virtual void        commit(atom_t property);
 
@@ -96,6 +112,8 @@ namespace lsp
                 void                set(const ws::Font *f);
 
             public:
+                virtual void        override();
+
                 bool get_parameters(ws::ISurface *s, float scaling, ws::font_parameters_t *fp) const;
                 bool get_parameters(Display *dpy, float scaling, ws::font_parameters_t *fp) const;
 

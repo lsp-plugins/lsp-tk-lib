@@ -53,6 +53,8 @@ namespace lsp
                 sInvLineColor.set("#000000");
                 sTextColor.set("#cccccc");
                 sInvTextColor.set("#00cc00");
+                // Override
+                sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileButton, "FileButton");
         }

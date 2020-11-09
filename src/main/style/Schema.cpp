@@ -33,8 +33,10 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Root, Style)
                 // Bind
                 sScaling.bind("size.scaling", this);
-
+                sFont.bind("font", this);
                 // Configure
+                sFont.set_antialiasing(true);
+                sFont.set_size(12.0f);
                 sScaling.set(1.0f);
             LSP_TK_STYLE_IMPL_END
 

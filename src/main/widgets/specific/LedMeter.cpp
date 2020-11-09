@@ -48,6 +48,8 @@ namespace lsp
                 sTextVisible.set(false);
                 sColor.set("#000000");
                 sMinChannelWidth.set(16);
+                // Override
+                sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(LedMeter, "LedMeter");
         }
