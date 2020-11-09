@@ -645,7 +645,7 @@ namespace lsp
                         li->padding()->enter(&xr, &it->r, scaling);
                         sFont.draw(s, col,
                                 xr.nLeft,
-                                xr.nTop  + ((it->r.nHeight - fp.Height) * 0.5f) + fp.Ascent,
+                                xr.nTop  + ((xr.nHeight - fp.Height) * 0.5f) + fp.Ascent,
                                 scaling, &text);
                     }
                     s->clip_end();

@@ -97,6 +97,9 @@
 	</style>
 	
 	<style class="ListBoxItem" parents="root">
+		<padding.top value="4" />
+		<padding.bottom value="4" />
+		
 		<bg.color value="bg2" />
 		<bg.selected.color value="bc" />
 		<text.color value="fg2" />
