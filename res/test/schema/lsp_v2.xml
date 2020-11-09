@@ -98,7 +98,7 @@
 	
 	<style class="ListBoxItem" parents="root">
 		<bg.color value="bg2" />
-		<bg.selected.color value="fg2" />
+		<bg.selected.color value="fg" />
 		<text.color value="fg2" />
 		<text.selected.color value="bg" />
 	</style>
@@ -144,6 +144,8 @@
 	
 	<style class="Menu" parents="root">
 		<border.size value="1" />
+		<ipadding.top value="4" />
+		<ipadding.bottom value="4" />
 		
 		<border.color value="bc" />
 		<bg.color value="bg2" />

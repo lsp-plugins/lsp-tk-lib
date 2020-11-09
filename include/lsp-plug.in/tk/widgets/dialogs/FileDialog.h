@@ -95,7 +95,6 @@ namespace lsp
                 Button                      sWCancel;
                 Grid                        sMainGrid;
                 ScrollArea                  sSBBookmarks;
-                Align                       sSBAlign;
                 Box                         sBookmarks;
                 Menu                        sBMPopup;
                 Button                      wBMAdd;

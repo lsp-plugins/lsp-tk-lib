@@ -46,6 +46,7 @@ namespace lsp
                 sCheckBorderRadius.bind("check.border.radius", this);
                 sSeparatorWidth.bind("separator.width", this);
                 sSpacing.bind("spacing", this);
+                sIPadding.bind("ipadding", this);
                 // Configure
                 sFont.set_size(12.0f);
                 sScrolling.set(0.0f);
@@ -61,12 +62,16 @@ namespace lsp
                 sCheckBorderRadius.set(3);
                 sSeparatorWidth.set(1);
                 sSpacing.set(4);
+                sIPadding.set_all(0);
+                sPadding.set_all(0);
                 // Override
                 sVisibility.set(false);
                 sBgColor.set("#cccccc");
                 // Commit
                 sVisibility.override();
                 sBgColor.override();
+                sIPadding.override();
+                sPadding.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Menu, "Menu");
 
@@ -278,6 +283,7 @@ namespace lsp
             sCheckBorderRadius(&sProperties),
             sSeparatorWidth(&sProperties),
             sSpacing(&sProperties),
+            sIPadding(&sProperties),
             sSubmenu(&sProperties)
         {
             nSelected               = -1;
@@ -363,6 +369,7 @@ namespace lsp
             sCheckBorderRadius.bind("check.border.radius", &sStyle);
             sSeparatorWidth.bind("separator.width", &sStyle);
             sSpacing.bind("spacing", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
             sSubmenu.bind(NULL);
 
             return STATUS_OK;
@@ -447,6 +454,9 @@ namespace lsp
             r->nMaxHeight   = st.full_h + border;
             r->nPreWidth    = -1;
             r->nPreHeight   = -1;
+
+            // Apply internal padding
+            sIPadding.add(r, scaling);
         }
 
         void Menu::allocate_items(lltl::darray<item_t> *out, istats_t *st)
@@ -676,6 +686,9 @@ namespace lsp
             rr.nWidth           = r->nWidth  - border * 2;
             rr.nHeight          = r->nHeight - border * 2;
 
+            // Apply internal padding
+            sIPadding.enter(&rr, scaling);
+
             // Re-compute scrolling parameters
             st.max_scroll       = lsp_max(0, st.full_h - rr.nHeight);
             if ((scroll > st.max_scroll) && (scaling > 0.0f))
@@ -786,12 +799,10 @@ namespace lsp
 
         void Menu::draw(ws::ISurface *s)
         {
-            padding_t pad;
             ws::rectangle_t xr, r;
             float scaling       = lsp_max(0.0f, sScaling.get());
             float bright        = sBrightness.get();
             ssize_t border      = lsp_max(0, sBorderSize.get() * scaling);
-            sPadding.compute(&pad, scaling);
 
             xr.nLeft            = border;
             xr.nTop             = border;
@@ -801,6 +812,9 @@ namespace lsp
             // Draw background
             lsp::Color color(sBgColor);
             s->clear(color);
+
+            // Apply internal padding
+            sIPadding.enter(&xr, scaling);
 
             ws::font_parameters_t fp;
             LSPString text;

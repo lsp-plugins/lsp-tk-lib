@@ -151,7 +151,7 @@ namespace lsp
             if ((property == vAtoms[P_TOP]) && (pStyle->get_int(vAtoms[P_TOP], &v) == STATUS_OK))
                 p.nTop      = lsp_max(v, 0);
             if ((property == vAtoms[P_BOTTOM]) && (pStyle->get_int(vAtoms[P_BOTTOM], &v) == STATUS_OK))
-                p.nTop      = lsp_max(v, 0);
+                p.nBottom   = lsp_max(v, 0);
 
             LSPString s;
             if ((property == vAtoms[P_CSS]) && (pStyle->get_string(vAtoms[P_CSS], &s) == STATUS_OK))

@@ -6,8 +6,8 @@
 	},
 	"to_bookmarks": "+Bookmarks",
 	"dlg": {
-		"open": "Open Dialog",
-		"save": "Save Dialog"
+		"open": "Open dialog",
+		"save": "Save dialog"
 	},
 	"open": "Open",
 	"save": "Save",
@@ -17,10 +17,10 @@
 	},
 	"edit": {
 		"delete": "Delete",
-		"move_first": "Move First",
-		"move_last": "Move Last",
-		"move_up": "Move Up",
-		"move_down": "Move Down",
+		"move_first": "Move first",
+		"move_last": "Move last",
+		"move_up": "Move up",
+		"move_down": "Move down",
 		"cut": "Cut",
 		"copy": "Copy",
 		"paste": "Paste"

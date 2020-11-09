@@ -232,7 +232,7 @@ namespace lsp
 
             // Scale the area size (if possible)
             w              += lsp_max(xgap * hScale, 0.0f);
-            h              += lsp_max(ygap * hScale, 0.0f);
+            h              += lsp_max(ygap * vScale, 0.0f);
             if (req->nMaxWidth > 0)
                 w              = lsp_min(w, req->nMaxWidth);
             if (req->nMaxHeight > 0)

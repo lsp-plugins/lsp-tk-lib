@@ -50,6 +50,7 @@ namespace lsp
                 prop::Integer           sCheckBorderRadius;
                 prop::Integer           sSeparatorWidth;
                 prop::Integer           sSpacing;
+                prop::Padding           sIPadding;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -175,6 +176,7 @@ namespace lsp
                 prop::Integer           sCheckBorderRadius;
                 prop::Integer           sSeparatorWidth;
                 prop::Integer           sSpacing;
+                prop::Padding           sIPadding;
                 prop::WidgetPtr<Menu>   sSubmenu;       // Sub-menu
 
             protected:
@@ -239,6 +241,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            check_border_gap,           &sCheckBorderGap)
                 LSP_TK_PROPERTY(Integer,            check_border_radius,        &sCheckBorderRadius)
                 LSP_TK_PROPERTY(Integer,            separator_width,            &sSeparatorWidth)
+                LSP_TK_PROPERTY(Padding,            padding_internal,           &sIPadding)
 
                 LSP_TK_PROPERTY(Rectangle,          trigger_area,               sWindow.trigger_area())
                 LSP_TK_PROPERTY(Integer,            trigger_screen,             sWindow.trigger_screen())
