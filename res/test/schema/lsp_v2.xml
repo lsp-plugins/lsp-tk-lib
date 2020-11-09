@@ -21,7 +21,7 @@
 		<hv.fill value="#264652" />
 		
 		<!-- Misc -->
-		<activity value="#a8aed3" />
+		<activity value="#40424e" />
 		<warn value="#ffff00" />
 	</colors>
 
@@ -120,8 +120,8 @@
 		<dec.active.color value="activity" />
 		<button.color value="bg2" />
 		<button.active.color value="activity" />
-		<slider.color value="bg2" />
-		<slider.border.color value="bg2" />
+		<slider.color value="bc" />
+		<slider.border.color value="bc" />
 		<slider.active.color value="activity" />
 		<border.gap.color value="bg" />
 		<text.color value="fg2" />
