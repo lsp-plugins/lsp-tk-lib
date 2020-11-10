@@ -95,6 +95,7 @@ namespace lsp
                 Button                      sWCancel;
                 Grid                        sMainGrid;
                 ScrollArea                  sSBBookmarks;
+                Box                         wOptions;
                 Box                         sBookmarks;
                 Menu                        sBMPopup;
                 Button                      wBMAdd;
@@ -127,6 +128,8 @@ namespace lsp
                 prop::String                sSelected;
                 prop::Boolean               sUseConfirm;
                 prop::String                sConfirmMsg;
+
+                prop::WidgetPtr<Widget>     sOptions;
 
                 // External properties
                 prop::Color                 sBMTextColor;
@@ -248,6 +251,7 @@ namespace lsp
                 LSP_TK_PROPERTY(String,                     selected_file,                  &sSelected);
                 LSP_TK_PROPERTY(Boolean,                    use_confirm,                    &sUseConfirm);
                 LSP_TK_PROPERTY(String,                     confirm_message,                &sConfirmMsg);
+                LSP_TK_PROPERTY(WidgetPtr<Widget>,          options,                        &sOptions);
 
                 LSP_TK_PROPERTY(Color,                      warn_color,                     &sWarnColor);
                 LSP_TK_PROPERTY(Color,                      auto_ext_color,                 &sExtColor);

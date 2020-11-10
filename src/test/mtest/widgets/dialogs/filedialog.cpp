@@ -30,6 +30,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         test_type_t    *test;
         char           *label;
         tk::FileDialog *dlg;
+        tk::Widget     *optional;
     } handler_t;
 
     static status_t slot_close(tk::Widget *sender, void *ptr, void *data)
@@ -181,6 +182,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         dlg->use_confirm()->set(true);
         dlg->confirm_message()->set("messages.file.confirm_open");
         dlg->title()->set_raw("Load from file dialog");
+        dlg->options()->set(h->optional);
         dlg->show(sender);
 
         return STATUS_OK;
@@ -202,7 +204,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         return STATUS_OK;
     }
 
-    status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label)
+    status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label, tk::Widget *opt = NULL)
     {
         status_t res = w->init();
         if (res != STATUS_OK)
@@ -214,6 +216,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         h->test     = this;
         h->label    = ::strdup(label);
         h->dlg      = NULL;
+        h->optional = opt;
 
         tk::handler_id_t hid;
         hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
@@ -309,10 +312,32 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
             size_t col = 0;
             int wid = 0;
 
+            // Create dialog options
+            tk::Box *box        = new tk::Box(dpy);
+            tk::CheckBox *ckbox = new tk::CheckBox(dpy);
+            tk::Label *lbl      = new tk::Label(dpy);
+
+            MTEST_ASSERT(box->init() == STATUS_OK);
+            MTEST_ASSERT(ckbox->init() == STATUS_OK);
+            MTEST_ASSERT(lbl->init() == STATUS_OK);
+            MTEST_ASSERT(widgets.add(box));
+            MTEST_ASSERT(widgets.add(ckbox));
+            MTEST_ASSERT(widgets.add(lbl));
+
+            ckbox->checked()->set(true);
+            lbl->text()->set_raw("Option");
+            lbl->text_layout()->set_halign(-1.0f);
+            lbl->allocation()->set_hexpand(true);
+            box->orientation()->set_horizontal();
+            box->spacing()->set(4);
+
+            MTEST_ASSERT(box->add(ckbox) == STATUS_OK);
+            MTEST_ASSERT(box->add(lbl) == STATUS_OK);
+
             // Create open dialog button
             MTEST_ASSERT(id.fmt_ascii("button-%d", wid++));
             MTEST_ASSERT(btn = new tk::Button(dpy));
-            MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(init_widget(btn, vh, id.get_ascii(), box) == STATUS_OK);
             MTEST_ASSERT(widgets.push(btn));
             MTEST_ASSERT(grid->add(btn) == STATUS_OK);
 

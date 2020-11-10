@@ -122,6 +122,18 @@
 		<text.active.color value="bg" />
 	</style>
 	
+	<style class="CheckBox" parents="root">
+		<border.size value="0" />
+		<border.gap.size value="0" />
+		<check.gap.size value="3" />
+		<border.radius value="4" />
+		
+		<fill.color value="fg" />
+		<fill.hover.color value="fg" />
+		<color value="activity0" />
+		<hover.color value="activity" />
+	</style>
+	
 	<!-- FileDialog widgets -->
 	<style class="FileDialog::Bookmark" parents="root">
 		<text.color value="hlink_text" />
@@ -136,16 +148,7 @@
 		<text.color value="fgwarn" />
 	</style>
 	
-	<style class="FileDialog::ExtCheck" parents="root">
-		<border.size value="0" />
-		<border.gap.size value="0" />
-		<check.gap.size value="3" />
-		<border.radius value="4" />
-		
-		<fill.color value="fg" />
-		<fill.hover.color value="fg" />
-		<color value="activity0" />
-		<hover.color value="activity" />
+	<style class="FileDialog::ExtCheck" parents="CheckBox">
 	</style>
 	
 	<!-- MessageBox widgets -->

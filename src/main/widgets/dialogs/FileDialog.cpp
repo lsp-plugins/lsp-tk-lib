@@ -207,6 +207,7 @@ namespace lsp
             sWCancel(dpy),
             sMainGrid(dpy),
             sSBBookmarks(dpy),
+            wOptions(dpy),
             sBookmarks(dpy),
             sBMPopup(dpy),
             wBMAdd(dpy),
@@ -228,7 +229,8 @@ namespace lsp
             sSelFilter(&sProperties),
             sSelected(&sProperties),
             sUseConfirm(&sProperties),
-            sConfirmMsg(&sProperties)
+            sConfirmMsg(&sProperties),
+            sOptions(&sProperties)
         {
             pWConfirm       = NULL;
             pWSearch        = NULL;
@@ -285,6 +287,7 @@ namespace lsp
             sActionAlign.destroy();
             sWarnBox.destroy();
             sSBBookmarks.destroy();
+            wOptions.destroy();
             sBookmarks.destroy();
             sBMPopup.destroy();
             wBMAdd.destroy();
@@ -444,13 +447,19 @@ namespace lsp
             sSBBookmarks.hscroll_mode()->set(SCROLL_OPTIONAL);
             sSBBookmarks.vscroll_mode()->set(SCROLL_OPTIONAL);
             sSBBookmarks.allocation()->set_expand(true);
-            sSBBookmarks.constraints()->set_min_width(192);
             sSBBookmarks.layout()->set(-1.0f, -1.0f, 1.0f, 0.0f);
 
             LSP_STATUS_ASSERT(sBookmarks.init());
             sBookmarks.orientation()->set_vertical();
             sBookmarks.allocation()->set_expand(true);
             LSP_STATUS_ASSERT(sSBBookmarks.add(&sBookmarks));
+
+            LSP_STATUS_ASSERT(wOptions.init());
+            wOptions.constraints()->set_min_width(192);
+            wOptions.allocation()->set_expand(true);
+            wOptions.spacing()->set(4);
+            wOptions.orientation()->set_vertical();
+            LSP_STATUS_ASSERT(wOptions.add(&sSBBookmarks));
 
             LSP_STATUS_ASSERT(init_bm_popup_menu());
 
@@ -479,7 +488,7 @@ namespace lsp
             LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.bookmark_list"));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWarnBox));
             // Row 3
-            LSP_STATUS_ASSERT(sMainGrid.add(&sSBBookmarks));
+            LSP_STATUS_ASSERT(sMainGrid.add(&wOptions));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWFiles));
             // Row 4
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
@@ -531,6 +540,7 @@ namespace lsp
             sSelected.bind(&sStyle, pDisplay->dictionary());
             sUseConfirm.bind("confirm", &sStyle);
             sConfirmMsg.bind(&sStyle, pDisplay->dictionary());
+            sOptions.bind(NULL);
 
             // Bind foreign properties
             sBMTextColor.bind("text.color", pBMNormal);
@@ -613,6 +623,14 @@ namespace lsp
             {
                 if (sVisibility.get())
                     refresh_current_path();
+            }
+            if (sOptions.is(prop))
+            {
+                for (size_t i=wOptions.items()->size(); i > 1; --i)
+                    wOptions.items()->remove(i-1);
+                Widget *opts = sOptions.get();
+                if (opts != NULL)
+                    wOptions.add(opts);
             }
         }
 
