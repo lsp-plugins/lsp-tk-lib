@@ -198,6 +198,20 @@
 	<style class="FileDialog::NavBox" parents="Box">
 		<spacing value="2" />
 	</style>
+	
+	<style class="FileDialog::ExtCheck" parents="root">
+		<border.size value="1" />
+		<border.gap.size value="0" />
+		<border.radius value="0" />
+		<check.gap.size value="2" />
+		
+		<border.color value="bc" />
+		<border.hover.color value="activity" />
+		<fill.color value="bg2" />
+		<fill.hover.color value="bg2" />
+		<color value="fg" />
+		<hover.color value="fg2" />
+	</style>
 
 	<!-- MessageBox widgets -->
 	<style class="MessageBox::Message" parents="Label">

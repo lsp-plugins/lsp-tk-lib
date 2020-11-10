@@ -102,7 +102,7 @@ namespace lsp
                 Align                       sActionAlign;
                 Box                         sWarnBox;
                 Align                       sAppendExt;
-                Button                      wAutoExt;
+                CheckBox                    wAutoExt;
                 Button                      wGo;
                 Button                      wUp;
                 Box                         wNavBox;
@@ -199,7 +199,7 @@ namespace lsp
             protected:
                 status_t                add_label(WidgetContainer *c, const char *key, float align = -1.0f, Label **label = NULL);
                 status_t                add_menu_item(Menu *m, const char *key, event_handler_t handler);
-                status_t                add_ext_button(WidgetContainer *c, const char *text);
+                status_t                add_ext_check(WidgetContainer *c, const char *text);
                 status_t                init_bm_popup_menu();
                 void                    sync_mode();
                 status_t                show_message(const char *title, const char *heading, const char *message, const io::Path *path);

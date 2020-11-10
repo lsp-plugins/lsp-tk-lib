@@ -26,6 +26,7 @@
 		<hlink_hover value="#ff8080" />
 		
 		<!-- Misc -->
+		<activity0 value="#0088cc" />
 		<activity value="#00ccff" />
 	</colors>
 	
@@ -133,6 +134,18 @@
 	
 	<style class="FileDialog::Warning" parents="root">
 		<text.color value="fgwarn" />
+	</style>
+	
+	<style class="FileDialog::ExtCheck" parents="root">
+		<border.size value="0" />
+		<border.gap.size value="0" />
+		<check.gap.size value="3" />
+		<border.radius value="4" />
+		
+		<fill.color value="fg" />
+		<fill.hover.color value="fg" />
+		<color value="activity0" />
+		<hover.color value="activity" />
 	</style>
 	
 	<!-- MessageBox widgets -->

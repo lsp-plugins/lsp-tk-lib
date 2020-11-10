@@ -180,20 +180,16 @@ namespace lsp
 
             //-----------------------------------------------------------------
             // FileDialog::ExtCheck
-            LSP_TK_STYLE_DEF_BEGIN(FileDialog__ExtCheck, Button)
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__ExtCheck, CheckBox)
             LSP_TK_STYLE_DEF_END
 
-            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ExtCheck, Button)
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ExtCheck, CheckBox)
                 // Override
-                sMode.set_toggle();
-                sColor.set("#00ff00");
-                sLed.set(true);
-                sDown.set(true);
+                sColor.set("#ffff00");
+                sChecked.set(true);
                 // Commit
-                sMode.override();
                 sColor.override();
-                sLed.override();
-                sDown.override();
+                sChecked.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck");
         }
@@ -487,7 +483,7 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.add(&sWFiles));
             // Row 4
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
-            LSP_STATUS_ASSERT(add_ext_button(&sMainGrid, "labels.automatic_extension"));
+            LSP_STATUS_ASSERT(add_ext_check(&sMainGrid, "labels.automatic_extension"));
             // Row 5
             LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.file_name", 1.0f, &pWSearch));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWSearch));
@@ -677,7 +673,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t FileDialog::add_ext_button(WidgetContainer *c, const char *text)
+        status_t FileDialog::add_ext_check(WidgetContainer *c, const char *text)
         {
             LSP_STATUS_ASSERT(sAppendExt.init());
             LSP_STATUS_ASSERT(wAutoExt.init());
@@ -1117,7 +1113,7 @@ namespace lsp
             }
             else if (sMode.save_file()) // Use 'File name' field
             {
-                if (wAutoExt.down()->get())
+                if (wAutoExt.checked()->get())
                 {
                     LSPString ext;
                     ListBoxItem *isel = sWFilter.selected()->get();
