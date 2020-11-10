@@ -139,6 +139,7 @@
 
 // Simple widgets
 #include <lsp-plug.in/tk/widgets/simple/Button.h>
+#include <lsp-plug.in/tk/widgets/simple/CheckBox.h>
 #include <lsp-plug.in/tk/widgets/simple/Edit.h>
 #include <lsp-plug.in/tk/widgets/simple/Fader.h>
 #include <lsp-plug.in/tk/widgets/simple/Hyperlink.h>

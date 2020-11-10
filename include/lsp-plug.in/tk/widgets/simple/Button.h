@@ -71,6 +71,9 @@ namespace lsp
          */
         class Button: public Widget
         {
+            private:
+                Button & operator = (const Button &);
+
             public:
                 static const w_class_t    metadata;
 

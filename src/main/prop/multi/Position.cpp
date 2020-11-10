@@ -163,7 +163,7 @@ namespace lsp
                     return (dx*dx + dy*dy) <= radius * radius;
                 }
             }
-            else if (x > (r->nWidth + radius))
+            else if (x > (r->nWidth - radius))
             {
                 if (y < radius)
                 {
