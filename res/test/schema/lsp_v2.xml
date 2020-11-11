@@ -152,6 +152,10 @@
 		<text.hover.color value="hv.text" />
 	</style>
 	
+	<style class="Separator" parents="root">
+		<color value="bc" />
+	</style>
+	
 	<style class="Menu" parents="root">
 		<border.size value="1" />
 		<ipadding.top value="4" />
@@ -171,6 +175,7 @@
 		<border.size value="1" />
 		<border.gap.size value="0" />
 		<border.radius value="0" />
+		<check.radius value="0" />		
 		<check.gap.size value="2" />
 		
 		<border.color value="bc" />

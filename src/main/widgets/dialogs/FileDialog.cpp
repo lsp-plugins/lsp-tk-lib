@@ -208,6 +208,7 @@ namespace lsp
             sMainGrid(dpy),
             sSBBookmarks(dpy),
             wOptions(dpy),
+            wSeparator(dpy),
             sBookmarks(dpy),
             sBMPopup(dpy),
             wBMAdd(dpy),
@@ -288,6 +289,7 @@ namespace lsp
             sWarnBox.destroy();
             sSBBookmarks.destroy();
             wOptions.destroy();
+            wSeparator.destroy();
             sBookmarks.destroy();
             sBMPopup.destroy();
             wBMAdd.destroy();
@@ -461,6 +463,10 @@ namespace lsp
             wOptions.orientation()->set_vertical();
             LSP_STATUS_ASSERT(wOptions.add(&sSBBookmarks));
 
+            LSP_STATUS_ASSERT(wSeparator.init());
+            wSeparator.allocation()->set_hexpand(true);
+            wSeparator.orientation()->set_horizontal();
+
             LSP_STATUS_ASSERT(init_bm_popup_menu());
 
             // Initialize supplementary elements
@@ -630,7 +636,10 @@ namespace lsp
                     wOptions.items()->remove(i-1);
                 Widget *opts = sOptions.get();
                 if (opts != NULL)
+                {
+                    wOptions.add(&wSeparator);
                     wOptions.add(opts);
+                }
             }
         }
 

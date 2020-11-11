@@ -96,6 +96,7 @@ namespace lsp
                 Grid                        sMainGrid;
                 ScrollArea                  sSBBookmarks;
                 Box                         wOptions;
+                Separator                   wSeparator;
                 Box                         sBookmarks;
                 Menu                        sBMPopup;
                 Button                      wBMAdd;

@@ -37,6 +37,7 @@ namespace lsp
                 prop::Integer           sBorderSize;            // Size of border
                 prop::Integer           sBorderRadius;          // Radius of border
                 prop::Integer           sBorderGapSize;         // Size of gap between border and check
+                prop::Integer           sCheckRadius;           // Inner radius of check
                 prop::Integer           sCheckGapSize;          // Size of gap for check
                 prop::Integer           sCheckMinSize;          // Minimum size of check
                 prop::Boolean           sChecked;               // Checked flag
@@ -81,6 +82,7 @@ namespace lsp
                 prop::Integer           sBorderSize;            // Size of border
                 prop::Integer           sBorderRadius;          // Radius of border
                 prop::Integer           sBorderGapSize;         // Size of gap between border and check
+                prop::Integer           sCheckRadius;           // Inner radius of check
                 prop::Integer           sCheckGapSize;          // Size of gap for check
                 prop::Integer           sCheckMinSize;          // Minimum size of check
                 prop::Boolean           sChecked;               // Checked flag
@@ -112,6 +114,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                    border_size,            &sBorderSize);
                 LSP_TK_PROPERTY(Integer,                    border_radius,          &sBorderRadius);
                 LSP_TK_PROPERTY(Integer,                    border_gap_size,        &sBorderGapSize);
+                LSP_TK_PROPERTY(Integer,                    check_radius,           &sCheckRadius);
                 LSP_TK_PROPERTY(Integer,                    check_gap_size,         &sCheckGapSize);
                 LSP_TK_PROPERTY(Integer,                    check_min_size,         &sCheckMinSize);
                 LSP_TK_PROPERTY(Boolean,                    checked,                &sChecked);

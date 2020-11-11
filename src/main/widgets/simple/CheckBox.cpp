@@ -34,6 +34,7 @@ namespace lsp
                 sBorderSize.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sBorderGapSize.bind("border.gap.size", this);
+                sCheckRadius.bind("check.radius", this);
                 sCheckGapSize.bind("check.gap.size", this);
                 sCheckMinSize.bind("check.min.size", this);
                 sChecked.bind("checked", this);
@@ -75,6 +76,7 @@ namespace lsp
             sBorderSize(&sProperties),
             sBorderRadius(&sProperties),
             sBorderGapSize(&sProperties),
+            sCheckRadius(&sProperties),
             sCheckGapSize(&sProperties),
             sCheckMinSize(&sProperties),
             sChecked(&sProperties),
@@ -114,6 +116,7 @@ namespace lsp
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sBorderGapSize.bind("border.gap.size", &sStyle);
+            sCheckRadius.bind("check.radius", &sStyle);
             sCheckGapSize.bind("check.gap.size", &sStyle);
             sCheckMinSize.bind("check.min.size", &sStyle);
             sChecked.bind("checked", &sStyle);
@@ -144,6 +147,8 @@ namespace lsp
             if (sBorderRadius.is(prop))
                 query_resize();
             if (sBorderGapSize.is(prop))
+                query_resize();
+            if (sCheckRadius.is(prop))
                 query_resize();
             if (sCheckGapSize.is(prop))
                 query_resize();
@@ -179,11 +184,12 @@ namespace lsp
             ssize_t bgap        = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
             ssize_t ckgap       = (sCheckGapSize.get() > 0) ? lsp_max(1.0f, sCheckGapSize.get() * scaling) : 0;
             ssize_t brad        = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
+            ssize_t irad        = (sCheckRadius.get() > 0) ? lsp_max(1.0f, sCheckRadius.get() * scaling) : 0;
             ssize_t ckmin       = lsp_max(1.0f, sCheckMinSize.get() * scaling);
 
             // Estimate the size of check box
             border             += lsp_max(ckgap, bgap);
-            ssize_t irad        = lsp_max(0, brad - border);
+            irad                = lsp_max(irad, brad - border);
             ckmin               = lsp_max(ckmin, irad * 2);
 
             // Return the size
@@ -218,6 +224,7 @@ namespace lsp
             float bright        = sBrightness.get();
             ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t bgap        = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
+            ssize_t irad        = (sCheckRadius.get() > 0) ? lsp_max(1.0f, sCheckRadius.get() * scaling) : 0;
             ssize_t ckgap       = (sCheckGapSize.get() > 0) ? lsp_max(1.0f, sCheckGapSize.get() * scaling) : 0;
 
             ssize_t brad        = nRadius;
@@ -276,7 +283,7 @@ namespace lsp
                 xr.nTop            += ckgap;
                 xr.nWidth          -= ckgap * 2;
                 xr.nHeight         -= ckgap * 2;
-                brad                = lsp_max(0, brad - ckgap);
+                brad                = lsp_max(irad, brad - ckgap);
 
                 c.copy((state & XF_HOVER) ? sHoverColor : sColor);
                 c.scale_lightness(bright);
