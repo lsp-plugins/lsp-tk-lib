@@ -214,6 +214,7 @@
 	</style>
 	
 	<style class="FileDialog::ExtCheck" parents="CheckBox">
+		<color value="fg" />
 	</style>
 
 	<!-- MessageBox widgets -->
