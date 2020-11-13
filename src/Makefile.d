@@ -22889,19 +22889,11 @@ $(LSP_TK_LIB_BIN)/main/helpers/draw.o: main/helpers/draw.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
 $(LSP_TK_LIB_BIN)/test/utest/tk/style/stylesheet.o: \
  test/utest/tk/style/stylesheet.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/utest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/helpers.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -23262,15 +23254,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/dialogs/MessageBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/dialogs/FileDialog.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/utest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/helpers.h
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
 $(LSP_TK_LIB_BIN)/test/utest/tk/style/nesting.o: \
  test/utest/tk/style/nesting.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -23454,30 +23438,14 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/nesting.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/dialogs/MessageBox.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/dialogs/FileDialog.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/utest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/helpers.h
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
 $(LSP_TK_LIB_BIN)/test/utest/tk/prop/specific/graphframedata.o: \
  test/utest/tk/prop/specific/graphframedata.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/utest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/helpers.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -23657,18 +23625,11 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/prop/specific/graphframedata.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/rackears.o: \
  test/mtest/widgets/specific/rackears.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -23849,18 +23810,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/rackears.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/ledmeter.o: \
  test/mtest/widgets/specific/ledmeter.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -24041,18 +23995,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/ledmeter.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/ledmeterchannel.o: \
  test/mtest/widgets/specific/ledmeterchannel.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -24233,18 +24180,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/ledmeterchannel.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/fraction.o: \
  test/mtest/widgets/specific/fraction.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -24425,18 +24365,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/fraction.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/filebutton.o: \
  test/mtest/widgets/specific/filebutton.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -24617,18 +24550,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/filebutton.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/audiosample.o: \
  test/mtest/widgets/specific/audiosample.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -24809,18 +24735,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/audiosample.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/audiochannel.o: \
  test/mtest/widgets/specific/audiochannel.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -25001,18 +24920,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/audiochannel.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/switch.o: \
  test/mtest/widgets/simple/switch.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -25193,18 +25105,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/switch.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/separator.o: \
  test/mtest/widgets/simple/separator.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -25385,18 +25290,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/separator.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/scrollbar.o: \
  test/mtest/widgets/simple/scrollbar.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -25577,18 +25475,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/scrollbar.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/radiobutton.o: \
  test/mtest/widgets/simple/radiobutton.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -25769,18 +25660,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/radiobutton.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/progressbar.o: \
  test/mtest/widgets/simple/progressbar.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -25961,18 +25845,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/progressbar.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/led.o: \
  test/mtest/widgets/simple/led.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -26153,18 +26030,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/led.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/label.o: \
  test/mtest/widgets/simple/label.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -26345,18 +26215,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/label.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/knob.o: \
  test/mtest/widgets/simple/knob.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -26537,18 +26400,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/knob.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/indicator.o: \
  test/mtest/widgets/simple/indicator.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -26729,18 +26585,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/indicator.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/hyperlink.o: \
  test/mtest/widgets/simple/hyperlink.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -26921,18 +26770,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/hyperlink.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/fader.o: \
  test/mtest/widgets/simple/fader.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -27113,18 +26955,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/fader.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/edit.o: \
  test/mtest/widgets/simple/edit.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -27305,18 +27140,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/edit.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/checkbox.o: \
  test/mtest/widgets/simple/checkbox.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -27497,18 +27325,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/checkbox.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/button.o: \
  test/mtest/widgets/simple/button.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -27689,18 +27510,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/button.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/graph/graph.o: \
  test/mtest/widgets/graph/graph.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -27923,18 +27737,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/graph/graph.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/dialogs/messagebox.o: \
  test/mtest/widgets/dialogs/messagebox.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -28115,18 +27922,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/dialogs/messagebox.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/dialogs/filedialog.o: \
  test/mtest/widgets/dialogs/filedialog.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -28308,18 +28108,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/dialogs/filedialog.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/resource/DirLoader.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/scrollarea.o: \
  test/mtest/widgets/containers/scrollarea.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -28500,18 +28293,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/scrollarea.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/popup.o: \
  test/mtest/widgets/containers/popup.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -28692,18 +28478,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/popup.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/group.o: \
  test/mtest/widgets/containers/group.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -28884,18 +28663,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/group.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid4.o: \
  test/mtest/widgets/containers/grid4.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -29076,18 +28848,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid4.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid3.o: \
  test/mtest/widgets/containers/grid3.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -29268,18 +29033,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid3.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid2.o: \
  test/mtest/widgets/containers/grid2.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -29460,18 +29218,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid2.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid1.o: \
  test/mtest/widgets/containers/grid1.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -29652,18 +29403,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid1.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/box.o: \
  test/mtest/widgets/containers/box.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -29843,18 +29587,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/box.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/align.o: \
  test/mtest/widgets/containers/align.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -30035,18 +29772,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/align.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/menu.o: \
  test/mtest/widgets/compound/menu.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -30227,18 +29957,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/menu.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/listbox.o: \
  test/mtest/widgets/compound/listbox.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -30419,18 +30142,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/listbox.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combogroup.o: \
  test/mtest/widgets/compound/combogroup.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -30611,18 +30327,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combogroup.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combobox.o: \
  test/mtest/widgets/compound/combobox.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -30803,18 +30512,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combobox.o: \
  $(LSP_TK_LIB_INC)/private/mtest/tk/common.h
 $(LSP_TK_LIB_BIN)/test/mtest/widgets/3d/area3d.o: \
  test/mtest/widgets/3d/area3d.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -31042,18 +30744,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/tk/common.o: test/mtest/tk/common.cpp \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h
 $(LSP_TK_LIB_BIN)/test/mtest/sys/display.o: test/mtest/sys/display.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -31232,18 +30927,11 @@ $(LSP_TK_LIB_BIN)/test/mtest/sys/display.o: test/mtest/sys/display.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
 $(LSP_TK_LIB_BIN)/test/mtest/example.o: test/mtest/example.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/mtest.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/test.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
@@ -31421,23 +31109,13 @@ $(LSP_TK_LIB_BIN)/test/mtest/example.o: test/mtest/example.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/widgets/dialogs/FileDialog.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h
-$(LSP_TK_LIB_BIN)/test/main.o: test/main.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h
+$(LSP_TK_LIB_BIN)/test/main.o: test/main.cpp
 $(LSP_TK_LIB_BIN)/test/init/init.o: test/init/init.cpp \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/init.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/version.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/env.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/config.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/types.h \
- $(LSP_TEST_FW_INC)/lsp-plug.in/test-fw/main/dynarray.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/style/types.h \
