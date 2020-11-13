@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema>
+	<!-- Color aliases -->
+	<colors>
+		<!-- Background colors -->
+		<bg value="#1b1c22" />
+		<bg2 value="#2f3037" />
+		<bg3 value="#45464d" />
+		<fg value="#ebecee" />
+		<hole value="#000000" />
+		<glass value="#101010" />
+		<fgwarn value="#ffff00" />
+		
+		<!-- Label colors -->
+		<main_text value="#ebecee" />
+		<dark_text value="#1b1c22" />
+		<invalid_input value="#880000" />
+		
+		<!-- Knob colors -->
+		<knob_cap value="#474843" />
+		<knob_scale value="#00c0ff" />
+		
+		<!-- Hyperlink -->
+		<hlink_text value="#80ffff" />
+		<hlink_hover value="#ff8080" />
+		
+		<!-- Misc -->
+		<activity0 value="#0088cc" />
+		<activity value="#00ccff" />
+	</colors>
+	
+	<!-- Root style -->
+	<root>
+		<size.scaling value="1.0" />
+		<lang value="en_US" />
+		<bg.color value="bg" />
+	</root>
+	
+	<!-- Nested style of window -->
+	<style class="Window" parents="root">
+	</style>
+	
+	<style class="FileDialog" parents="Window">
+	</style>
+	
+	<style class="MessageBox" parents="Window">
+	</style>
+	
+	<!-- Containers -->
+	<style class="Align" parents="root">
+	</style>
+	
+	<!-- Simple widgets -->
+	<style class="Label" parents="root">
+		<text.color value="fg" />
+	</style>
+	
+	<style class="Edit" parents="root">
+		<text.color value="bg" />
+		<color value="fg" />
+		<border.size value="0" />
+	</style>
+	
+	<style class="ComboBox" parents="root">
+		<border.size value="0" />
+	
+		<text.color value="bg" />
+		<color value="fg" />
+		<border.gap.color value="fg" />
+	</style>
+	
+	<style class="ComboBox::List" parents="root">
+		<border.radius value="2" />
+		<list.bg.color value="bg" />
+		<border.color value="fg" />
+	</style>
+	
+	<style class="Button" parents="root">
+		<text.color value="bg" />
+	</style>
+	
+	<style class="ListBox" parents="root">
+		<list.bg.color value="bg" />
+		<border.color value="fg" />
+	</style>
+	
+	<style class="Menu" parents="root">
+		<bg.color value="fg" />
+		<text.color value="bg" />
+	</style>
+	
+	<style class="MenuItem" parents="root">
+		<bg.selected.color value="activity" />
+		<text.color value="bg" />
+		<text.selected.color value="fg" />
+	</style>
+	
+	<style class="ListBoxItem" parents="root">
+		<bg.color value="bg" />
+		<bg.selected.color value="fg" />
+		<text.color value="fg" />
+		<text.selected.color value="bg" />
+	</style>
+	
+	<style class="ScrollBar" parents="root">
+		<size.constraints.width.min value="14" />
+		<size.constraints.height.min value="14" />
+		
+		<border.color value="fg" />
+		<inc.color value="bg" />
+		<inc.active.color value="activity" />
+		<dec.color value="bg" />
+		<dec.active.color value="activity" />
+		<button.color value="fg" />
+		<button.active.color value="activity" />
+		<slider.color value="fg" />
+		<slider.border.color value="fg" />
+		<slider.active.color value="activity" />
+		<border.gap.color value="bg" />
+		<text.color value="bg" />
+		<text.active.color value="bg" />
+	</style>
+	
+	<style class="CheckBox" parents="root">
+		<border.size value="1" />
+		<border.gap.size value="2" />
+		<check.gap.size value="2" />
+		<check.radius value="2" />
+		<border.radius value="4" />
+		
+		<border.color value="fg" />
+		<border.hover.color value="fg" />
+		<border.gap.color value="bg" />
+		<border.gap.hover.color value="bg" />
+		<fill.color value="bg" />
+		<fill.hover.color value="bg" />
+		<color value="activity0" />
+		<hover.color value="activity" />
+	</style>
+	
+	<style class="Separator" parents="root">
+		<color value="fg" />
+	</style>
+	
+	<!-- FileDialog widgets -->
+	<style class="FileDialog::Bookmark" parents="root">
+		<text.color value="hlink_text" />
+		<text.hover.color value="hlink_hover" />
+	</style>
+	
+	<style class="FileDialog::Bookmark.selected" parents="FileDialog::Bookmark">
+		<bg.color value="bg2" />
+	</style>
+	
+	<style class="FileDialog::Warning" parents="root">
+		<text.color value="fgwarn" />
+	</style>
+	
+	<style class="FileDialog::ExtCheck" parents="CheckBox">
+	</style>
+	
+	<!-- MessageBox widgets -->
+	<style class="MessageBox::Message" parents="Label">
+	</style>
+	
+	<style class="MessageBox::Heading" parents="Label">
+	</style>
+</schema>
+
+

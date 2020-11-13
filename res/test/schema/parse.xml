@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema>
+	<!-- Color aliases -->
+	<colors>
+		<!-- Color definitions -->
+		<color1 value="#1b1c22" />
+		<red    value="@0f8" />
+		<rgb    rgb="#0f0" />
+		<rgba   rgba="#0000ff88" />
+		<hsl    hsl="@112233" />
+		<hsla   hsla="@11223388" />
+		<ared   avalue="@0f84" />
+	</colors>
+	
+	<!-- Root style -->
+	<root>
+		<b.value value="true" />
+		<i.value value="123" />
+		<f.value value="123.45" />
+		<s.value value="some text" />
+		
+		<s.b.value value="true" />
+		<s.i.value value="123" />
+		<s.f.value value="123.45" />
+		
+		<f.i.value value="123" />
+	</root>
+	
+	<!-- Nested style of window -->
+	<style class="style1" parents="root">
+		<i.value value="456" />
+		<i.c.value value="456" />
+	</style>
+	
+	<style class="style2" parents="root">
+		<f.value value="234.56" />
+		<f.c.value value="234.56" />
+	</style>
+	
+	<style class="style3" parents="root">
+		<s.value value="overridden text" />
+		<s.c.value value="overridden text" />
+	</style>
+	
+	<style class="compound" parents="style1, style2, style3">
+	</style>
+	
+	<style class="overrides" parents="compound">
+		<i.value value="567" />
+		<f.value value="345.67" />
+		<s.value value="nested text" />
+	</style>
+
+</schema>
+

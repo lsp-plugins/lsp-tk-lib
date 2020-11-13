@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema>
+	<!-- Color aliases -->
+	<colors>
+		<!-- Main colors -->
+		<bg value="#1b1c22" />
+		<bg2 value="#26282f" />
+		<fg value="#8088b3" />
+		<fg2 value="#a8aed3" />
+		<bc value="#373943" />
+		<bc2 value="#40424e" />
+		
+		<!-- Hyperlinks -->
+		<hl.text value="#239db5" />
+		<hl.hover value="#83ba2d" />
+		<hl.sel value="#57b2a5" />
+		
+		<!-- Hover -->
+		<hv.text value="#a8aed3" />
+		<hv.border value="#376576" />
+		<hv.fill value="#264652" />
+		
+		<!-- Misc -->
+		<activity value="#40424e" />
+		<warn value="#ffff00" />
+	</colors>
+
+	<!-- Root style -->
+	<root>
+		<size.scaling value="1.0" />
+		<lang value="en_US" />
+		<bg.color value="bg" />
+		<font.size value="12.0" />
+	</root>
+	
+	<!-- Windows -->
+	<style class="Window" parents="root">
+	</style>
+	
+	<style class="FileDialog" parents="Window">
+	</style>
+	
+	<style class="MessageBox" parents="Window">
+	</style>
+	
+	<!-- Simple widgets -->
+	<style class="Label" parents="root">
+		<text.color value="fg" />
+	</style>
+	
+	<style class="Align" parents="root">
+	</style>
+	
+	<style class="Box" parents="root">
+	</style>
+	
+	<style class="Hyperlink" parents="root">
+		<text.color value="hl.text" />
+		<text.hover.color value="hl.hover" />
+	</style>
+	
+	<style class="Edit" parents="root">
+		<border.size value="1" />
+		<border.gap.size value="2" />
+		<border.radius value="0" />
+		
+		<color value="bg2" />		
+		<text.color value="fg2" />
+		<cursor.color value="fg2" />
+		<border.color value="bc" />
+		<border.gap.color value="bg2" />
+	</style>
+
+	<style class="ComboBox" parents="root">
+		<border.size value="1" />
+		<border.gap.size value="2" />
+		<border.radius value="0" />
+		
+		<color value="bg2" />		
+		<text.color value="fg" />
+		<spin.color value="bg2" />		
+		<spin.text.color value="fg2" />
+		<border.color value="bc" />
+		<border.gap.color value="bg2" />
+	</style>
+	
+	<style class="ComboBox::List" parents="root">
+		<border.size value="1" />
+		<border.gap.size value="2" />
+		<border.radius value="0" />
+		
+		<list.bg.color value="bg" />
+		<border.color value="bc" />
+	</style>
+	
+	<style class="ListBox" parents="root">
+		<border.size value="1" />
+		<border.gap.size value="2" />
+		<border.radius value="0" />
+		
+		<list.bg.color value="bg2" />
+		<border.color value="bc" />
+	</style>
+	
+	<style class="ListBoxItem" parents="root">
+		<padding.top value="4" />
+		<padding.bottom value="4" />
+		
+		<bg.color value="bg2" />
+		<bg.selected.color value="bc" />
+		<text.color value="fg2" />
+		<text.selected.color value="fg2" />
+	</style>
+	
+	<style class="ScrollBar" parents="root">
+		<border.size value="1" />
+		<border.gap.size value="1" />
+		<border.radius value="0" />
+		<size.constraints.width.min value="16" />
+		<size.constraints.height.min value="16" />
+		
+		<border.color value="bc" />
+		<inc.color value="bg" />
+		<inc.active.color value="activity" />
+		<dec.color value="bg" />
+		<dec.active.color value="activity" />
+		<button.color value="bg2" />
+		<button.active.color value="activity" />
+		<slider.color value="bc" />
+		<slider.border.color value="bc" />
+		<slider.active.color value="activity" />
+		<border.gap.color value="bg" />
+		<text.color value="fg" />
+		<text.active.color value="bg2" />
+	</style>
+	
+	<style class="Button" parents="root">
+		<border.size value="1" />
+		<gradient value="false" />
+		<hole value="false" />
+		<hover value="true" />
+		<text.shift value="0 0" />
+		<text.down.shift value="0 0" />
+		<text.pressed.shift value="1 1" />
+		
+		<border.color value="bc" />
+		<border.hover.color value="hv.border" />
+		<color value="bg2" />
+		<hover.color value="hv.fill" />
+		<text.color value="fg2" />
+		<text.hover.color value="hv.text" />
+	</style>
+	
+	<style class="Separator" parents="root">
+		<color value="bc" />
+	</style>
+	
+	<style class="Menu" parents="root">
+		<border.size value="1" />
+		<ipadding.top value="4" />
+		<ipadding.bottom value="4" />
+		
+		<border.color value="bc" />
+		<bg.color value="bg2" />
+	</style>
+	
+	<style class="MenuItem" parents="root">
+		<bg.selected.color value="bg" />
+		<text.color value="fg" />
+		<text.selected.color value="fg" />
+	</style>
+	
+	<style class="CheckBox" parents="root">
+		<border.size value="1" />
+		<border.gap.size value="0" />
+		<border.radius value="0" />
+		<check.radius value="0" />		
+		<check.gap.size value="2" />
+		
+		<border.color value="bc" />
+		<border.hover.color value="activity" />
+		<fill.color value="bg2" />
+		<fill.hover.color value="bg2" />
+		<color value="fg" />
+		<hover.color value="fg2" />
+	</style>
+	
+	<!-- FileDialog widgets -->
+	<style class="FileDialog::Bookmark" parents="Hyperlink">
+	</style>
+	
+	<style class="FileDialog::Bookmark.selected" parents="FileDialog::Bookmark">
+		<text.color value="hl.sel" />
+		<bg.color value="bg2" />
+	</style>
+	
+	<style class="FileDialog::Warning" parents="root">
+		<text.color value="warn" />
+	</style>
+	
+	<style class="FileDialog::ActionButton" parents="Button">
+	</style>
+	
+	<style class="FileDialog::NavButton" parents="Button">
+	</style>
+	
+	<style class="FileDialog::ActionAlign" parents="Align">
+		<layout.hscale value="0.0" />
+		<layout.halign value="1.0" />
+	</style>
+	
+	<style class="FileDialog::ActionBox" parents="Box">
+		<spacing value="4" />
+	</style>
+	
+	<style class="FileDialog::NavBox" parents="Box">
+		<spacing value="2" />
+	</style>
+	
+	<style class="FileDialog::ExtCheck" parents="CheckBox">
+		<color value="fg" />
+	</style>
+
+	<!-- MessageBox widgets -->
+	<style class="MessageBox::Message" parents="Label">
+	</style>
+	
+	<style class="MessageBox::Heading" parents="Label">
+	</style>
+	
+	<style class="MessageBox::Button" parents="Button">
+	</style>
+
+</schema>
+
+
