@@ -96,6 +96,7 @@ Drak flat theme:
 
 ```C++
 
+#include <stdio.h>
 #include <lsp-plug.in/tk/tk.h>
 
 // Handle the window close request event
@@ -115,7 +116,7 @@ static lsp::status_t slot_key_up(lsp::tk::Widget *sender, void *ptr, void *data)
 
     if ((wnd != NULL) && (ev != NULL) && (ev->nType == lsp::ws::UIE_KEY_UP))
     {
-        ::printf("Key up: %c (0x%x)\n", (char)ev->nCode, int(ev->nCode));
+        printf("Key up: %c (0x%x)\n", (char)ev->nCode, int(ev->nCode));
 
         // Get current scaling
         float scaling = wnd->style()->schema()->scaling()->get();
