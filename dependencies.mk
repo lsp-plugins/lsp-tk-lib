@@ -19,17 +19,17 @@
 #
 
 # Variables that describe dependencies
-LSP_COMMON_LIB_VERSION     := 1.0.9
+LSP_COMMON_LIB_VERSION     := 1.0.10
 LSP_COMMON_LIB_NAME        := lsp-common-lib
 LSP_COMMON_LIB_TYPE        := src
 LSP_COMMON_LIB_URL         := https://github.com/sadko4u/$(LSP_COMMON_LIB_NAME).git
 
-LSP_LLTL_LIB_VERSION       := 0.5.3
+LSP_LLTL_LIB_VERSION       := 0.5.4
 LSP_LLTL_LIB_NAME          := lsp-lltl-lib
 LSP_LLTL_LIB_TYPE          := src
 LSP_LLTL_LIB_URL           := https://github.com/sadko4u/$(LSP_LLTL_LIB_NAME).git
 
-LSP_RUNTIME_LIB_VERSION    := 0.5.4
+LSP_RUNTIME_LIB_VERSION    := 0.5.5
 LSP_RUNTIME_LIB_NAME       := lsp-runtime-lib
 LSP_RUNTIME_LIB_TYPE       := src
 LSP_RUNTIME_LIB_URL        := https://github.com/sadko4u/$(LSP_RUNTIME_LIB_NAME).git
@@ -39,12 +39,17 @@ LSP_R3D_IFACE_NAME         := lsp-r3d-iface
 LSP_R3D_IFACE_TYPE         := src
 LSP_R3D_IFACE_URL          := https://github.com/sadko4u/$(LSP_R3D_IFACE_NAME).git
 
-LSP_R3D_BASE_LIB_VERSION   := 0.5.3
+LSP_R3D_BASE_LIB_VERSION   := 0.5.4
 LSP_R3D_BASE_LIB_NAME      := lsp-r3d-base-lib
 LSP_R3D_BASE_LIB_TYPE      := src
 LSP_R3D_BASE_LIB_URL       := https://github.com/sadko4u/$(LSP_R3D_BASE_LIB_NAME).git
 
-LSP_WS_LIB_VERSION         := 0.5.2
+LSP_R3D_GLX_LIB_VERSION    := 0.5.3
+LSP_R3D_GLX_LIB_NAME       := lsp-r3d-glx-lib
+LSP_R3D_GLX_LIB_TYPE       := src
+LSP_R3D_GLX_LIB_URL        := https://github.com/sadko4u/$(LSP_R3D_GLX_LIB_NAME).git
+
+LSP_WS_LIB_VERSION         := 0.5.3
 LSP_WS_LIB_NAME            := lsp-ws-lib
 LSP_WS_LIB_TYPE            := src
 LSP_WS_LIB_URL             := https://github.com/sadko4u/$(LSP_WS_LIB_NAME).git
@@ -53,11 +58,6 @@ LSP_DSP_LIB_VERSION        := 0.5.10
 LSP_DSP_LIB_NAME           := lsp-dsp-lib
 LSP_DSP_LIB_TYPE           := src
 LSP_DSP_LIB_URL            := https://github.com/sadko4u/$(LSP_DSP_LIB_NAME).git
-
-LSP_R3D_GLX_LIB_VERSION    := 0.5.3
-LSP_R3D_GLX_LIB_NAME       := lsp-r3d-glx-lib
-LSP_R3D_GLX_LIB_TYPE       := src
-LSP_R3D_GLX_LIB_URL        := https://github.com/sadko4u/$(LSP_R3D_GLX_LIB_NAME).git
 
 LSP_TEST_FW_VERSION        := 1.0.6
 LSP_TEST_FW_NAME           := lsp-test-fw
