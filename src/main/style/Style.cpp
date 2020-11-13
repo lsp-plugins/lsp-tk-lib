@@ -134,6 +134,8 @@ namespace lsp
                 return STATUS_OK;
 
             // Update contents
+            bool config = config_mode();
+
             switch (src->type)
             {
                 case PT_INT:
@@ -144,7 +146,7 @@ namespace lsp
                     }
 
                     // Copy default value in INIT mode
-                    if ((config_mode()) && (dst->dv.iValue != src->dv.iValue))
+                    if ((config) && (dst->dv.iValue != src->dv.iValue))
                     {
                         ++dst->changes;
                         dst->dv.iValue  = src->dv.iValue;
@@ -158,7 +160,7 @@ namespace lsp
                     }
 
                     // Copy default value in INIT mode
-                    if ((config_mode()) && (dst->dv.fValue != src->dv.fValue))
+                    if ((config) && (dst->dv.fValue != src->dv.fValue))
                     {
                         ++dst->changes;
                         dst->dv.fValue  = src->dv.fValue;
@@ -172,7 +174,7 @@ namespace lsp
                     }
 
                     // Copy default value in INIT mode
-                    if ((config_mode()) && (dst->dv.bValue != src->dv.bValue))
+                    if ((config) && (dst->dv.bValue != src->dv.bValue))
                     {
                         ++dst->changes;
                         dst->dv.bValue  = src->dv.bValue;
@@ -192,7 +194,7 @@ namespace lsp
                     }
 
                     // Copy default value in INIT mode
-                    if ((config_mode()) && (::strcmp(dst->dv.sValue, src->dv.sValue) != 0))
+                    if ((config) && (::strcmp(dst->dv.sValue, src->dv.sValue) != 0))
                     {
                         char *tmp = ::strdup(src->dv.sValue);
                         if (tmp == NULL)
@@ -218,19 +220,20 @@ namespace lsp
                 return NULL;
 
             // Init contents
+            bool config = config_mode();
             switch (src->type)
             {
                 case PT_INT:
                     dst->v.iValue   = src->v.iValue;
-                    dst->dv.iValue  = src->dv.iValue;
+                    dst->dv.iValue  = (config) ? src->dv.iValue : 0;
                     break;
                 case PT_FLOAT:
                     dst->v.fValue   = src->v.fValue;
-                    dst->dv.fValue  = src->dv.fValue;
+                    dst->dv.fValue  = (config) ? src->dv.fValue : 0.0f;
                     break;
                 case PT_BOOL:
                     dst->v.bValue   = src->v.bValue;
-                    dst->dv.bValue  = src->dv.bValue;
+                    dst->dv.bValue  = (config) ? src->dv.bValue : false;
                     break;
                 case PT_STRING:
                 {
@@ -240,8 +243,10 @@ namespace lsp
                         vProperties.premove(dst);
                         return NULL;
                     }
+
                     // Update default value
-                    if ((dst->dv.sValue = ::strdup(src->dv.sValue)) == NULL)
+                    const char *dv = (config) ? src->dv.sValue : "";
+                    if ((dst->dv.sValue = ::strdup(dv)) == NULL)
                     {
                         ::free(dst->v.sValue);
                         dst->v.sValue   = NULL;
@@ -255,7 +260,7 @@ namespace lsp
             }
 
             dst->id         = id;
-            dst->refs       = (flags & F_CREATED) ? 1 : 0;
+            dst->refs       = 0;
             dst->type       = src->type;
             dst->changes    = 0;
             dst->flags      = flags;
@@ -305,7 +310,7 @@ namespace lsp
             }
 
             dst->id         = id;
-            dst->refs       = (flags & F_CREATED) ? 1 : 0;
+            dst->refs       = 0;
             dst->type       = type;
             dst->changes    = 0;
             dst->flags      = flags;
@@ -1082,24 +1087,6 @@ namespace lsp
             return (atom >= 0) ? get_string(atom, dst) : STATUS_UNKNOWN_ERR;
         }
 
-        bool Style::is_default(atom_t id) const
-        {
-            const property_t *prop = get_property(id);
-            return (prop != NULL) ? !(prop->flags & F_OVERRIDDEN) : true;
-        }
-
-        bool Style::is_default(const char *id) const
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? is_default(atom) : false;
-        }
-
-        bool Style::is_default(const LSPString *id) const
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? is_default(atom) : false;
-        }
-
         bool Style::is_overridden(atom_t id) const
         {
             const property_t *prop = get_property(id);
@@ -1134,24 +1121,6 @@ namespace lsp
         {
             atom_t atom = pSchema->atom_id(id);
             return (atom >= 0) ? exists(atom) : false;
-        }
-
-        bool Style::is_local(atom_t id) const
-        {
-            const property_t *prop = get_property(id);
-            return (prop != NULL) && (prop->flags & F_CREATED);
-        }
-
-        bool Style::is_local(const char *id) const
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? is_local(atom) : false;
-        }
-
-        bool Style::is_local(const LSPString *id) const
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? is_local(atom) : false;
         }
 
         property_type_t Style::get_type(atom_t id) const
@@ -1412,8 +1381,6 @@ namespace lsp
                 default:
                     return STATUS_UNKNOWN_ERR;
             }
-            p->flags       |= F_CREATED;    // Mark as explicitly created
-            ++p->refs;                      // Increment number of references
 
             if (changes != p->changes)
             {
@@ -1424,271 +1391,12 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Style::create_local_property(atom_t id, const property_t *src)
-        {
-            // Lookup for property first
-            property_t *p = get_property(id);
-            if (p == NULL)
-            {
-                // Just create property and mark as explicitly created
-                p = create_property(id, src, F_CREATED);
-                if (p == NULL)
-                    return STATUS_NO_MEM;
-
-                notify_listeners(p);
-                notify_children(p);
-
-                return STATUS_OK;
-            }
-            else if (p->flags & F_CREATED) // Check that property has already been explicitly created previously
-                return STATUS_ALREADY_EXISTS;
-
-            // Update default value of the property
-            return update_default_value(p, src);
-        }
-
-        status_t Style::override_local_property(atom_t id, const property_t *src)
-        {
-            // Lookup for property first
-            property_t *p = get_property(id);
-            if ((p == NULL) || (!(p->flags & F_CREATED)))
-                return STATUS_NOT_FOUND;
-
-            // Update default value of the property
-            return update_default_value(p, src);
-        }
-
-        status_t Style::create_int(atom_t id, ssize_t value)
-        {
-            property_t tmp;
-            tmp.type        = PT_INT;
-            tmp.v.iValue    = value;
-            tmp.dv.iValue   = value;
-            return create_local_property(id, &tmp);
-        }
-
-        status_t Style::create_int(const char *id, ssize_t value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_int(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_int(const LSPString *id, ssize_t value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_int(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_float(atom_t id, float value)
-        {
-            property_t tmp;
-            tmp.type        = PT_FLOAT;
-            tmp.v.fValue    = value;
-            tmp.dv.fValue   = value;
-            return create_local_property(id, &tmp);
-        }
-
-        status_t Style::create_float(const char *id, float value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_float(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_float(const LSPString *id, float value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_float(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_bool(atom_t id, bool value)
-        {
-            property_t tmp;
-            tmp.type        = PT_BOOL;
-            tmp.v.bValue    = value;
-            tmp.dv.bValue   = value;
-            return create_local_property(id, &tmp);
-        }
-
-        status_t Style::create_bool(const char *id, bool value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_bool(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_bool(const LSPString *id, bool value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_bool(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_string(atom_t id, const LSPString *value)
-        {
-            if (value == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
-            property_t tmp;
-            tmp.type        = PT_STRING;
-            tmp.v.sValue    = const_cast<char *>(value->get_utf8());
-            tmp.dv.sValue   = const_cast<char *>(value->get_utf8());
-            return create_local_property(id, &tmp);
-        }
-
-        status_t Style::create_string(const char *id, const LSPString *value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_string(const LSPString *id, const LSPString *value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_string(atom_t id, const char *value)
-        {
-            if (value == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
-            property_t tmp;
-            tmp.type        = PT_STRING;
-            tmp.v.sValue    = const_cast<char *>(value);
-            tmp.dv.sValue   = const_cast<char *>(value);
-            return create_local_property(id, &tmp);
-        }
-
-        status_t Style::create_string(const char *id, const char *value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::create_string(const LSPString *id, const char *value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? create_string(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_int(atom_t id, ssize_t value)
-        {
-            property_t tmp;
-            tmp.type        = PT_INT;
-            tmp.v.iValue    = value;
-            tmp.dv.iValue   = value;
-            return override_local_property(id, &tmp);
-        }
-
-        status_t Style::override_int(const char *id, ssize_t value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_int(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_int(const LSPString *id, ssize_t value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_int(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_float(atom_t id, float value)
-        {
-            property_t tmp;
-            tmp.type        = PT_FLOAT;
-            tmp.v.fValue    = value;
-            tmp.dv.fValue   = value;
-            return override_local_property(id, &tmp);
-        }
-
-        status_t Style::override_float(const char *id, float value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_float(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_float(const LSPString *id, float value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_float(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_bool(atom_t id, bool value)
-        {
-            property_t tmp;
-            tmp.type        = PT_BOOL;
-            tmp.v.bValue    = value;
-            tmp.dv.bValue   = value;
-            return override_local_property(id, &tmp);
-        }
-
-        status_t Style::override_bool(const char *id, bool value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_bool(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_bool(const LSPString *id, bool value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_bool(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_string(atom_t id, const LSPString *value)
-        {
-            if (value == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
-            property_t tmp;
-            tmp.type        = PT_STRING;
-            tmp.v.sValue    = const_cast<char *>(value->get_utf8());
-            tmp.dv.sValue   = const_cast<char *>(value->get_utf8());
-            return override_local_property(id, &tmp);
-        }
-
-        status_t Style::override_string(const char *id, const LSPString *value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_string(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_string(const LSPString *id, const LSPString *value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_string(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_string(atom_t id, const char *value)
-        {
-            if (value == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
-            property_t tmp;
-            tmp.type        = PT_STRING;
-            tmp.v.sValue    = const_cast<char *>(value);
-            tmp.dv.sValue   = const_cast<char *>(value);
-            return override_local_property(id, &tmp);
-        }
-
-        status_t Style::override_string(const char *id, const char *value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_string(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
-        status_t Style::override_string(const LSPString *id, const char *value)
-        {
-            atom_t atom = pSchema->atom_id(id);
-            return (atom >= 0) ? override_string(atom, value) : STATUS_UNKNOWN_ERR;
-        }
-
         status_t Style::remove(atom_t id)
         {
             property_t *p   = get_property(id);
             if (p == NULL)
                 return STATUS_NOT_FOUND;
-            else if (!(p->flags & F_CREATED))
-                return STATUS_PERMISSION_DENIED;
 
-            p->flags &= ~F_CREATED;
             deref_property(p);
 
             return STATUS_OK;

@@ -646,134 +646,6 @@ UTEST_BEGIN("tk.style", style)
         UTEST_ASSERT(v == 20);
     }
 
-    void test_default_values()
-    {
-        tk::Schema schema(&atoms);
-        tk::Style root(&schema);
-        tk::Style child(&schema);
-        union
-        {
-            ssize_t     iValue;
-            float       fValue;
-            bool        bValue;
-            const char *sValue;
-        } v;
-
-        printf("Testing inheritance of default values...\n");
-
-        // Create default values for root
-        printf("  creating root style...\n");
-        UTEST_ASSERT(root.init() == STATUS_OK);
-        UTEST_ASSERT(root.create_bool(atom("b.value"), true) == STATUS_OK);
-        UTEST_ASSERT(root.create_int(atom("i.value"), 440) == STATUS_OK);
-        UTEST_ASSERT(root.create_float(atom("f.value"), 48000.0f) == STATUS_OK);
-        UTEST_ASSERT(root.create_string(atom("s.value"), "root default") == STATUS_OK);
-
-        // Check state of the root style
-        UTEST_ASSERT(root.is_default(atom("b.value")));
-        UTEST_ASSERT(root.is_default(atom("i.value")));
-        UTEST_ASSERT(root.is_default(atom("f.value")));
-        UTEST_ASSERT(root.is_default(atom("s.value")));
-
-        UTEST_ASSERT(root.get_bool(atom("b.value"), &v.bValue) == STATUS_OK);
-        UTEST_ASSERT(v.bValue == true);
-        UTEST_ASSERT(root.get_int(atom("i.value"), &v.iValue) == STATUS_OK);
-        UTEST_ASSERT(v.iValue == 440);
-        UTEST_ASSERT(root.get_float(atom("f.value"), &v.fValue) == STATUS_OK);
-        UTEST_ASSERT(v.fValue == 48000.0f);
-        UTEST_ASSERT(root.get_string(atom("s.value"), &v.sValue) == STATUS_OK);
-        UTEST_ASSERT(::strcmp(v.sValue, "root default") == 0);
-
-        // Create default values for child
-        printf("  creating child style...\n");
-        UTEST_ASSERT(child.init() == STATUS_OK);
-        UTEST_ASSERT(child.create_bool(atom("b.value"), false) == STATUS_OK);
-        UTEST_ASSERT(child.create_int(atom("i.value"), 123) == STATUS_OK);
-        UTEST_ASSERT(child.create_float(atom("f.value"), 0.001f) == STATUS_OK);
-        UTEST_ASSERT(child.create_string(atom("s.value"), "child default") == STATUS_OK);
-
-        // Check state of the child style
-        UTEST_ASSERT(child.is_default(atom("b.value")));
-        UTEST_ASSERT(child.is_default(atom("i.value")));
-        UTEST_ASSERT(child.is_default(atom("f.value")));
-        UTEST_ASSERT(child.is_default(atom("s.value")));
-
-        UTEST_ASSERT(child.get_bool(atom("b.value"), &v.bValue) == STATUS_OK);
-        UTEST_ASSERT(v.bValue == false);
-        UTEST_ASSERT(child.get_int(atom("i.value"), &v.iValue) == STATUS_OK);
-        UTEST_ASSERT(v.iValue == 123);
-        UTEST_ASSERT(child.get_float(atom("f.value"), &v.fValue) == STATUS_OK);
-        UTEST_ASSERT(v.fValue == 0.001f);
-        UTEST_ASSERT(child.get_string(atom("s.value"), &v.sValue) == STATUS_OK);
-        UTEST_ASSERT(::strcmp(v.sValue, "child default") == 0);
-
-        // Step 1: override values and bind parent
-        printf("  overriding values and binding parent...\n");
-        UTEST_ASSERT(child.set_bool(atom("b.value"), true) == STATUS_OK);
-        UTEST_ASSERT(child.set_int(atom("i.value"), 321) == STATUS_OK);
-        UTEST_ASSERT(child.set_float(atom("f.value"), 123.45f) == STATUS_OK);
-        UTEST_ASSERT(child.set_string(atom("s.value"), "child override") == STATUS_OK);
-        UTEST_ASSERT(child.add_parent(&root) == STATUS_OK);
-
-        // Ensure that values have not been changed
-        UTEST_ASSERT(child.get_bool(atom("b.value"), &v.bValue) == STATUS_OK);
-        UTEST_ASSERT(v.bValue == true);
-        UTEST_ASSERT(child.get_int(atom("i.value"), &v.iValue) == STATUS_OK);
-        UTEST_ASSERT(v.iValue == 321);
-        UTEST_ASSERT(child.get_float(atom("f.value"), &v.fValue) == STATUS_OK);
-        UTEST_ASSERT(v.fValue == 123.45f);
-        UTEST_ASSERT(child.get_string(atom("s.value"), &v.sValue) == STATUS_OK);
-        UTEST_ASSERT(::strcmp(v.sValue, "child override") == 0);
-
-        // Step 2: reset child values to defaults
-        printf("  resetting child values to defaults...\n");
-        UTEST_ASSERT(child.set_default(atom("b.value")) == STATUS_OK);
-        UTEST_ASSERT(child.set_default(atom("i.value")) == STATUS_OK);
-        UTEST_ASSERT(child.set_default(atom("f.value")) == STATUS_OK);
-        UTEST_ASSERT(child.set_default(atom("s.value")) == STATUS_OK);
-
-        // Ensure that now child reflects parent values
-        UTEST_ASSERT(child.get_bool(atom("b.value"), &v.bValue) == STATUS_OK);
-        UTEST_ASSERT(v.bValue == true);
-        UTEST_ASSERT(child.get_int(atom("i.value"), &v.iValue) == STATUS_OK);
-        UTEST_ASSERT(v.iValue == 440);
-        UTEST_ASSERT(child.get_float(atom("f.value"), &v.fValue) == STATUS_OK);
-        UTEST_ASSERT(v.fValue == 48000.0f);
-        UTEST_ASSERT(child.get_string(atom("s.value"), &v.sValue) == STATUS_OK);
-        UTEST_ASSERT(::strcmp(v.sValue, "root default") == 0);
-
-        // Step 3: override values of the parent style
-        printf("  overriding values of the parent style...\n");
-        UTEST_ASSERT(root.set_bool(atom("b.value"), false) == STATUS_OK);
-        UTEST_ASSERT(root.set_int(atom("i.value"), 42) == STATUS_OK);
-        UTEST_ASSERT(root.set_float(atom("f.value"), 65.536f) == STATUS_OK);
-        UTEST_ASSERT(root.set_string(atom("s.value"), "root override") == STATUS_OK);
-
-        // Ensure that child reflects updated values
-        UTEST_ASSERT(child.get_bool(atom("b.value"), &v.bValue) == STATUS_OK);
-        UTEST_ASSERT(v.bValue == false);
-        UTEST_ASSERT(child.get_int(atom("i.value"), &v.iValue) == STATUS_OK);
-        UTEST_ASSERT(v.iValue == 42);
-        UTEST_ASSERT(child.get_float(atom("f.value"), &v.fValue) == STATUS_OK);
-        UTEST_ASSERT(v.fValue == 65.536f);
-        UTEST_ASSERT(child.get_string(atom("s.value"), &v.sValue) == STATUS_OK);
-        UTEST_ASSERT(::strcmp(v.sValue, "root override") == 0);
-
-        // Step 4: unbind parent
-        printf("  unbinding parent style...\n");
-        UTEST_ASSERT(root.remove_child(&child) == STATUS_OK);
-
-        // Ensure that child reflects default values
-        UTEST_ASSERT(child.get_bool(atom("b.value"), &v.bValue) == STATUS_OK);
-        UTEST_ASSERT(v.bValue == false);
-        UTEST_ASSERT(child.get_int(atom("i.value"), &v.iValue) == STATUS_OK);
-        UTEST_ASSERT(v.iValue == 123);
-        UTEST_ASSERT(child.get_float(atom("f.value"), &v.fValue) == STATUS_OK);
-        UTEST_ASSERT(v.fValue == 0.001f);
-        UTEST_ASSERT(child.get_string(atom("s.value"), &v.sValue) == STATUS_OK);
-        UTEST_ASSERT(::strcmp(v.sValue, "child default") == 0);
-    }
-
     void test_notifications()
     {
         tk::Schema schema(&atoms);
@@ -788,10 +660,10 @@ UTEST_BEGIN("tk.style", style)
         // Initialize style
         printf("  creating root style...\n");
         UTEST_ASSERT(root.init() == STATUS_OK);
-        UTEST_ASSERT(root.create_bool(atom("b.value"), true) == STATUS_OK);
-        UTEST_ASSERT(root.create_int(atom("i.value"), 440) == STATUS_OK);
-        UTEST_ASSERT(root.create_float(atom("f.value"), 48000.0f) == STATUS_OK);
-        UTEST_ASSERT(root.create_string(atom("s.value"), "root default") == STATUS_OK);
+        UTEST_ASSERT(root.set_bool(atom("b.value"), true) == STATUS_OK);
+        UTEST_ASSERT(root.set_int(atom("i.value"), 440) == STATUS_OK);
+        UTEST_ASSERT(root.set_float(atom("f.value"), 48000.0f) == STATUS_OK);
+        UTEST_ASSERT(root.set_string(atom("s.value"), "root default") == STATUS_OK);
 
         // Step 1: bind listeners
         printf("  binding listeners...\n");
@@ -917,7 +789,6 @@ UTEST_BEGIN("tk.style", style)
         test_function(root);
         test_multiple_parents(&schema);
 
-        test_default_values();
         test_notifications();
     }
 

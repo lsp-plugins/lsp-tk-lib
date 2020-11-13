@@ -538,7 +538,7 @@ namespace lsp
 
             while (true)
             {
-                last = text->index_of(',');
+                last = text->index_of(first, ',');
                 if (last < 0)
                 {
                     last = len;

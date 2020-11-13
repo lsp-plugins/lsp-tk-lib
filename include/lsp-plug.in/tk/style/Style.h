@@ -52,10 +52,9 @@ namespace lsp
             protected:
                 enum flags_t
                 {
-                    F_CREATED           = 1 << 0,   // Property has been explicitly created by client
-                    F_OVERRIDDEN        = 1 << 1,   // Property has been locally overridden by client
-                    F_NTF_LISTENERS     = 1 << 2,   // Property requires notification of listeners
-                    F_NTF_CHILDREN      = 1 << 3,   // Property requires notification of children
+                    F_OVERRIDDEN        = 1 << 0,   // Property has been locally overridden by client
+                    F_NTF_LISTENERS     = 1 << 1,   // Property requires notification of listeners
+                    F_NTF_CHILDREN      = 1 << 2,   // Property requires notification of children
                 };
 
                 enum style_flags_t
@@ -132,8 +131,6 @@ namespace lsp
                 property_t         *create_property(atom_t id, property_type_t type, size_t flags);
                 status_t            set_property_default(property_t *dst);
                 status_t            copy_property(property_t *dst, const property_t *src);
-                status_t            create_local_property(atom_t id, const property_t *src);
-                status_t            override_local_property(atom_t id, const property_t *src);
                 status_t            update_default_value(property_t *p, const property_t *src);
 
                 inline const property_t   *get_property(atom_t id) const { return const_cast<Style *>(this)->get_property(id); };
@@ -434,25 +431,6 @@ namespace lsp
                 bool                    exists(const LSPString *id) const;
 
                 /**
-                 * Check whether property is local for this style (explicitly created)
-                 * @param id property identifier
-                 * @return true if property has been explicitly created
-                 */
-                bool                    is_local(atom_t id) const;
-                bool                    is_local(const char *id) const;
-                bool                    is_local(const LSPString *id) const;
-
-                /**
-                 * Check whether property has default value or derives actual value
-                 * from parent style
-                 * @param id property identifier
-                 * @return true if property has default value
-                 */
-                bool                    is_default(atom_t id) const;
-                bool                    is_default(const char *id) const;
-                bool                    is_default(const LSPString *id) const;
-
-                /**
                  * Check whether property has been locally overridden
                  * @param id property identifier
                  * @return true if property has been locally overridden
@@ -532,107 +510,6 @@ namespace lsp
                 status_t                set_default(atom_t id);
                 status_t                set_default(const char *id);
                 status_t                set_default(const LSPString *id);
-
-                /**
-                 * Create local integer property
-                 * @param id property identifier
-                 * @param value default value
-                 * @return status of operation
-                 */
-                status_t                create_int(atom_t id, ssize_t value);
-                status_t                create_int(const char *id, ssize_t value);
-                status_t                create_int(const LSPString *id, ssize_t value);
-
-                /**
-                 * Create local floating-point property
-                 * @param id property identifier
-                 * @param value default value
-                 * @return status of operation
-                 */
-                status_t                create_float(atom_t id, float value);
-                status_t                create_float(const char *id, float value);
-                status_t                create_float(const LSPString *id, float value);
-
-                /**
-                 * Create local boolean property
-                 * @param id property identifier
-                 * @param value default value
-                 * @return status of operation
-                 */
-                status_t                create_bool(atom_t id, bool value);
-                status_t                create_bool(const char *id, bool value);
-                status_t                create_bool(const LSPString *id, bool value);
-
-                /**
-                 * Create local string property
-                 * @param id property identifier
-                 * @param value default value
-                 * @return status of operation
-                 */
-                status_t                create_string(atom_t id, const LSPString *value);
-                status_t                create_string(const char *id, const LSPString *value);
-                status_t                create_string(const LSPString *id, const LSPString *value);
-
-                /**
-                 * Create local string property
-                 * @param id property identifier
-                 * @param value default value (UTF-8 encoded)
-                 * @return status of operation
-                 */
-                status_t                create_string(atom_t id, const char *value);
-                status_t                create_string(const char *id, const char *value);
-                status_t                create_string(const LSPString *id, const char *value);
-
-
-                /**
-                 * Override default value of local integer property
-                 * @param id property identifier
-                 * @param value default value
-                 * @return status of operation
-                 */
-                status_t                override_int(atom_t id, ssize_t value);
-                status_t                override_int(const char *id, ssize_t value);
-                status_t                override_int(const LSPString *id, ssize_t value);
-
-                /**
-                 * Override default value of local floating-point property
-                 * @param id property identifier
-                 * @param value default value
-                 * @return status of operation
-                 */
-                status_t                override_float(atom_t id, float value);
-                status_t                override_float(const char *id, float value);
-                status_t                override_float(const LSPString *id, float value);
-
-                /**
-                 * Override default value of local boolean property
-                 * @param id property identifier
-                 * @param value default value
-                 * @return status of operation
-                 */
-                status_t                override_bool(atom_t id, bool value);
-                status_t                override_bool(const char *id, bool value);
-                status_t                override_bool(const LSPString *id, bool value);
-
-                /**
-                 * Override default value of local string property
-                 * @param id property identifier
-                 * @param value default value
-                 * @return status of operation
-                 */
-                status_t                override_string(atom_t id, const LSPString *value);
-                status_t                override_string(const char *id, const LSPString *value);
-                status_t                override_string(const LSPString *id, const LSPString *value);
-
-                /**
-                 * Override default value of local string property
-                 * @param id property identifier
-                 * @param value default value (UTF-8 encoded)
-                 * @return status of operation
-                 */
-                status_t                override_string(atom_t id, const char *value);
-                status_t                override_string(const char *id, const char *value);
-                status_t                override_string(const LSPString *id, const char *value);
 
                 /**
                  * Remove locally-created property
