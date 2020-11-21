@@ -68,6 +68,10 @@ LIBSNDFILE_VERSION         := system
 LIBSNDFILE_NAME            := sndfile
 LIBSNDFILE_TYPE            := pkg
 
+LIBICONV_VERSION           := system
+LIBICONV_TYPE              := opt
+LIBICONV_LDFLAGS           := -liconv
+
 XLIB_VERSION               := system
 XLIB_NAME                  := x11
 XLIB_TYPE                  := pkg
