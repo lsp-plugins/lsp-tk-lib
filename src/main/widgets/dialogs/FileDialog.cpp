@@ -1841,7 +1841,7 @@ namespace lsp
             return select_current_bookmark();
         }
 
-        int FileDialog::cmp_file_entry(const f_entry_t *a, const f_entry_t *b)
+        ssize_t FileDialog::cmp_file_entry(const f_entry_t *a, const f_entry_t *b)
         {
             ssize_t delta = ((b->nFlags & F_DOTDOT) - (a->nFlags & F_DOTDOT));
             if (delta != 0)

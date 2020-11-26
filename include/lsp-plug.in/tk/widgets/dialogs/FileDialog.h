@@ -226,7 +226,7 @@ namespace lsp
                 status_t                refresh_current_path();
                 status_t                add_file_entry(lltl::parray<f_entry_t> *dst, const char *name, size_t flags);
                 status_t                add_file_entry(lltl::parray<f_entry_t> *dst, const LSPString *name, size_t flags);
-                static int              cmp_file_entry(const f_entry_t *a, const f_entry_t *b);
+                static ssize_t          cmp_file_entry(const f_entry_t *a, const f_entry_t *b);
                 f_entry_t              *selected_entry();
 
                 status_t                sync_filters();
