@@ -1112,7 +1112,11 @@ namespace lsp
 
         status_t FileDialog::on_dlg_search(void *data)
         {
-            return (sVisibility.get()) ? apply_filters() : STATUS_OK;
+            if (!sVisibility.get())
+                return STATUS_OK;
+
+            sWFiles.selected()->clear();
+            return apply_filters();
         }
 
         status_t FileDialog::on_dlg_action(void *data, bool list)
@@ -1124,9 +1128,10 @@ namespace lsp
             LSP_STATUS_ASSERT(sWPath.text()->format(&spath));
             LSP_STATUS_ASSERT(path.set(&spath));
 
+            f_entry_t *ent = selected_entry();
+
             if (list)
             {
-                f_entry_t *ent = selected_entry();
                 if (ent == NULL)
                     return show_message("titles.attention", "headings.attention", "messages.file.not_specified", NULL);
 
@@ -1154,13 +1159,12 @@ namespace lsp
                 if (io::Path::is_dots(&fname) || (!io::Path::valid_file_name(&fname)))
                     return show_message("titles.attention", "headings.attention", "messages.file.invalid_name", &path);
             }
-            else if ((!io::Path::is_dots(&fname)) && (io::Path::valid_file_name(&fname)))
+            else if ((ent == NULL) && (!io::Path::is_dots(&fname)) && (io::Path::valid_file_name(&fname)))
             {
                 LSP_STATUS_ASSERT(path.append_child(&fname));
             }
             else // Use selection
             {
-                f_entry_t *ent = selected_entry();
                 if (ent == NULL)
                     return show_message("titles.attention", "headings.attention", "messages.file.not_specified", NULL);
 
