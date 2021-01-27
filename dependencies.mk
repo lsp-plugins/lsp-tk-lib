@@ -64,36 +64,49 @@ LSP_TEST_FW_NAME           := lsp-test-fw
 LSP_TEST_FW_TYPE           := src
 LSP_TEST_FW_URL            := https://github.com/sadko4u/$(LSP_TEST_FW_NAME).git
 
+LIBPTHREAD_VERSION         := system
+LIBPTHREAD_NAME            := libpthread
+LIBPTHREAD_TYPE            := opt
+LIBPTHREAD_LDFLAGS         := -lpthread
+
+LIBDL_VERSION              := system
+LIBDL_NAME                 := libdl
+LIBDL_TYPE                 := opt
+LIBDL_LDFLAGS              := -ldl
+
+LIBICONV_VERSION           := system
+LIBICONV_NAME              := libiconv
+LIBICONV_TYPE              := opt
+LIBICONV_LDFLAGS           := -liconv
+
+LIBSHLWAPI_VERSION         := system
+LIBSHLWAPI_NAME            := libshlwapi
+LIBSHLWAPI_TYPE            := opt
+LIBSHLWAPI_LDFLAGS         := -lshlwapi
+
+LIBWINMM_VERSION           := system
+LIBWINMM_NAME              := libwinmm
+LIBWINMM_TYPE              := opt
+LIBWINMM_LDFLAGS           := -lwinmm
+
+LIBMSACM_VERSION           := system
+LIBMSACM_NAME              := libmsacm
+LIBMSACM_TYPE              := opt
+LIBMSACM_LDFLAGS           := -lmsacm32
+
 LIBSNDFILE_VERSION         := system
 LIBSNDFILE_NAME            := sndfile
 LIBSNDFILE_TYPE            := pkg
 
-LIBICONV_VERSION           := system
-LIBICONV_TYPE              := opt
-LIBICONV_LDFLAGS           := -liconv
+LIBX11_VERSION             := system
+LIBX11_NAME                := x11
+LIBX11_TYPE                := pkg
 
-XLIB_VERSION               := system
-XLIB_NAME                  := x11
-XLIB_TYPE                  := pkg
+LIBGL_VERSION              := system
+LIBGL_NAME                 := gl
+LIBGL_TYPE                 := pkg
 
-CAIRO_VERSION         	   := system
-CAIRO_NAME                 := cairo
-CAIRO_TYPE                 := pkg
+LIBCAIRO_VERSION           := system
+LIBCAIRO_NAME              := cairo
+LIBCAIRO_TYPE              := pkg
 
-OPENGL_VERSION             := system
-OPENGL_NAME                := gl
-OPENGL_TYPE                := pkg
-
-ifeq ($(PLATFORM),Windows)
-  STDLIB_VERSION             := system
-  STDLIB_TYPE                := opt
-  STDLIB_LDFLAGS             := -lpthread -lshlwapi -lwinmm -lmsacm32
-else ifeq ($(PLATFORM),BSD)
-  STDLIB_VERSION             := system
-  STDLIB_TYPE                := opt
-  STDLIB_LDFLAGS             := -lpthread -ldl -liconv
-else
-  STDLIB_VERSION             := system
-  STDLIB_TYPE                := opt
-  STDLIB_LDFLAGS             := -lpthread -ldl
-endif
