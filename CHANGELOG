@@ -4,6 +4,7 @@
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.
+* Better integration with system::follow_url() routine.
 - Add custom mouse pointer for fraction actions.
 
 === 0.5.0 ===

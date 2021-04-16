@@ -23,6 +23,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/ipc/Process.h>
+#include <lsp-plug.in/runtime/system.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -251,29 +252,7 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            #ifdef PLATFORM_WINDOWS
-                ::ShellExecuteW(
-                    NULL,               // Not associated with window
-                    L"open",            // Open hyperlink
-                    url.get_utf16(),    // The file to execute
-                    NULL,               // Parameters
-                    NULL,               // Directory
-                    SW_SHOWNORMAL       // Show command
-                );
-            #else
-
-                ipc::Process p;
-
-                if ((res = p.set_command("xdg-open")) != STATUS_OK)
-                    return STATUS_OK;
-                if ((res = p.add_arg(&url)) != STATUS_OK)
-                    return STATUS_OK;
-                if ((res = p.launch()) != STATUS_OK)
-                    return STATUS_OK;
-                p.wait();
-            #endif /* PLATFORM_WINDOWS */
-
-            return STATUS_OK;
+            return system::follow_url(&url);
         }
 
         status_t Hyperlink::copy_url(ws::clipboard_id_t cb)
