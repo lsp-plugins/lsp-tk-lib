@@ -179,46 +179,37 @@ namespace lsp
                 return STATUS_NO_MEM;
 
             // Initialize dictionary
-            i18n::Dictionary *dict  = new i18n::Dictionary(pResourceLoader);
-            if (dict == NULL)
-                return STATUS_NO_MEM;
-
-            // Initialize dictionary
             LSPString dict_base;
             const char *env_dict_base = pEnv->get_utf8(LSP_TK_ENV_DICT_PATH, LSP_TK_ENV_DICT_PATH_DFL);
             if (!dict_base.set_utf8(env_dict_base))
                 return STATUS_NO_MEM;
 
             // Initialize dictionary
-            status_t res = dict->init(&dict_base);
-            if (res != STATUS_OK)
-            {
-                delete dict;
-                return res;
-            }
+            pDictionary  = new i18n::Dictionary(pResourceLoader);
+            if (pDictionary == NULL)
+                return STATUS_NO_MEM;
 
-            // Initialize display
-            pDisplay        = dpy;
-            pDisplay->set_main_callback(main_task_handler, this);
+            status_t res = pDictionary->init(&dict_base);
+            if (res != STATUS_OK)
+                return res;
 
             // Create slots
             Slot *slot   = sSlots.add(SLOT_DESTROY);
             if (slot == NULL)
-            {
-                delete dict;
                 return STATUS_NO_MEM;
-            }
             slot = sSlots.add(SLOT_RESIZE);
             if (slot == NULL)
-            {
-                delete dict;
                 return STATUS_NO_MEM;
-            }
 
-            // Initialize theme
-            pDictionary     = dict;
+            // Initialize schema
+            if ((res = init_schema()) != STATUS_OK)
+                return res;
 
-            return init_schema();
+            // Remember the display handle
+            dpy->set_main_callback(main_task_handler, this);
+            pDisplay        = dpy;
+
+            return STATUS_OK;
         }
 
         status_t Display::init_schema()
