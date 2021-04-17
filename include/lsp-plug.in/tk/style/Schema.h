@@ -78,6 +78,7 @@ namespace lsp
                 mutable Atoms                      *pAtoms;
                 size_t                              nFlags;
                 Style                              *pRoot;
+                lltl::pphash<LSPString, Style>      vBuiltin;
                 lltl::pphash<LSPString, Style>      vStyles;
                 lltl::pphash<LSPString, lsp::Color> vColors;
 
@@ -85,7 +86,8 @@ namespace lsp
                 prop::Font                          sFont;
 
             protected:
-                status_t            create_style(IStyleFactory *init);
+                status_t            create_builtin_style(IStyleFactory *init);
+                status_t            create_style(const LSPString *name);
 
                 static status_t     apply_settings(Style *s, StyleSheet::style_t *xs);
                 status_t            apply_relations(Style *s, StyleSheet::style_t *xs);

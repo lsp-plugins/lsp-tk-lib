@@ -57,6 +57,7 @@ namespace lsp
             sScaling.unbind();
 
             // Destroy named styles
+            vBuiltin.flush();
             lltl::parray<Style> vs;
             vStyles.values(&vs);
             vStyles.flush();
@@ -126,7 +127,7 @@ namespace lsp
             // Create all necessary styles
             for (size_t i=0; i<n; ++i)
             {
-                LSP_STATUS_ASSERT(create_style(list[i]));
+                LSP_STATUS_ASSERT(create_builtin_style(list[i]));
             }
 
             // Unset 'configuring' mode
@@ -198,11 +199,29 @@ namespace lsp
                     return res;
             }
 
-            // Iterate over named styles
+            // List all possible styles sheet names
             lltl::parray<LSPString>  vss;
+            if (!sheet->vStyles.keys(&vss))
+                return STATUS_NO_MEM;
+
+            // Create missing styles
+            for (size_t i=0, n=vss.size(); i<n; ++i)
+            {
+                LSPString *name         = vss.uget(i);
+                Style *s                = vStyles.get(name);
+                if (s != NULL)
+                    continue;
+
+                // Create new unbound style
+                if ((res = create_style(name)) != STATUS_OK)
+                    return res;
+            }
+
+            // Iterate over all existing styles
             if (!vStyles.keys(&vss))
                 return STATUS_NO_MEM;
 
+            // Do the usual stuff
             for (size_t i=0, n=vss.size(); i<n; ++i)
             {
                 LSPString *name         = vss.uget(i);
@@ -213,11 +232,21 @@ namespace lsp
                 StyleSheet::style_t *xs = sheet->vStyles.get(name);
                 if (xs != NULL)
                 {
-                    lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
-                    res = apply_settings(s, xs);
+                    if (vBuiltin.contains(name))
+                    {
+                        lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
+                        res = apply_settings(s, xs);
 
-                    if (res == STATUS_OK)
+                        if (res == STATUS_OK)
+                            res = apply_relations(s, xs);
+                    }
+                    else
+                    {
+                        lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
                         res = apply_relations(s, xs);
+                        if (res == STATUS_OK)
+                            res = apply_settings(s, xs);
+                    }
                 }
                 else
                     res = s->add_parent(pRoot);
@@ -287,7 +316,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::create_style(IStyleFactory *init)
+        status_t Schema::create_builtin_style(IStyleFactory *init)
         {
             LSPString name;
 
@@ -318,6 +347,35 @@ namespace lsp
 
             // Register style in the list
             if (!vStyles.create(&name, style))
+            {
+                delete style;
+                return STATUS_NO_MEM;
+            }
+
+            // Register style in the list
+            if (!vBuiltin.create(&name, style))
+                return STATUS_NO_MEM;
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::create_style(const LSPString *name)
+        {
+            // Duplicates are disallowed
+            if (vStyles.contains(name))
+            {
+                lsp_warn("Duplicate style name: %s", name->get_native());
+                return STATUS_ALREADY_EXISTS;
+            }
+
+            // Create style
+            lsp_trace("Creating style '%s'...", name->get_native());
+            Style *style    = new Style(this);
+            if (style == NULL)
+                return STATUS_NO_MEM;
+
+            // Register style in the list
+            if (!vStyles.create(name, style))
             {
                 delete style;
                 return STATUS_NO_MEM;
