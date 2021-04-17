@@ -27,7 +27,8 @@
 #endif
 
 // Property definitions
-#define LSP_TK_PROP_LANGUAGE        "language"
+#define LSP_TK_PROP_LANGUAGE            "language"
+#define LSP_TK_PROP_DEFAULT_LANGUAGE    "default"
 
 #define LSP_TK_PROPERTY(type, name, expr)    \
     inline type         *name()         { return (expr); } \

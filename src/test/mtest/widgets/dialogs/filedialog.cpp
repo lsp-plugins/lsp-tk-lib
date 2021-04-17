@@ -269,6 +269,9 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         MTEST_ASSERT(dpy != NULL);
 
         MTEST_ASSERT(dpy->init(0, NULL) == STATUS_OK);
+        LSPString lang;
+        MTEST_ASSERT(dpy->schema()->get_language(&lang) == STATUS_OK);
+        printf("Current language is: %s", lang.get_native());
 
         lltl::parray<tk::Widget> widgets;
         tk::Widget *w = NULL;

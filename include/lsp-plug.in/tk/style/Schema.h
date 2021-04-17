@@ -192,6 +192,21 @@ namespace lsp
                 const char         *atom_name(atom_t id) const;
 
                 /**
+                 * Get currently used language
+                 * @param dst pointer to store the result
+                 * @return status of operation
+                 */
+                status_t            get_language(LSPString *dst) const;
+
+                /**
+                 * Set currently used language
+                 * @param lang language identifier
+                 * @return status of operation
+                 */
+                status_t            set_lanugage(const LSPString *lang);
+                status_t            set_lanugage(const char *lang);
+
+                /**
                  * Check that schema is in configuration mode:
                  *   - no implicit overrides of style properties are allowed
                  *   - automatic property synchronization on change is enabled

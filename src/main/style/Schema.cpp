@@ -542,5 +542,58 @@ namespace lsp
         {
             return pAtoms->atom_name(id);
         }
+
+        status_t Schema::get_language(LSPString *dst) const
+        {
+            // Check state
+            if (pRoot == NULL)
+                return STATUS_BAD_STATE;
+
+            // Get atom
+            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
+            if (atom < 0)
+                return -atom;
+
+            // Get the string value
+            return pRoot->get_string(atom, dst);
+        }
+
+        status_t Schema::set_lanugage(const LSPString *lang)
+        {
+            // Check for arguments
+            if (lang == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            // Check state
+            if (pRoot == NULL)
+                return STATUS_BAD_STATE;
+
+            // Get atom
+            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
+            if (atom < 0)
+                return -atom;
+
+            // Get the string value
+            return pRoot->set_string(atom, lang);
+        }
+
+        status_t Schema::set_lanugage(const char *lang)
+        {
+            // Check for arguments
+            if (lang == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            // Check state
+            if (pRoot == NULL)
+                return STATUS_BAD_STATE;
+
+            // Get atom
+            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
+            if (atom < 0)
+                return -atom;
+
+            // Get the string value
+            return pRoot->set_string(atom, lang);
+        }
     } /* namespace tk */
 } /* namespace lsp */

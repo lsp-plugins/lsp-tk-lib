@@ -228,6 +228,14 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
+            // Set-up default language
+            const LSPString *language = pEnv->get(LSP_TK_ENV_LANG);
+            res = (language != NULL) ?
+                    sSchema.set_lanugage(language) :
+                    sSchema.set_lanugage(LSP_TK_PROP_DEFAULT_LANGUAGE);
+            if (res != STATUS_OK)
+                return res;
+
             // Load schema settings
             const char *schema_path = pEnv->get_utf8(LSP_TK_ENV_SCHEMA_PATH);
             if (schema_path == NULL)
