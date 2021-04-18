@@ -853,7 +853,7 @@ namespace lsp
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
             {
                 cell_t *w       = a->vCells.uget(i);
-                if (w->pWidget == NULL)
+                if ((w->pWidget == NULL) || (!w->pWidget->visibility()->get()))
                     continue;
                 else if ((w->nRows != 1) && (w->nCols != 1))
                     continue;
@@ -877,7 +877,7 @@ namespace lsp
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
             {
                 cell_t *w       = a->vCells.uget(i);
-                if (w->pWidget == NULL)
+                if ((w->pWidget == NULL) || (!w->pWidget->visibility()->get()))
                     continue;
                 if ((w->nRows <= 1) && (w->nCols <= 1))
                     continue;
@@ -977,7 +977,7 @@ namespace lsp
             {
                 // Get widget
                 cell_t *w       = a->vTable.uget(i);
-                if (w->pWidget == NULL)
+                if ((w->pWidget == NULL) || (!w->pWidget->visibility()->get()))
                     continue;
 
                 // Allocated widget area may be too large, restrict it with size constraints
