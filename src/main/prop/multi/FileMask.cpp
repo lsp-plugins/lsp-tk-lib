@@ -164,6 +164,8 @@ namespace lsp
 
             if (!ext.set(&mask, first, dfl))
                 return STATUS_NO_MEM;
+            if (str->ends_with_nocase(&ext))
+                return STATUS_OK;
             if (!str->append(&ext))
                 return STATUS_NO_MEM;
 
