@@ -97,6 +97,8 @@ namespace lsp
                 void            set(bool left, bool right, bool top, bool bottom);
                 void            set(bool hor, bool vert);
                 void            set(bool on);
+                void            set_horizontal(bool hor);
+                void            set_vertical(bool vert);
         };
 
         namespace prop

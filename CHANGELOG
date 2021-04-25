@@ -10,6 +10,7 @@
 * Fixed allocation for invisible widgets inside the tk::Grid container.
 * Updated behaviour of TextDataSink to be more memory-effective.
 * Property 'size_constraints' renamed to 'constraints' for tk::Align and tk::Group widgets.
+* Added 'set_horizontal' and 'set_vertical' methods to the embedding property.
 - Add custom mouse pointer for fraction actions.
 
 === 0.5.0 ===
