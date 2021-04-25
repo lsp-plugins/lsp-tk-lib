@@ -8,6 +8,7 @@
 * Added automatic style creation from XML schema.
 * Added simple language configuration support by the tk::Schema class.
 * Fixed allocation for invisible widgets inside the tk::Grid container.
+* Updated behaviour of TextDataSink to be more memory-effective.
 - Add custom mouse pointer for fraction actions.
 
 === 0.5.0 ===

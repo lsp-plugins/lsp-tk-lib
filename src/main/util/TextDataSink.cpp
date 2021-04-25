@@ -98,11 +98,13 @@ namespace lsp
             }
 
             // Commit data
+            LSPString tmp;
+
             if (code == STATUS_OK)
             {
-                LSPString tmp;
+                bool ok     = false;
+                code        = STATUS_NO_MEM;
 
-                bool ok = false;
                 switch (nMime)
                 {
                     case 0: // text/plain;charset=utf-8
@@ -136,11 +138,15 @@ namespace lsp
 
                 // Successful set?
                 if (ok)
-                    code    = receive(&tmp, pMime);
+                    code    = STATUS_OK;
             }
 
             // Drop data
             clear();
+
+            // Submit fetched data to callback method
+            if (code == STATUS_OK)
+                code    = receive(&tmp, pMime);
 
             return code;
         }
