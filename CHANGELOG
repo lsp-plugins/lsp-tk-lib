@@ -12,6 +12,7 @@
 * Property 'size_constraints' renamed to 'constraints' for tk::Align and tk::Group widgets.
 * Added 'set_horizontal' and 'set_vertical' methods to the embedding property.
 * Fixed crash on empty tk::Grid container, added constraints() property to the tk::Grid widget.
+* Added parse() method to all enumeration properties
 - Add custom mouse pointer for fraction actions.
 
 === 0.5.0 ===

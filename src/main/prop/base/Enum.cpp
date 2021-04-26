@@ -73,6 +73,28 @@ namespace lsp
             nValue = v;
         }
 
+        status_t Enum::parse(const char *value)
+        {
+            LSPString s;
+            if (!s.set_utf8(value))
+                return STATUS_NO_MEM;
+            return parse(&s);
+        }
+
+        status_t Enum::parse(const LSPString *value)
+        {
+            ssize_t v;
+            size_t n = Property::parse_enums(&v, 1, value, pEnum);
+            if (n <= 0)
+                return STATUS_INVALID_VALUE;
+            else if (nValue == v)
+                return true;
+
+            nValue  = v;
+            sync();
+            return true;
+        }
+
         void Enum::push()
         {
             for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
