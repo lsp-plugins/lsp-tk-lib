@@ -36,6 +36,7 @@ namespace lsp
                 sHSpacing.bind("hspacing", this);
                 sVSpacing.bind("vspacing", this);
                 sOrientation.bind("orientation", this);
+                sConstraints.bind("size.constraints", this);
                 // Configure
                 sRows.set(1);
                 sColumns.set(1);
@@ -109,6 +110,7 @@ namespace lsp
             sHSpacing.bind("hspacing", &sStyle);
             sVSpacing.bind("vspacing", &sStyle);
             sOrientation.bind("orientation", &sStyle);
+            sConstraints.bind("size.constraints", &sStyle);
 
             return STATUS_OK;
         }
@@ -125,6 +127,8 @@ namespace lsp
             if (sVSpacing.is(prop))
                 query_resize();
             if (sOrientation.is(prop))
+                query_resize();
+            if (sConstraints.is(prop))
                 query_resize();
         }
 
@@ -367,6 +371,7 @@ namespace lsp
         void Grid::size_request(ws::size_limit_t *r)
         {
             alloc_t a;
+            float scaling       = lsp_max(0.0f, sScaling.get());
 
             // Allocate cells
             allocate_cells(&a);
@@ -378,6 +383,9 @@ namespace lsp
             r->nMaxHeight       = -1;
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
+
+            // Apply size constraints
+            sConstraints.apply(r, scaling);
 
 //            lsp_trace("w={%d, %d}, h={%d, %d}",
 //                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight)
@@ -724,10 +732,16 @@ namespace lsp
             }
 
             // Mark last row and last column as non-spacing
-            h   = a->vRows.get(a->nRows - 1);
-            h->nSpacing     = 0;
-            h   = a->vCols.get(a->nCols - 1);
-            h->nSpacing     = 0;
+            if (a->nRows > 0)
+            {
+                h   = a->vRows.get(a->nRows - 1);
+                h->nSpacing     = 0;
+            }
+            if (a->nCols > 0)
+            {
+                h   = a->vCols.get(a->nCols - 1);
+                h->nSpacing     = 0;
+            }
 
             // Initialize expand flags
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
@@ -769,6 +783,10 @@ namespace lsp
 
         void Grid::distribute_size(lltl::darray<header_t> *vh, size_t first, size_t count, size_t size)
         {
+            // Check number of elements
+            if (count <= 0)
+                return;
+
             // Estimate number of expanded items and overall weight
             size_t expanded = 0, weight = 0, width = 0;
             for (size_t k=0; k<count; ++k)

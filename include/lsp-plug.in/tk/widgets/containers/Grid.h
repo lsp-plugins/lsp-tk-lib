@@ -39,6 +39,7 @@ namespace lsp
                 prop::Integer               sHSpacing;
                 prop::Integer               sVSpacing;
                 prop::Orientation           sOrientation;
+                prop::SizeConstraints       sConstraints;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -105,6 +106,7 @@ namespace lsp
                 prop::Integer               sHSpacing;
                 prop::Integer               sVSpacing;
                 prop::Orientation           sOrientation;
+                prop::SizeConstraints       sConstraints;
 
             protected:
                 void                        do_destroy();
@@ -174,6 +176,13 @@ namespace lsp
                  * @return vertical spacing between cells
                  */
                 LSP_TK_PROPERTY(Integer,            vspacing,           &sVSpacing)
+
+                /**
+                 * Get size constraints
+                 *
+                 * @return size constraings
+                 */
+                LSP_TK_PROPERTY(Integer,            constraints,        &sConstraints)
 
             //---------------------------------------------------------------------------------
             // Manipulation
