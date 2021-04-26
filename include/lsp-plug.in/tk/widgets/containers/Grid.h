@@ -182,7 +182,7 @@ namespace lsp
                  *
                  * @return size constraings
                  */
-                LSP_TK_PROPERTY(Integer,            constraints,        &sConstraints)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
 
             //---------------------------------------------------------------------------------
             // Manipulation
