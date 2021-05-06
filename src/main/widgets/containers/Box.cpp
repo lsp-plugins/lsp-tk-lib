@@ -209,7 +209,9 @@ namespace lsp
             // Draw background if needed
             if ((vVisible.is_empty()) && (force))
             {
-                s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+                s->clip_begin(area);
+                s->fill_rect(bg_color, &sSize);
+                s->clip_end();
                 return;
             }
 
@@ -265,9 +267,8 @@ namespace lsp
                             if (Size::overlap(area, &xr))
                                 s->fill_rect(bg_color, &xr);
                         }
-
-                        s->clip_end();
                     }
+                    s->clip_end();
                 }
             }
         }
