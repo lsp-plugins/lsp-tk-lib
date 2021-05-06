@@ -228,13 +228,13 @@ namespace lsp
                 cell_t *wc = vVisible.uget(i);
                 Widget *w = wc->pWidget;
 
-                if ((!force) && (!w->redraw_pending()))
-                    continue;
-
-                // Render widget
-                if (Size::intersection(&xr, area, &wc->s))
-                    w->render(s, &xr, force);
-                w->commit_redraw();
+                // Render the child widget
+                if ((force) || (w->redraw_pending()))
+                {
+                    if (Size::intersection(&xr, area, &wc->s))
+                        w->render(s, &xr, force);
+                    w->commit_redraw();
+                }
 
                 // Fill unused space with background
                 if (force)

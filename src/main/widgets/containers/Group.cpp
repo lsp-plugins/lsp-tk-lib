@@ -286,12 +286,11 @@ namespace lsp
             {
                 pWidget->get_rectangle(&xr);
 
-                if ((pWidget->redraw_pending()) || (force))
+                // Draw the nested widget
+                if ((force) || (pWidget->redraw_pending()))
                 {
-                    // Draw the child only if it is visible in the area
                     if (Size::intersection(&xr, &sSize))
                         pWidget->render(s, &xr, force);
-
                     pWidget->commit_redraw();
                 }
 

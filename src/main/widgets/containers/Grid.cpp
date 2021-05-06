@@ -198,13 +198,13 @@ namespace lsp
                     continue;
                 }
 
-                if ((!force) && (!w->pWidget->redraw_pending()))
-                    continue;
-
-                // Render the widget
-                if (Size::intersection(&xr, area, &w->s))
-                    w->pWidget->render(s, &xr, force);
-                w->pWidget->commit_redraw();
+                // Render the child widget
+                if ((force) || (w->pWidget->redraw_pending()))
+                {
+                    if (Size::intersection(&xr, area, &w->s))
+                        w->pWidget->render(s, &xr, force);
+                    w->pWidget->commit_redraw();
+                }
 
                 // Fill unused space with background
                 if (force)
