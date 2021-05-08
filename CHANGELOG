@@ -3,16 +3,19 @@
 *******************************************************************************
 
 === 0.5.1 ===
-* Updated code to match lltl library headers.
-* Better integration with system::follow_url() routine.
-* Added automatic style creation from XML schema.
-* Added simple language configuration support by the tk::Schema class.
-* Fixed allocation for invisible widgets inside the tk::Grid container.
-* Updated behaviour of TextDataSink to be more memory-effective.
-* Property 'size_constraints' renamed to 'constraints' for tk::Align and tk::Group widgets.
-* Added 'set_horizontal' and 'set_vertical' methods to the embedding property.
-* Fixed crash on empty tk::Grid container, added constraints() property to the tk::Grid widget.
-* Added parse() method to all enumeration properties
+- Updated code to match lltl library headers.
+- Better integration with system::follow_url() routine.
+- Added automatic style creation from XML schema.
+- Added simple language configuration support by the tk::Schema class.
+- Fixed allocation for invisible widgets inside the tk::Grid container.
+- Updated behaviour of TextDataSink to be more memory-effective.
+- Property 'size_constraints' renamed to 'constraints' for tk::Align and tk::Group widgets.
+- Added 'set_horizontal' and 'set_vertical' methods to the embedding property.
+- Fixed crash on empty tk::Grid container, added constraints() property to the tk::Grid widget.
+- Added parse() method to all enumeration properties.
+- Fixed knob behaviour which didn't trigger SLOT_CHANGE event when dragging knob's scale.
+
+TODO:
 - Add custom mouse pointer for fraction actions.
 
 === 0.5.0 ===

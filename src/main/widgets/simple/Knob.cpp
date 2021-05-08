@@ -162,6 +162,7 @@ namespace lsp
                 return;
 
             float angle     = asinf(dy / d);
+            float old       = sValue.get();
             if (sCycling.get())
             {
                 if (dx < 0.0f)
@@ -189,6 +190,10 @@ namespace lsp
                 // Update value
                 sValue.set_normalized(1.0f - (angle / (5.0f * M_PI  / 3.0f)), false);
             }
+
+            // Check that we need to notify listeners
+            if (old != sValue.get())
+                sSlots.execute(SLOT_CHANGE, this);
         }
 
         size_t Knob::check_mouse_over(ssize_t x, ssize_t y)
