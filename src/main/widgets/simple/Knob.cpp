@@ -293,20 +293,10 @@ namespace lsp
 
                 // Update value
                 float scaling   = lsp_max(0.0f, sScaling.get());
-                float step      = sStep.step();
-                if (nButtons & ws::MCF_RIGHT)
-                {
-                    step = (e->nState & ws::MCF_SHIFT)   ? sStep.step() :
-                           (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
-                           sStep.step_decel();
-                }
-                else
-                {
-                    step = (e->nState & ws::MCF_SHIFT) ? sStep.step_decel() :
-                           (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
-                           sStep.step();
-                }
+                bool accel      = (e->nState & ws::MCF_CONTROL);
+                bool decel      = bool(e->nState & ws::MCF_SHIFT) != bool(nButtons & ws::MCF_RIGHT);
 
+                float step      = sStep.get(accel, decel);
                 update_value(step * (nLastY - e->nTop) / scaling);
                 nLastY = e->nTop;
             }
