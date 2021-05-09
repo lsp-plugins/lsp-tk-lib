@@ -164,7 +164,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            editable,           &sEditable)
                 LSP_TK_PROPERTY(Boolean,            hole,               &sHole)
                 LSP_TK_PROPERTY(Boolean,            flat,               &sFlat)
-                LSP_TK_PROPERTY(TextLayout,         text_layouts,       &sTextLayout)
+                LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
                 LSP_TK_PROPERTY(Boolean,            text_clip,          &sTextClip)
                 LSP_TK_PROPERTY(Padding,            text_padding,       &sTextPadding)
                 LSP_TK_PROPERTY(Boolean,            hover,              &sHover)
