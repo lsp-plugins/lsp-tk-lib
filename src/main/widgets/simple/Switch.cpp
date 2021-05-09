@@ -104,7 +104,7 @@ namespace lsp
             pClass      = &metadata;
 
             handler_id_t id = 0;
-            id = sSlots.add(SLOT_FOCUS_IN, slot_on_change, self());
+            id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }
@@ -145,10 +145,7 @@ namespace lsp
             if (sAngle.is(prop))
                 query_resize();
             if (sDown.is(prop))
-            {
                 sync_state(sDown.get());
-                sSlots.execute(SLOT_CHANGE, this);
-            }
         }
 
         ws::mouse_pointer_t Switch::current_pointer()
@@ -495,7 +492,12 @@ namespace lsp
                     nState     &= ~S_PRESSED;
 
                 if (nBMask == 0)
-                    sDown.set(nState & S_TOGGLED);
+                {
+                    bool oval = sDown.commit_value(nState & S_TOGGLED);
+                    bool nval = sDown.get();
+                    if (oval != nval)
+                        sSlots.execute(SLOT_CHANGE, this, &nval);
+                }
 
                 query_draw();
             }
