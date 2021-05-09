@@ -41,6 +41,7 @@ namespace lsp
                 sRadius.bind("border.radius", this);
                 sTextRadius.bind("text.radius", this);
                 sEmbedding.bind("embed", this);
+                sIPadding.bind("ipadding", this);
                 // Configure
                 sFont.set_size(12.0f);
                 sColor.set("#000000");
@@ -51,6 +52,7 @@ namespace lsp
                 sRadius.set(10);
                 sTextRadius.set(10);
                 sEmbedding.set(false);
+                sIPadding.set_all(0);
                 // Override
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 // Commit
@@ -72,7 +74,8 @@ namespace lsp
             sTextBorder(&sProperties),
             sRadius(&sProperties),
             sTextRadius(&sProperties),
-            sEmbedding(&sProperties)
+            sEmbedding(&sProperties),
+            sIPadding(&sProperties)
         {
             pWidget             = NULL;
 
@@ -110,6 +113,7 @@ namespace lsp
             sRadius.bind("border.radius", &sStyle);
             sTextRadius.bind("text.radius", &sStyle);
             sEmbedding.bind("embed", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
 
             return STATUS_OK;
         }
@@ -134,6 +138,8 @@ namespace lsp
             if (sTextRadius.is(prop))
                 query_resize();
             if (sEmbedding.is(prop))
+                query_resize();
+            if (sIPadding.is(prop))
                 query_resize();
         }
 
@@ -184,6 +190,7 @@ namespace lsp
             if (!sEmbedding.top())
                 pad.nTop        = lsp_max(xr.nHeight, ssize_t(pad.nTop));
 
+            sIPadding.add(&pad, scaling);
             alloc->pad      = pad;
 
             pad.nLeft       = lsp_max(pad.nLeft,   size_t(radius));
@@ -191,6 +198,7 @@ namespace lsp
             pad.nTop        = lsp_max(pad.nTop,    size_t(radius));
             pad.nBottom     = lsp_max(pad.nBottom, size_t(radius));
 
+            sIPadding.add(&pad, scaling);
             alloc->xpad     = pad;
         }
 

@@ -107,11 +107,13 @@ namespace lsp
                 void            sub(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
                 void            enter(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
                 void            leave(ws::rectangle_t *dst, const ws::rectangle_t *src, float scale);
+                void            add(padding_t *dst, const padding_t *src, float scale);
 
                 inline void     add(ws::rectangle_t *dst, float scale)              { add(dst, dst, scale);     }
                 inline void     sub(ws::rectangle_t *dst, float scale)              { sub(dst, dst, scale);     }
                 inline void     enter(ws::rectangle_t *dst, float scale)            { enter(dst, dst, scale);   }
                 inline void     leave(ws::rectangle_t *dst, float scale)            { leave(dst, dst, scale);   }
+                inline void     add(padding_t *dst, float scale)                    { add(dst, dst, scale);     }
 
                 static void             add(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);
                 static void             sub(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad);

@@ -14,6 +14,7 @@
 - Fixed crash on empty tk::Grid container, added constraints() property to the tk::Grid widget.
 - Added parse() method to all enumeration properties.
 - Fixed knob behaviour which didn't trigger SLOT_CHANGE event when dragging knob's scale.
+- Added ipadding() property for internal padding of the tk::Group widget.
 
 TODO:
 - Add custom mouse pointer for fraction actions.
