@@ -44,6 +44,7 @@ namespace lsp
                 prop::Boolean       sVisibility;    // Visibility
                 prop::Pointer       sPointer;       // Mouse pointer
                 prop::Integer       sTag;           // Some tag associated with widget
+                prop::DrawMode      sDrawMode;      // Drawing mode
             LSP_TK_STYLE_DEF_END
         }
 
@@ -103,6 +104,7 @@ namespace lsp
                 prop::Boolean       sVisibility;    // Visibility
                 prop::Pointer       sPointer;       // Mouse pointer
                 prop::Integer       sTag;           // Some tag associated with widget
+                prop::DrawMode      sDrawMode;      // Drawing mode of widget
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -429,6 +431,11 @@ namespace lsp
                  * Some tag associated with widget, can be used as the user decides
                  */
                 LSP_TK_PROPERTY(Integer,            tag,                &sTag)
+
+                /**
+                 * Drawing mode of the widget
+                 */
+                LSP_TK_PROPERTY(DrawMode,           draw_mode,          &sDrawMode)
 
             //---------------------------------------------------------------------------------
             // Manipulation

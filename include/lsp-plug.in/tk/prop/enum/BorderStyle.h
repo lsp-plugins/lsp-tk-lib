@@ -42,7 +42,7 @@ namespace lsp
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit BorderStyle(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit BorderStyle(prop::Listener *listener = NULL): Enum(ENUM, ws::BS_SINGLE, listener) {};
 
             public:
                 inline ws::border_style_t   get() const     { return ws::border_style_t(nValue); }

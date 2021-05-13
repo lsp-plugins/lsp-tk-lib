@@ -39,7 +39,7 @@ namespace lsp
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit Orientation(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit Orientation(prop::Listener *listener = NULL): Enum(ENUM, O_HORIZONTAL, listener) {};
 
             public:
                 inline orientation_t        get() const                 { return orientation_t(nValue);         }

@@ -39,7 +39,7 @@ namespace lsp
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit MenuItemType(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit MenuItemType(prop::Listener *listener = NULL): Enum(ENUM, MI_NORMAL, listener) {};
 
             public:
                 inline menu_item_type_t     get() const                 { return menu_item_type_t(nValue);          }

@@ -34,10 +34,12 @@ namespace lsp
                 // Bind
                 sScaling.bind("size.scaling", this);
                 sFont.bind("font", this);
+                sDrawMode.bind("draw.mode", this);
                 // Configure
                 sFont.set_antialiasing(true);
                 sFont.set_size(12.0f);
                 sScaling.set(1.0f);
+                sDrawMode.set(DM_CLASSIC);
             LSP_TK_STYLE_IMPL_END
 
             LSP_SYMBOL_HIDDEN

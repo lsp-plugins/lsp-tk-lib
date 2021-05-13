@@ -42,7 +42,7 @@ namespace lsp
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit Pointer(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit Pointer(prop::Listener *listener = NULL): Enum(ENUM, ws::MP_DEFAULT, listener) {};
 
             public:
                 inline ws::mouse_pointer_t  get() const                         { return ws::mouse_pointer_t(nValue);           }

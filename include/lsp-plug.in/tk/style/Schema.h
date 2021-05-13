@@ -47,6 +47,7 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(Root, Style)
                 prop::Float                         sScaling;
                 prop::Font                          sFont;
+                prop::DrawMode                      sDrawMode;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -84,6 +85,7 @@ namespace lsp
 
                 prop::Float                         sScaling;
                 prop::Font                          sFont;
+                prop::DrawMode                      sDrawMode;
 
             protected:
                 status_t            create_builtin_style(IStyleFactory *init);
@@ -134,6 +136,7 @@ namespace lsp
             public:
                 LSP_TK_PROPERTY(Float,          scaling,            &sScaling)
                 LSP_TK_PROPERTY(Font,           font,               &sFont)
+                LSP_TK_PROPERTY(DrawMode,       draw_mode,          &sDrawMode)
 
             public:
                 /**

@@ -39,7 +39,7 @@ namespace lsp
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit FileDialogMode(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit FileDialogMode(prop::Listener *listener = NULL): Enum(ENUM, FDM_OPEN_FILE, listener) {};
 
             public:
                 inline file_dialog_mode_t   get() const                 { return file_dialog_mode_t(nValue);            }

@@ -64,6 +64,7 @@
 #include <lsp-plug.in/tk/prop/enum/Pointer.h>
 #include <lsp-plug.in/tk/prop/enum/Orientation.h>
 #include <lsp-plug.in/tk/prop/enum/Scrolling.h>
+#include <lsp-plug.in/tk/prop/enum/DrawMode.h>
 
 // Flags
 #include <lsp-plug.in/tk/prop/flags/Allocation.h>

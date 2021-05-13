@@ -16,6 +16,7 @@
 - Fixed knob behaviour which didn't trigger SLOT_CHANGE event when dragging knob's scale.
 - Added ipadding() property for internal padding of the tk::Group widget.
 - Fixed bugs reladed to SLOT_CHANGE notification delivery for tk::Switch widget.
+- Added drawing mode for the widget that allows to switch between different kinds of widget look.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

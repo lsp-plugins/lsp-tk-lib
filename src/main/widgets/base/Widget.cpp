@@ -38,6 +38,7 @@ namespace lsp
                 sBgColor.bind("bg.color", this);
                 sVisibility.bind("visible", this);
                 sPointer.bind("pointer", this);
+                sDrawMode.bind("draw.mode", this);
                 // Configure
                 sAllocation.set(true, false);
                 sScaling.set(1.0f);
@@ -46,6 +47,7 @@ namespace lsp
                 sBgColor.set("#cccccc");
                 sVisibility.set(true);
                 sPointer.set(ws::MP_DEFAULT);
+                sDrawMode.set(DM_CLASSIC);
                 // Commit
                 sVisibility.override();
             LSP_TK_STYLE_IMPL_END
@@ -137,6 +139,7 @@ namespace lsp
                 sBgColor.bind("bg.color", &sStyle);
                 sVisibility.bind("visible", &sStyle);
                 sPointer.bind("pointer", &sStyle);
+                sDrawMode.bind("draw.mode", &sStyle);
             }
 
             Style *sclass = pDisplay->schema()->get(style_class());

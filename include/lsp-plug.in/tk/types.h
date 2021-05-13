@@ -93,6 +93,15 @@ namespace lsp
         };
 
         /**
+         * Widget draw mode
+         */
+        enum draw_mode_t
+        {
+            DM_CLASSIC,         //!< Classic draw mode
+            DM_MODERN,          //!< Modern draw mode
+        };
+
+        /**
          * Key modifiers for shortcuts
          */
         enum key_modifier_t

@@ -39,7 +39,7 @@ namespace lsp
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit WindowPolicy(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit WindowPolicy(prop::Listener *listener = NULL): Enum(ENUM, WP_NORMAL, listener) {};
 
             public:
                 inline window_policy_t      get() const             { return window_policy_t(nValue); }

@@ -58,7 +58,7 @@ namespace lsp
                 virtual void        commit(atom_t property);
 
             protected:
-                explicit Enum(const prop::enum_t *xenum, prop::Listener *listener = NULL);
+                explicit Enum(const prop::enum_t *xenum, size_t dfl, prop::Listener *listener = NULL);
                 virtual ~Enum();
 
             public:

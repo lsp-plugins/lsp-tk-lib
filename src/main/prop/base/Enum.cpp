@@ -25,10 +25,10 @@ namespace lsp
 {
     namespace tk
     {
-        Enum::Enum(const prop::enum_t *xenum, prop::Listener *listener):
+        Enum::Enum(const prop::enum_t *xenum, size_t dfl, prop::Listener *listener):
             SimpleProperty(listener)
         {
-            nValue      = 0.0f;
+            nValue      = dfl;
             pEnum       = xenum;
         }
 
