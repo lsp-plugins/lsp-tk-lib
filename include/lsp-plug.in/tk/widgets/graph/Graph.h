@@ -113,7 +113,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                      color,              &sColor);
                 LSP_TK_PROPERTY(Color,                      border_color,       &sBorderColor);
                 LSP_TK_PROPERTY(Color,                      glass_color,        &sGlassColor);
-                LSP_TK_PROPERTY(Padding,                    internal_padding,   &sIPadding);
+                LSP_TK_PROPERTY(Padding,                    ipadding,           &sIPadding);
 
             public:
                 /**
