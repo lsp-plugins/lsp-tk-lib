@@ -134,8 +134,10 @@ namespace lsp
             }
 
             // Initialize palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color f_color(sColor);
+
+            get_actual_bg_color(bg_color);
             f_color.scale_lightness(sBrightness.get());
 
             // Draw background

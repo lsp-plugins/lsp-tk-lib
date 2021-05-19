@@ -267,7 +267,9 @@ namespace lsp
             float cy            = r->nTop  + (r->nHeight * 0.5f);
 
             // Draw hole
-            lsp::Color hole(sBgColor);
+            lsp::Color hole;
+            get_actual_bg_color(hole);
+
             ws::rectangle_t h   = *r;
             ssize_t hole_r      = 0.375f * r->nHeight;
             ssize_t chamfer     = lsp_max(1.0f, lsp_min(scaling * 3.0f, 0.25f * r->nHeight));
@@ -342,7 +344,8 @@ namespace lsp
             btn.nTop       -= sSize.nTop;
 
             // Draw background
-            lsp::Color col(sBgColor);
+            lsp::Color col;
+            get_actual_bg_color(col);
             s->clear(col);
 
             // Draw screws

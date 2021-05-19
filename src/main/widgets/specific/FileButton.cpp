@@ -229,7 +229,9 @@ namespace lsp
         {
             float v                 = sValue.get_normalized();
             float bright            = sBrightness.get();
-            lsp::Color bg(sBgColor);
+            lsp::Color bg;
+
+            get_actual_bg_color(bg);
             s->clear(bg);
 
             ws::rectangle_t clip    = sButton;

@@ -510,7 +510,9 @@ namespace lsp
             ssize_t radius      = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t hsspacing   = lsp_max(0.0f, sHScrollSpacing.get() * scaling);
             ssize_t vsspacing   = lsp_max(0.0f, sVScrollSpacing.get() * scaling);
-            lsp::Color col(sBgColor);
+
+            lsp::Color col;
+            get_actual_bg_color(col);
 
             ws::rectangle_t h, v, xa, xr;
             xa  = sSize;
@@ -637,7 +639,7 @@ namespace lsp
                         }
                         else
                         {
-                            col.copy(li->bg_color()->color());
+                            li->get_actual_bg_color(col);
                             s->fill_rect(col, &it->r);
                             col.copy(li->text_color()->color());
                         }

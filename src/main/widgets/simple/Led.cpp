@@ -136,10 +136,11 @@ namespace lsp
             bool on             = sOn.get();
 
             // Estimate palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color hole(sHoleColor);
             lsp::Color col((on) ? sLightColor : sColor);
 
+            get_actual_bg_color(bg_color);
             col.scale_lightness(brightness);
 
             // Draw background

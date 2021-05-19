@@ -561,7 +561,8 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             float bright        = sBrightness.get();
 
-            lsp::Color col(sBgColor);
+            lsp::Color col;
+            get_actual_bg_color(col);
             s->clear(col);
             col.copy(sColor);
             s->fill_rect(col, &sAAll);

@@ -40,7 +40,8 @@ namespace lsp
                 prop::Float         sScaling;       // UI scaling factor
                 prop::Float         sBrightness;    // Brightness
                 prop::Padding       sPadding;       // Widget padding
-                prop::Color         sBgColor;       // Widget color
+                prop::Color         sBgColor;       // Color of the background of the widget
+                prop::Boolean       sBgInherit;     // Inhert background color from parent container
                 prop::Boolean       sVisibility;    // Visibility
                 prop::Pointer       sPointer;       // Mouse pointer
                 prop::Integer       sTag;           // Some tag associated with widget
@@ -100,7 +101,8 @@ namespace lsp
                 prop::Float         sScaling;       // UI scaling factor
                 prop::Float         sBrightness;    // Brightness
                 prop::Padding       sPadding;       // Widget padding
-                prop::Color         sBgColor;       // Widget color
+                prop::Color         sBgColor;       // Color of the background of the widget
+                prop::Boolean       sBgInherit;     // Inhert background color from parent container
                 prop::Boolean       sVisibility;    // Visibility
                 prop::Pointer       sPointer;       // Mouse pointer
                 prop::Integer       sTag;           // Some tag associated with widget
@@ -380,6 +382,13 @@ namespace lsp
                 bool                    is_visible_child_of(const Widget *parent) const;
 
                 /**
+                 * Compute the actual background color and store it to the passed color value
+                 * @param color color to store the actual value
+                 */
+                void                    get_actual_bg_color(lsp::Color *color) const;
+                void                    get_actual_bg_color(lsp::Color &color) const;
+
+                /**
                  * Return widget's style
                  * @return widget's style
                  */
@@ -396,6 +405,15 @@ namespace lsp
                  * @return background color of the widget
                  */
                 LSP_TK_PROPERTY(Color,              bg_color,           &sBgColor)
+
+                /**
+                 * Get the inheritance flag of the background color.
+                 * If enabled, the color is taken from the parent widget container if it
+                 * is present. Otherwise, the bg_color() property is used to draw the color.
+                 *
+                 * @return inheritance flag of the background color
+                 */
+                LSP_TK_PROPERTY(Boolean,            bg_inherit,         &sBgInherit)
 
                 /**
                  * Get brightness property

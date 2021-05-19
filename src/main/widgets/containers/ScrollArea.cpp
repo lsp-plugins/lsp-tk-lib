@@ -328,7 +328,8 @@ namespace lsp
             if (nFlags & REDRAW_SURFACE)
                 force = true;
 
-            lsp::Color col(sBgColor);
+            lsp::Color col;
+            get_actual_bg_color(col);
 
             ws::rectangle_t h, v, xa, xr;
             xa  = sSize;
@@ -405,7 +406,7 @@ namespace lsp
                 {
                     s->clip_begin(&xa);
                     {
-                        col.copy(pWidget->bg_color()->color());
+                        pWidget->get_actual_bg_color(col);
                         s->fill_frame(col, &xa, &xr);
                     }
                     s->clip_end();

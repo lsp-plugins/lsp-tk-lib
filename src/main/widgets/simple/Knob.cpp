@@ -352,10 +352,11 @@ namespace lsp
             lsp::Color scol(sScaleColor);
             lsp::Color sdcol(sScaleColor);
             lsp::Color hcol(sHoleColor);
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color cap(sColor);
             lsp::Color tip(sTipColor);
 
+            get_actual_bg_color(bg_color);
             scol.scale_lightness(bright);
             sdcol.scale_lightness(0.75f * bright);
             cap.scale_lightness(bright);

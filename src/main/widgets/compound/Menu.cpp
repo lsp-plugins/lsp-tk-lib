@@ -810,7 +810,8 @@ namespace lsp
             xr.nHeight          = sSize.nHeight - border * 2;
 
             // Draw background
-            lsp::Color color(sBgColor);
+            lsp::Color color;
+            get_actual_bg_color(color);
             s->clear(color);
 
             // Apply internal padding

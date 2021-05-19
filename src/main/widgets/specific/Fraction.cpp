@@ -479,11 +479,12 @@ namespace lsp
             float lw        = lsp_max(1.0f, sThick.get() * scaling * ((sFont.bold()) ? 2.0f : 1.0f));
 
             // Prepare palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color color(sColor);
             lsp::Color tc(sNum.sColor);
             lsp::Color bc(sDen.sColor);
 
+            get_actual_bg_color(bg_color);
             color.scale_lightness(bright);
             tc.scale_lightness(bright);
             bc.scale_lightness(bright);

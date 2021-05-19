@@ -473,7 +473,8 @@ namespace lsp
             xr.nHeight      = sSize.nHeight;
 
             // Clear
-            lsp::Color color(sBgColor);
+            lsp::Color color;
+            get_actual_bg_color(color);
             s->clear(color);
 
             // Draw border

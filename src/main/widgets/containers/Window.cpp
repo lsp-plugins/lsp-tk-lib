@@ -367,7 +367,8 @@ namespace lsp
             if (!bMapped)
                 return;
 
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
 
             if ((pChild == NULL) || (!pChild->visibility()->get()))
             {
@@ -396,7 +397,9 @@ namespace lsp
                     0, 0, sSize.nWidth, sSize.nHeight,
                     pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
                 );
-                s->fill_frame(pChild->bg_color()->color(), &pr, &cr);
+
+                pChild->get_actual_bg_color(bg_color);
+                s->fill_frame(bg_color, &pr, &cr);
 
                 float scaling   = sScaling.get();
                 float border    = sBorderSize.get() * scaling;

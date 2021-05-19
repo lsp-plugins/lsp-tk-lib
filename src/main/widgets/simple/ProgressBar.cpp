@@ -292,7 +292,9 @@ namespace lsp
             xr.nTop             = 0;
 
             // Draw background
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+
+            get_actual_bg_color(bg_color);
             s->clear(bg_color);
             bool aa = s->set_antialiasing(true);
 

@@ -36,6 +36,7 @@ namespace lsp
                 sBrightness.bind("brightness", this);
                 sPadding.bind("padding", this);
                 sBgColor.bind("bg.color", this);
+                sBgInherit.bind("bg.inherit", this);
                 sVisibility.bind("visible", this);
                 sPointer.bind("pointer", this);
                 sDrawMode.bind("draw.mode", this);
@@ -45,6 +46,7 @@ namespace lsp
                 sBrightness.set(1.0f);
                 sPadding.set_all(0);
                 sBgColor.set("#cccccc");
+                sBgInherit.set(false);
                 sVisibility.set(true);
                 sPointer.set(ws::MP_DEFAULT);
                 sDrawMode.set(DM_CLASSIC);
@@ -137,6 +139,7 @@ namespace lsp
                 sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
                 sBgColor.bind("bg.color", &sStyle);
+                sBgInherit.bind("bg.inherit", &sStyle);
                 sVisibility.bind("visible", &sStyle);
                 sPointer.bind("pointer", &sStyle);
                 sDrawMode.bind("draw.mode", &sStyle);
@@ -205,6 +208,8 @@ namespace lsp
             if (sPadding.is(prop))
                 query_resize();
             if (sBgColor.is(prop))
+                query_draw();
+            if (sBgInherit.is(prop))
                 query_draw();
             if (sAllocation.is(prop))
                 query_resize();
@@ -793,6 +798,29 @@ namespace lsp
             }
 
             return STATUS_OK;
+        }
+
+        void Widget::get_actual_bg_color(lsp::Color *color) const
+        {
+            if ((!sBgInherit.get()) || (pParent == NULL))
+            {
+                color->copy(sBgColor.color());
+                return;
+            }
+
+            WidgetContainer *pw = widget_cast<WidgetContainer>(pParent);
+            if (pw == NULL)
+            {
+                color->copy(sBgColor.color());
+                return;
+            }
+
+            pw->get_child_bg_color(color);
+        }
+
+        void Widget::get_actual_bg_color(lsp::Color &color) const
+        {
+            get_actual_bg_color(&color);
         }
 
         status_t Widget::get_padded_screen_rectangle(ws::rectangle_t *r)

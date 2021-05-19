@@ -496,7 +496,7 @@ namespace lsp
                     {
                         s->clip_begin(area);
                         {
-                            color.copy(widget->bg_color()->color());
+                            widget->get_actual_bg_color(color);
                             s->fill_frame(color, &sSize, &xr);
                         }
                         s->clip_end();
@@ -505,7 +505,7 @@ namespace lsp
             }
             else
             {
-                color.copy(sBgColor);
+                get_actual_bg_color(color);
                 s->fill_rect(color, &sSize);
                 bg   = true;
             }
@@ -521,7 +521,7 @@ namespace lsp
                 {
                     if (!bg)
                     {
-                        color.copy(sBgColor);
+                        get_actual_bg_color(color);
 
                         xr          = sSize;
                         xg          = border * 2;

@@ -303,7 +303,8 @@ namespace lsp
             r.nTop              = 0;
 
             // Clear the surface
-            lsp::Color bg(sBgColor);
+            lsp::Color bg;
+            get_actual_bg_color(bg);
             bg.scale_lightness(bright);
             s->clear(bg);
 

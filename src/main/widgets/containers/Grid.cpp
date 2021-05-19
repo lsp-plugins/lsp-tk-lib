@@ -156,7 +156,8 @@ namespace lsp
 
         void Grid::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
 
             // Check dirty flag
             if (nFlags & REDRAW_SURFACE)
@@ -183,7 +184,7 @@ namespace lsp
 
                 if (w->pWidget == NULL)
                 {
-                    bg_color.copy(sBgColor);
+                    get_actual_bg_color(bg_color);
 
                     size_t cw   = w->a.nWidth;
                     size_t ch   = w->a.nHeight;
@@ -214,12 +215,12 @@ namespace lsp
                         // Draw widget area
                         if (Size::overlap(area, &w->a))
                         {
-                            bg_color.copy(w->pWidget->bg_color()->color());
+                            w->pWidget->get_actual_bg_color(bg_color);
                             s->fill_frame(bg_color, &w->a, &w->s);
                         }
 
                         // Need to draw spacing?
-                        bg_color.copy(sBgColor);
+                        get_actual_bg_color(bg_color);
                         if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
                         {
                             xr.nLeft    = w->a.nLeft + w->a.nWidth;

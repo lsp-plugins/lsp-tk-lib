@@ -156,11 +156,13 @@ namespace lsp
         void Switch::draw(ws::ISurface *s)
         {
             // Prepare palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color border(sBorderColor);
             lsp::Color bcl(sColor);
             lsp::Color font(sTextColor);
             lsp::Color hole(sHoleColor);
+
+            get_actual_bg_color(bg_color);
 
             float bright    = sBrightness.get();
             float scaling   = lsp_max(0.0f, sScaling.get());

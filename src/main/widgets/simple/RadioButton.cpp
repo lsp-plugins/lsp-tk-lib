@@ -215,7 +215,7 @@ namespace lsp
 
             // Draw background
             bool aa     = s->set_antialiasing(false);
-            c.copy(sBgColor);
+            get_actual_bg_color(c);
             s->fill_rect(c, 0, 0, sSize.nWidth, sSize.nHeight);
             s->set_antialiasing(true);
 

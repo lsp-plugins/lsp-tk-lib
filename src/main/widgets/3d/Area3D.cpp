@@ -315,7 +315,8 @@ namespace lsp
             // Prepare palette
             ws::ISurface *cv;
             lsp::Color color(sColor);
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
             color.scale_lightness(bright);
 
             s->clip_begin(area);

@@ -204,7 +204,8 @@ namespace lsp
                 force = true;
 
             // Estimate palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
 
             // Draw background if needed
             if ((vVisible.is_empty()) && (force))
@@ -241,14 +242,14 @@ namespace lsp
                 {
                     s->clip_begin(area);
                     {
-                        bg_color.copy(w->bg_color()->color());
+                        w->get_actual_bg_color(bg_color);
                         if (Size::overlap(area, &wc->a))
                             s->fill_frame(bg_color, &wc->a, &wc->s);
 
                         // Draw spacing
                         if (((i + 1) < n) && (spacing > 0))
                         {
-                            bg_color.copy(sBgColor);
+                            get_actual_bg_color(bg_color);
                             if (horizontal)
                             {
                                 xr.nLeft    = wc->a.nLeft + wc->a.nWidth;

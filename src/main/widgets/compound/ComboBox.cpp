@@ -437,7 +437,8 @@ namespace lsp
             va.nTop            -= sSize.nTop;
 
             // Draw background
-            lsp::Color c(sBgColor);
+            lsp::Color c;
+            get_actual_bg_color(c);
             s->clear(c);
             aa                  = s->get_antialiasing();
 

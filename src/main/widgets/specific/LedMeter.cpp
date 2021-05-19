@@ -496,7 +496,8 @@ namespace lsp
             bool has_text       = sTextVisible.get();
             ssize_t angle       = sAngle.get();
 
-            lsp::Color col(sBgColor);
+            lsp::Color col;
+            get_actual_bg_color(col);
             s->clear(col);
             col.copy(sColor);
             s->fill_rect(col, &sAAll);

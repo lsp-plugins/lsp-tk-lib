@@ -400,9 +400,11 @@ namespace lsp
             size_t angle        = sAngle.get();
 
             // Prepare palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color color(sColor);
             lsp::Color hole(bg_color);
+
+            get_actual_bg_color(bg_color);
             color.scale_lightness(sBrightness.get());
 
             // Clear surface

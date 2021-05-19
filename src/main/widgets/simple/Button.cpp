@@ -357,10 +357,12 @@ namespace lsp
             r.nTop             -= sSize.nTop;
 
             // Prepare palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color color(sColor);
             lsp::Color tcolor(sTextColor);
             lsp::Color border_color(sBorderColor);
+
+            get_actual_bg_color(bg_color);
 
             if ((sHover.get()) && (pressed & S_HOVER))
             {

@@ -77,7 +77,7 @@ namespace lsp
                 if (sFill.get())
                     color.copy(sColor);
                 else
-                    color.copy(sBgColor);
+                    get_actual_bg_color(color);
                 s->clip_begin(area);
                 s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
                 s->clip_end();

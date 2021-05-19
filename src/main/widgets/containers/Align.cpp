@@ -112,7 +112,8 @@ namespace lsp
                 force = true;
 
             // Initialize palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
 
             // Draw background if child is invisible or not present
             if ((pWidget == NULL) || (!pWidget->visibility()->get()))
@@ -143,7 +144,7 @@ namespace lsp
                 {
                     s->clip_begin(area);
                     {
-                        bg_color.copy(pWidget->bg_color()->color());
+                        pWidget->get_actual_bg_color(bg_color);
                         s->fill_frame(bg_color, &sSize, &cr);
                     }
                     s->clip_end();
