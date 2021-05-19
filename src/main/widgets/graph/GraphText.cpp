@@ -46,7 +46,7 @@ namespace lsp
                 sHValue.set(0.0f);
                 sVValue.set(0.0f);
                 sHAxis.set(0);
-                sVAxis.set(0);
+                sVAxis.set(1);
                 sOrigin.set(0);
                 // Override
                 sPadding.set(2);
