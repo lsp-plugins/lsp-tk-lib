@@ -35,9 +35,11 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Box, WidgetContainer)
                 prop::Integer               sSpacing;
+                prop::Integer               sBorder;            // Border size
                 prop::Boolean               sHomogeneous;
                 prop::Orientation           sOrientation;
-                prop::SizeConstraints       sConstraints;        // Size constraints
+                prop::SizeConstraints       sConstraints;       // Size constraints
+                prop::Color                 sBorderColor;       // Border color
             LSP_TK_STYLE_DEF_END
         }
 
@@ -67,9 +69,11 @@ namespace lsp
                 prop::CollectionListener    sIListener;         // Listener to trigger vItems content change
 
                 prop::Integer               sSpacing;
+                prop::Integer               sBorder;            // Border size
                 prop::Boolean               sHomogeneous;
                 prop::Orientation           sOrientation;
-                prop::SizeConstraints       sConstraints;        // Size constraints
+                prop::SizeConstraints       sConstraints;       // Size constraints
+                prop::Color                 sBorderColor;       // Border color
 
             protected:
                 status_t                    visible_items(lltl::darray<cell_t> *out);
@@ -105,6 +109,12 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            spacing,            &sSpacing)
 
                 /**
+                 * The size of the border around the box
+                 * @return size of border around the box
+                 */
+                LSP_TK_PROPERTY(Integer,            border,             &sBorder)
+
+                /**
                  * Get proportional flag
                  * @return proportional flag property
                  */
@@ -121,6 +131,12 @@ namespace lsp
                  * @return size constraints of the box
                  */
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
+
+                /**
+                 * Get the color of the surrounding border
+                 * @return color of the surrounding border
+                 */
+                LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
 
                 /**
                  * Get collection of widgets

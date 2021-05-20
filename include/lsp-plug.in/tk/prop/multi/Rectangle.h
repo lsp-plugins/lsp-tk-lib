@@ -80,6 +80,10 @@ namespace lsp
                 void                set(ssize_t left, ssize_t top, ssize_t width, ssize_t height);
                 void                set(const ws::rectangle_t *r);
                 inline void         clear()                         { set(0, 0, 0, 0);              }
+
+            public:
+                static void         enter_border(ws::rectangle_t *r, const ws::rectangle_t *sr, ssize_t border);
+                static void         enter_border(ws::rectangle_t *r, ssize_t border);
         };
 
         namespace prop

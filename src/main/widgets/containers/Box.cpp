@@ -32,14 +32,22 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Box, WidgetContainer)
                 // Bind
                 sSpacing.bind("spacing", this);
+                sBorder.bind("border.size", this);
                 sHomogeneous.bind("homogeneous", this);
                 sOrientation.bind("orientation", this);
                 sConstraints.bind("size.constraints", this);
+                sBorderColor.bind("border.color", this);
                 // Configure
                 sSpacing.set(0);
+                sBorder.set(0);
                 sHomogeneous.set(false);
                 sOrientation.set(O_HORIZONTAL);
                 sConstraints.set_all(-1);
+                sBorderColor.set("#000000");
+                // Override
+                sAllocation.set(true, false);
+                // Commit
+                sAllocation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Box, "Box");
         }
@@ -74,12 +82,11 @@ namespace lsp
 
             // Init properties
             sSpacing.bind("spacing", &sStyle);
+            sBorder.bind("border.size", &sStyle);
             sHomogeneous.bind("homogeneous", &sStyle);
             sOrientation.bind("orientation", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
-
-            // Override settings for hfill and vfill
-            sAllocation.set(true, false);
+            sBorderColor.bind("border.color", &sStyle);
 
             return res;
         }
@@ -99,11 +106,15 @@ namespace lsp
                 query_resize();
             if (sSpacing.is(prop))
                 query_resize();
+            if (sBorder.is(prop))
+                query_resize();
             if (sHomogeneous.is(prop))
                 query_resize();
             if (sOrientation.is(prop))
                 query_resize();
             if (sConstraints.is(prop))
+                query_resize();
+            if (sBorderColor.is(prop))
                 query_resize();
         }
 
@@ -204,7 +215,11 @@ namespace lsp
                 force = true;
 
             // Estimate palette
-            lsp::Color bg_color;
+            ws::rectangle_t xr;
+            lsp::Color bg_color, border_color;
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float bright    = sBrightness.get();
+            size_t border   = (sBorder.get() > 0) ? lsp_max(1, sBorder.get() * scaling) : 0;
             get_actual_bg_color(bg_color);
 
             // Draw background if needed
@@ -212,17 +227,23 @@ namespace lsp
             {
                 s->clip_begin(area);
                 s->fill_rect(bg_color, &sSize);
+                if (border > 0)
+                {
+                    border_color.copy(sBorderColor);
+                    border_color.scale_lightness(bright);
+                    Rectangle::enter_border(&xr, &sSize, border);
+                    s->fill_frame(border_color, &sSize, &xr);
+                }
+
                 s->clip_end();
                 return;
             }
 
             // Compute spacing size
-            float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = scaling * sSpacing.get();
 
             // Draw items
             bool horizontal     = sOrientation.horizontal();
-            ws::rectangle_t xr;
 
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
@@ -267,6 +288,15 @@ namespace lsp
 
                             if (Size::overlap(area, &xr))
                                 s->fill_rect(bg_color, &xr);
+                        }
+
+                        // Draw border
+                        if (border > 0)
+                        {
+                            border_color.copy(sBorderColor);
+                            border_color.scale_lightness(bright);
+                            Rectangle::enter_border(&xr, &sSize, border);
+                            s->fill_frame(border_color, &sSize, &xr);
                         }
                     }
                     s->clip_end();
@@ -560,6 +590,12 @@ namespace lsp
             // Call parent method to realize
             WidgetContainer::realize(r);
 
+            // Add border
+            ws::rectangle_t xr;
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            ssize_t border      = (sBorder.get() > 0) ? lsp_max(1, sBorder.get() * scaling) : 0;
+            Rectangle::enter_border(&xr, r, border);
+
             // Create list of visible items
             lltl::darray<cell_t>    visible;
             status_t res    = visible_items(&visible);
@@ -570,8 +606,8 @@ namespace lsp
             if ((res == STATUS_OK) && (visible.size() > 0))
             {
                 res = (sHomogeneous.get()) ?
-                    allocate_homogeneous(r, visible) :
-                    allocate_proportional(r, visible);
+                    allocate_homogeneous(&xr, visible) :
+                    allocate_proportional(&xr, visible);
             }
 
             // Update list of visible items
@@ -601,11 +637,12 @@ namespace lsp
             // Estimate parameters
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = scaling * sSpacing.get();
+            ssize_t border      = (sBorder.get() > 0) ? lsp_max(1, sBorder.get() * scaling * 2) : 0;
 
             // Estimated width and height, maximum width and height
             ws::size_limit_t sr;
-            ssize_t e_width = 0, e_height = 0;
-            ssize_t m_width = 0, m_height = 0;
+            ssize_t e_width = border, e_height = border;
+            ssize_t m_width = border, m_height = border;
 
             // Estimate self size
             for (size_t i=0, n=visible.size(); i<n; ++i)
