@@ -707,7 +707,7 @@ namespace lsp
                         r.nWidth    = e->nWidth;
                         r.nHeight   = e->nHeight;
 
-                        realize(&r);
+                        realize_widget(&r);
                     }
                     break;
 
