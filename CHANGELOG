@@ -18,6 +18,7 @@
 - Fixed bugs reladed to SLOT_CHANGE notification delivery for tk::Switch widget.
 - Added drawing mode for the widget that allows to switch between different kinds of widget look.
 - Added basic background color inheritance support to widgets.
+- Rendering of graph widget has been fixed and enhanced with "border.flat" property.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

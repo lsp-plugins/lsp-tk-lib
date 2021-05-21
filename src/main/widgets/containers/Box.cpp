@@ -58,9 +58,11 @@ namespace lsp
             WidgetContainer(dpy),
             vItems(&sProperties, &sIListener),
             sSpacing(&sProperties),
+            sBorder(&sProperties),
             sHomogeneous(&sProperties),
             sOrientation(&sProperties),
-            sConstraints(&sProperties)
+            sConstraints(&sProperties),
+            sBorderColor(&sProperties)
         {
             pClass          = &metadata;
         }

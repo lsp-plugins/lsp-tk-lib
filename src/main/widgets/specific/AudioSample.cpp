@@ -87,6 +87,7 @@ namespace lsp
                 sLabelRadius.bind("label.radius", this);
                 sBorder.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
+                sBorderFlat.bind("border.flat", this);
                 sGlass.bind("glass", this);
                 sColor.bind("color", this);
                 sBorderColor.bind("border.color", this);
@@ -122,6 +123,7 @@ namespace lsp
 
                 sBorder.set(4);
                 sBorderRadius.set(12);
+                sBorderFlat.set(false);
                 sGlass.set(true);
                 sColor.set("#000000");
                 sBorderColor.set("#000000");
@@ -165,6 +167,7 @@ namespace lsp
             sLabelRadius(&sProperties),
             sBorder(&sProperties),
             sBorderRadius(&sProperties),
+            sBorderFlat(&sProperties),
             sGlass(&sProperties),
             sColor(&sProperties),
             sBorderColor(&sProperties),
@@ -263,6 +266,7 @@ namespace lsp
             sLabelRadius.bind("label.radius", &sStyle);
             sBorder.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
+            sBorderFlat.bind("border.flat", &sStyle);
             sGlass.bind("glass", &sStyle);
             sColor.bind("color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
@@ -327,6 +331,8 @@ namespace lsp
                 query_resize();
             if (sBorderRadius.is(prop))
                 query_resize();
+            if (sBorderFlat.is(prop))
+                query_draw();
             if (sGlass.is(prop))
                 query_draw();
             if (sColor.is(prop))
@@ -943,12 +949,13 @@ namespace lsp
                 if (pressed)
                     bw         += lsp_max(1.0f, scaling);
 
+                bool flat   = sBorderFlat.get();
                 if (sGlass.get())
                 {
                     cv = create_border_glass(&pGlass, s,
                             color, bg_color,
                             SURFMASK_ALL_CORNER, bw, xr,
-                            sSize.nWidth, sSize.nHeight
+                            sSize.nWidth, sSize.nHeight, flat
                         );
                     if (cv != NULL)
                         s->draw(cv, sSize.nLeft, sSize.nTop);
@@ -956,7 +963,7 @@ namespace lsp
                 else
                 {
                     drop_glass();
-                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize);
+                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize, flat);
                 }
 
                 s->set_antialiasing(aa);
