@@ -105,6 +105,7 @@ namespace lsp
                 LSP_TK_PROPERTY(String,             text,               &sText)
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Color,              text_color,         &sTextColor)
+                LSP_TK_PROPERTY(Color,              screw_color,        &sScrewColor)
                 LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
                 LSP_TK_PROPERTY(Integer,            angle,              &sAngle)
                 LSP_TK_PROPERTY(Padding,            button_padding,     &sButtonPadding)
