@@ -83,6 +83,7 @@
 #include <lsp-plug.in/tk/prop/multi/Embedding.h>
 #include <lsp-plug.in/tk/prop/multi/FileMask.h>
 #include <lsp-plug.in/tk/prop/multi/Font.h>
+#include <lsp-plug.in/tk/prop/multi/Alignment.h>
 #include <lsp-plug.in/tk/prop/multi/Layout.h>
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
 #include <lsp-plug.in/tk/prop/multi/Position.h>
