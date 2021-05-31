@@ -85,12 +85,18 @@ namespace lsp
 
             public:
                 void                happly(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *req);
+                void                happly(ws::rectangle_t *dst, const ws::rectangle_t *src, ssize_t avail);
                 void                vapply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *req);
+                void                vapply(ws::rectangle_t *dst, const ws::rectangle_t *src, ssize_t avail);
                 void                apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *req, orientation_t orientation);
+                void                apply(ws::rectangle_t *dst, const ws::rectangle_t *src, ssize_t avail, orientation_t orientation);
 
                 inline void         happly(ws::rectangle_t *dst, const ws::size_limit_t *req) { return happly(dst, dst, req); }
+                inline void         happly(ws::rectangle_t *dst, ssize_t avail) { return happly(dst, dst, avail); }
                 inline void         vapply(ws::rectangle_t *dst, const ws::size_limit_t *req) { return vapply(dst, dst, req); }
+                inline void         vapply(ws::rectangle_t *dst, ssize_t avail) { return vapply(dst, dst, avail); }
                 void                apply(ws::rectangle_t *dst, const ws::size_limit_t *req, orientation_t orientation);
+                void                apply(ws::rectangle_t *dst, ssize_t avail, orientation_t orientation);
 
         };
 

@@ -45,6 +45,7 @@ namespace lsp
                 prop::Integer           sTextRadius;
                 prop::Embedding         sEmbedding;
                 prop::Padding           sIPadding;
+                prop::Alignment         sHeading;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -82,6 +83,7 @@ namespace lsp
                 prop::Integer           sTextRadius;
                 prop::Embedding         sEmbedding;
                 prop::Padding           sIPadding;
+                prop::Alignment         sHeading;
 
             protected:
                 void                    allocate(alloc_t *alloc);
@@ -109,6 +111,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,    text_radius,    &sTextRadius)
                 LSP_TK_PROPERTY(Embedding,  embedding,      &sEmbedding)
                 LSP_TK_PROPERTY(Padding,    ipadding,       &sIPadding)
+                LSP_TK_PROPERTY(Alignment,  heading,        &sHeading)
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

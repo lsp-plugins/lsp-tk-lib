@@ -42,6 +42,7 @@ namespace lsp
                 sTextRadius.bind("text.radius", this);
                 sEmbedding.bind("embed", this);
                 sIPadding.bind("ipadding", this);
+                sHeading.bind("heading", this);
                 // Configure
                 sFont.set_size(12.0f);
                 sColor.set("#000000");
@@ -53,6 +54,7 @@ namespace lsp
                 sTextRadius.set(10);
                 sEmbedding.set(false);
                 sIPadding.set_all(0);
+                sHeading.set(-1.0f, 0.0f);
                 // Override
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 // Commit
@@ -114,6 +116,7 @@ namespace lsp
             sTextRadius.bind("text.radius", &sStyle);
             sEmbedding.bind("embed", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
+            sHeading.bind("heading", &sStyle);
 
             return STATUS_OK;
         }
@@ -176,6 +179,11 @@ namespace lsp
             {
                 xr.nWidth           = 0;
                 xr.nHeight          = 0;
+
+                alloc->text.nLeft   = 0;
+                alloc->text.nTop    = 0;
+                alloc->text.nWidth  = 0;
+                alloc->text.nHeight = 0;
             }
             alloc->rtext        = xr;
 
@@ -246,16 +254,21 @@ namespace lsp
 
         void Group::realize(const ws::rectangle_t *r)
         {
-//            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             WidgetContainer::realize(r);
 
             // Compute text and widget area
             alloc_t alloc;
             allocate(&alloc);
 
-            sLabel          = alloc.text;
+            sHeading.happly(&sLabel, &alloc.text, r->nWidth);
+//            sLabel          = alloc.text;
             sLabel.nLeft   += r->nLeft;
             sLabel.nTop    += r->nTop;
+            lsp_trace("this=%p, width=%d, height=%d, lwidth=%d, lheight=%d",
+                this,
+                int(r->nWidth), int(r->nHeight),
+                int(sLabel.nWidth), int(sLabel.nHeight)
+            );
 
             Padding::enter(&sArea, r, &alloc.pad);
 

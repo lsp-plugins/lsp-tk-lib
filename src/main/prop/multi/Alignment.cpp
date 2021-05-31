@@ -157,6 +157,25 @@ namespace lsp
             dst->nHeight    = src->nHeight;
         }
 
+        void Alignment::happly(ws::rectangle_t *dst, const ws::rectangle_t *src, ssize_t avail)
+        {
+            // Estimate the minimum area size and the amount of free space
+            ssize_t w       = lsp_max(0, src->nWidth);
+            ssize_t xgap    = lsp_max(0, avail - w);
+
+            // Scale the area size (if possible)
+            w              += lsp_max(xgap * nScale, 0.0f);
+
+            // Estimate the amount of free space and update position (if possible)
+            xgap            = lsp_max(0, avail  - w);
+
+            // Scale position (if possible) and store results
+            dst->nLeft      = src->nLeft + xgap * (nAlign + 1.0f) * 0.5f;
+            dst->nTop       = src->nTop;
+            dst->nWidth     = w;
+            dst->nHeight    = src->nHeight;
+        }
+
         void Alignment::vapply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *req)
         {
             // Estimate the minimum area size and the amount of free space
@@ -178,6 +197,25 @@ namespace lsp
             dst->nHeight    = h;
         }
 
+        void Alignment::vapply(ws::rectangle_t *dst, const ws::rectangle_t *src, ssize_t avail)
+        {
+            // Estimate the minimum area size and the amount of free space
+            ssize_t h       = lsp_max(0, src->nHeight);
+            ssize_t ygap    = lsp_max(0, avail - h);
+
+            // Scale the area size (if possible)
+            h              += lsp_max(ygap * nScale, 0.0f);
+
+            // Estimate the amount of free space and update position (if possible)
+            ygap            = lsp_max(0, avail - h);
+
+            // Scale position (if possible) and store results
+            dst->nLeft      = src->nLeft;
+            dst->nTop       = src->nTop  + ygap * (nAlign + 1.0f) * 0.5f;
+            dst->nWidth     = src->nWidth;
+            dst->nHeight    = h;
+        }
+
         void Alignment::apply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *req, orientation_t orientation)
         {
             if (orientation == O_HORIZONTAL)
@@ -186,12 +224,28 @@ namespace lsp
                 vapply(dst, src, req);
         }
 
+        void Alignment::apply(ws::rectangle_t *dst, const ws::rectangle_t *src, ssize_t avail, orientation_t orientation)
+        {
+            if (orientation == O_HORIZONTAL)
+                happly(dst, src, avail);
+            else
+                vapply(dst, src, avail);
+        }
+
         void Alignment::apply(ws::rectangle_t *dst, const ws::size_limit_t *req, orientation_t orientation)
         {
             if (orientation == O_HORIZONTAL)
                 happly(dst, dst, req);
             else
                 vapply(dst, dst, req);
+        }
+
+        void Alignment::apply(ws::rectangle_t *dst, ssize_t avail, orientation_t orientation)
+        {
+            if (orientation == O_HORIZONTAL)
+                happly(dst, dst, avail);
+            else
+                vapply(dst, dst, avail);
         }
 
     } /* namespace tk */
