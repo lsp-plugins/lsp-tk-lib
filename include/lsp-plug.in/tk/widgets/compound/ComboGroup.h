@@ -45,6 +45,7 @@ namespace lsp
                 prop::Integer               sRadius;
                 prop::Integer               sTextRadius;
                 prop::Integer               sSpinSize;
+                prop::Integer               sSpinSpacing;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sLayout;
                 prop::SizeConstraints       sSizeConstraints;
@@ -128,6 +129,7 @@ namespace lsp
                 prop::Integer               sRadius;
                 prop::Integer               sTextRadius;
                 prop::Integer               sSpinSize;
+                prop::Integer               sSpinSpacing;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sLayout;
                 prop::SizeConstraints       sSizeConstraints;
@@ -173,6 +175,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                    border_radius,          &sRadius)
                 LSP_TK_PROPERTY(Integer,                    text_radius,            &sTextRadius)
                 LSP_TK_PROPERTY(Integer,                    spin_size,              &sSpinSize)
+                LSP_TK_PROPERTY(Integer,                    spin_spacing,           &sSpinSpacing)
                 LSP_TK_PROPERTY(Embedding,                  embedding,              &sEmbedding)
                 LSP_TK_PROPERTY(WidgetList<Widget>,         children,               &vWidgets)
                 LSP_TK_PROPERTY(Layout,                     layout,                 &sLayout)

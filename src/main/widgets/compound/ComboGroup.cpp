@@ -42,6 +42,7 @@ namespace lsp
                 sRadius.bind("border.radius", this);
                 sTextRadius.bind("text.radius", this);
                 sSpinSize.bind("spin.size", this);
+                sSpinSpacing.bind("spin.spacing", this);
                 sEmbedding.bind("embed", this);
                 sLayout.bind("layout", this);
                 sSizeConstraints.bind("size.constraints", this);
@@ -57,6 +58,7 @@ namespace lsp
                 sRadius.set(10);
                 sTextRadius.set(10);
                 sSpinSize.set(8);
+                sSpinSpacing.set(0);
                 sEmbedding.set(false);
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 sSizeConstraints.set_all(-1);
@@ -145,6 +147,7 @@ namespace lsp
             sRadius(&sProperties),
             sTextRadius(&sProperties),
             sSpinSize(&sProperties),
+            sSpinSpacing(&sProperties),
             sEmbedding(&sProperties),
             sLayout(&sProperties),
             sSizeConstraints(&sProperties),
@@ -203,6 +206,7 @@ namespace lsp
             sRadius.bind("border.radius", &sStyle);
             sTextRadius.bind("text.radius", &sStyle);
             sSpinSize.bind("spin.size", &sStyle);
+            sSpinSpacing.bind("spin.spacing", &sStyle);
             sEmbedding.bind("embed", &sStyle);
             sLayout.bind("layout", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -257,6 +261,10 @@ namespace lsp
             if (sRadius.is(prop))
                 query_resize();
             if (sTextRadius.is(prop))
+                query_resize();
+            if (sSpinSize.is(prop))
+                query_resize();
+            if (sSpinSpacing.is(prop))
                 query_resize();
             if (sEmbedding.is(prop))
                 query_resize();
@@ -316,6 +324,7 @@ namespace lsp
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
             ssize_t spin    = lsp_max(0.0f, sSpinSize.get() * scaling);
+            ssize_t spin_sp = lsp_max(0.0f, sSpinSpacing.get() * scaling);
 
             // Text allocation
             ws::rectangle_t xr;
@@ -336,7 +345,7 @@ namespace lsp
 
             sFont.get_parameters(pDisplay, scaling, &fp);
             sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
-            xr.nWidth           = tp.Width + tradius + spin;
+            xr.nWidth           = tp.Width + tradius + spin + spin_sp;
             xr.nHeight          = lsp_max(fp.Height, tp.Height);
             sTextPadding.add(&xr, scaling);
             alloc->text         = xr;
@@ -476,7 +485,7 @@ namespace lsp
             {
                 widget->get_rectangle(&xr);
 
-                if (widget->redraw_pending())
+                if ((force) || (widget->redraw_pending()))
                 {
                     // Draw the child only if it is visible in the area
                     if (Size::intersection(&xr, &sSize))
@@ -542,6 +551,7 @@ namespace lsp
                 if (Size::overlap(area, &sLabel))
                 {
                     ssize_t spin        = lsp_max(0.0f, sSpinSize.get() * scaling);
+                    ssize_t spin_sp     = lsp_max(0.0f, sSpinSpacing.get() * scaling);
                     ListBoxItem *it     = current_item();
                     ir                  = lsp_max(0.0f, sTextRadius.get() * scaling);
 
@@ -570,7 +580,7 @@ namespace lsp
                     sTextPadding.enter(&tloc, &sLabel, scaling);
 
                     sFont.draw(s, color,
-                            tloc.nLeft + spin - tp.XBearing, tloc.nTop + fp.Ascent,
+                            tloc.nLeft + spin + spin_sp - tp.XBearing, tloc.nTop + fp.Ascent,
                             scaling, &text);
 
                     // Draw arrows

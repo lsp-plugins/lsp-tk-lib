@@ -262,6 +262,7 @@ MTEST_BEGIN("tk.widgets.compound", combogroup)
         cg->heading()->set_scale(1.0f);
         cg->text_radius()->set(0);
         cg->text_padding()->set_left(5);
+        cg->spin_spacing()->set(5);
 
         tk::ListBoxItem *li = add_item(vh, widgets, cg, wid, col, "Widget 1");
         add_item(vh, widgets, cg, wid, col, "Widget 2");

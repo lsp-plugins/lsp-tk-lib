@@ -24,6 +24,7 @@
 - Replaced text_border property for tk::ComboGroup widget with text_padding property.
 - Added heading property for tk::ComboGroup widget.
 - Fixed missing builtin styles for tk::ComboGroup widget.
+- Added spin_spacing property to tk::ComboGroup widget.
 
 TODO:
 - Add custom mouse pointer for fraction actions.
