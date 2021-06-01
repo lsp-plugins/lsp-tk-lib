@@ -196,7 +196,7 @@ MTEST_BEGIN("tk.widgets.containers", group)
         grid->hspacing()->set(8);
         grid->vspacing()->set(4);
         grid->bg_color()->set_rgb(1.0, 0.75, 1.0);
-        grid->rows()->set(2);
+        grid->rows()->set(3);
         grid->columns()->set(3);
 
         {
@@ -205,6 +205,7 @@ MTEST_BEGIN("tk.widgets.containers", group)
             size_t vid = 0;
             size_t col = 0;
 
+            // Row 1
             // Create empty group
             MTEST_ASSERT(id.fmt_ascii("group-%d", int(gid++)));
 
@@ -234,6 +235,7 @@ MTEST_BEGIN("tk.widgets.containers", group)
             gr->text()->set_raw("Some long text");
             gr->show_text()->set(true);
 
+            // Row 2
             // Create group with element and without embedding
             MTEST_ASSERT(id.fmt_ascii("group-%d", int(gid++)));
 
@@ -243,6 +245,7 @@ MTEST_BEGIN("tk.widgets.containers", group)
             MTEST_ASSERT(grid->add(gr) == STATUS_OK);
             gr->text()->set_raw("Void");
             gr->show_text()->set(true);
+            gr->heading()->set_align(1.0f);
 
             MTEST_ASSERT(id.fmt_ascii("void-%d", int(vid++)));
 
@@ -263,6 +266,7 @@ MTEST_BEGIN("tk.widgets.containers", group)
             gr->text()->set_raw("Void");
             gr->show_text()->set(true);
             gr->embedding()->set(true);
+            gr->heading()->set_align(0.0f);
 
             MTEST_ASSERT(id.fmt_ascii("void-%d", int(vid++)));
 
@@ -293,6 +297,27 @@ MTEST_BEGIN("tk.widgets.containers", group)
             MTEST_ASSERT(gr->add(wv) == STATUS_OK);
             wv->constraints()->set_min(32, 32);
             wv->bg_color()->set_rgb24(next_color(col));
+
+            // Row 3
+            // Create flat group
+            MTEST_ASSERT(id.fmt_ascii("group-%d", int(gid++)));
+
+            MTEST_ASSERT(gr = new tk::Group(dpy));
+            MTEST_ASSERT(init_widget(gr, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(gr));
+            MTEST_ASSERT(grid->add(gr, 1, 3) == STATUS_OK);
+            gr->text()->set_raw("Heading");
+            gr->show_text()->set(true);
+            gr->layout()->set_scale(0.0f);
+            gr->layout()->set_align(0.5f, 0.5f);
+            gr->border_radius()->set(0);
+            gr->border_size()->set(0);
+            gr->bg_color()->set_rgb24(0x1b1c22);
+            gr->color()->set_rgb24(0x26282f);
+            gr->text_color()->set_rgb24(0xa8aed3);
+            gr->heading()->set_scale(1.0f);
+            gr->text_radius()->set(0);
+            gr->text_padding()->set_left(5);
         }
 
         // Show window

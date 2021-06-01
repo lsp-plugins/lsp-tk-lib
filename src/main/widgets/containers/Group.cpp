@@ -37,7 +37,7 @@ namespace lsp
                 sTextColor.bind("text.color", this);
                 sShowText.bind("text.show", this);
                 sBorder.bind("border.size", this);
-                sTextBorder.bind("text.border", this);
+                sTextPadding.bind("text.padding", this);
                 sRadius.bind("border.radius", this);
                 sTextRadius.bind("text.radius", this);
                 sEmbedding.bind("embed", this);
@@ -49,7 +49,7 @@ namespace lsp
                 sTextColor.set("#ffffff");
                 sShowText.set(true);
                 sBorder.set(2);
-                sTextBorder.set(2);
+                sTextPadding.set(2);
                 sRadius.set(10);
                 sTextRadius.set(10);
                 sEmbedding.set(false);
@@ -73,7 +73,7 @@ namespace lsp
             sText(&sProperties),
             sShowText(&sProperties),
             sBorder(&sProperties),
-            sTextBorder(&sProperties),
+            sTextPadding(&sProperties),
             sRadius(&sProperties),
             sTextRadius(&sProperties),
             sEmbedding(&sProperties),
@@ -111,7 +111,7 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sShowText.bind("text.show", &sStyle);
             sBorder.bind("border.size", &sStyle);
-            sTextBorder.bind("text.border", &sStyle);
+            sTextPadding.bind("text.padding", &sStyle);
             sRadius.bind("border.radius", &sStyle);
             sTextRadius.bind("text.radius", &sStyle);
             sEmbedding.bind("embed", &sStyle);
@@ -135,6 +135,8 @@ namespace lsp
             if (sShowText.is(prop))
                 query_resize();
             if (sBorder.is(prop))
+                query_resize();
+            if (sTextPadding.is(prop))
                 query_resize();
             if (sRadius.is(prop))
                 query_resize();
@@ -163,14 +165,14 @@ namespace lsp
                 ws::text_parameters_t tp;
                 ws::font_parameters_t fp;
 
-                ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
                 ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
                 sText.format(&s);
 
                 sFont.get_parameters(pDisplay, scaling, &fp);
                 sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
-                xr.nWidth           = tp.Width + tborder + tradius;
-                xr.nHeight          = lsp_max(fp.Height, tp.Height) + tborder*2;
+                xr.nWidth           = tp.Width + tradius;
+                xr.nHeight          = lsp_max(fp.Height, tp.Height);
+                sTextPadding.add(&xr, scaling);
                 alloc->text         = xr;
 
                 xr.nWidth          += radius * 1.5f;
@@ -368,16 +370,8 @@ namespace lsp
                     color.copy(sColor);
                     color.scale_lightness(bright);
 
-                    xr          = sSize;
-                    xg          = border >> 1;
-                    ir          = lsp_max(0, radius - xg);
-                    xr.nLeft   += xg;
-                    xr.nTop    += xg;
-                    xr.nWidth  -= (border*2 - xg);
-                    xr.nHeight -= (border*2 - xg);
-
                     s->set_antialiasing(true);
-                    s->wire_round_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &xr, border);
+                    s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
                 }
 
                 // Draw text
@@ -385,12 +379,18 @@ namespace lsp
                 {
                     ir          = lsp_max(0.0f, sTextRadius.get() * scaling);
 
+                    size_t mask = 0;
+                    if (sHeading.align() > -1.0f)
+                        mask       |= SURFMASK_LB_CORNER;
+                    if (sHeading.align() < 1.0f)
+                        mask       |= SURFMASK_RB_CORNER;
+
                     // Draw text background
                     color.copy(sColor);
                     color.scale_lightness(bright);
 
                     s->set_antialiasing(true);
-                    s->fill_round_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
+                    s->fill_round_rect(color, mask, ir, &sLabel);
 
                     // Draw text
                     LSPString text;
@@ -399,15 +399,16 @@ namespace lsp
                     color.copy(sTextColor);
                     color.scale_lightness(bright);
 
-                    ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
                     sText.format(&text);
 
                     sFont.get_parameters(pDisplay, scaling, &fp);
                     sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                    ws::rectangle_t tloc;
+                    sTextPadding.enter(&tloc, &sLabel, scaling);
+                    tloc.nLeft -= tp.XBearing;
+                    tloc.nTop  += fp.Ascent;
 
-                    sFont.draw(s, color,
-                            sLabel.nLeft + tborder - tp.XBearing, sLabel.nTop + tborder + fp.Ascent,
-                            scaling, &text);
+                    sFont.draw(s, color, tloc.nLeft, tloc.nTop, scaling, &text);
                 }
 
                 s->clip_end();

@@ -40,7 +40,7 @@ namespace lsp
                 prop::String            sText;
                 prop::Boolean           sShowText;
                 prop::Integer           sBorder;
-                prop::Integer           sTextBorder;
+                prop::Padding           sTextPadding;
                 prop::Integer           sRadius;
                 prop::Integer           sTextRadius;
                 prop::Embedding         sEmbedding;
@@ -78,7 +78,7 @@ namespace lsp
                 prop::String            sText;
                 prop::Boolean           sShowText;
                 prop::Integer           sBorder;
-                prop::Integer           sTextBorder;
+                prop::Padding           sTextPadding;
                 prop::Integer           sRadius;
                 prop::Integer           sTextRadius;
                 prop::Embedding         sEmbedding;
@@ -106,7 +106,7 @@ namespace lsp
                 LSP_TK_PROPERTY(String,     text,           &sText)
                 LSP_TK_PROPERTY(Boolean,    show_text,      &sShowText)
                 LSP_TK_PROPERTY(Integer,    border_size,    &sBorder)
-                LSP_TK_PROPERTY(Integer,    text_border,    &sTextBorder)
+                LSP_TK_PROPERTY(Padding,    text_padding,   &sTextPadding)
                 LSP_TK_PROPERTY(Integer,    border_radius,  &sRadius)
                 LSP_TK_PROPERTY(Integer,    text_radius,    &sTextRadius)
                 LSP_TK_PROPERTY(Embedding,  embedding,      &sEmbedding)

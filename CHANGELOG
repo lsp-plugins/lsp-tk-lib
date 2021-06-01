@@ -19,6 +19,8 @@
 - Added drawing mode for the widget that allows to switch between different kinds of widget look.
 - Added basic background color inheritance support to widgets.
 - Rendering of graph widget has been fixed and enhanced with "border.flat" property.
+- Replaced text_border property for tk::Group widget with text_padding property.
+- Added heading property for tk::Group widget.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

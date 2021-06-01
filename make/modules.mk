@@ -69,10 +69,10 @@ $(ALL_SRC_MODULES) $(ALL_HDR_MODULES):
 	@$(GIT) -C "$($(@)_PATH)" reset --hard
 	@$(GIT) -C "$($(@)_PATH)" fetch origin --force
 	@$(GIT) -C "$($(@)_PATH)" fetch origin '+refs/heads/*:refs/tags/*' --force
-	@$(GIT) -c advice.detachedHead=false -C "$($(@)_PATH)" checkout origin/$($(@)_BRANCH) || \
-	 $(GIT) -c advice.detachedHead=false -C "$($(@)_PATH)" checkout refs/tags/$($(@)_BRANCH) || \
-	 $(GIT) -c advice.detachedHead=false -C "$($(@)_PATH)" checkout origin/$($(@)_NAME)-$($(@)_BRANCH) || \
-	 $(GIT) -c advice.detachedHead=false -C "$($(@)_PATH)" checkout refs/tags/$($(@)_NAME)-$($(@)_BRANCH)
+	@$(GIT) -c advice.detachedHead=false -C "$($(@)_PATH)" checkout -B "$($(@)_BRANCH)" "origin/$($(@)_BRANCH)" || \
+	 $(GIT) -c advice.detachedHead=false -C "$($(@)_PATH)" checkout "refs/tags/$($(@)_BRANCH)" || \
+	 $(GIT) -c advice.detachedHead=false -C "$($(@)_PATH)" checkout -B "$($(@)_NAME)-$($(@)_BRANCH)" "origin/$($(@)_NAME)-$($(@)_BRANCH)" || \
+	 $(GIT) -c advice.detachedHead=false -C "$($(@)_PATH)" checkout "refs/tags/$($(@)_NAME)-$($(@)_BRANCH)"
 
 $(ALL_PATHS):
 	@echo "Removing $(notdir $(@))"
