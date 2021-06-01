@@ -38,13 +38,14 @@ namespace lsp
                 sSpinColor.bind("spin.color", this);
                 sOpened.bind("opened", this);
                 sBorder.bind("border.size", this);
-                sTextBorder.bind("text.border", this);
+                sTextPadding.bind("text.padding", this);
                 sRadius.bind("border.radius", this);
                 sTextRadius.bind("text.radius", this);
                 sSpinSize.bind("spin.size", this);
                 sEmbedding.bind("embed", this);
                 sLayout.bind("layout", this);
                 sSizeConstraints.bind("size.constraints", this);
+                sHeading.bind("heading", this);
                 // Configure
                 sFont.set_size(12.0f);
                 sColor.set("#000000");
@@ -52,15 +53,22 @@ namespace lsp
                 sSpinColor.set("#ffffff");
                 sOpened.set(false);
                 sBorder.set(2);
-                sTextBorder.set(2);
+                sTextPadding.set(2);
                 sRadius.set(10);
                 sTextRadius.set(10);
                 sSpinSize.set(8);
                 sEmbedding.set(false);
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 sSizeConstraints.set_all(-1);
+                sHeading.set(-1.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ComboGroup, "ComboGroup");
+
+            // ComboGroup::Window style
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboGroup::Window");
+
+            // ComboGroup::List style
+            LSP_TK_BUILTIN_STYLE(ListBox, "ComboGroup::List");
         }
 
         //-----------------------------------------------------------------------------
@@ -133,13 +141,14 @@ namespace lsp
             sEmptyText(&sProperties),
             sOpened(&sProperties),
             sBorder(&sProperties),
-            sTextBorder(&sProperties),
+            sTextPadding(&sProperties),
             sRadius(&sProperties),
             sTextRadius(&sProperties),
             sSpinSize(&sProperties),
             sEmbedding(&sProperties),
             sLayout(&sProperties),
             sSizeConstraints(&sProperties),
+            sHeading(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -190,31 +199,14 @@ namespace lsp
             sEmptyText.bind(&sStyle, pDisplay->dictionary());
             sOpened.bind("opened", &sStyle);
             sBorder.bind("border.size", &sStyle);
-            sTextBorder.bind("text.border", &sStyle);
+            sTextPadding.bind("text.padding", &sStyle);
             sRadius.bind("border.radius", &sStyle);
             sTextRadius.bind("text.radius", &sStyle);
             sSpinSize.bind("spin.size", &sStyle);
             sEmbedding.bind("embed", &sStyle);
             sLayout.bind("layout", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sFont.init(sclass);
-//                sColor.init(sclass, "#000000");
-//                sTextColor.init(sclass, "#ffffff");
-//                sSpinColor.init(sclass, "#ffffff");
-//                sOpened.init(sclass, false);
-//                sBorder.init(sclass, 2);
-//                sTextBorder.init(sclass, 2);
-//                sRadius.init(sclass, 10);
-//                sTextRadius.init(sclass, 10);
-//                sSpinSize.init(sclass, 8);
-//                sEmbedding.init(sclass, false);
-//                sLayout.init(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
-//                sSizeConstraints.init(sclass);
-//            }
+            sHeading.bind("heading", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -260,6 +252,8 @@ namespace lsp
             }
             if (sBorder.is(prop))
                 query_resize();
+            if (sPadding.is(prop))
+                query_resize();
             if (sRadius.is(prop))
                 query_resize();
             if (sTextRadius.is(prop))
@@ -269,6 +263,8 @@ namespace lsp
             if (sLayout.is(prop))
                 query_resize();
             if (sSizeConstraints.is(prop))
+                query_resize();
+            if (sHeading.is(prop))
                 query_resize();
             if (vWidgets.is(prop))
                 query_resize();
@@ -332,7 +328,6 @@ namespace lsp
             ws::font_parameters_t fp;
             ListBoxItem *it     = current_item();
 
-            ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
             ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
             if (it != NULL)
                 it->text()->format(&s);
@@ -341,8 +336,9 @@ namespace lsp
 
             sFont.get_parameters(pDisplay, scaling, &fp);
             sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
-            xr.nWidth           = tp.Width + tborder + tradius + spin;
-            xr.nHeight          = lsp_max(fp.Height, tp.Height) + tborder*2;
+            xr.nWidth           = tp.Width + tradius + spin;
+            xr.nHeight          = lsp_max(fp.Height, tp.Height);
+            sTextPadding.add(&xr, scaling);
             alloc->text         = xr;
 
             xr.nWidth          += radius * 1.5f;
@@ -422,7 +418,7 @@ namespace lsp
             alloc_t alloc;
             allocate(&alloc);
 
-            sLabel          = alloc.text;
+            sHeading.happly(&sLabel, &alloc.text, r->nWidth);
             sLabel.nLeft   += r->nLeft;
             sLabel.nTop    += r->nTop;
 
@@ -538,16 +534,8 @@ namespace lsp
                     color.copy(sColor);
                     color.scale_lightness(bright);
 
-                    xr          = sSize;
-                    xg          = border >> 1;
-                    ir          = lsp_max(0, radius - xg);
-                    xr.nLeft   += xg;
-                    xr.nTop    += xg;
-                    xr.nWidth  -= (border*2 - xg);
-                    xr.nHeight -= (border*2 - xg);
-
                     s->set_antialiasing(true);
-                    s->wire_round_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &xr, border);
+                    s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
                 }
 
                 // Draw text (and image)
@@ -571,7 +559,6 @@ namespace lsp
                     color.copy(sTextColor);
                     color.scale_lightness(bright);
 
-                    ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
                     if (it != NULL)
                         it->text()->format(&text);
                     else
@@ -579,12 +566,11 @@ namespace lsp
 
                     sFont.get_parameters(pDisplay, scaling, &fp);
                     sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
-
-                    ssize_t x = sLabel.nLeft + tborder;
-                    ssize_t y = sLabel.nTop  + tborder;
+                    ws::rectangle_t tloc;
+                    sTextPadding.enter(&tloc, &sLabel, scaling);
 
                     sFont.draw(s, color,
-                            x + spin - tp.XBearing, y + fp.Ascent,
+                            tloc.nLeft + spin - tp.XBearing, tloc.nTop + fp.Ascent,
                             scaling, &text);
 
                     // Draw arrows
@@ -592,15 +578,17 @@ namespace lsp
                     color.scale_lightness(bright);
 
                     s->fill_triangle(
-                        x, y + (fp.Height*3.0f)/7.0f,
-                        x + spin*0.4f, y + fp.Height/7.0f,
-                        x + spin*0.8f, y + (fp.Height*3.0f)/7.0f,
-                        color);
+                        tloc.nLeft, tloc.nTop + (fp.Height*3.0f)/7.0f,
+                        tloc.nLeft + spin*0.4f, tloc.nTop + fp.Height/7.0f,
+                        tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*3.0f)/7.0f,
+                        color
+                    );
                     s->fill_triangle(
-                        x, y + (fp.Height*4.0f)/7.0f,
-                        x + spin*0.8f, y + (fp.Height*4.0f)/7.0f,
-                        x + spin*0.4f, y + (fp.Height*6.0f)/7.0f,
-                        color);
+                        tloc.nLeft, tloc.nTop + (fp.Height*4.0f)/7.0f,
+                        tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*4.0f)/7.0f,
+                        tloc.nLeft + spin*0.4f, tloc.nTop + (fp.Height*6.0f)/7.0f,
+                        color
+                    );
                 }
 
                 s->clip_end();

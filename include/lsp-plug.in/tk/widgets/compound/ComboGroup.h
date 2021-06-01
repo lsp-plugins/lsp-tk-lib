@@ -41,13 +41,14 @@ namespace lsp
                 prop::String                sEmptyText;
                 prop::Boolean               sOpened;
                 prop::Integer               sBorder;
-                prop::Integer               sTextBorder;
+                prop::Padding               sTextPadding;
                 prop::Integer               sRadius;
                 prop::Integer               sTextRadius;
                 prop::Integer               sSpinSize;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sLayout;
                 prop::SizeConstraints       sSizeConstraints;
+                prop::Alignment             sHeading;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -123,13 +124,14 @@ namespace lsp
                 prop::String                sEmptyText;
                 prop::Boolean               sOpened;
                 prop::Integer               sBorder;
-                prop::Integer               sTextBorder;
+                prop::Padding               sTextPadding;
                 prop::Integer               sRadius;
                 prop::Integer               sTextRadius;
                 prop::Integer               sSpinSize;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sLayout;
                 prop::SizeConstraints       sSizeConstraints;
+                prop::Alignment             sHeading;
 
                 prop::WidgetList<Widget>    vWidgets;
                 prop::WidgetPtr<ListBoxItem> sSelected;
@@ -160,21 +162,22 @@ namespace lsp
                 virtual status_t            init();
 
             public:
-                LSP_TK_PROPERTY(Font,       font,               &sFont)
-                LSP_TK_PROPERTY(Color,      color,              &sColor)
-                LSP_TK_PROPERTY(Color,      text_color,         &sTextColor)
-                LSP_TK_PROPERTY(Color,      spin_color,         &sSpinColor)
-                LSP_TK_PROPERTY(String,     empty_text,         &sEmptyText)
-                LSP_TK_PROPERTY(Boolean,    opened,             &sOpened)
-                LSP_TK_PROPERTY(Integer,    border_size,        &sBorder)
-                LSP_TK_PROPERTY(Integer,    text_border,        &sTextBorder)
-                LSP_TK_PROPERTY(Integer,    border_radius,      &sRadius)
-                LSP_TK_PROPERTY(Integer,    text_radius,        &sTextRadius)
-                LSP_TK_PROPERTY(Integer,    spin_size,          &sSpinSize)
-                LSP_TK_PROPERTY(Embedding,  embedding,          &sEmbedding)
+                LSP_TK_PROPERTY(Font,                       font,                   &sFont)
+                LSP_TK_PROPERTY(Color,                      color,                  &sColor)
+                LSP_TK_PROPERTY(Color,                      text_color,             &sTextColor)
+                LSP_TK_PROPERTY(Color,                      spin_color,             &sSpinColor)
+                LSP_TK_PROPERTY(String,                     empty_text,             &sEmptyText)
+                LSP_TK_PROPERTY(Boolean,                    opened,                 &sOpened)
+                LSP_TK_PROPERTY(Integer,                    border_size,            &sBorder)
+                LSP_TK_PROPERTY(Padding,                    text_padding,           &sTextPadding)
+                LSP_TK_PROPERTY(Integer,                    border_radius,          &sRadius)
+                LSP_TK_PROPERTY(Integer,                    text_radius,            &sTextRadius)
+                LSP_TK_PROPERTY(Integer,                    spin_size,              &sSpinSize)
+                LSP_TK_PROPERTY(Embedding,                  embedding,              &sEmbedding)
                 LSP_TK_PROPERTY(WidgetList<Widget>,         children,               &vWidgets)
                 LSP_TK_PROPERTY(Layout,                     layout,                 &sLayout)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,            &sSizeConstraints)
+                LSP_TK_PROPERTY(Alignment,                  heading,                &sHeading)
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,               &sSelected)
 
                 LSP_TK_PROPERTY(Font,                       list_font,              sLBox.font())

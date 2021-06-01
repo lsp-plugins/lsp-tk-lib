@@ -77,7 +77,8 @@ namespace lsp
             sRadius(&sProperties),
             sTextRadius(&sProperties),
             sEmbedding(&sProperties),
-            sIPadding(&sProperties)
+            sIPadding(&sProperties),
+            sHeading(&sProperties)
         {
             pWidget             = NULL;
 
@@ -145,6 +146,8 @@ namespace lsp
             if (sEmbedding.is(prop))
                 query_resize();
             if (sIPadding.is(prop))
+                query_resize();
+            if (sHeading.is(prop))
                 query_resize();
         }
 
@@ -263,14 +266,8 @@ namespace lsp
             allocate(&alloc);
 
             sHeading.happly(&sLabel, &alloc.text, r->nWidth);
-//            sLabel          = alloc.text;
             sLabel.nLeft   += r->nLeft;
             sLabel.nTop    += r->nTop;
-            lsp_trace("this=%p, width=%d, height=%d, lwidth=%d, lheight=%d",
-                this,
-                int(r->nWidth), int(r->nHeight),
-                int(sLabel.nWidth), int(sLabel.nHeight)
-            );
 
             Padding::enter(&sArea, r, &alloc.pad);
 

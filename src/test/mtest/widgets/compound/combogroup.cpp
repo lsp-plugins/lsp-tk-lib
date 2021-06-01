@@ -212,15 +212,14 @@ MTEST_BEGIN("tk.widgets.compound", combogroup)
         grid->hspacing()->set(8);
         grid->vspacing()->set(4);
         grid->bg_color()->set_rgb(1.0, 0.75, 1.0);
-        grid->rows()->set(2);
-        grid->columns()->set(3);
+        grid->rows()->set(1);
+        grid->columns()->set(2);
 
+        LSPString id;
+        size_t gid = 0;
+        size_t wid = 0;
+        size_t col = 0;
         {
-            LSPString id;
-            size_t gid = 0;
-            size_t wid = 0;
-            size_t col = 0;
-
             // Create empty group
             MTEST_ASSERT(id.fmt_ascii("combogroup-%d", int(gid++)));
             MTEST_ASSERT(cg = new tk::ComboGroup(dpy));
@@ -245,6 +244,41 @@ MTEST_BEGIN("tk.widgets.compound", combogroup)
                 wv->constraints()->set_min(32*(i+1), 32*(i+1));
                 wv->bg_color()->set_rgb24(next_color(col));
             }
+        }
+
+        // Add custom combo group
+        MTEST_ASSERT(id.fmt_ascii("combogroup-%d", int(gid++)));
+        MTEST_ASSERT(cg = new tk::ComboGroup(dpy));
+        MTEST_ASSERT(init_widget(cg, vh, id.get_ascii()) == STATUS_OK);
+        MTEST_ASSERT(widgets.push(cg));
+        MTEST_ASSERT(grid->add(cg) == STATUS_OK);
+        cg->layout()->set_scale(0.0f);
+        cg->layout()->set_align(0.5f, 0.5f);
+        cg->border_radius()->set(0);
+        cg->border_size()->set(0);
+        cg->bg_color()->set_rgb24(0x1b1c22);
+        cg->color()->set_rgb24(0x26282f);
+        cg->text_color()->set_rgb24(0xa8aed3);
+        cg->heading()->set_scale(1.0f);
+        cg->text_radius()->set(0);
+        cg->text_padding()->set_left(5);
+
+        tk::ListBoxItem *li = add_item(vh, widgets, cg, wid, col, "Widget 1");
+        add_item(vh, widgets, cg, wid, col, "Widget 2");
+        add_item(vh, widgets, cg, wid, col, "Widget 3");
+        add_item(vh, widgets, cg, wid, col, "Widget 4");
+        cg->selected()->set(li);
+
+        for (size_t i=0; i<4; ++i)
+        {
+            MTEST_ASSERT(id.fmt_ascii("void-%d", int(wid++)));
+
+            MTEST_ASSERT(wv = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(wv, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(wv));
+            MTEST_ASSERT(cg->add(wv) == STATUS_OK);
+            wv->constraints()->set_min(32*(i+1), 32*(i+1));
+            wv->bg_color()->set_rgb24(next_color(col));
         }
 
         // Show window

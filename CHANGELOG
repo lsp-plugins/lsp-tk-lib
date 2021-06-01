@@ -21,6 +21,9 @@
 - Rendering of graph widget has been fixed and enhanced with "border.flat" property.
 - Replaced text_border property for tk::Group widget with text_padding property.
 - Added heading property for tk::Group widget.
+- Replaced text_border property for tk::ComboGroup widget with text_padding property.
+- Added heading property for tk::ComboGroup widget.
+- Fixed missing builtin styles for tk::ComboGroup widget.
 
 TODO:
 - Add custom mouse pointer for fraction actions.
