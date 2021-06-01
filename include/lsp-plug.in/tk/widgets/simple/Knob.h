@@ -36,6 +36,7 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(Knob, Widget)
                 prop::Color         sColor;
                 prop::Color         sScaleColor;
+                prop::Color         sBalanceColor;
                 prop::Color         sHoleColor;
                 prop::Color         sTipColor;
                 prop::SizeRange     sSizeRange;
@@ -44,6 +45,9 @@ namespace lsp
                 prop::StepFloat     sStep;
                 prop::Float         sBalance;
                 prop::Boolean       sCycling;
+                prop::Boolean       sScaleMarks;
+                prop::Boolean       sBalanceColorCustom;
+                prop::Boolean       sFlat;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -67,6 +71,7 @@ namespace lsp
 
                 prop::Color         sColor;
                 prop::Color         sScaleColor;
+                prop::Color         sBalanceColor;
                 prop::Color         sHoleColor;
                 prop::Color         sTipColor;
                 prop::SizeRange     sSizeRange;
@@ -76,6 +81,9 @@ namespace lsp
                 prop::StepFloat     sStep;
                 prop::Float         sBalance;
                 prop::Boolean       sCycling;
+                prop::Boolean       sScaleMarks;
+                prop::Boolean       sBalanceColorCustom;
+                prop::Boolean       sFlat;
 
             protected:
                 size_t                          check_mouse_over(ssize_t x, ssize_t y);
@@ -96,16 +104,20 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                LSP_TK_PROPERTY(Color,              color,              &sColor)
-                LSP_TK_PROPERTY(Color,              scale_color,        &sScaleColor)
-                LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
-                LSP_TK_PROPERTY(Color,              tip_color,          &sTipColor)
-                LSP_TK_PROPERTY(SizeRange,          size,               &sSizeRange)
-                LSP_TK_PROPERTY(Float,              scale,              &sScale)
-                LSP_TK_PROPERTY(RangeFloat,         value,              &sValue)
-                LSP_TK_PROPERTY(StepFloat,          step,               &sStep)
-                LSP_TK_PROPERTY(Float,              balance,            &sBalance)
-                LSP_TK_PROPERTY(Boolean,            cycling,            &sCycling)
+                LSP_TK_PROPERTY(Color,              color,                  &sColor)
+                LSP_TK_PROPERTY(Color,              scale_color,            &sScaleColor)
+                LSP_TK_PROPERTY(Color,              balance_color,          &sBalanceColor)
+                LSP_TK_PROPERTY(Color,              hole_color,             &sHoleColor)
+                LSP_TK_PROPERTY(Color,              tip_color,              &sTipColor)
+                LSP_TK_PROPERTY(SizeRange,          size,                   &sSizeRange)
+                LSP_TK_PROPERTY(Float,              scale,                  &sScale)
+                LSP_TK_PROPERTY(RangeFloat,         value,                  &sValue)
+                LSP_TK_PROPERTY(StepFloat,          step,                   &sStep)
+                LSP_TK_PROPERTY(Float,              balance,                &sBalance)
+                LSP_TK_PROPERTY(Boolean,            cycling,                &sCycling)
+                LSP_TK_PROPERTY(Boolean,            scale_marks,            &sScaleMarks)
+                LSP_TK_PROPERTY(Boolean,            balance_color_custom,   &sBalanceColorCustom)
+                LSP_TK_PROPERTY(Boolean,            flat,                   &sFlat)
 
             public:
                 virtual status_t                on_mouse_down(const ws::event_t *e);

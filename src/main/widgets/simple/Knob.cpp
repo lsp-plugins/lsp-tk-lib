@@ -34,6 +34,7 @@ namespace lsp
                 // Bind
                 sColor.bind("color", this);
                 sScaleColor.bind("scale.color", this);
+                sBalanceColor.bind("balance.color", this);
                 sHoleColor.bind("hole.color", this);
                 sTipColor.bind("tip.color", this);
                 sSizeRange.bind("size.range", this);
@@ -42,9 +43,13 @@ namespace lsp
                 sStep.bind("step", this);
                 sBalance.bind("value.balance", this);
                 sCycling.bind("value.cycling", this);
+                sScaleMarks.bind("scale.marks", this);
+                sBalanceColorCustom.bind("balance.color.custom", this);
+                sFlat.bind("flat", this);
                 // Configure
                 sColor.set("#cccccc");
                 sScaleColor.set("#00cc00");
+                sBalanceColor.set("#0000cc");
                 sHoleColor.set("#000000");
                 sTipColor.set("#000000");
                 sSizeRange.set(8, -1);
@@ -53,6 +58,9 @@ namespace lsp
                 sStep.set(0.01f);
                 sBalance.set(0.5f);
                 sCycling.set(false);
+                sScaleMarks.set(true);
+                sBalanceColorCustom.set(false);
+                sFlat.set(false);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Knob, "Knob");
         }
@@ -63,6 +71,7 @@ namespace lsp
             Widget(dpy),
             sColor(&sProperties),
             sScaleColor(&sProperties),
+            sBalanceColor(&sProperties),
             sHoleColor(&sProperties),
             sTipColor(&sProperties),
             sSizeRange(&sProperties),
@@ -70,7 +79,10 @@ namespace lsp
             sValue(&sProperties),
             sStep(&sProperties),
             sBalance(&sProperties),
-            sCycling(&sProperties)
+            sCycling(&sProperties),
+            sScaleMarks(&sProperties),
+            sBalanceColorCustom(&sProperties),
+            sFlat(&sProperties)
         {
             nLastY      = -1;
             nState      = 0;
@@ -100,6 +112,9 @@ namespace lsp
             sStep.bind("step", &sStyle);
             sBalance.bind("value.balance", &sStyle);
             sCycling.bind("value.cycling", &sStyle);
+            sScaleMarks.bind("scale.marks", &sStyle);
+            sBalanceColorCustom.bind("balance.color.custom", &sStyle);
+            sFlat.bind("flat", &sStyle);
 
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)
@@ -116,6 +131,8 @@ namespace lsp
                 query_draw();
             if (sScaleColor.is(prop))
                 query_draw();
+            if (sBalanceColor.is(prop))
+                query_draw();
             if (sHoleColor.is(prop))
                 query_draw();
             if (sTipColor.is(prop))
@@ -129,6 +146,12 @@ namespace lsp
             if (sBalance.is(prop))
                 query_draw();
             if (sCycling.is(prop))
+                query_draw();
+            if (sScaleMarks.is(prop))
+                query_draw();
+            if (sBalanceColorCustom.is(prop))
+                query_draw();
+            if (sFlat.is(prop))
                 query_draw();
         }
 
@@ -238,7 +261,7 @@ namespace lsp
         void Knob::size_request(ws::size_limit_t *r)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
-            ssize_t chamfer     = lsp_max(1, scaling * 3.0f);
+            ssize_t chamfer     = (sFlat.get()) ? 0 : lsp_max(1, scaling * 3.0f);
             size_t hole         = lsp_max(1, scaling);
             size_t gap          = lsp_max(1, scaling);
             size_t scale        = lsp_max(0, sScale.get() * scaling);
@@ -343,22 +366,36 @@ namespace lsp
             ssize_t c_x         = (sSize.nWidth >> 1);
             ssize_t c_y         = (sSize.nHeight >> 1);
             size_t xr           = lsp_min(sSize.nWidth, sSize.nHeight) >> 1;
-            size_t chamfer      = lsp_max(1, scaling * 3.0f);
+            size_t chamfer      = (sFlat.get()) ? 0 : lsp_max(1, scaling * 3.0f);
             size_t hole         = lsp_max(1, scaling);
             size_t gap          = lsp_max(1, scaling);
             size_t scale        = lsp_max(0, sScale.get() * scaling);
 
             // Prepare the color palette
-            lsp::Color scol(sScaleColor);
-            lsp::Color sdcol(sScaleColor);
+            lsp::Color scol, sdcol;
+            if (sBalanceColorCustom.get())
+            {
+                scol.copy(sBalanceColor);
+                sdcol.copy(sScaleColor);
+
+                scol.scale_lightness(bright);
+                sdcol.scale_lightness(bright);
+            }
+            else
+            {
+                scol.copy(sBalanceColor);
+                sdcol.copy(sScaleColor);
+
+                scol.scale_lightness(bright);
+                sdcol.scale_lightness(0.75f * bright);
+            }
+
             lsp::Color hcol(sHoleColor);
             lsp::Color bg_color;
             lsp::Color cap(sColor);
             lsp::Color tip(sTipColor);
 
             get_actual_bg_color(bg_color);
-            scol.scale_lightness(bright);
-            sdcol.scale_lightness(0.75f * bright);
             cap.scale_lightness(bright);
             tip.scale_lightness(bright);
 
@@ -402,19 +439,22 @@ namespace lsp
                         s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
                 }
 
-                // Draw scales: overall 10 segments separated by 2 sub-segments
-                float r1    = xr + 1;
-                float r2    = xr - scale * 0.5f;
-                float r3    = xr - scale - 1;
-                delta   = 0.25f * M_PI / 3.0f;
-
-                for (size_t i=0; i <= nsectors; ++i)
+                if (sScaleMarks.get())
                 {
-                    float angle = base + delta * i;
-                    float scr   = (i & 1) ? r2 : r3;
-                    float f_sin = sinf(angle), f_cos = cosf(angle);
+                    // Draw scales: overall 10 segments separated by 2 sub-segments
+                    float r1    = xr + 1;
+                    float r2    = xr - scale * 0.5f;
+                    float r3    = xr - scale - 1;
+                    delta   = 0.25f * M_PI / 3.0f;
 
-                    s->line(c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling, bg_color);
+                    for (size_t i=0; i <= nsectors; ++i)
+                    {
+                        float angle = base + delta * i;
+                        float scr   = (i & 1) ? r2 : r3;
+                        float f_sin = sinf(angle), f_cos = cosf(angle);
+
+                        s->line(c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling, bg_color);
+                    }
                 }
 
                 // Draw hole and update radius
@@ -429,25 +469,37 @@ namespace lsp
             // Draw knob
             float f_sin = sinf(v_angle1), f_cos = cosf(v_angle1);
 
-            for (size_t i=0; i<=chamfer; ++i, --xr)
+            if (sFlat.get())
             {
-                // Compute color
-                float bright = float(i + 1.0f) / (chamfer + 1);
-                scol.blend(cap, hcol, bright);
-                sdcol.blend(scol, hcol, 0.5f);
-
                 // Draw cap
-                ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, xr, c_x + xr, c_y - xr, xr * 4.0);
-                gr->add_color(0.0f, scol);
-                gr->add_color(1.0f, sdcol);
-                s->fill_circle(c_x, c_y, xr, gr);
-                delete gr;
+                s->fill_circle(c_x, c_y, xr, cap);
 
                 // Draw tip
-                scol.copy(tip);
-                scol.blend(hcol, bright);
                 s->line(c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
-                        c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, scol);
+                            c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, tip);
+            }
+            else
+            {
+                for (size_t i=0; i<=chamfer; ++i, --xr)
+                {
+                    // Compute color
+                    float bright = float(i + 1.0f) / (chamfer + 1);
+                    scol.blend(cap, hcol, bright);
+                    sdcol.blend(scol, hcol, 0.5f);
+
+                    // Draw cap
+                    ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, xr, c_x + xr, c_y - xr, xr * 4.0);
+                    gr->add_color(0.0f, scol);
+                    gr->add_color(1.0f, sdcol);
+                    s->fill_circle(c_x, c_y, xr, gr);
+                    delete gr;
+
+                    // Draw tip
+                    scol.copy(tip);
+                    scol.blend(hcol, bright);
+                    s->line(c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
+                            c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, scol);
+                }
             }
 
             s->set_antialiasing(aa);
