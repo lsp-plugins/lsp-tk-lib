@@ -46,6 +46,10 @@ namespace lsp
          */
         class Display: public Atoms
         {
+            private:
+                Display & operator = (const Display &);
+                Display(const Display &);
+
             protected:
                 typedef struct item_t
                 {

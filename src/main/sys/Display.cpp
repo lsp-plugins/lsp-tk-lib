@@ -30,7 +30,7 @@ namespace lsp
     namespace tk
     {
         Display::Display(display_settings_t *settings):
-            sSchema(this)
+            sSchema(this, this)
         {
             pDictionary     = NULL;
             pDisplay        = NULL;

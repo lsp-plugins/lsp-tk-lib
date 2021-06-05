@@ -44,6 +44,7 @@ namespace lsp
         {
             private:
                 Style & operator = (const Style &);
+                Style(const Style &);
 
                 friend class IStyleFactory;
                 friend class Schema;
@@ -150,7 +151,7 @@ namespace lsp
                  * @param set overide mode (true/false)
                  * @return previous mode
                  */
-                bool                set_override(bool set);
+                bool                    set_override(bool set);
 
                 /**
                  * Get associated schema

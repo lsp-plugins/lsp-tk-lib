@@ -35,7 +35,12 @@ namespace lsp
          */
         class IStyleListener
         {
+            private:
+                IStyleListener & operator = (const IStyleListener &);
+                IStyleListener(const IStyleListener &);
+
             public:
+                explicit IStyleListener();
                 virtual ~IStyleListener();
 
             public:

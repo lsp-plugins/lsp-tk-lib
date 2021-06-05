@@ -46,9 +46,10 @@ namespace lsp
             StyleFactory<Root> RootFactory(NULL);
         }
 
-        Schema::Schema(Atoms *atoms)
+        Schema::Schema(Atoms *atoms, Display *dpy)
         {
             pAtoms          = atoms;
+            pDisplay        = dpy;
             nFlags          = 0;
             pRoot           = NULL;
         }
@@ -98,6 +99,37 @@ namespace lsp
             }
         }
 
+        status_t Schema::init_colors_from_sheet(StyleSheet *sheet)
+        {
+            lltl::parray<LSPString> vk;
+            sheet->vColors.keys(&vk);
+            for (size_t i=0, n=vk.size(); i<n; ++i)
+            {
+                LSPString *key      = vk.uget(i);
+                lsp::Color *color   = sheet->vColors.get(key);
+                if ((key == NULL) || (color == NULL))
+                    return STATUS_BAD_STATE;
+
+                lsp::Color *xc      = new lsp::Color(color);
+                if (xc == NULL)
+                    return STATUS_NO_MEM;
+
+                if (!vColors.create(key, xc))
+                {
+                    delete xc;
+                    return STATUS_NO_MEM;
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::load_fonts_from_sheet(StyleSheet *sheet, resource::ILoader *loader)
+        {
+            // TODO: implement this when sheet will contain information about fonts
+            return STATUS_OK;
+        }
+
         status_t Schema::init(lltl::parray<IStyleFactory> *list)
         {
             return init(list->array(), list->size());
@@ -138,47 +170,36 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::apply(StyleSheet *sheet)
+        status_t Schema::apply(StyleSheet *sheet, resource::ILoader *loader)
         {
             if (sheet == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
             // Apply settings in configuration mode
             nFlags |= S_CONFIGURING;
-            status_t res = apply_internal(sheet);
+            status_t res = apply_internal(sheet, loader);
             nFlags &= ~S_CONFIGURING;
 
             return res;
         }
 
-        status_t Schema::apply_internal(StyleSheet *sheet)
+        status_t Schema::apply_internal(StyleSheet *sheet, resource::ILoader *loader)
         {
-            // Destroy colors
-            destroy_colors();
+            status_t res;
 
-            // Copy colors from sheet
-            lltl::parray<LSPString> vk;
-            sheet->vColors.keys(&vk);
-            for (size_t i=0, n=vk.size(); i<n; ++i)
+            // Destroy all previously loaded and used fonts and apply new
+            if (pDisplay != NULL)
             {
-                LSPString *key      = vk.uget(i);
-                lsp::Color *color   = sheet->vColors.get(key);
-                if ((key == NULL) || (color == NULL))
-                    return STATUS_BAD_STATE;
-
-                lsp::Color *xc      = new lsp::Color(color);
-                if (xc == NULL)
-                    return STATUS_NO_MEM;
-
-                if (!vColors.create(key, xc))
-                {
-                    delete xc;
-                    return STATUS_NO_MEM;
-                }
+                pDisplay->display()->remove_all_fonts();
+                load_fonts_from_sheet(sheet, loader);
             }
 
+            // Destroy colors and copy colors from sheed
+            destroy_colors();
+            if ((res = init_colors_from_sheet(sheet)) != STATUS_OK)
+                return res;
+
             // Destroy all relations between styles
-            status_t res;
             lltl::parray<Style> vs;
             if (!vStyles.values(&vs))
                 return STATUS_NO_MEM;

@@ -648,7 +648,7 @@ UTEST_BEGIN("tk.style", style)
 
     void test_notifications()
     {
-        tk::Schema schema(&atoms);
+        tk::Schema schema(&atoms, NULL);
         tk::Style root(&schema);
 
         ChangeListener l1(this, "c1"), l2(this, "c2"), l3(this, "c3");
@@ -781,7 +781,7 @@ UTEST_BEGIN("tk.style", style)
 
     UTEST_MAIN
     {
-        tk::Schema schema(&atoms);
+        tk::Schema schema(&atoms, NULL);
         tk::Style root(&schema);
 
         init_style(root);

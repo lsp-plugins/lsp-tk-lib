@@ -59,7 +59,7 @@ namespace lsp
 
         StyleSheet::StyleSheet()
         {
-            pRoot = NULL;
+            pRoot       = NULL;
         }
 
         StyleSheet::~StyleSheet()

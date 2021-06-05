@@ -47,6 +47,7 @@ namespace lsp
         {
             private:
                 StyleSheet & operator = (const StyleSheet &);
+                StyleSheet(const StyleSheet &);
 
                 friend class Schema;
 

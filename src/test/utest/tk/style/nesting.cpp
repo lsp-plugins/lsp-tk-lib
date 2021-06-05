@@ -177,7 +177,7 @@ UTEST_BEGIN("tk.style", nesting)
     UTEST_MAIN
     {
         Atoms sAtoms;
-        Schema sSchema(&sAtoms);
+        Schema sSchema(&sAtoms, NULL);
         StyleSheet sSheet;
         io::Path path;
 

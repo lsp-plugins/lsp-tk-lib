@@ -34,12 +34,14 @@
 #include <lsp-plug.in/io/IInStream.h>
 #include <lsp-plug.in/io/IInSequence.h>
 #include <lsp-plug.in/fmt/xml/PullParser.h>
+#include <lsp-plug.in/resource/ILoader.h>
 
 namespace lsp
 {
     namespace tk
     {
         class Atoms;
+        class Display;
 
         // Style definition
         namespace style
@@ -51,10 +53,16 @@ namespace lsp
             LSP_TK_STYLE_DEF_END
         }
 
+        /**
+         * This class describes the system schema.
+         * The schema provides complete style hierarchy and may be
+         * reconfigured by applying another style sheet.
+         */
         class Schema
         {
             private:
                 Schema & operator = (const Schema &);
+                Schema(const Schema &);
 
             protected:
                 enum flags_t
@@ -77,6 +85,7 @@ namespace lsp
 
             protected:
                 mutable Atoms                      *pAtoms;
+                mutable Display                    *pDisplay;
                 size_t                              nFlags;
                 Style                              *pRoot;
                 lltl::pphash<LSPString, Style>      vBuiltin;
@@ -94,14 +103,16 @@ namespace lsp
                 static status_t     apply_settings(Style *s, StyleSheet::style_t *xs);
                 status_t            apply_relations(Style *s, StyleSheet::style_t *xs);
                 void                destroy_colors();
+                status_t            init_colors_from_sheet(StyleSheet *sheet);
+                status_t            load_fonts_from_sheet(StyleSheet *sheet, resource::ILoader *loader);
                 static status_t     parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt);
 
                 void                bind(Style *root);
 
-                status_t            apply_internal(StyleSheet *sheet);
+                status_t            apply_internal(StyleSheet *sheet, resource::ILoader *loader);
 
             public:
-                explicit Schema(Atoms *atoms);
+                explicit Schema(Atoms *atoms, Display *dpy);
                 virtual ~Schema();
 
                 /**
@@ -129,9 +140,10 @@ namespace lsp
                 /**
                  * Apply stylesheet settings to the schema
                  * @param sheet style sheet
+                 * @param loader resource loader
                  * @return status of operation
                  */
-                status_t            apply(StyleSheet *sheet);
+                status_t            apply(StyleSheet *sheet, resource::ILoader *loader = NULL);
 
             public:
                 LSP_TK_PROPERTY(Float,          scaling,            &sScaling)

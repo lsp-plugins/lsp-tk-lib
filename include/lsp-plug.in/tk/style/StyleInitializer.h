@@ -33,6 +33,10 @@ namespace lsp
          */
         class StyleInitializer
         {
+            private:
+                StyleInitializer & operator = (const StyleInitializer &);
+                StyleInitializer(const StyleInitializer &);
+
             protected:
                 const char          *pClass;
 

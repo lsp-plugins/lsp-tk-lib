@@ -41,6 +41,7 @@ namespace lsp
         {
             private:
                 IStyleFactory & operator = (const IStyleFactory &);
+                IStyleFactory(const IStyleFactory &);
 
             protected:
                 const char         *sName;
@@ -76,6 +77,7 @@ namespace lsp
             {
                 private:
                     StyleFactory & operator = (const StyleFactory &);
+                    StyleFactory(const StyleFactory &);
 
                 public:
                     explicit StyleFactory(const char *name) : IStyleFactory(name) {}
