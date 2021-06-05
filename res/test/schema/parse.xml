@@ -13,6 +13,13 @@
 		<ared   avalue="@0f84" />
 	</colors>
 	
+	<!-- Fonts -->
+	<fonts>
+		<font1  src="path/to/some/font1.ttf" />
+		<font2  alias="font1" />
+		<font3  src="path/to/some/font3.ttf" />
+	</fonts>
+	
 	<!-- Root style -->
 	<root>
 		<b.value value="true" />

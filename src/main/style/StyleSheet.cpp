@@ -159,6 +159,8 @@ namespace lsp
                     case xml::XT_START_ELEMENT:
                         if (p->name()->equals_ascii("colors"))
                             res = parse_colors(p);
+                        else if (p->name()->equals_ascii("fonts"))
+                            res = parse_fonts(p);
                         else if (p->name()->equals_ascii("style"))
                             res = parse_style(p, false);
                         else if (p->name()->equals_ascii("root"))
@@ -220,6 +222,66 @@ namespace lsp
                         // Drop color on error
                         if (res != STATUS_OK)
                             delete c;
+                        break;
+                    }
+
+                    case xml::XT_END_ELEMENT:
+                        return STATUS_OK;
+
+                    default:
+                        return STATUS_CORRUPTED;
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
+        }
+
+        status_t StyleSheet::parse_fonts(xml::PullParser *p)
+        {
+            status_t item, res = STATUS_OK;
+
+            while (true)
+            {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                switch (item)
+                {
+                    case xml::XT_CHARACTERS:
+                    case xml::XT_COMMENT:
+                        break;
+
+                    case xml::XT_START_ELEMENT:
+                    {
+                        // Check that font has not been previously defined
+                        if (vFonts.exists(p->name()))
+                        {
+                            sError.fmt_utf8("Duplicated font name: '%s'", p->name()->get_utf8());
+                            return STATUS_DUPLICATED;
+                        }
+
+                        // Create font object
+                        font_t *f = new font_t();
+                        if (f == NULL)
+                            return STATUS_NO_MEM;
+                        f->alias    = false;
+                        if (!f->name.set(p->name()))
+                        {
+                            delete f;
+                            return STATUS_NO_MEM;
+                        }
+
+                        // Try to parse font
+                        if ((res = parse_font(p, f)) == STATUS_OK)
+                        {
+                            if (!vFonts.put(p->name(), f, NULL))
+                                res = STATUS_NO_MEM;
+                        }
+
+                        // Drop color on error
+                        if (res != STATUS_OK)
+                            delete f;
                         break;
                     }
 
@@ -354,7 +416,10 @@ namespace lsp
                     case xml::XT_ATTRIBUTE:
                         // Value already has been set?
                         if (value)
+                        {
+                            sError.fmt_utf8("Color value has already been set");
                             return STATUS_BAD_FORMAT;
+                        }
                         value   = true;
 
                         // Parse value
@@ -379,7 +444,80 @@ namespace lsp
 
                     case xml::XT_END_ELEMENT:
                         if (!value)
+                        {
+                            sError.fmt_utf8("Not specified value for color '%s'", p->name()->get_utf8());
                             return STATUS_BAD_FORMAT;
+                        }
+                        return STATUS_OK;
+
+                    default:
+                        return STATUS_CORRUPTED;
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
+        }
+
+        status_t StyleSheet::parse_font(xml::PullParser *p, font_t *font)
+        {
+            status_t item, res = STATUS_OK;
+            enum {
+                LC_FLAG_SRC     = 1 << 0,
+                LC_FLAG_ALIAS   = 1 << 1
+            };
+            size_t flags = 0;
+
+            while (true)
+            {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                switch (item)
+                {
+                    case xml::XT_CHARACTERS:
+                    case xml::XT_COMMENT:
+                        break;
+
+                    case xml::XT_ATTRIBUTE:
+                        // Parse value
+                        if (p->name()->equals_ascii("src"))
+                        {
+                            if (flags)
+                            {
+                                sError.fmt_utf8("Can not set simultaneously alias and resource location for font '%s'", font->name.get_utf8());
+                                return STATUS_BAD_FORMAT;
+                            }
+                            flags  |= LC_FLAG_SRC;
+                            if (!font->path.set(p->value()))
+                                return STATUS_NO_MEM;
+                            font->alias = false;
+                        }
+                        else if (p->name()->equals_ascii("alias"))
+                        {
+                            if (flags)
+                            {
+                                sError.fmt_utf8("Can not set simultaneously alias and resource location for font '%s'", font->name.get_utf8());
+                                return STATUS_BAD_FORMAT;
+                            }
+                            flags  |= LC_FLAG_ALIAS;
+                            if (!font->path.set(p->value()))
+                                return STATUS_NO_MEM;
+                            font->alias = true;
+                        }
+                        else
+                        {
+                            sError.fmt_utf8("Unknown property '%s' for font", p->name()->get_utf8());
+                            return STATUS_CORRUPTED;
+                        }
+                        break;
+
+                    case xml::XT_END_ELEMENT:
+                        if (!flags)
+                        {
+                            sError.fmt_utf8("Location of font file or alias should be defined for font '%s'", p->name()->get_utf8());
+                            return STATUS_BAD_FORMAT;
+                        }
                         return STATUS_OK;
 
                     default:
@@ -704,6 +842,11 @@ namespace lsp
             return (vColors.keys(names)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
+        status_t StyleSheet::enum_fonts(lltl::parray<LSPString> *names)
+        {
+            return (vFonts.keys(names)) ? STATUS_OK : STATUS_NO_MEM;
+        }
+
         status_t StyleSheet::enum_styles(lltl::parray<LSPString> *names)
         {
             return (vStyles.keys(names)) ? STATUS_OK : STATUS_NO_MEM;
@@ -784,6 +927,31 @@ namespace lsp
             if (!c.set_utf8(color))
                 return STATUS_NOT_FOUND;
             return get_color(&c, dst);
+        }
+
+        ssize_t StyleSheet::get_font(const LSPString *font, LSPString *path, bool *alias)
+        {
+            font_t *f = vFonts.get(font);
+            if (f == NULL)
+                return STATUS_NOT_FOUND;
+
+            if (path != NULL)
+            {
+                if (!path->set(&f->path))
+                    return STATUS_NO_MEM;
+            }
+            if (alias != NULL)
+                *alias = f->alias;
+
+            return STATUS_OK;
+        }
+
+        ssize_t StyleSheet::get_font(const char *font, LSPString *path, bool *alias)
+        {
+            LSPString c;
+            if (!c.set_utf8(font))
+                return STATUS_NOT_FOUND;
+            return get_font(&c, path, alias);
         }
 
         status_t StyleSheet::validate()

@@ -62,6 +62,13 @@ namespace lsp
                     ~style_t();
                 } style_t;
 
+                typedef struct font_t
+                {
+                    LSPString                               name;       // Name of the font
+                    LSPString                               path;       // Path to font
+                    bool                                    alias;      // Is an alias
+                } font_t;
+
                 typedef struct path_t
                 {
                     lltl::parray<style_t>                   visited;
@@ -71,6 +78,7 @@ namespace lsp
             protected:
                 style_t                            *pRoot;      // Root style
                 lltl::pphash<LSPString, style_t>    vStyles;    // Additional named styles
+                lltl::pphash<LSPString, font_t>     vFonts;     // Additional fonts
                 lltl::pphash<LSPString, lsp::Color> vColors;    // Color map
                 LSPString                           sError;     // Error text
 
@@ -82,8 +90,11 @@ namespace lsp
                 status_t            parse_document(xml::PullParser *p);
                 status_t            parse_schema(xml::PullParser *p);
                 status_t            parse_colors(xml::PullParser *p);
+                status_t            parse_fonts(xml::PullParser *p);
+
                 status_t            parse_style(xml::PullParser *p, bool root);
                 status_t            parse_color(xml::PullParser *p, lsp::Color *color);
+                status_t            parse_font(xml::PullParser *p, font_t *font);
                 status_t            parse_property(xml::PullParser *p, style_t *style, const LSPString *name);
 
                 status_t            parse_style_class(LSPString *cname, const LSPString *text);
@@ -108,6 +119,7 @@ namespace lsp
             public:
                 status_t            enum_colors(lltl::parray<LSPString> *names);
                 status_t            enum_styles(lltl::parray<LSPString> *names);
+                status_t            enum_fonts(lltl::parray<LSPString> *names);
                 status_t            enum_properties(const LSPString *style, lltl::parray<LSPString> *names);
                 status_t            enum_properties(const char *style, lltl::parray<LSPString> *names);
                 status_t            enum_parents(const LSPString *style, lltl::parray<LSPString> *names);
@@ -117,6 +129,8 @@ namespace lsp
                 ssize_t             get_property(const char *style, const char *property, LSPString *dst);
                 ssize_t             get_color(const LSPString *color, lsp::Color *dst);
                 ssize_t             get_color(const char *color, lsp::Color *dst);
+                ssize_t             get_font(const LSPString *font, LSPString *path, bool *alias);
+                ssize_t             get_font(const char *font, LSPString *path, bool *alias);
 
             public:
                 const LSPString    *error() const { return &sError;     }
