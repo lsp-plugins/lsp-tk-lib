@@ -69,6 +69,7 @@ namespace lsp
             protected:
                 static const prop::desc_t   DESC[];
                 static const prop::enum_t   FLAGS[];
+                static const prop::enum_t   ANTIALIAS[];
 
             protected:
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
@@ -89,30 +90,32 @@ namespace lsp
                 inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); }
 
             public:
-                inline const char  *name() const            { return sValue.get_name();                 }
-                inline float        size() const            { return sValue.get_size();                 }
-                inline bool         bold() const            { return sValue.is_bold();                  }
-                inline bool         italic() const          { return sValue.is_italic();                }
-                inline bool         underline() const       { return sValue.is_underline();             }
-                inline bool         antialiasing() const    { return sValue.is_antialiasing();          }
-                inline size_t       flags() const           { return sValue.flags();                    }
-                inline void         get(ws::Font *f) const  { f->set(&sValue);                          }
-                inline void         get(ws::Font *f, float scaling) const;
+                inline const char          *name() const            { return sValue.get_name();                 }
+                inline float                size() const            { return sValue.get_size();                 }
+                inline bool                 bold() const            { return sValue.bold();                     }
+                inline bool                 italic() const          { return sValue.italic();                   }
+                inline bool                 underline() const       { return sValue.underline();                }
+                inline ws::font_antialias_t antialiasing() const    { return sValue.antialiasing();             }
+                inline ws::font_antialias_t antialias() const       { return sValue.antialiasing();             }
+                inline size_t               flags() const           { return sValue.flags();                    }
+                inline void                 get(ws::Font *f) const  { f->set(&sValue);                          }
+                inline void                 get(ws::Font *f, float scaling) const;
 
-                void                set_name(const char *name);
-                inline void         set_name(const LSPString *name)     { set_name((name != NULL) ? name->get_utf8() : NULL );      }
-                float               set_size(float size);
-                bool                set_bold(bool on = true);
-                bool                set_italic(bool on = true);
-                bool                set_underline(bool on = true);
-                bool                set_antialiasing(bool on = true);
-                size_t              set_flags(size_t flags);
-                void                set(const char *name, size_t size, size_t flags = 0);
-                void                set_params(size_t size, size_t flags = 0);
-                void                set(const ws::Font *f);
+                void                        set_name(const char *name);
+                inline void                 set_name(const LSPString *name)     { set_name((name != NULL) ? name->get_utf8() : NULL );      }
+                float                       set_size(float size);
+                bool                        set_bold(bool on = true);
+                bool                        set_italic(bool on = true);
+                bool                        set_underline(bool on = true);
+                ws::font_antialias_t        set_antialiasing(ws::font_antialias_t value = ws::FA_ENABLED);
+                ws::font_antialias_t        set_antialias(ws::font_antialias_t value = ws::FA_ENABLED);
+                size_t                      set_flags(size_t flags);
+                void                        set(const char *name, size_t size, size_t flags = 0);
+                void                        set_params(size_t size, size_t flags = 0);
+                void                        set(const ws::Font *f);
 
             public:
-                virtual void        override();
+                virtual void                override();
 
                 bool get_parameters(ws::ISurface *s, float scaling, ws::font_parameters_t *fp) const;
                 bool get_parameters(Display *dpy, float scaling, ws::font_parameters_t *fp) const;

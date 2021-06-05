@@ -181,6 +181,16 @@ namespace lsp
             return NULL;
         }
 
+        const prop::enum_t *Property::find_enum(ssize_t value, const prop::enum_t *xe)
+        {
+            for ( ; (xe != NULL) && (xe->name != NULL); ++xe)
+            {
+                if (value == xe->value)
+                    return xe;
+            }
+            return NULL;
+        }
+
         size_t Property::parse_enums(ssize_t *dst, size_t max, const LSPString *s, const prop::enum_t *xenum)
         {
             // Parse values

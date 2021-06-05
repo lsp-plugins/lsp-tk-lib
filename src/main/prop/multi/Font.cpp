@@ -27,14 +27,14 @@ namespace lsp
     {
         const prop::desc_t Font::DESC[] =
         {
-            { ".name",      PT_STRING   },
-            { ".size",      PT_FLOAT    },
-            { ".flags",     PT_STRING   },
-            { ".bold",      PT_BOOL     },
-            { ".italic",    PT_BOOL     },
-            { ".underline", PT_BOOL     },
-            { ".aliasing",  PT_BOOL     },
-            { NULL,         PT_UNKNOWN  }
+            { ".name",          PT_STRING   },
+            { ".size",          PT_FLOAT    },
+            { ".flags",         PT_STRING   },
+            { ".bold",          PT_BOOL     },
+            { ".italic",        PT_BOOL     },
+            { ".underline",     PT_BOOL     },
+            { ".antialiasing",  PT_STRING   },
+            { NULL,             PT_UNKNOWN  }
         };
 
         const prop::enum_t Font::FLAGS[] =
@@ -42,7 +42,16 @@ namespace lsp
             { "bold",       ws::FF_BOLD             },
             { "italic",     ws::FF_ITALIC           },
             { "underline",  ws::FF_UNDERLINE        },
-            { "aliasing",   ws::FF_ANTIALIASING     },
+            { NULL,         0                       }
+        };
+
+        const prop::enum_t Font::ANTIALIAS[] =
+        {
+            { "default",    ws::FA_DEFAULT          },
+            { "enabled",    ws::FA_ENABLED          },
+            { "disabled",   ws::FA_DISABLED         },
+            { "on",         ws::FA_ENABLED          },
+            { "off",        ws::FA_DISABLED         },
             { NULL,         0                       }
         };
 
@@ -72,8 +81,6 @@ namespace lsp
                 pStyle->set_bool(vAtoms[P_ITALIC], f.is_italic());
             if ((mask & O_UNDERLINE) && (vAtoms[P_UNDERLINE] >= 0))
                 pStyle->set_bool(vAtoms[P_UNDERLINE], f.is_underline());
-            if ((mask & O_ANTIALIAS) && (vAtoms[P_ANTIALIAS] >= 0))
-                pStyle->set_bool(vAtoms[P_ANTIALIAS], f.is_antialiasing());
 
             // Complicated properties
             LSPString s;
@@ -81,6 +88,13 @@ namespace lsp
             {
                 Property::fmt_bit_enums(&s, FLAGS, f.flags());
                 pStyle->set_string(vAtoms[P_FLAGS], &s);
+            }
+            if ((mask & O_ANTIALIAS) && (vAtoms[P_ANTIALIAS] >= 0))
+            {
+                size_t aa = f.antialiasing();
+                const prop::enum_t *e = find_enum(aa, ANTIALIAS);
+                if (e != NULL)
+                    pStyle->set_string(vAtoms[P_ANTIALIAS], e->name);
             }
         }
 
@@ -131,8 +145,13 @@ namespace lsp
                 f.set_italic(bvalue);
             if ((property == vAtoms[P_UNDERLINE]) && (pStyle->get_bool(vAtoms[P_UNDERLINE], &bvalue) == STATUS_OK))
                 f.set_underline(bvalue);
-            if ((property == vAtoms[P_ANTIALIAS]) && (pStyle->get_bool(vAtoms[P_ANTIALIAS], &bvalue) == STATUS_OK))
-                f.set_antialiasing(bvalue);
+
+            if ((property == vAtoms[P_ANTIALIAS]) && (pStyle->get_string(vAtoms[P_ANTIALIAS], &s) == STATUS_OK))
+            {
+                const prop::enum_t *e = find_enum(&s, ANTIALIAS);
+                if (e != NULL)
+                    f.set_antialiasing(ws::font_antialias_t(e->value));
+            }
 
             if ((property == vAtoms[P_FLAGS]) && (pStyle->get_string(vAtoms[P_FLAGS], &s) == STATUS_OK))
             {
@@ -143,7 +162,7 @@ namespace lsp
 
         void Font::get(ws::Font *f, float scaling) const
         {
-            f->set(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            f->set(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags(), sValue.antialiasing());
         }
 
         void Font::set_name(const char *name)
@@ -207,14 +226,14 @@ namespace lsp
             return old;
         }
 
-        bool Font::set_antialiasing(bool on)
+        ws::font_antialias_t Font::set_antialiasing(ws::font_antialias_t value)
         {
             nOverride      |= O_FLAGS | O_ANTIALIAS;
-            bool old = sValue.is_antialiasing();
-            if (old == on)
+            ws::font_antialias_t old = sValue.antialiasing();
+            if (old == value)
                 return old;
 
-            sValue.set_antialiasing(on);
+            sValue.set_antialiasing(value);
             sync();
             return old;
         }
@@ -291,7 +310,8 @@ namespace lsp
         {
             if (s == NULL)
                 return false;
-            ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            ws::Font f(&sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling));
             return s->get_font_parameters(f, fp);
         }
 
@@ -344,7 +364,8 @@ namespace lsp
             if ((s == NULL) || (text == NULL))
                 return false;
 
-            ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            ws::Font f(&sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling));
 
             ssize_t prev = 0, curr = 0, tail = 0;
             ws::font_parameters_t fp;
@@ -434,7 +455,8 @@ namespace lsp
             if (s == NULL)
                 return false;
 
-            ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            ws::Font f(sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling)); // Update the font size
             return s->get_text_parameters(f, tp, text, first, last);
         }
 
@@ -491,7 +513,8 @@ namespace lsp
             if (s == NULL)
                 return;
 
-            ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            ws::Font f(sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling)); // Update the font size
             s->out_text(f, c, x, y, text, first, last);
         }
     }

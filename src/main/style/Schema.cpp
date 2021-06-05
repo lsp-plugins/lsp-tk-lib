@@ -36,7 +36,7 @@ namespace lsp
                 sFont.bind("font", this);
                 sDrawMode.bind("draw.mode", this);
                 // Configure
-                sFont.set_antialiasing(true);
+                sFont.set_antialiasing(ws::FA_DEFAULT);
                 sFont.set_size(12.0f);
                 sScaling.set(1.0f);
                 sDrawMode.set(DM_CLASSIC);

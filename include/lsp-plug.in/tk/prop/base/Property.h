@@ -78,6 +78,7 @@ namespace lsp
 
             protected:
                 static const prop::enum_t *find_enum(const LSPString *s, const prop::enum_t *xenum);
+                static const prop::enum_t *find_enum(ssize_t value, const prop::enum_t *xenum);
 
                 static size_t       parse_bools(bool *dst, size_t max, const LSPString *s);
                 static size_t       parse_ints(ssize_t *dst, size_t max, const LSPString *s);

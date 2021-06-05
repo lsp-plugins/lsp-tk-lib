@@ -43,7 +43,7 @@ namespace lsp
                 // Configure
                 sFont.set_size(16.0f);
                 sFont.set_bold(true);
-                sFont.set_antialiasing(true);
+                sFont.set_antialiasing(ws::FA_ENABLED);
                 sColor.set("#00ccff");
                 sScrewColor.set("#444444");
                 sTextColor.set("#ffffff");

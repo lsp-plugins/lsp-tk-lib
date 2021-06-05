@@ -110,3 +110,6 @@ LIBCAIRO_VERSION           := system
 LIBCAIRO_NAME              := cairo
 LIBCAIRO_TYPE              := pkg
 
+LIBFREETYPE_VERSION        := system
+LIBFREETYPE_NAME           := freetype2
+LIBFREETYPE_TYPE           := pkg
