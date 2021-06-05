@@ -37,6 +37,7 @@ namespace lsp
         {
             protected:
                 Font & operator = (const Font &);
+                Font(const Font &);
 
             protected:
                 enum property_t
@@ -155,6 +156,7 @@ namespace lsp
             {
                 private:
                     Font & operator = (const Font &);
+                    Font(const Font &);
 
                 public:
                     explicit Font(prop::Listener *listener = NULL): tk::Font(listener) {};

@@ -39,6 +39,7 @@ namespace lsp
         {
             protected:
                 Color & operator = (const Color &);
+                Color(const Color &);
 
             protected:
                 enum property_t
@@ -169,6 +170,7 @@ namespace lsp
             {
                 private:
                     Color & operator = (const Color &);
+                    Color(const Color &);
 
                 public:
                     explicit inline Color(prop::Listener *listener = NULL): tk::Color(listener) {};

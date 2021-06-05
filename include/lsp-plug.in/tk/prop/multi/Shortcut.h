@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 Shortcut & operator = (const Shortcut &);
+                Shortcut(const Shortcut &);
 
             protected:
                 enum property_t
@@ -139,6 +140,7 @@ namespace lsp
             {
                 private:
                     Shortcut & operator = (const Shortcut &);
+                    Shortcut(const Shortcut &);
 
                 public:
                     inline Shortcut(prop::Listener *listener = NULL): tk::Shortcut(listener) {}

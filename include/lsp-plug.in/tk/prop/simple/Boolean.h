@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 Boolean & operator = (const Boolean &);
+                Boolean(const Boolean &);
 
             protected:
                 bool                bValue;
@@ -99,6 +100,7 @@ namespace lsp
             {
                 private:
                     Boolean & operator = (const Boolean &);
+                    Boolean(const Boolean &);
 
                 public:
                     explicit inline Boolean(prop::Listener *listener = NULL): tk::Boolean(listener) {};

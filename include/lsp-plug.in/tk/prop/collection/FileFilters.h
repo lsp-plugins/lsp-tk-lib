@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 FileFilters & operator = (const FileFilters &);
+                FileFilters(const FileFilters &);
 
             protected:
                 class Listener: public prop::Listener
@@ -181,6 +182,7 @@ namespace lsp
             {
                 private:
                     FileFilters & operator = (const FileFilters &);
+                    FileFilters(const FileFilters &);
 
                 public:
                     explicit FileFilters(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::FileFilters(listener, clistener) {}

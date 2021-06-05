@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 FileDialogMode & operator = (const FileDialogMode &);
+                FileDialogMode(const FileDialogMode &);
 
             protected:
                 static const prop::enum_t ENUM[];
@@ -59,6 +60,7 @@ namespace lsp
             {
                 private:
                     FileDialogMode & operator = (const FileDialogMode &);
+                    FileDialogMode(const FileDialogMode &);
 
                 public:
                     explicit FileDialogMode(prop::Listener *listener = NULL): tk::FileDialogMode(listener) {};

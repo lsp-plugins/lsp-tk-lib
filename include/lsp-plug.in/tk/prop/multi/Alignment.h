@@ -43,6 +43,7 @@ namespace lsp
         {
             protected:
                 Alignment & operator = (const Alignment &);
+                Alignment(const Alignment &);
 
             protected:
                 enum property_t
@@ -109,6 +110,7 @@ namespace lsp
             {
                 private:
                     Alignment & operator = (const Alignment &);
+                    Alignment(const Alignment &);
 
                 public:
                     explicit Alignment(prop::Listener *listener = NULL): tk::Alignment(listener) {};

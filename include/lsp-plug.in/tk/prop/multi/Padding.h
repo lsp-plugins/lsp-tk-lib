@@ -34,6 +34,7 @@ namespace lsp
         {
             protected:
                 Padding & operator = (const Padding &);
+                Padding(const Padding &);
 
             protected:
                 enum property_t
@@ -139,6 +140,7 @@ namespace lsp
             {
                 private:
                     Padding & operator = (const Padding &);
+                    Padding(const Padding &);
 
                 public:
                     explicit Padding(prop::Listener *listener = NULL): tk::Padding(listener) {};

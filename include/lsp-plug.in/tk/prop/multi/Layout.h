@@ -43,6 +43,7 @@ namespace lsp
         {
             protected:
                 Layout & operator = (const Layout &);
+                Layout(const Layout &);
 
             protected:
                 enum property_t
@@ -112,6 +113,7 @@ namespace lsp
             {
                 private:
                     Layout & operator = (const Layout &);
+                    Layout(const Layout &);
 
                 public:
                     explicit Layout(prop::Listener *listener = NULL): tk::Layout(listener) {};

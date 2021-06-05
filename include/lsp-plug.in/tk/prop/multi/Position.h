@@ -38,6 +38,7 @@ namespace lsp
         {
             protected:
                 Position & operator = (const Position &);
+                Position(const Position &);
 
             protected:
                 enum property_t
@@ -98,6 +99,7 @@ namespace lsp
             {
                 private:
                     Position & operator = (const Position &);
+                    Position(const Position &);
 
                 public:
                     explicit Position(prop::Listener *listener = NULL): tk::Position(listener) {};

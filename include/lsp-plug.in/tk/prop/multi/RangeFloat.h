@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 RangeFloat & operator = (const RangeFloat &);
+                RangeFloat(const RangeFloat &);
 
             protected:
                 enum property_t
@@ -114,6 +115,7 @@ namespace lsp
             {
                 private:
                     RangeFloat & operator = (const RangeFloat &);
+                    RangeFloat(const RangeFloat &);
 
                 public:
                     explicit RangeFloat(prop::Listener *listener = NULL): tk::RangeFloat(listener) {};

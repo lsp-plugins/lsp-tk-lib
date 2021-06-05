@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 WindowActions & operator = (const WindowActions &);
+                WindowActions(const WindowActions &);
 
             protected:
                 static const prop::enum_t ENUM[];
@@ -109,6 +110,7 @@ namespace lsp
             {
                 private:
                     WindowActions & operator = (const WindowActions &);
+                    WindowActions(const WindowActions &);
 
                 public:
                     explicit WindowActions(prop::Listener *listener = NULL): tk::WindowActions(listener) {};

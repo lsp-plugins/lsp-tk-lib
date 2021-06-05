@@ -35,6 +35,7 @@ namespace lsp
         {
             private:
                 Flags & operator = (const Flags &);
+                Flags(const Flags &);
 
             protected:
                 size_t                  nFlags;         // Bit field of flags

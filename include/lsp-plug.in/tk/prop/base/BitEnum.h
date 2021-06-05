@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 BitEnum & operator = (const BitEnum &);
+                BitEnum(const BitEnum &);
 
             protected:
                 size_t              nValue;

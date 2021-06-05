@@ -38,6 +38,7 @@ namespace lsp
         {
             protected:
                 TextSelection & operator = (const TextSelection &);
+                TextSelection(const TextSelection &);
 
             protected:
                 enum property_t
@@ -100,6 +101,7 @@ namespace lsp
             {
                 private:
                     TextSelection & operator = (const TextSelection &);
+                    TextSelection(const TextSelection &);
 
                 public:
                     explicit TextSelection(prop::Listener *listener = NULL): tk::TextSelection(listener) {};

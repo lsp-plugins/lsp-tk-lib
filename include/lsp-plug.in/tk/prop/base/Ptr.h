@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 Ptr & operator = (const Ptr &);
+                Ptr(const Ptr &);
 
             protected:
                 void                       *pCurr;

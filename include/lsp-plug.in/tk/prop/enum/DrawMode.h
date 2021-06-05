@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 DrawMode & operator = (const DrawMode &);
+                DrawMode(const DrawMode &);
 
             protected:
                 static const prop::enum_t ENUM[];
@@ -58,6 +59,7 @@ namespace lsp
             {
                 private:
                     DrawMode & operator = (const DrawMode &);
+                    DrawMode(const DrawMode &);
 
                 public:
                     explicit DrawMode(prop::Listener *listener = NULL): tk::DrawMode(listener) {};

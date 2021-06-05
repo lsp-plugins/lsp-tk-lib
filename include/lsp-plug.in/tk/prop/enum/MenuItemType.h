@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 MenuItemType & operator = (const MenuItemType &);
+                MenuItemType(const MenuItemType &);
 
             protected:
                 static const prop::enum_t ENUM[];
@@ -62,6 +63,7 @@ namespace lsp
             {
                 private:
                     MenuItemType & operator = (const MenuItemType &);
+                    MenuItemType(const MenuItemType &);
 
                 public:
                     explicit MenuItemType(prop::Listener *listener = NULL): tk::MenuItemType(listener) {};

@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 Float & operator = (const Float &);
+                Float(const Float &);
 
             protected:
                 float               fValue;
@@ -82,6 +83,7 @@ namespace lsp
             {
                 private:
                     Float & operator = (const Float &);
+                    Float(const Float &);
 
                 public:
                     explicit inline Float(prop::Listener *listener = NULL): tk::Float(listener) {};

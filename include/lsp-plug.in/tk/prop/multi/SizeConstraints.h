@@ -34,6 +34,7 @@ namespace lsp
         {
             protected:
                 SizeConstraints & operator = (const SizeConstraints &);
+                SizeConstraints(const SizeConstraints &);
 
             protected:
                 enum property_t
@@ -140,6 +141,7 @@ namespace lsp
             {
                 private:
                     SizeConstraints & operator = (const SizeConstraints &);
+                    SizeConstraints(const SizeConstraints &);
 
                 public:
                     explicit SizeConstraints(prop::Listener *listener = NULL): tk::SizeConstraints(listener) {};

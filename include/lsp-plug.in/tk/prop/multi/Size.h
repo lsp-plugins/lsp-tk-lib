@@ -34,6 +34,7 @@ namespace lsp
         {
             protected:
                 Size & operator = (const Size &);
+                Size(const Size &);
 
             protected:
                 enum property_t
@@ -95,6 +96,7 @@ namespace lsp
             {
                 private:
                     Size & operator = (const Size &);
+                    Size(const Size &);
 
                 public:
                     explicit Size(prop::Listener *listener = NULL): tk::Size(listener) {};

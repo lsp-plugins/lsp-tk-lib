@@ -40,6 +40,7 @@ namespace lsp
         {
             private:
                 StepFloat & operator = (const StepFloat &);
+                StepFloat(const StepFloat &);
 
             protected:
                 enum property_t
@@ -102,6 +103,7 @@ namespace lsp
             {
                 private:
                     StepFloat & operator = (const StepFloat &);
+                    StepFloat(const StepFloat &);
 
                 public:
                     explicit StepFloat(prop::Listener *listener = NULL): tk::StepFloat(listener) {};

@@ -39,6 +39,7 @@ namespace lsp
         {
             private:
                 ColorRange & operator = (const ColorRange &);
+                ColorRange(const ColorRange &);
 
             protected:
                 enum property_t
@@ -160,6 +161,7 @@ namespace lsp
             {
                 private:
                     ColorRange & operator = (const ColorRange &);
+                    ColorRange(const ColorRange &);
 
                 public:
                     explicit inline ColorRange(prop::Listener *listener = NULL): tk::ColorRange(listener) {};

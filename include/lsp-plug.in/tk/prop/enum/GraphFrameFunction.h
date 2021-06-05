@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 GraphFrameFunction & operator = (const GraphFrameFunction &);
+                GraphFrameFunction(const GraphFrameFunction &);
 
             protected:
                 static const prop::enum_t ENUM[];
@@ -66,6 +67,7 @@ namespace lsp
             {
                 private:
                     GraphFrameFunction & operator = (const GraphFrameFunction &);
+                    GraphFrameFunction(const GraphFrameFunction &);
 
                 public:
                     explicit GraphFrameFunction(prop::Listener *listener = NULL): tk::GraphFrameFunction(listener) {};

@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 SimpleProperty & operator = (const SimpleProperty &);
+                SimpleProperty(const SimpleProperty &);
 
             protected:
                 atom_t              nAtom;

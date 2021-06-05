@@ -39,6 +39,7 @@ namespace lsp
         {
             private:
                 PathPattern & operator = (const PathPattern &);
+                PathPattern(const PathPattern &);
 
             protected:
                 io::PathPattern                 sPattern;
@@ -79,6 +80,7 @@ namespace lsp
             {
                 private:
                     PathPattern & operator = (const PathPattern &);
+                    PathPattern(const PathPattern &);
 
                 public:
                     explicit PathPattern(prop::Listener *listener = NULL): tk::PathPattern(listener) {};

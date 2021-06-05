@@ -39,6 +39,7 @@ namespace lsp
         {
             private:
                 Vector2D & operator = (const Vector2D &);
+                Vector2D(const Vector2D &);
 
             protected:
                 enum property_t
@@ -115,6 +116,7 @@ namespace lsp
             {
                 private:
                     Vector2D & operator = (const Vector2D &);
+                    Vector2D(const Vector2D &);
 
                 public:
                     explicit Vector2D(prop::Listener *listener = NULL): tk::Vector2D(listener) {};

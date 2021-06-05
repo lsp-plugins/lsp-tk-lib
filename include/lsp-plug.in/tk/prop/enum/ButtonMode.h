@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 ButtonMode & operator = (const ButtonMode &);
+                ButtonMode(const ButtonMode &);
 
             protected:
                 static const prop::enum_t ENUM[];
@@ -60,6 +61,7 @@ namespace lsp
             {
                 private:
                     ButtonMode & operator = (const ButtonMode &);
+                    ButtonMode(const ButtonMode &);
 
                 public:
                     explicit ButtonMode(prop::Listener *listener = NULL): tk::ButtonMode(listener) {};

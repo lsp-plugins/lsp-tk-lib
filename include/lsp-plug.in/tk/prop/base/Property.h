@@ -42,6 +42,7 @@ namespace lsp
         {
             private:
                 Property & operator = (const Property &);
+                Property(const Property &);
 
             protected:
                 class Listener: public IStyleListener

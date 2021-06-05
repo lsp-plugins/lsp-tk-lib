@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 ColorRanges & operator = (const ColorRanges &);
+                ColorRanges(const ColorRanges &);
 
             protected:
                 class Changes: public prop::Listener
@@ -150,6 +151,7 @@ namespace lsp
             {
                 private:
                     ColorRanges & operator = (const ColorRanges &);
+                    ColorRanges(const ColorRanges &);
 
                 public:
                     explicit ColorRanges(prop::Listener *listener = NULL): tk::ColorRanges(listener) {};

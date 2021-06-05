@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 FileMask & operator = (const FileMask &);
+                FileMask(const FileMask &);
 
             protected:
                 class PListener: public prop::Listener
@@ -89,6 +90,7 @@ namespace lsp
             {
                 private:
                     FileMask & operator = (const FileMask &);
+                    FileMask(const FileMask &);
 
                 public:
                     explicit FileMask(prop::Listener *listener = NULL): tk::FileMask(listener) {}

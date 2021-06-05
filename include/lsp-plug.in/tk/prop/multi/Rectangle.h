@@ -33,6 +33,7 @@ namespace lsp
         {
             private:
                 Rectangle & operator = (const Rectangle &);
+                Rectangle(const Rectangle &);
 
             protected:
                 enum property_t
@@ -95,6 +96,7 @@ namespace lsp
             {
                 private:
                     Rectangle & operator = (const Rectangle &);
+                    Rectangle(const Rectangle &);
 
                 public:
                     explicit Rectangle(prop::Listener *listener = NULL): tk::Rectangle(listener) {};

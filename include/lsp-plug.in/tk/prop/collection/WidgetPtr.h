@@ -38,6 +38,7 @@ namespace lsp
             {
                 private:
                     WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &);
+                    WidgetPtr(const WidgetPtr<widget_t> &);
 
                 protected:
                     inline WidgetPtr<widget_t> *ccast() const       { return const_cast< WidgetPtr<widget_t> >(this);                               }
@@ -76,6 +77,7 @@ namespace lsp
                 {
                     private:
                         WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &);
+                        WidgetPtr(const WidgetPtr<widget_t> &);
 
                     public:
                         explicit WidgetPtr(prop::Listener *listener = NULL): tk::WidgetPtr<widget_t>(listener) {}

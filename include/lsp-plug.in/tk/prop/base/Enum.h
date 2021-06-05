@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 Enum & operator = (const Enum &);
+                Enum(const Enum &);
 
             protected:
                 ssize_t             nValue;
