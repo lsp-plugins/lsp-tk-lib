@@ -126,7 +126,74 @@ namespace lsp
 
         status_t Schema::load_fonts_from_sheet(StyleSheet *sheet, resource::ILoader *loader)
         {
-            // TODO: implement this when sheet will contain information about fonts
+            status_t res;
+            lltl::parray<LSPString> vk;
+            sheet->enum_fonts(&vk);
+
+            ws::IDisplay *dpy = pDisplay->display();
+            if (dpy == NULL)
+                return STATUS_BAD_STATE;
+
+            for (size_t i=0, n=vk.size(); i<n; ++i)
+            {
+                LSPString *key              = vk.uget(i);
+                StyleSheet::font_t *font    = sheet->vFonts.get(key);
+                if ((key == NULL) || (font == NULL))
+                    return STATUS_BAD_STATE;
+
+                if (font->alias)
+                {
+                    if ((res = dpy->add_font_alias(font->name.get_utf8(), font->path.get_utf8())) != STATUS_OK)
+                    {
+                        lsp_error("Could not create font alias \"%s\" -> \"%s\"",
+                            font->name.get_utf8(),
+                            font->path.get_utf8()
+                        );
+                        return res;
+                    }
+                }
+                else if (loader != NULL)
+                {
+                    // Use resource resolver for loading fonts
+                    io::IInStream *is = loader->read_stream(&font->path);
+                    if (is == NULL)
+                    {
+                        lsp_error("Could not resolve font data \"%s\" located at \"%s\", error code %d",
+                            font->name.get_utf8(),
+                            font->path.get_utf8(),
+                            int(loader->last_error())
+                        );
+                        return loader->last_error();
+                    }
+
+                    if ((res = dpy->add_font(font->name.get_utf8(), is)) != STATUS_OK)
+                    {
+                        lsp_error("Could not load font data \"%s\" resolved at \"%s\", error code %d",
+                            font->name.get_utf8(),
+                            font->path.get_utf8(),
+                            int(loader->last_error())
+                        );
+                        is->close();
+                        return res;
+                    }
+
+                    is->close();
+                }
+                else
+                {
+                    // Just load font from file
+                    if ((res = dpy->add_font(font->name.get_utf8(), font->path.get_utf8())) != STATUS_OK)
+                    {
+                        lsp_error("Could not load font \"%s\" located at \"%s\", error code %d",
+                            font->name.get_utf8(),
+                            font->path.get_utf8(),
+                            int(res)
+                        );
+                        return res;
+                    }
+                }
+            }
+
             return STATUS_OK;
         }
 

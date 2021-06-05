@@ -28,6 +28,8 @@
 - Added 'balance_color', 'balance_color_custom', 'flat' and 'scale_marks' properties to the tk::Knob widget.
 - Added font scaling feature to the tk::Font property.
 - Added freetype2 library dependencies for UNIX-compatible operating systems.
+- Added possibility to specify custom fonts in the stylesheet data.
+- Added font loading support by the tk::Schema object.
 
 TODO:
 - Add custom mouse pointer for fraction actions.
