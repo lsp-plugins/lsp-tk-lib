@@ -218,6 +218,8 @@ MTEST_BEGIN("tk.widgets.simple", label)
                     MTEST_ASSERT(grid->add(label) == STATUS_OK);
                     label->text()->set_raw(&id);
                     label->font()->set_antialiasing((col & 1) ? ws::FA_ENABLED : ws::FA_DISABLED);
+                    if ((col%5) == 4)
+                        label->font()->set_scaling(1.5f);
                     label->text_layout()->set((x - 2) * 0.5f, (y - 2) * 0.5f);
                     label->constraints()->set(-1, -1, 64, 64);
                     label->pointer()->set(ws::MP_HAND);

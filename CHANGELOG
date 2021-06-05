@@ -26,6 +26,7 @@
 - Fixed missing builtin styles for tk::ComboGroup widget.
 - Added spin_spacing property to tk::ComboGroup widget.
 - Added 'balance_color', 'balance_color_custom', 'flat' and 'scale_marks' properties to the tk::Knob widget.
+- Added font scaling feature to the tk::Font property.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

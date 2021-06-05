@@ -49,6 +49,7 @@ namespace lsp
                     P_ITALIC,
                     P_UNDERLINE,
                     P_ANTIALIAS,
+                    P_SCALING,
 
                     P_COUNT
                 };
@@ -62,8 +63,9 @@ namespace lsp
                     O_ITALIC    = 1 << P_ITALIC,
                     O_UNDERLINE = 1 << P_UNDERLINE,
                     O_ANTIALIAS = 1 << P_ANTIALIAS,
+                    O_SCALING   = 1 << P_SCALING,
 
-                    O_ALL_FLAGS = O_FLAGS | O_BOLD | O_ITALIC | O_UNDERLINE | O_ANTIALIAS,
+                    O_ALL_FLAGS = O_FLAGS | O_BOLD | O_ITALIC | O_UNDERLINE | O_ANTIALIAS | O_SCALING,
                     O_ALL       = O_ALL_FLAGS | O_NAME | O_SIZE
                 };
 
@@ -76,6 +78,7 @@ namespace lsp
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 ws::Font            sValue;             // Font parameters
                 size_t              nOverride;          // Override flags
+                float               fScaling;           // Font scaling
                 mutable ws::font_parameters_t   sFP;    // Cached font parameters
 
             protected:
@@ -99,12 +102,14 @@ namespace lsp
                 inline ws::font_antialias_t antialiasing() const    { return sValue.antialiasing();             }
                 inline ws::font_antialias_t antialias() const       { return sValue.antialiasing();             }
                 inline size_t               flags() const           { return sValue.flags();                    }
+                inline float                scaling() const         { return fScaling;                          }
                 inline void                 get(ws::Font *f) const  { f->set(&sValue);                          }
                 inline void                 get(ws::Font *f, float scaling) const;
 
                 void                        set_name(const char *name);
                 inline void                 set_name(const LSPString *name)     { set_name((name != NULL) ? name->get_utf8() : NULL );      }
                 float                       set_size(float size);
+                float                       set_scaling(float scale);
                 bool                        set_bold(bool on = true);
                 bool                        set_italic(bool on = true);
                 bool                        set_underline(bool on = true);
