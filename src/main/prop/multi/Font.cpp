@@ -34,7 +34,6 @@ namespace lsp
             { ".italic",        PT_BOOL     },
             { ".underline",     PT_BOOL     },
             { ".antialiasing",  PT_STRING   },
-            { ".scaling",       PT_FLOAT    },
             { NULL,             PT_UNKNOWN  }
         };
 
@@ -62,7 +61,6 @@ namespace lsp
             MultiProperty(vAtoms, P_COUNT, listener)
         {
             nOverride       = 0;
-            fScaling        = 1.0f;
         }
 
         Font::~Font()
@@ -85,8 +83,6 @@ namespace lsp
                 pStyle->set_bool(vAtoms[P_ITALIC], f.is_italic());
             if ((mask & O_UNDERLINE) && (vAtoms[P_UNDERLINE] >= 0))
                 pStyle->set_bool(vAtoms[P_UNDERLINE], f.is_underline());
-            if ((mask & O_SCALING) && (vAtoms[P_SCALING] >= 0))
-                pStyle->set_float(vAtoms[P_SCALING], fScaling);
 
             // Complicated properties
             LSPString s;
@@ -144,8 +140,6 @@ namespace lsp
 
             if ((property == vAtoms[P_SIZE]) && (pStyle->get_float(vAtoms[P_SIZE], &fvalue) == STATUS_OK))
                 f.set_size(lsp_max(0.0f, fvalue));
-            if ((property == vAtoms[P_SCALING]) && (pStyle->get_float(vAtoms[P_SCALING], &fvalue) == STATUS_OK))
-                fScaling = lsp_max(0.0f, fvalue);
 
             if ((property == vAtoms[P_BOLD]) && (pStyle->get_bool(vAtoms[P_BOLD], &bvalue) == STATUS_OK))
                 f.set_bold(bvalue);
@@ -172,7 +166,7 @@ namespace lsp
         {
             f->set(
                 sValue.get_name(),
-                sValue.get_size() * lsp_max(0.0f, scaling * fScaling),
+                sValue.get_size() * lsp_max(0.0f, scaling),
                 sValue.flags(),
                 sValue.antialiasing()
             );
@@ -199,18 +193,6 @@ namespace lsp
                 return old;
 
             sValue.set_size(size);
-            sync();
-            return old;
-        }
-
-        float Font::set_scaling(float scale)
-        {
-            nOverride      |= O_SCALING;
-            float old = fScaling;
-            if (old == scale)
-                return old;
-
-            fScaling        = scale;
             sync();
             return old;
         }
@@ -375,7 +357,7 @@ namespace lsp
             if (s == NULL)
                 return false;
             ws::Font f(&sValue);
-            f.set_size(sValue.size() * lsp_max(0.0f, scaling * fScaling));
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling));
             return s->get_font_parameters(f, fp);
         }
 
@@ -429,7 +411,7 @@ namespace lsp
                 return false;
 
             ws::Font f(&sValue);
-            f.set_size(sValue.size() * lsp_max(0.0f, scaling * fScaling));
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling));
 
             ssize_t prev = 0, curr = 0, tail = 0;
             ws::font_parameters_t fp;
@@ -520,7 +502,7 @@ namespace lsp
                 return false;
 
             ws::Font f(sValue);
-            f.set_size(sValue.size() * lsp_max(0.0f, scaling * fScaling)); // Update the font size
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling)); // Update the font size
             return s->get_text_parameters(f, tp, text, first, last);
         }
 
@@ -578,7 +560,7 @@ namespace lsp
                 return;
 
             ws::Font f(sValue);
-            f.set_size(sValue.size() * lsp_max(0.0f, scaling * fScaling)); // Update the font size
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling)); // Update the font size
             s->out_text(f, c, x, y, text, first, last);
         }
     }

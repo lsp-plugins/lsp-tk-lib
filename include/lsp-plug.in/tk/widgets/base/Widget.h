@@ -38,6 +38,7 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(Widget, Style)
                 prop::Allocation    sAllocation;    // Widget allocation
                 prop::Float         sScaling;       // UI scaling factor
+                prop::Float         sFontScaling;   // UI font scaling factor
                 prop::Float         sBrightness;    // Brightness
                 prop::Padding       sPadding;       // Widget padding
                 prop::Color         sBgColor;       // Color of the background of the widget
@@ -99,6 +100,7 @@ namespace lsp
 
                 prop::Allocation    sAllocation;    // Widget allocation
                 prop::Float         sScaling;       // UI scaling factor
+                prop::Float         sFontScaling;   // UI font scaling factor
                 prop::Float         sBrightness;    // Brightness
                 prop::Padding       sPadding;       // Widget padding
                 prop::Color         sBgColor;       // Color of the background of the widget
@@ -422,10 +424,16 @@ namespace lsp
                 LSP_TK_PROPERTY(Float,              brightness,         &sBrightness)
 
                 /**
-                 * Get brightness property
-                 * @return brightness property
+                 * Get widget scaling property
+                 * @return widget scaling property
                  */
                 LSP_TK_PROPERTY(Float,              scaling,            &sScaling)
+
+                /**
+                 * Get font scaling property
+                 * @return font scaling property
+                 */
+                LSP_TK_PROPERTY(Float,              font_scaling,       &sFontScaling)
 
                 /**
                  * Widget allocation flags

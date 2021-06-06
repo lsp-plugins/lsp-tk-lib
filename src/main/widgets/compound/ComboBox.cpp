@@ -336,6 +336,7 @@ namespace lsp
             ws::rectangle_t ta, sa, va; // text area, spin area, split area
 
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             estimate_parameters(&a, scaling);
 
             // Estimate size of the spin
@@ -350,13 +351,13 @@ namespace lsp
             ws::text_parameters_t tp;
             LSPString text;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
             ta.nWidth           = 0;
             ta.nHeight          = fp.Height;
 
             // Estimate the maximum text width
             sEmptyText.format(&text);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
             ta.nWidth           = lsp_max(ta.nWidth,  tp.Width);
             ta.nHeight          = lsp_max(ta.nHeight, tp.Height);
 
@@ -368,7 +369,7 @@ namespace lsp
                     continue;
 
                 it->text()->format(&text);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 ta.nWidth           = lsp_max(ta.nWidth,  tp.Width);
                 ta.nHeight          = lsp_max(ta.nHeight, tp.Height);
             }
@@ -422,6 +423,7 @@ namespace lsp
             bool aa;
             ws::rectangle_t ta, sa, va; // text area, spin area
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
             estimate_parameters(&a, scaling);
 
@@ -516,8 +518,8 @@ namespace lsp
                 else
                     sEmptyText.format(&text);
 
-                sFont.get_parameters(s, scaling, &fp);
-                sFont.get_text_parameters(s, &tp, scaling, &text);
+                sFont.get_parameters(s, fscaling, &fp);
+                sFont.get_text_parameters(s, &tp, fscaling, &text);
                 float dy        = (ta.nHeight - fp.Height) * 0.5f;
                 float dx        = (ta.nWidth  - tp.Width ) * 0.5f;
                 ssize_t y       = ta.nTop   + dy * valign + fp.Ascent;
@@ -527,7 +529,7 @@ namespace lsp
                 {
                     c.copy(sTextColor);
                     c.scale_lightness(bright);
-                    sFont.draw(s, c, x, y, scaling, &text);
+                    sFont.draw(s, c, x, y, fscaling, &text);
                 }
                 s->clip_end();
             }

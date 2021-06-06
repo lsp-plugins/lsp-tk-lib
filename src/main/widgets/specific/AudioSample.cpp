@@ -360,6 +360,7 @@ namespace lsp
         void AudioSample::size_request(ws::size_limit_t *r)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             bool sgroups        = sSGroups.get();
 
             lltl::parray<AudioChannel> channels;
@@ -379,7 +380,7 @@ namespace lsp
                 ws::text_parameters_t tp;
                 LSPString text;
                 sMainText.format(&text);
-                sMainFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+                sMainFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
                 r->nMinWidth            = tp.Width;
                 r->nMinHeight           = tp.Height;
             }
@@ -689,6 +690,7 @@ namespace lsp
         void AudioSample::draw_main_text(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
 
             LSPString text;
@@ -704,8 +706,8 @@ namespace lsp
 
             // Get main text parameters
             sMainText.format(&text);
-            sMainFont.get_parameters(s, scaling, &fp);
-            sMainFont.get_multitext_parameters(s, &tp, scaling, &text);
+            sMainFont.get_parameters(s, fscaling, &fp);
+            sMainFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
             // Draw main text
             lsp::Color color(sMainColor);
@@ -713,7 +715,7 @@ namespace lsp
 
             draw_multiline_text(
                 s, &sMainFont, &xr, color, &fp, &tp,
-                sMainTextLayout.halign(), sMainTextLayout.valign(), scaling,
+                sMainTextLayout.halign(), sMainTextLayout.valign(), fscaling,
                 &text
             );
         }
@@ -721,6 +723,7 @@ namespace lsp
         void AudioSample::draw_label(ws::ISurface *s, size_t idx)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
 
             ws::font_parameters_t fp;
@@ -731,8 +734,8 @@ namespace lsp
 
             // Get label text parameters
             sLabel[idx].format(&text);
-            sLabelFont.get_parameters(s, scaling, &fp);
-            sLabelFont.get_multitext_parameters(s, &tp, scaling, &text);
+            sLabelFont.get_parameters(s, fscaling, &fp);
+            sLabelFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
             ssize_t rad         = (sLabelRadius.get() > 0) ? lsp_max(1.0f, sLabelRadius.get() * scaling) : 0.0f;
             size_t padding      = ceilf(rad * M_SQRT1_2);
@@ -770,7 +773,7 @@ namespace lsp
 
             draw_multiline_text(
                 s, &sLabelFont, &xr, color, &fp, &tp,
-                sLabelTextLayout[idx].halign(), sLabelTextLayout[idx].valign(), scaling,
+                sLabelTextLayout[idx].halign(), sLabelTextLayout[idx].valign(), fscaling,
                 &text
             );
 

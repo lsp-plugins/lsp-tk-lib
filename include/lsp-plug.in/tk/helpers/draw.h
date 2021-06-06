@@ -105,7 +105,7 @@ namespace lsp
          * @param tp text parameters
          * @param halign horizontal font alignment
          * @param valign vertical font alignment
-         * @param scaling font scaling
+         * @param fscaling font scaling
          * @param text text to output
          */
         void draw_multiline_text(
@@ -115,7 +115,7 @@ namespace lsp
             const lsp::Color &color,
             const ws::font_parameters_t *fp,
             const ws::text_parameters_t *tp,
-            float halign, float valign, float scaling,
+            float halign, float valign, float fscaling,
             const LSPString *text
         );
     }

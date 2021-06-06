@@ -98,21 +98,6 @@ namespace lsp
             sVAxis.bind("vaxis", &sStyle);
             sOrigin.bind("origin", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sFont.init(sclass, 10.0f);
-//                sColor.init(sclass, "#ffffff");
-//                sLayout.init(sclass, 1.0f, 1.0f, 0.0f, 0.0f);
-//                sTextLayout.init(sclass, 0.5f, 0.5f);
-//                sHValue.init(sclass, 0.0f);
-//                sVValue.init(sclass, 0.0f);
-//                sHAxis.init(sclass, 0);
-//                sVAxis.init(sclass, 0);
-//                sOrigin.init(sclass, 0);
-//                sPadding.override(sclass, 2);
-//            }
-
             return STATUS_OK;
         }
 
@@ -154,8 +139,9 @@ namespace lsp
                 return;
 
             // Get palette
-            float scaling = lsp_max(0.0f, sScaling.get());
-            float bright  = sBrightness.get();
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
+            float bright    = sBrightness.get();
 
             lsp::Color font_color(sColor);
             font_color.scale_lightness(bright);
@@ -184,8 +170,8 @@ namespace lsp
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
 
-            sFont.get_parameters(s, scaling, &fp);
-            sFont.get_multitext_parameters(s, &tp, scaling, &text);
+            sFont.get_parameters(s, fscaling, &fp);
+            sFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
             // Allocate position
             ws::rectangle_t r;
@@ -230,12 +216,12 @@ namespace lsp
                 }
 
                 // Calculate text location
-                sFont.get_text_parameters(s, &tp, scaling, &text, last, tail);
+                sFont.get_text_parameters(s, &tp, fscaling, &text, last, tail);
                 float dx    = (r.nWidth - tp.Width) * 0.5f;
                 ssize_t tx  = r.nLeft   + dx * halign - tp.XBearing;
                 ty         += fp.Height;
 
-                sFont.draw(s, font_color, tx, ty, scaling, &text, last, tail);
+                sFont.draw(s, font_color, tx, ty, fscaling, &text, last, tail);
                 last    = curr + 1;
             }
         }

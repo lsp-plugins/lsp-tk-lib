@@ -101,13 +101,14 @@ namespace lsp
             sText.format(&text);
 
             // Estimate sizes
-            float scaling   = sScaling.get();
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
             ws::rectangle_t r;
 
-            sFont.get_parameters(s, scaling, &fp);
-            sFont.get_multitext_parameters(s, &tp, scaling, &text);
+            sFont.get_parameters(s, fscaling, &fp);
+            sFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
             // Estimate drawing area
             tp.Height       = lsp_max(tp.Height, fp.Height);
@@ -168,12 +169,12 @@ namespace lsp
                 }
 
                 // Calculate text location
-                sFont.get_text_parameters(s, &tp, scaling, &text, last, tail);
+                sFont.get_text_parameters(s, &tp, fscaling, &text, last, tail);
                 float dx    = (r.nWidth - tp.Width) * 0.5f;
                 ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
                 y          += fp.Height;
 
-                sFont.draw(s, f_color, x, y, scaling, &text, last, tail);
+                sFont.draw(s, f_color, x, y, fscaling, &text, last, tail);
                 last    = curr + 1;
             }
         }
@@ -192,12 +193,13 @@ namespace lsp
             sText.format(&text);
 
             // Estimate sizes
-            float scaling   = sScaling.get();
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
 
             r->nMinWidth    = ceil(tp.Width);
             r->nMinHeight   = ceil(lsp_max(tp.Height, fp.Height));

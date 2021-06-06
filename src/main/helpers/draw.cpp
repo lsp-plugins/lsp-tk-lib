@@ -247,7 +247,7 @@ namespace lsp
             const lsp::Color &color,
             const ws::font_parameters_t *fp,
             const ws::text_parameters_t *tp,
-            float halign, float valign, float scaling,
+            float halign, float valign, float fscaling,
             const LSPString *text
         )
         {
@@ -278,12 +278,12 @@ namespace lsp
                 }
 
                 // Calculate text location
-                font->get_text_parameters(s, &xtp, scaling, text, last, tail);
+                font->get_text_parameters(s, &xtp, fscaling, text, last, tail);
                 float dx    = (r->nWidth - xtp.Width) * 0.5f;
                 ssize_t x   = r->nLeft   + dx * halign - xtp.XBearing;
                 y          += fp->Height;
 
-                font->draw(s, color, x, y, scaling, text, last, tail);
+                font->draw(s, color, x, y, fscaling, text, last, tail);
                 last    = curr + 1;
             }
         }

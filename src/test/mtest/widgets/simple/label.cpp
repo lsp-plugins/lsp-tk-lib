@@ -50,6 +50,10 @@ MTEST_BEGIN("tk.widgets.simple", label)
                 wnd->style()->schema()->scaling()->add(0.25f);
             else if ((ev->nCode == '-') || (ev->nCode == ws::WSK_KEYPAD_SUBTRACT))
                 wnd->style()->schema()->scaling()->sub(0.25f);
+            else if (ev->nCode == 'a')
+                wnd->style()->schema()->font_scaling()->add(0.25f);
+            else if (ev->nCode == 'z')
+                wnd->style()->schema()->font_scaling()->sub(0.25f);
         }
         return STATUS_OK;
     }
@@ -219,7 +223,7 @@ MTEST_BEGIN("tk.widgets.simple", label)
                     label->text()->set_raw(&id);
                     label->font()->set_antialiasing((col & 1) ? ws::FA_ENABLED : ws::FA_DISABLED);
                     if ((col%5) == 4)
-                        label->font()->set_scaling(1.5f);
+                        label->font_scaling()->set(1.5f);
                     label->text_layout()->set((x - 2) * 0.5f, (y - 2) * 0.5f);
                     label->constraints()->set(-1, -1, 64, 64);
                     label->pointer()->set(ws::MP_HAND);

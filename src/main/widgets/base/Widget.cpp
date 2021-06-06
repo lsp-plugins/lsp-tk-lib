@@ -33,6 +33,7 @@ namespace lsp
                 // Bind
                 sAllocation.bind("allocation", this);
                 sScaling.bind("size.scaling", this);
+                sFontScaling.bind("font.scaling", this);
                 sBrightness.bind("brightness", this);
                 sPadding.bind("padding", this);
                 sBgColor.bind("bg.color", this);
@@ -43,6 +44,7 @@ namespace lsp
                 // Configure
                 sAllocation.set(true, false);
                 sScaling.set(1.0f);
+                sFontScaling.set(1.0f);
                 sBrightness.set(1.0f);
                 sPadding.set_all(0);
                 sBgColor.set("#cccccc");
@@ -69,6 +71,7 @@ namespace lsp
             sProperties(this),
             sAllocation(&sProperties),
             sScaling(&sProperties),
+            sFontScaling(&sProperties),
             sBrightness(&sProperties),
             sPadding(&sProperties),
             sBgColor(&sProperties),
@@ -136,6 +139,7 @@ namespace lsp
             {
                 sAllocation.bind("allocation", &sStyle);
                 sScaling.bind("size.scaling", &sStyle);
+                sFontScaling.bind("font.scaling", &sStyle);
                 sBrightness.bind("brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
                 sBgColor.bind("bg.color", &sStyle);
@@ -202,6 +206,8 @@ namespace lsp
         void Widget::property_changed(Property *prop)
         {
             if (sScaling.is(prop))
+                query_resize();
+            if (sFontScaling.is(prop))
                 query_resize();
             if (sBrightness.is(prop))
                 query_draw();

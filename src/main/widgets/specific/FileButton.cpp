@@ -158,7 +158,8 @@ namespace lsp
 
         void FileButton::size_request(ws::size_limit_t *r)
         {
-            float scaling           = lsp_max(0.0f, sScaling.get());
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
 
             // Estimate minmum size required for the text field
             LSPString s;
@@ -171,20 +172,20 @@ namespace lsp
             xr.nWidth       = 0;
             xr.nHeight      = 0;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
 
             for (size_t i=0,n=sTextList.size(); i<n; ++i)
             {
                 String *si      = sTextList.get(i);
                 si->format(&s);
-                sFont.get_multitext_parameters(pDisplay, &tp, scaling, &s);
+                sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &s);
 
                 xr.nWidth       = lsp_max(xr.nWidth,  tp.Width );
                 xr.nHeight      = lsp_max(xr.nHeight, tp.Height);
             }
 
             sText.format(&s);
-            sFont.get_multitext_parameters(pDisplay, &tp, scaling, &s);
+            sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &s);
 
             xr.nWidth       = lsp_max(xr.nWidth,  tp.Width );
             xr.nHeight      = lsp_max(xr.nHeight, tp.Height);
@@ -274,6 +275,7 @@ namespace lsp
             float xa[NPOINTS], ya[NPOINTS];
 
             float scaling           = lsp_max(0.0f, sScaling.get());
+            float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
             size_t max_chamfer      = lsp_max(1.0f, scaling * 4.0f);
             size_t min_chamfer      = lsp_max(1.0f, scaling * 3.0f);
             float line_width        = lsp_max(1.0f, scaling);
@@ -346,9 +348,9 @@ namespace lsp
             LSPString stext;
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
-            sFont.get_parameters(s, scaling, &fp);
+            sFont.get_parameters(s, fscaling, &fp);
             sText.format(&stext);
-            sFont.get_multitext_parameters(s, &tp, scaling, &stext);
+            sFont.get_multitext_parameters(s, &tp, fscaling, &stext);
 
             float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
             float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
@@ -375,12 +377,12 @@ namespace lsp
                 }
 
                 // Calculate text location
-                sFont.get_text_parameters(s, &tp, scaling, &stext, last, tail);
+                sFont.get_text_parameters(s, &tp, fscaling, &stext, last, tail);
                 float dx    = (b.nWidth - tp.Width) * 0.5f;
                 ssize_t x   = b.nLeft   + dx * halign - tp.XBearing;
                 y          += fp.Height;
 
-                sFont.draw(s, text, x, y, scaling, &stext, last, tail);
+                sFont.draw(s, text, x, y, fscaling, &stext, last, tail);
                 last    = curr + 1;
             }
 

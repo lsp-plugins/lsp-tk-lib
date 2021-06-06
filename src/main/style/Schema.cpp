@@ -39,7 +39,6 @@ namespace lsp
                 // Configure
                 sFont.set_antialiasing(ws::FA_DEFAULT);
                 sFont.set_size(12.0f);
-                sFont.set_scaling(1.0f);
                 sFontScaling.set(1.0f);
                 sScaling.set(1.0f);
                 sDrawMode.set(DM_CLASSIC);
@@ -61,6 +60,9 @@ namespace lsp
         {
             // Manually unbind all properties before destroying context
             sScaling.unbind();
+            sFontScaling.unbind();
+            sFont.unbind();
+            sDrawMode.unbind();
 
             // Destroy named styles
             vBuiltin.flush();
@@ -485,6 +487,9 @@ namespace lsp
         {
             // Bind properties
             sScaling.bind("size.scaling", root);
+            sFontScaling.bind("font.scaling", root);
+            sFont.bind("font", root);
+            sDrawMode.bind("draw.mode", root);
         }
 
         status_t Schema::parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt)

@@ -321,6 +321,7 @@ namespace lsp
         void ComboGroup::allocate(alloc_t *alloc)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
             ssize_t spin    = lsp_max(0.0f, sSpinSize.get() * scaling);
@@ -343,8 +344,8 @@ namespace lsp
             else
                 sEmptyText.format(&s);
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
             xr.nWidth           = tp.Width + tradius + spin + spin_sp;
             xr.nHeight          = lsp_max(fp.Height, tp.Height);
             sTextPadding.add(&xr, scaling);
@@ -471,6 +472,7 @@ namespace lsp
 
             ws::rectangle_t xr;
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright    = lsp_max(0.0f, sBrightness.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
@@ -574,14 +576,14 @@ namespace lsp
                     else
                         sEmptyText.format(&text);
 
-                    sFont.get_parameters(pDisplay, scaling, &fp);
-                    sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                    sFont.get_parameters(pDisplay, fscaling, &fp);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                     ws::rectangle_t tloc;
                     sTextPadding.enter(&tloc, &sLabel, scaling);
 
                     sFont.draw(s, color,
                             tloc.nLeft + spin + spin_sp - tp.XBearing, tloc.nTop + fp.Ascent,
-                            scaling, &text);
+                            fscaling, &text);
 
                     // Draw arrows
                     color.copy(sSpinColor);

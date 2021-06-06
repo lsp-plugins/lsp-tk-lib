@@ -150,6 +150,7 @@ namespace lsp
         void RackEars::estimate_sizes(ws::rectangle_t *screw, ws::rectangle_t *btn)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t angle       = (sAngle.get() & 0x03);
             ssize_t chamfer     = lsp_max(1.0f, scaling * 3.0f);
 
@@ -167,8 +168,8 @@ namespace lsp
             LSPString text;
 
             sText.format(&text);
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 
             btn->nLeft          = 0;
             btn->nTop           = 0;
@@ -328,6 +329,7 @@ namespace lsp
         void RackEars::draw(ws::ISurface *s)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright    = sBrightness.get();
             bool aa         = s->set_antialiasing(true);
 
@@ -407,13 +409,13 @@ namespace lsp
             LSPString text;
 
             sText.format(&text);
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 
             sFont.draw(s, font,
                 btn.nLeft + ((btn.nWidth  - tp.Width ) * 0.5f),
                 btn.nTop  + ((btn.nHeight - fp.Height) * 0.5f) + fp.Ascent,
-                scaling, &text
+                fscaling, &text
             );
 
             // Restore antialiasing

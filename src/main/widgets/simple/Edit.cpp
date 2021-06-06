@@ -361,6 +361,7 @@ namespace lsp
         void Edit::size_request(ws::size_limit_t *r)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             if (border > 0)
@@ -377,7 +378,7 @@ namespace lsp
 
             // Estimate sizes
             ws::font_parameters_t fp;
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
             r->nMinHeight   = lsp_max(r->nMinHeight, rgap*2 + fp.Height);
             r->nMinWidth   += lsp_max(1.0f, scaling); // Additional place for cursor
 
@@ -479,6 +480,7 @@ namespace lsp
 
             // Draw border
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float lightness = sBrightness.get();
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
@@ -531,13 +533,13 @@ namespace lsp
             LSPString *text = sText.formatted();
             size_t cpos     = lsp_limit(sCursor.location(), 0, ssize_t(text->length()));
 
-            sFont.get_parameters(s, scaling, &fp);
-            sFont.get_text_parameters(s, &tp, scaling, text, 0, cpos);
+            sFont.get_parameters(s, fscaling, &fp);
+            sFont.get_text_parameters(s, &tp, fscaling, text, 0, cpos);
 
             ssize_t textw   = tp.XAdvance;
             if (sCursor.visible() && sCursor.replacing() && (cpos >= text->length()))
             {
-                sFont.get_text_parameters(s, &tp, scaling, "_");
+                sFont.get_text_parameters(s, &tp, fscaling, "_");
                 xr.nWidth  -= tp.Width;
             }
 
@@ -590,20 +592,20 @@ namespace lsp
 
                 if (first > 0)
                 {
-                    sFont.get_text_parameters(s, &tp, scaling, text, 0, first);
-                    sFont.draw(s, color, xpos, xr.nTop + fp.Ascent, scaling, text, 0, first);
+                    sFont.get_text_parameters(s, &tp, fscaling, text, 0, first);
+                    sFont.draw(s, color, xpos, xr.nTop + fp.Ascent, fscaling, text, 0, first);
                     xpos           += tp.XAdvance;
                 }
 
-                sFont.get_text_parameters(s, &tp, scaling, text, first, last);
+                sFont.get_text_parameters(s, &tp, fscaling, text, first, last);
                 s->fill_rect(scolor, xpos + xshift, xr.nTop, tp.XAdvance, xr.nHeight);
-                sFont.draw(s, stcolor, xpos, xr.nTop + fp.Ascent, scaling, text, first, last);
+                sFont.draw(s, stcolor, xpos, xr.nTop + fp.Ascent, fscaling, text, first, last);
                 xpos           += /*tp.XBearing + */ tp.XAdvance;
 
                 if (last < ssize_t(text->length()))
                 {
-                    sFont.get_text_parameters(s, &tp, scaling, text, last);
-                    sFont.draw(s, color, xpos, xr.nTop + fp.Ascent, scaling, text, last);
+                    sFont.get_text_parameters(s, &tp, fscaling, text, last);
+                    sFont.draw(s, color, xpos, xr.nTop + fp.Ascent, fscaling, text, last);
                     xpos           += /*tp.XBearing + */ tp.XAdvance;
                 }
             }
@@ -612,7 +614,7 @@ namespace lsp
                 color.copy(sTextColor);
                 color.scale_lightness(lightness);
 
-                sFont.draw(s, color, xr.nLeft + sTextPos, xr.nTop + fp.Ascent, scaling, text);
+                sFont.draw(s, color, xr.nLeft + sTextPos, xr.nTop + fp.Ascent, fscaling, text);
             }
 
             xr.nLeft       += cleft;
@@ -629,7 +631,7 @@ namespace lsp
                 {
                     if (cpos >= text->length())
                     {
-                        sFont.get_text_parameters(s, &tp, scaling, "_");
+                        sFont.get_text_parameters(s, &tp, fscaling, "_");
                         s->fill_rect(color, xr.nLeft, xr.nTop, tp.Width, xr.nHeight);
                     }
                     else
@@ -638,12 +640,12 @@ namespace lsp
                         lsp::Color bcolor(sColor);
                         bcolor.scale_lightness(lightness);
 
-                        sFont.get_text_parameters(s, &tp, scaling, text, sCursor.position(), sCursor.position() + 1);
+                        sFont.get_text_parameters(s, &tp, fscaling, text, sCursor.position(), sCursor.position() + 1);
                         ssize_t xw = (tp.XAdvance > tp.Width) ? tp.XAdvance : tp.Width + 1;
                         s->fill_rect(color, xr.nLeft + tp.XBearing - 1, xr.nTop, xw, xr.nHeight);
 
                         // Draw letter
-                        sFont.draw(s, bcolor, xr.nLeft, xr.nTop + fp.Ascent, scaling, text, sCursor.position(), sCursor.position() + 1);
+                        sFont.draw(s, bcolor, xr.nLeft, xr.nTop + fp.Ascent, fscaling, text, sCursor.position(), sCursor.position() + 1);
                     }
                 }
             }
@@ -695,11 +697,12 @@ namespace lsp
 
             ssize_t tpos        = sTextPos;
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
 
 //            lsp_trace("x=%d", int(x));
 
             ws::text_parameters_t tp;
-            if (sFont.get_text_parameters(pDisplay, &tp, scaling, text))
+            if (sFont.get_text_parameters(pDisplay, &tp, fscaling, text))
             {
                 if (x > (tpos + tp.XAdvance))
                     return text->length();
@@ -709,7 +712,7 @@ namespace lsp
             while ((right - left) > 1)
             {
                 ssize_t middle = (left + right) >> 1;
-                if (!sFont.get_text_parameters(pDisplay, &tp, scaling, text, left, middle))
+                if (!sFont.get_text_parameters(pDisplay, &tp, fscaling, text, left, middle))
                     return -1;
 
                 ssize_t tx      = tpos + tp.XAdvance;
@@ -730,7 +733,7 @@ namespace lsp
             }
 
             // Position may be somewhere in the middle of character, determine the actual position
-            if (sFont.get_text_parameters(pDisplay, &tp, scaling, text, left, right))
+            if (sFont.get_text_parameters(pDisplay, &tp, fscaling, text, left, right))
             {
                 float tx        = tpos + tp.XAdvance * 0.75f;
 //                lsp_trace("x=%d, tpos=%d, xadvance=%d, tx=%d, left=%d, right=%d",

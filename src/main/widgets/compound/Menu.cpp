@@ -462,6 +462,7 @@ namespace lsp
         void Menu::allocate_items(lltl::darray<item_t> *out, istats_t *st)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
 
             st->full_w          = 0;
@@ -493,7 +494,7 @@ namespace lsp
             LSPString s;
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
 
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
@@ -535,7 +536,7 @@ namespace lsp
                 if (xsep)
                 {
                     mi->text()->format(&s);
-                    sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
 
                     pi->text.nWidth     = tp.Width;
                     pi->text.nHeight    = lsp_max(fp.Height, tp.Height);
@@ -573,7 +574,7 @@ namespace lsp
                 if ((xsep) && (mi->shortcut()->valid()))
                 {
                     mi->shortcut()->format(&s);
-                    sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
 
                     st->shortcut        = true;
                     pi->scut.nWidth     = tp.Width;
@@ -801,6 +802,7 @@ namespace lsp
         {
             ws::rectangle_t xr, r;
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
             ssize_t border      = lsp_max(0, sBorderSize.get() * scaling);
 
@@ -820,7 +822,7 @@ namespace lsp
             ws::font_parameters_t fp;
             LSPString text;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
 
             float aa            = s->set_antialiasing(true);
 
@@ -862,13 +864,13 @@ namespace lsp
                 else
                     color.copy(mi->text_color()->color());
                 color.scale_lightness(bright);
-                sFont.draw(s, color, pi->text.nLeft, pi->text.nTop + fp.Ascent, scaling, &text);
+                sFont.draw(s, color, pi->text.nLeft, pi->text.nTop + fp.Ascent, fscaling, &text);
 
                 // Draw shortcut
                 if (mi->shortcut()->valid())
                 {
                     mi->shortcut()->format(&text);
-                    sFont.draw(s, color, pi->scut.nLeft, pi->scut.nTop + fp.Ascent, scaling, &text);
+                    sFont.draw(s, color, pi->scut.nLeft, pi->scut.nTop + fp.Ascent, fscaling, &text);
                 }
 
                 // Draw reference

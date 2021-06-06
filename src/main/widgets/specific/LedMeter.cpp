@@ -173,6 +173,7 @@ namespace lsp
 
             bool pack       = (sSGroups.get()) && (list.size() >= 2);
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float seg_size  = 4.0f * scaling;
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle   = sAngle.get();
@@ -186,8 +187,8 @@ namespace lsp
             {
                 LSPString text;
                 sEstText.format(&text);
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 tp.Height           = lsp_max(tp.Height, fp.Height);
             }
 
@@ -279,6 +280,7 @@ namespace lsp
             get_visible_items(&list);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float seg_size      = 4.0f * scaling;
             ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle       = sAngle.get();
@@ -311,8 +313,8 @@ namespace lsp
             {
                 LSPString text;
                 sEstText.format(&text);
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 tp.Height           = lsp_max(tp.Height, fp.Height);
 
                 if (angle & 1) // Vertical
@@ -492,6 +494,7 @@ namespace lsp
         void LedMeter::draw(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
             bool has_text       = sTextVisible.get();
             ssize_t angle       = sAngle.get();
@@ -508,7 +511,7 @@ namespace lsp
 
                 c->draw_meter(s, angle, scaling, bright);
                 if (has_text)
-                    c->draw_label(s, &sFont, scaling, bright);
+                    c->draw_label(s, &sFont, fscaling, bright);
 
                 // Commit pending redraw request
                 c->commit_redraw();

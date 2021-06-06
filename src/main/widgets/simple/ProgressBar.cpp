@@ -165,6 +165,7 @@ namespace lsp
         void ProgressBar::size_request(ws::size_limit_t *r)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             size_t border   = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             size_t radius   = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             if (border > 0)
@@ -186,8 +187,8 @@ namespace lsp
                 ws::font_parameters_t fp;
                 ws::text_parameters_t tp;
 
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
 
                 tp.Height       = lsp_max(tp.Height, fp.Height);
                 r->nMinHeight   = lsp_max(r->nMinHeight, rgap*2 + tp.Height);
@@ -237,12 +238,13 @@ namespace lsp
             xr.nTop        -= sSize.nTop;
 
             // Estimate sizes
-            float scaling   = sScaling.get();
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_multitext_parameters(pDisplay, &tp, scaling, text);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_multitext_parameters(pDisplay, &tp, fscaling, text);
 
             float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
             float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
@@ -269,12 +271,12 @@ namespace lsp
                 }
 
                 // Calculate text location
-                sFont.get_text_parameters(s, &tp, scaling, text, last, tail);
+                sFont.get_text_parameters(s, &tp, fscaling, text, last, tail);
                 float dx    = (xr.nWidth - tp.Width) * 0.5f;
                 ssize_t x   = xr.nLeft   + dx * halign - tp.XBearing;
                 y          += fp.Height;
 
-                sFont.draw(s, color, x, y, scaling, text, last, tail);
+                sFont.draw(s, color, x, y, fscaling, text, last, tail);
                 last    = curr + 1;
             }
         }
