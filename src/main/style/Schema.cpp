@@ -33,11 +33,14 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Root, Style)
                 // Bind
                 sScaling.bind("size.scaling", this);
+                sFontScaling.bind("font.scaling", this);
                 sFont.bind("font", this);
                 sDrawMode.bind("draw.mode", this);
                 // Configure
                 sFont.set_antialiasing(ws::FA_DEFAULT);
                 sFont.set_size(12.0f);
+                sFont.set_scaling(1.0f);
+                sFontScaling.set(1.0f);
                 sScaling.set(1.0f);
                 sDrawMode.set(DM_CLASSIC);
             LSP_TK_STYLE_IMPL_END

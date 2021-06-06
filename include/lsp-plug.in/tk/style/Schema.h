@@ -48,6 +48,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Root, Style)
                 prop::Float                         sScaling;
+                prop::Float                         sFontScaling;
                 prop::Font                          sFont;
                 prop::DrawMode                      sDrawMode;
             LSP_TK_STYLE_DEF_END
@@ -93,6 +94,7 @@ namespace lsp
                 lltl::pphash<LSPString, lsp::Color> vColors;
 
                 prop::Float                         sScaling;
+                prop::Float                         sFontScaling;
                 prop::Font                          sFont;
                 prop::DrawMode                      sDrawMode;
 
@@ -147,6 +149,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Float,          scaling,            &sScaling)
+                LSP_TK_PROPERTY(Float,          font_scaling,       &sFontScaling)
                 LSP_TK_PROPERTY(Font,           font,               &sFont)
                 LSP_TK_PROPERTY(DrawMode,       draw_mode,          &sDrawMode)
 
