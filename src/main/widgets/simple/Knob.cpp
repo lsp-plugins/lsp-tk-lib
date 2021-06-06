@@ -383,7 +383,7 @@ namespace lsp
             }
             else
             {
-                scol.copy(sBalanceColor);
+                scol.copy(sScaleColor);
                 sdcol.copy(sScaleColor);
 
                 scol.scale_lightness(bright);
