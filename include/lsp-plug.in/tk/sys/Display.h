@@ -50,6 +50,8 @@ namespace lsp
                 Display & operator = (const Display &);
                 Display(const Display &);
 
+                friend class Schema;
+
             protected:
                 typedef struct item_t
                 {

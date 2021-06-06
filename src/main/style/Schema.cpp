@@ -152,8 +152,12 @@ namespace lsp
                         return res;
                     }
                 }
-                else if (loader != NULL)
+                else if ((loader != NULL) || (pDisplay->pResourceLoader != NULL))
                 {
+                    // Patch the loader (if not specified)
+                    if (loader == NULL)
+                        loader  = pDisplay->pResourceLoader;
+
                     // Use resource resolver for loading fonts
                     io::IInStream *is = loader->read_stream(&font->path);
                     if (is == NULL)

@@ -202,12 +202,15 @@ namespace lsp
                 return STATUS_NO_MEM;
 
             // Initialize schema
+            pDisplay        = dpy;
             if ((res = init_schema()) != STATUS_OK)
+            {
+                pDisplay        = NULL;
                 return res;
+            }
 
             // Remember the display handle
             dpy->set_main_callback(main_task_handler, this);
-            pDisplay        = dpy;
 
             return STATUS_OK;
         }
