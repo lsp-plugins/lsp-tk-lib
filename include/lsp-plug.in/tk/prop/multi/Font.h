@@ -114,7 +114,12 @@ namespace lsp
                 bool                        set_italic(bool on = true);
                 bool                        set_underline(bool on = true);
                 ws::font_antialias_t        set_antialiasing(ws::font_antialias_t value = ws::FA_ENABLED);
+                ws::font_antialias_t        set_antialiasing(const char *value);
+                ws::font_antialias_t        set_antialiasing(const LSPString *value);
                 ws::font_antialias_t        set_antialias(ws::font_antialias_t value = ws::FA_ENABLED);
+                ws::font_antialias_t        set_antialias(const char *value);
+                ws::font_antialias_t        set_antialias(const LSPString *value);
+
                 size_t                      set_flags(size_t flags);
                 void                        set(const char *name, size_t size, size_t flags = 0);
                 void                        set_params(size_t size, size_t flags = 0);

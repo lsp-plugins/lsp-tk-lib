@@ -53,6 +53,8 @@ namespace lsp
             { "disabled",   ws::FA_DISABLED         },
             { "on",         ws::FA_ENABLED          },
             { "off",        ws::FA_DISABLED         },
+            { "true",       ws::FA_ENABLED          },
+            { "false",      ws::FA_DISABLED         },
             { NULL,         0                       }
         };
 
@@ -259,6 +261,45 @@ namespace lsp
             sValue.set_antialiasing(value);
             sync();
             return old;
+        }
+
+        ws::font_antialias_t Font::set_antialiasing(const LSPString *value)
+        {
+            ws::font_antialias_t old = sValue.antialiasing();
+            const prop::enum_t *e = find_enum(value, ANTIALIAS);
+            if ((e == NULL) || (e->value == old))
+                return old;
+
+            sValue.set_antialiasing(ws::font_antialias_t(e->value));
+            sync();
+            return old;
+        }
+
+        ws::font_antialias_t Font::set_antialiasing(const char *value)
+        {
+            ws::font_antialias_t old = sValue.antialiasing();
+            const prop::enum_t *e = find_enum(value, ANTIALIAS);
+            if ((e == NULL) || (e->value == old))
+                return old;
+
+            sValue.set_antialiasing(ws::font_antialias_t(e->value));
+            sync();
+            return old;
+        }
+
+        ws::font_antialias_t Font::set_antialias(ws::font_antialias_t value)
+        {
+            return set_antialiasing(value);
+        }
+
+        ws::font_antialias_t Font::set_antialias(const LSPString *value)
+        {
+            return set_antialiasing(value);
+        }
+
+        ws::font_antialias_t Font::set_antialias(const char *value)
+        {
+            return set_antialiasing(value);
         }
 
         size_t Font::set_flags(size_t flags)

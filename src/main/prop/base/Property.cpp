@@ -181,6 +181,17 @@ namespace lsp
             return NULL;
         }
 
+        const prop::enum_t *Property::find_enum(const char *s, const prop::enum_t *xenum)
+        {
+            for (size_t i=0; (xenum != NULL) && (xenum->name != NULL); ++i, ++xenum)
+            {
+                if (!strcasecmp(xenum->name, s))
+                    return xenum;
+            }
+            return NULL;
+        }
+
+
         const prop::enum_t *Property::find_enum(ssize_t value, const prop::enum_t *xe)
         {
             for ( ; (xe != NULL) && (xe->name != NULL); ++xe)
