@@ -491,11 +491,44 @@ namespace lsp
             st->check_h         = st->check_w;
 
             // Size of text, shortcut and reference
-            LSPString s;
+            LSPString caption, shortcut;
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
             sFont.get_parameters(pDisplay, fscaling, &fp);
 
+            // First pass: estimate that there are certain elements present
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                // Keep only visible items
+                MenuItem *mi        = vItems.get(i);
+                if ((mi == NULL) || (!mi->visibility()->get()))
+                    continue;
+
+                // Estimate type of item
+                menu_item_type_t mt = mi->type()->get();
+                if ((mt == MI_CHECK) || (mt == MI_RADIO))
+                    st->ckbox           = true;
+                else if (mt != MI_SEPARATOR)
+                {
+                    if (mi->shortcut()->valid())
+                    {
+                        mi->shortcut()->format(&shortcut);
+                        sFont.get_text_parameters(pDisplay, &tp, fscaling, &shortcut);
+
+                        st->shortcut        = true;
+                        st->scut_w          = lsp_max(st->scut_w, ceilf(tp.Width));
+                        st->scut_h          = lsp_max(st->scut_h, ceilf(lsp_max(fp.Height, tp.Height)));
+                    }
+                    if (mi->menu()->is_set())
+                    {
+                        st->submenu         = true;
+                        st->link_w          = lsp_max(st->link_w, ssize_t(lsp_max(2.0f, M_SQRT1_2 * fp.Height)));
+                        st->link_h          = lsp_max(st->link_h, fp.Height);
+                    }
+                }
+            }
+
+            // Second pass: estimate parameters for each item
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Keep only visible items
@@ -515,7 +548,6 @@ namespace lsp
                 // Estimate type of item
                 menu_item_type_t mt = mi->type()->get();
                 bool xsep           = (mt != MI_SEPARATOR);
-                bool check          = (mt == MI_CHECK) || (mt == MI_RADIO);
 
                 // Reduce padding
                 if (xsep)
@@ -535,8 +567,8 @@ namespace lsp
 
                 if (xsep)
                 {
-                    mi->text()->format(&s);
-                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
+                    mi->text()->format(&caption);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &caption);
 
                     pi->text.nWidth     = tp.Width;
                     pi->text.nHeight    = lsp_max(fp.Height, tp.Height);
@@ -554,9 +586,8 @@ namespace lsp
                 // Check box/radio
                 pi->check.nLeft     = 0;
                 pi->check.nTop      = 0;
-                if (check)
+                if ((xsep) && (st->ckbox))
                 {
-                    st->ckbox           = true;
                     pi->check.nWidth    = st->check_w;
                     pi->check.nHeight   = st->check_h;
                     pi->area.nWidth    += pi->check.nWidth + spacing;
@@ -571,16 +602,14 @@ namespace lsp
                 // Estimate size of shortcut
                 pi->scut.nLeft      = 0;
                 pi->scut.nTop       = 0;
-                if ((xsep) && (mi->shortcut()->valid()))
+                if ((xsep) && (st->shortcut))
                 {
-                    mi->shortcut()->format(&s);
-                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
+                    mi->shortcut()->format(&shortcut);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &shortcut);
 
                     st->shortcut        = true;
-                    pi->scut.nWidth     = tp.Width;
+                    pi->scut.nWidth     = st->scut_w;
                     pi->scut.nHeight    = lsp_max(fp.Height, tp.Height);
-                    st->scut_w          = lsp_max(st->scut_w, pi->scut.nWidth);
-                    st->scut_h          = lsp_max(st->scut_h, pi->scut.nHeight);
 
                     pi->area.nWidth    += pi->scut.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->scut.nHeight);
@@ -594,17 +623,13 @@ namespace lsp
                 // Estimate submenu reference size
                 pi->ref.nLeft       = 0;
                 pi->ref.nTop        = 0;
-                if ((xsep) && (mi->menu()->is_set()))
+                if ((xsep) && (st->submenu))
                 {
                     st->submenu         = true;
                     pi->ref.nHeight     = fp.Height;
                     pi->ref.nWidth      = lsp_max(2.0f, M_SQRT1_2 * fp.Height);
 
-                    st->link_w          = lsp_max(st->link_w, pi->ref.nWidth);
-                    st->link_h          = lsp_max(st->link_h, pi->ref.nHeight);
-
-                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), pi->ref.nWidth + spacing);
-//                    pi->area.nWidth    += pi->ref.nWidth + spacing;
+                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), st->link_w + spacing);
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->ref.nHeight);
                 }
                 else
@@ -622,6 +647,17 @@ namespace lsp
                 st->full_w              = lsp_max(st->full_w, pi->area.nWidth);
                 st->item_w              = lsp_max(st->item_w, st->full_w);
                 st->item_h              = lsp_max(st->item_h, pi->area.nHeight);
+
+//                lsp_trace("menu item text=%s, text.w={%d, %d}, check.w={%d, %d}, scut.w=%d, ref.w=%d, area.w={%d, %d}, st.w=%d, it.w=%d",
+//                    (xsep) ? caption.get_utf8() : "-",
+//                    int(pi->text.nWidth), int(pi->text.nHeight),
+//                    int(pi->check.nWidth), int(pi->check.nHeight),
+//                    int(pi->scut.nWidth),
+//                    int(pi->ref.nWidth),
+//                    int(pi->area.nWidth), int(pi->area.nHeight),
+//                    int(st->full_w),
+//                    int(st->item_w)
+//                );
             }
         }
 

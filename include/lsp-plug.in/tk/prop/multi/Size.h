@@ -85,6 +85,8 @@ namespace lsp
 
                 static bool         overlap(const ws::rectangle_t *a, const ws::rectangle_t *b);
                 static bool         is_empty(const ws::rectangle_t *r);
+
+                static void         init(ws::rectangle_t *dst, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
         };
 
         namespace prop

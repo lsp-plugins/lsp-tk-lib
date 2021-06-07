@@ -450,5 +450,13 @@ namespace lsp
             dst->nBottom        = src->nBottom  + sValue.nBottom * scale;
         }
 
+        void Padding::init(padding_t *dst, ssize_t left, ssize_t right, ssize_t top, ssize_t bottom)
+        {
+            dst->nLeft          = left;
+            dst->nRight         = right;
+            dst->nTop           = top;
+            dst->nBottom        = bottom;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */

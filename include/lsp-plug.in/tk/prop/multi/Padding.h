@@ -129,6 +129,8 @@ namespace lsp
                 static inline void      leave(ws::rectangle_t *dst, const padding_t *pad)       { leave(dst, dst, pad);     }
 
                 static inline void      add(ws::size_limit_t *dst, const padding_t *pad)        { add(dst, dst, pad);       }
+
+                static void             init(padding_t *dst, ssize_t left, ssize_t right, ssize_t top, ssize_t bottom);
         };
 
         namespace prop

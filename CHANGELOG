@@ -30,6 +30,7 @@
 - Added freetype2 library dependencies for UNIX-compatible operating systems.
 - Added possibility to specify custom fonts in the stylesheet data.
 - Added font loading support by the tk::Schema object.
+- Fixed bug in menu item allocation that could yield to ugly-looking menus.
 
 TODO:
 - Add custom mouse pointer for fraction actions.
