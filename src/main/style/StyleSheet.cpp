@@ -144,6 +144,14 @@ namespace lsp
         status_t StyleSheet::parse_schema(xml::PullParser *p)
         {
             status_t item, res = STATUS_OK;
+            enum
+            {
+                F_COLORS        = 1 << 0,
+                F_FONTS         = 1 << 1,
+                F_ROOT          = 1 << 2,
+                F_META          = 1 << 3
+            };
+            size_t flags = 0;
 
             while (true)
             {
@@ -158,20 +166,103 @@ namespace lsp
 
                     case xml::XT_START_ELEMENT:
                         if (p->name()->equals_ascii("colors"))
-                            res = parse_colors(p);
+                        {
+                            if (flags & F_COLORS)
+                            {
+                                sError.set_ascii("Duplicate element 'colors'");
+                                return STATUS_BAD_FORMAT;
+                            }
+                            res     = parse_colors(p);
+                            flags  |= F_COLORS;
+                        }
                         else if (p->name()->equals_ascii("fonts"))
+                        {
+                            if (flags & F_COLORS)
+                            {
+                                sError.set_ascii("Duplicate element 'fonts'");
+                                return STATUS_BAD_FORMAT;
+                            }
                             res = parse_fonts(p);
+                            flags  |= F_FONTS;
+                        }
                         else if (p->name()->equals_ascii("style"))
                             res = parse_style(p, false);
                         else if (p->name()->equals_ascii("root"))
                             res = parse_style(p, true);
+                        else if (p->name()->equals_ascii("meta"))
+                        {
+                            if (flags & F_META)
+                            {
+                                sError.set_ascii("Duplicate element 'meta'");
+                                return STATUS_BAD_FORMAT;
+                            }
+                            res = parse_metadata(p);
+                            flags  |= F_META;
+                        }
                         else
+                        {
+                            sError.fmt_utf8("Unsupported element: '%s'", p->name()->get_utf8());
                             return STATUS_CORRUPTED;
+                        }
                         break;
 
                     case xml::XT_END_ELEMENT:
                         if (!p->name()->equals_ascii("schema"))
                             return STATUS_CORRUPTED;
+                        return STATUS_OK;
+
+                    default:
+                        return STATUS_CORRUPTED;
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
+        }
+
+        status_t StyleSheet::parse_metadata(xml::PullParser *p)
+        {
+            status_t item, res = STATUS_OK;
+            bool title_set = false;
+
+            while (true)
+            {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                switch (item)
+                {
+                    case xml::XT_CHARACTERS:
+                    case xml::XT_COMMENT:
+                        break;
+
+                    case xml::XT_START_ELEMENT:
+                    {
+                        if (p->name()->equals_ascii("title"))
+                        {
+                            sError.fmt_utf8("Duplicated color name: '%s'", p->name()->get_utf8());
+                            return STATUS_DUPLICATED;
+                        }
+
+                        // Create color object
+                        lsp::Color *c = new lsp::Color();
+                        if (c == NULL)
+                            return STATUS_NO_MEM;
+
+                        // Try to parse color
+                        if ((res = parse_color(p, c)) == STATUS_OK)
+                        {
+                            if (!vColors.put(p->name(), c, NULL))
+                                res = STATUS_NO_MEM;
+                        }
+
+                        // Drop color on error
+                        if (res != STATUS_OK)
+                            delete c;
+                        break;
+                    }
+
+                    case xml::XT_END_ELEMENT:
                         return STATUS_OK;
 
                     default:
