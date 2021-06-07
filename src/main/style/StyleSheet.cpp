@@ -177,7 +177,7 @@ namespace lsp
                         }
                         else if (p->name()->equals_ascii("fonts"))
                         {
-                            if (flags & F_COLORS)
+                            if (flags & F_FONTS)
                             {
                                 sError.set_ascii("Duplicate element 'fonts'");
                                 return STATUS_BAD_FORMAT;
@@ -223,7 +223,11 @@ namespace lsp
         status_t StyleSheet::parse_metadata(xml::PullParser *p)
         {
             status_t item, res = STATUS_OK;
-            bool title_set = false;
+            enum
+            {
+                F_TITLE         = 1 << 0
+            };
+            size_t flags = 0;
 
             while (true)
             {
@@ -240,29 +244,76 @@ namespace lsp
                     {
                         if (p->name()->equals_ascii("title"))
                         {
-                            sError.fmt_utf8("Duplicated color name: '%s'", p->name()->get_utf8());
-                            return STATUS_DUPLICATED;
+                            if (flags & F_TITLE)
+                            {
+                                sError.set_ascii("Duplicate element 'title'");
+                                return STATUS_DUPLICATED;
+                            }
+                            flags |= F_TITLE;
+                            res = parse_string_value(p, &sTitle);
                         }
-
-                        // Create color object
-                        lsp::Color *c = new lsp::Color();
-                        if (c == NULL)
-                            return STATUS_NO_MEM;
-
-                        // Try to parse color
-                        if ((res = parse_color(p, c)) == STATUS_OK)
+                        else
                         {
-                            if (!vColors.put(p->name(), c, NULL))
-                                res = STATUS_NO_MEM;
+                            sError.fmt_utf8("Unsupported element: '%s'", p->name()->get_utf8());
+                            return STATUS_CORRUPTED;
                         }
 
-                        // Drop color on error
-                        if (res != STATUS_OK)
-                            delete c;
                         break;
                     }
 
                     case xml::XT_END_ELEMENT:
+                        return STATUS_OK;
+
+                    default:
+                        return STATUS_CORRUPTED;
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
+        }
+
+        status_t StyleSheet::parse_string_value(xml::PullParser *p, LSPString *value)
+        {
+            status_t item, res = STATUS_OK;
+            bool set = false;
+
+            while (true)
+            {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                switch (item)
+                {
+                    case xml::XT_CHARACTERS:
+                    case xml::XT_COMMENT:
+                        break;
+
+                    case xml::XT_ATTRIBUTE:
+                        // Value already has been set?
+                        if (set)
+                        {
+                            sError.fmt_utf8("The value has already been set");
+                            return STATUS_BAD_FORMAT;
+                        }
+                        set     = true;
+
+                        // Parse value
+                        if (p->name()->equals_ascii("value"))
+                            res = (value->set(p->value())) ? STATUS_OK : STATUS_NO_MEM;
+                        else
+                        {
+                            sError.fmt_utf8("Unknown attribute '%s'", p->name()->get_utf8());
+                            return STATUS_CORRUPTED;
+                        }
+                        break;
+
+                    case xml::XT_END_ELEMENT:
+                        if (!set)
+                        {
+                            sError.fmt_utf8("Not specified value for string property '%s'", p->name()->get_utf8());
+                            return STATUS_BAD_FORMAT;
+                        }
                         return STATUS_OK;
 
                     default:

@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <schema>
+	<!-- Metadata -->
+	<meta>
+		<title value="Test schema" />
+	</meta>
+
 	<!-- Color aliases -->
 	<colors>
 		<!-- Color definitions -->

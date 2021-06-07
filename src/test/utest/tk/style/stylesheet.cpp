@@ -106,6 +106,9 @@ UTEST_BEGIN("tk.style", stylesheet)
         UTEST_ASSERT(path.fmt("%s/schema/parse.xml", resources()) > 0);
         UTEST_ASSERT(ss.parse_file(&path) == STATUS_OK);
 
+        // Check metatdata
+        UTEST_ASSERT(ss.title()->equals_ascii("Test schema"));
+
         // Check colors
         vs.clear();
         UTEST_ASSERT(ss.enum_colors(&vs) == STATUS_OK);

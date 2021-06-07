@@ -100,6 +100,7 @@ namespace lsp
                 status_t            parse_property(xml::PullParser *p, style_t *style, const LSPString *name);
 
                 status_t            parse_style_class(LSPString *cname, const LSPString *text);
+                status_t            parse_string_value(xml::PullParser *p, LSPString *value);
                 status_t            parse_style_parents(style_t *style, const LSPString *text);
                 status_t            parse_property_type(property_type_t *pt, const LSPString *text);
                 status_t            add_parent(style_t *style, const LSPString *text);
