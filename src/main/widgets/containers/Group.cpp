@@ -154,6 +154,7 @@ namespace lsp
         void Group::allocate(alloc_t *alloc)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
 
@@ -171,8 +172,8 @@ namespace lsp
                 ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
                 sText.format(&s);
 
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
                 xr.nWidth           = tp.Width + tradius;
                 xr.nHeight          = lsp_max(fp.Height, tp.Height);
                 sTextPadding.add(&xr, scaling);
@@ -294,6 +295,7 @@ namespace lsp
 
             ws::rectangle_t xr;
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright    = lsp_max(0.0f, sBrightness.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
@@ -398,14 +400,14 @@ namespace lsp
 
                     sText.format(&text);
 
-                    sFont.get_parameters(pDisplay, scaling, &fp);
-                    sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                    sFont.get_parameters(pDisplay, fscaling, &fp);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                     ws::rectangle_t tloc;
                     sTextPadding.enter(&tloc, &sLabel, scaling);
                     tloc.nLeft -= tp.XBearing;
                     tloc.nTop  += fp.Ascent;
 
-                    sFont.draw(s, color, tloc.nLeft, tloc.nTop, scaling, &text);
+                    sFont.draw(s, color, tloc.nLeft, tloc.nTop, fscaling, &text);
                 }
 
                 s->clip_end();
