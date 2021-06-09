@@ -283,8 +283,8 @@ namespace lsp
             for (size_t i=0, n=vs.size(); i<n; ++i)
             {
                 Style *s = vs.uget(i);
-                s->remove_all_parents();
-                s->remove_all_children();
+                if (s != NULL)
+                    s->remove_all_parents();
             }
 
             // Initialize each style
@@ -348,7 +348,10 @@ namespace lsp
                     }
                 }
                 else
+                {
+                    lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
                     res = s->add_parent(pRoot);
+                }
 
                 if (res != STATUS_OK)
                     return res;
@@ -372,7 +375,11 @@ namespace lsp
                 LSPString *value        = xs->properties.get(name);
                 property_type_t type    = s->get_type(name);
 
-                lsp_trace("  %s = %s", name->get_utf8(), value->get_utf8());
+                lsp_trace("  %s = %s [%d]",
+                    name->get_utf8(),
+                    value->get_utf8(),
+                    int(pAtoms->atom_id(name))
+                );
 
                 if (parse_property_value(&v, value, type) == STATUS_OK)
                 {

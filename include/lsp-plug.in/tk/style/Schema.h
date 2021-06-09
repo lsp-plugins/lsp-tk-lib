@@ -102,7 +102,7 @@ namespace lsp
                 status_t            create_builtin_style(IStyleFactory *init);
                 status_t            create_style(const LSPString *name);
 
-                static status_t     apply_settings(Style *s, StyleSheet::style_t *xs);
+                status_t            apply_settings(Style *s, StyleSheet::style_t *xs);
                 status_t            apply_relations(Style *s, StyleSheet::style_t *xs);
                 void                destroy_colors();
                 status_t            init_colors_from_sheet(StyleSheet *sheet);
