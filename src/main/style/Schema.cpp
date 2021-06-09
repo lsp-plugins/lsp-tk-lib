@@ -259,6 +259,147 @@ namespace lsp
             return res;
         }
 
+        status_t Schema::create_missing_styles(StyleSheet *sheet)
+        {
+            // List all possible styles sheet names
+            status_t res;
+            lltl::parray<LSPString>  vss;
+            if (!sheet->vStyles.keys(&vss))
+                return STATUS_NO_MEM;
+
+            // Create missing styles and reset configured flag for all styles
+            for (size_t i=0, n=vss.size(); i<n; ++i)
+            {
+                LSPString *name         = vss.uget(i);
+                Style *s                = vStyles.get(name);
+                if (s != NULL)
+                    continue;
+
+                // Create new unbound style
+                if ((res = create_style(name)) != STATUS_OK)
+                    return res;
+
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::link_styles(StyleSheet *sheet)
+        {
+            // List all possible styles sheet names
+            status_t res;
+            lltl::parray<LSPString>  vss;
+            if (!vStyles.keys(&vss))
+                return STATUS_NO_MEM;
+
+            // For each style: link it to parents and reset the 'configured' flag
+            for (size_t i=0, n=vss.size(); i<n; ++i)
+            {
+                LSPString *name         = vss.uget(i);
+                Style *s                = vStyles.get(name);
+                if (s == NULL)
+                    continue;
+
+                // Reset the 'configured' flag for styles
+                s->set_configured(false);
+
+                // Link to parents
+                StyleSheet::style_t *xs = sheet->vStyles.get(name);
+                if (xs != NULL)
+                {
+                    lsp_trace("Linking style '%s'", name->get_utf8());
+                    res = apply_relations(s, xs);
+                }
+                else
+                {
+                    lsp_trace("Linking style '%s'", name->get_utf8());
+                    res = s->add_parent(pRoot);
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
+
+            return STATUS_OK;
+        }
+
+        bool Schema::check_parents_configured(Style *s)
+        {
+            for (size_t i=0, n=s->parents(); i<n; ++i)
+            {
+                Style *sp = s->parent(i);
+                if ((sp != NULL) && (!sp->configured()))
+                    return false;
+            }
+
+            return true;
+        }
+
+        status_t Schema::configure_styles(StyleSheet *sheet)
+        {
+            // List all possible styles sheet names
+            status_t res;
+            lltl::parray<LSPString> vss;
+            if (!vStyles.keys(&vss))
+                return STATUS_NO_MEM;
+
+            // Initialize all styles in the order of their inheritance
+            for (size_t i=0; vss.size() > 0; )
+            {
+                LSPString *name         = vss.uget(i);
+                Style *s                = vStyles.get(name);
+                i                      %= vss.size();
+
+                // Style does not exists or is already configured?
+                if ((s == NULL) || (s->configured()))
+                {
+                    vss.remove(i); // Remove the key
+                    continue;
+                }
+
+                // Is there stylesheet present for this style?
+                StyleSheet::style_t *xs = sheet->vStyles.get(name);
+                if (xs == NULL)
+                {
+                    s->set_configured(true);
+                    vss.remove(i); // Remove the key
+                    continue;
+                }
+
+                // Check that parents of this style already have been configured
+                if (check_parents_configured(s))
+                {
+                    lsp_trace("Configuring style '%s'", name->get_utf8());
+                    if ((res = apply_settings(s, xs)) != STATUS_OK)
+                        return res;
+
+                    s->set_configured(true);
+                    vss.remove(i); // Remove the key
+                    continue;
+                }
+
+                // Increment the position
+                ++i;
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::unlink_styles()
+        {
+            lltl::parray<Style> vs;
+            if (!vStyles.values(&vs))
+                return STATUS_NO_MEM;
+
+            for (size_t i=0, n=vs.size(); i<n; ++i)
+            {
+                Style *s = vs.uget(i);
+                if (s != NULL)
+                    s->remove_all_parents();
+            }
+            return STATUS_OK;
+        }
+
         status_t Schema::apply_internal(StyleSheet *sheet, resource::ILoader *loader)
         {
             status_t res;
@@ -276,86 +417,33 @@ namespace lsp
                 return res;
 
             // Destroy all relations between styles
-            lltl::parray<Style> vs;
-            if (!vStyles.values(&vs))
-                return STATUS_NO_MEM;
-
-            for (size_t i=0, n=vs.size(); i<n; ++i)
-            {
-                Style *s = vs.uget(i);
-                if (s != NULL)
-                    s->remove_all_parents();
-            }
-
-            // Initialize each style
-            lsp_trace("Applying stylesheet to root style");
-            if (sheet->pRoot != NULL)
-            {
-                res = apply_settings(pRoot, sheet->pRoot);
-                if (res == STATUS_OK)
-                    res = apply_relations(pRoot, sheet->pRoot);
-                if (res != STATUS_OK)
-                    return res;
-            }
-
-            // List all possible styles sheet names
-            lltl::parray<LSPString>  vss;
-            if (!sheet->vStyles.keys(&vss))
-                return STATUS_NO_MEM;
+            if ((res = unlink_styles()) != STATUS_OK)
+                return res;
 
             // Create missing styles
-            for (size_t i=0, n=vss.size(); i<n; ++i)
-            {
-                LSPString *name         = vss.uget(i);
-                Style *s                = vStyles.get(name);
-                if (s != NULL)
-                    continue;
+            if ((res = create_missing_styles(sheet)) != STATUS_OK)
+                return res;
 
-                // Create new unbound style
-                if ((res = create_style(name)) != STATUS_OK)
+            // Link root style and other styles
+            lsp_trace("Linking root style");
+            if (sheet->pRoot != NULL)
+            {
+                if ((res = apply_relations(pRoot, sheet->pRoot)) != STATUS_OK)
                     return res;
             }
+            if ((res = link_styles(sheet)) != STATUS_OK)
+                return res;
 
-            // Iterate over all existing styles
-            if (!vStyles.keys(&vss))
-                return STATUS_NO_MEM;
-
-            // Do the usual stuff
-            for (size_t i=0, n=vss.size(); i<n; ++i)
+            // Configure root style and others
+            lsp_trace("Configuring root style");
+            if (sheet->pRoot != NULL)
             {
-                LSPString *name         = vss.uget(i);
-                Style *s                = vStyles.get(name);
-                if (s == NULL)
-                    continue;
-
-                StyleSheet::style_t *xs = sheet->vStyles.get(name);
-                if (xs != NULL)
-                {
-                    if (vBuiltin.contains(name))
-                    {
-                        lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
-                        res = apply_settings(s, xs);
-
-                        if (res == STATUS_OK)
-                            res = apply_relations(s, xs);
-                    }
-                    else
-                    {
-                        lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
-                        res = apply_relations(s, xs);
-                        if (res == STATUS_OK)
-                            res = apply_settings(s, xs);
-                    }
-                }
-                else
-                {
-                    lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
-                    res = s->add_parent(pRoot);
-                }
-
-                if (res != STATUS_OK)
+                if ((res = apply_settings(pRoot, sheet->pRoot)) != STATUS_OK)
                     return res;
+                pRoot->set_configured(true);
             }
+            if ((res = configure_styles(sheet)) != STATUS_OK)
+                return res;
 
             return STATUS_OK;
         }

@@ -31,6 +31,7 @@
 - Added possibility to specify custom fonts in the stylesheet data.
 - Added font loading support by the tk::Schema object.
 - Fixed bug in menu item allocation that could yield to ugly-looking menus.
+- Implemented proper UI schema loading at the runtime.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

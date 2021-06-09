@@ -101,6 +101,11 @@ namespace lsp
             protected:
                 status_t            create_builtin_style(IStyleFactory *init);
                 status_t            create_style(const LSPString *name);
+                status_t            create_missing_styles(StyleSheet *sheet);
+                status_t            unlink_styles();
+                status_t            link_styles(StyleSheet *sheet);
+                status_t            configure_styles(StyleSheet *sheet);
+                static bool         check_parents_configured(Style *s);
 
                 status_t            apply_settings(Style *s, StyleSheet::style_t *xs);
                 status_t            apply_relations(Style *s, StyleSheet::style_t *xs);

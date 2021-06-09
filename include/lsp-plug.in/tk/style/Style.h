@@ -61,7 +61,8 @@ namespace lsp
                 enum style_flags_t
                 {
                     S_DELAYED           = 1 << 0,   // Delayed notification
-                    S_OVERRIDE          = 1 << 1    // Force overrides
+                    S_OVERRIDE          = 1 << 1,   // Force overrides
+                    S_CONFIGURED        = 1 << 2,   // The changes to style have been configured
                 };
 
                 typedef struct property_t
@@ -144,6 +145,9 @@ namespace lsp
                 void                notify_listeners(property_t *prop);
                 size_t              notify_listeners_delayed(property_t *prop);
                 void                deref_property(property_t *prop);
+
+                bool                set_configured(bool set);
+                inline bool         configured() const      { return nFlags & S_CONFIGURED; }
 
             public:
                 /** Set override mode for the style

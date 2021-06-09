@@ -127,6 +127,13 @@ namespace lsp
             return (nFlags & S_OVERRIDE) ? true : !config_mode();
         }
 
+        bool Style::set_configured(bool set)
+        {
+            bool res = nFlags & S_CONFIGURED;
+            nFlags = lsp_setflag(nFlags, S_CONFIGURED, set);
+            return res;
+        }
+
         status_t Style::copy_property(property_t *dst, const property_t *src)
         {
             // Check type of property
