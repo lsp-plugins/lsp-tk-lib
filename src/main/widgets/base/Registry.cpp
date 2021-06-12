@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -38,22 +39,20 @@ namespace lsp
         {
             sMapping.flush();
 
-            // Transform all widgets into arrays
-            lltl::parray<Widget> list;
-            vWidgets.values(&list);
-            vWidgets.flush();
-
             // Destroy all widgets in reverse order
-            for (size_t i=list.size(); (i--) > 0;)
+            for (size_t i=vWidgets.size(); (i--) > 0;)
             {
-                tk::Widget *w = list.uget(i);
+                tk::Widget *w = vWidgets.uget(i);
+                lsp_trace("w = %p (%s)", w, w->get_class()->name);
+
                 if (w != NULL)
                 {
                     w->destroy();
                     delete w;
                 }
             }
-            list.flush();
+
+            vWidgets.flush();
         }
 
         status_t Registry::add(tk::Widget *w)
@@ -61,8 +60,12 @@ namespace lsp
             if (w == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            if (!vWidgets.create(w))
-                return (vWidgets.contains(w)) ? STATUS_ALREADY_EXISTS : STATUS_NO_MEM;
+            if (vWidgets.contains(w))
+                return STATUS_ALREADY_EXISTS;
+            else if (!vWidgets.add(w))
+                return STATUS_NO_MEM;
+
+            lsp_trace("w = %p (%s)", w, w->get_class()->name);
 
             return STATUS_OK;
         }
@@ -72,14 +75,18 @@ namespace lsp
             if ((uid == NULL) || (w == NULL))
                 return STATUS_BAD_ARGUMENTS;
 
-            if (!vWidgets.create(w))
-                return (vWidgets.contains(w)) ? STATUS_ALREADY_EXISTS : STATUS_NO_MEM;
+            if (vWidgets.contains(w))
+                return STATUS_ALREADY_EXISTS;
+            else if (!vWidgets.add(w))
+                return STATUS_NO_MEM;
 
             if (!sMapping.create(uid, w))
             {
-                vWidgets.remove(w);
+                vWidgets.premove(w);
                 return (sMapping.contains(uid)) ? STATUS_DUPLICATED : STATUS_NO_MEM;
             }
+
+            lsp_trace("w = %p (%s)", uid);
 
             return STATUS_OK;
         }

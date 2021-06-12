@@ -26,8 +26,6 @@
     #error "use <lsp-plug.in/tk/tk.h>"
 #endif
 
-#include <lsp-plug.in/lltl/phashset.h>
-
 namespace lsp
 {
     namespace tk
@@ -47,7 +45,7 @@ namespace lsp
 
             protected:
                 lltl::pphash<char, tk::Widget>      sMapping;       // Widget mapping by UID
-                lltl::phashset<tk::Widget>          vWidgets;       // List of widgets
+                lltl::parray<tk::Widget>            vWidgets;       // List of widgets
 
             protected:
                 bool                        remove_item(lltl::parray<tk::Widget> *slist, tk::Widget *w);

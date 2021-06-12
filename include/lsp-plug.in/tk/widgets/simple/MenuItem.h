@@ -87,6 +87,7 @@ namespace lsp
                 virtual ~MenuItem();
 
                 virtual status_t            init();
+                virtual void                destroy();
 
             public:
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,            menu,                       &sMenu)

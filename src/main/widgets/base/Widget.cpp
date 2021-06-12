@@ -189,6 +189,7 @@ namespace lsp
 
             // Set parent widget to NULL
             set_parent(NULL);
+            sStyle.destroy();
 
             // Destroy surface
             if (pSurface != NULL)

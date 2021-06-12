@@ -82,6 +82,12 @@ namespace lsp
             nFlags     |= FINALIZED;
         }
 
+        void MenuItem::destroy()
+        {
+            nFlags     |= FINALIZED;
+            Widget::destroy();
+        }
+
         status_t MenuItem::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
             MenuItem *_this = widget_ptrcast<MenuItem>(ptr);
