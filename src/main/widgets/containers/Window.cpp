@@ -479,11 +479,15 @@ namespace lsp
                     return;
                 pWindow->set_role(text.get_utf8());
             }
+            if (sPadding.is(prop))
+                query_resize();
             if (sBorderColor.is(prop))
                 query_draw();
-            if (sBorderSize.is(prop) || sScaling.is(prop))
+            if (sBorderSize.is(prop))
                 query_resize();
-            if (sBorderRadius.is(prop) || sScaling.is(prop))
+            if (sBorderRadius.is(prop))
+                query_resize();
+            if (sScaling.is(prop))
                 query_resize();
             if (sBorderStyle.is(prop))
                 pWindow->set_border_style(sBorderStyle.get());
