@@ -49,6 +49,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Led & operator = (const Led &);
+                Led(const Led &);
+
             protected:
                 prop::Color             sColor;
                 prop::Color             sHoleColor;

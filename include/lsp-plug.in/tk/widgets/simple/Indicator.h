@@ -50,6 +50,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Indicator & operator = (const Indicator &);
+                Indicator(const Indicator &);
+
             protected:
                 prop::Color         sColor;         // Color of the indicator
                 prop::Color         sTextColor;     // Color of the text

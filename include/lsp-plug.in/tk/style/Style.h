@@ -552,6 +552,7 @@ namespace lsp
             { \
                 private: \
                     Name & operator = (Name &); \
+                    Name(const Name &); \
                 \
                 public: \
                     explicit Name(::lsp::tk::Schema *schema); \

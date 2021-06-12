@@ -54,6 +54,7 @@ namespace lsp
 
             private:
                 GraphText & operator = (const GraphText &);
+                GraphText(const GraphText &);
 
             private:
                 prop::String            sText;

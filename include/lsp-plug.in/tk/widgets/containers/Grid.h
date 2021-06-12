@@ -48,6 +48,10 @@ namespace lsp
          */
         class Grid: public WidgetContainer
         {
+            private:
+                Grid & operator = (const Grid &);
+                Grid(const Grid &);
+
             public:
                 static const w_class_t    metadata;
 

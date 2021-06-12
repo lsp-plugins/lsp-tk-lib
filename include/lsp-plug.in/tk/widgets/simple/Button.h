@@ -73,6 +73,7 @@ namespace lsp
         {
             private:
                 Button & operator = (const Button &);
+                Button(const Button &);
 
             public:
                 static const w_class_t    metadata;

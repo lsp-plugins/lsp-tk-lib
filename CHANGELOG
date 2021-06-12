@@ -32,6 +32,8 @@
 - Added font loading support by the tk::Schema object.
 - Fixed bug in menu item allocation that could yield to ugly-looking menus.
 - Implemented proper UI schema loading at the runtime.
+- Added tk::Registry class for managing widgets.
+- Denied copy constructor usage for all widget classes.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

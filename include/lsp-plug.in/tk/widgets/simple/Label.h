@@ -47,6 +47,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Label & operator = (const Label &);
+                Label(const Label &);
+
             protected:
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::Font                  sFont;          // Font parameters

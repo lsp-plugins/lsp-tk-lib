@@ -47,6 +47,7 @@ namespace lsp
 
             private:
                 GraphItem & operator = (const GraphItem &);
+                GraphItem(const GraphItem &);
 
             protected:
                 prop::Boolean       sSmooth;

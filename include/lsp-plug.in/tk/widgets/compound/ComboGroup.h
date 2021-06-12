@@ -62,6 +62,7 @@ namespace lsp
         {
             private:
                 ComboGroup & operator = (const ComboGroup &);
+                ComboGroup(const ComboGroup &);
 
             public:
                 static const w_class_t    metadata;

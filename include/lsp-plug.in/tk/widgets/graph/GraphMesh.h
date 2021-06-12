@@ -52,6 +52,7 @@ namespace lsp
 
             private:
                 GraphMesh & operator = (const GraphMesh &);
+                GraphMesh(const GraphMesh &);
 
             protected:
                 prop::Integer               sOrigin;        // Index of origin

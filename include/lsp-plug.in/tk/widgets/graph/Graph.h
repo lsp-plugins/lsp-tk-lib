@@ -60,6 +60,7 @@ namespace lsp
 
             private:
                 Graph & operator    = (const Graph &);
+                Graph(const Graph &);
 
             protected:
                 prop::WidgetList<GraphItem>     vItems;         // Overall list of graph items

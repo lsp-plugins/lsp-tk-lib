@@ -47,6 +47,7 @@ namespace lsp
         {
             private:
                 Void & operator = (const Void &);
+                Void(const Void &);
 
             public:
                 static const w_class_t    metadata;

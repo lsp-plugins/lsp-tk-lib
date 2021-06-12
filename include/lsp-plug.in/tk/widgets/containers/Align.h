@@ -46,6 +46,10 @@ namespace lsp
          */
         class Align: public WidgetContainer
         {
+            private:
+                Align & operator = (const Align &);
+                Align(const Align &);
+
             public:
                 static const w_class_t    metadata;
 

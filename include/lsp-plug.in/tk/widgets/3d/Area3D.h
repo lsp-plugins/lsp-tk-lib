@@ -55,6 +55,7 @@ namespace lsp
 
             private:
                 Area3D & operator    = (const Area3D &);
+                Area3D(const Area3D &);
 
             protected:
                 prop::SizeConstraints       sConstraints;   // Size constraints

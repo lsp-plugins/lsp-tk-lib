@@ -52,6 +52,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Hyperlink & operator = (const Hyperlink &);
+                Hyperlink(const Hyperlink &);
+
             protected:
                 enum state_t
                 {

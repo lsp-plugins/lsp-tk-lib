@@ -79,6 +79,7 @@ namespace lsp
 
             private:
                 AudioSample & operator = (const AudioSample &);
+                AudioSample(const AudioSample &);
 
             protected:
                 enum flags_t

@@ -63,6 +63,7 @@ namespace lsp
 
             private:
                 AudioChannel & operator = (const AudioChannel &);
+                AudioChannel(const AudioChannel &);
                 friend class AudioSample;
 
             protected:

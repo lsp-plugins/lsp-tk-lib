@@ -47,7 +47,8 @@ namespace lsp
         class PopupWindow: public Window
         {
             private:
-                Window & operator = (const Window &);
+                PopupWindow & operator = (const PopupWindow &);
+                PopupWindow(const PopupWindow &);
 
             public:
                 static const w_class_t          metadata;

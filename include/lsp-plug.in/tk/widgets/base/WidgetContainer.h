@@ -44,6 +44,7 @@ namespace lsp
         {
             private:
                 WidgetContainer & operator = (const WidgetContainer &);
+                WidgetContainer(const WidgetContainer &);
 
             public:
                 static const w_class_t    metadata;

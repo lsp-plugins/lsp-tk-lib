@@ -51,6 +51,7 @@ namespace lsp
         {
             private:
                 Box & operator = (const Box &);
+                Box(const Box &);
 
             public:
                 static const w_class_t    metadata;

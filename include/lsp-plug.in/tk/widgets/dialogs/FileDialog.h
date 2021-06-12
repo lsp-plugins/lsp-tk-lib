@@ -58,6 +58,7 @@ namespace lsp
 
             private:
                 FileDialog & operator = (const FileDialog &);
+                FileDialog(const FileDialog &);
 
             protected:
                 enum

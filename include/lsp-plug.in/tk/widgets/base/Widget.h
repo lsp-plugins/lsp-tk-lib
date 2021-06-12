@@ -57,6 +57,7 @@ namespace lsp
         {
             private:
                 Widget & operator = (const Widget &);
+                Widget(const Widget &);
 
             public:
                 static const w_class_t    metadata;

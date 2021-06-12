@@ -55,6 +55,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                MenuItem & operator = (const MenuItem &);
+                MenuItem(const MenuItem &);
+
             protected:
                 friend class Menu;
 

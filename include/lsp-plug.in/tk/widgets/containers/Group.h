@@ -56,6 +56,10 @@ namespace lsp
          */
         class Group: public Align
         {
+            private:
+                Group & operator = (const Group &);
+                Group(const Group &);
+
             public:
                 static const w_class_t    metadata;
 

@@ -54,6 +54,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Fader & operator = (const Fader &);
+                Fader(const Fader &);
+
             protected:
                 enum flags_t
                 {

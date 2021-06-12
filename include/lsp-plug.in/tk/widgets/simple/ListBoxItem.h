@@ -42,6 +42,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                ListBoxItem & operator = (const ListBoxItem &);
+                ListBoxItem(const ListBoxItem &);
+
             protected:
                 prop::String                sText;
                 prop::Color                 sBgSelectedColor;

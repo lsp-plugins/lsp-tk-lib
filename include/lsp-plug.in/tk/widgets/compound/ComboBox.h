@@ -60,6 +60,7 @@ namespace lsp
         {
             private:
                 ComboBox & operator = (const ComboBox &);
+                ComboBox(const ComboBox &);
 
             public:
                 static const w_class_t      metadata;

@@ -55,6 +55,7 @@ namespace lsp
         {
             private:
                 Window & operator = (const Window &);
+                Window(const Window &);
 
             protected:
                 friend class Display;

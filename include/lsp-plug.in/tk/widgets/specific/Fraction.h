@@ -57,6 +57,7 @@ namespace lsp
 
             private:
                 Fraction & operator = (const Fraction &);
+                Fraction(const Fraction &);
 
             protected:
                 enum mstate_t

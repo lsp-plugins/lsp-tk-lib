@@ -67,6 +67,7 @@ namespace lsp
 
             private:
                 LedMeterChannel & operator = (const LedMeterChannel &);
+                LedMeterChannel(const LedMeterChannel &);
 
                 friend class LedMeter;
 

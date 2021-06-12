@@ -58,6 +58,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Edit & operator = (const Edit &);
+                Edit(const Edit &);
+
             protected:
                 class EditCursor: public TextCursor
                 {

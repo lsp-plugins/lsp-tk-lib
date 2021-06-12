@@ -136,6 +136,7 @@
 
 // Base widgets
 #include <lsp-plug.in/tk/widgets/base/Widget.h>
+#include <lsp-plug.in/tk/widgets/base/Registry.h>
 #include <lsp-plug.in/tk/widgets/base/WidgetContainer.h>
 #include <lsp-plug.in/tk/widgets/cast.h>
 

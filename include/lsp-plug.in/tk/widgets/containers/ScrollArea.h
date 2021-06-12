@@ -49,6 +49,10 @@ namespace lsp
          */
         class ScrollArea: public WidgetContainer
         {
+            private:
+                ScrollArea & operator = (const ScrollArea &);
+                ScrollArea(const ScrollArea &);
+
             public:
                 static const w_class_t    metadata;
 

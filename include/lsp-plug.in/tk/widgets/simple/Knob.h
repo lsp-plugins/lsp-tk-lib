@@ -56,6 +56,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Knob & operator = (const Knob &);
+                Knob(const Knob &);
+
             protected:
                 enum state_t
                 {

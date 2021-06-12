@@ -55,6 +55,7 @@ namespace lsp
 
             private:
                 RackEars & operator = (const RackEars &);
+                RackEars(const RackEars &);
 
             protected:
                 enum flags_t

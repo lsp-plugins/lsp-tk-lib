@@ -41,6 +41,10 @@ namespace lsp
          */
         class MessageBox: public Window
         {
+            private:
+                MessageBox & operator = (const MessageBox &);
+                MessageBox(const MessageBox &);
+
             public:
                 static const w_class_t metadata;
 

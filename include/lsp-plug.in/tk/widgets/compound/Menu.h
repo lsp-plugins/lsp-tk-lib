@@ -56,6 +56,10 @@ namespace lsp
 
         class Menu: public WidgetContainer
         {
+            private:
+                Menu & operator = (const Menu &);
+                Menu(const Menu &);
+
             public:
                 static const w_class_t    metadata;
 

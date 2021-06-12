@@ -55,6 +55,7 @@ namespace lsp
 
             private:
                 LedMeter & operator = (const LedMeter &);
+                LedMeter(const LedMeter &);
 
             protected:
                 lltl::parray<LedMeterChannel>       vVisible;
