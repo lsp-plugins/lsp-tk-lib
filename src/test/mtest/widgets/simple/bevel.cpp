@@ -222,8 +222,8 @@ MTEST_BEGIN("tk.widgets.simple", bevel)
                 float angle = (x >> 2) * 90.0f + angles[x & 0x03];
 
                 bv->bg_inherit();
-                bv->color()->set_rgb24(0xff0000);
-                bv->bg_color()->set_rgb24(0xffff00);
+                bv->color()->set_rgb24(0xffff00);
+                bv->bg_color()->set_rgb24(0xff0000);
                 bv->border_color()->set_rgb24(0x0000ff);
                 bv->border_width()->set(3);
                 bv->constraints()->set_min(48, 48);

@@ -120,7 +120,7 @@ namespace lsp
             float dy2 = sp->y - cx->y;
             float mul = dx*dx2 + dy*dy2;
 
-            if (mul >= 0.0f)
+            if (mul < 0.0f)
                 return false;
 
             dp->x   = sp->x;
@@ -236,6 +236,7 @@ namespace lsp
                     {
                         s->fill_triangle(ap.x, ap.y, bp.x, bp.y, vp[1].x, vp[1].y, col);
                         s->fill_triangle(ap.x, ap.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y, col);
+                        s->fill_triangle(bp.x, bp.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y, col);
                     }
                 }
 
