@@ -225,7 +225,7 @@ MTEST_BEGIN("tk.widgets.simple", bevel)
                 bv->color()->set_rgb24(0xffff00);
                 bv->bg_color()->set_rgb24(0xff0000);
                 bv->border_color()->set_rgb24(0x0000ff);
-                bv->border_width()->set(3);
+                bv->border()->set(3);
                 bv->constraints()->set_min(48, 48);
                 bv->arrangement()->set(0.0f);
                 bv->direction()->set_dpolar(1.0f, angle);
