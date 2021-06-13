@@ -35,6 +35,14 @@ namespace lsp
             float &a, float &b, float &c
         );
 
+        bool line2d_delta_equation
+        (
+            float x1, float y,
+            float dx, float dy,
+            float &a, float &b, float &c
+        );
+
+
         bool line2d_equation
         (
             float dx, float dy,

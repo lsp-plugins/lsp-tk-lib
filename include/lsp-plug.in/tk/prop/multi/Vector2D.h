@@ -80,6 +80,8 @@ namespace lsp
             public:
                 inline float        dx() const                  { return fDX;                   }
                 inline float        dy() const                  { return fDY;                   }
+                inline float        adx() const                 { return fabs(fDX);             }
+                inline float        ady() const                 { return fabs(fDY);             }
                 inline float        rho() const                 { return fRho;                  }
                 inline float        phi() const                 { return fPhi;                  }
                 inline float        rphi() const                { return fPhi;                  }

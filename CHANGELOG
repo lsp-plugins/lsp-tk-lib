@@ -34,6 +34,8 @@
 - Implemented proper UI schema loading at the runtime.
 - Added tk::Registry class for managing widgets.
 - Denied copy constructor usage for all widget classes.
+- Added tk::Bevel widget which allows to draw bevels/facets in the UI.
+- Added tk::Arrangement property which allows to arrange some element inside of another.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

@@ -42,12 +42,29 @@ namespace lsp
             float dx = x1 - x2;
             float dy = y1 - y2;
 
-            if ((dy == 0.0) && (dx == 0.0))
+            if ((dy == 0.0f) && (dx == 0.0f))
                 return false;
 
             a = dy;
             b = - dx;
             c = y1 * dx - x1 * dy;
+
+            return true;
+        }
+
+        bool line2d_delta_equation
+        (
+            float x, float y,
+            float dx, float dy,
+            float &a, float &b, float &c
+        )
+        {
+            if ((dy == 0.0f) && (dx == 0.0f))
+                return false;
+
+            a = dy;
+            b = - dx;
+            c = y * dx - x * dy;
 
             return true;
         }
@@ -198,61 +215,88 @@ namespace lsp
             float &cx1, float &cy1, float &cx2, float &cy2
         )
         {
-            point2d_t p[4];
-            int n = 0;
+            point2d_t p[2];
 
-            // Add some precision error gap
-            float xlc = lc - 1e-2f;
-            float xrc = rc + 1e-2f;
-            float xtc = tc + 1e-2f;
-            float xbc = bc - 1e-2f;
+            if (lc > rc)
+                lsp::swap(lc, rc);
+            if (tc > bc)
+                lsp::swap(tc, bc);
 
-            if (fabs(b) > fabs(a))
+            if (fabs(b) > fabs(a)) // fabs(dx) > fabs(dy) ?
             {
-                // Left corner
-                if (vclip_line2d(a, b, c, lc, xtc, xbc, p[n].x, p[n].y))
-                    ++n;
-                // Right corner
-                if (vclip_line2d(a, b, c, rc, xtc, xbc, p[n].x, p[n].y))
-                    ++n;
-                // Top corner
-                if (hclip_line2d(a, b, c, tc, xlc, xrc, p[n].x, p[n].y))
-                    ++n;
-                // Bottom corner
-                if (hclip_line2d(a, b, c, bc, xlc, xrc, p[n].x, p[n].y))
-                    ++n;
+                if (fabs(b) <= 1e-6f)
+                    return false;
+
+                // Compute intersection with left and right boundaries
+                p[0].x  = lc;
+                p[1].x  = rc;
+                p[0].y  = -(c + a * p[0].x) / b;
+                p[1].y  = -(c + a * p[1].x) / b;
+
+                if (p[0].y > p[1].y)
+                {
+                    lsp::swap(p[0].x, p[1].x);
+                    lsp::swap(p[0].y, p[1].y);
+                }
+
+                // Check that line lays between vertical boundaries
+                if ((p[0].y >= bc) || (p[1].y <= tc))
+                    return false;
+
+                // Now compute clipping of line at top
+                if (p[0].y < tc)
+                {
+                    p[0].y  = tc;
+                    p[0].x  = -(c + b*p[0].y) / a;
+                }
+
+                // And at bottom
+                if (p[1].y > bc)
+                {
+                    p[1].y  = bc;
+                    p[1].x  = -(c + b*p[1].y) / a;
+                }
             }
             else
             {
-                // Top corner
-                if (hclip_line2d(a, b, c, tc, xlc, xrc, p[n].x, p[n].y))
-                    ++n;
-                // Bottom corner
-                if (hclip_line2d(a, b, c, bc, xlc, xrc, p[n].x, p[n].y))
-                    ++n;
-                // Left corner
-                if (vclip_line2d(a, b, c, lc, xtc, xbc, p[n].x, p[n].y))
-                    ++n;
-                // Right corner
-                if (vclip_line2d(a, b, c, rc, xtc, xbc, p[n].x, p[n].y))
-                    ++n;
-            }
+                if (fabs(a) <= 1e-6f)
+                    return false;
 
-            if (n <= 0)
-                return false;
+                // Compute intersection with top and bottom boundaries
+                p[0].y  = tc;
+                p[1].y  = bc;
+                p[0].x  = -(c + b * p[0].y) / a;
+                p[1].x  = -(c + b * p[1].y) / a;
+
+                if (p[0].x > p[1].x)
+                {
+                    lsp::swap(p[0].x, p[1].x);
+                    lsp::swap(p[0].y, p[1].y);
+                }
+
+                // Check that line lays between vertical boundaries
+                if ((p[0].x >= rc) || (p[1].x <= lc))
+                    return false;
+
+                // Now compute clipping of line at left
+                if (p[0].x < lc)
+                {
+                    p[0].x  = lc;
+                    p[0].y  = -(c + a*p[0].x) / b;
+                }
+
+                // And at right
+                if (p[1].x > rc)
+                {
+                    p[1].x  = rc;
+                    p[1].y  = -(c + a*p[1].x) / b;
+                }
+            }
 
             cx1 = p[0].x;
             cy1 = p[0].y;
-            if (n < 2)
-            {
-                cx2 = p[0].x;
-                cy2 = p[0].y;
-            }
-            else
-            {
-                cx2 = p[1].x;
-                cy2 = p[1].y;
-            }
+            cx2 = p[1].x;
+            cy2 = p[1].y;
 
             return true;
         }

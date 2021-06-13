@@ -80,7 +80,7 @@ namespace lsp
                 float               set_align(float v);
                 float               set_scale(float v);
 
-                void                set(float align, float scale);
+                void                set(float halign, float valign);
 
                 inline void         set_default()               { MultiProperty::set_default(vAtoms, DESC); }
 

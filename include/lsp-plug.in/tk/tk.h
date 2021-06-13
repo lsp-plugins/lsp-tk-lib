@@ -85,6 +85,7 @@
 #include <lsp-plug.in/tk/prop/multi/Font.h>
 #include <lsp-plug.in/tk/prop/multi/Alignment.h>
 #include <lsp-plug.in/tk/prop/multi/Layout.h>
+#include <lsp-plug.in/tk/prop/multi/Arrangement.h>
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
 #include <lsp-plug.in/tk/prop/multi/Position.h>
 #include <lsp-plug.in/tk/prop/multi/RangeFloat.h>
@@ -158,6 +159,7 @@
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/Switch.h>
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
+#include <lsp-plug.in/tk/widgets/simple/Bevel.h>
 
 // Container widgets
 #include <lsp-plug.in/tk/widgets/containers/Window.h>
