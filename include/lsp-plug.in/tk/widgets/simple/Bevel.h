@@ -37,7 +37,7 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;
                 prop::Color                 sColor;
                 prop::Color                 sBorderColor;
-                prop::Integer               sBorderWidth;
+                prop::Integer               sBorderSize;
                 prop::Vector2D              sDirection;
                 prop::Arrangement           sArrangement;
             LSP_TK_STYLE_DEF_END
@@ -66,7 +66,7 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;
                 prop::Color                 sColor;
                 prop::Color                 sBorderColor;
-                prop::Integer               sBorderWidth;
+                prop::Integer               sBorderSize;
                 prop::Vector2D              sDirection;
                 prop::Arrangement           sArrangement;
 
@@ -81,7 +81,7 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
-                LSP_TK_PROPERTY(Integer,            border_width,       &sBorderWidth)
+                LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
                 LSP_TK_PROPERTY(Vector2D,           direction,          &sDirection)
                 LSP_TK_PROPERTY(Arrangement,        arrangement,        &sArrangement)
 

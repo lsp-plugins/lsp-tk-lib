@@ -35,7 +35,7 @@ namespace lsp
                 sConstraints.bind("size.constraints", this);
                 sColor.bind("color", this);
                 sBorderColor.bind("border.color", this);
-                sBorderWidth.bind("border.width", this);
+                sBorderSize.bind("border.size", this);
                 sDirection.bind("direction", this);
                 sArrangement.bind("arrangement", this);
 
@@ -43,7 +43,7 @@ namespace lsp
                 sConstraints.set(-1, -1, -1, -1);
                 sColor.set("#cccccc");
                 sBorderColor.set("#ffffff");
-                sBorderWidth.set(0);
+                sBorderSize.set(0);
                 sDirection.set_dangle(45.0f);
                 sArrangement.set(0.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
@@ -73,7 +73,7 @@ namespace lsp
             sConstraints.bind("size.constraints", &sStyle);
             sColor.bind("color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
-            sBorderWidth.bind("border.width", &sStyle);
+            sBorderSize.bind("border.size", &sStyle);
             sDirection.bind("direction", &sStyle);
             sArrangement.bind("arrangement", &sStyle);
 
@@ -90,7 +90,7 @@ namespace lsp
                 query_draw();
             if (sBorderColor.is(prop))
                 query_draw();
-            if (sBorderWidth.is(prop))
+            if (sBorderSize.is(prop))
                 query_resize();
             if (sDirection.is(prop))
                 query_draw();
@@ -102,7 +102,7 @@ namespace lsp
         {
             // Add external size constraints
             float scaling       = lsp_max(0.0f, sScaling.get());
-            ssize_t border      = (sBorderWidth.get() > 0) ? lsp_max(1.0f, sBorderWidth.get() * scaling) : -1;
+            ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : -1;
 
             r->nMinWidth        = border;
             r->nMinHeight       = border;
@@ -147,7 +147,7 @@ namespace lsp
             }
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            ssize_t border      = (sBorderWidth.get() > 0) ? lsp_max(1.0f, sBorderWidth.get() * scaling) : -1;
+            ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : -1;
 
             ws::rectangle_t xr, sr;
             point2d_t cp, ap, bp;
