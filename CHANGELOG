@@ -36,6 +36,7 @@
 - Denied copy constructor usage for all widget classes.
 - Added tk::Bevel widget which allows to draw bevels/facets in the UI.
 - Added tk::Arrangement property which allows to arrange some element inside of another.
+- Indicator now supports modern-style drawing.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

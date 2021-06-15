@@ -359,17 +359,33 @@ namespace lsp
 
                     if (ch == '\n') // Need to fill up to end-of-line
                     {
-                        offset += cols - col;
+                        for ( ; col < cols; ++col, ++offset)
+                            draw_simple
+                            (
+                                s,
+                                xr.nLeft + col*(nDWidth*scaling + spacing),
+                                xr.nTop  + row*(nDHeight*scaling + spacing),
+                                '8', off, &fp
+                            );
                     }
                     else
                     {
-                        draw_simple
-                        (
-                            s,
-                            xr.nLeft + col*(nDWidth*scaling + spacing),
-                            xr.nTop  + row*(nDHeight*scaling + spacing),
-                            ch, on, &fp
-                        );
+                        if (ch == ' ')
+                            draw_simple
+                            (
+                                s,
+                                xr.nLeft + col*(nDWidth*scaling + spacing),
+                                xr.nTop  + row*(nDHeight*scaling + spacing),
+                                '8', off, &fp
+                            );
+                        else
+                            draw_simple
+                            (
+                                s,
+                                xr.nLeft + col*(nDWidth*scaling + spacing),
+                                xr.nTop  + row*(nDHeight*scaling + spacing),
+                                ch, on, &fp
+                            );
                         ++offset;
                     }
                 }
