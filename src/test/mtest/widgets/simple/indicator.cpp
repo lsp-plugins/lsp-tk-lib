@@ -206,7 +206,7 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(3);
+        grid->rows()->set(6);
         grid->columns()->set(2);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -215,68 +215,76 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
         {
             // Create alignment and child widget
             LSPString id;
+            int iid = 0;
 
-            // Create indicator
-            MTEST_ASSERT(id.fmt_ascii("indicator-0"));
-            MTEST_ASSERT(ind = new tk::Indicator(dpy));
-            MTEST_ASSERT(init_widget(ind, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(ind));
-            MTEST_ASSERT(grid->add(ind, 3, 1) == STATUS_OK);
+            for (size_t i=0; i<2; ++i)
+            {
+                // Create indicator
+                MTEST_ASSERT(id.fmt_ascii("indicator-%d", iid++));
+                MTEST_ASSERT(ind = new tk::Indicator(dpy));
+                MTEST_ASSERT(init_widget(ind, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(ind));
+                MTEST_ASSERT(grid->add(ind, 3, 1) == STATUS_OK);
 
-            ind->rows()->set(6);
-            ind->columns()->set(16);
-            ind->text_loop()->set(true);
-            ind->text_gap()->set(4);
+                ind->rows()->set(6);
+                ind->columns()->set(16);
+                ind->text_loop()->set(true);
+                ind->text_gap()->set(4);
+                ind->modern()->set(i);
 
-            ind->text()->set_raw(
-                " !\"#$%&'()*+,-./"
-                "0123456789:;<=>?"
-                "@ABCDEFGHIJKLMNO"
-                "PQRSTUVWXYZ[\\]^_"
-                "`abcdefghijklmno"
-                "pqrstuvwxyz{|}~\x7f"
-            );
+                ind->text()->set_raw(
+                    " !\"#$%&'()*+,-./"
+                    "0123456789:;<=>?"
+                    "@ABCDEFGHIJKLMNO"
+                    "PQRSTUVWXYZ[\\]^_"
+                    "`abcdefghijklmno"
+                    "pqrstuvwxyz{|}~\x7f"
+                );
 
-            // Second indicator
-            MTEST_ASSERT(id.fmt_ascii("indicator-1"));
-            MTEST_ASSERT(ind = new tk::Indicator(dpy));
-            MTEST_ASSERT(init_widget(ind, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(ind));
-            MTEST_ASSERT(grid->add(ind) == STATUS_OK);
+                // Second indicator
+                MTEST_ASSERT(id.fmt_ascii("indicator-%d", iid++));
+                MTEST_ASSERT(ind = new tk::Indicator(dpy));
+                MTEST_ASSERT(init_widget(ind, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(ind));
+                MTEST_ASSERT(grid->add(ind) == STATUS_OK);
 
-            ind->columns()->set(17);
-            ind->text_loop()->set(true);
-            ind->text_gap()->set(4);
-            ind->text_color()->set_rgb24(0xffff00);
-            ind->text()->set_raw("2020-06-06 16:13:00");
+                ind->columns()->set(17);
+                ind->text_loop()->set(true);
+                ind->text_gap()->set(4);
+                ind->text_color()->set_rgb24(0xffff00);
+                ind->text()->set_raw("2020-06-06 16:13:00");
+                ind->modern()->set(i);
 
-            // Third indicator
-            MTEST_ASSERT(id.fmt_ascii("indicator-2"));
-            MTEST_ASSERT(ind = new tk::Indicator(dpy));
-            MTEST_ASSERT(init_widget(ind, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(ind));
-            MTEST_ASSERT(grid->add(ind) == STATUS_OK);
+                // Third indicator
+                MTEST_ASSERT(id.fmt_ascii("indicator-%d", iid++));
+                MTEST_ASSERT(ind = new tk::Indicator(dpy));
+                MTEST_ASSERT(init_widget(ind, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(ind));
+                MTEST_ASSERT(grid->add(ind) == STATUS_OK);
 
-            ind->columns()->set(19);
-            ind->rows()->set(3);
-            ind->text_loop()->set(false);
-            ind->text_gap()->set(4);
-            ind->text_color()->set_rgb24(0x00ccff);
-            ind->text()->set_raw("This is test\nof multiline text\nin the indicator.");
+                ind->columns()->set(19);
+                ind->rows()->set(3);
+                ind->text_loop()->set(false);
+                ind->text_gap()->set(4);
+                ind->text_color()->set_rgb24(0x00ccff);
+                ind->text()->set_raw("This is test\nof multiline text\nin the indicator.");
+                ind->modern()->set(i);
 
-            // Fourth indicator
-            MTEST_ASSERT(id.fmt_ascii("indicator-3"));
-            MTEST_ASSERT(ind = new tk::Indicator(dpy));
-            MTEST_ASSERT(init_widget(ind, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(ind));
-            MTEST_ASSERT(grid->add(ind) == STATUS_OK);
+                // Fourth indicator
+                MTEST_ASSERT(id.fmt_ascii("indicator-%d", iid++));
+                MTEST_ASSERT(ind = new tk::Indicator(dpy));
+                MTEST_ASSERT(init_widget(ind, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(ind));
+                MTEST_ASSERT(grid->add(ind) == STATUS_OK);
 
-            ind->columns()->set(18);
-            ind->rows()->set(1);
-            ind->text_loop()->set(true);
-            ind->text_gap()->set(4);
-            ind->text_color()->set_rgb24(0x00ffcc);
-            ind->text()->set_raw("(10+1)*2=22");
+                ind->columns()->set(18);
+                ind->rows()->set(1);
+                ind->text_loop()->set(true);
+                ind->text_gap()->set(4);
+                ind->text_color()->set_rgb24(0x00ffcc);
+                ind->text()->set_raw("(10+1)*2=22");
+                ind->modern()->set(i);
+            }
         }
 
         // Show window
