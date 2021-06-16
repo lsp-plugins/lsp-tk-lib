@@ -792,5 +792,48 @@ namespace lsp
             // Get the string value
             return pRoot->set_string(atom, lang);
         }
+
+        status_t Schema::add_font(const char *name, const char *path)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font(name, path) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::add_font(const char *name, const io::Path *path)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font(name, path) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::add_font(const char *name, const LSPString *path)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font(name, path) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::add_font(const char *name, io::IInStream *is)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font(name, is) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::add_font_alias(const char *name, const char *alias)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font_alias(name, alias) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::remove_font(const char *name)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->remove_font(name) : STATUS_BAD_STATE;
+        }
+
+        void Schema::remove_all_fonts()
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            if (dpy != NULL)
+                dpy->remove_all_fonts();
+        }
     } /* namespace tk */
 } /* namespace lsp */

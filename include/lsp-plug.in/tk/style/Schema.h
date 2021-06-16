@@ -236,6 +236,58 @@ namespace lsp
                  * @return
                  */
                 inline bool         config_mode() const           { return nFlags & S_CONFIGURING;  }
+
+                /**
+                 * Load font and add to the repository
+                 * @param name font name in UTF-8
+                 * @param path path to the file that contains the font data (UTF-8)
+                 * @return status of operation
+                 */
+                status_t            add_font(const char *name, const char *path);
+
+                /**
+                 * Load font and add to the repository
+                 * @param name font name in UTF-8
+                 * @param path path to the file that contains the font data (UTF-8)
+                 * @return status of operation
+                 */
+                status_t            add_font(const char *name, const io::Path *path);
+
+                /**
+                 * Load font and add to the repository
+                 * @param name font name in UTF-8
+                 * @param path path to the file that contains the font data (UTF-8)
+                 * @return status of operation
+                 */
+                status_t            add_font(const char *name, const LSPString *path);
+
+                /**
+                 * Load font from stream and add to the repository
+                 * @param name font name in UTF-8
+                 * @param path path to the file that contains the font data (UTF-8)
+                 * @return status of operation
+                 */
+                status_t            add_font(const char *name, io::IInStream *is);
+
+                /**
+                 * Add an alias to the font name
+                 * @param name font name
+                 * @param alias alias for the font name
+                 * @return status of operation
+                 */
+                status_t            add_font_alias(const char *name, const char *alias);
+
+                /**
+                 * Remove font or font alias by identifier
+                 * @param name name font name or font alias
+                 * @return status of operation
+                 */
+                status_t            remove_font(const char *name);
+
+                /**
+                 * Remove all previously loaded custom fonts and aliases
+                 */
+                void                remove_all_fonts();
         };
     
     } /* namespace tk */

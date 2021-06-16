@@ -130,6 +130,9 @@ namespace lsp
                 void        tapply(ws::rectangle_t *sc, float scale);
                 static void tapply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc);
                 static void tapply(ws::rectangle_t *dst, const ws::size_limit_t *sc);
+
+                static void maximize(ws::size_limit_t *dst, const ws::size_limit_t *a, const ws::size_limit_t *b);
+                static void maximize(ws::size_limit_t *dst, const ws::size_limit_t *src);
         };
 
         namespace prop

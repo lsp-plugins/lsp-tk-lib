@@ -415,12 +415,17 @@ namespace lsp
 
             ssize_t prev = 0, curr = 0, tail = 0;
             ws::font_parameters_t fp;
-            ws::text_parameters_t xp;
+            ws::text_parameters_t xp, rp;
 
             if (!s->get_font_parameters(f, &fp))
                 return false;
 
-            float w = 0, h = 0;
+            rp.Width        = 0.0f;
+            rp.Height       = 0.0f;
+            rp.XAdvance     = 0.0f;
+            rp.YAdvance     = 0.0f;
+            rp.XBearing     = 0.0f;
+            rp.YBearing     = 0.0f;
 
             while (curr < last)
             {
@@ -445,17 +450,24 @@ namespace lsp
                 if (!s->get_text_parameters(f, &xp, str))
                     return false;
 
-                if (w < xp.Width)
-                    w       = xp.Width;
-                h      += fp.Height;
+                if (prev <= 0)
+                {
+                    rp           = xp;
+                    rp.Height    = lsp_max(xp.Height, fp.Height);
+                }
+                else
+                {
+                    rp.Width     = lsp_max(rp.Width, xp.Width);
+                    rp.XAdvance  = lsp_max(rp.XAdvance, xp.XAdvance);
+                    rp.Height   += fp.Height;
+                    rp.YAdvance += xp.YAdvance;
+                }
 
                 prev    = curr + 1;
             }
 
             // Store font parameters
-            xp.Width    = w;
-            xp.Height   = h;
-            *tp         = xp;
+            *tp         = rp;
             return true;
         }
 

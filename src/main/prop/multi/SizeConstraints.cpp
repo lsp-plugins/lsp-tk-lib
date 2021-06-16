@@ -437,6 +437,21 @@ namespace lsp
                 dst->nHeight    = sc->nMinWidth;
         }
 
+        void SizeConstraints::maximize(ws::size_limit_t *dst, const ws::size_limit_t *a, const ws::size_limit_t *b)
+        {
+            dst->nMinWidth  = lsp_max(a->nMinWidth,  b->nMinWidth);
+            dst->nMinHeight = lsp_max(a->nMinHeight, b->nMinHeight);
+            dst->nMaxWidth  = lsp_max(a->nMaxWidth,  b->nMaxWidth);
+            dst->nMaxHeight = lsp_max(a->nMaxHeight, b->nMaxHeight);
+            dst->nPreWidth  = lsp_max(a->nPreWidth,  b->nPreWidth);
+            dst->nPreHeight = lsp_max(a->nPreHeight, b->nPreHeight);
+        }
+
+        void SizeConstraints::maximize(ws::size_limit_t *dst, const ws::size_limit_t *src)
+        {
+            maximize(dst, dst, src);
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

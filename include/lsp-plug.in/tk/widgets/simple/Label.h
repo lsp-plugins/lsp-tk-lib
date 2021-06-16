@@ -51,6 +51,8 @@ namespace lsp
                 Label & operator = (const Label &);
                 Label(const Label &);
 
+                friend class MultiLabel;
+
             protected:
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::Font                  sFont;          // Font parameters

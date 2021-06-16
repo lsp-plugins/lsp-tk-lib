@@ -169,6 +169,7 @@
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
 #include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
+#include <lsp-plug.in/tk/widgets/containers/MultiLabel.h>
 
 // Compound widgets
 #include <lsp-plug.in/tk/widgets/compound/Menu.h>
