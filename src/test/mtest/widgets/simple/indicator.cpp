@@ -284,6 +284,7 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
                 ind->text_color()->set_rgb24(0x00ffcc);
                 ind->text()->set_raw("(10+1)*2=22");
                 ind->modern()->set(i);
+                ind->dark_text()->set(false);
             }
         }
 

@@ -41,6 +41,7 @@ namespace lsp
                 prop::Integer       sShift;         // Text shift
                 prop::Integer       sTextGap;       // Text gap for loop
                 prop::Boolean       sLoop;          // Loop flag
+                prop::Boolean       sDarkText;      // Enables drawing of the dark text/dark segments
                 prop::String        sText;          // Actual text to display
                 prop::Boolean       sModern;        // Modern design
                 prop::Font          sFont;          // Font properties
@@ -66,6 +67,7 @@ namespace lsp
                 prop::Integer       sShift;         // Text shift
                 prop::Integer       sTextGap;       // Text gap for loop
                 prop::Boolean       sLoop;          // Loop flag
+                prop::Boolean       sDarkText;      // Enables drawing of the dark text/dark segments
                 prop::String        sText;          // Actual text to display
                 prop::Boolean       sModern;        // Modern design
                 prop::Font          sFont;          // Font properties
@@ -100,6 +102,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            text_shift,         &sShift)
                 LSP_TK_PROPERTY(Integer,            text_gap,           &sTextGap)
                 LSP_TK_PROPERTY(Boolean,            text_loop,          &sLoop)
+                LSP_TK_PROPERTY(Boolean,            dark_text,          &sDarkText)
                 LSP_TK_PROPERTY(String,             text,               &sText)
                 LSP_TK_PROPERTY(Boolean,            modern,             &sModern)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)

@@ -38,6 +38,7 @@ namespace lsp
                 sShift.bind("text.shift", this);
                 sTextGap.bind("text.gap", this);
                 sLoop.bind("text.loop", this);
+                sDarkText.bind("text.dark", this);
                 sModern.bind("modern", this);
                 sFont.bind("font", this);
                 sSpacing.bind("spacing", this);
@@ -50,6 +51,7 @@ namespace lsp
                 sShift.set(0);
                 sTextGap.set(0);
                 sLoop.set(false);
+                sDarkText.set(true);
                 sModern.set(false);
                 sFont.set_size(16);
                 sFont.set_bold(true);
@@ -132,6 +134,7 @@ namespace lsp
             sShift(&sProperties),
             sTextGap(&sProperties),
             sLoop(&sProperties),
+            sDarkText(&sProperties),
             sText(&sProperties),
             sModern(&sProperties),
             sFont(&sProperties),
@@ -162,6 +165,7 @@ namespace lsp
             sShift.bind("text.shift", &sStyle);
             sTextGap.bind("text.gap", &sStyle);
             sLoop.bind("text.loop", &sStyle);
+            sDarkText.bind("text.dark", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sModern.bind("modern", &sStyle);
             sFont.bind("font", &sStyle);
@@ -187,6 +191,8 @@ namespace lsp
             if (sTextGap.is(prop))
                 query_draw();
             if (sLoop.is(prop))
+                query_draw();
+            if (sDarkText.is(prop))
                 query_draw();
             if (sText.is(prop))
                 query_draw();
@@ -232,11 +238,14 @@ namespace lsp
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
             const rect_t *r = segments;
+            bool dark       = sDarkText.get();
 
             for (size_t i=0, m=1; i<11; ++i, m <<= 1, ++r)
             {
-                const lsp::Color &col = (state & m) ? on : off;
-                s->wire_rect(col, x + r->x * scaling - 0.5f, y + r->y * scaling - 0.5f, r->w * scaling, r->h * scaling, scaling);
+                if (state & m)
+                    s->wire_rect(on, x + r->x * scaling - 0.5f, y + r->y * scaling - 0.5f, r->w * scaling, r->h * scaling, scaling);
+                else if (dark)
+                    s->wire_rect(off, x + r->x * scaling - 0.5f, y + r->y * scaling - 0.5f, r->w * scaling, r->h * scaling, scaling);
             }
         }
 
@@ -317,6 +326,7 @@ namespace lsp
             size_t cols     = lsp_max(1, sColumns.get());
             size_t last     = rows * cols;
             ssize_t spacing = (sSpacing.get() > 0) ? lsp_max(1.0f, sSpacing.get() * scaling) : 0;
+            bool dark       = sDarkText.get();
             ws::rectangle_t xr;
 
             xr.nLeft        = 0;
@@ -359,25 +369,33 @@ namespace lsp
 
                     if (ch == '\n') // Need to fill up to end-of-line
                     {
-                        for ( ; col < cols; ++col, ++offset)
-                            draw_simple
-                            (
-                                s,
-                                xr.nLeft + col*(nDWidth*scaling + spacing),
-                                xr.nTop  + row*(nDHeight*scaling + spacing),
-                                '8', off, &fp
-                            );
+                        if (dark)
+                        {
+                            for ( ; col < cols; ++col, ++offset)
+                                draw_simple
+                                (
+                                    s,
+                                    xr.nLeft + col*(nDWidth*scaling + spacing),
+                                    xr.nTop  + row*(nDHeight*scaling + spacing),
+                                    '8', off, &fp
+                                );
+                        }
                     }
                     else
                     {
                         if (ch == ' ')
-                            draw_simple
-                            (
-                                s,
-                                xr.nLeft + col*(nDWidth*scaling + spacing),
-                                xr.nTop  + row*(nDHeight*scaling + spacing),
-                                '8', off, &fp
-                            );
+                        {
+                            if (dark)
+                            {
+                                draw_simple
+                                (
+                                    s,
+                                    xr.nLeft + col*(nDWidth*scaling + spacing),
+                                    xr.nTop  + row*(nDHeight*scaling + spacing),
+                                    '8', off, &fp
+                                );
+                            }
+                        }
                         else
                             draw_simple
                             (
