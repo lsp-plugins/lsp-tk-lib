@@ -107,7 +107,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Font,       font,           &sFont)
-                LSP_TK_PROPERTY(TextAdjust, text_ajdust,    &sTextAdjust)
+                LSP_TK_PROPERTY(TextAdjust, text_adjust,    &sTextAdjust)
                 LSP_TK_PROPERTY(Color,      color,          &sColor)
                 LSP_TK_PROPERTY(Color,      text_color,     &sTextColor)
                 LSP_TK_PROPERTY(String,     text,           &sText)
