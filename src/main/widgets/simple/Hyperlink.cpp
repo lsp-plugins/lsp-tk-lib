@@ -35,6 +35,7 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Hyperlink, Widget)
                 // Bind
                 sTextLayout.bind("text.layout", this);
+                sTextAdjust.bind("text.adjust", this);
                 sFont.bind("font", this);
                 sColor.bind("text.color", this);
                 sHoverColor.bind("text.hover.color", this);
@@ -42,6 +43,7 @@ namespace lsp
                 sFollow.bind("follow", this);
                 // Configure
                 sTextLayout.set(0.0f, 0.0f);
+                sTextAdjust.set(TA_NONE);
                 sFont.set_underline();
                 sColor.set("#0000cc");
                 sHoverColor.set("#ff0000");
@@ -61,6 +63,7 @@ namespace lsp
         Hyperlink::Hyperlink(Display *dpy):
             Widget(dpy),
             sTextLayout(&sProperties),
+            sTextAdjust(&sProperties),
             sFont(&sProperties),
             sColor(&sProperties),
             sHoverColor(&sProperties),
@@ -95,6 +98,7 @@ namespace lsp
                 return res;
 
             sTextLayout.bind("text.layout", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("text.color", &sStyle);
             sHoverColor.bind("text.hover.color", &sStyle);
@@ -134,40 +138,23 @@ namespace lsp
             }
         }
 
-        status_t Hyperlink::create_default_menu()
+        void Hyperlink::property_changed(Property *prop)
         {
-            // Add default menu
-            handler_id_t id = 0;
-            Menu *menu      = new Menu(pDisplay);
-            if (menu == NULL)
-                return STATUS_NO_MEM;
-            vMenus[0]       = menu;
-            LSP_STATUS_ASSERT(menu->init());
-
-            // Create 'copy' menu item
-            MenuItem *mi    = new MenuItem(pDisplay);
-            if (mi == NULL)
-                return STATUS_NO_MEM;
-            vMenus[1]       = mi;
-            LSP_STATUS_ASSERT(mi->init());
-            LSP_STATUS_ASSERT(menu->add(mi));
-            LSP_STATUS_ASSERT(mi->text()->set("actions.link.copy"));
-            id = mi->slots()->bind(SLOT_SUBMIT, slot_copy_link_action, self());
-            if (id < 0)
-                return -id;
-
-            mi    = new MenuItem(pDisplay);
-                        if (mi == NULL)
-                            return STATUS_NO_MEM;
-            vMenus[2]       = mi;
-            LSP_STATUS_ASSERT(mi->init());
-            LSP_STATUS_ASSERT(menu->add(mi));
-            LSP_STATUS_ASSERT(mi->text()->set("actions.link.follow"));
-            id = mi->slots()->bind(SLOT_SUBMIT, slot_on_submit, self());
-            if (id < 0)
-                return -id;
-
-            return STATUS_OK;
+            Widget::property_changed(prop);
+            if (sTextLayout.is(prop))
+                query_draw();
+            if (sTextAdjust.is(prop))
+                query_resize();
+            if (sFont.is(prop))
+                query_resize();
+            if (sColor.is(prop))
+                query_draw();
+            if (sHoverColor.is(prop))
+                query_draw();
+            if (sText.is(prop))
+                query_resize();
+            if (sConstraints.is(prop))
+                query_resize();
         }
 
         void Hyperlink::size_request(ws::size_limit_t *r)
@@ -180,6 +167,7 @@ namespace lsp
             // Form the text string
             LSPString text;
             sText.format(&text);
+            sTextAdjust.apply(&text);
 
             // Estimate sizes
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -199,96 +187,12 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void Hyperlink::property_changed(Property *prop)
-        {
-            Widget::property_changed(prop);
-            if (sTextLayout.is(prop))
-                query_draw();
-            if (sFont.is(prop))
-                query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sHoverColor.is(prop))
-                query_draw();
-            if (sText.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
-                query_resize();
-        }
-
-
-        status_t Hyperlink::slot_on_submit(Widget *sender, void *ptr, void *data)
-        {
-            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
-            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
-        }
-
-        status_t Hyperlink::slot_on_before_popup(Widget *sender, void *ptr, void *data)
-        {
-            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
-            Menu *_menu = widget_ptrcast<Menu>(sender);
-            return (_this != NULL) ? _this->on_before_popup(_menu) : STATUS_BAD_ARGUMENTS;
-        }
-
-        status_t Hyperlink::slot_on_popup(Widget *sender, void *ptr, void *data)
-        {
-            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
-            Menu *_menu = widget_ptrcast<Menu>(sender);
-            return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
-        }
-
-        status_t Hyperlink::slot_copy_link_action(Widget *sender, void *ptr, void *data)
-        {
-            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
-            if (_this == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
-            return _this->copy_url(ws::CBUF_CLIPBOARD);
-        }
-
-        status_t Hyperlink::follow_url() const
-        {
-            LSPString url;
-            status_t res = sUrl.format(&url);
-            if (res != STATUS_OK)
-                return res;
-
-            return system::follow_url(&url);
-        }
-
-        status_t Hyperlink::copy_url(ws::clipboard_id_t cb)
-        {
-            // Prepare URL to copy
-            LSPString url;
-            status_t res = sUrl.format(&url);
-            if (res != STATUS_OK)
-                return res;
-
-            // Copy data to clipboard
-            TextDataSource *src = new TextDataSource();
-            if (src == NULL)
-                return STATUS_NO_MEM;
-            src->acquire();
-
-            status_t result = src->set_text(&url);
-            if (result == STATUS_OK)
-                pDisplay->set_clipboard(cb, src);
-            src->release();
-
-            return result;
-        }
-
-        status_t Hyperlink::on_submit()
-        {
-            lsp_trace("hyperlink submitted");
-            return (sFollow.get()) ? follow_url() : STATUS_OK;
-        }
-
         void Hyperlink::draw(ws::ISurface *s)
         {
             // Form the text string
             LSPString text;
             sText.format(&text);
+            sTextAdjust.apply(&text);
 
             // Estimate sizes
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -367,6 +271,109 @@ namespace lsp
                 sFont.draw(s, f_color, x, y, fscaling, &text, last, tail);
                 last    = curr + 1;
             }
+        }
+
+        status_t Hyperlink::create_default_menu()
+        {
+            // Add default menu
+            handler_id_t id = 0;
+            Menu *menu      = new Menu(pDisplay);
+            if (menu == NULL)
+                return STATUS_NO_MEM;
+            vMenus[0]       = menu;
+            LSP_STATUS_ASSERT(menu->init());
+
+            // Create 'copy' menu item
+            MenuItem *mi    = new MenuItem(pDisplay);
+            if (mi == NULL)
+                return STATUS_NO_MEM;
+            vMenus[1]       = mi;
+            LSP_STATUS_ASSERT(mi->init());
+            LSP_STATUS_ASSERT(menu->add(mi));
+            LSP_STATUS_ASSERT(mi->text()->set("actions.link.copy"));
+            id = mi->slots()->bind(SLOT_SUBMIT, slot_copy_link_action, self());
+            if (id < 0)
+                return -id;
+
+            mi    = new MenuItem(pDisplay);
+                        if (mi == NULL)
+                            return STATUS_NO_MEM;
+            vMenus[2]       = mi;
+            LSP_STATUS_ASSERT(mi->init());
+            LSP_STATUS_ASSERT(menu->add(mi));
+            LSP_STATUS_ASSERT(mi->text()->set("actions.link.follow"));
+            id = mi->slots()->bind(SLOT_SUBMIT, slot_on_submit, self());
+            if (id < 0)
+                return -id;
+
+            return STATUS_OK;
+        }
+
+        status_t Hyperlink::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Hyperlink::slot_on_before_popup(Widget *sender, void *ptr, void *data)
+        {
+            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_before_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Hyperlink::slot_on_popup(Widget *sender, void *ptr, void *data)
+        {
+            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Hyperlink::slot_copy_link_action(Widget *sender, void *ptr, void *data)
+        {
+            Hyperlink *_this = widget_ptrcast<Hyperlink>(ptr);
+            if (_this == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            return _this->copy_url(ws::CBUF_CLIPBOARD);
+        }
+
+        status_t Hyperlink::follow_url() const
+        {
+            LSPString url;
+            status_t res = sUrl.format(&url);
+            if (res != STATUS_OK)
+                return res;
+
+            return system::follow_url(&url);
+        }
+
+        status_t Hyperlink::copy_url(ws::clipboard_id_t cb)
+        {
+            // Prepare URL to copy
+            LSPString url;
+            status_t res = sUrl.format(&url);
+            if (res != STATUS_OK)
+                return res;
+
+            // Copy data to clipboard
+            TextDataSource *src = new TextDataSource();
+            if (src == NULL)
+                return STATUS_NO_MEM;
+            src->acquire();
+
+            status_t result = src->set_text(&url);
+            if (result == STATUS_OK)
+                pDisplay->set_clipboard(cb, src);
+            src->release();
+
+            return result;
+        }
+
+        status_t Hyperlink::on_submit()
+        {
+            lsp_trace("hyperlink submitted");
+            return (sFollow.get()) ? follow_url() : STATUS_OK;
         }
 
         status_t Hyperlink::on_mouse_in(const ws::event_t *e)

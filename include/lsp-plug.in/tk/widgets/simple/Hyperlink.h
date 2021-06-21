@@ -37,6 +37,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Hyperlink, Widget)
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
                 prop::Color                 sHoverColor;    // Hover font color
@@ -70,6 +71,7 @@ namespace lsp
                 Widget                     *vMenus[3];
 
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
                 prop::Color                 sHoverColor;    // Hover font color
