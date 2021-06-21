@@ -147,7 +147,7 @@ namespace lsp
             }
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : -1;
+            ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
 
             ws::rectangle_t xr, sr;
             point2d_t cp, ap, bp;
