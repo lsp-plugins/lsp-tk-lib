@@ -51,6 +51,14 @@ namespace lsp
                 inline text_adjust_t        set(text_adjust_t v)
                     { return text_adjust_t(Enum::set(v)); };
 
+                inline bool                 is_toupper() const      { return nValue == TA_TOUPPER;  }
+                inline bool                 is_lower() const        { return nValue == TA_TOLOWER;  }
+                inline bool                 is_none() const         { return nValue == TA_NONE;     }
+
+                inline text_adjust_t        set_toupper()           { return set(TA_TOUPPER);       }
+                inline text_adjust_t        set_tolower()           { return set(TA_TOLOWER);       }
+                inline text_adjust_t        set_none()              { return set(TA_NONE);          }
+
                 status_t                    apply(LSPString *dst, const LSPString *src) const;
                 status_t                    apply(LSPString *dst) const;
         };

@@ -37,12 +37,16 @@ namespace lsp
                 sTextAdjust.bind("text.adjust", this);
                 sFont.bind("font", this);
                 sColor.bind("text.color", this);
+                sHoverColor.bind("text.hover.color", this);
+                sHover.bind("text.hover", this);
                 sConstraints.bind("size.constraints", this);
                 // Configure
                 sTextLayout.set(0.0f, 0.0f);
                 sTextAdjust.set(TA_NONE);
                 sFont.set_size(12.0f);
                 sColor.set("#000000");
+                sHoverColor.set("#ff0000");
+                sHover.set(false);
                 sConstraints.set(-1, -1, -1, -1);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Label, "Label");
@@ -56,9 +60,15 @@ namespace lsp
             sTextAdjust(&sProperties),
             sFont(&sProperties),
             sColor(&sProperties),
+            sHoverColor(&sProperties),
+            sHover(&sProperties),
             sText(&sProperties),
-            sConstraints(&sProperties)
+            sConstraints(&sProperties),
+            sPopup(&sProperties)
         {
+            nMFlags     = 0;
+            nState      = 0;
+
             pClass      = &metadata;
         }
 
@@ -77,8 +87,17 @@ namespace lsp
             sTextAdjust.bind("text.adjust", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("text.color", &sStyle);
+            sHoverColor.bind("text.hover.color", &sStyle);
+            sHover.bind("text.hover", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
+            sPopup.bind(NULL);
+
+            handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEFORE_POPUP, slot_on_before_popup, self());
+            if (id >= 0) id = sSlots.add(SLOT_POPUP, slot_on_popup, self());
+            if (id < 0)
+                return -id;
 
             return STATUS_OK;
         }
@@ -93,6 +112,10 @@ namespace lsp
             if (sFont.is(prop))
                 query_resize();
             if (sColor.is(prop))
+                query_draw();
+            if (sHoverColor.is(prop))
+                query_draw();
+            if (sHover.is(prop))
                 query_draw();
             if (sText.is(prop))
                 query_resize();
@@ -110,6 +133,7 @@ namespace lsp
             // Estimate sizes
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
+            bool hover      = (nState & F_MOUSE_IN) && (sHover.get());
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
             ws::rectangle_t r;
@@ -143,7 +167,7 @@ namespace lsp
 
             // Initialize palette
             lsp::Color bg_color;
-            lsp::Color f_color(sColor);
+            lsp::Color f_color((hover) ? sHoverColor : sColor);
 
             get_actual_bg_color(bg_color);
             f_color.scale_lightness(sBrightness.get());
@@ -214,6 +238,123 @@ namespace lsp
 
             // Apply size constraints
             sConstraints.apply(r, scaling);
+        }
+
+        status_t Label::on_mouse_in(const ws::event_t *e)
+        {
+            Widget::on_mouse_in(e);
+
+            size_t flags = nState;
+            nState |= F_MOUSE_IN;
+            if (flags != nState)
+                query_draw();
+
+            return STATUS_OK;
+        }
+
+        status_t Label::on_mouse_out(const ws::event_t *e)
+        {
+            Widget::on_mouse_out(e);
+
+            size_t flags = nState;
+            nState &= ~F_MOUSE_IN;
+            if (flags != nState)
+                query_draw();
+
+            return STATUS_OK;
+        }
+
+        status_t Label::on_mouse_move(const ws::event_t *e)
+        {
+            size_t flags = nState;
+            nState = lsp_setflag(nState, F_MOUSE_IN, inside(e->nLeft, e->nTop));
+            if (flags != nState)
+                query_draw();
+            return STATUS_OK;
+        }
+
+        status_t Label::on_mouse_down(const ws::event_t *e)
+        {
+            size_t flags = nState;
+
+            if (nMFlags == 0)
+            {
+                if (e->nCode == ws::MCB_LEFT)
+                    nState |= F_MOUSE_DOWN;
+                else
+                    nState |= F_MOUSE_IGN;
+            }
+
+            nMFlags |= 1 << e->nCode;
+            nState = lsp_setflag(nState, F_MOUSE_IN, inside(e->nLeft, e->nTop));
+
+            if (flags != nState)
+                query_draw();
+            return STATUS_OK;
+        }
+
+        status_t Label::on_mouse_up(const ws::event_t *e)
+        {
+            size_t flags = nMFlags;
+            nMFlags &= ~ (1 << e->nCode);
+            if (nMFlags == 0)
+                nState      = 0;
+
+            bool xinside = inside(e->nLeft, e->nTop);
+            nState = lsp_setflag(nState, F_MOUSE_IN, xinside);
+            if (flags != nState)
+                query_draw();
+
+            // Trigger submit action
+            if (xinside)
+            {
+                if ((flags == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+                    sSlots.execute(SLOT_SUBMIT, this);
+                else if ((flags == (1 << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT) && (sPopup.is_set()))
+                {
+                    Menu *popup = sPopup.get();
+                    sSlots.execute(SLOT_BEFORE_POPUP, popup, self());
+                    popup->show();
+                    sSlots.execute(SLOT_POPUP, popup, self());
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Label::on_before_popup(Menu *menu)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Label::on_popup(Menu *menu)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Label::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t Label::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            Label *_this = widget_ptrcast<Label>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Label::slot_on_before_popup(Widget *sender, void *ptr, void *data)
+        {
+            Label *_this = widget_ptrcast<Label>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_before_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Label::slot_on_popup(Widget *sender, void *ptr, void *data)
+        {
+            Label *_this = widget_ptrcast<Label>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
         }
     } /* namespace tk */
 } /* namespace lsp */

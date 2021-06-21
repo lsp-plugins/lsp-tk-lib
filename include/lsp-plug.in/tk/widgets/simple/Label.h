@@ -38,6 +38,8 @@ namespace lsp
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
+                prop::Color                 sHoverColor;    // Hover color
+                prop::Boolean               sHover;         // Hover enable
                 prop::String                sText;          // Text to display
                 prop::SizeConstraints       sConstraints;   // Size constraints
             LSP_TK_STYLE_DEF_END
@@ -55,12 +57,31 @@ namespace lsp
                 friend class MultiLabel;
 
             protected:
+                enum state_t
+                {
+                    F_MOUSE_IN      = 1 << 0,
+                    F_MOUSE_DOWN    = 1 << 1,
+                    F_MOUSE_IGN     = 1 << 2,
+                };
+
+            protected:
+                size_t                      nMFlags;
+                size_t                      nState;
+
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
+                prop::Color                 sHoverColor;    // Hover color
+                prop::Boolean               sHover;         // Hover enable
                 prop::String                sText;          // Text to display
                 prop::SizeConstraints       sConstraints;   // Size constraints
+                prop::WidgetPtr<Menu>       sPopup;         // Popup menu
+
+            protected:
+                static status_t                 slot_on_submit(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_on_before_popup(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_on_popup(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual void                    size_request(ws::size_limit_t *r);
@@ -77,11 +98,30 @@ namespace lsp
                 LSP_TK_PROPERTY(TextAdjust,         text_adjust,        &sTextAdjust)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
+                LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)
+                LSP_TK_PROPERTY(Boolean,            hover,              &sHover)
                 LSP_TK_PROPERTY(String,             text,               &sText)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,              &sPopup)
 
             public:
                 virtual void                    draw(ws::ISurface *s);
+
+                virtual status_t                on_mouse_in(const ws::event_t *e);
+
+                virtual status_t                on_mouse_out(const ws::event_t *e);
+
+                virtual status_t                on_mouse_move(const ws::event_t *e);
+
+                virtual status_t                on_mouse_down(const ws::event_t *e);
+
+                virtual status_t                on_mouse_up(const ws::event_t *e);
+
+                virtual status_t                on_before_popup(Menu *menu);
+
+                virtual status_t                on_popup(Menu *menu);
+
+                virtual status_t                on_submit();
         };
     
     } /* namespace tk */

@@ -230,6 +230,10 @@ MTEST_BEGIN("tk.widgets.simple", label)
                     label->bg_color()->set_rgb24(next_color(col));
                     label->color()->set_rgb24(0xffffff);
                     label->padding()->set_all(0);
+                    if (x == 0)
+                        label->hover()->set(true);
+                    else if (x == 1)
+                        label->text_adjust()->set(tk::TA_TOUPPER);
                 }
         }
 
