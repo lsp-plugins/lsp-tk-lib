@@ -45,6 +45,7 @@ namespace lsp
                 prop::Color             sHoleColor;
                 prop::Font              sFont;
                 prop::String            sText;
+                prop::TextAdjust        sTextAdjust;
                 prop::SizeConstraints   sConstraints;
                 prop::TextLayout        sTextLayout;
                 prop::ButtonMode        sMode;
@@ -111,6 +112,7 @@ namespace lsp
                 prop::Color             sHoleColor;
                 prop::Font              sFont;
                 prop::String            sText;
+                prop::TextAdjust        sTextAdjust;
                 prop::SizeConstraints   sConstraints;
                 prop::TextLayout        sTextLayout;
                 prop::ButtonMode        sMode;
@@ -158,6 +160,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(String,             text,               &sText)
+                LSP_TK_PROPERTY(TextAdjust,         text_adjust,        &sTextAdjust)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(ButtonMode,         mode,               &sMode)
                 LSP_TK_PROPERTY(Boolean,            down,               &sDown)

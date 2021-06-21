@@ -41,6 +41,7 @@ namespace lsp
                 sLTextColor.bind("led.text.color", this);
                 sHoleColor.bind("hole.color", this);
                 sFont.bind("font", this);
+                sTextAdjust.bind("text.adjust", this);
                 sConstraints.bind("size.constraints", this);
                 sTextLayout.bind("text.layout", this);
                 sMode.bind("mode", this);
@@ -106,6 +107,7 @@ namespace lsp
             sHoleColor(&sProperties),
             sFont(&sProperties),
             sText(&sProperties),
+            sTextAdjust(&sProperties),
             sConstraints(&sProperties),
             sTextLayout(&sProperties),
             sMode(&sProperties),
@@ -160,6 +162,7 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
             sTextLayout.bind("text.layout", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sMode.bind("mode", &sStyle);
             sDown.bind("down", &sStyle);
             sLed.bind("led", &sStyle);
@@ -183,28 +186,6 @@ namespace lsp
             if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
 
             return (id >= 0) ? STATUS_OK : -id;
-        }
-
-        status_t Button::slot_on_change(Widget *sender, void *ptr, void *data)
-        {
-            Button *_this = widget_ptrcast<Button>(ptr);
-            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
-        }
-
-        status_t Button::slot_on_submit(Widget *sender, void *ptr, void *data)
-        {
-            Button *_this = widget_ptrcast<Button>(ptr);
-            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
-        }
-
-        status_t Button::on_change()
-        {
-            return STATUS_OK;
-        }
-
-        status_t Button::on_submit()
-        {
-            return STATUS_OK;
         }
 
         void Button::property_changed(Property *prop)
@@ -232,6 +213,8 @@ namespace lsp
             if (sFont.is(prop))
                 query_resize();
             if (sText.is(prop))
+                query_resize();
+            if (sTextAdjust.is(prop))
                 query_resize();
             if (sConstraints.is(prop))
                 query_resize();
@@ -522,6 +505,7 @@ namespace lsp
                 // Do we have a text?
                 LSPString text;
                 sText.format(&text);
+                sTextAdjust.apply(&text);
                 if (text.length() > 0)
                 {
                     chamfer         = max_chamfer - chamfer;
@@ -612,6 +596,7 @@ namespace lsp
 
             // Need to analyze text parameters?
             sText.format(&text);
+            sTextAdjust.apply(&text);
 
             if ((text.length() > 0) && (!sTextClip.get()))
             {
@@ -883,5 +868,27 @@ namespace lsp
             return STATUS_OK;
         }
 
+
+        status_t Button::slot_on_change(Widget *sender, void *ptr, void *data)
+        {
+            Button *_this = widget_ptrcast<Button>(ptr);
+            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Button::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            Button *_this = widget_ptrcast<Button>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Button::on_change()
+        {
+            return STATUS_OK;
+        }
+
+        status_t Button::on_submit()
+        {
+            return STATUS_OK;
+        }
     } /* namespace tk */
 } /* namespace lsp */
