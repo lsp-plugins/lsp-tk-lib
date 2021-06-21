@@ -35,6 +35,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Label, Widget)
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
                 prop::String                sText;          // Text to display
@@ -55,6 +56,7 @@ namespace lsp
 
             protected:
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
                 prop::String                sText;          // Text to display
@@ -72,6 +74,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
+                LSP_TK_PROPERTY(TextAdjust,         text_adjust,        &sTextAdjust)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(String,             text,               &sText)

@@ -38,6 +38,7 @@
 - Added tk::Arrangement property which allows to arrange some element inside of another.
 - Indicator now supports modern-style drawing.
 - Added tk::MultiLabel widget for drawing vector glyphs.
+- Added tk::TextAdjust property and support of this property by several widgets.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

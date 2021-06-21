@@ -34,6 +34,7 @@ namespace lsp
                 sColor.bind("color", this);
                 sLayout.bind("layout", this);
                 sTextLayout.bind("text.layout", this);
+                sTextAdjust.bind("text.adjust", this);
                 sHValue.bind("hvalue", this);
                 sVValue.bind("vvalue", this);
                 sHAxis.bind("haxis", this);
@@ -43,6 +44,7 @@ namespace lsp
                 sFont.set_size(10.0f);
                 sLayout.set(1.0f, 1.0f, 0.0f, 0.0f);
                 sTextLayout.set(0.5f, 0.5f);
+                sTextAdjust.set(TA_NONE);
                 sHValue.set(0.0f);
                 sVValue.set(0.0f);
                 sHAxis.set(0);
@@ -66,6 +68,7 @@ namespace lsp
             sColor(&sProperties),
             sLayout(&sProperties),
             sTextLayout(&sProperties),
+            sTextAdjust(&sProperties),
             sHValue(&sProperties),
             sVValue(&sProperties),
             sHAxis(&sProperties),
@@ -92,6 +95,7 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sLayout.bind("layout", &sStyle);
             sTextLayout.bind("text.layout", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sHValue.bind("hvalue", &sStyle);
             sVValue.bind("vvalue", &sStyle);
             sHAxis.bind("haxis", &sStyle);
@@ -113,6 +117,8 @@ namespace lsp
                 query_draw();
             if (sLayout.is(prop))
                 query_draw();
+            if (sTextAdjust.is(prop))
+                query_resize();
             if (sHValue.is(prop))
                 query_draw();
             if (sVValue.is(prop))
@@ -132,6 +138,7 @@ namespace lsp
             sText.format(&text);
             if (text.is_empty())
                 return;
+            sTextAdjust.apply(&text);
 
             // Graph
             Graph *cv = graph();

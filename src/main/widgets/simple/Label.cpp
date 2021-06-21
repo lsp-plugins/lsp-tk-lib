@@ -34,11 +34,13 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Label, Widget)
                 // Bind
                 sTextLayout.bind("text.layout", this);
+                sTextAdjust.bind("text.adjust", this);
                 sFont.bind("font", this);
                 sColor.bind("text.color", this);
                 sConstraints.bind("size.constraints", this);
                 // Configure
                 sTextLayout.set(0.0f, 0.0f);
+                sTextAdjust.set(TA_NONE);
                 sFont.set_size(12.0f);
                 sColor.set("#000000");
                 sConstraints.set(-1, -1, -1, -1);
@@ -51,6 +53,7 @@ namespace lsp
         Label::Label(Display *dpy):
             Widget(dpy),
             sTextLayout(&sProperties),
+            sTextAdjust(&sProperties),
             sFont(&sProperties),
             sColor(&sProperties),
             sText(&sProperties),
@@ -71,6 +74,7 @@ namespace lsp
                 return result;
 
             sTextLayout.bind("text.layout", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("text.color", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
@@ -84,6 +88,8 @@ namespace lsp
             Widget::property_changed(prop);
             if (sTextLayout.is(prop))
                 query_draw();
+            if (sTextAdjust.is(prop))
+                query_resize();
             if (sFont.is(prop))
                 query_resize();
             if (sColor.is(prop))
@@ -99,6 +105,7 @@ namespace lsp
             // Form the text string
             LSPString text;
             sText.format(&text);
+            sTextAdjust.apply(&text);
 
             // Estimate sizes
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -191,6 +198,7 @@ namespace lsp
             // Form the text string
             LSPString text;
             sText.format(&text);
+            sTextAdjust.apply(&text);
 
             // Estimate sizes
             float scaling   = lsp_max(0.0f, sScaling.get());

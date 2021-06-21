@@ -31,6 +31,7 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(MenuItem, Widget)
                 // Bind
+                sTextAdjust.bind("text.adjust", this);
                 sType.bind("type", this);
                 sChecked.bind("checked", this);
                 sBgSelectedColor.bind("bg.selected.color", this);
@@ -41,6 +42,7 @@ namespace lsp
                 sCheckBorderColor.bind("check.border.color", this);
                 sShortcut.bind("shortcut", this);
                 // Configure
+                sTextAdjust.set(TA_NONE);
                 sType.set(MI_NORMAL);
                 sChecked.set(false);
                 sBgSelectedColor.set("#000088");
@@ -64,6 +66,7 @@ namespace lsp
             Widget(dpy),
             sMenu(&sProperties),
             sText(&sProperties),
+            sTextAdjust(&sProperties),
             sType(&sProperties),
             sChecked(&sProperties),
             sBgSelectedColor(&sProperties),
@@ -100,6 +103,7 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
+            sTextAdjust.bind("text.adjust", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sType.bind("type", &sStyle);
             sChecked.bind("checked", &sStyle);
@@ -121,6 +125,8 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
+            if (sTextAdjust.is(prop))
+                query_resize();
             if (sText.is(prop))
                 query_resize();
             if (sType.is(prop))

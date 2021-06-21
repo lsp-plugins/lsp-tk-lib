@@ -35,6 +35,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(ComboGroup, WidgetContainer)
                 prop::Font                  sFont;
+                prop::TextAdjust            sTextAdjust;
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sSpinColor;
@@ -120,6 +121,7 @@ namespace lsp
                 bool                        bInside;
 
                 prop::Font                  sFont;
+                prop::TextAdjust            sTextAdjust;
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sSpinColor;
@@ -166,6 +168,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Font,                       font,                   &sFont)
+                LSP_TK_PROPERTY(TextAdjust,                 text_ajdust,            &sTextAdjust)
                 LSP_TK_PROPERTY(Color,                      color,                  &sColor)
                 LSP_TK_PROPERTY(Color,                      text_color,             &sTextColor)
                 LSP_TK_PROPERTY(Color,                      spin_color,             &sSpinColor)

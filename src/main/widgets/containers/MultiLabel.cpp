@@ -125,6 +125,7 @@ namespace lsp
 
                 // Estimate the label size
                 l->sText.format(&text);
+                l->sTextAdjust.apply(&text);
                 l->sFont.get_parameters(pDisplay, fscaling, &fp);
                 l->sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
 

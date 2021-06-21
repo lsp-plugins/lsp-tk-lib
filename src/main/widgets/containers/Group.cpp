@@ -33,6 +33,7 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Group, Align)
                 // Bind
                 sFont.bind("font", this);
+                sTextAdjust.bind("text.adjust", this);
                 sColor.bind("color", this);
                 sTextColor.bind("text.color", this);
                 sShowText.bind("text.show", this);
@@ -45,6 +46,7 @@ namespace lsp
                 sHeading.bind("heading", this);
                 // Configure
                 sFont.set_size(12.0f);
+                sTextAdjust.set(TA_NONE);
                 sColor.set("#000000");
                 sTextColor.set("#ffffff");
                 sShowText.set(true);
@@ -68,6 +70,7 @@ namespace lsp
         Group::Group(Display *dpy):
             Align(dpy),
             sFont(&sProperties),
+            sTextAdjust(&sProperties),
             sColor(&sProperties),
             sTextColor(&sProperties),
             sText(&sProperties),
@@ -107,6 +110,7 @@ namespace lsp
                 return result;
 
             sFont.bind("font", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sColor.bind("color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
@@ -126,6 +130,8 @@ namespace lsp
         {
             Align::property_changed(prop);
             if (sFont.is(prop))
+                query_resize();
+            if (sTextAdjust.is(prop))
                 query_resize();
             if (sColor.is(prop))
                 query_draw();
@@ -171,6 +177,7 @@ namespace lsp
 
                 ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
                 sText.format(&s);
+                sTextAdjust.apply(&s);
 
                 sFont.get_parameters(pDisplay, fscaling, &fp);
                 sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
@@ -399,6 +406,7 @@ namespace lsp
                     color.scale_lightness(bright);
 
                     sText.format(&text);
+                    sTextAdjust.apply(&text);
 
                     sFont.get_parameters(pDisplay, fscaling, &fp);
                     sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);

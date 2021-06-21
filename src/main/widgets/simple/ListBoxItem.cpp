@@ -30,10 +30,12 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(ListBoxItem, Widget)
                 // Bind
+                sTextAdjust.bind("text.adjust", this);
                 sBgSelectedColor.bind("bg.selected.color", this);
                 sTextColor.bind("text.color", this);
                 sTextSelectedColor.bind("text.selected.color", this);
                 // Configure
+                sTextAdjust.set(TA_NONE);
                 sBgSelectedColor.set("#00ccff");
                 sTextColor.set("#000000");
                 sTextSelectedColor.set("#ffffff");
@@ -52,6 +54,7 @@ namespace lsp
         ListBoxItem::ListBoxItem(Display *dpy):
             Widget(dpy),
             sText(&sProperties),
+            sTextAdjust(&sProperties),
             sBgSelectedColor(&sProperties),
             sTextColor(&sProperties),
             sTextSelectedColor(&sProperties)
@@ -70,6 +73,7 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
+            sTextAdjust.bind("text.adjust", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sBgSelectedColor.bind("bg.selected.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
@@ -81,6 +85,8 @@ namespace lsp
         void ListBoxItem::property_changed(Property *prop)
         {
             if (sText.is(prop))
+                query_resize();
+            if (sTextAdjust.is(prop))
                 query_resize();
             if (sBgSelectedColor.is(prop))
                 query_draw();

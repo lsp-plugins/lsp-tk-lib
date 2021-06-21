@@ -278,6 +278,7 @@ namespace lsp
                 // Obtain the text of item and it's parameters
                 s.clear();
                 li->text()->format(&s);
+                li->text_adjust()->apply(&s);
                 sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
 
                 // Estimate size
@@ -630,6 +631,7 @@ namespace lsp
 
                         text.clear();
                         li->text()->format(&text);
+                        li->text_adjust()->apply(&text);
                         bool selected = vSelected.contains(li);
                         sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 

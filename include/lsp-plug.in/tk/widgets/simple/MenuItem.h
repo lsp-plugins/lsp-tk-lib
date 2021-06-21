@@ -37,6 +37,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(MenuItem, Widget)
                 prop::String                sText;
+                prop::TextAdjust            sTextAdjust;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
                 prop::Color                 sBgSelectedColor;
@@ -65,6 +66,7 @@ namespace lsp
             protected:
                 prop::WidgetPtr<Menu>       sMenu;
                 prop::String                sText;
+                prop::TextAdjust            sTextAdjust;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
                 prop::Color                 sBgSelectedColor;
@@ -92,6 +94,7 @@ namespace lsp
             public:
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,            menu,                       &sMenu)
                 LSP_TK_PROPERTY(String,                     text,                       &sText)
+                LSP_TK_PROPERTY(TextAdjust,                 text_adjust,                &sTextAdjust)
                 LSP_TK_PROPERTY(MenuItemType,               type,                       &sType)
                 LSP_TK_PROPERTY(Boolean,                    checked,                    &sChecked)
                 LSP_TK_PROPERTY(Color,                      bg_selected_color,          &sBgSelectedColor)

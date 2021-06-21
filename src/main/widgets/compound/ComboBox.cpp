@@ -45,6 +45,7 @@ namespace lsp
                 sOpened.bind("opened", this);
                 sTextFit.bind("text.fit", this);
                 sFont.bind("font", this);
+                sTextAdjust.bind("text.adjust", this);
                 sConstraints.bind("size.constraints", this);
                 sTextLayout.bind("text.layout", this);
                 // Configure
@@ -62,6 +63,7 @@ namespace lsp
                 sOpened.set(false);
                 sTextFit.set(false, true);
                 sFont.set_size(12.0f);
+                sTextAdjust.set(TA_NONE);
                 sConstraints.set(-1, -1, -1, 0);
                 sTextLayout.set(-1.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
@@ -154,6 +156,7 @@ namespace lsp
             sOpened(&sProperties),
             sTextFit(&sProperties),
             sFont(&sProperties),
+            sTextAdjust(&sProperties),
             sConstraints(&sProperties),
             sTextLayout(&sProperties),
             sEmptyText(&sProperties),
@@ -232,6 +235,7 @@ namespace lsp
             sOpened.bind("opened", &sStyle);
             sTextFit.bind("text.fit", &sStyle);
             sFont.bind("font", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sTextLayout.bind("text.layout", &sStyle);
             sEmptyText.bind(&sStyle, pDisplay->dictionary());
@@ -296,6 +300,8 @@ namespace lsp
                 query_resize();
             if (sFont.is(prop))
                 query_resize();
+            if (sTextAdjust.is(prop))
+                query_resize();
             if (sConstraints.is(prop))
                 query_resize();
             if (sTextLayout.is(prop))
@@ -357,6 +363,7 @@ namespace lsp
 
             // Estimate the maximum text width
             sEmptyText.format(&text);
+            sTextAdjust.apply(&text);
             sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
             ta.nWidth           = lsp_max(ta.nWidth,  tp.Width);
             ta.nHeight          = lsp_max(ta.nHeight, tp.Height);
@@ -369,6 +376,7 @@ namespace lsp
                     continue;
 
                 it->text()->format(&text);
+                sTextAdjust.apply(&text);
                 sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 ta.nWidth           = lsp_max(ta.nWidth,  tp.Width);
                 ta.nHeight          = lsp_max(ta.nHeight, tp.Height);
@@ -517,6 +525,7 @@ namespace lsp
                     sel->text()->format(&text);
                 else
                     sEmptyText.format(&text);
+                sTextAdjust.apply(&text);
 
                 sFont.get_parameters(s, fscaling, &fp);
                 sFont.get_text_parameters(s, &tp, fscaling, &text);

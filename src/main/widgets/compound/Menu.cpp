@@ -568,6 +568,7 @@ namespace lsp
                 if (xsep)
                 {
                     mi->text()->format(&caption);
+                    mi->text_adjust()->apply(&caption);
                     sFont.get_text_parameters(pDisplay, &tp, fscaling, &caption);
 
                     pi->text.nWidth     = tp.Width;
@@ -895,6 +896,7 @@ namespace lsp
 
                 // Draw text
                 mi->text()->format(&text);
+                mi->text_adjust()->apply(&text);
                 if (nSelected == i)
                     color.copy(mi->text_selected_color()->color());
                 else

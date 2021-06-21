@@ -33,6 +33,7 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(ComboGroup, WidgetContainer)
                 // Bind
                 sFont.bind("font", this);
+                sTextAdjust.bind("text.adjust", this);
                 sColor.bind("color", this);
                 sTextColor.bind("text.color", this);
                 sSpinColor.bind("spin.color", this);
@@ -49,6 +50,7 @@ namespace lsp
                 sHeading.bind("heading", this);
                 // Configure
                 sFont.set_size(12.0f);
+                sTextAdjust.set(TA_NONE);
                 sColor.set("#000000");
                 sTextColor.set("#ffffff");
                 sSpinColor.set("#ffffff");
@@ -137,6 +139,7 @@ namespace lsp
             sLBox(dpy, this),
             sWindow(dpy, this),
             sFont(&sProperties),
+            sTextAdjust(&sProperties),
             sColor(&sProperties),
             sTextColor(&sProperties),
             sSpinColor(&sProperties),
@@ -196,6 +199,7 @@ namespace lsp
             sWindow.layout()->set_scale(1.0f);
 
             sFont.bind("font", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sColor.bind("color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sSpinColor.bind("spin.color", &sStyle);
@@ -226,6 +230,8 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
             if (sFont.is(prop))
+                query_resize();
+            if (sTextAdjust.is(prop))
                 query_resize();
             if (sColor.is(prop))
                 query_draw();
@@ -343,6 +349,7 @@ namespace lsp
                 it->text()->format(&s);
             else
                 sEmptyText.format(&s);
+            sTextAdjust.apply(&s);
 
             sFont.get_parameters(pDisplay, fscaling, &fp);
             sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
@@ -575,6 +582,7 @@ namespace lsp
                         it->text()->format(&text);
                     else
                         sEmptyText.format(&text);
+                    sTextAdjust.apply(&text);
 
                     sFont.get_parameters(pDisplay, fscaling, &fp);
                     sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);

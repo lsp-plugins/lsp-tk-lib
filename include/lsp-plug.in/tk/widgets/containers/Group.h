@@ -35,6 +35,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Group, Align)
                 prop::Font              sFont;
+                prop::TextAdjust        sTextAdjust;
                 prop::Color             sColor;
                 prop::Color             sTextColor;
                 prop::String            sText;
@@ -77,6 +78,7 @@ namespace lsp
                 ws::rectangle_t         sArea;
 
                 prop::Font              sFont;
+                prop::TextAdjust        sTextAdjust;
                 prop::Color             sColor;
                 prop::Color             sTextColor;
                 prop::String            sText;
@@ -105,6 +107,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Font,       font,           &sFont)
+                LSP_TK_PROPERTY(TextAdjust, text_ajdust,    &sTextAdjust)
                 LSP_TK_PROPERTY(Color,      color,          &sColor)
                 LSP_TK_PROPERTY(Color,      text_color,     &sTextColor)
                 LSP_TK_PROPERTY(String,     text,           &sText)

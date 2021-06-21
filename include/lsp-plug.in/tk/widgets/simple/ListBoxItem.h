@@ -31,6 +31,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(ListBoxItem, Widget)
                 prop::String                sText;
+                prop::TextAdjust            sTextAdjust;
                 prop::Color                 sBgSelectedColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sTextSelectedColor;
@@ -48,6 +49,7 @@ namespace lsp
 
             protected:
                 prop::String                sText;
+                prop::TextAdjust            sTextAdjust;
                 prop::Color                 sBgSelectedColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sTextSelectedColor;
@@ -61,6 +63,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(String,     text,                       &sText)
+                LSP_TK_PROPERTY(TextAdjust, text_adjust,                &sTextAdjust)
                 LSP_TK_PROPERTY(Color,      bg_selected_color,          &sBgSelectedColor)
                 LSP_TK_PROPERTY(Color,      text_color,                 &sTextColor)
                 LSP_TK_PROPERTY(Color,      text_selected_color,        &sTextSelectedColor)
