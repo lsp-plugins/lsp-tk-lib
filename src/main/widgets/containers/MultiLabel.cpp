@@ -32,6 +32,7 @@ namespace lsp
                 // Bind
                 sConstraints.bind("size.constraints", this);
                 sBearing.bind("bearing", this);
+                sHover.bind("hover", this);
                 // Configure
                 sConstraints.set(-1, -1, -1, -1);
                 sBearing.set(true);
@@ -45,8 +46,12 @@ namespace lsp
             WidgetContainer(dpy),
             sConstraints(&sProperties),
             sBearing(&sProperties),
+            sHover(&sProperties),
             vItems(&sProperties, &sIListener)
         {
+            nMFlags     = 0;
+            nState      = 0;
+
             pClass      = &metadata;
         }
 
@@ -89,6 +94,8 @@ namespace lsp
             // Init style
             sConstraints.bind("size.constraints", &sStyle);
             sBearing.bind("bearing", &sStyle);
+            sHover.bind("hover", &sStyle);
+            sPopup.bind(NULL);
 
             return STATUS_OK;
         }
@@ -101,6 +108,8 @@ namespace lsp
                 query_resize();
             if (sBearing.is(prop))
                 query_resize();
+            if (sHover.is(prop))
+                query_draw();
             if (vItems.is(prop))
                 query_resize();
         }
@@ -167,6 +176,7 @@ namespace lsp
             // Estimate sizes
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
+            bool hover      = (nState & F_MOUSE_IN) && (sHover.get());
 
             LSPString text;
             lsp::Color bg_color, color;
@@ -215,7 +225,7 @@ namespace lsp
                         l->sFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
                         // Copy color preferencies
-                        color.copy(l->sColor);
+                        color.copy((hover) ? l->sHoverColor : l->sColor);
                         color.scale_lightness(sBrightness.get());
 
                         float halign    = lsp_limit(l->sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
@@ -338,6 +348,90 @@ namespace lsp
                 }
             }
             s->clip_end();
+        }
+
+
+        status_t MultiLabel::on_mouse_in(const ws::event_t *e)
+        {
+            WidgetContainer::on_mouse_in(e);
+
+            size_t flags = nState;
+            nState |= F_MOUSE_IN;
+            if (flags != nState)
+                query_draw();
+
+            return STATUS_OK;
+        }
+
+
+        status_t MultiLabel::on_mouse_out(const ws::event_t *e)
+        {
+            Widget::on_mouse_out(e);
+
+            size_t flags = nState;
+            nState &= ~F_MOUSE_IN;
+            if (flags != nState)
+                query_draw();
+
+            return STATUS_OK;
+        }
+
+        status_t MultiLabel::on_mouse_move(const ws::event_t *e)
+        {
+            size_t flags = nState;
+            nState = lsp_setflag(nState, F_MOUSE_IN, inside(e->nLeft, e->nTop));
+            if (flags != nState)
+                query_draw();
+            return STATUS_OK;
+        }
+
+        status_t MultiLabel::on_mouse_down(const ws::event_t *e)
+        {
+            size_t flags = nState;
+
+            if (nMFlags == 0)
+            {
+                if (e->nCode == ws::MCB_LEFT)
+                    nState |= F_MOUSE_DOWN;
+                else
+                    nState |= F_MOUSE_IGN;
+            }
+
+            nMFlags |= 1 << e->nCode;
+            nState = lsp_setflag(nState, F_MOUSE_IN, inside(e->nLeft, e->nTop));
+
+            if (flags != nState)
+                query_draw();
+            return STATUS_OK;
+        }
+
+        status_t MultiLabel::on_mouse_up(const ws::event_t *e)
+        {
+            size_t flags = nMFlags;
+            nMFlags &= ~ (1 << e->nCode);
+            if (nMFlags == 0)
+                nState      = 0;
+
+            bool xinside = inside(e->nLeft, e->nTop);
+            nState = lsp_setflag(nState, F_MOUSE_IN, xinside);
+            if (flags != nState)
+                query_draw();
+
+            // Trigger submit action
+            if (xinside)
+            {
+                if ((flags == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+                    sSlots.execute(SLOT_SUBMIT, this);
+                else if ((flags == (1 << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT) && (sPopup.is_set()))
+                {
+                    Menu *popup = sPopup.get();
+                    sSlots.execute(SLOT_BEFORE_POPUP, popup, self());
+                    popup->show();
+                    sSlots.execute(SLOT_POPUP, popup, self());
+                }
+            }
+
+            return STATUS_OK;
         }
 
         status_t MultiLabel::add(Widget *widget)

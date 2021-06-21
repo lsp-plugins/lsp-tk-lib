@@ -36,6 +36,7 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(MultiLabel, WidgetContainer)
                 prop::SizeConstraints   sConstraints;
                 prop::Boolean           sBearing;
+                prop::Boolean           sHover;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -53,11 +54,25 @@ namespace lsp
             public:
                 static const w_class_t      metadata;
 
+
             protected:
+                enum state_t
+                {
+                    F_MOUSE_IN      = 1 << 0,
+                    F_MOUSE_DOWN    = 1 << 1,
+                    F_MOUSE_IGN     = 1 << 2,
+                };
+
+            protected:
+                size_t                      nMFlags;
+                size_t                      nState;
+
                 prop::SizeConstraints       sConstraints;
                 prop::Boolean               sBearing;
+                prop::Boolean               sHover;         // Hover enable
                 prop::WidgetList<Label>     vItems;
                 prop::CollectionListener    sIListener;     // Listener to trigger vItems content change
+                prop::WidgetPtr<Menu>       sPopup;         // Popup menu
 
             protected:
                 void                    do_destroy();
@@ -81,7 +96,9 @@ namespace lsp
             public:
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Boolean,            bearing,            &sBearing)
+                LSP_TK_PROPERTY(Boolean,            hover,              &sHover)
                 LSP_TK_PROPERTY(WidgetList<Label>,  items,              &vItems)
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,              &sPopup)
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
@@ -89,6 +106,16 @@ namespace lsp
                 virtual status_t        add(Widget *widget);
 
                 virtual status_t        remove(Widget *widget);
+
+                virtual status_t        on_mouse_in(const ws::event_t *e);
+
+                virtual status_t        on_mouse_out(const ws::event_t *e);
+
+                virtual status_t        on_mouse_move(const ws::event_t *e);
+
+                virtual status_t        on_mouse_down(const ws::event_t *e);
+
+                virtual status_t        on_mouse_up(const ws::event_t *e);
         };
 
     } /* namespace tk */

@@ -212,7 +212,7 @@ MTEST_BEGIN("tk.widgets.containers", multilabel)
 
         for (ssize_t i=0; i<9; ++i)
         {
-            // Create multilabelment widget
+            // Create multilabe widget
             MTEST_ASSERT(id.fmt_ascii("multilabel-%d", int(i)));
             MTEST_ASSERT(ml = new tk::MultiLabel(dpy));
             MTEST_ASSERT(init_widget(ml, vh, id.get_ascii()) == STATUS_OK);
@@ -220,6 +220,7 @@ MTEST_BEGIN("tk.widgets.containers", multilabel)
             MTEST_ASSERT(grid->add(ml) == STATUS_OK);
             ml->padding()->set(2);
             ml->bg_color()->set_rgb24(0x1b1c22);
+            ml->hover()->set(!(i & 3));
 
             // Create labels
             {
@@ -233,6 +234,7 @@ MTEST_BEGIN("tk.widgets.containers", multilabel)
                 lbl->font()->set("lsp-test", 64);
                 lbl->font()->set_antialias((i & 1) ? ws::FA_ENABLED : ws::FA_DISABLED);
                 lbl->color()->set_rgb24(0x239db5);
+                lbl->hover_color()->set_rgb24(0xa4ed3b);
                 lbl->text_layout()->set((i % 3) - 1, (i / 3) - 1);
                 lbl->text()->set_raw("A");
                 lbl->allocation()->set_fill(true);
@@ -247,6 +249,7 @@ MTEST_BEGIN("tk.widgets.containers", multilabel)
                 lbl->font()->set("lsp-test", 64);
                 lbl->font()->set_antialias((i) ? ws::FA_ENABLED : ws::FA_DISABLED);
                 lbl->color()->set_rgb24(0xa4ed3b);
+                lbl->hover_color()->set_rgb24(0x239db5);
                 lbl->text_layout()->set((i % 3) - 1, (i / 3) - 1);
                 lbl->text()->set_raw("B");
                 lbl->allocation()->set_fill(true);
