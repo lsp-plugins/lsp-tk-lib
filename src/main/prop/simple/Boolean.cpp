@@ -50,9 +50,6 @@ namespace lsp
         bool Boolean::set(bool v)
         {
             bool prev = bValue;
-            if (v == bValue)
-                return prev;
-
             bValue  = v;
             sync();
 

@@ -97,6 +97,12 @@ namespace lsp
             sHover.bind("hover", &sStyle);
             sPopup.bind(NULL);
 
+            handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEFORE_POPUP, slot_on_before_popup, self());
+            if (id >= 0) id = sSlots.add(SLOT_POPUP, slot_on_popup, self());
+            if (id < 0)
+                return -id;
+
             return STATUS_OK;
         }
 
@@ -473,6 +479,41 @@ namespace lsp
             // Remove widget from supplementary structures
             _this->unlink_widget(item);
             _this->query_resize();
+        }
+
+        status_t MultiLabel::on_before_popup(Menu *menu)
+        {
+            return STATUS_OK;
+        }
+
+        status_t MultiLabel::on_popup(Menu *menu)
+        {
+            return STATUS_OK;
+        }
+
+        status_t MultiLabel::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t MultiLabel::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            MultiLabel *_this = widget_ptrcast<MultiLabel>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t MultiLabel::slot_on_before_popup(Widget *sender, void *ptr, void *data)
+        {
+            MultiLabel *_this = widget_ptrcast<MultiLabel>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_before_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t MultiLabel::slot_on_popup(Widget *sender, void *ptr, void *data)
+        {
+            MultiLabel *_this = widget_ptrcast<MultiLabel>(ptr);
+            Menu *_menu = widget_ptrcast<Menu>(sender);
+            return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
         }
     }
 }

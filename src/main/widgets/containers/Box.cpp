@@ -37,6 +37,7 @@ namespace lsp
                 sOrientation.bind("orientation", this);
                 sConstraints.bind("size.constraints", this);
                 sBorderColor.bind("border.color", this);
+                sSolid.bind("solid", this);
                 // Configure
                 sSpacing.set(0);
                 sBorder.set(0);
@@ -44,6 +45,7 @@ namespace lsp
                 sOrientation.set(O_HORIZONTAL);
                 sConstraints.set_all(-1);
                 sBorderColor.set("#000000");
+                sSolid.set(false);
                 // Override
                 sAllocation.set(true, false);
                 // Commit
@@ -62,8 +64,12 @@ namespace lsp
             sHomogeneous(&sProperties),
             sOrientation(&sProperties),
             sConstraints(&sProperties),
-            sBorderColor(&sProperties)
+            sBorderColor(&sProperties),
+            sSolid(&sProperties)
         {
+            nMFlags         = 0;
+            nState          = 0;
+
             pClass          = &metadata;
         }
         
@@ -89,6 +95,11 @@ namespace lsp
             sOrientation.bind("orientation", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
+            sSolid.bind("solid", &sStyle);
+
+            handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            if (id < 0)
+                return -id;
 
             return res;
         }
@@ -194,6 +205,10 @@ namespace lsp
 
         Widget *Box::find_widget(ssize_t x, ssize_t y)
         {
+            // Do not search for any widget
+            if (sSolid.get())
+                return NULL;
+
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 cell_t *w = vVisible.uget(i);
@@ -688,6 +703,125 @@ namespace lsp
 
             lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this, int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
-    
+
+        status_t Box::on_mouse_in(const ws::event_t *e)
+        {
+            WidgetContainer::on_mouse_in(e);
+
+            if (sSolid.get())
+            {
+                size_t flags = nState;
+                nState |= F_MOUSE_IN;
+                if (flags != nState)
+                    query_draw();
+
+                for (size_t i=0, n=vItems.size(); i<n; ++i)
+                {
+                    Widget *w = vItems.get(i);
+                    if ((w == NULL) || (!w->visibility()->get()))
+                        continue;
+
+                    w->handle_event(e);
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+
+        status_t Box::on_mouse_out(const ws::event_t *e)
+        {
+            Widget::on_mouse_out(e);
+
+            if (sSolid.get())
+            {
+                size_t flags = nState;
+                nState &= ~F_MOUSE_IN;
+                if (flags != nState)
+                    query_draw();
+
+                for (size_t i=0, n=vItems.size(); i<n; ++i)
+                {
+                    Widget *w = vItems.get(i);
+                    if ((w == NULL) || (!w->visibility()->get()))
+                        continue;
+
+                    w->handle_event(e);
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Box::on_mouse_move(const ws::event_t *e)
+        {
+            if (!sSolid.get())
+                return STATUS_OK;
+
+            size_t flags = nState;
+            nState = lsp_setflag(nState, F_MOUSE_IN, inside(e->nLeft, e->nTop));
+            if (flags != nState)
+                query_draw();
+            return STATUS_OK;
+        }
+
+        status_t Box::on_mouse_down(const ws::event_t *e)
+        {
+            if (!sSolid.get())
+                return STATUS_OK;
+
+            size_t flags = nState;
+
+            if (nMFlags == 0)
+            {
+                if (e->nCode == ws::MCB_LEFT)
+                    nState |= F_MOUSE_DOWN;
+                else
+                    nState |= F_MOUSE_IGN;
+            }
+
+            nMFlags |= 1 << e->nCode;
+            nState = lsp_setflag(nState, F_MOUSE_IN, inside(e->nLeft, e->nTop));
+
+            if (flags != nState)
+                query_draw();
+            return STATUS_OK;
+        }
+
+        status_t Box::on_mouse_up(const ws::event_t *e)
+        {
+            if (!sSolid.get())
+                return STATUS_OK;
+
+            size_t flags = nMFlags;
+            nMFlags &= ~ (1 << e->nCode);
+            if (nMFlags == 0)
+                nState      = 0;
+
+            bool xinside = inside(e->nLeft, e->nTop);
+            nState = lsp_setflag(nState, F_MOUSE_IN, xinside);
+            if (flags != nState)
+                query_draw();
+
+            // Trigger submit action
+            if (xinside)
+            {
+                if ((flags == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+                    sSlots.execute(SLOT_SUBMIT, this);
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Box::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t Box::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            Box *_this = widget_ptrcast<Box>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
     } /* namespace tk */
 } /* namespace lsp */

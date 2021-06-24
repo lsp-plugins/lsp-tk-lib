@@ -83,6 +83,11 @@ namespace lsp
                 virtual void            realize(const ws::rectangle_t *r);
 
             protected:
+                static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_before_popup(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_popup(Widget *sender, void *ptr, void *data);
+
+            protected:
                 static void             on_add_item(void *obj, Property *prop, void *w);
                 static void             on_remove_item(void *obj, Property *prop, void *w);
 
@@ -116,6 +121,12 @@ namespace lsp
                 virtual status_t        on_mouse_down(const ws::event_t *e);
 
                 virtual status_t        on_mouse_up(const ws::event_t *e);
+
+                virtual status_t        on_before_popup(Menu *menu);
+
+                virtual status_t        on_popup(Menu *menu);
+
+                virtual status_t        on_submit();
         };
 
     } /* namespace tk */
