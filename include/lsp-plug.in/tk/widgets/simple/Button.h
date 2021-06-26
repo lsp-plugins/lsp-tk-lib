@@ -35,14 +35,15 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Button, Widget)
                 prop::Color             sColor;
-                prop::Color             sHoverColor;
                 prop::Color             sBorderColor;
-                prop::Color             sBorderHoverColor;
-                prop::Color             sLightColor;
+                prop::Color             sLedColor;
                 prop::Color             sTextColor;
+                prop::Color             sLedTextColor;
+                prop::Color             sHoverColor;
+                prop::Color             sBorderHoverColor;
                 prop::Color             sHoverTextColor;
-                prop::Color             sLTextColor;
                 prop::Color             sHoleColor;
+
                 prop::Font              sFont;
                 prop::String            sText;
                 prop::TextAdjust        sTextAdjust;
@@ -102,14 +103,15 @@ namespace lsp
                 ws::rectangle_t         sButton;
 
                 prop::Color             sColor;
-                prop::Color             sHoverColor;
                 prop::Color             sBorderColor;
-                prop::Color             sBorderHoverColor;
-                prop::Color             sLightColor;
+                prop::Color             sLedColor;
                 prop::Color             sTextColor;
+                prop::Color             sLedTextColor;
+                prop::Color             sHoverColor;
+                prop::Color             sBorderHoverColor;
                 prop::Color             sHoverTextColor;
-                prop::Color             sLTextColor;
                 prop::Color             sHoleColor;
+
                 prop::Font              sFont;
                 prop::String            sText;
                 prop::TextAdjust        sTextAdjust;
@@ -153,10 +155,10 @@ namespace lsp
             public:
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Color,              hover_color,        &sColor)
-                LSP_TK_PROPERTY(Color,              led_color,          &sLightColor)
+                LSP_TK_PROPERTY(Color,              led_color,          &sLedColor)
                 LSP_TK_PROPERTY(Color,              text_color,         &sTextColor)
                 LSP_TK_PROPERTY(Color,              hover_text_color,   &sTextColor)
-                LSP_TK_PROPERTY(Color,              led_text_color,     &sLTextColor)
+                LSP_TK_PROPERTY(Color,              led_text_color,     &sLedTextColor)
                 LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(String,             text,               &sText)

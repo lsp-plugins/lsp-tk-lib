@@ -35,10 +35,10 @@ namespace lsp
                 sHoverColor.bind("hover.color", this);
                 sBorderColor.bind("border.color", this);
                 sBorderHoverColor.bind("border.hover.color", this);
-                sLightColor.bind("led.color", this);
+                sLedColor.bind("led.color", this);
                 sTextColor.bind("text.color", this);
                 sHoverTextColor.bind("text.hover.color", this);
-                sLTextColor.bind("led.text.color", this);
+                sLedTextColor.bind("led.text.color", this);
                 sHoleColor.bind("hole.color", this);
                 sFont.bind("font", this);
                 sTextAdjust.bind("text.adjust", this);
@@ -65,10 +65,10 @@ namespace lsp
                 sHoverColor.set("#ffffff");
                 sBorderColor.set("#888888");
                 sBorderHoverColor.set("#cccccc");
-                sLightColor.set("#00cc00");
+                sLedColor.set("#00cc00");
                 sTextColor.set("#000000");
                 sHoverTextColor.set("#000000");
-                sLTextColor.set("#000000");
+                sLedTextColor.set("#000000");
                 sHoleColor.set("#000000");
                 sFont.set_size(12.0f);
                 sConstraints.set(18, 18, -1, -1);
@@ -97,13 +97,13 @@ namespace lsp
         Button::Button(Display *dpy):
             Widget(dpy),
             sColor(&sProperties),
-            sHoverColor(&sProperties),
             sBorderColor(&sProperties),
-            sBorderHoverColor(&sProperties),
-            sLightColor(&sProperties),
+            sLedColor(&sProperties),
             sTextColor(&sProperties),
+            sLedTextColor(&sProperties),
+            sHoverColor(&sProperties),
+            sBorderHoverColor(&sProperties),
             sHoverTextColor(&sProperties),
-            sLTextColor(&sProperties),
             sHoleColor(&sProperties),
             sFont(&sProperties),
             sText(&sProperties),
@@ -153,10 +153,10 @@ namespace lsp
             sHoverColor.bind("hover.color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sBorderHoverColor.bind("border.hover.color", &sStyle);
-            sLightColor.bind("led.color", &sStyle);
+            sLedColor.bind("led.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sHoverTextColor.bind("text.hover.color", &sStyle);
-            sLTextColor.bind("led.text.color", &sStyle);
+            sLedTextColor.bind("led.text.color", &sStyle);
             sHoleColor.bind("hole.color", &sStyle);
             sFont.bind("font", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
@@ -200,13 +200,13 @@ namespace lsp
                 query_draw();
             if ((sBorderHoverColor.is(prop)) && (sHover.get()))
                 query_draw();
-            if (sLightColor.is(prop))
+            if (sLedColor.is(prop))
                 query_draw();
             if (sTextColor.is(prop))
                 query_draw();
             if ((sHoverTextColor.is(prop)) && (sHover.get()))
                 query_draw();
-            if (sLTextColor.is(prop))
+            if (sLedTextColor.is(prop))
                 query_draw();
             if (sHoleColor.is(prop))
                 query_draw();
@@ -359,8 +359,8 @@ namespace lsp
             {
                 if (pressed & S_DOWN)
                 {
-                    color.copy(sLightColor);
-                    tcolor.copy(sLTextColor);
+                    color.copy(sLedColor);
+                    tcolor.copy(sLedTextColor);
 
                     if ((sHover.get()) && (pressed & S_HOVER))
                     {
