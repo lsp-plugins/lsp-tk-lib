@@ -40,6 +40,7 @@
 - Added tk::MultiLabel widget for drawing vector glyphs.
 - Added tk::TextAdjust property and support of this property by several widgets.
 - Added support of hovers by the tk::Label widget.
+- Fixed bug with UIE_MOUSE_IN and UIE_MOUSE_OUT event delivery when entering/leaving window.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

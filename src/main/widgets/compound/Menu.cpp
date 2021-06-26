@@ -99,7 +99,7 @@ namespace lsp
         Widget *Menu::Window::sync_mouse_handler(const ws::event_t *e)
         {
             Widget *old     = hMouse.pWidget;
-            Widget *curr    = PopupWindow::sync_mouse_handler(e);
+            Widget *curr    = PopupWindow::sync_mouse_handler(e, true);
 
             if (curr != old)
                 curr->take_focus();

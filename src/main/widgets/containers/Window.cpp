@@ -731,7 +731,7 @@ namespace lsp
                     else if (h != NULL)
                         result          = h->handle_event(e);
 
-                    release_mouse_handler(e);
+                    release_mouse_handler(e, true);
                     break;
                 }
 
@@ -783,7 +783,7 @@ namespace lsp
                     else if (h != NULL)
                         result          = h->handle_event(e);
 
-                    release_mouse_handler(e);
+                    release_mouse_handler(e, true);
                     break;
                 }
 
@@ -867,6 +867,23 @@ namespace lsp
                     break;
                 }
 
+                case ws::UIE_MOUSE_IN:
+                {
+                    acquire_mouse_handler(e);
+                    hMouse.nState   = e->nState;
+                    hMouse.nLeft    = e->nLeft;
+                    hMouse.nTop     = e->nTop;
+
+                    break;
+                }
+
+                case ws::UIE_MOUSE_OUT:
+                {
+                    WidgetContainer::handle_event(e);
+                    release_mouse_handler(e, false);
+                    break;
+                }
+
                 //-------------------------------------------------------------
                 // Other events
                 default:
@@ -880,11 +897,11 @@ namespace lsp
             return result;
         }
 
-        Widget *Window::sync_mouse_handler(const ws::event_t *e)
+        Widget *Window::sync_mouse_handler(const ws::event_t *e, bool lookup)
         {
             // Update current widget
             Widget *old     = hMouse.pWidget;
-            Widget *child   = find_widget(e->nLeft, e->nTop);
+            Widget *child   = (lookup) ? find_widget(e->nLeft, e->nTop) : NULL;
             if (child == old)
                 return old;
 
@@ -930,10 +947,10 @@ namespace lsp
             if ((hMouse.nState & ws::MCF_BTN_MASK) && (old))
                 return old;
 
-            return sync_mouse_handler(e);
+            return sync_mouse_handler(e, true);
         }
 
-        Widget *Window::release_mouse_handler(const ws::event_t *e)
+        Widget *Window::release_mouse_handler(const ws::event_t *e, bool lookup)
         {
             Widget *old = hMouse.pWidget;
 
@@ -946,7 +963,7 @@ namespace lsp
             if (hMouse.nState & ws::MCF_BTN_MASK)
                 return old;
 
-            return sync_mouse_handler(e);
+            return sync_mouse_handler(e, lookup);
         }
 
         bool Window::take_focus(Widget *w)
@@ -1071,7 +1088,7 @@ namespace lsp
                 old->handle_event(&ev);
 
                 if ((valid()) && (sVisibility.get()))
-                    sync_mouse_handler(&ev);
+                    sync_mouse_handler(&ev, true);
             }
         }
 
