@@ -181,6 +181,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              down_hover_color,        &sDownHoverColor)
                 LSP_TK_PROPERTY(Color,              text_down_hover_color,   &sTextDownHoverColor)
                 LSP_TK_PROPERTY(Color,              border_down_hover_color, &sBorderDownHoverColor)
+                LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
 
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(String,             text,               &sText)

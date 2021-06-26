@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 
 namespace lsp
 {
@@ -158,9 +159,6 @@ namespace lsp
         float Color::red(float r)
         {
             float old = sColor.red();
-            if (old == r)
-                return old;
-
             sColor.red(r);
             sync();
             return old;
@@ -169,9 +167,6 @@ namespace lsp
         float Color::green(float g)
         {
             float old = sColor.green();
-            if (old == g)
-                return old;
-
             sColor.green(g);
             sync();
             return old;
@@ -180,9 +175,6 @@ namespace lsp
         float Color::blue(float b)
         {
             float old = sColor.blue();
-            if (old == b)
-                return old;
-
             sColor.blue(b);
             sync();
             return old;
@@ -191,9 +183,6 @@ namespace lsp
         float Color::hue(float h)
         {
             float old = sColor.hue();
-            if (old == h)
-                return old;
-
             sColor.hue(h);
             sync();
             return old;
@@ -202,9 +191,6 @@ namespace lsp
         float Color::saturation(float s)
         {
             float old = sColor.saturation();
-            if (old == s)
-                return old;
-
             sColor.saturation(s);
             sync();
             return old;
@@ -213,9 +199,6 @@ namespace lsp
         float Color::lightness(float l)
         {
             float old = sColor.lightness();
-            if (old == l)
-                return old;
-
             sColor.lightness(l);
             sync();
             return old;
@@ -224,9 +207,6 @@ namespace lsp
         float Color::alpha(float a)
         {
             float old = sColor.alpha();
-            if (old == a)
-                return old;
-
             sColor.alpha(a);
             sync();
             return old;
@@ -234,84 +214,48 @@ namespace lsp
 
         void Color::set_rgb(float r, float g, float b)
         {
-            float xr, xg, xb;
-            sColor.get_rgb(xr, xg, xb);
-            if ((xr == r) && (xg == g) && (xb == b))
-                return;
-
             sColor.set_rgb(r, g, b);
             sync();
         }
 
         void Color::set_rgba(float r, float g, float b, float a)
         {
-            float xr, xg, xb, xa;
-            sColor.get_rgba(xr, xg, xb, xa);
-            if ((xr == r) && (xg == g) && (xb == b) && (xa == a))
-                return;
-
             sColor.set_rgba(r, g, b, a);
             sync();
         }
 
         void Color::set_rgb24(uint32_t v)
         {
-            uint32_t old = sColor.rgb24();
-            if (old == v)
-                return;
-
             sColor.set_rgb24(v);
             sync();
         }
 
         void Color::set_rgba32(uint32_t v)
         {
-            uint32_t old = sColor.rgba32();
-            if (old == v)
-                return;
-
             sColor.set_rgba32(v);
             sync();
         }
 
         void Color::set_hsl24(uint32_t v)
         {
-            uint32_t old = sColor.hsl24();
-            if (old == v)
-                return;
-
             sColor.set_hsl24(v);
             sync();
         }
 
         void Color::set_hsla32(uint32_t v)
         {
-            uint32_t old = sColor.hsla32();
-            if (old == v)
-                return;
-
             sColor.set_hsla32(v);
             sync();
         }
 
         void Color::set_hsl(float h, float s, float l)
         {
-            float xh, xs, xl;
-            sColor.get_hsl(xh, xs, xl);
-            if ((xh == h) && (xs == s) && (xl == l))
-                return;
-
             sColor.set_hsl(h, s, l);
             sync();
         }
 
         void Color::set_hsla(float h, float s, float l, float a)
         {
-            float xh, xs, xl, xa;
-            sColor.get_hsla(xh, xs, xl, xa);
-            if ((xh == h) && (xs == s) && (xl == l) && (xa == a))
-                return;
-
             sColor.set_hsla(h, s, l, a);
             sync();
         }
