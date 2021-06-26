@@ -41,6 +41,7 @@
 - Added tk::TextAdjust property and support of this property by several widgets.
 - Added support of hovers by the tk::Label widget.
 - Fixed bug with UIE_MOUSE_IN and UIE_MOUSE_OUT event delivery when entering/leaving window.
+- tk::Button now allows to use different colors for different states.
 
 TODO:
 - Add custom mouse pointer for fraction actions.

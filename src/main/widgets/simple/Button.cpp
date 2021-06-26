@@ -32,20 +32,26 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Button, Widget)
                 // Bind
                 sColor.bind("color", this);
-                sHoverColor.bind("hover.color", this);
-                sBorderColor.bind("border.color", this);
-                sBorderHoverColor.bind("border.hover.color", this);
-                sLedColor.bind("led.color", this);
                 sTextColor.bind("text.color", this);
-                sHoverTextColor.bind("text.hover.color", this);
-                sLedTextColor.bind("led.text.color", this);
+                sBorderColor.bind("border.color", this);
+                sDownColor.bind("down.color", this);
+                sTextDownColor.bind("text.down.color", this);
+                sBorderDownColor.bind("border.down.color", this);
+                sHoverColor.bind("hover.color", this);
+                sTextHoverColor.bind("text.hover.color", this);
+                sBorderHoverColor.bind("border.hover.color", this);
+                sDownHoverColor.bind("down.hover.color", this);
+                sTextDownHoverColor.bind("text.down.hover.color", this);
+                sBorderDownHoverColor.bind("border.down.hover.color", this);
                 sHoleColor.bind("hole.color", this);
+
                 sFont.bind("font", this);
                 sTextAdjust.bind("text.adjust", this);
                 sConstraints.bind("size.constraints", this);
                 sTextLayout.bind("text.layout", this);
                 sMode.bind("mode", this);
                 sDown.bind("down", this);
+                sDownColors.bind("down.colors", this);
                 sLed.bind("led", this);
                 sBorderSize.bind("border.size", this);
                 sBorderPressedSize.bind("border.pressed.size", this);
@@ -62,19 +68,25 @@ namespace lsp
                 sTextPressedShift.bind("text.pressed.shift", this);
                 // Configure
                 sColor.set("#cccccc");
-                sHoverColor.set("#ffffff");
-                sBorderColor.set("#888888");
-                sBorderHoverColor.set("#cccccc");
-                sLedColor.set("#00cc00");
                 sTextColor.set("#000000");
-                sHoverTextColor.set("#000000");
-                sLedTextColor.set("#000000");
+                sBorderColor.set("#888888");
+                sHoverColor.set("#ffffff");
+                sTextHoverColor.set("#000000");
+                sBorderHoverColor.set("#cccccc");
+                sDownColor.set("#00cc00");
+                sTextDownColor.set("#000000");
+                sBorderDownColor.set("#888888");
+                sDownHoverColor.set("#00ff00");
+                sTextDownHoverColor.set("#444444");
+                sBorderDownHoverColor.set("#888888");
                 sHoleColor.set("#000000");
+
                 sFont.set_size(12.0f);
                 sConstraints.set(18, 18, -1, -1);
                 sTextLayout.set(0.0f, 0.0f);
                 sMode.set(BM_NORMAL);
                 sDown.set(false);
+                sDownColors.set(false);
                 sLed.set(0);
                 sBorderSize.set(3);
                 sBorderPressedSize.set(3);
@@ -97,13 +109,17 @@ namespace lsp
         Button::Button(Display *dpy):
             Widget(dpy),
             sColor(&sProperties),
-            sBorderColor(&sProperties),
-            sLedColor(&sProperties),
             sTextColor(&sProperties),
-            sLedTextColor(&sProperties),
+            sBorderColor(&sProperties),
+            sDownColor(&sProperties),
+            sTextDownColor(&sProperties),
+            sBorderDownColor(&sProperties),
             sHoverColor(&sProperties),
+            sTextHoverColor(&sProperties),
             sBorderHoverColor(&sProperties),
-            sHoverTextColor(&sProperties),
+            sDownHoverColor(&sProperties),
+            sTextDownHoverColor(&sProperties),
+            sBorderDownHoverColor(&sProperties),
             sHoleColor(&sProperties),
             sFont(&sProperties),
             sText(&sProperties),
@@ -112,6 +128,7 @@ namespace lsp
             sTextLayout(&sProperties),
             sMode(&sProperties),
             sDown(&sProperties),
+            sDownColors(&sProperties),
             sLed(&sProperties),
             sBorderSize(&sProperties),
             sBorderPressedSize(&sProperties),
@@ -150,14 +167,19 @@ namespace lsp
                 return result;
 
             sColor.bind("color", &sStyle);
-            sHoverColor.bind("hover.color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sBorderHoverColor.bind("border.hover.color", &sStyle);
-            sLedColor.bind("led.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
-            sHoverTextColor.bind("text.hover.color", &sStyle);
-            sLedTextColor.bind("led.text.color", &sStyle);
+            sBorderColor.bind("border.color", &sStyle);
+            sDownColor.bind("down.color", &sStyle);
+            sTextDownColor.bind("text.down.color", &sStyle);
+            sBorderDownColor.bind("border.down.color", &sStyle);
+            sHoverColor.bind("hover.color", &sStyle);
+            sTextHoverColor.bind("text.hover.color", &sStyle);
+            sBorderHoverColor.bind("border.hover.color", &sStyle);
+            sDownHoverColor.bind("down.hover.color", &sStyle);
+            sTextDownHoverColor.bind("text.down.hover.color", &sStyle);
+            sBorderDownHoverColor.bind("border.down.hover.color", &sStyle);
             sHoleColor.bind("hole.color", &sStyle);
+
             sFont.bind("font", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
@@ -165,6 +187,7 @@ namespace lsp
             sTextAdjust.bind("text.adjust", &sStyle);
             sMode.bind("mode", &sStyle);
             sDown.bind("down", &sStyle);
+            sDownColors.bind("down.colors", &sStyle);
             sLed.bind("led", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderPressedSize.bind("border.pressed.size", &sStyle);
@@ -192,22 +215,17 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (sColor.is(prop))
+            prop::Color &color = select_color();
+            prop::Color &text_color = select_text_color();
+            prop::Color &border_color = select_border_color();
+
+            if (color.is(prop))
                 query_draw();
-            if ((sHoverColor.is(prop)) && (sHover.get()))
+            if (text_color.is(prop))
                 query_draw();
-            if (sBorderColor.is(prop))
+            if (border_color.is(prop))
                 query_draw();
-            if ((sBorderHoverColor.is(prop)) && (sHover.get()))
-                query_draw();
-            if (sLedColor.is(prop))
-                query_draw();
-            if (sTextColor.is(prop))
-                query_draw();
-            if ((sHoverTextColor.is(prop)) && (sHover.get()))
-                query_draw();
-            if (sLedTextColor.is(prop))
-                query_draw();
+
             if (sHoleColor.is(prop))
                 query_draw();
             if (sFont.is(prop))
@@ -228,7 +246,7 @@ namespace lsp
 
             if (sLed.is(prop))
             {
-                size_t state = (sLed.get() > 0) ? nState | S_LED : nState & (~S_LED);
+                size_t state = lsp_setflag(nState, S_LED, sLed.get() > 0);
                 if (state != nState)
                 {
                     nState  = state;
@@ -280,6 +298,30 @@ namespace lsp
                 query_draw();
             if (sGradient.is(prop))
                 query_draw();
+        }
+
+        prop::Color &Button::select4(prop::Color &dfl, prop::Color &hover, prop::Color &down, prop::Color &hover_down)
+        {
+            bool xdown = (nState & S_DOWN) && ((nState & S_LED) || (sLed.get() > 0) || (sDownColors.get()));
+            if ((sHover.get()) && (nState & S_HOVER))
+                return (xdown) ? hover_down : hover;
+
+            return (xdown) ? down : dfl;
+        }
+
+        prop::Color &Button::select_color()
+        {
+            return select4(sColor, sHoverColor, sDownColor, sDownHoverColor);
+        }
+
+        prop::Color &Button::select_text_color()
+        {
+            return select4(sTextColor, sTextHoverColor, sTextDownColor, sTextDownHoverColor);
+        }
+
+        prop::Color &Button::select_border_color()
+        {
+            return select4(sBorderColor, sBorderHoverColor, sBorderDownColor, sBorderDownHoverColor);
         }
 
         void Button::update_mode(button_mode_t mode)
@@ -342,40 +384,11 @@ namespace lsp
 
             // Prepare palette
             lsp::Color bg_color;
-            lsp::Color color(sColor);
-            lsp::Color tcolor(sTextColor);
-            lsp::Color border_color(sBorderColor);
+            lsp::Color color(select_color());
+            lsp::Color tcolor(select_text_color());
+            lsp::Color border_color(select_border_color());
 
             get_actual_bg_color(bg_color);
-
-            if ((sHover.get()) && (pressed & S_HOVER))
-            {
-                color.copy(sHoverColor);
-                tcolor.copy(sHoverTextColor);
-                border_color.copy(sBorderHoverColor);
-            }
-
-            if (pressed & S_LED)
-            {
-                if (pressed & S_DOWN)
-                {
-                    color.copy(sLedColor);
-                    tcolor.copy(sLedTextColor);
-
-                    if ((sHover.get()) && (pressed & S_HOVER))
-                    {
-                        color.scale_lightness(1.25f);
-                        tcolor.scale_lightness(0.75f);
-                        border_color.scale_lightness(0.75f);
-                    }
-                }
-                else
-                {
-                    color.scale_lightness(0.75f);
-                    tcolor.scale_lightness(0.75f);
-                    border_color.scale_lightness(0.75f);
-                }
-            }
 
             color.scale_lightness(brightness);
             tcolor.scale_lightness(brightness);
