@@ -106,7 +106,7 @@ UTEST_BEGIN("tk.style", nesting)
         public:
             StyleClient(test_type_t *test, const char *style, Schema *schema):
                 sListener(this),
-                sStyle(schema),
+                sStyle(schema, NULL),
                 sInt(&sListener),
                 sFloat(&sListener),
                 sColor(&sListener),

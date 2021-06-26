@@ -67,7 +67,7 @@ namespace lsp
         const w_class_t Widget::metadata = { "Widget", NULL };
 
         Widget::Widget(Display *dpy):
-            sStyle(dpy->schema()),
+            sStyle(dpy->schema(), NULL),
             sProperties(this),
             sAllocation(&sProperties),
             sScaling(&sProperties),

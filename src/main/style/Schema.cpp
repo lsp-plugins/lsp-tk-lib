@@ -564,7 +564,7 @@ namespace lsp
 
             // Create style
             lsp_trace("Creating style '%s'...", name->get_native());
-            Style *style    = new Style(this);
+            Style *style    = new Style(this, name->get_utf8());
             if (style == NULL)
                 return STATUS_NO_MEM;
 
@@ -677,7 +677,7 @@ namespace lsp
                 return s;
 
             // Create style
-            s = new Style(this);
+            s = new Style(this, id->get_utf8());
             if (s == NULL)
                 return NULL;
 

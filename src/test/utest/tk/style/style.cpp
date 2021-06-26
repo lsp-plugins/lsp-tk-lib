@@ -320,10 +320,10 @@ UTEST_BEGIN("tk.style", style)
     void test_binding(tk::Style &s)
     {
         ChangeListener l1(this, "s1"), l2(this, "s2"), l3(this, "s3"), l4(this, "s4");
-        tk::Style s1(s.schema());
-        tk::Style s2(s.schema());
-        tk::Style s3(s.schema());
-        tk::Style s4(s.schema());
+        tk::Style s1(s.schema(), NULL);
+        tk::Style s2(s.schema(), NULL);
+        tk::Style s3(s.schema(), NULL);
+        tk::Style s4(s.schema(), NULL);
         ssize_t iv = -1;
 
         tk::atom_t var1 = atom("count");
@@ -581,10 +581,10 @@ UTEST_BEGIN("tk.style", style)
 
     void test_multiple_parents(tk::Schema *schema)
     {
-        tk::Style p1(schema);
-        tk::Style p2(schema);
-        tk::Style c1(schema);
-        tk::Style c2(schema);
+        tk::Style p1(schema, NULL);
+        tk::Style p2(schema, NULL);
+        tk::Style c1(schema, NULL);
+        tk::Style c2(schema, NULL);
 
         ChangeListener l1(this, "c1"), l2(this, "c2");
 
@@ -649,7 +649,7 @@ UTEST_BEGIN("tk.style", style)
     void test_notifications()
     {
         tk::Schema schema(&atoms, NULL);
-        tk::Style root(&schema);
+        tk::Style root(&schema, NULL);
 
         ChangeListener l1(this, "c1"), l2(this, "c2"), l3(this, "c3");
         tk::IStyleListener *vl[3] = { &l1, &l2, &l3 };
@@ -782,7 +782,7 @@ UTEST_BEGIN("tk.style", style)
     UTEST_MAIN
     {
         tk::Schema schema(&atoms, NULL);
-        tk::Style root(&schema);
+        tk::Style root(&schema, NULL);
 
         init_style(root);
         test_binding(root);

@@ -83,7 +83,7 @@ namespace lsp
                     explicit StyleFactory(const char *name) : IStyleFactory(name) {}
 
                 public:
-                    virtual Style      *create(Schema *schema) { return init(new IStyle(schema));   }
+                    virtual Style      *create(Schema *schema) { return init(new IStyle(schema, sName));   }
             };
     }
 }

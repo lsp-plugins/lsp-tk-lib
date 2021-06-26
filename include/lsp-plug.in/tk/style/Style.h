@@ -98,6 +98,12 @@ namespace lsp
                     IStyleListener     *pListener;  // Listener
                 } listener_t;
 
+                typedef struct prop_sync_t
+                {
+                    property_t         *pProperty;  // Property of this style
+                    property_t         *pParent;    // Property of parent style
+                } property_sync_t;
+
                 typedef struct client_t
                 {
                     atom_t              nId;
@@ -112,9 +118,10 @@ namespace lsp
                 lltl::parray<IStyleListener>    vLocks;
                 mutable Schema                 *pSchema;
                 size_t                          nFlags;
+                char                           *sName;
 
             public:
-                explicit Style(Schema *schema);
+                explicit Style(Schema *schema, const char *name);
                 virtual ~Style();
 
                 virtual status_t    init();
@@ -145,8 +152,10 @@ namespace lsp
                 void                notify_listeners(property_t *prop);
                 size_t              notify_listeners_delayed(property_t *prop);
                 void                deref_property(property_t *prop);
+                status_t            inheritance_tree(lltl::parray<Style> *dst);
 
                 bool                set_configured(bool set);
+                inline const char  *name() const            { return sName; }
                 inline bool         configured() const      { return nFlags & S_CONFIGURED; }
 
             public:
@@ -555,7 +564,7 @@ namespace lsp
                     Name(const Name &); \
                 \
                 public: \
-                    explicit Name(::lsp::tk::Schema *schema); \
+                    explicit Name(::lsp::tk::Schema *schema, const char *name); \
                 \
                 public: \
                     virtual ::lsp::status_t     init(); \
@@ -566,7 +575,7 @@ namespace lsp
             }; \
 
         #define LSP_TK_STYLE_IMPL_BEGIN(Name, Parent) \
-            Name::Name(::lsp::tk::Schema *schema): Parent(schema) {} \
+            Name::Name(::lsp::tk::Schema *schema, const char *name): Parent(schema, name) {} \
             \
             status_t Name::init() \
             { \
