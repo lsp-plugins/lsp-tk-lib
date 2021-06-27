@@ -264,6 +264,12 @@ namespace lsp
         // Menu implementation
         const w_class_t Menu::metadata      = { "Menu", &WidgetContainer::metadata };
 
+        const arrangement_t Menu::arrangements[] =
+        {
+            { A_RIGHT,  0.0f,   false },
+            { A_LEFT,   0.0f,   false }
+        };
+
         Menu::Menu(Display *dpy):
             WidgetContainer(dpy),
             sWindow(dpy, this),
@@ -332,8 +338,7 @@ namespace lsp
                 sWindow.destroy();
                 return result;
             }
-            sWindow.add_arrangement(A_RIGHT, 0.0f, false);
-            sWindow.add_arrangement(A_LEFT, 0.0f, false);
+            sWindow.set_arrangements(arrangements, 2);
             sWindow.layout()->set(-1.0f, -1.0f, 1.0f, 1.0f);
             sWindow.auto_close()->set(false);
 
@@ -1357,6 +1362,7 @@ namespace lsp
             pChildMenu          = menu;
 
             // Show the nested menu
+            menu->set_arrangements(arrangements, 2);
             menu->show(w);
         }
 
@@ -1583,6 +1589,26 @@ namespace lsp
             nMouseScroll    = 0;
             sMouseTimer.cancel();
             return STATUS_OK;
+        }
+
+        bool Menu::set_arrangements(const lltl::darray<arrangement_t> *list)
+        {
+            return sWindow.set_arrangements(list);
+        }
+
+        bool Menu::set_arrangements(const arrangement_t *list, size_t count)
+        {
+            return sWindow.set_arrangements(list, count);
+        }
+
+        bool Menu::add_arrangement(const arrangement_t *item)
+        {
+            return sWindow.add_arrangement(item);
+        }
+
+        bool Menu::add_arrangement(arrangement_pos_t pos, float align, bool stretch)
+        {
+            return sWindow.add_arrangement(pos, align, stretch);
         }
 
     } /* namespace tk */
