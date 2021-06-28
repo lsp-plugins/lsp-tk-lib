@@ -151,6 +151,7 @@ namespace lsp
                 Style                      *pActionBox;
                 Style                      *pActionAlign;
                 Style                      *pNavBox;
+                Style                      *pWFilter;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);

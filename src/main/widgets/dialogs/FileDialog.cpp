@@ -249,6 +249,7 @@ namespace lsp
             pActionBox      = NULL;
             pActionAlign    = NULL;
             pNavBox         = NULL;
+            pWFilter        = NULL;
 
             pClass          = &metadata;
         }
@@ -386,6 +387,9 @@ namespace lsp
             pNavBox         = pDisplay->schema()->get("FileDialog::NavBox");
             if (pNavBox == NULL)
                 return STATUS_BAD_STATE;
+            pWFilter        = pDisplay->schema()->get("FileDialog::FilterComboBox");
+            if (pWFilter == NULL)
+                return STATUS_BAD_STATE;
 
             // Initialize widgets
             LSP_STATUS_ASSERT(sWPath.init());
@@ -394,6 +398,7 @@ namespace lsp
             LSP_STATUS_ASSERT(sWSearch.init());
 
             LSP_STATUS_ASSERT(sWFilter.init());
+            LSP_STATUS_ASSERT(sWFilter.style()->inject_parent(pWFilter));
 
             LSP_STATUS_ASSERT(sWFiles.init());
             sWFiles.constraints()->set_min(400, 320);

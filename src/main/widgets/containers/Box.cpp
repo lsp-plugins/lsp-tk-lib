@@ -236,7 +236,7 @@ namespace lsp
             lsp::Color bg_color, border_color;
             float scaling   = lsp_max(0.0f, sScaling.get());
             float bright    = sBrightness.get();
-            size_t border   = (sBorder.get() > 0) ? lsp_max(1, sBorder.get() * scaling) : 0;
+            size_t border   = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             get_actual_bg_color(bg_color);
 
             // Draw background if needed
@@ -654,12 +654,12 @@ namespace lsp
             // Estimate parameters
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = scaling * sSpacing.get();
-            ssize_t border      = (sBorder.get() > 0) ? lsp_max(1, sBorder.get() * scaling * 2) : 0;
+            ssize_t border      = (sBorder.get() > 0) ? lsp_max(1, sBorder.get() * scaling) : 0;
 
             // Estimated width and height, maximum width and height
             ws::size_limit_t sr;
-            ssize_t e_width = border, e_height = border;
-            ssize_t m_width = border, m_height = border;
+            ssize_t e_width = 0, e_height = 0;
+            ssize_t m_width = 0, m_height = 0;
 
             // Estimate self size
             for (size_t i=0, n=visible.size(); i<n; ++i)
@@ -684,18 +684,18 @@ namespace lsp
             if (sOrientation.horizontal())
             {
                 if (sHomogeneous.get())
-                    r->nMinWidth        = (m_width + spacing) * visible.size() - spacing;
+                    r->nMinWidth        = (m_width + spacing) * visible.size() - spacing + border * 2;
                 else
-                    r->nMinWidth        = e_width + spacing * (visible.size() - 1);
-                r->nMinHeight       = m_height;
+                    r->nMinWidth        = e_width + spacing * (visible.size() - 1) + border * 2;
+                r->nMinHeight       = m_height + border * 2;
             }
             else // vertical
             {
-                r->nMinWidth        = m_width;
+                r->nMinWidth        = m_width + border * 2;
                 if (sHomogeneous.get())
-                    r->nMinHeight       = (m_height + spacing) * visible.size() - spacing;
+                    r->nMinHeight       = (m_height + spacing) * visible.size() - spacing + border * 2;
                 else
-                    r->nMinHeight       = e_height + spacing * (visible.size() - 1);
+                    r->nMinHeight       = e_height + spacing * (visible.size() - 1) + border * 2;
             }
 
             // Apply size constraints

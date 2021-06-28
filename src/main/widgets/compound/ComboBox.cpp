@@ -61,7 +61,7 @@ namespace lsp
                 sBorderColor.set("#000000");
                 sBorderGapColor.set("#cccccc");
                 sOpened.set(false);
-                sTextFit.set(false, true);
+                sTextFit.set(1.0f, 1.0f);
                 sFont.set_size(12.0f);
                 sTextAdjust.set(TA_NONE);
                 sConstraints.set(-1, -1, -1, 0);
@@ -543,7 +543,7 @@ namespace lsp
                 s->clip_end();
             }
 
-            // Draw the background for spin area
+            // Draw the spin area
             if (sa.nWidth > 0)
             {
                 ssize_t radius  = a.radius;
