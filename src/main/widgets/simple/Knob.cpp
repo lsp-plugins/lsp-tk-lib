@@ -46,6 +46,8 @@ namespace lsp
                 sScaleMarks.bind("scale.marks", this);
                 sBalanceColorCustom.bind("balance.color.custom", this);
                 sFlat.bind("flat", this);
+                sHoleSize.bind("hole.size", this);
+                sGapSize.bind("gap.size", this);
                 // Configure
                 sColor.set("#cccccc");
                 sScaleColor.set("#00cc00");
@@ -82,7 +84,9 @@ namespace lsp
             sCycling(&sProperties),
             sScaleMarks(&sProperties),
             sBalanceColorCustom(&sProperties),
-            sFlat(&sProperties)
+            sFlat(&sProperties),
+            sHoleSize(&sProperties),
+            sGapSize(&sProperties)
         {
             nLastY      = -1;
             nState      = 0;
@@ -115,6 +119,8 @@ namespace lsp
             sScaleMarks.bind("scale.marks", &sStyle);
             sBalanceColorCustom.bind("balance.color.custom", &sStyle);
             sFlat.bind("flat", &sStyle);
+            sHoleSize.bind("hole.size", &sStyle);
+            sGapSize.bind("gap.size", &sStyle);
 
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)
@@ -153,6 +159,10 @@ namespace lsp
                 query_draw();
             if (sFlat.is(prop))
                 query_draw();
+            if (sHoleSize.is(prop))
+                query_resize();
+            if (sGapSize.is(prop))
+                query_resize();
         }
 
         status_t Knob::slot_on_change(Widget *sender, void *ptr, void *data)
@@ -238,8 +248,8 @@ namespace lsp
             // lsp_trace("cx=%d, cy=%d, x=%d, y=%d, dx=%d, dy=%d, r=%d", int(cx), int(cy), int(x), int(y), int(dx), int(dy), int(r));
 
             // Estimate hole and scale color
-            size_t hole     = lsp_max(1, scaling);
-            size_t gap      = lsp_max(1, scaling);
+            size_t hole     = (sHoleSize.get() > 0) ? lsp_max(1.0f, sHoleSize.get() * scaling) : 0;
+            size_t gap      = (sGapSize.get() > 0) ? lsp_max(1.0f, sGapSize.get() * scaling) : 0;
             size_t scale    = (sScale.get() > 0) ? lsp_max(0, sScale.get() * scaling) : 0;
 
             if (delta > ssize_t(xr*xr))
@@ -262,8 +272,8 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t chamfer     = (sFlat.get()) ? 0 : lsp_max(1, scaling * 3.0f);
-            size_t hole         = lsp_max(1, scaling);
-            size_t gap          = lsp_max(1, scaling);
+            size_t hole         = (sHoleSize.get() > 0) ? lsp_max(1.0f, sHoleSize.get() * scaling) : 0;
+            size_t gap          = (sGapSize.get() > 0) ? lsp_max(1.0f, sGapSize.get() * scaling) : 0;
             size_t scale        = lsp_max(0, sScale.get() * scaling);
             size_t extra        = hole + ((scale > 0) ? scale + gap : 0);
 
@@ -367,8 +377,8 @@ namespace lsp
             ssize_t c_y         = (sSize.nHeight >> 1);
             size_t xr           = lsp_min(sSize.nWidth, sSize.nHeight) >> 1;
             size_t chamfer      = (sFlat.get()) ? 0 : lsp_max(1, scaling * 3.0f);
-            size_t hole         = lsp_max(1, scaling);
-            size_t gap          = lsp_max(1, scaling);
+            size_t hole         = (sHoleSize.get() > 0) ? lsp_max(1.0f, sHoleSize.get() * scaling) : 0;
+            size_t gap          = (sGapSize.get() > 0) ? lsp_max(1.0f, sGapSize.get() * scaling) : 0;
             size_t scale        = lsp_max(0, sScale.get() * scaling);
 
             // Prepare the color palette
@@ -463,8 +473,11 @@ namespace lsp
             }
 
             // Draw hole
-            s->fill_circle(c_x, c_y, xr, hcol);
-            xr -= hole;
+            if (hole > 0)
+            {
+                s->fill_circle(c_x, c_y, xr, hcol);
+                xr -= hole;
+            }
 
             // Draw knob
             float f_sin = sinf(v_angle1), f_cos = cosf(v_angle1);

@@ -287,6 +287,8 @@ MTEST_BEGIN("tk.widgets.simple", knob)
                 kn->color()->set_rgb24(0x24272e);
                 kn->tip_color()->set_rgb24(0xa8aed3);
                 kn->flat()->set(true);
+                kn->hole_size()->set(0);
+                kn->gap_size()->set(0);
             }
         }
 

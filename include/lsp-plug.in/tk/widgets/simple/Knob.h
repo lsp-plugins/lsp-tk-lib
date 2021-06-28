@@ -48,6 +48,8 @@ namespace lsp
                 prop::Boolean       sScaleMarks;
                 prop::Boolean       sBalanceColorCustom;
                 prop::Boolean       sFlat;
+                prop::Integer       sHoleSize;
+                prop::Integer       sGapSize;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -88,6 +90,8 @@ namespace lsp
                 prop::Boolean       sScaleMarks;
                 prop::Boolean       sBalanceColorCustom;
                 prop::Boolean       sFlat;
+                prop::Integer       sHoleSize;
+                prop::Integer       sGapSize;
 
             protected:
                 size_t                          check_mouse_over(ssize_t x, ssize_t y);
@@ -122,6 +126,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            scale_marks,            &sScaleMarks)
                 LSP_TK_PROPERTY(Boolean,            balance_color_custom,   &sBalanceColorCustom)
                 LSP_TK_PROPERTY(Boolean,            flat,                   &sFlat)
+                LSP_TK_PROPERTY(Integer,            hole_size,              &sHoleSize)
+                LSP_TK_PROPERTY(Integer,            gap_size,               &sGapSize)
 
             public:
                 virtual status_t                on_mouse_down(const ws::event_t *e);
