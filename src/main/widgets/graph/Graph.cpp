@@ -41,7 +41,7 @@ namespace lsp
                 sColor.bind("color", this);
                 sBorderColor.bind("border.color", this);
                 sGlassColor.bind("glass.color", this);
-                sIPadding.bind("padding.internal", this);
+                sIPadding.bind("ipadding", this);
 
                 // Configure
                 sConstraints.set_all(-1);
@@ -148,7 +148,7 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sGlassColor.bind("glass.color", &sStyle);
-            sIPadding.bind("padding.internal", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
 
             return STATUS_OK;
         }
@@ -293,7 +293,8 @@ namespace lsp
                 else
                 {
                     drop_glass();
-                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize, flat);
+                    if (bw > 0)
+                        draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize, flat);
                 }
 
                 s->set_antialiasing(aa);

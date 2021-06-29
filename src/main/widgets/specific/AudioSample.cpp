@@ -92,7 +92,7 @@ namespace lsp
                 sColor.bind("color", this);
                 sBorderColor.bind("border.color", this);
                 sGlassColor.bind("glass.color", this);
-                sIPadding.bind("padding.internal", this);
+                sIPadding.bind("ipadding", this);
 
                 for (size_t i=0; i<LABELS; ++i)
                 {
@@ -271,7 +271,7 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sGlassColor.bind("glass.color", &sStyle);
-            sIPadding.bind("padding.internal", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
 
             for (size_t i=0; i<LABELS; ++i)
             {
