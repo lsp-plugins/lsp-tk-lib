@@ -208,27 +208,26 @@ namespace lsp
 
         void Indicator::calc_digit_size(ssize_t *w, ssize_t *h)
         {
-            float scaling   = lsp_max(0.0f, sScaling.get());
-            LSPString text;
-
+            float fscaling  = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
             if (!sModern.get())
             {
-                *w  = 16;
-                *h  = 20;
+                *w  = 16 * fscaling;
+                *h  = 20 * fscaling;
                 return;
             }
 
             // Estimate the size of the most wide char
+            LSPString text;
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
             *w  = 0;
             *h  = fp.Height;
 
             for (const char *c = estimate; *c != '\0'; ++c)
             {
                 text.fmt_ascii("%c", *c);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 *w  = lsp_max(*w, ceilf(tp.Width));
                 *h  = lsp_max(*h, ceilf(tp.Height));
             }
@@ -236,34 +235,34 @@ namespace lsp
 
         void Indicator::draw_digit(ws::ISurface *s, float x, float y, size_t state, const lsp::Color &on, const lsp::Color &off)
         {
-            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
             const rect_t *r = segments;
             bool dark       = sDarkText.get();
 
             for (size_t i=0, m=1; i<11; ++i, m <<= 1, ++r)
             {
                 if (state & m)
-                    s->wire_rect(on, x + r->x * scaling - 0.5f, y + r->y * scaling - 0.5f, r->w * scaling, r->h * scaling, scaling);
+                    s->wire_rect(on, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
                 else if (dark)
-                    s->wire_rect(off, x + r->x * scaling - 0.5f, y + r->y * scaling - 0.5f, r->w * scaling, r->h * scaling, scaling);
+                    s->wire_rect(off, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
             }
         }
 
         void Indicator::draw_simple(ws::ISurface *s, float x, float y, char ch, const lsp::Color &on, const ws::font_parameters_t *fp)
         {
-            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
             LSPString text;
             ws::text_parameters_t tp;
 
             text.fmt_ascii("%c", ch);
-            sFont.get_text_parameters(s, &tp, scaling, &text);
+            sFont.get_text_parameters(s, &tp, fscaling, &text);
 
             sFont.draw
             (
                 s, on,
                 x + (nDWidth - tp.Width) * 0.5f,
                 y + (nDHeight - fp->Height) + fp->Ascent,
-                scaling,
+                fscaling,
                 &text
             );
         }
