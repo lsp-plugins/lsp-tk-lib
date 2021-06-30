@@ -175,12 +175,6 @@ namespace lsp
         void Font::set_name(const char *name)
         {
             nOverride      |= O_NAME;
-            const char *old = sValue.get_name();
-            if (old == name)
-                return;
-            if ((old != NULL) && (name != NULL) && (::strcmp(old, name) == 0))
-                return;
-
             sValue.set_name(name);
             sync();
         }
@@ -189,9 +183,6 @@ namespace lsp
         {
             nOverride      |= O_SIZE;
             float old = sValue.get_size();
-            if (old == size)
-                return old;
-
             sValue.set_size(size);
             sync();
             return old;
@@ -201,9 +192,6 @@ namespace lsp
         {
             nOverride      |= O_FLAGS | O_BOLD;
             bool old = sValue.is_bold();
-            if (old == on)
-                return old;
-
             sValue.set_bold(on);
             sync();
             return old;
@@ -213,9 +201,6 @@ namespace lsp
         {
             nOverride      |= O_FLAGS | O_ITALIC;
             bool old = sValue.is_italic();
-            if (old == on)
-                return old;
-
             sValue.set_italic(on);
             sync();
             return old;
@@ -225,9 +210,6 @@ namespace lsp
         {
             nOverride      |= O_FLAGS | O_UNDERLINE;
             bool old = sValue.is_underline();
-            if (old == on)
-                return old;
-
             sValue.set_underline(on);
             sync();
             return old;
@@ -237,9 +219,6 @@ namespace lsp
         {
             nOverride      |= O_FLAGS | O_ANTIALIAS;
             ws::font_antialias_t old = sValue.antialiasing();
-            if (old == value)
-                return old;
-
             sValue.set_antialiasing(value);
             sync();
             return old;
@@ -249,9 +228,6 @@ namespace lsp
         {
             ws::font_antialias_t old = sValue.antialiasing();
             const prop::enum_t *e = find_enum(value, ANTIALIAS);
-            if ((e == NULL) || (e->value == old))
-                return old;
-
             sValue.set_antialiasing(ws::font_antialias_t(e->value));
             sync();
             return old;
@@ -261,9 +237,6 @@ namespace lsp
         {
             ws::font_antialias_t old = sValue.antialiasing();
             const prop::enum_t *e = find_enum(value, ANTIALIAS);
-            if ((e == NULL) || (e->value == old))
-                return old;
-
             sValue.set_antialiasing(ws::font_antialias_t(e->value));
             sync();
             return old;
@@ -289,9 +262,6 @@ namespace lsp
             nOverride      |= O_ALL_FLAGS;
             flags      &= ws::FF_ALL;
             size_t old  = sValue.flags();
-            if (old == flags)
-                return old;
-
             sValue.set_flags(flags);
             sync();
             return old;
@@ -301,11 +271,6 @@ namespace lsp
         {
             nOverride      |= O_SIZE | O_ALL_FLAGS;
             flags              &= ws::FF_ALL;
-
-            if ((flags == sValue.flags()) &&
-                (size == sValue.get_size()))
-                return;
-
             sValue.set_size(size);
             sValue.set_flags(flags);
             sync();
@@ -314,37 +279,14 @@ namespace lsp
         void Font::set(const char *name, size_t size, size_t flags)
         {
             nOverride      |= O_ALL;
-            bool changed = false;
 
-            // Change name
-            const char *oname = sValue.get_name();
-            if (oname == name) {} // Nothing
-            else if ((oname != NULL) && (name != NULL) && (::strcmp(oname, name) == 0)) {} // Nothing
-            else
-            {
-                sValue.set_name(name);
-                changed     = true;
-            }
-
-            // Change size
-            float osize = sValue.get_size();
-            if (size != osize)
-            {
-                sValue.set_size(size);
-                changed     = true;
-            }
-
-            // Change flags
-            size_t oflags = sValue.flags();
-            if (flags != oflags)
-            {
-                sValue.set_flags(flags);
-                changed     = true;
-            }
+            // Change fields
+            sValue.set_name(name);
+            sValue.set_size(size);
+            sValue.set_flags(flags);
 
             // Sync
-            if (changed)
-                sync();
+            sync();
         }
 
         void Font::set(const ws::Font *f)

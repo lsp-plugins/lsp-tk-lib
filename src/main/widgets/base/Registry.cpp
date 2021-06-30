@@ -86,7 +86,7 @@ namespace lsp
                 return (sMapping.contains(uid)) ? STATUS_DUPLICATED : STATUS_NO_MEM;
             }
 
-            lsp_trace("w = %p (%s)", uid);
+            //lsp_trace("w = %p (%s)", w, uid);
 
             return STATUS_OK;
         }

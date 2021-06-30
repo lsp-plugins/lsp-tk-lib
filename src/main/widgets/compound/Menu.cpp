@@ -174,7 +174,7 @@ namespace lsp
                     // We're root menu
                     if (get_screen_rectangle(&xr) != STATUS_OK)
                         break;
-                    lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
+                    // lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
                     xe.nLeft       += xr.nLeft;
                     xe.nTop        += xr.nTop;
 
@@ -680,14 +680,14 @@ namespace lsp
 
         Menu *Menu::find_menu(const ws::event_t *ev, ws::rectangle_t *xr)
         {
-            lsp_trace("this = %p", this);
+            // lsp_trace("this = %p", this);
 
             // Get last child
             Menu *curr = this;
             while (curr->pChildMenu != NULL)
                 curr = curr->pChildMenu;
 
-            lsp_trace("last = %p", curr);
+            // lsp_trace("last = %p", curr);
 
             // Seek from last child to parent
             while (curr != NULL)
