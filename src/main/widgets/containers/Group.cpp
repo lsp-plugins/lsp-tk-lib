@@ -408,8 +408,8 @@ namespace lsp
                     sText.format(&text);
                     sTextAdjust.apply(&text);
 
-                    sFont.get_parameters(pDisplay, fscaling, &fp);
-                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
+                    sFont.get_parameters(s, fscaling, &fp);
+                    sFont.get_text_parameters(s, &tp, fscaling, &text);
                     ws::rectangle_t tloc;
                     sTextPadding.enter(&tloc, &sLabel, scaling);
                     tloc.nLeft -= tp.XBearing;

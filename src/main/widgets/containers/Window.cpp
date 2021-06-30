@@ -291,19 +291,23 @@ namespace lsp
                 return STATUS_OK;
 
             size_t flags = nFlags;
-            ws::ISurface *bs = get_surface(s);
 
-            ws::rectangle_t xr;
-            s->begin();
+            ws::ISurface *bs = get_surface(s);
+            bs->begin();
+            {
+                ws::rectangle_t xr;
                 xr.nLeft    = 0;
                 xr.nTop     = 0;
                 xr.nWidth   = sSize.nWidth;
                 xr.nHeight  = sSize.nHeight;
                 render(bs, &xr, flags);
+            }
+            bs->end();
 
+            s->begin();
                 s->draw(bs, 0, 0);
-                commit_redraw();
             s->end();
+            commit_redraw();
 
             // And also update pointer
             update_pointer();

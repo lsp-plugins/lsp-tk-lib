@@ -211,8 +211,8 @@ namespace lsp
 
                         // Estimate the label size
                         l->sText.format(&text);
-                        l->sFont.get_parameters(pDisplay, fscaling, &fp);
-                        l->sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
+                        l->sFont.get_parameters(s, fscaling, &fp);
+                        l->sFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
                         r.nWidth        = lsp_max(r.nWidth,  ssize_t(tp.Width));
                         r.nHeight       = lsp_max(r.nHeight, ssize_t(lsp_max(tp.Height, fp.Height)));

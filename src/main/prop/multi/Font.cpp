@@ -307,7 +307,14 @@ namespace lsp
         {
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_parameters(s, scaling, fp) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_parameters(s, scaling, fp);
+            s->end();
+
+            return res;
         }
 
         bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text) const
@@ -316,7 +323,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_multitext_parameters(s, tp, scaling, text, 0, text->length()) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_multitext_parameters(s, tp, scaling, text, 0, text->length());
+            s->end();
+
+            return res;
         }
 
         bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const
@@ -325,7 +339,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_multitext_parameters(s, tp, scaling, text, first, text->length()) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_multitext_parameters(s, tp, scaling, text, first, text->length());
+            s->end();
+
+            return res;
         }
 
         bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const
@@ -334,7 +355,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_multitext_parameters(s, tp, scaling, text, first, last) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_multitext_parameters(s, tp, scaling, text, first, last);
+            s->end();
+
+            return res;
         }
 
         bool Font::get_multitext_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text) const
@@ -419,7 +447,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_text_parameters(s, tp, scaling, text, 0, text->length()) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_text_parameters(s, tp, scaling, text, 0, text->length());
+            s->end();
+
+            return res;
         }
 
         bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const
@@ -428,7 +463,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_text_parameters(s, tp, scaling, text, first, text->length()) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_text_parameters(s, tp, scaling, text, first, text->length());
+            s->end();
+
+            return res;
         }
 
         bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const
@@ -437,7 +479,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_text_parameters(s, tp, scaling, text, first, last) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_text_parameters(s, tp, scaling, text, first, last);
+            s->end();
+
+            return res;
         }
 
         bool Font::get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text) const

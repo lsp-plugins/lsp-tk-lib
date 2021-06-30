@@ -592,7 +592,7 @@ namespace lsp
 
             // Render to the main surface
             s->clip_begin(area);
-            s->draw(src, sSize.nLeft, sSize.nTop);
+                s->draw(src, sSize.nLeft, sSize.nTop);
             s->clip_end();
         }
 
@@ -633,7 +633,9 @@ namespace lsp
             // Redraw surface if required
             if (nFlags & REDRAW_SURFACE)
             {
-                draw(pSurface);
+                pSurface->begin();
+                    draw(pSurface);
+                pSurface->end();
                 nFlags         &= ~REDRAW_SURFACE;
             }
 

@@ -550,8 +550,8 @@ namespace lsp
                     // Estimate font parameters
                     ws::font_parameters_t fp;
                     ws::text_parameters_t tp;
-                    sFont.get_parameters(pDisplay, fscaling, &fp);
-                    sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
+                    sFont.get_parameters(s, fscaling, &fp);
+                    sFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
                     // Prepare to draw
                     float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
