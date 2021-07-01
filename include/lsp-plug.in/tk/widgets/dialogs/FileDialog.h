@@ -142,16 +142,10 @@ namespace lsp
                 prop::Color                 sExtColor;
 
                 // Styles
-                Style                      *pNavButton;
-                Style                      *pActButton;
                 Style                      *pBMNormal;
                 Style                      *pBMSel;
                 Style                      *pWarning;
                 Style                      *pExtCheck;
-                Style                      *pActionBox;
-                Style                      *pActionAlign;
-                Style                      *pNavBox;
-                Style                      *pWFilter;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -223,6 +217,7 @@ namespace lsp
                 bm_entry_t             *find_bookmark(Widget *sender);
                 status_t                add_new_bookmark();
                 status_t                init_bookmark_entry(bm_entry_t *ent, const io::Path *path);
+                status_t                inject_style(tk::Widget *w, const char *name);
 
                 void                    destroy_file_entries(lltl::parray<f_entry_t> *list);
                 status_t                refresh_current_path();
