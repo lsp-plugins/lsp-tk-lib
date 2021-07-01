@@ -98,6 +98,9 @@ namespace lsp
                 void        set_width(ssize_t min, ssize_t max);
                 void        set_height(ssize_t min, ssize_t max);
 
+                inline void set_min(ssize_t min)                            { set_min(min, min);                    }
+                inline void set_max(ssize_t max)                            { set_max(max, max);                    }
+
                 inline void set_width(ssize_t value)                        { set_width(value, value);              }
                 inline void set_height(ssize_t value)                       { set_height(value, value);             }
 
