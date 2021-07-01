@@ -277,8 +277,8 @@ namespace lsp
 
             calc_digit_size(&dw, &dh);
 
-            r->nMinWidth    = ceilf(dw * cols * scaling + spacing * (cols - 1));
-            r->nMinHeight   = ceilf(dh * rows * scaling + spacing * (rows - 1));
+            r->nMinWidth    = ceilf(dw * cols + spacing * (cols - 1));
+            r->nMinHeight   = ceilf(dh * rows + spacing * (rows - 1));
             r->nMaxWidth    = r->nMinWidth;
             r->nMaxHeight   = r->nMinHeight;
             r->nPreWidth    = -1;
@@ -374,8 +374,8 @@ namespace lsp
                                 draw_simple
                                 (
                                     s,
-                                    xr.nLeft + col*(nDWidth*scaling + spacing),
-                                    xr.nTop  + row*(nDHeight*scaling + spacing),
+                                    xr.nLeft + col*(nDWidth + spacing),
+                                    xr.nTop  + row*(nDHeight + spacing),
                                     '8', off, &fp
                                 );
                         }
@@ -389,8 +389,8 @@ namespace lsp
                                 draw_simple
                                 (
                                     s,
-                                    xr.nLeft + col*(nDWidth*scaling + spacing),
-                                    xr.nTop  + row*(nDHeight*scaling + spacing),
+                                    xr.nLeft + col*(nDWidth + spacing),
+                                    xr.nTop  + row*(nDHeight + spacing),
                                     '8', off, &fp
                                 );
                             }
@@ -399,8 +399,8 @@ namespace lsp
                             draw_simple
                             (
                                 s,
-                                xr.nLeft + col*(nDWidth*scaling + spacing),
-                                xr.nTop  + row*(nDHeight*scaling + spacing),
+                                xr.nLeft + col*(nDWidth + spacing),
+                                xr.nTop  + row*(nDHeight + spacing),
                                 ch, on, &fp
                             );
                         ++offset;
@@ -471,8 +471,8 @@ namespace lsp
                             draw_digit
                             (
                                 s,
-                                xr.nLeft + col*(nDWidth*scaling + spacing),
-                                xr.nTop  + row*(nDHeight*scaling + spacing),
+                                xr.nLeft + col*(nDWidth + spacing),
+                                xr.nTop  + row*(nDHeight + spacing),
                                 state, on, off
                             );
                     }
@@ -481,8 +481,8 @@ namespace lsp
                         draw_digit
                         (
                             s,
-                            xr.nLeft + col*(nDWidth*scaling + spacing),
-                            xr.nTop  + row*(nDHeight*scaling + spacing),
+                            xr.nLeft + col*(nDWidth + spacing),
+                            xr.nTop  + row*(nDHeight + spacing),
                             state, on, off
                         );
                         ++offset;
