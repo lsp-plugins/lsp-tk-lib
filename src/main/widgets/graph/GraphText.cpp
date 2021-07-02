@@ -56,7 +56,7 @@ namespace lsp
                 sFont.override();
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphText, "GraphText");
+            LSP_TK_BUILTIN_STYLE(GraphText, "GraphText", "root");
         }
 
         const w_class_t GraphText::metadata             = { "GraphText", &GraphItem::metadata };

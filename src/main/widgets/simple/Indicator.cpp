@@ -61,7 +61,7 @@ namespace lsp
                 sFont.override();
                 sSpacing.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Indicator, "Indicator");
+            LSP_TK_BUILTIN_STYLE(Indicator, "Indicator", "root");
         }
 
         typedef struct rect_t

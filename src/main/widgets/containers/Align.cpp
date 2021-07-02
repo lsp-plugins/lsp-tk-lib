@@ -40,7 +40,7 @@ namespace lsp
                 sLayout.override();
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Align, "Align");
+            LSP_TK_BUILTIN_STYLE(Align, "Align", "root");
         }
 
         const w_class_t Align::metadata         = { "Align", &WidgetContainer::metadata };

@@ -66,13 +66,13 @@ namespace lsp
                 sSizeConstraints.set_all(-1);
                 sHeading.set(-1.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ComboGroup, "ComboGroup");
+            LSP_TK_BUILTIN_STYLE(ComboGroup, "ComboGroup", "root");
 
             // ComboGroup::Window style
-            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboGroup::Window");
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboGroup::Window", "Window");
 
             // ComboGroup::List style
-            LSP_TK_BUILTIN_STYLE(ListBox, "ComboGroup::List");
+            LSP_TK_BUILTIN_STYLE(ListBox, "ComboGroup::List", "ListBox");
         }
 
         //-----------------------------------------------------------------------------

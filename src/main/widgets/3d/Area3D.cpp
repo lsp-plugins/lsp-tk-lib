@@ -51,7 +51,7 @@ namespace lsp
                 sBorderColor.set("#000000");
                 sGlassColor.set("#ffffff");
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Area3D, "Area3D");
+            LSP_TK_BUILTIN_STYLE(Area3D, "Area3D", "root");
         }
 
         const w_class_t Area3D::metadata      = { "Area3D", &Widget::metadata };

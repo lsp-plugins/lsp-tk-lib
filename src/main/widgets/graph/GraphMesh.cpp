@@ -51,7 +51,7 @@ namespace lsp
                 sFillColor.set("#8800ff00");
                 sData.set_size(0);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphMesh, "GraphMesh");
+            LSP_TK_BUILTIN_STYLE(GraphMesh, "GraphMesh", "root");
         }
 
         const w_class_t GraphMesh::metadata             = { "GraphMesh", &GraphItem::metadata };

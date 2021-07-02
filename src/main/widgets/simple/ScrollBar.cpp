@@ -84,7 +84,7 @@ namespace lsp
                 sTextColor.set("#000000");
                 sTextActiveColor.set("#000000");
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ScrollBar, "ScrollBar");
+            LSP_TK_BUILTIN_STYLE(ScrollBar, "ScrollBar", "root");
         }
 
         const w_class_t ScrollBar::metadata         = { "ScrollBar", &Widget::metadata };

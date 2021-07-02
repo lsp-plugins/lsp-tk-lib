@@ -62,7 +62,7 @@ namespace lsp
                 // Commit
                 sLayout.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Group, "Group");
+            LSP_TK_BUILTIN_STYLE(Group, "Group", "root");
         }
 
         const w_class_t Group::metadata         = { "Group", &Align::metadata };

@@ -39,7 +39,7 @@ namespace lsp
                 sColor.set("#ffffff");
                 sFill.set(false);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Void, "Void");
+            LSP_TK_BUILTIN_STYLE(Void, "Void", "root");
         }
 
         const w_class_t Void::metadata      = { "Void", &Widget::metadata };

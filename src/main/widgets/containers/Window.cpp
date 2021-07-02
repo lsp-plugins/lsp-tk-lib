@@ -59,7 +59,7 @@ namespace lsp
                 // Commit
                 sVisibility.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Window, "Window");
+            LSP_TK_BUILTIN_STYLE(Window, "Window", "root");
         }
 
         const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };

@@ -53,7 +53,7 @@ namespace lsp
                 sColor.set("#ff0000");
                 sFunction.set(GFF_DEFAULT);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphFrameBuffer, "GraphFrameBuffer");
+            LSP_TK_BUILTIN_STYLE(GraphFrameBuffer, "GraphFrameBuffer", "root");
         }
 
         const w_class_t GraphFrameBuffer::metadata             = { "GraphFrameBuffer", &GraphItem::metadata };

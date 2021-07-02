@@ -78,7 +78,7 @@ namespace lsp
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(LedMeterChannel, "LedMeterChannel");
+            LSP_TK_BUILTIN_STYLE(LedMeterChannel, "LedMeterChannel", "root");
         }
 
         const w_class_t LedMeterChannel::metadata           = { "LedMeterChannel", &Widget::metadata };

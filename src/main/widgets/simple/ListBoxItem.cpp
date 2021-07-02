@@ -46,7 +46,7 @@ namespace lsp
                 sPadding.override();
                 sBgColor.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ListBoxItem, "ListBoxItem");
+            LSP_TK_BUILTIN_STYLE(ListBoxItem, "ListBoxItem", "root");
         }
 
         const w_class_t ListBoxItem::metadata       = { "ListBoxItem", &Widget::metadata };

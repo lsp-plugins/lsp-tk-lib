@@ -119,9 +119,10 @@ namespace lsp
                 mutable Schema                 *pSchema;
                 size_t                          nFlags;
                 char                           *sName;
+                char                           *sDflParents;
 
             public:
-                explicit Style(Schema *schema, const char *name);
+                explicit Style(Schema *schema, const char *name, const char *parents);
                 virtual ~Style();
 
                 virtual status_t    init();
@@ -155,7 +156,8 @@ namespace lsp
                 status_t            inheritance_tree(lltl::parray<Style> *dst);
 
                 bool                set_configured(bool set);
-                inline const char  *name() const            { return sName; }
+                inline const char  *name() const            { return sName;                 }
+                inline const char  *default_parents() const { return sDflParents;           }
                 inline bool         configured() const      { return nFlags & S_CONFIGURED; }
 
             public:
@@ -280,6 +282,14 @@ namespace lsp
                  * @return true if style has a child
                  */
                 bool                    has_child(Style *child, bool recursive = false);
+
+                /**
+                 * Set default parent styles of the class
+                 * @param parents string with comma-separated list of default parent classes
+                 * @return status of operation
+                 */
+                status_t                set_default_parents(const char *parents);
+                status_t                set_default_parents(const LSPString *parents);
 
             public:
                 /**
@@ -564,7 +574,7 @@ namespace lsp
                     Name(const Name &); \
                 \
                 public: \
-                    explicit Name(::lsp::tk::Schema *schema, const char *name); \
+                    explicit Name(::lsp::tk::Schema *schema, const char *name, const char *parents); \
                 \
                 public: \
                     virtual ::lsp::status_t     init(); \
@@ -575,7 +585,7 @@ namespace lsp
             }; \
 
         #define LSP_TK_STYLE_IMPL_BEGIN(Name, Parent) \
-            Name::Name(::lsp::tk::Schema *schema, const char *name): Parent(schema, name) {} \
+            Name::Name(::lsp::tk::Schema *schema, const char *name, const char *parents): Parent(schema, name, parents) {} \
             \
             status_t Name::init() \
             { \

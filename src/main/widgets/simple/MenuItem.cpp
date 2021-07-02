@@ -57,7 +57,7 @@ namespace lsp
                 // Commit
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MenuItem, "MenuItem");
+            LSP_TK_BUILTIN_STYLE(MenuItem, "MenuItem", "root");
         }
 
         const w_class_t MenuItem::metadata      = { "MenuItem", &Widget::metadata };

@@ -64,7 +64,7 @@ namespace lsp
                 sBalanceColorCustom.set(false);
                 sFlat.set(false);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Knob, "Knob");
+            LSP_TK_BUILTIN_STYLE(Knob, "Knob", "root");
         }
 
         const w_class_t Knob::metadata      = { "Knob", &Widget::metadata };

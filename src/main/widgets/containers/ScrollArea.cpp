@@ -45,7 +45,7 @@ namespace lsp
                 sHScroll.set_all(0.0f, 0.0f, 0.0f);
                 sVScroll.set_all(0.0f, 0.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ScrollArea, "ScrollArea");
+            LSP_TK_BUILTIN_STYLE(ScrollArea, "ScrollArea", "root");
         }
 
         const w_class_t ScrollArea::metadata    = { "ScrollArea", &WidgetContainer::metadata };

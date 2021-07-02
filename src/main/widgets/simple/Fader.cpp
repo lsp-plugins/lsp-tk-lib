@@ -51,7 +51,7 @@ namespace lsp
                 sAngle.set(0);
                 sBtnPointer.set(ws::MP_DEFAULT);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Fader, "Fader");
+            LSP_TK_BUILTIN_STYLE(Fader, "Fader", "root");
         }
 
         const w_class_t Fader::metadata         = { "Fader", &Widget::metadata };

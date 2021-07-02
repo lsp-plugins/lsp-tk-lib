@@ -27,11 +27,12 @@ namespace lsp
 {
     namespace tk
     {
-        Style::Style(Schema *schema, const char *name)
+        Style::Style(Schema *schema, const char *name, const char *parents)
         {
             pSchema     = schema;
             nFlags      = 0;
-            sName       = (name != NULL) ? strdup(name) : NULL;
+            sName       = (name != NULL)    ? strdup(name)      : NULL;
+            sDflParents = (parents != NULL) ? strdup(parents)   : NULL;
         }
         
         Style::~Style()
@@ -88,7 +89,14 @@ namespace lsp
             if (sName != NULL)
             {
                 free(sName);
-                sName   = NULL;
+                sName       = NULL;
+            }
+
+            // Destroy parents
+            if (sDflParents != NULL)
+            {
+                free(sDflParents);
+                sDflParents = NULL;
             }
         }
 
@@ -1521,6 +1529,24 @@ namespace lsp
         const char *Style::atom_name(atom_t id) const
         {
             return pSchema->atom_name(id);
+        }
+
+        status_t Style::set_default_parents(const char *parents)
+        {
+            char *copy = (parents != NULL) ? strdup(parents) : NULL;
+            if ((parents != NULL) && (copy == NULL))
+                return STATUS_NO_MEM;
+
+            if (sDflParents != NULL)
+                free(sDflParents);
+            sDflParents = copy;
+
+            return STATUS_OK;
+        }
+
+        status_t Style::set_default_parents(const LSPString *parents)
+        {
+            return set_default_parents((parents != NULL) ? parents->get_utf8() : NULL);
         }
 
     } /* namespace tk */

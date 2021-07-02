@@ -141,7 +141,7 @@ namespace lsp
                 sMainFont.override();
                 sLabelFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(AudioSample, "AudioSample");
+            LSP_TK_BUILTIN_STYLE(AudioSample, "AudioSample", "root");
         }
 
         const w_class_t AudioSample::metadata           = { "AudioSample", &WidgetContainer::metadata };

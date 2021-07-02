@@ -67,13 +67,13 @@ namespace lsp
                 sConstraints.set(-1, -1, -1, 0);
                 sTextLayout.set(-1.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ComboBox, "ComboBox");
+            LSP_TK_BUILTIN_STYLE(ComboBox, "ComboBox", "root");
 
             // ComboBox::Window style
-            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboBox::Window");
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboBox::Window", "Window");
 
             // ComboBox::List style
-            LSP_TK_BUILTIN_STYLE(ListBox, "ComboBox::List");
+            LSP_TK_BUILTIN_STYLE(ListBox, "ComboBox::List", "ListBox");
         }
 
         //-----------------------------------------------------------------------------

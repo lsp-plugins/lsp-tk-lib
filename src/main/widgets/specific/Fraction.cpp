@@ -67,7 +67,7 @@ namespace lsp
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Fraction, "Fraction");
+            LSP_TK_BUILTIN_STYLE(Fraction, "Fraction", "root");
         }
 
         //-----------------------------------------------------------------------------

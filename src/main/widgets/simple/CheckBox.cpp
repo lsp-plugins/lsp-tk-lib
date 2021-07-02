@@ -65,7 +65,7 @@ namespace lsp
                 // Commit
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(CheckBox, "CheckBox");
+            LSP_TK_BUILTIN_STYLE(CheckBox, "CheckBox", "root");
         }
 
         const w_class_t CheckBox::metadata      = { "CheckBox", &Widget::metadata };

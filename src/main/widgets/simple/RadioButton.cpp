@@ -62,7 +62,7 @@ namespace lsp
                 // Commit
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(RadioButton, "RadioButton");
+            LSP_TK_BUILTIN_STYLE(RadioButton, "RadioButton", "root");
         }
 
         const w_class_t RadioButton::metadata      = { "RadioButton", &Widget::metadata };

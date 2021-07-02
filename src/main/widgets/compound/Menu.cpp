@@ -73,17 +73,17 @@ namespace lsp
                 sIPadding.override();
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Menu, "Menu");
+            LSP_TK_BUILTIN_STYLE(Menu, "Menu", "root");
 
             // Menu::Window style
-            LSP_TK_BUILTIN_STYLE(PopupWindow, "Menu::Window");
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "Menu::Window", "Window");
 
             // Menu::Scroll style
             LSP_TK_STYLE_DEF_BEGIN(Menu__MenuScroll, Widget)
             LSP_TK_STYLE_DEF_END
             LSP_TK_STYLE_IMPL_BEGIN(Menu__MenuScroll, Widget)
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Menu__MenuScroll, "Menu::MenuScroll");
+            LSP_TK_BUILTIN_STYLE(Menu__MenuScroll, "Menu::MenuScroll", "root");
         }
 
         //-----------------------------------------------------------------------------

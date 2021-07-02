@@ -184,14 +184,14 @@ namespace lsp
                  * If style does not exists, it will be automatically created and bound to the root style
                  * @return style or NULL on error
                  */
-                Style              *get(const char *id, StyleInitializer *init = NULL);
+                Style              *get(const char *id);
 
                 /**
                  * Get style by class identifier.
                  * If style does not exists, it will be automatically created and bound to the root style
                  * @return style or NULL on error
                  */
-                Style              *get(const LSPString *id, StyleInitializer *init = NULL);
+                Style              *get(const LSPString *id);
 
                 /**
                  * Get atom identifier by name

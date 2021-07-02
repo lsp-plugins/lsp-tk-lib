@@ -54,7 +54,7 @@ namespace lsp
                 sGlassColor.set("#ffffff");
                 sIPadding.set(1);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Graph, "Graph");
+            LSP_TK_BUILTIN_STYLE(Graph, "Graph", "root");
         }
 
         const w_class_t Graph::metadata         =   { "Graph", &WidgetContainer::metadata };

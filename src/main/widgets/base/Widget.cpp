@@ -55,7 +55,7 @@ namespace lsp
                 // Commit
                 sVisibility.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Widget, "Widget");
+            LSP_TK_BUILTIN_STYLE(Widget, "Widget", "root");
         }
 
         void Widget::PropListener::notify(Property *prop)
@@ -67,7 +67,7 @@ namespace lsp
         const w_class_t Widget::metadata = { "Widget", NULL };
 
         Widget::Widget(Display *dpy):
-            sStyle(dpy->schema(), NULL),
+            sStyle(dpy->schema(), NULL, NULL),
             sProperties(this),
             sAllocation(&sProperties),
             sScaling(&sProperties),
@@ -149,9 +149,14 @@ namespace lsp
                 sDrawMode.bind("draw.mode", &sStyle);
             }
 
-            Style *sclass = pDisplay->schema()->get(style_class());
+            // Configure the style class
+            const char *ws_class = style_class();
+            Style *sclass = pDisplay->schema()->get(ws_class);
             if (sclass != NULL)
-                sStyle.add_parent(sclass);
+            {
+                LSP_STATUS_ASSERT(sStyle.set_default_parents(ws_class));
+                LSP_STATUS_ASSERT(sStyle.add_parent(sclass));
+            }
 
             // Declare slots
             handler_id_t id = 0;

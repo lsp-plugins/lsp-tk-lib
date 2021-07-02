@@ -101,7 +101,7 @@ namespace lsp
                 sTextDownShift.set(0, 0);
                 sTextPressedShift.set(1, 1);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Button, "Button");
+            LSP_TK_BUILTIN_STYLE(Button, "Button", "root");
         }
 
         const w_class_t Button::metadata        = { "Button", &Widget::metadata };

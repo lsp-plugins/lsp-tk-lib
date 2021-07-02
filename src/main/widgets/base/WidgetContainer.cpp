@@ -32,7 +32,7 @@ namespace lsp
                 // Bind
                 // Configure
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(WidgetContainer, "WidgetContainer");
+            LSP_TK_BUILTIN_STYLE(WidgetContainer, "WidgetContainer", "root");
         }
 
         const w_class_t WidgetContainer::metadata = { "WidgetContainer", &Widget::metadata };

@@ -56,7 +56,7 @@ namespace lsp
                 sBorderSize.set(3);
                 sGradient.set(true);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Led, "Led");
+            LSP_TK_BUILTIN_STYLE(Led, "Led", "root");
         }
 
         const w_class_t Led::metadata           = { "Led", &Widget::metadata };

@@ -58,7 +58,7 @@ namespace lsp
                 sActions.override();
                 sLayout.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog, "FileDialog");
+            LSP_TK_BUILTIN_STYLE(FileDialog, "FileDialog", "Window");
 
             //-----------------------------------------------------------------
             // FileDialog::NavButton style
@@ -73,7 +73,7 @@ namespace lsp
                 sConstraints.override();
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__NavButton, "FileDialog::NavButton");
+            LSP_TK_BUILTIN_STYLE(FileDialog__NavButton, "FileDialog::NavButton", "Button");
 
             //-----------------------------------------------------------------
             // FileDialog::NavBox style
@@ -88,7 +88,7 @@ namespace lsp
                 sSpacing.override();
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__NavBox, "FileDialog::NavBox");
+            LSP_TK_BUILTIN_STYLE(FileDialog__NavBox, "FileDialog::NavBox", "Box");
 
             //-----------------------------------------------------------------
             // FileDialog::ActionButton style
@@ -103,7 +103,7 @@ namespace lsp
                 sConstraints.override();
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__ActionButton, "FileDialog::ActionButton");
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionButton, "FileDialog::ActionButton", "Button");
 
             //-----------------------------------------------------------------
             // FileDialog::ActionBox style
@@ -116,7 +116,7 @@ namespace lsp
                 // Commit
                 sSpacing.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__ActionBox, "FileDialog::ActionBox");
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionBox, "FileDialog::ActionBox", "Box");
 
             //-----------------------------------------------------------------
             // FileDialog::ActionAlign style
@@ -129,7 +129,7 @@ namespace lsp
                 // Commit
                 sLayout.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__ActionAlign, "FileDialog::ActionAlign");
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionAlign, "FileDialog::ActionAlign", "Align");
 
             //-----------------------------------------------------------------
             // FileDialog::Bookmark style
@@ -146,7 +146,7 @@ namespace lsp
                 sTextLayout.override();
                 sFollow.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark, "FileDialog::Bookmark");
+            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark, "FileDialog::Bookmark", "Hyperlink");
 
             //-----------------------------------------------------------------
             // FileDialog::Bookmark.selected style
@@ -161,7 +161,7 @@ namespace lsp
                 sColor.override();
                 sBgColor.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark_selected, "FileDialog::Bookmark.selected");
+            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark_selected, "FileDialog::Bookmark.selected", "FileDialog::Bookmark");
 
             //-----------------------------------------------------------------
             // FileDialog::Warning
@@ -176,7 +176,7 @@ namespace lsp
                 sTextLayout.override();
                 sColor.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__Warning, "FileDialog::Warning");
+            LSP_TK_BUILTIN_STYLE(FileDialog__Warning, "FileDialog::Warning", "Label");
 
             //-----------------------------------------------------------------
             // FileDialog::Label
@@ -189,7 +189,7 @@ namespace lsp
                 // Commit
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__Label, "FileDialog::Label");
+            LSP_TK_BUILTIN_STYLE(FileDialog__Label, "FileDialog::Label", "Label");
 
             //-----------------------------------------------------------------
             // FileDialog::ExtCheck
@@ -204,7 +204,7 @@ namespace lsp
                 sColor.override();
                 sChecked.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck");
+            LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck", "CheckBox");
 
             //-----------------------------------------------------------------
             // FileDialog::FilterComboBox
@@ -213,7 +213,7 @@ namespace lsp
 
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__FilterComboBox, ComboBox)
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__FilterComboBox, "FileDialog::FilterComboBox");
+            LSP_TK_BUILTIN_STYLE(FileDialog__FilterComboBox, "FileDialog::FilterComboBox", "ComboBox");
         }
 
         const w_class_t FileDialog::metadata            = { "FileDialog", &Window::metadata };

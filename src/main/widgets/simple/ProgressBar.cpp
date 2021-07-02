@@ -65,7 +65,7 @@ namespace lsp
                 // Commit
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ProgressBar, "ProgressBar");
+            LSP_TK_BUILTIN_STYLE(ProgressBar, "ProgressBar", "root");
         }
 
         const w_class_t ProgressBar::metadata           = { "ProgressBar", &Widget::metadata };

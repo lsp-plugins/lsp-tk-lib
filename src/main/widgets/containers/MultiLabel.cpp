@@ -37,7 +37,7 @@ namespace lsp
                 sConstraints.set(-1, -1, -1, -1);
                 sBearing.set(true);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MultiLabel, "MultiLabel");
+            LSP_TK_BUILTIN_STYLE(MultiLabel, "MultiLabel", "root");
         }
 
         const w_class_t MultiLabel::metadata        = { "MultiLabel", &WidgetContainer::metadata };

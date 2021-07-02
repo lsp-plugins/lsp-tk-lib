@@ -55,7 +55,7 @@ namespace lsp
                 sPointer.override();
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Hyperlink, "Hyperlink");
+            LSP_TK_BUILTIN_STYLE(Hyperlink, "Hyperlink", "root");
         }
 
         const w_class_t Hyperlink::metadata =        { "Hyperlink", &Widget::metadata };

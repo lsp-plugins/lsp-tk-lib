@@ -25,9 +25,10 @@ namespace lsp
 {
     namespace tk
     {
-        IStyleFactory::IStyleFactory(const char *name)
+        IStyleFactory::IStyleFactory(const char *name, const char *parents)
         {
             sName       = name;
+            sParents    = parents;
         }
 
         IStyleFactory::~IStyleFactory()

@@ -48,7 +48,7 @@ namespace lsp
                 // Commit
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Grid, "Grid");
+            LSP_TK_BUILTIN_STYLE(Grid, "Grid", "root");
         }
 
         const w_class_t Grid::metadata = { "Grid", &WidgetContainer::metadata };

@@ -53,7 +53,7 @@ namespace lsp
                 sOrigin.set(0);
                 sColor.set("#ffffff");
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphAxis, "GraphAxis");
+            LSP_TK_BUILTIN_STYLE(GraphAxis, "GraphAxis", "root");
         }
 
         const w_class_t GraphAxis::metadata             = { "GraphAxis", &GraphItem::metadata };

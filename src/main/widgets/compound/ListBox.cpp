@@ -63,7 +63,7 @@ namespace lsp
                 sHScrollSpacing.set(1);
                 sVScrollSpacing.set(1);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ListBox, "ListBox");
+            LSP_TK_BUILTIN_STYLE(ListBox, "ListBox", "root");
         }
 
         const w_class_t ListBox::metadata               = { "ListBox", &WidgetContainer::metadata };

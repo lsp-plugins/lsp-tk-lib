@@ -45,7 +45,7 @@ namespace lsp
             LSP_TK_STYLE_IMPL_END
 
             LSP_SYMBOL_HIDDEN
-            StyleFactory<Root> RootFactory(NULL);
+            StyleFactory<Root> RootFactory(NULL, NULL);
         }
 
         Schema::Schema(Atoms *atoms, Display *dpy)
@@ -307,12 +307,12 @@ namespace lsp
                 StyleSheet::style_t *xs = sheet->vStyles.get(name);
                 if (xs != NULL)
                 {
-                    lsp_trace("Linking style '%s'", name->get_utf8());
+                    lsp_trace("Linking style '%s', default parents: '%s'", name->get_utf8(), s->default_parents());
                     res = apply_relations(s, xs);
                 }
                 else
                 {
-                    lsp_trace("Linking style '%s'", name->get_utf8());
+                    lsp_trace("Linking style '%s', default parents: '%s'", name->get_utf8(), s->default_parents());
                     res = s->add_parent(pRoot);
                 }
 
@@ -526,7 +526,7 @@ namespace lsp
             }
 
             // Create style
-            lsp_trace("Creating style '%s'...", init->name());
+            lsp_trace("Creating style '%s' with default parents '%s'...", init->name(), init->default_parents());
             Style *style    = init->create(this);
             if (style == NULL)
                 return STATUS_NO_MEM;
@@ -564,7 +564,7 @@ namespace lsp
 
             // Create style
             lsp_trace("Creating style '%s'...", name->get_native());
-            Style *style    = new Style(this, name->get_utf8());
+            Style *style    = new Style(this, name->get_utf8(), "root");
             if (style == NULL)
                 return STATUS_NO_MEM;
 
@@ -661,15 +661,15 @@ namespace lsp
             return (tok.get_token(expr::TF_GET) == expr::TT_EOF) ? STATUS_OK : STATUS_BAD_FORMAT;
         }
     
-        Style *Schema::get(const char *id, StyleInitializer *init)
+        Style *Schema::get(const char *id)
         {
             LSPString tmp;
             if (!tmp.set_utf8(id))
                 return NULL;
-            return get(&tmp, init);
+            return get(&tmp);
         }
 
-        Style *Schema::get(const LSPString *id, StyleInitializer *init)
+        Style *Schema::get(const LSPString *id)
         {
             // Check that style exists
             Style *s  = vStyles.get(id);
@@ -677,18 +677,15 @@ namespace lsp
                 return s;
 
             // Create style
-            s = new Style(this, id->get_utf8());
+            s = new Style(this, id->get_utf8(), NULL);
             if (s == NULL)
                 return NULL;
 
             // Initialize style
-            if (init != NULL)
+            if (s->init() != STATUS_OK)
             {
-                if (init->init(s) != STATUS_OK)
-                {
-                    delete s;
-                    return NULL;
-                }
+                delete s;
+                return NULL;
             }
 
             // Bind root style as parent automatically

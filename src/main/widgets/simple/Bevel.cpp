@@ -47,7 +47,7 @@ namespace lsp
                 sDirection.set_dangle(45.0f);
                 sArrangement.set(0.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Bevel, "Bevel");
+            LSP_TK_BUILTIN_STYLE(Bevel, "Bevel", "root");
         }
 
         const w_class_t Bevel::metadata      = { "Bevel", &Widget::metadata };

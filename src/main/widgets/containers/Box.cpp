@@ -51,7 +51,7 @@ namespace lsp
                 // Commit
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Box, "Box");
+            LSP_TK_BUILTIN_STYLE(Box, "Box", "root");
         }
 
         const w_class_t Box::metadata   =   { "Box", &WidgetContainer::metadata     };

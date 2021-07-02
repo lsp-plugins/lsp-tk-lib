@@ -65,7 +65,7 @@ namespace lsp
                 // Commit
                 sPointer.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Edit, "Edit");
+            LSP_TK_BUILTIN_STYLE(Edit, "Edit", "root");
         }
 
         const w_class_t Edit::metadata      = { "Edit", &Widget::metadata };

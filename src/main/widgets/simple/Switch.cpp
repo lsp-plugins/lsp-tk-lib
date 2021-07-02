@@ -52,7 +52,7 @@ namespace lsp
                 sAspect.set(1.41);
                 sButtonPointer.set(ws::MP_DEFAULT);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Switch, "Switch");
+            LSP_TK_BUILTIN_STYLE(Switch, "Switch", "root");
         }
 
         static const float ANGLE = 15.0f * M_PI / 180.0f;

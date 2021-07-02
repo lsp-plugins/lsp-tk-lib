@@ -117,7 +117,6 @@
 // Styles and schemas
 #include <lsp-plug.in/tk/style/StyleSheet.h>
 #include <lsp-plug.in/tk/style/Style.h>
-#include <lsp-plug.in/tk/style/StyleInitializer.h>
 #include <lsp-plug.in/tk/style/IStyleFactory.h>
 #include <lsp-plug.in/tk/style/Schema.h>
 
