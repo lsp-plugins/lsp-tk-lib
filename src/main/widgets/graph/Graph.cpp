@@ -308,7 +308,7 @@ namespace lsp
             lsp::Color c(sColor);
             // c.set_rgb24(0x888888);
             c.scale_lightness(sBrightness.get());
-            s->clear(&c);
+            s->clear(c);
 
             // Sync internal lists of axes and origins
             sync_lists();

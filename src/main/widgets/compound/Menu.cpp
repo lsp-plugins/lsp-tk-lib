@@ -985,19 +985,19 @@ namespace lsp
                     {
                         color.copy(mi->check_border_color()->color());
                         color.scale_lightness(bright);
-                        s->fill_circle(xc, yc, br, &color);
+                        s->fill_circle(xc, yc, br, color);
                         br                  = lsp_max(0.0f, br - bw);
 
                         color.copy(mi->check_bg_color()->color());
                         color.scale_lightness(bright);
-                        s->fill_circle(xc, yc, br, &color);
+                        s->fill_circle(xc, yc, br, color);
                         br                  = lsp_max(0, br - bw);
 
                         if (mi->checked()->get())
                         {
                             color.copy(mi->check_color()->color());
                             color.scale_lightness(bright);
-                            s->fill_circle(xc, yc, br, &color);
+                            s->fill_circle(xc, yc, br, color);
                         }
                     }
                     else
@@ -1007,7 +1007,7 @@ namespace lsp
                         else
                             color.copy(mi->check_bg_color()->color());
                         color.scale_lightness(bright);
-                        s->fill_circle(xc, yc, br, &color);
+                        s->fill_circle(xc, yc, br, color);
                     }
 
                 }

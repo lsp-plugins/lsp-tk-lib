@@ -50,6 +50,7 @@ namespace lsp
                 prop::Boolean       sFlat;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
+                prop::Float         sScaleBrightness;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -92,6 +93,7 @@ namespace lsp
                 prop::Boolean       sFlat;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
+                prop::Float         sScaleBrightness;
 
             protected:
                 size_t                          check_mouse_over(ssize_t x, ssize_t y);

@@ -308,7 +308,7 @@ namespace lsp
 
             gr = s->radial_gradient(cx + (rad * M_RGOLD_RATIO), cy - (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
             gr->add_color(0.0, 1.0, 1.0, 1.0);
-            gr->add_color(1.0, &screw);
+            gr->add_color(1.0, screw);
             s->fill_circle(cx, cy, rad, gr);
             delete gr;
 
@@ -318,7 +318,7 @@ namespace lsp
 
             gr = s->radial_gradient(cx - (rad * M_RGOLD_RATIO), cy + (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
             gr->add_color(0.0, 1.0, 1.0, 1.0);
-            gr->add_color(1.0, &screw);
+            gr->add_color(1.0, screw);
             ws::surf_line_cap_t cap = s->set_line_cap(ws::SURFLCAP_ROUND);
             s->line(cx + a_cos, cy + a_sin, cx - a_cos, cy - a_sin, lwidth, gr);
             s->line(cx - a_sin, cy + a_cos, cx + a_sin, cy - a_cos, lwidth, gr);

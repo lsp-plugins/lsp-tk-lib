@@ -48,6 +48,7 @@ namespace lsp
                 sFlat.bind("flat", this);
                 sHoleSize.bind("hole.size", this);
                 sGapSize.bind("gap.size", this);
+                sScaleBrightness.bind("scale.brightness", this);
                 // Configure
                 sColor.set("#cccccc");
                 sScaleColor.set("#00cc00");
@@ -63,6 +64,9 @@ namespace lsp
                 sScaleMarks.set(true);
                 sBalanceColorCustom.set(false);
                 sFlat.set(false);
+                sHoleSize.set(1);
+                sGapSize.set(1);
+                sScaleBrightness.set(0.75f);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Knob, "Knob", "root");
         }
@@ -86,7 +90,8 @@ namespace lsp
             sBalanceColorCustom(&sProperties),
             sFlat(&sProperties),
             sHoleSize(&sProperties),
-            sGapSize(&sProperties)
+            sGapSize(&sProperties),
+            sScaleBrightness(&sProperties)
         {
             nLastY      = -1;
             nState      = 0;
@@ -121,6 +126,7 @@ namespace lsp
             sFlat.bind("flat", &sStyle);
             sHoleSize.bind("hole.size", &sStyle);
             sGapSize.bind("gap.size", &sStyle);
+            sScaleBrightness.bind("scale.brightness", &sStyle);
 
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)
@@ -163,6 +169,8 @@ namespace lsp
                 query_resize();
             if (sGapSize.is(prop))
                 query_resize();
+            if (sScaleBrightness.is(prop))
+                query_draw();
         }
 
         status_t Knob::slot_on_change(Widget *sender, void *ptr, void *data)
@@ -397,7 +405,7 @@ namespace lsp
                 sdcol.copy(sScaleColor);
 
                 scol.scale_lightness(bright);
-                sdcol.scale_lightness(0.75f * bright);
+                sdcol.scale_lightness(sScaleBrightness.get() * bright);
             }
 
             lsp::Color hcol(sHoleColor);

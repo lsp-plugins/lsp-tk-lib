@@ -789,7 +789,7 @@ namespace lsp
             // Draw background
             lsp::Color color(sColor);
             color.scale_lightness(bright);
-            s->clear(&color);
+            s->clear(color);
 
             // Draw main text if it is required to be shown
             if (sMainVisibility.get())
