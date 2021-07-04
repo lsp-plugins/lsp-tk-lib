@@ -130,6 +130,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            flat,                   &sFlat)
                 LSP_TK_PROPERTY(Integer,            hole_size,              &sHoleSize)
                 LSP_TK_PROPERTY(Integer,            gap_size,               &sGapSize)
+                LSP_TK_PROPERTY(Float,              scale_brightness,       &sScaleBrightness)
 
             public:
                 virtual status_t                on_mouse_down(const ws::event_t *e);
