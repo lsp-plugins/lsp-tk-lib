@@ -873,18 +873,28 @@ namespace lsp
 
                 case ws::UIE_MOUSE_IN:
                 {
-                    acquire_mouse_handler(e);
-                    hMouse.nState   = e->nState;
-                    hMouse.nLeft    = e->nLeft;
-                    hMouse.nTop     = e->nTop;
+                    Widget *w   = hMouse.pWidget;
+                    if (!(hMouse.nState & ws::MCF_BTN_MASK))
+                    {
+                        w = acquire_mouse_handler(e);
+                        hMouse.nState   = e->nState;
+                        hMouse.nLeft    = e->nLeft;
+                        hMouse.nTop     = e->nTop;
+                    }
+
+                    if (w != this)
+                        WidgetContainer::handle_event(e);
 
                     break;
                 }
 
                 case ws::UIE_MOUSE_OUT:
                 {
-                    WidgetContainer::handle_event(e);
-                    release_mouse_handler(e, false);
+                    Widget *w   = hMouse.pWidget;
+                    if (!(hMouse.nState & ws::MCF_BTN_MASK))
+                        release_mouse_handler(e, false);
+                    if (w != this)
+                        WidgetContainer::handle_event(e);
                     break;
                 }
 
