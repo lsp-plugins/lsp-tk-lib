@@ -92,7 +92,7 @@ namespace lsp
 
                 typedef struct alloc_t
                 {
-                    lltl::darray<cell_t>    vCells;
+                    lltl::parray<cell_t>    vCells;
                     lltl::parray<cell_t>    vTable;
                     lltl::darray<header_t>  vRows;
                     lltl::darray<header_t>  vCols;
@@ -131,6 +131,8 @@ namespace lsp
                 static void                 assign_coords(alloc_t *a, const ws::rectangle_t *r);
                 static void                 realize_children(alloc_t *a);
                 status_t                    attach_internal(ssize_t left, ssize_t top, Widget *widget, size_t rows, size_t cols);
+                static cell_t              *alloc_cell(lltl::parray<cell_t> *list);
+                static void                 free_cell(cell_t *cell);
 
             protected:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);

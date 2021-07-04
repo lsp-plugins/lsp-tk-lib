@@ -88,6 +88,9 @@ namespace lsp
 
             vItems.flush();
 
+            for (size_t i=0, n=sAlloc.vCells.size(); i<n; ++i)
+                free_cell(sAlloc.vCells.uget(i));
+
             sAlloc.vCells.flush();
             sAlloc.vTable.flush();
         }
@@ -97,6 +100,46 @@ namespace lsp
             nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
+        }
+
+        Grid::cell_t *Grid::alloc_cell(lltl::parray<cell_t> *list)
+        {
+            cell_t *cell = static_cast<cell_t *>(malloc(sizeof(cell_t)));
+            if (cell == NULL)
+                return NULL;
+
+            if (!list->add(cell))
+            {
+                free(cell);
+                return NULL;
+            }
+
+            cell->a.nLeft   = 0;
+            cell->a.nTop    = 0;
+            cell->a.nWidth  = 0;
+            cell->a.nHeight = 0;
+            cell->s.nLeft   = 0;
+            cell->s.nTop    = 0;
+            cell->s.nWidth  = 0;
+            cell->s.nHeight = 0;
+
+            cell->pWidget   = NULL;
+            cell->nLeft     = 0;
+            cell->nTop      = 0;
+            cell->nRows     = 0;
+            cell->nCols     = 0;
+            cell->nTag      = 0;
+
+            return cell;
+        }
+
+        void Grid::free_cell(cell_t *cell)
+        {
+            if (cell == NULL)
+                return;
+
+            cell->pWidget   = NULL;
+            free(cell);
         }
 
         status_t Grid::init()
@@ -412,7 +455,7 @@ namespace lsp
             }
 
             // Allocate cell
-            cell_t *cell = a->vCells.add();
+            cell_t *cell = alloc_cell(&a->vCells);
             if (cell == NULL)
                 return false;
 
@@ -703,7 +746,7 @@ namespace lsp
                         if (prev == NULL)
                         {
                             // Allocate cell
-                            if ((prev = a->vCells.add()) == NULL)
+                            if ((prev = alloc_cell(&a->vCells)) == NULL)
                                 return STATUS_NO_MEM;
 
                             prev->pWidget   = NULL;
