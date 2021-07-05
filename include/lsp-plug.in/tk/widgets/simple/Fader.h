@@ -108,32 +108,15 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline Color                   *color()                     { return &sColor;       }
-                inline const Color             *color() const               { return &sColor;       }
-
-                inline Color                   *hole_color()                { return &sHoleColor;   }
-                inline const Color             *hole_color() const          { return &sHoleColor;   }
-
-                inline SizeRange               *size()                      { return &sSizeRange;   }
-                inline const SizeRange         *size() const                { return &sSizeRange;   }
-
-                inline RangeFloat              *value()                     { return &sValue;       }
-                inline const RangeFloat        *value() const               { return &sValue;       }
-
-                inline StepFloat               *step()                      { return &sStep;        }
-                inline const StepFloat         *step() const                { return &sStep;        }
-
-                inline SizeRange               *button_width()              { return &sBtnWidth;    }
-                inline const SizeRange         *button_width() const        { return &sBtnWidth;    }
-
-                inline Float                   *button_aspect()             { return &sBtnAspect;   }
-                inline const Float             *button_aspect() const       { return &sBtnAspect;   }
-
-                inline Pointer                 *button_pointer()            { return &sBtnPointer;  }
-                inline const Pointer           *button_pointer() const      { return &sBtnPointer;  }
-
-                inline Integer                 *angle()                     { return &sAngle;       }
-                inline const Integer           *angle() const               { return &sAngle;       }
+                LSP_TK_PROPERTY(Color,          color,                      &sColor);
+                LSP_TK_PROPERTY(Color,          hole_color,                 &sHoleColor);
+                LSP_TK_PROPERTY(SizeRange,      size,                       &sSizeRange);
+                LSP_TK_PROPERTY(RangeFloat,     value,                      &sValue);
+                LSP_TK_PROPERTY(StepFloat,      step,                       &sStep);
+                LSP_TK_PROPERTY(SizeRange,      button_width,               &sBtnWidth);
+                LSP_TK_PROPERTY(Float,          button_aspect,              &sBtnAspect);
+                LSP_TK_PROPERTY(Pointer,        button_pointer,             &sBtnPointer);
+                LSP_TK_PROPERTY(Integer,        angle,                      &sAngle);
 
             public:
 
