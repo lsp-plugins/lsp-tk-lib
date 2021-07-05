@@ -442,5 +442,10 @@ namespace lsp
             vItems.clear();
             return STATUS_OK;
         }
+
+        void Graph::canvas_size(ws::rectangle_t *r)
+        {
+            *r      = sICanvas;
+        }
     }
 }

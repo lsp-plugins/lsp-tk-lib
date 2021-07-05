@@ -150,15 +150,17 @@ namespace lsp
         bool clip_line2d(
             float dx, float dy,
             float lc, float rc, float tc, float bc,
+            float error,
             float &cx1, float &cy1, float &cx2, float &cy2
         )
         {
-            return clip_line2d(dy, dx, 0.0f, lc, rc, tc, bc, cx1, cy1, cx2, cy2);
+            return clip_line2d(dy, dx, 0.0f, lc, rc, tc, bc, error, cx1, cy1, cx2, cy2);
         }
 
         bool clip_line2d(
             float x1, float x2, float y1, float y2,
             float lc, float rc, float tc, float bc,
+            float error,
             float &cx1, float &cy1, float &cx2, float &cy2
         )
         {
@@ -166,7 +168,7 @@ namespace lsp
             if (!line2d_equation(x1, y1, x2, y2, a, b, c))
                 return false;
 
-            return clip_line2d(a, b, c, lc, rc, tc, bc, cx1, cy1, cx2, cy2);
+            return clip_line2d(a, b, c, lc, rc, tc, bc, error, cx1, cy1, cx2, cy2);
         }
 
         bool vclip_line2d(
@@ -212,6 +214,7 @@ namespace lsp
         bool clip_line2d(
             float a, float b, float c,
             float lc, float rc, float tc, float bc,
+            float error,
             float &cx1, float &cy1, float &cx2, float &cy2
         )
         {
@@ -240,18 +243,18 @@ namespace lsp
                 }
 
                 // Check that line lays between vertical boundaries
-                if ((p[0].y >= bc) || (p[1].y <= tc))
+                if ((p[0].y > (bc + error)) || (p[1].y < (tc - error)))
                     return false;
 
                 // Now compute clipping of line at top
-                if (p[0].y < tc)
+                if (p[0].y < (tc - error))
                 {
                     p[0].y  = tc;
                     p[0].x  = -(c + b*p[0].y) / a;
                 }
 
                 // And at bottom
-                if (p[1].y > bc)
+                if (p[1].y > (bc + error))
                 {
                     p[1].y  = bc;
                     p[1].x  = -(c + b*p[1].y) / a;
@@ -275,18 +278,18 @@ namespace lsp
                 }
 
                 // Check that line lays between vertical boundaries
-                if ((p[0].x >= rc) || (p[1].x <= lc))
+                if ((p[0].x > (rc + error)) || (p[1].x < (lc - error)))
                     return false;
 
                 // Now compute clipping of line at left
-                if (p[0].x < lc)
+                if (p[0].x < (lc - error))
                 {
                     p[0].x  = lc;
                     p[0].y  = -(c + a*p[0].x) / b;
                 }
 
                 // And at right
-                if (p[1].x > rc)
+                if (p[1].x > (rc + error))
                 {
                     p[1].x  = rc;
                     p[1].y  = -(c + a*p[1].x) / b;

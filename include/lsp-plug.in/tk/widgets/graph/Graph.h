@@ -147,6 +147,7 @@ namespace lsp
                 bool                        origin(size_t index, float *x, float *y);
                 bool                        origin(GraphOrigin *o, float *x, float *y);
 
+                void                        canvas_size(ws::rectangle_t *r);
                 inline ssize_t              canvas_left() const         { return sICanvas.nLeft;                    }
                 inline ssize_t              canvas_top() const          { return sICanvas.nTop;                     }
                 inline ssize_t              canvas_width() const        { return sICanvas.nWidth;                   }

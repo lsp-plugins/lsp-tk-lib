@@ -174,6 +174,7 @@ namespace lsp
             if (!clip_line2d(a, b, c,
                 sr.nLeft, sr.nLeft + sr.nWidth,
                 sr.nTop,  sr.nTop  + sr.nHeight,
+                0,
                 ap.x, ap.y, bp.x, bp.y))
             {
                 s->clip_begin(area);
