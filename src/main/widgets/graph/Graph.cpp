@@ -233,6 +233,19 @@ namespace lsp
             sICanvas.nHeight= sCanvas.nHeight;
 
             sIPadding.enter(&sICanvas, scaling);
+
+            for (size_t i=0, n = vItems.size(); i<n; ++i)
+            {
+                tk::GraphItem *gi = vItems.get(i);
+                if (gi == NULL)
+                    continue;
+                tk::Slot *slot = gi->slot(SLOT_RESIZE_PARENT);
+                if (slot != NULL)
+                {
+                    ws::rectangle_t xr = *r;
+                    slot->execute(this, &xr);
+                }
+            }
         }
 
         void Graph::hide_widget()
