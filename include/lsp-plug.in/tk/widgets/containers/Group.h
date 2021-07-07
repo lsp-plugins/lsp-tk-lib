@@ -37,6 +37,7 @@ namespace lsp
                 prop::Font              sFont;
                 prop::TextAdjust        sTextAdjust;
                 prop::Color             sColor;
+                prop::Color             sIBGColor;
                 prop::Color             sTextColor;
                 prop::String            sText;
                 prop::Boolean           sShowText;
@@ -47,6 +48,8 @@ namespace lsp
                 prop::Embedding         sEmbedding;
                 prop::Padding           sIPadding;
                 prop::Alignment         sHeading;
+                prop::Boolean           sIBGInherit;
+                prop::Float             sIBGBrightness;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -80,6 +83,7 @@ namespace lsp
                 prop::Font              sFont;
                 prop::TextAdjust        sTextAdjust;
                 prop::Color             sColor;
+                prop::Color             sIBGColor;
                 prop::Color             sTextColor;
                 prop::String            sText;
                 prop::Boolean           sShowText;
@@ -90,6 +94,8 @@ namespace lsp
                 prop::Embedding         sEmbedding;
                 prop::Padding           sIPadding;
                 prop::Alignment         sHeading;
+                prop::Boolean           sIBGInherit;
+                prop::Float             sIBGBrightness;
 
             protected:
                 void                    allocate(alloc_t *alloc);
@@ -98,6 +104,9 @@ namespace lsp
                 virtual void            property_changed(Property *prop);
                 virtual void            size_request(ws::size_limit_t *r);
                 virtual void            realize(const ws::rectangle_t *r);
+
+                virtual void            get_child_bg_color(lsp::Color *color) const;
+                virtual void            get_child_bg_color(lsp::Color &color) const;
 
             public:
                 explicit Group(Display *dpy);
@@ -109,6 +118,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Font,       font,           &sFont)
                 LSP_TK_PROPERTY(TextAdjust, text_adjust,    &sTextAdjust)
                 LSP_TK_PROPERTY(Color,      color,          &sColor)
+                LSP_TK_PROPERTY(Color,      ibg_color,      &sIBGColor)
                 LSP_TK_PROPERTY(Color,      text_color,     &sTextColor)
                 LSP_TK_PROPERTY(String,     text,           &sText)
                 LSP_TK_PROPERTY(Boolean,    show_text,      &sShowText)
@@ -119,6 +129,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Embedding,  embedding,      &sEmbedding)
                 LSP_TK_PROPERTY(Padding,    ipadding,       &sIPadding)
                 LSP_TK_PROPERTY(Alignment,  heading,        &sHeading)
+                LSP_TK_PROPERTY(Boolean,    ibg_inherit,    &sIBGInherit)
+                LSP_TK_PROPERTY(Float,      ibg_brightness, &sIBGBrightness)
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

@@ -35,6 +35,7 @@ namespace lsp
                 sFont.bind("font", this);
                 sTextAdjust.bind("text.adjust", this);
                 sColor.bind("color", this);
+                sIBGColor.bind("ibg.color", this);
                 sTextColor.bind("text.color", this);
                 sShowText.bind("text.show", this);
                 sBorder.bind("border.size", this);
@@ -44,6 +45,8 @@ namespace lsp
                 sEmbedding.bind("embed", this);
                 sIPadding.bind("ipadding", this);
                 sHeading.bind("heading", this);
+                sIBGInherit.bind("ibg.inherit", this);
+                sIBGBrightness.bind("ibg.brightness", this);
                 // Configure
                 sFont.set_size(12.0f);
                 sTextAdjust.set(TA_NONE);
@@ -57,6 +60,8 @@ namespace lsp
                 sEmbedding.set(false);
                 sIPadding.set_all(0);
                 sHeading.set(-1.0f, 0.0f);
+                sIBGInherit.set(true);
+                sIBGBrightness.set(1.0f);
                 // Override
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 // Commit
@@ -72,6 +77,7 @@ namespace lsp
             sFont(&sProperties),
             sTextAdjust(&sProperties),
             sColor(&sProperties),
+            sIBGColor(&sProperties),
             sTextColor(&sProperties),
             sText(&sProperties),
             sShowText(&sProperties),
@@ -81,7 +87,9 @@ namespace lsp
             sTextRadius(&sProperties),
             sEmbedding(&sProperties),
             sIPadding(&sProperties),
-            sHeading(&sProperties)
+            sHeading(&sProperties),
+            sIBGInherit(&sProperties),
+            sIBGBrightness(&sProperties)
         {
             pWidget             = NULL;
 
@@ -112,6 +120,7 @@ namespace lsp
             sFont.bind("font", &sStyle);
             sTextAdjust.bind("text.adjust", &sStyle);
             sColor.bind("color", &sStyle);
+            sIBGColor.bind("ibg.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sShowText.bind("text.show", &sStyle);
@@ -122,6 +131,8 @@ namespace lsp
             sEmbedding.bind("embed", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
             sHeading.bind("heading", &sStyle);
+            sIBGInherit.bind("ibg.inherit", &sStyle);
+            sIBGBrightness.bind("ibg.brightness", &sStyle);
 
             return STATUS_OK;
         }
@@ -135,6 +146,8 @@ namespace lsp
                 query_resize();
             if (sColor.is(prop))
                 query_draw();
+            if (sIBGColor.is(prop))
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
             if (sTextColor.is(prop))
                 query_draw();
             if (sText.is(prop))
@@ -155,6 +168,10 @@ namespace lsp
                 query_resize();
             if (sHeading.is(prop))
                 query_resize();
+            if (sIBGInherit.is(prop))
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
+            if (sIBGBrightness.is(prop))
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
         }
 
         void Group::allocate(alloc_t *alloc)
@@ -292,6 +309,24 @@ namespace lsp
             }
         }
 
+        void Group::get_child_bg_color(lsp::Color *color) const
+        {
+            float ibg_bright = sIBGBrightness.get();
+            if (sIBGInherit.get())
+            {
+                get_actual_bg_color(color, ibg_bright);
+                return;
+            }
+
+            color->copy(sIBGColor);
+            color->scale_lightness(ibg_bright);
+        }
+
+        void Group::get_child_bg_color(lsp::Color &color) const
+        {
+            return get_child_bg_color(&color);
+        }
+
         void Group::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             if (nFlags & REDRAW_SURFACE)
@@ -341,7 +376,7 @@ namespace lsp
             {
                 s->clip_begin(area);
                 {
-                    get_actual_bg_color(color);
+                    get_child_bg_color(color);
                     s->fill_rect(color, &sSize);
                     bg   = true;
                 }

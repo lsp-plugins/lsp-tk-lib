@@ -35,6 +35,7 @@ namespace lsp
                 sScaling.bind("size.scaling", this);
                 sFontScaling.bind("font.scaling", this);
                 sBrightness.bind("brightness", this);
+                sBgBrightness.bind("bg.brightness", this);
                 sPadding.bind("padding", this);
                 sBgColor.bind("bg.color", this);
                 sBgInherit.bind("bg.inherit", this);
@@ -46,6 +47,7 @@ namespace lsp
                 sScaling.set(1.0f);
                 sFontScaling.set(1.0f);
                 sBrightness.set(1.0f);
+                sBgBrightness.set(1.0f);
                 sPadding.set_all(0);
                 sBgColor.set("#cccccc");
                 sBgInherit.set(false);
@@ -73,6 +75,7 @@ namespace lsp
             sScaling(&sProperties),
             sFontScaling(&sProperties),
             sBrightness(&sProperties),
+            sBgBrightness(&sProperties),
             sPadding(&sProperties),
             sBgColor(&sProperties),
             sVisibility(&sProperties),
@@ -141,6 +144,7 @@ namespace lsp
                 sScaling.bind("size.scaling", &sStyle);
                 sFontScaling.bind("font.scaling", &sStyle);
                 sBrightness.bind("brightness", &sStyle);
+                sBgBrightness.bind("bg.brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
                 sBgColor.bind("bg.color", &sStyle);
                 sBgInherit.bind("bg.inherit", &sStyle);
@@ -217,12 +221,14 @@ namespace lsp
                 query_resize();
             if (sBrightness.is(prop))
                 query_draw();
+            if (sBgBrightness.is(prop))
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
             if (sPadding.is(prop))
                 query_resize();
             if (sBgColor.is(prop))
-                query_draw();
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
             if (sBgInherit.is(prop))
-                query_draw();
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
             if (sAllocation.is(prop))
                 query_resize();
             if (sVisibility.is(prop))
@@ -814,11 +820,15 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Widget::get_actual_bg_color(lsp::Color *color) const
+        void Widget::get_actual_bg_color(lsp::Color *color, float brightness) const
         {
+            if (brightness < 0.0f)
+                brightness = sBgBrightness.get();
+
             if ((!sBgInherit.get()) || (pParent == NULL))
             {
                 color->copy(sBgColor.color());
+                color->scale_lightness(brightness);
                 return;
             }
 
@@ -826,15 +836,17 @@ namespace lsp
             if (pw == NULL)
             {
                 color->copy(sBgColor.color());
+                color->scale_lightness(brightness);
                 return;
             }
 
             pw->get_child_bg_color(color);
+            color->scale_lightness(brightness);
         }
 
-        void Widget::get_actual_bg_color(lsp::Color &color) const
+        void Widget::get_actual_bg_color(lsp::Color &color, float brightness) const
         {
-            get_actual_bg_color(&color);
+            get_actual_bg_color(&color, brightness);
         }
 
         status_t Widget::get_padded_screen_rectangle(ws::rectangle_t *r)
