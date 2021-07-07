@@ -307,13 +307,13 @@ namespace lsp
                 StyleSheet::style_t *xs = sheet->vStyles.get(name);
                 if (xs != NULL)
                 {
-                    lsp_trace("Linking style '%s', default parents: '%s'", name->get_utf8(), s->default_parents());
-                    res = apply_relations(s, xs);
+                    lsp_trace("Linking style '%s'", name->get_utf8());
+                    res = apply_relations(s, &xs->parents);
                 }
                 else
                 {
-                    lsp_trace("Linking style '%s', default parents: '%s'", name->get_utf8(), s->default_parents());
-                    res = s->add_parent(pRoot);
+                    lsp_trace("Linking style '%s' to default parents: '%s'", name->get_utf8(), s->default_parents());
+                    res = apply_relations(s, s->default_parents());
                 }
 
                 if (res != STATUS_OK)
@@ -346,9 +346,9 @@ namespace lsp
             // Initialize all styles in the order of their inheritance
             for (size_t i=0; vss.size() > 0; )
             {
+                i                      %= vss.size();
                 LSPString *name         = vss.uget(i);
                 Style *s                = vStyles.get(name);
-                i                      %= vss.size();
 
                 // Style does not exists or is already configured?
                 if ((s == NULL) || (s->configured()))
@@ -428,7 +428,7 @@ namespace lsp
             lsp_trace("Linking root style");
             if (sheet->pRoot != NULL)
             {
-                if ((res = apply_relations(pRoot, sheet->pRoot)) != STATUS_OK)
+                if ((res = apply_relations(pRoot, &sheet->pRoot->parents)) != STATUS_OK)
                     return res;
             }
             if ((res = link_styles(sheet)) != STATUS_OK)
@@ -490,21 +490,71 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::apply_relations(Style *s, StyleSheet::style_t *xs)
+        status_t Schema::apply_relations(Style *s, const lltl::parray<LSPString> *parents)
         {
             status_t res;
 
-            for (size_t i=0, n=xs->parents.size(); i<n; ++i)
+            for (size_t i=0, n=parents->size(); i<n; ++i)
             {
-                LSPString *parent = xs->parents.get(i);
+                const LSPString *parent = parents->uget(i);
                 Style *ps = (parent->equals_ascii("root")) ? pRoot : vStyles.get(parent);
-                if (ps == NULL)
-                    continue;
+                if (ps != NULL)
+                {
+                    lsp_trace("  parent: %s", parent->get_utf8());
+                    if ((res = s->add_parent(ps)) != STATUS_OK)
+                        return res;
+                }
+            }
 
-                lsp_trace("  parent: %s", parent->get_utf8());
-                res = s->add_parent(ps);
-                if (res != STATUS_OK)
-                    return res;
+            return STATUS_OK;
+        }
+
+        status_t Schema::apply_relations(Style *s, const char *list)
+        {
+            status_t res;
+            LSPString parent, text;
+            if (!text.set_utf8(list))
+                return STATUS_NO_MEM;
+
+            // Parse list of
+            ssize_t first = 0, last = -1, len = text.length();
+
+            while (true)
+            {
+                last = text.index_of(first, ',');
+                if (last < 0)
+                {
+                    last = len;
+                    break;
+                }
+
+                if (!parent.set(&text, first, last))
+                    return false;
+
+                Style *ps = (parent.equals_ascii("root")) ? pRoot : vStyles.get(&parent);
+                if (ps != NULL)
+                {
+                    lsp_trace("  parent: %s", parent.get_utf8());
+                    if ((res = s->add_parent(ps)) != STATUS_OK)
+                        return res;
+                }
+
+                first = last + 1;
+            }
+
+            // Last token pending?
+            if (last > first)
+            {
+                if (!parent.set(&text, first, last))
+                    return false;
+
+                Style *ps = (parent.equals_ascii("root")) ? pRoot : vStyles.get(&parent);
+                if (ps != NULL)
+                {
+                    lsp_trace("  parent: %s", parent.get_utf8());
+                    if ((res = s->add_parent(ps)) != STATUS_OK)
+                        return res;
+                }
             }
 
             return STATUS_OK;

@@ -108,7 +108,8 @@ namespace lsp
                 static bool         check_parents_configured(Style *s);
 
                 status_t            apply_settings(Style *s, StyleSheet::style_t *xs);
-                status_t            apply_relations(Style *s, StyleSheet::style_t *xs);
+                status_t            apply_relations(Style *s, const lltl::parray<LSPString> *parents);
+                status_t            apply_relations(Style *s, const char *parents);
                 void                destroy_colors();
                 status_t            init_colors_from_sheet(StyleSheet *sheet);
                 status_t            load_fonts_from_sheet(StyleSheet *sheet, resource::ILoader *loader);
