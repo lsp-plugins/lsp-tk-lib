@@ -37,6 +37,7 @@ namespace lsp
                 sBalanceColor.bind("balance.color", this);
                 sHoleColor.bind("hole.color", this);
                 sTipColor.bind("tip.color", this);
+                sBalanceTipColor.bind("balance.tip.color", this);
                 sSizeRange.bind("size.range", this);
                 sScale.bind("scale.size", this);
                 sValue.bind("value", this);
@@ -49,12 +50,14 @@ namespace lsp
                 sHoleSize.bind("hole.size", this);
                 sGapSize.bind("gap.size", this);
                 sScaleBrightness.bind("scale.brightness", this);
+                sBalanceTipSize.bind("balance.tip.size", this);
                 // Configure
                 sColor.set("#cccccc");
                 sScaleColor.set("#00cc00");
                 sBalanceColor.set("#0000cc");
                 sHoleColor.set("#000000");
                 sTipColor.set("#000000");
+                sBalanceTipColor.set("#0000ff");
                 sSizeRange.set(8, -1);
                 sScale.set(4);
                 sValue.set_all(0.5f, 0.0f, 1.0f);
@@ -67,6 +70,7 @@ namespace lsp
                 sHoleSize.set(1);
                 sGapSize.set(1);
                 sScaleBrightness.set(0.75f);
+                sBalanceTipSize.set(0);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Knob, "Knob", "root");
         }
@@ -80,6 +84,7 @@ namespace lsp
             sBalanceColor(&sProperties),
             sHoleColor(&sProperties),
             sTipColor(&sProperties),
+            sBalanceTipColor(&sProperties),
             sSizeRange(&sProperties),
             sScale(&sProperties),
             sValue(&sProperties),
@@ -91,7 +96,8 @@ namespace lsp
             sFlat(&sProperties),
             sHoleSize(&sProperties),
             sGapSize(&sProperties),
-            sScaleBrightness(&sProperties)
+            sScaleBrightness(&sProperties),
+            sBalanceTipSize(&sProperties)
         {
             nLastY      = -1;
             nState      = 0;
@@ -115,6 +121,7 @@ namespace lsp
             sScaleColor.bind("scale.color", &sStyle);
             sHoleColor.bind("hole.color", &sStyle);
             sTipColor.bind("tip.color", &sStyle);
+            sBalanceTipColor.bind("balance.tip.color", &sStyle);
             sSizeRange.bind("size.range", &sStyle);
             sScale.bind("scale.size", &sStyle);
             sValue.bind("value", &sStyle);
@@ -127,6 +134,7 @@ namespace lsp
             sHoleSize.bind("hole.size", &sStyle);
             sGapSize.bind("gap.size", &sStyle);
             sScaleBrightness.bind("scale.brightness", &sStyle);
+            sBalanceTipSize.bind("balance.tip.size", &sStyle);
 
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)
@@ -149,6 +157,8 @@ namespace lsp
                 query_draw();
             if (sTipColor.is(prop))
                 query_draw();
+            if (sBalanceTipColor.is(prop))
+                query_draw();;
             if (sSizeRange.is(prop))
                 query_resize();
             if (sScale.is(prop))
@@ -170,6 +180,8 @@ namespace lsp
             if (sGapSize.is(prop))
                 query_resize();
             if (sScaleBrightness.is(prop))
+                query_draw();
+            if (sBalanceTipSize.is(prop))
                 query_draw();
         }
 
@@ -473,6 +485,16 @@ namespace lsp
 
                         s->line(c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling, bg_color);
                     }
+                }
+
+                size_t btsz     = (sBalanceTipSize.get() > 0) ? lsp_min(1.0f, sBalanceTipSize.get() * scaling) : 0.0f;
+                if (btsz > 0)
+                {
+                    float delta = btsz / (xr - scale * 0.5f);
+                    scol.copy(sTipColor);
+                    scol.scale_lightness(bright);
+
+                    s->fill_sector(c_x, c_y, xr, v_angle2 - delta, v_angle2 + delta, scol);
                 }
 
                 // Draw hole and update radius
