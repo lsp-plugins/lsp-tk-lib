@@ -143,7 +143,7 @@ namespace lsp
         status_t MenuItem::on_focus_in(const ws::event_t *e)
         {
             Menu *m = widget_cast<Menu>(parent());
-            lsp_trace("this = %p", this);
+//            lsp_trace("this = %p", this);
             if (m != NULL)
                 m->select_menu_item(this, false);
             return STATUS_OK;
@@ -152,7 +152,7 @@ namespace lsp
         status_t MenuItem::on_mouse_in(const ws::event_t *e)
         {
             Menu *m = widget_cast<Menu>(parent());
-            lsp_trace("this = %p", this);
+//            lsp_trace("this = %p", this);
             if (m != NULL)
                 m->select_menu_item(this, true);
             return STATUS_OK;
@@ -161,12 +161,12 @@ namespace lsp
         status_t MenuItem::on_mouse_up(const ws::event_t *e)
         {
             // Allow only left button click
-            lsp_trace("this=%p", this);
+//            lsp_trace("this=%p", this);
             if ((e->nCode != ws::MCB_LEFT) || ((e->nState & ws::MCF_BTN_MASK) != ws::MCF_LEFT))
                 return STATUS_OK;
 
             Menu *m = widget_cast<Menu>(parent());
-            lsp_trace("parent=%p", m);
+//            lsp_trace("parent=%p", m);
 
             if (m != NULL)
                 m->submit_menu_item(this, false);

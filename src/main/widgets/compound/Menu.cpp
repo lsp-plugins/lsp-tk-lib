@@ -141,7 +141,7 @@ namespace lsp
                     // We're root menu
                     if (get_screen_rectangle(&xr) != STATUS_OK)
                         break;
-                    lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
+//                    lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
                     xe.nLeft       += xr.nLeft;
                     xe.nTop        += xr.nTop;
 
@@ -191,8 +191,8 @@ namespace lsp
                     xe.nLeft       -= xr.nLeft;
                     xe.nTop        -= xr.nTop;
 
-                    lsp_trace("handler=%p, coords: {%d, %d}", m,
-                            int(xe.nLeft), int(xe.nTop));
+//                    lsp_trace("handler=%p, coords: {%d, %d}", m,
+//                            int(xe.nLeft), int(xe.nTop));
                     result          = (m != pMenu) ?
                             m->sWindow.handle_event(&xe) :
                             PopupWindow::handle_event(&xe);
@@ -670,11 +670,10 @@ namespace lsp
         Menu *Menu::root_menu()
         {
             Menu *curr  = this;
-            lsp_trace("this = %p", this);
             while ((curr->pParentMenu != NULL))
                 curr        = curr->pParentMenu;
 
-            lsp_trace("root = %p", curr);
+//            lsp_trace("this = %p, root = %p", this, curr);
             return curr;
         }
 
@@ -693,18 +692,18 @@ namespace lsp
             while (curr != NULL)
             {
                 curr->sWindow.get_screen_rectangle(xr);
-                lsp_trace("pos={%d, %d}, curr = %p, param = {%d, %d, %d, %d}",
-                        int(ev->nLeft), int(ev->nTop), curr,
-                        int(xr->nLeft), int(xr->nTop), int(xr->nWidth), int(xr->nHeight));
+//                lsp_trace("pos={%d, %d}, curr = %p, param = {%d, %d, %d, %d}",
+//                        int(ev->nLeft), int(ev->nTop), curr,
+//                        int(xr->nLeft), int(xr->nTop), int(xr->nWidth), int(xr->nHeight));
                 if (Position::inside(xr, ev->nLeft, ev->nTop))
                 {
-                    lsp_trace("found handler: %p", curr);
+//                    lsp_trace("found handler: %p", curr);
                     return curr;
                 }
                 curr    = curr->pParentMenu;
             }
 
-            lsp_trace("not found handler");
+//            lsp_trace("not found handler");
 
             return NULL;
         }
@@ -1217,6 +1216,7 @@ namespace lsp
             sWindow.show();
 
             // Take focus if there is no parent menu
+            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
             if (pParentMenu == NULL)
             {
                 sWindow.grab_events(ws::GRAB_MENU);
@@ -1228,7 +1228,16 @@ namespace lsp
         {
             nSelected = -1;
 
+            // Hide all nested menus and disconnect from parent
+            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
             hide_nested_menus(this);
+            if (pParentMenu != NULL)
+            {
+                if (pParentMenu->pChildMenu == this)
+                    pParentMenu->pChildMenu = NULL;
+                pParentMenu     = NULL;
+            }
+
             sWindow.hide();
         }
 
@@ -1269,7 +1278,7 @@ namespace lsp
         {
             sWindow.take_focus();
 
-            lsp_trace("sel = %d, nSelected = %d", int(sel), int(nSelected));
+//            lsp_trace("sel = %d, nSelected = %d", int(sel), int(nSelected));
 
             if (sel != nSelected)
             {
@@ -1324,6 +1333,9 @@ namespace lsp
                 pm->pChildMenu  = NULL;
 
                 // Hide menu and move forward
+                lsp_trace("menu = %p, parent = %p", cm, cm->pParentMenu);
+                lsp_trace("menu = %p, child  = %p", pm, pm->pChildMenu);
+//                lsp_trace("this=%p is hiding nested menu %p", this, cm);
                 cm->hide();
                 pm  = cm;
             }
@@ -1354,12 +1366,17 @@ namespace lsp
             if (pChildMenu != menu)
             {
                 if (pChildMenu != NULL)
+                {
                     pChildMenu->hide();
+                }
             }
             hide_nested_menus(menu);
 
             menu->pParentMenu   = this;
             pChildMenu          = menu;
+
+            lsp_trace("menu = %p, parent=%p", menu, menu->pParentMenu);
+            lsp_trace("menu = %p, child=%p", this, pChildMenu);
 
             // Show the nested menu
             menu->set_arrangements(arrangements, 2);
@@ -1526,7 +1543,7 @@ namespace lsp
             ssize_t scroll      = sScrolling.get() * scaling;
             ssize_t amount      = lsp_max(1, sIStats.item_h >> 1);
 
-            lsp_trace("scroll=%d, amount=%d, dir=%d, max=%d", int(scroll), int(amount), int(dir), int(sIStats.max_scroll));
+//            lsp_trace("scroll=%d, amount=%d, dir=%d, max=%d", int(scroll), int(amount), int(dir), int(sIStats.max_scroll));
 
             scroll              = lsp_limit(scroll + dir * amount, 0, sIStats.max_scroll);
 
