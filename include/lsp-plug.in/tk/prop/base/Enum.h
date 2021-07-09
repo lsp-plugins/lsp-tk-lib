@@ -65,6 +65,7 @@ namespace lsp
             public:
                 status_t            parse(const char *value);
                 status_t            parse(const LSPString *value);
+                inline ssize_t      set_index(ssize_t v)        { return set(v);            };
         };
     }
 }
