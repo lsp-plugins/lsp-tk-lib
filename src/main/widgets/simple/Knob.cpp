@@ -51,6 +51,7 @@ namespace lsp
                 sGapSize.bind("gap.size", this);
                 sScaleBrightness.bind("scale.brightness", this);
                 sBalanceTipSize.bind("balance.tip.size", this);
+                sBalanceTipColorCustom.bind("balance.tip.color.custom", this);
                 // Configure
                 sColor.set("#cccccc");
                 sScaleColor.set("#00cc00");
@@ -71,6 +72,7 @@ namespace lsp
                 sGapSize.set(1);
                 sScaleBrightness.set(0.75f);
                 sBalanceTipSize.set(0);
+                sBalanceTipColorCustom.set(false);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Knob, "Knob", "root");
         }
@@ -97,7 +99,8 @@ namespace lsp
             sHoleSize(&sProperties),
             sGapSize(&sProperties),
             sScaleBrightness(&sProperties),
-            sBalanceTipSize(&sProperties)
+            sBalanceTipSize(&sProperties),
+            sBalanceTipColorCustom(&sProperties)
         {
             nLastY      = -1;
             nState      = 0;
@@ -135,6 +138,7 @@ namespace lsp
             sGapSize.bind("gap.size", &sStyle);
             sScaleBrightness.bind("scale.brightness", &sStyle);
             sBalanceTipSize.bind("balance.tip.size", &sStyle);
+            sBalanceTipColorCustom.bind("balance.tip.color.custom", &sStyle);
 
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)
@@ -182,6 +186,8 @@ namespace lsp
             if (sScaleBrightness.is(prop))
                 query_draw();
             if (sBalanceTipSize.is(prop))
+                query_draw();
+            if (sBalanceTipColorCustom.is(prop))
                 query_draw();
         }
 
@@ -475,7 +481,7 @@ namespace lsp
                     float r1    = xr + 1;
                     float r2    = xr - scale * 0.5f;
                     float r3    = xr - scale - 1;
-                    delta   = 0.25f * M_PI / 3.0f;
+                    delta       = 0.25f * M_PI / 3.0f;
 
                     for (size_t i=0; i <= nsectors; ++i)
                     {
@@ -490,10 +496,13 @@ namespace lsp
                 size_t btsz     = (sBalanceTipSize.get() > 0) ? lsp_min(1.0f, sBalanceTipSize.get() * scaling) : 0.0f;
                 if (btsz > 0)
                 {
-                    float delta = btsz / (xr - scale * 0.5f);
-                    scol.copy(sTipColor);
-                    scol.scale_lightness(bright);
+                    if (sBalanceTipColorCustom.get())
+                    {
+                        scol.copy(sTipColor);
+                        scol.scale_lightness(bright);
+                    }
 
+                    delta = btsz / (xr - scale * 0.5f);
                     s->fill_sector(c_x, c_y, xr, v_angle2 - delta, v_angle2 + delta, scol);
                 }
 

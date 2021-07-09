@@ -53,6 +53,7 @@ namespace lsp
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
                 prop::Integer       sBalanceTipSize;
+                prop::Boolean       sBalanceTipColorCustom;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -98,6 +99,7 @@ namespace lsp
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
                 prop::Integer       sBalanceTipSize;
+                prop::Boolean       sBalanceTipColorCustom;
 
             protected:
                 size_t                          check_mouse_over(ssize_t x, ssize_t y);
@@ -118,25 +120,26 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                LSP_TK_PROPERTY(Color,              color,                  &sColor)
-                LSP_TK_PROPERTY(Color,              scale_color,            &sScaleColor)
-                LSP_TK_PROPERTY(Color,              balance_color,          &sBalanceColor)
-                LSP_TK_PROPERTY(Color,              hole_color,             &sHoleColor)
-                LSP_TK_PROPERTY(Color,              tip_color,              &sTipColor)
-                LSP_TK_PROPERTY(Color,              balance_tip_color,      &sBalanceTipColor)
-                LSP_TK_PROPERTY(SizeRange,          size,                   &sSizeRange)
-                LSP_TK_PROPERTY(Float,              scale,                  &sScale)
-                LSP_TK_PROPERTY(RangeFloat,         value,                  &sValue)
-                LSP_TK_PROPERTY(StepFloat,          step,                   &sStep)
-                LSP_TK_PROPERTY(Float,              balance,                &sBalance)
-                LSP_TK_PROPERTY(Boolean,            cycling,                &sCycling)
-                LSP_TK_PROPERTY(Boolean,            scale_marks,            &sScaleMarks)
-                LSP_TK_PROPERTY(Boolean,            balance_color_custom,   &sBalanceColorCustom)
-                LSP_TK_PROPERTY(Boolean,            flat,                   &sFlat)
-                LSP_TK_PROPERTY(Integer,            hole_size,              &sHoleSize)
-                LSP_TK_PROPERTY(Integer,            gap_size,               &sGapSize)
-                LSP_TK_PROPERTY(Float,              scale_brightness,       &sScaleBrightness)
-                LSP_TK_PROPERTY(Integer,            balance_tip_size,       &sBalanceTipSize)
+                LSP_TK_PROPERTY(Color,              color,                      &sColor)
+                LSP_TK_PROPERTY(Color,              scale_color,                &sScaleColor)
+                LSP_TK_PROPERTY(Color,              balance_color,              &sBalanceColor)
+                LSP_TK_PROPERTY(Color,              hole_color,                 &sHoleColor)
+                LSP_TK_PROPERTY(Color,              tip_color,                  &sTipColor)
+                LSP_TK_PROPERTY(Color,              balance_tip_color,          &sBalanceTipColor)
+                LSP_TK_PROPERTY(SizeRange,          size,                       &sSizeRange)
+                LSP_TK_PROPERTY(Float,              scale,                      &sScale)
+                LSP_TK_PROPERTY(RangeFloat,         value,                      &sValue)
+                LSP_TK_PROPERTY(StepFloat,          step,                       &sStep)
+                LSP_TK_PROPERTY(Float,              balance,                    &sBalance)
+                LSP_TK_PROPERTY(Boolean,            cycling,                    &sCycling)
+                LSP_TK_PROPERTY(Boolean,            scale_marks,                &sScaleMarks)
+                LSP_TK_PROPERTY(Boolean,            balance_color_custom,       &sBalanceColorCustom)
+                LSP_TK_PROPERTY(Boolean,            flat,                       &sFlat)
+                LSP_TK_PROPERTY(Integer,            hole_size,                  &sHoleSize)
+                LSP_TK_PROPERTY(Integer,            gap_size,                   &sGapSize)
+                LSP_TK_PROPERTY(Float,              scale_brightness,           &sScaleBrightness)
+                LSP_TK_PROPERTY(Integer,            balance_tip_size,           &sBalanceTipSize)
+                LSP_TK_PROPERTY(Boolean,            balance_tip_color_custom,   &sBalanceTipColorCustom)
 
             public:
                 virtual status_t                on_mouse_down(const ws::event_t *e);
