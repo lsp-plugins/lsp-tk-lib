@@ -146,7 +146,7 @@ namespace lsp
 
                 size_t hole         = (sHole.get()) ? lsp_max(1.0f, scaling) : 0;
                 size_t border       = (sGradient.get()) ? 0 : lsp_max(0.0f, scaling * sBorderSize.get());
-                size_t led          = lsp_max(0.0f, sLed.get() * scaling);
+                size_t led          = (sLed.get() > 0) ? lsp_max(1.0f, sLed.get() * scaling) : 0.0f;
                 extra               = (lsp_max(hole, led) + border) * 2;
             }
             else
@@ -154,7 +154,7 @@ namespace lsp
                 float border        = sBorderSize.get() * scaling;
                 ssize_t chamfer     = lsp_max(0.0f, border);
                 ssize_t hole        = (sHole.get()) ? lsp_max(1, scaling) : 0;
-                ssize_t light       = lsp_max(1, scaling * (sLed.get() + 2));
+                ssize_t light       = (sLed.get() > 0) ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
                 ssize_t outer       = lsp_max(hole, light);
                 extra               = (chamfer + outer) * 2;
 
@@ -180,12 +180,13 @@ namespace lsp
 
         void Led::draw_round(ws::ISurface *s)
         {
-            ws::IGradient *g = NULL;
+            ws::IGradient *g    = NULL;
             float scaling       = lsp_max(0.0f, sScaling.get());
             float brightness    = sBrightness.get();
             size_t sz_hole      = (sHole.get()) ? lsp_max(1.0f, scaling) : 0;
             size_t sz_led       = lsp_max(0.0f, sLed.get() * scaling);
             bool gradient       = sGradient.get();
+            size_t light        = (sLed.get() > 0) ? lsp_max(1.0f, sLed.get() * scaling) : 0.0f;
             size_t border       = (gradient) ? 0 : lsp_max(0.0f, scaling * sBorderSize.get());
             size_t extra        = lsp_max(sz_hole, sz_led) + border;
             bool on             = sOn.get();
@@ -213,9 +214,9 @@ namespace lsp
             if (sHole.get())
                 s->fill_circle(cx, cy, r + sz_hole + border, hole);
 
-            if (on)
+            // Draw light
+            if ((light > 0) && (on))
             {
-                // Draw light
                 g = s->radial_gradient(cx, cy, r + border, cx, cy, xr);
                 g->add_color(0.0, col, 0.5f);
                 g->add_color(1.0, col, 1.0f);
@@ -283,7 +284,7 @@ namespace lsp
             float border        = sBorderSize.get() * scaling;
             ssize_t chamfer     = lsp_max(0.0f, border);
             ssize_t hole        = (sHole.get()) ? lsp_max(1, scaling) : 0;
-            ssize_t light       = lsp_max(1, scaling * (sLed.get() + 2));
+            ssize_t light       = (sLed.get() > 0) ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
             ssize_t outer       = lsp_max(hole, light);
             bool on             = sOn.get();
             bool gradient       = sGradient.get();
@@ -318,7 +319,7 @@ namespace lsp
             }
 
             // Draw light
-            if (on)
+            if ((light > 0) && (on))
             {
                 float c_x   = sSize.nWidth  >> 1;
                 float c_y   = sSize.nHeight >> 1;
