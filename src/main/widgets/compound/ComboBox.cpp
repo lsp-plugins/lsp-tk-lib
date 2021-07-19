@@ -392,6 +392,8 @@ namespace lsp
             r->nMinHeight       = lsp_max(extra, lsp_max(ta.nHeight, sa.nHeight));
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
 
             // Apply size constraints
             sConstraints.apply(r, scaling);

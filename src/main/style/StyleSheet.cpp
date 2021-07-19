@@ -94,6 +94,18 @@ namespace lsp
                     delete s;
             }
             vs.flush();
+
+            // Delete fonts
+            lltl::parray<font_t> vf;
+            vFonts.values(&vf);
+            vFonts.flush();
+            for (size_t i=0, n=vf.size(); i<n; ++i)
+            {
+                font_t *f = vf.uget(i);
+                if (f != NULL)
+                    delete f;
+            }
+            vf.flush();
         }
 
         status_t StyleSheet::parse_document(xml::PullParser *p)

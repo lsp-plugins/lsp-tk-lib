@@ -183,10 +183,12 @@ namespace lsp
                             int(loader->last_error())
                         );
                         is->close();
+                        delete is;
                         return res;
                     }
 
                     is->close();
+                    delete is;
                 }
                 else
                 {

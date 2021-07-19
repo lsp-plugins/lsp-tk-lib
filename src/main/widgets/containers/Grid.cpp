@@ -88,11 +88,7 @@ namespace lsp
 
             vItems.flush();
 
-            for (size_t i=0, n=sAlloc.vCells.size(); i<n; ++i)
-                free_cell(sAlloc.vCells.uget(i));
-
-            sAlloc.vCells.flush();
-            sAlloc.vTable.flush();
+            free_cells(&sAlloc);
         }
 
         void Grid::destroy()
@@ -140,6 +136,15 @@ namespace lsp
 
             cell->pWidget   = NULL;
             free(cell);
+        }
+
+        void Grid::free_cells(alloc_t *alloc)
+        {
+            for (size_t i=0, n=alloc->vCells.size(); i<n; ++i)
+                free_cell(alloc->vCells.uget(i));
+
+            alloc->vCells.flush();
+            alloc->vTable.flush();
         }
 
         status_t Grid::init()
@@ -367,9 +372,7 @@ namespace lsp
                     if (!vItems.remove(i))
                         return STATUS_NO_MEM;
 
-                    sAlloc.vCells.clear();
-                    sAlloc.vTable.clear();
-
+                    free_cells(&sAlloc);
                     unlink_widget(widget);
                     return STATUS_OK;
                 }
@@ -385,10 +388,12 @@ namespace lsp
 //                );
 //
             alloc_t a;
-
             status_t res = allocate_cells(&a);
             if (res != STATUS_OK)
+            {
+                free_cells(&a);
                 return;
+            }
 
             // Distribute the size between rows and columns
             distribute_size(&a.vCols, 0, a.nCols, r->nWidth);
@@ -410,6 +415,9 @@ namespace lsp
 
             // Call parent method to realize
             WidgetContainer::realize(r);
+
+            // Destroy the previously used data
+            free_cells(&a);
         }
 
         void Grid::size_request(ws::size_limit_t *r)
@@ -430,6 +438,9 @@ namespace lsp
 
             // Apply size constraints
             sConstraints.apply(r, scaling);
+
+            free_cells(&a);
+
 
 //            lsp_trace("w={%d, %d}, h={%d, %d}",
 //                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight)

@@ -132,6 +132,7 @@ namespace lsp
                 static void                 realize_children(alloc_t *a);
                 status_t                    attach_internal(ssize_t left, ssize_t top, Widget *widget, size_t rows, size_t cols);
                 static cell_t              *alloc_cell(lltl::parray<cell_t> *list);
+                static void                 free_cells(alloc_t *a);
                 static void                 free_cell(cell_t *cell);
 
             protected:
