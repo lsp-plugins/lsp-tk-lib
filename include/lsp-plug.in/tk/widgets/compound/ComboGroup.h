@@ -189,6 +189,7 @@ namespace lsp
 
                 LSP_TK_PROPERTY(Font,                       list_font,              sLBox.font())
                 LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,                  sLBox.items())
+                LSP_TK_PROPERTY(WidgetList<Widget>,         widgets,                &vWidgets)
 
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

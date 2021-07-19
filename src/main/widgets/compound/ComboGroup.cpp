@@ -298,7 +298,7 @@ namespace lsp
 
         void ComboGroup::on_add_widget(void *obj, Property *prop, void *w)
         {
-            ListBoxItem *item = widget_ptrcast<ListBoxItem>(w);
+            Widget *item = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
@@ -312,7 +312,7 @@ namespace lsp
 
         void ComboGroup::on_remove_widget(void *obj, Property *prop, void *w)
         {
-            ListBoxItem *item = widget_ptrcast<ListBoxItem>(w);
+            Widget *item = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
@@ -651,6 +651,8 @@ namespace lsp
         Widget *ComboGroup::find_widget(ssize_t x, ssize_t y)
         {
             Widget *widget  = current_widget();
+            if (widget == NULL)
+                return NULL;
             if ((widget->is_visible_child_of(this)) && (widget->inside(x, y)))
                 return widget;
 
