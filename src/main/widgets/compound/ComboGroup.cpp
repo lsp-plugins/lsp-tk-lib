@@ -294,6 +294,8 @@ namespace lsp
                     sSelected.set(NULL);
                 query_resize();
             }
+            if (sActive.is(prop))
+                query_resize();
         }
 
         void ComboGroup::on_add_widget(void *obj, Property *prop, void *w)
@@ -319,6 +321,10 @@ namespace lsp
             ComboGroup *_this = widget_ptrcast<ComboGroup>(obj);
             if (_this == NULL)
                 return;
+
+            // Reset active widget if present
+            if (_this->sActive.get() == item)
+                _this->sActive.set(NULL);
 
             _this->unlink_widget(item);
             _this->query_resize();
@@ -389,8 +395,8 @@ namespace lsp
 
             allocate(&alloc);
 
-            ssize_t hpad       = alloc.pad.nLeft + alloc.pad.nRight;
-            ssize_t vpad       = alloc.pad.nTop  + alloc.pad.nBottom;
+            ssize_t hpad        = alloc.pad.nLeft + alloc.pad.nRight;
+            ssize_t vpad        = alloc.pad.nTop  + alloc.pad.nBottom;
 
             Widget *widget      = current_widget();
 
@@ -457,6 +463,10 @@ namespace lsp
 
         Widget *ComboGroup::current_widget()
         {
+            Widget *active  = sActive.get();
+            if ((active != NULL) && (vWidgets.contains(active)))
+                return active;
+
             ListBoxItem *it = sSelected.get();
             ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : NULL;
             return vWidgets.get(index);

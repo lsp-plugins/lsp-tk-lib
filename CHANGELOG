@@ -44,6 +44,7 @@
 - tk::Button now allows to use different colors for different states.
 - Removed obsolete tk::StyleInitializer class.
 - Fixed memory corruption in tk::Grid widget related to invalid cell pointers after reallocation of memory chunk.
+- Additional feature added to ComboGroup that allows to select the active visible widget.
 
 TODO:
 - Add custom mouse pointer for fraction actions.
