@@ -288,7 +288,11 @@ namespace lsp
                 sLabelVisibility[i].bind(&id, &sStyle);
             }
 
-            return STATUS_OK;
+            // Add slots
+            handler_id_t id = 0;
+            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+
+            return (id >= 0) ? STATUS_OK : -id;
         }
 
         void AudioSample::property_changed(Property *prop)
@@ -1148,6 +1152,11 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t AudioSample::on_submit()
+        {
+            return STATUS_OK;
+        }
+
         status_t AudioSample::slot_on_before_popup(Widget *sender, void *ptr, void *data)
         {
             AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
@@ -1160,6 +1169,12 @@ namespace lsp
             AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
             Menu *_menu = widget_ptrcast<Menu>(sender);
             return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t AudioSample::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
         }
     }
 }

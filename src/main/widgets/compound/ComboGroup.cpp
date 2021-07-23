@@ -434,7 +434,6 @@ namespace lsp
 
         void ComboGroup::realize(const ws::rectangle_t *r)
         {
-            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             WidgetContainer::realize(r);
 
             // Compute text and widget area

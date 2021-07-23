@@ -135,6 +135,7 @@ namespace lsp
             protected:
                 static status_t         slot_on_before_popup(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_popup(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
             public:
                 virtual void            size_request(ws::size_limit_t *r);
@@ -222,6 +223,8 @@ namespace lsp
                 virtual status_t            on_before_popup(Menu *menu);
 
                 virtual status_t            on_popup(Menu *menu);
+
+                virtual status_t            on_submit();
         };
     }
 }
