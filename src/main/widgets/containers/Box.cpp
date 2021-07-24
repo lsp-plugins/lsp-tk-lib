@@ -668,8 +668,6 @@ namespace lsp
                 cell_t *w = visible.uget(i);
 
                 w->pWidget->get_padded_size_limits(&sr);
-                lsp_trace("size_request id=%d, parameters = {%d, %d, %d, %d}",
-                    int(i), int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight));
 
                 // Analyze widget class
                 ssize_t x_width     = lsp_max(0, sr.nMinWidth);
@@ -700,8 +698,6 @@ namespace lsp
 
             // Apply size constraints
             sConstraints.apply(r, scaling);
-
-            lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this, int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
         status_t Box::on_mouse_in(const ws::event_t *e)

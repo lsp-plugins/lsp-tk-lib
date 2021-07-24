@@ -237,17 +237,17 @@ namespace lsp
             else
             {
                 if (angle < (-M_PI / 3.0))
-                {
                     sValue.set_normalized((dx > 0) ? 1.0f : 0.0f, false);
-                    return;
+                else
+                {
+                    if (dx < 0.0f)
+                        angle           = M_PI - angle;
+
+                    angle          += M_PI / 3.0;
+
+                    // Update value
+                    sValue.set_normalized(1.0f - (angle / (5.0f * M_PI  / 3.0f)), false);
                 }
-                if (dx < 0.0f)
-                    angle           = M_PI - angle;
-
-                angle          += M_PI / 3.0;
-
-                // Update value
-                sValue.set_normalized(1.0f - (angle / (5.0f * M_PI  / 3.0f)), false);
             }
 
             // Check that we need to notify listeners
@@ -344,7 +344,7 @@ namespace lsp
 
         status_t Knob::on_mouse_move(const ws::event_t *e)
         {
-//            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
+            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
             if (nState == S_MOVING)
             {
                 if (!(nButtons & (ws::MCF_LEFT | ws::MCF_RIGHT)))
