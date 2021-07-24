@@ -145,13 +145,17 @@ namespace lsp
             clear();
 
             // Submit fetched data to callback method
-            if (code == STATUS_OK)
-                code    = receive(&tmp, pMime);
+            code    = (code == STATUS_OK) ? receive(&tmp, pMime) : error(code);
 
             return code;
         }
 
         status_t TextDataSink::receive(const LSPString *text, const char *mime)
+        {
+            return STATUS_OK;
+        }
+
+        status_t TextDataSink::error(status_t code)
         {
             return STATUS_OK;
         }

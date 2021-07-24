@@ -126,7 +126,7 @@ namespace lsp
         status_t GenericWidgetList::remove(size_t index)
         {
             item_t xw;
-            if (sList.remove(index, &xw))
+            if (!sList.remove(index, &xw))
                 return STATUS_INVALID_VALUE;
 
             // Notify listeners

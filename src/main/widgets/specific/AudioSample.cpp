@@ -32,7 +32,7 @@ namespace lsp
     {
         namespace style
         {
-            static const char *label_colors[] =
+            static const char *label_text_color[] =
             {
                 "label.0.text.color",
                 "label.1.text.color",
@@ -59,13 +59,13 @@ namespace lsp
                 "label.4.text.layout"
             };
 
-            static const char *label_visibile[] =
+            static const char *label_visible[] =
             {
-                "label.0.visibile",
-                "label.1.visibile",
-                "label.2.visibile",
-                "label.3.visibile",
-                "label.4.visibile"
+                "label.0.visible",
+                "label.1.visible",
+                "label.2.visible",
+                "label.3.visible",
+                "label.4.visible"
             };
 
             LSP_TK_STYLE_IMPL_BEGIN(AudioSample, WidgetContainer)
@@ -96,10 +96,10 @@ namespace lsp
 
                 for (size_t i=0; i<LABELS; ++i)
                 {
-                    sLabelColor[i].bind(label_colors[i], this);
+                    sLabelColor[i].bind(label_text_color[i], this);
                     sLabelLayout[i].bind(label_layout[i], this);
                     sLabelTextLayout[i].bind(label_text_layout[i], this);
-                    sLabelVisibility[i].bind(label_visibile[i], this);
+                    sLabelVisibility[i].bind(label_visible[i], this);
                 }
 
                 // Configure
@@ -278,14 +278,10 @@ namespace lsp
                 LSPString id;
 
                 sLabel[i].bind(&sStyle, pDisplay->dictionary());
-                id.fmt_ascii("label.%d.text.color", int(i));
-                sLabelColor[i].bind(&id, &sStyle);
-                id.fmt_ascii("label.%d.layout", int(i));
-                sLabelLayout[i].bind(&id, &sStyle);
-                id.fmt_ascii("label.%d.text.layout", int(i));
-                sLabelTextLayout[i].bind(&id, &sStyle);
-                id.fmt_ascii("label.%d.visibility", int(i));
-                sLabelVisibility[i].bind(&id, &sStyle);
+                sLabelColor[i].bind(style::label_text_color[i], &sStyle);
+                sLabelLayout[i].bind(style::label_layout[i], &sStyle);
+                sLabelTextLayout[i].bind(style::label_text_layout[i], &sStyle);
+                sLabelVisibility[i].bind(style::label_visible[i], &sStyle);
             }
 
             // Add slots
