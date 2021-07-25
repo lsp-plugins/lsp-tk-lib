@@ -31,24 +31,42 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Fader, Widget)
                 // Init
-                sColor.bind("color", this);
-                sHoleColor.bind("hole.color", this);
+                sBtnColor.bind("button.color", this);
+                sBtnBorderColor.bind("button.border.color", this);
+                sScaleColor.bind("scale.color", this);
+                sScaleBorderColor.bind("scale.border.color", this);
                 sSizeRange.bind("size", this);
                 sValue.bind("value", this);
                 sStep.bind("step", this);
                 sBtnWidth.bind("button.width", this);
                 sBtnAspect.bind("button.aspect", this);
                 sAngle.bind("angle", this);
+                sScaleWidth.bind("scale.width", this);
+                sScaleBorder.bind("scale.border.size", this);
+                sScaleRadius.bind("scale.border.radius", this);
+                sScaleGradient.bind("scale.border.gradient", this);
                 sBtnPointer.bind("button.pointer", this);
+                sBtnBorder.bind("button.border.size", this);
+                sBtnRadius.bind("button.border.radius", this);
+                sBtnGradient.bind("button.border.gradient", this);
                 // Configure
-                sColor.set("#cccccc");
-                sHoleColor.set("#000000");
+                sBtnColor.set("#cccccc");
+                sBtnBorderColor.set("#cccccc");
+                sScaleColor.set("#000000");
+                sScaleBorderColor.set("#ffffff");
                 sSizeRange.set(64, -1);
                 sValue.set(0.5f);
                 sStep.set(0.01f);
-                sBtnWidth.set(0, 0);
+                sBtnWidth.set(12, 12);
                 sBtnAspect.set(1.41f);
                 sAngle.set(0);
+                sScaleWidth.set(4);
+                sScaleBorder.set(3);
+                sScaleRadius.set(5);
+                sScaleGradient.set(true);
+                sBtnBorder.set(3);
+                sBtnRadius.set(3);
+                sBtnGradient.set(true);
                 sBtnPointer.set(ws::MP_DEFAULT);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Fader, "Fader", "root");
@@ -58,14 +76,23 @@ namespace lsp
         
         Fader::Fader(Display *dpy):
             Widget(dpy),
-            sColor(&sProperties),
-            sHoleColor(&sProperties),
+            sBtnColor(&sProperties),
+            sBtnBorderColor(&sProperties),
+            sScaleColor(&sProperties),
+            sScaleBorderColor(&sProperties),
             sSizeRange(&sProperties),
             sValue(&sProperties),
             sStep(&sProperties),
             sBtnWidth(&sProperties),
             sBtnAspect(&sProperties),
             sAngle(&sProperties),
+            sScaleWidth(&sProperties),
+            sScaleBorder(&sProperties),
+            sScaleRadius(&sProperties),
+            sScaleGradient(&sProperties),
+            sBtnBorder(&sProperties),
+            sBtnRadius(&sProperties),
+            sBtnGradient(&sProperties),
             sBtnPointer(&sProperties)
         {
             nLastV          = 0;
@@ -99,14 +126,23 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
-            sColor.bind("color", &sStyle);
-            sHoleColor.bind("hole.color", &sStyle);
+            sBtnColor.bind("button.color", &sStyle);
+            sBtnBorderColor.bind("button.border.color", &sStyle);
+            sScaleColor.bind("scale.color", &sStyle);
+            sScaleBorderColor.bind("scale.border.color", &sStyle);
             sSizeRange.bind("size", &sStyle);
             sValue.bind("value", &sStyle);
             sStep.bind("step", &sStyle);
             sBtnWidth.bind("button.width", &sStyle);
             sBtnAspect.bind("button.aspect", &sStyle);
             sAngle.bind("angle", &sStyle);
+            sScaleWidth.bind("scale.width", &sStyle);
+            sScaleBorder.bind("scale.border.size", &sStyle);
+            sScaleRadius.bind("scale.border.radius", &sStyle);
+            sScaleGradient.bind("scale.border.gradient", &sStyle);
+            sBtnBorder.bind("button.border.size", &sStyle);
+            sBtnRadius.bind("button.border.radius", &sStyle);
+            sBtnGradient.bind("button.border.gradient", &sStyle);
             sBtnPointer.bind("button.pointer", &sStyle);
 
             handler_id_t id = 0;
@@ -121,9 +157,13 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (sColor.is(prop))
+            if (sBtnColor.is(prop))
                 query_draw();
-            if (sHoleColor.is(prop))
+            if (sBtnBorderColor.is(prop))
+                query_draw();
+            if (sScaleColor.is(prop))
+                query_draw();
+            if (sScaleBorderColor.is(prop))
                 query_draw();
             if (sSizeRange.is(prop))
                 query_resize();
@@ -135,6 +175,20 @@ namespace lsp
                 query_resize();
             if (sAngle.is(prop))
                 query_resize();
+            if (sScaleWidth.is(prop))
+                query_resize();
+            if (sScaleBorder.is(prop))
+                query_resize();
+            if (sScaleRadius.is(prop))
+                query_resize();
+            if (sScaleGradient.is(prop))
+                query_draw();
+            if (sBtnBorder.is(prop))
+                query_resize();
+            if (sBtnRadius.is(prop))
+                query_resize();
+            if (sBtnGradient.is(prop))
+                query_draw();
         }
 
         void Fader::sync_button_pos()
@@ -160,21 +214,29 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             float aspect        = lsp_max(0.0f, sBtnAspect.get());
             size_t angle        = sAngle.get();
+            ssize_t hole_width  = lsp_max(0.0f, sScaleWidth.get() * scaling);
 
-            ssize_t chamfer     = lsp_max(1, scaling * 3.0f);
-            size_t ir           = lsp_max(2, scaling * 2);
-            ssize_t range       = (chamfer + ir)*2;
+            ssize_t schamfer    = (sScaleBorder.get() > 0) ? lsp_max(1, scaling * sScaleBorder.get()) : 0.0f;
+            ssize_t sradius     = (sScaleRadius.get() > 0) ? lsp_max(1, scaling * sScaleRadius.get()) : 0.0f;
+            ssize_t range       = lsp_max(schamfer*2 + hole_width, sradius * 2);
+
+            ssize_t bchamfer    = (sBtnBorder.get() > 0) ? lsp_max(1, scaling * sBtnBorder.get()) : 0.0f;
+            ssize_t bradius     = (sBtnRadius.get() > 0) ? lsp_max(1, scaling * sBtnRadius.get()) : 0.0f;
 
             ssize_t smin, smax, bmin, bmax;
             sSizeRange.compute(&smin, &smax, scaling);
             sBtnWidth.compute(&bmin, &bmax, scaling);
+
+            bmin                = lsp_max(bmin, bchamfer*2 + bradius*2);
+            if (bmax >= 0)
+                bmax                = lsp_max(bmax, bmin);
 
             if (angle & 1) // Vertical
             {
                 // Compute parameters for vertical fader
                 r->nMinWidth        = lsp_max(bmin, range);
                 r->nMaxWidth        = (bmax >= 0) ? lsp_max(bmax, range) : -1;
-                bmin                = lsp_max(r->nMinWidth * aspect, range);
+                bmin                = lsp_max(bmin, ssize_t(r->nMinWidth * aspect), range);
 
                 // Compute boundaries for slider
                 r->nMinHeight       = lsp_max(smin, bmin * 3);
@@ -185,7 +247,7 @@ namespace lsp
                 // Compute parameters for vertical fader
                 r->nMinHeight       = lsp_max(bmin, range);
                 r->nMaxHeight       = (bmax >= 0) ? lsp_max(bmax, range) : -1;
-                bmin                = lsp_max(r->nMinHeight * aspect, range);
+                bmin                = lsp_max(bmin, ssize_t(r->nMinHeight * aspect), range);
 
                 // Compute boundaries for slider
                 r->nMinWidth        = lsp_max(smin, bmin * 3);
@@ -203,10 +265,11 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             float aspect        = lsp_max(0.0f, sBtnAspect.get());
             size_t angle        = sAngle.get();
+            ssize_t hole_width  = lsp_max(0.0f, sScaleWidth.get() * scaling);
 
-            ssize_t chamfer     = lsp_max(1, scaling * 3.0f);
-            size_t ir           = lsp_max(2, scaling * 2);
-            ssize_t range       = (chamfer + ir)*2;
+            ssize_t schamfer    = (sScaleBorder.get() > 0) ? lsp_max(1, scaling * sScaleBorder.get()) : 0.0f;
+            ssize_t sradius     = (sScaleRadius.get() > 0) ? lsp_max(1, scaling * sScaleRadius.get()) : 0.0f;
+            ssize_t range       = lsp_max(schamfer*2 + hole_width, sradius * 2);
 
             sButton.nLeft       = r->nLeft;
             sButton.nTop        = r->nTop;
@@ -396,90 +459,134 @@ namespace lsp
         {
             ws::IGradient *g;
             float scaling       = lsp_max(0.0f, sScaling.get());
-            ssize_t chamfer     = lsp_max(1, scaling * 3.0f);
+            ssize_t schamfer    = (sScaleBorder.get() > 0) ? lsp_max(1, scaling * sScaleBorder.get()) : 0.0f;
+            ssize_t sradius     = (sScaleRadius.get() > 0) ? lsp_max(1, scaling * sScaleRadius.get()) : 0.0f;
+            ssize_t bchamfer    = (sBtnBorder.get() > 0) ? lsp_max(1, scaling * sBtnBorder.get()) : 0.0f;
+            ssize_t bradius     = (sBtnRadius.get() > 0) ? lsp_max(1, scaling * sBtnRadius.get()) : 0.0f;
             size_t angle        = sAngle.get();
+            float bright        = sBrightness.get();
 
             // Prepare palette
             lsp::Color bg_color;
-            lsp::Color color(sColor);
-            lsp::Color hole(bg_color);
+            lsp::Color button(sBtnColor);
+            lsp::Color scale(sScaleColor);
+            lsp::Color bborder(sBtnBorderColor);
+            lsp::Color sborder(sScaleBorderColor);
 
             get_actual_bg_color(bg_color);
-            color.scale_lightness(sBrightness.get());
+            button.scale_lightness(bright);
+            scale.scale_lightness(bright);
 
             // Clear surface
             s->clear(bg_color);
+            bool aa             = s->set_antialiasing(true);
 
             // Draw the hole
             ws::rectangle_t h   = sHole;
-            bool aa             = s->set_antialiasing(true);
-            float delta         = (angle & 1) ? sSize.nHeight : sSize.nWidth;
-            ssize_t xr          = (angle & 1) ? sHole.nWidth >> 1 : sHole.nHeight >> 1;
             h.nLeft            -= sSize.nLeft;
             h.nTop             -= sSize.nTop;
 
-            for (ssize_t i=0; i<chamfer; ++i)
+            if (sScaleGradient.get())
             {
-                // Compute color
-                float bright = float(chamfer - i) / chamfer;
-                hole.lightness(bright);
+                float delta         = (angle & 1) ? sSize.nHeight : sSize.nWidth;
 
-                if (angle & 1) // vertical
-                    g = s->radial_gradient(0, sSize.nHeight, scaling, 0, sSize.nHeight, delta);
-                else // horizontal
-                    g = s->radial_gradient(0, sSize.nHeight, scaling, 0, sSize.nHeight, delta);
+                for (ssize_t i=0; i<schamfer; ++i)
+                {
+                    // Compute button
+                    float l = float(schamfer - i) / schamfer;
+                    sborder.lightness(l);
+                    sborder.scale_lightness(bright);
 
-                g->add_color(0.0, hole);
-                g->add_color(1.0, 0.5 * hole.red(), 0.5 *  hole.green(), 0.5 * hole.blue());
-                s->fill_round_rect(g, SURFMASK_ALL_CORNER, xr--, &h);
-                delete g;
+                    if (angle & 1) // vertical
+                        g = s->radial_gradient(0, sSize.nHeight, scaling, 0, sSize.nHeight, delta);
+                    else // horizontal
+                        g = s->radial_gradient(0, sSize.nHeight, scaling, 0, sSize.nHeight, delta);
 
-                h.nLeft        += 1;
-                h.nTop         += 1;
-                h.nWidth       -= 2;
-                h.nHeight      -= 2;
+                    g->add_color(0.0, sborder);
+                    g->add_color(1.0, 0.5 * sborder.red(), 0.5 *  sborder.green(), 0.5 * sborder.blue());
+                    s->fill_round_rect(g, SURFMASK_ALL_CORNER, sradius, &h);
+                    delete g;
+
+                    h.nLeft        += 1;
+                    h.nTop         += 1;
+                    h.nWidth       -= 2;
+                    h.nHeight      -= 2;
+                    sradius         = lsp_max(0, sradius - 1);
+                }
+
+                // Draw the scale
+                s->fill_round_rect(scale, SURFMASK_ALL_CORNER, sradius, &h);
+            }
+            else
+            {
+                // Just draw simple border
+                sborder.scale_lightness(bright);
+                s->fill_round_rect(sborder, SURFMASK_ALL_CORNER, sradius, &h);
+                sradius         = lsp_max(0, sradius - schamfer);
+                h.nLeft        += schamfer;
+                h.nTop         += schamfer;
+                h.nWidth       -= (schamfer << 1);
+                h.nHeight      -= (schamfer << 1);
+
+                // Fill the scale
+                s->fill_round_rect(scale, SURFMASK_ALL_CORNER, sradius, &h);
             }
 
-            hole.copy(sHoleColor);
-            s->fill_round_rect(hole, SURFMASK_ALL_CORNER, xr--, &h);
-
             // Draw button
-            delta           = sqrtf(sButton.nWidth * sButton.nWidth + sButton.nHeight * sButton.nHeight) * 0.5f;
             h               = sButton;
             h.nLeft        -= sSize.nLeft;
             h.nTop         -= sSize.nTop;
-            xr              = chamfer + scaling;
-            float xb        = color.lightness();
 
-            for (ssize_t i=0; i<chamfer; ++i)
+            if (sBtnGradient.get())
             {
-                // Compute color
-                float bright        = float(i + 1.0f) / (chamfer + 1);
+                float delta     = sqrtf(sButton.nWidth * sButton.nWidth + sButton.nHeight * sButton.nHeight) * 0.5f;
+                float xb        = button.lightness();
 
-                // Create gradient
-                g = s->radial_gradient(h.nLeft + h.nWidth + chamfer, h.nTop - chamfer, 0, h.nLeft + h.nWidth + chamfer, h.nTop - chamfer, delta);
-                color.lightness(1.0f);
-                g->add_color(0.0, color.red(), color.green(), color.blue());
-                color.lightness(xb * bright);
-                g->add_color(1.0, color.red(), color.green(), color.blue());
-                s->fill_round_rect(g, SURFMASK_ALL_CORNER, xr--, &h);
+                for (ssize_t i=0; i<bchamfer; ++i)
+                {
+                    // Compute button
+                    float l        = float(i + 1.0f) / (bchamfer + 1);
+
+                    // Create gradient
+                    g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, 0, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
+                    bborder.lightness(1.0f);
+                    g->add_color(0.0, bborder.red(), bborder.green(), bborder.blue());
+                    bborder.lightness(xb * l);
+                    g->add_color(1.0, bborder.red(), bborder.green(), bborder.blue());
+                    s->fill_round_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
+                    delete g;
+
+                    // Update rect
+                    h.nLeft        += 1;
+                    h.nTop         += 1;
+                    h.nWidth       -= 2;
+                    h.nHeight      -= 2;
+                    bradius         = lsp_max(0, bradius - 1);
+                }
+
+                // Draw button face
+                g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, 0, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
+                button.lightness(1.0f);
+                g->add_color(0.0, button.red(), button.green(), button.blue());
+                button.lightness(xb);
+                g->add_color(1.0, button.red(), button.green(), button.blue());
+                s->fill_round_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
                 delete g;
-
-                // Update rect
-                h.nLeft        += 1;
-                h.nTop         += 1;
-                h.nWidth       -= 2;
-                h.nHeight      -= 2;
             }
+            else
+            {
+                // Just draw simple border
+                bborder.scale_lightness(bright);
+                s->fill_round_rect(bborder, SURFMASK_ALL_CORNER, bradius, &h);
+                bradius         = lsp_max(0, bradius - bchamfer);
+                h.nLeft        += bchamfer;
+                h.nTop         += bchamfer;
+                h.nWidth       -= (bchamfer << 1);
+                h.nHeight      -= (bchamfer << 1);
 
-            // Draw button face
-            g = s->radial_gradient(h.nLeft + h.nWidth + chamfer, h.nTop - chamfer, 0, h.nLeft + h.nWidth + chamfer, h.nTop - chamfer, delta);
-            color.lightness(1.0f);
-            g->add_color(0.0, color.red(), color.green(), color.blue());
-            color.lightness(xb);
-            g->add_color(1.0, color.red(), color.green(), color.blue());
-            s->fill_round_rect(g, SURFMASK_ALL_CORNER, xr, &h);
-            delete g;
+                // Fill the button
+                s->fill_round_rect(button, SURFMASK_ALL_CORNER, bradius, &h);
+            }
 
             // Restore antialiasing
             s->set_antialiasing(aa);

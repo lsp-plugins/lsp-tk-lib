@@ -63,7 +63,7 @@ namespace lsp
                     nMin            = lsp_max(-1, xv[0]);
                     nMax            = lsp_max(-1, xv[1]);
                 }
-                else if (n == 2)
+                else if (n == 1)
                 {
                     nMin            = lsp_max(-1, xv[0]);
                     nMax            = nMin;

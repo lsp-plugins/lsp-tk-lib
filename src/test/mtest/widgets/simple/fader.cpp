@@ -214,7 +214,8 @@ MTEST_BEGIN("tk.widgets.simple", fader)
             MTEST_ASSERT(widgets.push(fd));
             MTEST_ASSERT(grid->add(fd, 1, 8) == STATUS_OK);
 
-            fd->color()->set_rgb24(next_color(col));
+            fd->button_color()->set_rgb24(next_color(col));
+            fd->button_border_color()->set(fd->button_color());
             fd->button_width()->set(14);
             fd->button_pointer()->set(ws::MP_HSIZE);
 
@@ -228,7 +229,8 @@ MTEST_BEGIN("tk.widgets.simple", fader)
                 MTEST_ASSERT(widgets.push(fd));
                 MTEST_ASSERT(grid->add(fd) == STATUS_OK);
 
-                fd->color()->set_rgb24(next_color(col));
+                fd->button_color()->set_rgb24(next_color(col));
+                fd->button_border_color()->set(fd->button_color());
                 fd->value()->set(x / 7.0);
                 fd->button_width()->set(18);
                 fd->button_aspect()->set((x + 1.0f) / 4.0f);
@@ -244,7 +246,8 @@ MTEST_BEGIN("tk.widgets.simple", fader)
             MTEST_ASSERT(widgets.push(fd));
             MTEST_ASSERT(grid->add(fd, 1, 8) == STATUS_OK);
 
-            fd->color()->set_rgb24(next_color(col));
+            fd->button_color()->set_rgb24(next_color(col));
+            fd->button_border_color()->set(fd->button_color());
             fd->button_pointer()->set(ws::MP_HSIZE);
         }
 

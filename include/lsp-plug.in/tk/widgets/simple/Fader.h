@@ -34,14 +34,23 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(Fader, Widget)
-                prop::Color                     sColor;
-                prop::Color                     sHoleColor;
+                prop::Color                     sBtnColor;
+                prop::Color                     sBtnBorderColor;
+                prop::Color                     sScaleColor;
+                prop::Color                     sScaleBorderColor;
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
                 prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;
                 prop::Float                     sBtnAspect;
                 prop::Integer                   sAngle;
+                prop::Integer                   sScaleWidth;
+                prop::Integer                   sScaleBorder;
+                prop::Integer                   sScaleRadius;
+                prop::Boolean                   sScaleGradient;
+                prop::Integer                   sBtnBorder;
+                prop::Integer                   sBtnRadius;
+                prop::Boolean                   sBtnGradient;
                 prop::Pointer                   sBtnPointer;
             LSP_TK_STYLE_DEF_END
         }
@@ -75,14 +84,23 @@ namespace lsp
                 ws::rectangle_t                 sButton;
                 ws::rectangle_t                 sHole;
 
-                prop::Color                     sColor;
-                prop::Color                     sHoleColor;
+                prop::Color                     sBtnColor;
+                prop::Color                     sBtnBorderColor;
+                prop::Color                     sScaleColor;
+                prop::Color                     sScaleBorderColor;
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
                 prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;
                 prop::Float                     sBtnAspect;
                 prop::Integer                   sAngle;
+                prop::Integer                   sScaleWidth;
+                prop::Integer                   sScaleBorder;
+                prop::Integer                   sScaleRadius;
+                prop::Boolean                   sScaleGradient;
+                prop::Integer                   sBtnBorder;
+                prop::Integer                   sBtnRadius;
+                prop::Boolean                   sBtnGradient;
                 prop::Pointer                   sBtnPointer;
 
             protected:
@@ -108,8 +126,10 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                LSP_TK_PROPERTY(Color,          color,                      &sColor);
-                LSP_TK_PROPERTY(Color,          hole_color,                 &sHoleColor);
+                LSP_TK_PROPERTY(Color,          button_color,               &sBtnColor);
+                LSP_TK_PROPERTY(Color,          button_border_color,        &sBtnBorderColor);
+                LSP_TK_PROPERTY(Color,          scale_color,                &sScaleColor);
+                LSP_TK_PROPERTY(Color,          scale_border_color,         &sScaleBorderColor);
                 LSP_TK_PROPERTY(SizeRange,      size,                       &sSizeRange);
                 LSP_TK_PROPERTY(RangeFloat,     value,                      &sValue);
                 LSP_TK_PROPERTY(StepFloat,      step,                       &sStep);
@@ -117,6 +137,13 @@ namespace lsp
                 LSP_TK_PROPERTY(Float,          button_aspect,              &sBtnAspect);
                 LSP_TK_PROPERTY(Pointer,        button_pointer,             &sBtnPointer);
                 LSP_TK_PROPERTY(Integer,        angle,                      &sAngle);
+                LSP_TK_PROPERTY(Integer,        scale_width,                &sScaleWidth);
+                LSP_TK_PROPERTY(Integer,        scale_border,               &sScaleBorder);
+                LSP_TK_PROPERTY(Integer,        scale_radius,               &sScaleRadius);
+                LSP_TK_PROPERTY(Boolean,        scale_gradient,             &sScaleGradient);
+                LSP_TK_PROPERTY(Integer,        button_border,              &sBtnBorder);
+                LSP_TK_PROPERTY(Integer,        button_radius,              &sBtnRadius);
+                LSP_TK_PROPERTY(Boolean,        button_gradient,            &sBtnGradient);
 
             public:
 
