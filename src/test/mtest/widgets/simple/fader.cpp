@@ -196,7 +196,7 @@ MTEST_BEGIN("tk.widgets.simple", fader)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(3);
+        grid->rows()->set(4);
         grid->columns()->set(8);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -218,6 +218,10 @@ MTEST_BEGIN("tk.widgets.simple", fader)
             fd->button_border_color()->set(fd->button_color());
             fd->button_width()->set(14);
             fd->button_pointer()->set(ws::MP_HSIZE);
+            fd->balance_color()->set_rgb24(0xffff00);
+            fd->balance_color_custom()->set(true);
+            fd->angle()->set(0);
+            fd->balance()->set(0.5f);
 
             // Create vertical faders
             for (ssize_t x=0; x<8; ++x)
@@ -235,8 +239,34 @@ MTEST_BEGIN("tk.widgets.simple", fader)
                 fd->button_width()->set(18);
                 fd->button_aspect()->set((x + 1.0f) / 4.0f);
                 fd->button_pointer()->set(ws::MP_VSIZE);
+                fd->balance_color()->set_rgb24(0xffff00);
+                fd->balance_color_custom()->set(true);
 
                 fd->angle()->set(1);
+                fd->balance()->set(0.5f);
+            }
+
+            // Create vertical faders
+            for (ssize_t x=0; x<8; ++x)
+            {
+                // Create alignment widget
+                MTEST_ASSERT(id.fmt_ascii("vfader-%d-0", x));
+                MTEST_ASSERT(fd = new tk::Fader(dpy));
+                MTEST_ASSERT(init_widget(fd, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(fd));
+                MTEST_ASSERT(grid->add(fd) == STATUS_OK);
+
+                fd->button_color()->set_rgb24(next_color(col));
+                fd->button_border_color()->set(fd->button_color());
+                fd->value()->set(x / 7.0);
+                fd->button_width()->set(18);
+                fd->button_aspect()->set((x + 1.0f) / 4.0f);
+                fd->button_pointer()->set(ws::MP_VSIZE);
+                fd->balance_color()->set_rgb24(0xffff00);
+                fd->balance_color_custom()->set(true);
+
+                fd->angle()->set(3);
+                fd->balance()->set(0.5f);
             }
 
             // Create horizontal fader
@@ -249,6 +279,10 @@ MTEST_BEGIN("tk.widgets.simple", fader)
             fd->button_color()->set_rgb24(next_color(col));
             fd->button_border_color()->set(fd->button_color());
             fd->button_pointer()->set(ws::MP_HSIZE);
+            fd->balance_color()->set_rgb24(0xffff00);
+            fd->balance_color_custom()->set(true);
+            fd->angle()->set(2);
+            fd->balance()->set(0.5f);
         }
 
         // Show window

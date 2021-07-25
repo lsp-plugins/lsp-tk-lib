@@ -438,7 +438,9 @@ namespace lsp
             {
                 ssize_t range   = (angle & 1) ? sSize.nHeight - sButton.nHeight : sSize.nWidth - sButton.nWidth;
                 float delta     = sValue.range() * float(value - nLastV) / range; // normalized
-                float accel     = 1.0f;;
+                if (angle >= 2)
+                    delta           = -delta;
+                float accel     = 1.0f;
 
                 if (nXFlags & F_PRECISION)
                 {
@@ -573,38 +575,43 @@ namespace lsp
                 s->fill_round_rect(sdcol, SURFMASK_ALL_CORNER, sradius, &h);
                 float balance   = sValue.get_normalized(sBalance.get());
                 float value     = sValue.get_normalized();
-                if (angle & 2)
+
+                ssize_t boff, bval;
+                ws::rectangle_t c   = sSize;
+                c.nLeft        -= sSize.nLeft;
+                c.nTop         -= sSize.nTop;
+
+                switch (angle & 3)
                 {
-                    balance         = 1.0f - balance;
-                    value           = 1.0f - value;
-                }
-
-                ssize_t range   = (angle & 1) ? sSize.nHeight - sButton.nHeight : sSize.nWidth - sButton.nWidth;
-                ssize_t start   = (angle & 1) ? (sButton.nHeight >> 1) : (sButton.nWidth >> 1);
-                ssize_t boff    = start + range * balance;
-                ssize_t bval    = start + range * value;
-
-                if (boff != bval)
-                {
-                    ws::rectangle_t c   = sSize;
-                    c.nLeft        -= sSize.nLeft;
-                    c.nTop         -= sSize.nTop;
-
-                    if (angle & 1)
-                    {
+                    case 0: // +
+                        boff            = sHole.nLeft - sSize.nLeft + sHole.nWidth * balance;
+                        bval            = sHole.nLeft - sSize.nLeft + sHole.nWidth * value;
+                        c.nLeft         = lsp_min(boff, bval);
+                        c.nWidth        = lsp_max(boff, bval) - c.nLeft;
+                        break;
+                    case 1:
+                        boff            = sHole.nTop - sSize.nTop + sHole.nHeight * (1.0f - balance);
+                        bval            = sHole.nTop - sSize.nTop + sHole.nHeight * (1.0f - value);
                         c.nTop          = lsp_min(boff, bval);
                         c.nHeight       = lsp_max(boff, bval) - c.nTop;
-                    }
-                    else
-                    {
+                        break;
+                    case 2:
+                        boff            = sHole.nLeft - sSize.nLeft + sHole.nWidth * balance;
+                        bval            = sHole.nLeft - sSize.nLeft + sHole.nWidth * value;
                         c.nLeft         = lsp_min(boff, bval);
-                        c.nWidth        = lsp_max(boff, bval) - c.nTop;
-                    }
-
-                    s->clip_begin(&c);
-                    s->fill_round_rect(scol, SURFMASK_ALL_CORNER, sradius, &h);
-                    s->clip_end();
+                        c.nWidth        = lsp_max(boff, bval) - c.nLeft;
+                        break;
+                    default:  // +
+                        boff            = sHole.nTop - sSize.nTop + sHole.nHeight * (1.0f - balance);
+                        bval            = sHole.nTop - sSize.nTop + sHole.nHeight * (1.0f - value);
+                        c.nTop          = lsp_min(boff, bval);
+                        c.nHeight       = lsp_max(boff, bval) - c.nTop;
+                        break;
                 }
+
+                s->clip_begin(&c);
+                s->fill_round_rect(scol, SURFMASK_ALL_CORNER, sradius, &h);
+                s->clip_end();
             }
 
 
