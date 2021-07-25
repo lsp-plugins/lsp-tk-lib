@@ -35,6 +35,7 @@ namespace lsp
                 sBtnBorderColor.bind("button.border.color", this);
                 sScaleColor.bind("scale.color", this);
                 sScaleBorderColor.bind("scale.border.color", this);
+                sBalanceColor.bind("balance.color", this);
                 sSizeRange.bind("size", this);
                 sValue.bind("value", this);
                 sStep.bind("step", this);
@@ -49,11 +50,15 @@ namespace lsp
                 sBtnBorder.bind("button.border.size", this);
                 sBtnRadius.bind("button.border.radius", this);
                 sBtnGradient.bind("button.border.gradient", this);
+                sBalance.bind("balance", this);
+                sScaleBrightness.bind("scale.brightness", this);
+                sBalanceColorCustom.bind("balance.color.custom", this);
                 // Configure
                 sBtnColor.set("#cccccc");
                 sBtnBorderColor.set("#cccccc");
                 sScaleColor.set("#000000");
                 sScaleBorderColor.set("#ffffff");
+                sBalanceColor.set("#000000");
                 sSizeRange.set(64, -1);
                 sValue.set(0.5f);
                 sStep.set(0.01f);
@@ -68,6 +73,9 @@ namespace lsp
                 sBtnRadius.set(3);
                 sBtnGradient.set(true);
                 sBtnPointer.set(ws::MP_DEFAULT);
+                sBalance.set(0.0f);
+                sScaleBrightness.set(0.75f);
+                sBalanceColorCustom.set(false);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Fader, "Fader", "root");
         }
@@ -80,6 +88,7 @@ namespace lsp
             sBtnBorderColor(&sProperties),
             sScaleColor(&sProperties),
             sScaleBorderColor(&sProperties),
+            sBalanceColor(&sProperties),
             sSizeRange(&sProperties),
             sValue(&sProperties),
             sStep(&sProperties),
@@ -93,7 +102,10 @@ namespace lsp
             sBtnBorder(&sProperties),
             sBtnRadius(&sProperties),
             sBtnGradient(&sProperties),
-            sBtnPointer(&sProperties)
+            sBtnPointer(&sProperties),
+            sBalance(&sProperties),
+            sScaleBrightness(&sProperties),
+            sBalanceColorCustom(&sProperties)
         {
             nLastV          = 0;
             nButtons        = 0;
@@ -130,6 +142,7 @@ namespace lsp
             sBtnBorderColor.bind("button.border.color", &sStyle);
             sScaleColor.bind("scale.color", &sStyle);
             sScaleBorderColor.bind("scale.border.color", &sStyle);
+            sBalanceColor.bind("balance.color", &sStyle);
             sSizeRange.bind("size", &sStyle);
             sValue.bind("value", &sStyle);
             sStep.bind("step", &sStyle);
@@ -144,6 +157,9 @@ namespace lsp
             sBtnRadius.bind("button.border.radius", &sStyle);
             sBtnGradient.bind("button.border.gradient", &sStyle);
             sBtnPointer.bind("button.pointer", &sStyle);
+            sBalance.bind("balance", &sStyle);
+            sScaleBrightness.bind("scale.brightness", &sStyle);
+            sBalanceColorCustom.bind("balance.color.custom", &sStyle);
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -164,6 +180,8 @@ namespace lsp
             if (sScaleColor.is(prop))
                 query_draw();
             if (sScaleBorderColor.is(prop))
+                query_draw();
+            if (sBalanceColor.is(prop))
                 query_draw();
             if (sSizeRange.is(prop))
                 query_resize();
@@ -188,6 +206,12 @@ namespace lsp
             if (sBtnRadius.is(prop))
                 query_resize();
             if (sBtnGradient.is(prop))
+                query_draw();
+            if (sBalance.is(prop))
+                query_draw();
+            if (sScaleBrightness.is(prop))
+                query_draw();
+            if (sBalanceColorCustom.is(prop))
                 query_draw();
         }
 
@@ -469,13 +493,31 @@ namespace lsp
             // Prepare palette
             lsp::Color bg_color;
             lsp::Color button(sBtnColor);
-            lsp::Color scale(sScaleColor);
+            lsp::Color scol, sdcol;
             lsp::Color bborder(sBtnBorderColor);
             lsp::Color sborder(sScaleBorderColor);
 
+            if (sBalanceColorCustom.get())
+            {
+                scol.copy(sBalanceColor);
+                sdcol.copy(sScaleColor);
+
+                scol.scale_lightness(bright);
+                sdcol.scale_lightness(bright);
+            }
+            else
+            {
+                scol.copy(sScaleColor);
+                sdcol.copy(sScaleColor);
+
+                scol.scale_lightness(bright);
+                sdcol.scale_lightness(sScaleBrightness.get() * bright);
+            }
+
             get_actual_bg_color(bg_color);
             button.scale_lightness(bright);
-            scale.scale_lightness(bright);
+            scol.scale_lightness(bright);
+            sdcol.scale_lightness(bright);
 
             // Clear surface
             s->clear(bg_color);
@@ -513,9 +555,6 @@ namespace lsp
                     h.nHeight      -= 2;
                     sradius         = lsp_max(0, sradius - 1);
                 }
-
-                // Draw the scale
-                s->fill_round_rect(scale, SURFMASK_ALL_CORNER, sradius, &h);
             }
             else
             {
@@ -527,10 +566,47 @@ namespace lsp
                 h.nTop         += schamfer;
                 h.nWidth       -= (schamfer << 1);
                 h.nHeight      -= (schamfer << 1);
-
-                // Fill the scale
-                s->fill_round_rect(scale, SURFMASK_ALL_CORNER, sradius, &h);
             }
+
+            // Draw the scale
+            {
+                s->fill_round_rect(sdcol, SURFMASK_ALL_CORNER, sradius, &h);
+                float balance   = sValue.get_normalized(sBalance.get());
+                float value     = sValue.get_normalized();
+                if (angle & 2)
+                {
+                    balance         = 1.0f - balance;
+                    value           = 1.0f - value;
+                }
+
+                ssize_t range   = (angle & 1) ? sSize.nHeight - sButton.nHeight : sSize.nWidth - sButton.nWidth;
+                ssize_t start   = (angle & 1) ? (sButton.nHeight >> 1) : (sButton.nWidth >> 1);
+                ssize_t boff    = start + range * balance;
+                ssize_t bval    = start + range * value;
+
+                if (boff != bval)
+                {
+                    ws::rectangle_t c   = sSize;
+                    c.nLeft        -= sSize.nLeft;
+                    c.nTop         -= sSize.nTop;
+
+                    if (angle & 1)
+                    {
+                        c.nTop          = lsp_min(boff, bval);
+                        c.nHeight       = lsp_max(boff, bval) - c.nTop;
+                    }
+                    else
+                    {
+                        c.nLeft         = lsp_min(boff, bval);
+                        c.nWidth        = lsp_max(boff, bval) - c.nTop;
+                    }
+
+                    s->clip_begin(&c);
+                    s->fill_round_rect(scol, SURFMASK_ALL_CORNER, sradius, &h);
+                    s->clip_end();
+                }
+            }
+
 
             // Draw button
             h               = sButton;

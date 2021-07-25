@@ -38,6 +38,7 @@ namespace lsp
                 prop::Color                     sBtnBorderColor;
                 prop::Color                     sScaleColor;
                 prop::Color                     sScaleBorderColor;
+                prop::Color                     sBalanceColor;
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
                 prop::StepFloat                 sStep;
@@ -52,6 +53,9 @@ namespace lsp
                 prop::Integer                   sBtnRadius;
                 prop::Boolean                   sBtnGradient;
                 prop::Pointer                   sBtnPointer;
+                prop::Float                     sBalance;
+                prop::Float                     sScaleBrightness;
+                prop::Boolean                   sBalanceColorCustom;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -88,6 +92,7 @@ namespace lsp
                 prop::Color                     sBtnBorderColor;
                 prop::Color                     sScaleColor;
                 prop::Color                     sScaleBorderColor;
+                prop::Color                     sBalanceColor;
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
                 prop::StepFloat                 sStep;
@@ -102,6 +107,9 @@ namespace lsp
                 prop::Integer                   sBtnRadius;
                 prop::Boolean                   sBtnGradient;
                 prop::Pointer                   sBtnPointer;
+                prop::Float                     sBalance;
+                prop::Float                     sScaleBrightness;
+                prop::Boolean                   sBalanceColorCustom;
 
             protected:
                 float                           limit_value(float value);
@@ -130,6 +138,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,          button_border_color,        &sBtnBorderColor);
                 LSP_TK_PROPERTY(Color,          scale_color,                &sScaleColor);
                 LSP_TK_PROPERTY(Color,          scale_border_color,         &sScaleBorderColor);
+                LSP_TK_PROPERTY(Color,          balance_color,              &sBalanceColor);
                 LSP_TK_PROPERTY(SizeRange,      size,                       &sSizeRange);
                 LSP_TK_PROPERTY(RangeFloat,     value,                      &sValue);
                 LSP_TK_PROPERTY(StepFloat,      step,                       &sStep);
@@ -144,6 +153,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,        button_border,              &sBtnBorder);
                 LSP_TK_PROPERTY(Integer,        button_radius,              &sBtnRadius);
                 LSP_TK_PROPERTY(Boolean,        button_gradient,            &sBtnGradient);
+                LSP_TK_PROPERTY(Float,          balance,                    &sBalance);
+                LSP_TK_PROPERTY(Float,          scale_brightness,           &sScaleBrightness);
+                LSP_TK_PROPERTY(Boolean,        balance_color_custom,       &sBalanceColorCustom);
 
             public:
 
