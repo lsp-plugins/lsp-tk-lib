@@ -339,7 +339,7 @@ namespace lsp
             ssize_t hitems      = (pack && has_text) ? ((list.size() + 1) >> 1) : list.size();
             size_t hlimit       = (pack && has_text) ? list.size() & (~1) : hitems;
             ssize_t payload     = (pack && has_text) ? (hitems << 1) : hitems;
-            ssize_t hsegsize    = ((angle & 1) ? xr.nWidth : xr.nHeight) / payload;
+            ssize_t hsegsize    = ((angle & 1) ? xr.nWidth : xr.nHeight) / lsp_max(1, payload);
             ssize_t hgap        = ((angle & 1) ? xr.nWidth : xr.nHeight) - (hsegsize * payload);
 
             // Allocate meters
