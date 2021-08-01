@@ -260,6 +260,23 @@ namespace lsp
             return STATUS_OK;
         }
 
+        void ColorRanges::clear()
+        {
+            lltl::parray<ColorRange> ranges;
+            ranges.swap(vItems);
+
+            for (size_t i=0, n=ranges.size(); i<n; ++i)
+            {
+                ColorRange *r = ranges.uget(i);
+                if (r == NULL)
+                    continue;
+                delete r;
+            }
+            ranges.flush();
+
+            sync();
+        }
+
         status_t ColorRanges::premove(const ColorRange *s)
         {
             // Lookup for the entry

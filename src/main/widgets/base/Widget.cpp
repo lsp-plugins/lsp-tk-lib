@@ -60,12 +60,14 @@ namespace lsp
             LSP_TK_BUILTIN_STYLE(Widget, "Widget", "root");
         }
 
+        //---------------------------------------------------------------------
         void Widget::PropListener::notify(Property *prop)
         {
             if (pWidget->valid())
                 pWidget->property_changed(prop);
         }
 
+        //---------------------------------------------------------------------
         const w_class_t Widget::metadata = { "Widget", NULL };
 
         Widget::Widget(Display *dpy):

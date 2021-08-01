@@ -297,6 +297,24 @@ namespace lsp
             sync();
         }
 
+        void Color::set(const Color &src)
+        {
+            sColor.copy(&src.sColor);
+            sync();
+        }
+
+        void Color::set(const lsp::Color *src)
+        {
+            sColor.copy(src);
+            sync();
+        }
+
+        void Color::set(const lsp::Color &src)
+        {
+            sColor.copy(src);
+            sync();
+        }
+
         void Color::set(const ColorRange *src)
         {
             sColor.copy(src->color());

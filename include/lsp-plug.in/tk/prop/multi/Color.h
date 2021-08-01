@@ -116,6 +116,9 @@ namespace lsp
                 void set(const char *text);
                 void set(const LSPString *text);
                 void set(const Color *src);
+                void set(const Color &src);
+                void set(const lsp::Color *src);
+                void set(const lsp::Color &src);
                 void set(const ColorRange *src);
 
             public:

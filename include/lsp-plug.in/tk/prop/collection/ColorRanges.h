@@ -79,6 +79,11 @@ namespace lsp
 
             public:
                 /**
+                 * Clear the collection
+                 */
+                void                clear();
+
+                /**
                  * Insert color range at the specified position
                  * @param index index to place the string
                  * @return inserted color range or NULL on error
