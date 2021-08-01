@@ -138,7 +138,14 @@ namespace lsp
                 expr::token_t tok = t.get_token(expr::TF_GET);
                 if (tok == expr::TT_EOF)
                     break;
-                t.unget();
+
+                if (out->size() > 0)
+                {
+                    if (tok != expr::TT_COMMA)
+                        return STATUS_BAD_FORMAT;
+                }
+                else
+                    t.unget();
 
                 // Create color range
                 ColorRange *c = create_item();
