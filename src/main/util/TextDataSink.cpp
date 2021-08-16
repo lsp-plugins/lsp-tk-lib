@@ -98,11 +98,13 @@ namespace lsp
             }
 
             // Commit data
+            LSPString tmp;
+
             if (code == STATUS_OK)
             {
-                LSPString tmp;
+                bool ok     = false;
+                code        = STATUS_NO_MEM;
 
-                bool ok = false;
                 switch (nMime)
                 {
                     case 0: // text/plain;charset=utf-8
@@ -136,16 +138,24 @@ namespace lsp
 
                 // Successful set?
                 if (ok)
-                    code    = receive(&tmp, pMime);
+                    code    = STATUS_OK;
             }
 
             // Drop data
             clear();
 
+            // Submit fetched data to callback method
+            code    = (code == STATUS_OK) ? receive(&tmp, pMime) : error(code);
+
             return code;
         }
 
         status_t TextDataSink::receive(const LSPString *text, const char *mime)
+        {
+            return STATUS_OK;
+        }
+
+        status_t TextDataSink::error(status_t code)
         {
             return STATUS_OK;
         }

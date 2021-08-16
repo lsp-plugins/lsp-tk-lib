@@ -28,46 +28,57 @@ namespace lsp
     {
         void draw_border(ws::ISurface *s,
                 const lsp::Color &c, size_t mask, ssize_t thick, size_t iradius,
-                ssize_t left, ssize_t top, ssize_t width, ssize_t height
+                const ws::rectangle_t *size, bool flat
         )
         {
             // Draw border
             bool aa = s->set_antialiasing(true);
 
-            float pr = sqrtf(float(width*width) + float(height*height));
+            float pr = sqrtf(float(size->nWidth*size->nWidth) + float(size->nHeight*size->nHeight));
 
-            for (ssize_t i=0; i < thick; ++i)
+            if (flat)
             {
-                float bright = float(thick - i) / thick;
-                lsp::Color l(1.0f, 1.0f, 1.0f);
-                l.blend(c, bright);
+                float hthick  = thick * 0.5f;
 
-                ws::IGradient *g = s->radial_gradient(left, top + height, i, left, top + height, pr * 1.5f);
-                g->add_color(0.0f, l);
-                g->add_color(1.0f, c);
                 s->wire_round_rect(
-                        g, mask, iradius - i,
-                        left + i + 0.5f, top + i + 0.5f,
-                        width - (i << 1) - 1, height - (i << 1) - 1,
+                    c, mask, lsp_max(0.0f, iradius - hthick),
+                    size->nLeft + hthick, size->nTop + hthick,
+                    size->nWidth - thick, size->nHeight - thick,
+                    thick
+                );
+            }
+            else
+            {
+                for (ssize_t i=0; i < thick; ++i)
+                {
+                    float bright = float(thick - i) / thick;
+                    lsp::Color l(1.0f, 1.0f, 1.0f);
+                    l.blend(c, bright);
+
+                    ws::IGradient *g = s->radial_gradient(
+                            size->nLeft, size->nTop + size->nHeight, i,
+                            size->nLeft, size->nTop + size->nHeight, pr * 1.5f
+                    );
+                    g->add_color(0.0f, l);
+                    g->add_color(1.0f, c);
+                    s->wire_round_rect(
+                            g, mask, iradius - i,
+                            size->nLeft + i + 0.5f, size->nTop + i + 0.5f,
+                            size->nWidth - (i << 1) - 1, size->nHeight - (i << 1) - 1,
+                            1.0f
+                    );
+                    delete g;
+                }
+
+                s->wire_round_rect(
+                        c, mask, iradius - thick,
+                        size->nLeft + thick + 0.5f, size->nTop + thick + 0.5f,
+                        size->nWidth - (thick << 1) - 1, size->nHeight - (thick << 1) - 1,
                         1.0f
                 );
-                delete g;
             }
 
-            s->fill_round_rect(
-                    c, mask, iradius - thick,
-                    left + thick + 0.5f, top + thick + 0.5f,
-                    width - (thick << 1) - 1, height - (thick << 1) - 1);
             s->set_antialiasing(aa);
-        }
-
-        void draw_border(ws::ISurface *s,
-                const lsp::Color &c, size_t mask, ssize_t thick, size_t iradius,
-                const ws::rectangle_t *size
-        )
-        {
-            draw_border(s, c, mask, thick, iradius,
-                    size->nLeft, size->nTop, size->nWidth, size->nHeight);
         }
 
         ws::ISurface *create_glass(ws::ISurface **g, ws::ISurface *s,
@@ -90,23 +101,25 @@ namespace lsp
             if ((*g) != NULL)
                 return *g;
 
-            if (s == NULL)
-                return NULL;
-            *g          = s->create(width, height);
+            *g          = (s != NULL) ? s->create(width, height) : NULL;
             if ((*g) == NULL)
                 return NULL;
 
-            // Draw glass effect
-            size_t pr   = sqrtf(float(width)*float(width) + float(height)*float(height));
+            (*g)->begin();
+            {
+                // Draw glass effect
+                size_t pr   = sqrtf(float(width)*float(width) + float(height)*float(height));
 
-            ws::IGradient *gr = (*g)->radial_gradient(width, 0, 1, width, 0, pr);
-            gr->add_color(0.0f, c, 0.85f);
-            gr->add_color(1.0f, c, 1.0f);
+                ws::IGradient *gr = (*g)->radial_gradient(width, 0, 1, width, 0, pr);
+                gr->add_color(0.0f, c, 0.85f);
+                gr->add_color(1.0f, c, 1.0f);
 
-            bool aa = (*g)->set_antialiasing(true);
-            (*g)->fill_round_rect(gr, mask, radius, 0, 0, width, height);
-            (*g)->set_antialiasing(aa);
-            delete gr;
+                bool aa = (*g)->set_antialiasing(true);
+                (*g)->fill_round_rect(gr, mask, radius, 0, 0, width, height);
+                (*g)->set_antialiasing(aa);
+                delete gr;
+            }
+            (*g)->end();
 
             return *g;
         }
@@ -115,7 +128,7 @@ namespace lsp
             ws::ISurface **g, ws::ISurface *s,
             const lsp::Color &gc, const lsp::Color &bc,
             size_t mask, ssize_t thick, ssize_t radius,
-            size_t width, size_t height
+            size_t width, size_t height, bool flat
         )
         {
             // Check surface
@@ -133,57 +146,70 @@ namespace lsp
             if ((*g) != NULL)
                 return *g;
 
-            if (s == NULL)
-                return NULL;
-            *g          = s->create(width, height);
+            *g          = (s != NULL) ? s->create(width, height) : NULL;
             if ((*g) == NULL)
                 return NULL;
 
-            // Pre-calculate params
-            ws::IGradient *gr = NULL;
-            bool aa = (*g)->set_antialiasing(true);
-            float pr = sqrtf(float(width)*float(width) + float(height)*float(height));
-
-            // Draw border
-            for (ssize_t i=0; i < thick; ++i)
+            (*g)->begin();
             {
-                float bright = float(thick - i) / thick;
-                lsp::Color l(1.0f, 1.0f, 1.0f);
-                l.blend(bc, bright);
-                ssize_t xrr = lsp_max(0, radius - i);
+                // Pre-calculate params
+                ws::IGradient *gr = NULL;
+                bool aa = (*g)->set_antialiasing(true);
+                float pr = sqrtf(float(width)*float(width) + float(height)*float(height));
 
-                gr = (*g)->radial_gradient(0, height, i, 0, height, pr * 1.5f);
-                gr->add_color(0.0f, l);
-                gr->add_color(1.0f, bc);
-                (*g)->wire_round_rect(
-                        gr, mask, xrr,
-                        i + 0.5f, i + 0.5f, width - (i << 1) - 1, height - (i << 1) - 1,
-                        1.0f
+                // Draw border
+                if (flat)
+                {
+                    float hthick  = thick * 0.5f;
+
+                    (*g)->wire_round_rect(
+                        bc, mask, lsp_max(0.0f, radius - hthick),
+                        hthick, hthick, width - thick, height - thick,
+                        thick
                     );
+                }
+                else
+                {
+                    for (ssize_t i=0; i < thick; ++i)
+                    {
+                        float bright = float(thick - i) / thick;
+                        lsp::Color l(1.0f, 1.0f, 1.0f);
+                        l.blend(bc, bright);
+                        ssize_t xrr = lsp_max(0, radius - i);
+
+                        gr = (*g)->radial_gradient(0, height, i, 0, height, pr * 1.5f);
+                        gr->add_color(0.0f, l);
+                        gr->add_color(1.0f, bc);
+                        (*g)->wire_round_rect(
+                                gr, mask, xrr,
+                                i+ 0.5f, i + 0.5f, width - (i << 1) - 1, height - (i << 1) - 1,
+                                1.0f
+                            );
+                        delete gr;
+                    }
+
+                    (*g)->wire_round_rect(
+                            bc, mask, lsp_max(0, radius - thick),
+                            thick + 0.5f, thick + 0.5f,
+                            width - (thick << 1) - 1, height - (thick << 1) - 1,
+                            1.0f
+                        );
+                }
+
+                // Draw glass effect
+                gr = (*g)->radial_gradient(width, 0, 1, width, 0, pr);
+                gr->add_color(0.0f, gc, 0.85f);
+                gr->add_color(1.0f, gc, 1.0f);
+
+                (*g)->fill_round_rect(
+                        gr, mask, lsp_max(0, radius - thick),
+                        thick, thick,
+                        width - (thick << 1), height - (thick << 1)
+                    );
+                (*g)->set_antialiasing(aa);
                 delete gr;
             }
-
-            (*g)->wire_round_rect(
-                    bc, mask, lsp_max(0, radius - thick),
-                    thick + 0.5f, thick + 0.5f,
-                    width - (thick << 1) - 1, height - (thick << 1) - 1,
-                    1.0f
-                );
-
-            // Draw glass effect
-            gr = (*g)->radial_gradient(width, 0, 1, width, 0, pr);
-            gr->add_color(0.0f, gc, 0.85f);
-            gr->add_color(1.0f, gc, 1.0f);
-
-            (*g)->fill_round_rect(
-                    gr, mask, lsp_max(0, radius - thick),
-                    thick, thick,
-                    width - (thick << 1), height - (thick << 1)
-                );
-            (*g)->set_antialiasing(aa);
-            delete gr;
-
-            s->set_antialiasing(aa);
+            (*g)->end();
 
             return *g;
         }
@@ -223,7 +249,7 @@ namespace lsp
             const lsp::Color &color,
             const ws::font_parameters_t *fp,
             const ws::text_parameters_t *tp,
-            float halign, float valign, float scaling,
+            float halign, float valign, float fscaling,
             const LSPString *text
         )
         {
@@ -254,12 +280,12 @@ namespace lsp
                 }
 
                 // Calculate text location
-                font->get_text_parameters(s, &xtp, scaling, text, last, tail);
+                font->get_text_parameters(s, &xtp, fscaling, text, last, tail);
                 float dx    = (r->nWidth - xtp.Width) * 0.5f;
                 ssize_t x   = r->nLeft   + dx * halign - xtp.XBearing;
                 y          += fp->Height;
 
-                font->draw(s, color, x, y, scaling, text, last, tail);
+                font->draw(s, color, x, y, fscaling, text, last, tail);
                 last    = curr + 1;
             }
         }

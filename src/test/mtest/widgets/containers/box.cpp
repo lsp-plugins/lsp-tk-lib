@@ -291,6 +291,8 @@ MTEST_BEGIN("tk.widgets.containers", box)
         MTEST_ASSERT(parent->add(box) == STATUS_OK);
         box->bg_color()->set_rgb(0, 0.75, 0.5);
         box->orientation()->set_horizontal();
+        box->border_color()->set_rgb24(0xcccccc);
+        box->border()->set(4);
         {
             // Create widget (1)
             MTEST_ASSERT(wv = new tk::Void(dpy));

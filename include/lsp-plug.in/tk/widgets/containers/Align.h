@@ -46,6 +46,10 @@ namespace lsp
          */
         class Align: public WidgetContainer
         {
+            private:
+                Align & operator = (const Align &);
+                Align(const Align &);
+
             public:
                 static const w_class_t    metadata;
 
@@ -72,7 +76,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
-                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,   &sConstraints)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

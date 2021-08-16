@@ -45,7 +45,7 @@ namespace lsp
                 sHScroll.set_all(0.0f, 0.0f, 0.0f);
                 sVScroll.set_all(0.0f, 0.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ScrollArea, "ScrollArea");
+            LSP_TK_BUILTIN_STYLE(ScrollArea, "ScrollArea", "root");
         }
 
         const w_class_t ScrollArea::metadata    = { "ScrollArea", &WidgetContainer::metadata };
@@ -328,7 +328,8 @@ namespace lsp
             if (nFlags & REDRAW_SURFACE)
                 force = true;
 
-            lsp::Color col(sBgColor);
+            lsp::Color col;
+            get_actual_bg_color(col);
 
             ws::rectangle_t h, v, xa, xr;
             xa  = sSize;
@@ -405,7 +406,7 @@ namespace lsp
                 {
                     s->clip_begin(&xa);
                     {
-                        col.copy(pWidget->bg_color()->color());
+                        pWidget->get_actual_bg_color(col);
                         s->fill_frame(col, &xa, &xr);
                     }
                     s->clip_end();

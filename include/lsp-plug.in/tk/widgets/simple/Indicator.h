@@ -41,7 +41,12 @@ namespace lsp
                 prop::Integer       sShift;         // Text shift
                 prop::Integer       sTextGap;       // Text gap for loop
                 prop::Boolean       sLoop;          // Loop flag
+                prop::Boolean       sDarkText;      // Enables drawing of the dark text/dark segments
                 prop::String        sText;          // Actual text to display
+                prop::Boolean       sModern;        // Modern design
+                prop::Font          sFont;          // Font properties
+                prop::Integer       sSpacing;       // Spacing between digits
+                prop::Padding       sIPadding;      // Internal padding
             LSP_TK_STYLE_DEF_END
         }
 
@@ -49,6 +54,10 @@ namespace lsp
         {
             public:
                 static const w_class_t    metadata;
+
+            private:
+                Indicator & operator = (const Indicator &);
+                Indicator(const Indicator &);
 
             protected:
                 prop::Color         sColor;         // Color of the indicator
@@ -58,15 +67,26 @@ namespace lsp
                 prop::Integer       sShift;         // Text shift
                 prop::Integer       sTextGap;       // Text gap for loop
                 prop::Boolean       sLoop;          // Loop flag
+                prop::Boolean       sDarkText;      // Enables drawing of the dark text/dark segments
                 prop::String        sText;          // Actual text to display
+                prop::Boolean       sModern;        // Modern design
+                prop::Font          sFont;          // Font properties
+                prop::Integer       sSpacing;       // Spacing between digits
+                prop::Padding       sIPadding;      // Internal padding
+
+                ssize_t             nDWidth;        // Width of the digit
+                ssize_t             nDHeight;       // Height of the digit
 
             protected:
                 void                draw_digit(ws::ISurface *s, float x, float y, size_t state, const lsp::Color &on, const lsp::Color &off);
+                void                draw_simple(ws::ISurface *s, float x, float y, char ch, const lsp::Color &on, const ws::font_parameters_t *fp);
                 uint8_t             get_char(const LSPString *str, size_t index);
+                void                calc_digit_size(ssize_t *w, ssize_t *h);
 
             protected:
                 virtual void        size_request(ws::size_limit_t *r);
                 virtual void        property_changed(Property *prop);
+                virtual void        realize(const ws::rectangle_t *r);
 
             public:
                 explicit            Indicator(Display *dpy);
@@ -82,7 +102,12 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            text_shift,         &sShift)
                 LSP_TK_PROPERTY(Integer,            text_gap,           &sTextGap)
                 LSP_TK_PROPERTY(Boolean,            text_loop,          &sLoop)
+                LSP_TK_PROPERTY(Boolean,            dark_text,          &sDarkText)
                 LSP_TK_PROPERTY(String,             text,               &sText)
+                LSP_TK_PROPERTY(Boolean,            modern,             &sModern)
+                LSP_TK_PROPERTY(Font,               font,               &sFont)
+                LSP_TK_PROPERTY(Integer,            spacing,            &sSpacing)
+                LSP_TK_PROPERTY(Padding,            ipadding,           &sIPadding)
 
             public:
                 virtual void        draw(ws::ISurface *s);

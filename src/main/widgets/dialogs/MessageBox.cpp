@@ -44,7 +44,7 @@ namespace lsp
                 sLayout.override();
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MessageBox, "MessageBox");
+            LSP_TK_BUILTIN_STYLE(MessageBox, "MessageBox", "Window");
 
             //-----------------------------------------------------------------
             // MessageBox::VBox style
@@ -57,7 +57,7 @@ namespace lsp
                 // Commit
                 sSpacing.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MessageBox__VBox, "MessageBox::VBox");
+            LSP_TK_BUILTIN_STYLE(MessageBox__VBox, "MessageBox::VBox", "Box");
 
             //-----------------------------------------------------------------
             // MessageBox::Heading style
@@ -75,7 +75,7 @@ namespace lsp
                 sAllocation.override();
                 sTextLayout.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MessageBox__Heading, "MessageBox::Heading");
+            LSP_TK_BUILTIN_STYLE(MessageBox__Heading, "MessageBox::Heading", "Label");
 
             //-----------------------------------------------------------------
             // MessageBox::Message style
@@ -92,7 +92,7 @@ namespace lsp
                 sTextLayout.override();
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MessageBox__Message, "MessageBox::Message");
+            LSP_TK_BUILTIN_STYLE(MessageBox__Message, "MessageBox::Message", "Label");
 
             //-----------------------------------------------------------------
             // MessageBox::ButtonAlign style
@@ -105,7 +105,7 @@ namespace lsp
                 // Commit
                 sLayout.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MessageBox__ButtonAlign, "MessageBox::ButtonAlign");
+            LSP_TK_BUILTIN_STYLE(MessageBox__ButtonAlign, "MessageBox::ButtonAlign", "Align");
 
             //-----------------------------------------------------------------
             // MessageBox::ButtonBox style
@@ -118,7 +118,7 @@ namespace lsp
                 // Commit
                 sSpacing.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MessageBox__ButtonBox, "MessageBox::ButtonBox");
+            LSP_TK_BUILTIN_STYLE(MessageBox__ButtonBox, "MessageBox::ButtonBox", "Box");
 
             //-----------------------------------------------------------------
             // MessageBox::Button style
@@ -131,7 +131,7 @@ namespace lsp
                 // Commit
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MessageBox__Button, "MessageBox::Button");
+            LSP_TK_BUILTIN_STYLE(MessageBox__Button, "MessageBox::Button", "Button");
         }
 
         const w_class_t MessageBox::metadata        = { "MessageBox", &Window::metadata };

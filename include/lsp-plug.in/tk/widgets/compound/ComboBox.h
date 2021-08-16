@@ -50,6 +50,7 @@ namespace lsp
                 prop::Boolean               sOpened;
                 prop::TextFitness           sTextFit;
                 prop::Font                  sFont;
+                prop::TextAdjust            sTextAdjust;
                 prop::SizeConstraints       sConstraints;
                 prop::TextLayout            sTextLayout;
                 prop::String                sEmptyText;
@@ -60,6 +61,7 @@ namespace lsp
         {
             private:
                 ComboBox & operator = (const ComboBox &);
+                ComboBox(const ComboBox &);
 
             public:
                 static const w_class_t      metadata;
@@ -131,6 +133,7 @@ namespace lsp
                 prop::Boolean               sOpened;
                 prop::TextFitness           sTextFit;
                 prop::Font                  sFont;
+                prop::TextAdjust            sTextAdjust;
                 prop::SizeConstraints       sConstraints;
                 prop::TextLayout            sTextLayout;
                 prop::String                sEmptyText;
@@ -177,6 +180,7 @@ namespace lsp
                 LSP_TK_PROPERTY(TextFitness,                text_fit,               &sTextFit)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,            &sConstraints)
                 LSP_TK_PROPERTY(Font,                       font,                   &sFont)
+                LSP_TK_PROPERTY(TextAdjust,                 text_adjust,            &sTextAdjust)
                 LSP_TK_PROPERTY(TextLayout,                 text_layout,            &sTextLayout)
                 LSP_TK_PROPERTY(String,                     empty_text,             &sEmptyText)
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,               &sSelected)

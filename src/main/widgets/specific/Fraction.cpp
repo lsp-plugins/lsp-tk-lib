@@ -67,7 +67,7 @@ namespace lsp
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Fraction, "Fraction");
+            LSP_TK_BUILTIN_STYLE(Fraction, "Fraction", "root");
         }
 
         //-----------------------------------------------------------------------------
@@ -361,12 +361,13 @@ namespace lsp
         {
             // Get font parameters
             ws::text_parameters_t tp;
-            float scaling = lsp_max(0.0f, sScaling.get());
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
 
             // Estimate empty text size
             LSPString s;
             cb->sText.format(&s);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
             r->nWidth  = tp.Width;
             r->nHeight = tp.Height;
 
@@ -385,7 +386,7 @@ namespace lsp
                     continue;
 
                 // Get text parameters
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
                 r->nWidth       = lsp_max(r->nWidth, tp.Width);
                 r->nHeight      = lsp_max(r->nHeight, tp.Width);
             }
@@ -397,10 +398,11 @@ namespace lsp
         {
             ws::font_parameters_t fp;
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float angle     = sAngle.get() * M_PI / 180.0f;
             float tpad      = (sTextPad.get() + sThick.get()) * scaling;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
             estimate_size(&sNum, &a->sNum);
             estimate_size(&sDen, &a->sDen);
 
@@ -474,16 +476,18 @@ namespace lsp
             ws::text_parameters_t tp, bp;
 
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright    = sBrightness.get();
             float angle     = sAngle.get() * M_PI / 180.0f;
             float lw        = lsp_max(1.0f, sThick.get() * scaling * ((sFont.bold()) ? 2.0f : 1.0f));
 
             // Prepare palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color color(sColor);
             lsp::Color tc(sNum.sColor);
             lsp::Color bc(sDen.sColor);
 
+            get_actual_bg_color(bg_color);
             color.scale_lightness(bright);
             tc.scale_lightness(bright);
             bc.scale_lightness(bright);
@@ -522,9 +526,9 @@ namespace lsp
                 sDen.sText.format(&den);
 
             // Get font parameters
-            sFont.get_parameters(s, scaling, &fp);
-            sFont.get_text_parameters(s, &tp, scaling, &num);
-            sFont.get_text_parameters(s, &bp, scaling, &den);
+            sFont.get_parameters(s, fscaling, &fp);
+            sFont.get_text_parameters(s, &tp, fscaling, &num);
+            sFont.get_text_parameters(s, &bp, fscaling, &den);
 
             // Draw line
             float dx        = fp.Height * cosf(angle);
@@ -550,13 +554,13 @@ namespace lsp
                 s, tc,
                 sNum.sArea.nLeft - (tp.Width*0.5f) - tp.XBearing,
                 sNum.sArea.nTop  + fp.Ascent  - fp.Height*0.5f,
-                scaling, &num
+                fscaling, &num
             );
             sFont.draw(
                 s, bc,
                 sDen.sArea.nLeft - (bp.Width*0.5f) - bp.XBearing,
                 sDen.sArea.nTop  + fp.Ascent  - fp.Height*0.5f,
-                scaling, &den
+                fscaling, &den
             );
 
             s->set_antialiasing(aa);

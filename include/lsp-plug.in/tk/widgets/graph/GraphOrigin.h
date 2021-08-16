@@ -48,6 +48,7 @@ namespace lsp
 
             private:
                 GraphOrigin & operator = (const GraphOrigin &);
+                GraphOrigin(const GraphOrigin &);
 
             protected:
                 prop::RangeFloat            sLeft;

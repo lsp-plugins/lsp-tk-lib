@@ -61,6 +61,7 @@ namespace lsp
 
                 prop::Integer           sBorder;                    // Border size
                 prop::Integer           sBorderRadius;              // Border radius
+                prop::Boolean           sBorderFlat;                // Border is flat
                 prop::Boolean           sGlass;                     // Draw glass
                 prop::Color             sColor;                     // Graph color
                 prop::Color             sBorderColor;               // Color of the border
@@ -78,6 +79,7 @@ namespace lsp
 
             private:
                 AudioSample & operator = (const AudioSample &);
+                AudioSample(const AudioSample &);
 
             protected:
                 enum flags_t
@@ -117,6 +119,7 @@ namespace lsp
 
                 prop::Integer           sBorder;                    // Border size
                 prop::Integer           sBorderRadius;              // Border radius
+                prop::Boolean           sBorderFlat;                // Border is flat
                 prop::Boolean           sGlass;                     // Draw glass
                 prop::Color             sColor;                     // Graph color
                 prop::Color             sBorderColor;               // Color of the border
@@ -132,6 +135,7 @@ namespace lsp
             protected:
                 static status_t         slot_on_before_popup(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_popup(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
             public:
                 virtual void            size_request(ws::size_limit_t *r);
@@ -190,11 +194,12 @@ namespace lsp
 
                 LSP_TK_PROPERTY(Integer,                border_size,            &sBorder);
                 LSP_TK_PROPERTY(Integer,                border_radius,          &sBorderRadius);
+                LSP_TK_PROPERTY(Boolean,                border_flat,            &sBorderFlat);
                 LSP_TK_PROPERTY(Boolean,                glass,                  &sGlass);
                 LSP_TK_PROPERTY(Color,                  color,                  &sColor)
                 LSP_TK_PROPERTY(Color,                  border_color,           &sBorderColor);
                 LSP_TK_PROPERTY(Color,                  glass_color,            &sGlassColor);
-                LSP_TK_PROPERTY(Padding,                internal_padding,       &sIPadding);
+                LSP_TK_PROPERTY(Padding,                ipadding,               &sIPadding);
 
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,        popup,                  &sPopup);
 
@@ -218,6 +223,8 @@ namespace lsp
                 virtual status_t            on_before_popup(Menu *menu);
 
                 virtual status_t            on_popup(Menu *menu);
+
+                virtual status_t            on_submit();
         };
     }
 }

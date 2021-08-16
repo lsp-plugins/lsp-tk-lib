@@ -34,6 +34,7 @@ namespace lsp
                 sColor.bind("color", this);
                 sLayout.bind("layout", this);
                 sTextLayout.bind("text.layout", this);
+                sTextAdjust.bind("text.adjust", this);
                 sHValue.bind("hvalue", this);
                 sVValue.bind("vvalue", this);
                 sHAxis.bind("haxis", this);
@@ -43,10 +44,11 @@ namespace lsp
                 sFont.set_size(10.0f);
                 sLayout.set(1.0f, 1.0f, 0.0f, 0.0f);
                 sTextLayout.set(0.5f, 0.5f);
+                sTextAdjust.set(TA_NONE);
                 sHValue.set(0.0f);
                 sVValue.set(0.0f);
                 sHAxis.set(0);
-                sVAxis.set(0);
+                sVAxis.set(1);
                 sOrigin.set(0);
                 // Override
                 sPadding.set(2);
@@ -54,7 +56,7 @@ namespace lsp
                 sFont.override();
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphText, "GraphText");
+            LSP_TK_BUILTIN_STYLE(GraphText, "GraphText", "root");
         }
 
         const w_class_t GraphText::metadata             = { "GraphText", &GraphItem::metadata };
@@ -66,6 +68,7 @@ namespace lsp
             sColor(&sProperties),
             sLayout(&sProperties),
             sTextLayout(&sProperties),
+            sTextAdjust(&sProperties),
             sHValue(&sProperties),
             sVValue(&sProperties),
             sHAxis(&sProperties),
@@ -92,26 +95,12 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sLayout.bind("layout", &sStyle);
             sTextLayout.bind("text.layout", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sHValue.bind("hvalue", &sStyle);
             sVValue.bind("vvalue", &sStyle);
             sHAxis.bind("haxis", &sStyle);
             sVAxis.bind("vaxis", &sStyle);
             sOrigin.bind("origin", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sFont.init(sclass, 10.0f);
-//                sColor.init(sclass, "#ffffff");
-//                sLayout.init(sclass, 1.0f, 1.0f, 0.0f, 0.0f);
-//                sTextLayout.init(sclass, 0.5f, 0.5f);
-//                sHValue.init(sclass, 0.0f);
-//                sVValue.init(sclass, 0.0f);
-//                sHAxis.init(sclass, 0);
-//                sVAxis.init(sclass, 0);
-//                sOrigin.init(sclass, 0);
-//                sPadding.override(sclass, 2);
-//            }
 
             return STATUS_OK;
         }
@@ -128,6 +117,8 @@ namespace lsp
                 query_draw();
             if (sLayout.is(prop))
                 query_draw();
+            if (sTextAdjust.is(prop))
+                query_resize();
             if (sHValue.is(prop))
                 query_draw();
             if (sVValue.is(prop))
@@ -147,6 +138,7 @@ namespace lsp
             sText.format(&text);
             if (text.is_empty())
                 return;
+            sTextAdjust.apply(&text);
 
             // Graph
             Graph *cv = graph();
@@ -154,8 +146,9 @@ namespace lsp
                 return;
 
             // Get palette
-            float scaling = lsp_max(0.0f, sScaling.get());
-            float bright  = sBrightness.get();
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
+            float bright    = sBrightness.get();
 
             lsp::Color font_color(sColor);
             font_color.scale_lightness(bright);
@@ -184,8 +177,8 @@ namespace lsp
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
 
-            sFont.get_parameters(s, scaling, &fp);
-            sFont.get_multitext_parameters(s, &tp, scaling, &text);
+            sFont.get_parameters(s, fscaling, &fp);
+            sFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
             // Allocate position
             ws::rectangle_t r;
@@ -230,12 +223,12 @@ namespace lsp
                 }
 
                 // Calculate text location
-                sFont.get_text_parameters(s, &tp, scaling, &text, last, tail);
+                sFont.get_text_parameters(s, &tp, fscaling, &text, last, tail);
                 float dx    = (r.nWidth - tp.Width) * 0.5f;
                 ssize_t tx  = r.nLeft   + dx * halign - tp.XBearing;
                 ty         += fp.Height;
 
-                sFont.draw(s, font_color, tx, ty, scaling, &text, last, tail);
+                sFont.draw(s, font_color, tx, ty, fscaling, &text, last, tail);
                 last    = curr + 1;
             }
         }

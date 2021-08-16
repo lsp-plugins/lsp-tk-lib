@@ -130,9 +130,6 @@ namespace lsp
         {
             value               = lsp_max(value, -1);
             ssize_t old         = sValue.nMinWidth;
-            if (old == value)
-                return value;
-
             sValue.nMinWidth    = value;
             sync();
             return old;
@@ -142,9 +139,6 @@ namespace lsp
         {
             value               = lsp_max(value, -1);
             ssize_t old         = sValue.nMinHeight;
-            if (old == value)
-                return value;
-
             sValue.nMinHeight   = value;
             sync();
             return old;
@@ -154,9 +148,6 @@ namespace lsp
         {
             value               = lsp_max(value, -1);
             ssize_t old         = sValue.nMaxWidth;
-            if (old == value)
-                return value;
-
             sValue.nMaxWidth    = value;
             sync();
             return old;
@@ -166,9 +157,6 @@ namespace lsp
         {
             value               = lsp_max(value, -1);
             ssize_t old         = sValue.nMaxHeight;
-            if (old == value)
-                return value;
-
             sValue.nMaxHeight   = value;
             sync();
             return old;
@@ -178,10 +166,6 @@ namespace lsp
         {
             width               = lsp_max(width, -1);
             height              = lsp_max(height, -1);
-            if ((sValue.nMinWidth == width) &&
-                (sValue.nMinHeight == height))
-                return;
-
             sValue.nMinWidth    = width;
             sValue.nMinHeight   = height;
             sync();
@@ -191,10 +175,6 @@ namespace lsp
         {
             width               = lsp_max(width, -1);
             height              = lsp_max(height, -1);
-            if ((sValue.nMaxWidth == width) &&
-                (sValue.nMaxHeight == height))
-                return;
-
             sValue.nMaxWidth    = width;
             sValue.nMaxHeight   = height;
             sync();
@@ -204,10 +184,6 @@ namespace lsp
         {
             min                 = lsp_max(min, -1);
             max                 = lsp_max(max, -1);
-            if ((sValue.nMinWidth == min) &&
-                (sValue.nMaxWidth == max))
-                return;
-
             sValue.nMinWidth    = min;
             sValue.nMaxWidth    = max;
             sync();
@@ -217,10 +193,6 @@ namespace lsp
         {
             min                 = lsp_max(min, -1);
             max                 = lsp_max(max, -1);
-            if ((sValue.nMinHeight == min) &&
-                (sValue.nMaxHeight == max))
-                return;
-
             sValue.nMinHeight   = min;
             sValue.nMaxHeight   = max;
             sync();
@@ -232,12 +204,6 @@ namespace lsp
             min_height          = lsp_max(min_height, -1);
             max_width           = lsp_max(max_width, -1);
             max_height          = lsp_max(max_height, -1);
-
-            if ((sValue.nMinWidth == min_width) &&
-                (sValue.nMinHeight == min_height) &&
-                (sValue.nMaxWidth == max_width) &&
-                (sValue.nMaxHeight == max_height))
-                return;
 
             sValue.nMinWidth    = min_width;
             sValue.nMinHeight   = min_height;
@@ -253,12 +219,6 @@ namespace lsp
             ssize_t max_width   = lsp_max(p->nMaxWidth, -1);
             ssize_t max_height  = lsp_max(p->nMaxHeight, -1);
 
-            if ((sValue.nMinWidth == min_width) &&
-                (sValue.nMinHeight == min_height) &&
-                (sValue.nMaxWidth == max_width) &&
-                (sValue.nMaxHeight == max_height))
-                return;
-
             sValue.nMinWidth    = min_width;
             sValue.nMinHeight   = min_height;
             sValue.nMaxWidth    = max_width;
@@ -268,12 +228,6 @@ namespace lsp
 
         void SizeConstraints::set(const SizeConstraints *p)
         {
-            if ((sValue.nMinWidth == p->sValue.nMinWidth) &&
-                (sValue.nMinHeight == p->sValue.nMinHeight) &&
-                (sValue.nMaxWidth == p->sValue.nMaxWidth) &&
-                (sValue.nMaxHeight == p->sValue.nMaxHeight))
-                return;
-
             sValue.nMinWidth    = p->sValue.nMinWidth;
             sValue.nMinHeight   = p->sValue.nMinHeight;
             sValue.nMaxWidth    = p->sValue.nMaxWidth;
@@ -435,6 +389,21 @@ namespace lsp
                 dst->nWidth     = sc->nMinHeight;
             if ((sc->nMinWidth  >= 0) && (dst->nHeight < sc->nMinWidth ))
                 dst->nHeight    = sc->nMinWidth;
+        }
+
+        void SizeConstraints::maximize(ws::size_limit_t *dst, const ws::size_limit_t *a, const ws::size_limit_t *b)
+        {
+            dst->nMinWidth  = lsp_max(a->nMinWidth,  b->nMinWidth);
+            dst->nMinHeight = lsp_max(a->nMinHeight, b->nMinHeight);
+            dst->nMaxWidth  = lsp_max(a->nMaxWidth,  b->nMaxWidth);
+            dst->nMaxHeight = lsp_max(a->nMaxHeight, b->nMaxHeight);
+            dst->nPreWidth  = lsp_max(a->nPreWidth,  b->nPreWidth);
+            dst->nPreHeight = lsp_max(a->nPreHeight, b->nPreHeight);
+        }
+
+        void SizeConstraints::maximize(ws::size_limit_t *dst, const ws::size_limit_t *src)
+        {
+            maximize(dst, dst, src);
         }
 
     } /* namespace tk */

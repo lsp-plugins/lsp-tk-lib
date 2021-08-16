@@ -33,30 +33,41 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Group, Align)
                 // Bind
                 sFont.bind("font", this);
+                sTextAdjust.bind("text.adjust", this);
                 sColor.bind("color", this);
+                sIBGColor.bind("ibg.color", this);
                 sTextColor.bind("text.color", this);
                 sShowText.bind("text.show", this);
                 sBorder.bind("border.size", this);
-                sTextBorder.bind("text.border", this);
+                sTextPadding.bind("text.padding", this);
                 sRadius.bind("border.radius", this);
                 sTextRadius.bind("text.radius", this);
                 sEmbedding.bind("embed", this);
+                sIPadding.bind("ipadding", this);
+                sHeading.bind("heading", this);
+                sIBGInherit.bind("ibg.inherit", this);
+                sIBGBrightness.bind("ibg.brightness", this);
                 // Configure
                 sFont.set_size(12.0f);
+                sTextAdjust.set(TA_NONE);
                 sColor.set("#000000");
                 sTextColor.set("#ffffff");
                 sShowText.set(true);
                 sBorder.set(2);
-                sTextBorder.set(2);
+                sTextPadding.set(2);
                 sRadius.set(10);
                 sTextRadius.set(10);
                 sEmbedding.set(false);
+                sIPadding.set_all(0);
+                sHeading.set(-1.0f, 0.0f);
+                sIBGInherit.set(true);
+                sIBGBrightness.set(1.0f);
                 // Override
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 // Commit
                 sLayout.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Group, "Group");
+            LSP_TK_BUILTIN_STYLE(Group, "Group", "root");
         }
 
         const w_class_t Group::metadata         = { "Group", &Align::metadata };
@@ -64,15 +75,21 @@ namespace lsp
         Group::Group(Display *dpy):
             Align(dpy),
             sFont(&sProperties),
+            sTextAdjust(&sProperties),
             sColor(&sProperties),
+            sIBGColor(&sProperties),
             sTextColor(&sProperties),
             sText(&sProperties),
             sShowText(&sProperties),
             sBorder(&sProperties),
-            sTextBorder(&sProperties),
+            sTextPadding(&sProperties),
             sRadius(&sProperties),
             sTextRadius(&sProperties),
-            sEmbedding(&sProperties)
+            sEmbedding(&sProperties),
+            sIPadding(&sProperties),
+            sHeading(&sProperties),
+            sIBGInherit(&sProperties),
+            sIBGBrightness(&sProperties)
         {
             pWidget             = NULL;
 
@@ -101,15 +118,21 @@ namespace lsp
                 return result;
 
             sFont.bind("font", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sColor.bind("color", &sStyle);
+            sIBGColor.bind("ibg.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sShowText.bind("text.show", &sStyle);
             sBorder.bind("border.size", &sStyle);
-            sTextBorder.bind("text.border", &sStyle);
+            sTextPadding.bind("text.padding", &sStyle);
             sRadius.bind("border.radius", &sStyle);
             sTextRadius.bind("text.radius", &sStyle);
             sEmbedding.bind("embed", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
+            sHeading.bind("heading", &sStyle);
+            sIBGInherit.bind("ibg.inherit", &sStyle);
+            sIBGBrightness.bind("ibg.brightness", &sStyle);
 
             return STATUS_OK;
         }
@@ -119,8 +142,12 @@ namespace lsp
             Align::property_changed(prop);
             if (sFont.is(prop))
                 query_resize();
+            if (sTextAdjust.is(prop))
+                query_resize();
             if (sColor.is(prop))
                 query_draw();
+            if (sIBGColor.is(prop))
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
             if (sTextColor.is(prop))
                 query_draw();
             if (sText.is(prop))
@@ -129,17 +156,28 @@ namespace lsp
                 query_resize();
             if (sBorder.is(prop))
                 query_resize();
+            if (sTextPadding.is(prop))
+                query_resize();
             if (sRadius.is(prop))
                 query_resize();
             if (sTextRadius.is(prop))
                 query_resize();
             if (sEmbedding.is(prop))
                 query_resize();
+            if (sIPadding.is(prop))
+                query_resize();
+            if (sHeading.is(prop))
+                query_resize();
+            if (sIBGInherit.is(prop))
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
+            if (sIBGBrightness.is(prop))
+                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
         }
 
         void Group::allocate(alloc_t *alloc)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
 
@@ -154,14 +192,15 @@ namespace lsp
                 ws::text_parameters_t tp;
                 ws::font_parameters_t fp;
 
-                ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
                 ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
                 sText.format(&s);
+                sTextAdjust.apply(&s);
 
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
-                xr.nWidth           = tp.Width + tborder + tradius;
-                xr.nHeight          = lsp_max(fp.Height, tp.Height) + tborder*2;
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
+                xr.nWidth           = tp.Width + tradius;
+                xr.nHeight          = lsp_max(fp.Height, tp.Height);
+                sTextPadding.add(&xr, scaling);
                 alloc->text         = xr;
 
                 xr.nWidth          += radius * 1.5f;
@@ -170,6 +209,11 @@ namespace lsp
             {
                 xr.nWidth           = 0;
                 xr.nHeight          = 0;
+
+                alloc->text.nLeft   = 0;
+                alloc->text.nTop    = 0;
+                alloc->text.nWidth  = 0;
+                alloc->text.nHeight = 0;
             }
             alloc->rtext        = xr;
 
@@ -184,6 +228,7 @@ namespace lsp
             if (!sEmbedding.top())
                 pad.nTop        = lsp_max(xr.nHeight, ssize_t(pad.nTop));
 
+            sIPadding.add(&pad, scaling);
             alloc->pad      = pad;
 
             pad.nLeft       = lsp_max(pad.nLeft,   size_t(radius));
@@ -191,6 +236,7 @@ namespace lsp
             pad.nTop        = lsp_max(pad.nTop,    size_t(radius));
             pad.nBottom     = lsp_max(pad.nBottom, size_t(radius));
 
+            sIPadding.add(&pad, scaling);
             alloc->xpad     = pad;
         }
 
@@ -238,14 +284,13 @@ namespace lsp
 
         void Group::realize(const ws::rectangle_t *r)
         {
-//            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             WidgetContainer::realize(r);
 
             // Compute text and widget area
             alloc_t alloc;
             allocate(&alloc);
 
-            sLabel          = alloc.text;
+            sHeading.happly(&sLabel, &alloc.text, r->nWidth);
             sLabel.nLeft   += r->nLeft;
             sLabel.nTop    += r->nTop;
 
@@ -264,6 +309,24 @@ namespace lsp
             }
         }
 
+        void Group::get_child_bg_color(lsp::Color *color) const
+        {
+            float ibg_bright = sIBGBrightness.get();
+            if (sIBGInherit.get())
+            {
+                get_actual_bg_color(color, ibg_bright);
+                return;
+            }
+
+            color->copy(sIBGColor);
+            color->scale_lightness(ibg_bright);
+        }
+
+        void Group::get_child_bg_color(lsp::Color &color) const
+        {
+            return get_child_bg_color(&color);
+        }
+
         void Group::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             if (nFlags & REDRAW_SURFACE)
@@ -274,6 +337,7 @@ namespace lsp
 
             ws::rectangle_t xr;
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright    = lsp_max(0.0f, sBrightness.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
@@ -286,12 +350,11 @@ namespace lsp
             {
                 pWidget->get_rectangle(&xr);
 
-                if (pWidget->redraw_pending())
+                // Draw the nested widget
+                if ((force) || (pWidget->redraw_pending()))
                 {
-                    // Draw the child only if it is visible in the area
                     if (Size::intersection(&xr, &sSize))
                         pWidget->render(s, &xr, force);
-
                     pWidget->commit_redraw();
                 }
 
@@ -302,7 +365,7 @@ namespace lsp
                     {
                         s->clip_begin(area);
                         {
-                            color.copy(pWidget->bg_color()->color());
+                            pWidget->get_actual_bg_color(color);
                             s->fill_frame(color, &sSize, &xr);
                         }
                         s->clip_end();
@@ -313,7 +376,7 @@ namespace lsp
             {
                 s->clip_begin(area);
                 {
-                    color.copy(sBgColor);
+                    get_child_bg_color(color);
                     s->fill_rect(color, &sSize);
                     bg   = true;
                 }
@@ -331,7 +394,7 @@ namespace lsp
                 {
                     if (!bg)
                     {
-                        color.copy(sBgColor);
+                        get_actual_bg_color(color);
 
                         xr          = sSize;
                         xg          = border * 2;
@@ -348,16 +411,8 @@ namespace lsp
                     color.copy(sColor);
                     color.scale_lightness(bright);
 
-                    xr          = sSize;
-                    xg          = border >> 1;
-                    ir          = lsp_max(0, radius - xg);
-                    xr.nLeft   += xg;
-                    xr.nTop    += xg;
-                    xr.nWidth  -= (border*2 - xg);
-                    xr.nHeight -= (border*2 - xg);
-
                     s->set_antialiasing(true);
-                    s->wire_round_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &xr, border);
+                    s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
                 }
 
                 // Draw text
@@ -365,12 +420,18 @@ namespace lsp
                 {
                     ir          = lsp_max(0.0f, sTextRadius.get() * scaling);
 
+                    size_t mask = 0;
+                    if (sHeading.align() > -1.0f)
+                        mask       |= SURFMASK_LB_CORNER;
+                    if (sHeading.align() < 1.0f)
+                        mask       |= SURFMASK_RB_CORNER;
+
                     // Draw text background
                     color.copy(sColor);
                     color.scale_lightness(bright);
 
                     s->set_antialiasing(true);
-                    s->fill_round_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
+                    s->fill_round_rect(color, mask, ir, &sLabel);
 
                     // Draw text
                     LSPString text;
@@ -379,15 +440,17 @@ namespace lsp
                     color.copy(sTextColor);
                     color.scale_lightness(bright);
 
-                    ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
                     sText.format(&text);
+                    sTextAdjust.apply(&text);
 
-                    sFont.get_parameters(pDisplay, scaling, &fp);
-                    sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                    sFont.get_parameters(s, fscaling, &fp);
+                    sFont.get_text_parameters(s, &tp, fscaling, &text);
+                    ws::rectangle_t tloc;
+                    sTextPadding.enter(&tloc, &sLabel, scaling);
+                    tloc.nLeft -= tp.XBearing;
+                    tloc.nTop  += fp.Ascent;
 
-                    sFont.draw(s, color,
-                            sLabel.nLeft + tborder - tp.XBearing, sLabel.nTop + tborder + fp.Ascent,
-                            scaling, &text);
+                    sFont.draw(s, color, tloc.nLeft, tloc.nTop, fscaling, &text);
                 }
 
                 s->clip_end();

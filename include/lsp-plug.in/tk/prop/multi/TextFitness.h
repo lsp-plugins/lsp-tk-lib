@@ -33,6 +33,7 @@ namespace lsp
         {
             protected:
                 TextFitness & operator = (const TextFitness &);
+                TextFitness(const TextFitness &);
 
             protected:
                 enum property_t
@@ -84,6 +85,7 @@ namespace lsp
             {
                 private:
                     TextFitness & operator = (const TextFitness &);
+                    TextFitness(const TextFitness &);
 
                 public:
                     explicit TextFitness(prop::Listener *listener = NULL): tk::TextFitness(listener) {};

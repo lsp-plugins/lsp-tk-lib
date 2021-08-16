@@ -58,6 +58,7 @@ namespace lsp
 
             private:
                 FileDialog & operator = (const FileDialog &);
+                FileDialog(const FileDialog &);
 
             protected:
                 enum
@@ -141,15 +142,10 @@ namespace lsp
                 prop::Color                 sExtColor;
 
                 // Styles
-                Style                      *pNavButton;
-                Style                      *pActButton;
                 Style                      *pBMNormal;
                 Style                      *pBMSel;
                 Style                      *pWarning;
                 Style                      *pExtCheck;
-                Style                      *pActionBox;
-                Style                      *pActionAlign;
-                Style                      *pNavBox;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -221,12 +217,13 @@ namespace lsp
                 bm_entry_t             *find_bookmark(Widget *sender);
                 status_t                add_new_bookmark();
                 status_t                init_bookmark_entry(bm_entry_t *ent, const io::Path *path);
+                status_t                inject_style(tk::Widget *w, const char *name);
 
                 void                    destroy_file_entries(lltl::parray<f_entry_t> *list);
                 status_t                refresh_current_path();
                 status_t                add_file_entry(lltl::parray<f_entry_t> *dst, const char *name, size_t flags);
                 status_t                add_file_entry(lltl::parray<f_entry_t> *dst, const LSPString *name, size_t flags);
-                static int              cmp_file_entry(const f_entry_t *a, const f_entry_t *b);
+                static ssize_t          cmp_file_entry(const f_entry_t *a, const f_entry_t *b);
                 f_entry_t              *selected_entry();
 
                 status_t                sync_filters();

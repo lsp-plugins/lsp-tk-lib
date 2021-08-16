@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 Integer & operator = (const Integer &);
+                Integer(const Integer &);
 
             protected:
                 ssize_t             nValue;
@@ -84,6 +85,7 @@ namespace lsp
             {
                 private:
                     Integer & operator = (const Integer &);
+                    Integer(const Integer &);
 
                 public:
                     explicit Integer(prop::Listener *listener = NULL): tk::Integer(listener) {};

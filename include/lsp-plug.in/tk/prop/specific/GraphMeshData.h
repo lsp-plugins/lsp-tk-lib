@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 GraphMeshData &operator = (const GraphMeshData &);
+                GraphMeshData(const GraphMeshData &);
 
             protected:
                 static const prop::desc_t   DESC[];
@@ -97,6 +98,7 @@ namespace lsp
             {
                 private:
                     GraphMeshData &operator = (const GraphMeshData &);
+                    GraphMeshData(const GraphMeshData &);
 
                 public:
                     explicit inline GraphMeshData(prop::Listener *listener = NULL): tk::GraphMeshData(listener) {}

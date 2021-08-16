@@ -198,7 +198,7 @@ MTEST_BEGIN("tk.widgets.simple", led)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(4);
+        grid->rows()->set(6);
         grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -209,7 +209,7 @@ MTEST_BEGIN("tk.widgets.simple", led)
             LSPString id;
             size_t col = 0;
 
-            // Create quad buttons
+            // Create leds
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
@@ -223,10 +223,11 @@ MTEST_BEGIN("tk.widgets.simple", led)
                 led->hole()->set(x & 1);
                 led->on()->set(x & 1);
                 led->led()->set((x + 1) * 4);
-                led->size()->set((x + 1) * 8);
+                led->gradient()->set(x & 1);
+                led->constraints()->set_all((x + 1) * 8);
             }
 
-            // Create quad buttons
+            // Create leds
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
@@ -240,10 +241,11 @@ MTEST_BEGIN("tk.widgets.simple", led)
                 led->hole()->set(x & 1);
                 led->on()->set(x & 1);
                 led->led()->set((x + 1) * 4);
-                led->size()->set((x + 1) * 8);
+                led->gradient()->set(x & 1);
+                led->constraints()->set_all((x + 1) * 8);
             }
 
-            // Create quad buttons
+            // Create leds
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
@@ -257,10 +259,11 @@ MTEST_BEGIN("tk.widgets.simple", led)
                 led->hole()->set(!(x & 1));
                 led->on()->set(x & 1);
                 led->led()->set((x + 1) * 4);
-                led->size()->set_min((x + 1) * 8);
+                led->gradient()->set(x & 1);
+                led->constraints()->set_min((x + 1) * 8);
             }
 
-            // Create quad buttons
+            // Create leds
             for (ssize_t x=0; x<4; ++x)
             {
                 // Create alignment widget
@@ -276,7 +279,52 @@ MTEST_BEGIN("tk.widgets.simple", led)
                 led->hole()->set(!(x & 1));
                 led->on()->set(x & 1);
                 led->led()->set((x + 1) * 4);
-                led->size()->set_min((x + 1) * 8);
+                led->gradient()->set(x & 1);
+                led->constraints()->set_min((x + 1) * 8);
+            }
+
+            // Create rectangle leds
+            for (ssize_t x=0; x<4; ++x)
+            {
+                // Create alignment widget
+                MTEST_ASSERT(id.fmt_ascii("led-%d-4", x));
+                MTEST_ASSERT(led = new tk::Led(dpy));
+                MTEST_ASSERT(init_widget(led, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(led));
+                MTEST_ASSERT(grid->add(led) == STATUS_OK);
+
+                led->color()->set_rgb24(next_color(col));
+                led->led_color()->set(led->color());
+                led->led_color()->lightness(led->led_color()->lightness() * 1.5f);
+                led->hole()->set(!(x & 1));
+                led->on()->set(x & 1);
+                led->led()->set((x + 1) * 4);
+                led->gradient()->set(true);
+                led->round()->set(false);
+                led->constraints()->set_min((x + 1) * 8, (5 - x) * 8);
+                led->constraints()->set_max((x + 1) * 8, (5 - x) * 8);
+            }
+
+            // Create rectangle leds
+            for (ssize_t x=0; x<4; ++x)
+            {
+                // Create alignment widget
+                MTEST_ASSERT(id.fmt_ascii("led-%d-5", x));
+                MTEST_ASSERT(led = new tk::Led(dpy));
+                MTEST_ASSERT(init_widget(led, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(led));
+                MTEST_ASSERT(grid->add(led) == STATUS_OK);
+
+                led->color()->set_rgb24(next_color(col));
+                led->led_color()->set(led->color());
+                led->led_color()->lightness(led->led_color()->lightness() * 1.5f);
+                led->hole()->set(!(x & 1));
+                led->on()->set(x & 1);
+                led->led()->set((x + 1) * 4);
+                led->gradient()->set(false);
+                led->round()->set(false);
+                led->constraints()->set_min((x + 1) * 8, (5 - x) * 8);
+                led->constraints()->set_max((x + 1) * 8, (5 - x) * 8);
             }
         }
 

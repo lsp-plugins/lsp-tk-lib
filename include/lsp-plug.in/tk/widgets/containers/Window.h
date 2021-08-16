@@ -55,6 +55,7 @@ namespace lsp
         {
             private:
                 Window & operator = (const Window &);
+                Window(const Window &);
 
             protected:
                 friend class Display;
@@ -117,9 +118,9 @@ namespace lsp
                 status_t            update_pointer();
 
                 // Mouse operations
-                virtual Widget     *sync_mouse_handler(const ws::event_t *e);
+                virtual Widget     *sync_mouse_handler(const ws::event_t *e, bool lookup);
                 virtual Widget     *acquire_mouse_handler(const ws::event_t *e);
-                virtual Widget     *release_mouse_handler(const ws::event_t *e);
+                virtual Widget     *release_mouse_handler(const ws::event_t *e, bool lookup);
 
                 // Focus operations
                 inline bool         check_focus(Widget *w) const    { return pFocused == w; }

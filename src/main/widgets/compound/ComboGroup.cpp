@@ -33,34 +33,46 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(ComboGroup, WidgetContainer)
                 // Bind
                 sFont.bind("font", this);
+                sTextAdjust.bind("text.adjust", this);
                 sColor.bind("color", this);
                 sTextColor.bind("text.color", this);
                 sSpinColor.bind("spin.color", this);
                 sOpened.bind("opened", this);
                 sBorder.bind("border.size", this);
-                sTextBorder.bind("text.border", this);
+                sTextPadding.bind("text.padding", this);
                 sRadius.bind("border.radius", this);
                 sTextRadius.bind("text.radius", this);
                 sSpinSize.bind("spin.size", this);
+                sSpinSpacing.bind("spin.spacing", this);
                 sEmbedding.bind("embed", this);
                 sLayout.bind("layout", this);
                 sSizeConstraints.bind("size.constraints", this);
+                sHeading.bind("heading", this);
                 // Configure
                 sFont.set_size(12.0f);
+                sTextAdjust.set(TA_NONE);
                 sColor.set("#000000");
                 sTextColor.set("#ffffff");
                 sSpinColor.set("#ffffff");
                 sOpened.set(false);
                 sBorder.set(2);
-                sTextBorder.set(2);
+                sTextPadding.set(2);
                 sRadius.set(10);
                 sTextRadius.set(10);
                 sSpinSize.set(8);
+                sSpinSpacing.set(0);
                 sEmbedding.set(false);
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 sSizeConstraints.set_all(-1);
+                sHeading.set(-1.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ComboGroup, "ComboGroup");
+            LSP_TK_BUILTIN_STYLE(ComboGroup, "ComboGroup", "root");
+
+            // ComboGroup::Window style
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboGroup::Window", "Window");
+
+            // ComboGroup::List style
+            LSP_TK_BUILTIN_STYLE(ListBox, "ComboGroup::List", "ListBox");
         }
 
         //-----------------------------------------------------------------------------
@@ -127,19 +139,22 @@ namespace lsp
             sLBox(dpy, this),
             sWindow(dpy, this),
             sFont(&sProperties),
+            sTextAdjust(&sProperties),
             sColor(&sProperties),
             sTextColor(&sProperties),
             sSpinColor(&sProperties),
             sEmptyText(&sProperties),
             sOpened(&sProperties),
             sBorder(&sProperties),
-            sTextBorder(&sProperties),
+            sTextPadding(&sProperties),
             sRadius(&sProperties),
             sTextRadius(&sProperties),
             sSpinSize(&sProperties),
+            sSpinSpacing(&sProperties),
             sEmbedding(&sProperties),
             sLayout(&sProperties),
             sSizeConstraints(&sProperties),
+            sHeading(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -184,37 +199,22 @@ namespace lsp
             sWindow.layout()->set_scale(1.0f);
 
             sFont.bind("font", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sColor.bind("color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sSpinColor.bind("spin.color", &sStyle);
             sEmptyText.bind(&sStyle, pDisplay->dictionary());
             sOpened.bind("opened", &sStyle);
             sBorder.bind("border.size", &sStyle);
-            sTextBorder.bind("text.border", &sStyle);
+            sTextPadding.bind("text.padding", &sStyle);
             sRadius.bind("border.radius", &sStyle);
             sTextRadius.bind("text.radius", &sStyle);
             sSpinSize.bind("spin.size", &sStyle);
+            sSpinSpacing.bind("spin.spacing", &sStyle);
             sEmbedding.bind("embed", &sStyle);
             sLayout.bind("layout", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sFont.init(sclass);
-//                sColor.init(sclass, "#000000");
-//                sTextColor.init(sclass, "#ffffff");
-//                sSpinColor.init(sclass, "#ffffff");
-//                sOpened.init(sclass, false);
-//                sBorder.init(sclass, 2);
-//                sTextBorder.init(sclass, 2);
-//                sRadius.init(sclass, 10);
-//                sTextRadius.init(sclass, 10);
-//                sSpinSize.init(sclass, 8);
-//                sEmbedding.init(sclass, false);
-//                sLayout.init(sclass, 0.0f, 0.0f, 1.0f, 1.0f);
-//                sSizeConstraints.init(sclass);
-//            }
+            sHeading.bind("heading", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -230,6 +230,8 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
             if (sFont.is(prop))
+                query_resize();
+            if (sTextAdjust.is(prop))
                 query_resize();
             if (sColor.is(prop))
                 query_draw();
@@ -260,15 +262,23 @@ namespace lsp
             }
             if (sBorder.is(prop))
                 query_resize();
+            if (sPadding.is(prop))
+                query_resize();
             if (sRadius.is(prop))
                 query_resize();
             if (sTextRadius.is(prop))
+                query_resize();
+            if (sSpinSize.is(prop))
+                query_resize();
+            if (sSpinSpacing.is(prop))
                 query_resize();
             if (sEmbedding.is(prop))
                 query_resize();
             if (sLayout.is(prop))
                 query_resize();
             if (sSizeConstraints.is(prop))
+                query_resize();
+            if (sHeading.is(prop))
                 query_resize();
             if (vWidgets.is(prop))
                 query_resize();
@@ -284,11 +294,13 @@ namespace lsp
                     sSelected.set(NULL);
                 query_resize();
             }
+            if (sActive.is(prop))
+                query_resize();
         }
 
         void ComboGroup::on_add_widget(void *obj, Property *prop, void *w)
         {
-            ListBoxItem *item = widget_ptrcast<ListBoxItem>(w);
+            Widget *item = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
@@ -302,13 +314,17 @@ namespace lsp
 
         void ComboGroup::on_remove_widget(void *obj, Property *prop, void *w)
         {
-            ListBoxItem *item = widget_ptrcast<ListBoxItem>(w);
+            Widget *item = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
             ComboGroup *_this = widget_ptrcast<ComboGroup>(obj);
             if (_this == NULL)
                 return;
+
+            // Reset active widget if present
+            if (_this->sActive.get() == item)
+                _this->sActive.set(NULL);
 
             _this->unlink_widget(item);
             _this->query_resize();
@@ -317,9 +333,11 @@ namespace lsp
         void ComboGroup::allocate(alloc_t *alloc)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
             ssize_t spin    = lsp_max(0.0f, sSpinSize.get() * scaling);
+            ssize_t spin_sp = lsp_max(0.0f, sSpinSpacing.get() * scaling);
 
             // Text allocation
             ws::rectangle_t xr;
@@ -332,17 +350,18 @@ namespace lsp
             ws::font_parameters_t fp;
             ListBoxItem *it     = current_item();
 
-            ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
             ssize_t tradius     = lsp_max(0.0f, sTextRadius.get() * scaling);
             if (it != NULL)
                 it->text()->format(&s);
             else
                 sEmptyText.format(&s);
+            sTextAdjust.apply(&s);
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
-            xr.nWidth           = tp.Width + tborder + tradius + spin;
-            xr.nHeight          = lsp_max(fp.Height, tp.Height) + tborder*2;
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
+            xr.nWidth           = tp.Width + tradius + spin + spin_sp;
+            xr.nHeight          = lsp_max(fp.Height, tp.Height);
+            sTextPadding.add(&xr, scaling);
             alloc->text         = xr;
 
             xr.nWidth          += radius * 1.5f;
@@ -376,8 +395,8 @@ namespace lsp
 
             allocate(&alloc);
 
-            ssize_t hpad       = alloc.pad.nLeft + alloc.pad.nRight;
-            ssize_t vpad       = alloc.pad.nTop  + alloc.pad.nBottom;
+            ssize_t hpad        = alloc.pad.nLeft + alloc.pad.nRight;
+            ssize_t vpad        = alloc.pad.nTop  + alloc.pad.nBottom;
 
             Widget *widget      = current_widget();
 
@@ -415,14 +434,13 @@ namespace lsp
 
         void ComboGroup::realize(const ws::rectangle_t *r)
         {
-            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             WidgetContainer::realize(r);
 
             // Compute text and widget area
             alloc_t alloc;
             allocate(&alloc);
 
-            sLabel          = alloc.text;
+            sHeading.happly(&sLabel, &alloc.text, r->nWidth);
             sLabel.nLeft   += r->nLeft;
             sLabel.nTop    += r->nTop;
 
@@ -444,6 +462,10 @@ namespace lsp
 
         Widget *ComboGroup::current_widget()
         {
+            Widget *active  = sActive.get();
+            if ((active != NULL) && (vWidgets.contains(active)))
+                return active;
+
             ListBoxItem *it = sSelected.get();
             ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : NULL;
             return vWidgets.get(index);
@@ -466,6 +488,7 @@ namespace lsp
 
             ws::rectangle_t xr;
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright    = lsp_max(0.0f, sBrightness.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
@@ -480,7 +503,7 @@ namespace lsp
             {
                 widget->get_rectangle(&xr);
 
-                if (widget->redraw_pending())
+                if ((force) || (widget->redraw_pending()))
                 {
                     // Draw the child only if it is visible in the area
                     if (Size::intersection(&xr, &sSize))
@@ -496,7 +519,7 @@ namespace lsp
                     {
                         s->clip_begin(area);
                         {
-                            color.copy(widget->bg_color()->color());
+                            widget->get_actual_bg_color(color);
                             s->fill_frame(color, &sSize, &xr);
                         }
                         s->clip_end();
@@ -505,7 +528,7 @@ namespace lsp
             }
             else
             {
-                color.copy(sBgColor);
+                get_actual_bg_color(color);
                 s->fill_rect(color, &sSize);
                 bg   = true;
             }
@@ -521,7 +544,7 @@ namespace lsp
                 {
                     if (!bg)
                     {
-                        color.copy(sBgColor);
+                        get_actual_bg_color(color);
 
                         xr          = sSize;
                         xg          = border * 2;
@@ -538,22 +561,15 @@ namespace lsp
                     color.copy(sColor);
                     color.scale_lightness(bright);
 
-                    xr          = sSize;
-                    xg          = border >> 1;
-                    ir          = lsp_max(0, radius - xg);
-                    xr.nLeft   += xg;
-                    xr.nTop    += xg;
-                    xr.nWidth  -= (border*2 - xg);
-                    xr.nHeight -= (border*2 - xg);
-
                     s->set_antialiasing(true);
-                    s->wire_round_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &xr, border);
+                    s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
                 }
 
                 // Draw text (and image)
                 if (Size::overlap(area, &sLabel))
                 {
                     ssize_t spin        = lsp_max(0.0f, sSpinSize.get() * scaling);
+                    ssize_t spin_sp     = lsp_max(0.0f, sSpinSpacing.get() * scaling);
                     ListBoxItem *it     = current_item();
                     ir                  = lsp_max(0.0f, sTextRadius.get() * scaling);
 
@@ -571,36 +587,37 @@ namespace lsp
                     color.copy(sTextColor);
                     color.scale_lightness(bright);
 
-                    ssize_t tborder     = lsp_max(0.0f, sTextBorder.get() * scaling);
                     if (it != NULL)
                         it->text()->format(&text);
                     else
                         sEmptyText.format(&text);
+                    sTextAdjust.apply(&text);
 
-                    sFont.get_parameters(pDisplay, scaling, &fp);
-                    sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
-
-                    ssize_t x = sLabel.nLeft + tborder;
-                    ssize_t y = sLabel.nTop  + tborder;
+                    sFont.get_parameters(pDisplay, fscaling, &fp);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
+                    ws::rectangle_t tloc;
+                    sTextPadding.enter(&tloc, &sLabel, scaling);
 
                     sFont.draw(s, color,
-                            x + spin - tp.XBearing, y + fp.Ascent,
-                            scaling, &text);
+                            tloc.nLeft + spin + spin_sp - tp.XBearing, tloc.nTop + fp.Ascent,
+                            fscaling, &text);
 
                     // Draw arrows
                     color.copy(sSpinColor);
                     color.scale_lightness(bright);
 
                     s->fill_triangle(
-                        x, y + (fp.Height*3.0f)/7.0f,
-                        x + spin*0.4f, y + fp.Height/7.0f,
-                        x + spin*0.8f, y + (fp.Height*3.0f)/7.0f,
-                        color);
+                        tloc.nLeft, tloc.nTop + (fp.Height*3.0f)/7.0f,
+                        tloc.nLeft + spin*0.4f, tloc.nTop + fp.Height/7.0f,
+                        tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*3.0f)/7.0f,
+                        color
+                    );
                     s->fill_triangle(
-                        x, y + (fp.Height*4.0f)/7.0f,
-                        x + spin*0.8f, y + (fp.Height*4.0f)/7.0f,
-                        x + spin*0.4f, y + (fp.Height*6.0f)/7.0f,
-                        color);
+                        tloc.nLeft, tloc.nTop + (fp.Height*4.0f)/7.0f,
+                        tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*4.0f)/7.0f,
+                        tloc.nLeft + spin*0.4f, tloc.nTop + (fp.Height*6.0f)/7.0f,
+                        color
+                    );
                 }
 
                 s->clip_end();
@@ -643,6 +660,8 @@ namespace lsp
         Widget *ComboGroup::find_widget(ssize_t x, ssize_t y)
         {
             Widget *widget  = current_widget();
+            if (widget == NULL)
+                return NULL;
             if ((widget->is_visible_child_of(this)) && (widget->inside(x, y)))
                 return widget;
 

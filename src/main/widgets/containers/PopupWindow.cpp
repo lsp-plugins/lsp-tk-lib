@@ -47,7 +47,7 @@ namespace lsp
                 sBorderStyle.override();
                 sActions.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(PopupWindow, "PopupWindow");
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "PopupWindow", "root");
         }
 
         PopupWindow::PopupWindow(Display *dpy):

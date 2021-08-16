@@ -336,7 +336,7 @@ namespace lsp
             if (res == STATUS_NOT_FOUND)
             {
                 path.clear();
-                if (!path.append_ascii("default"))
+                if (!path.append_ascii(LSP_TK_PROP_DEFAULT_LANGUAGE))
                     return STATUS_NO_MEM;
                 if (!path.append('.'))
                     return STATUS_NO_MEM;

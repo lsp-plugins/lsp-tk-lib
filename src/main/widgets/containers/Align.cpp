@@ -40,7 +40,7 @@ namespace lsp
                 sLayout.override();
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Align, "Align");
+            LSP_TK_BUILTIN_STYLE(Align, "Align", "root");
         }
 
         const w_class_t Align::metadata         = { "Align", &WidgetContainer::metadata };
@@ -112,13 +112,14 @@ namespace lsp
                 force = true;
 
             // Initialize palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
 
             // Draw background if child is invisible or not present
             if ((pWidget == NULL) || (!pWidget->visibility()->get()))
             {
                 s->clip_begin(area);
-                    s->fill_rect(bg_color, &sSize);
+                s->fill_rect(bg_color, &sSize);
                 s->clip_end();
                 return;
             }
@@ -143,7 +144,7 @@ namespace lsp
                 {
                     s->clip_begin(area);
                     {
-                        bg_color.copy(pWidget->bg_color()->color());
+                        pWidget->get_actual_bg_color(bg_color);
                         s->fill_frame(bg_color, &sSize, &cr);
                     }
                     s->clip_end();

@@ -57,10 +57,10 @@ namespace
     LSP_TK_STYLE_IMPL_BEGIN(TestChild, TestBase)
     LSP_TK_STYLE_IMPL_END
 
-    StyleFactory<TestBase>  TestBaseFactory("TestBase");
-    StyleFactory<TestChild> TestBaseChild1("TestChild1");
-    StyleFactory<TestChild> TestBaseChild2("TestChild2");
-    StyleFactory<TestChild> TestBaseChild3("TestChild3");
+    StyleFactory<TestBase>  TestBaseFactory("TestBase", "root");
+    StyleFactory<TestChild> TestBaseChild1("TestChild1", "TestBase");
+    StyleFactory<TestChild> TestBaseChild2("TestChild2", "TestBase");
+    StyleFactory<TestChild> TestBaseChild3("TestChild3", "TestBase");
 
     static IStyleFactory *init_list[] =
     {
@@ -106,7 +106,7 @@ UTEST_BEGIN("tk.style", nesting)
         public:
             StyleClient(test_type_t *test, const char *style, Schema *schema):
                 sListener(this),
-                sStyle(schema),
+                sStyle(schema, NULL, NULL),
                 sInt(&sListener),
                 sFloat(&sListener),
                 sColor(&sListener),
@@ -177,12 +177,12 @@ UTEST_BEGIN("tk.style", nesting)
     UTEST_MAIN
     {
         Atoms sAtoms;
-        Schema sSchema(&sAtoms);
+        Schema sSchema(&sAtoms, NULL);
         StyleSheet sSheet;
         io::Path path;
 
         // Create default styles
-        UTEST_ASSERT(sSchema.init(init_list, sizeof(init_list)/sizeof(StyleInitializer *)) == STATUS_OK);
+        UTEST_ASSERT(sSchema.init(init_list, sizeof(init_list)/sizeof(IStyleFactory *)) == STATUS_OK);
 
         // Load style sheet and apply
         UTEST_ASSERT(path.fmt("%s/schema/nesting.xml", resources()) > 0);

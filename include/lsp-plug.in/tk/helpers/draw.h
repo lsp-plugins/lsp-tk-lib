@@ -31,23 +31,16 @@ namespace lsp
         /** Draw border
          *
          * @param s surface to draw the border
-         * @param left the left position
-         * @param top the top position
-         * @param width the width of the border
-         * @param height the height of the border
+         * @param size the size of the surrounding rectangle
          * @param thick the thickness of the border
          * @param iradius inner radius of the border
          * @param mask the rounding mask
          * @param c the color of the border
          */
-        void draw_border(ws::ISurface *s,
-                const lsp::Color &c, size_t mask, ssize_t thick, size_t iradius,
-                ssize_t left, ssize_t top, ssize_t width, ssize_t height
-        );
 
         void draw_border(ws::ISurface *s,
                 const lsp::Color &c, size_t mask, ssize_t thick, size_t iradius,
-                const ws::rectangle_t *size
+                const ws::rectangle_t *size, bool flat
         );
 
         /** Create glass
@@ -76,13 +69,14 @@ namespace lsp
          * @param mask the radius drawing mask
          * @param gc the color of the glass
          * @param bc the color of the border
+         * @param flat use flat border painting insetad of gradient
          * @return pointer to the glass on succes or null on error
          */
         ws::ISurface * create_border_glass(
             ws::ISurface **g, ws::ISurface *s,
             const lsp::Color &gc, const lsp::Color &bc,
             size_t mask, ssize_t thick, ssize_t radius,
-            size_t width, size_t height
+            size_t width, size_t height, bool flat
         );
 
         void draw_border_back(
@@ -111,7 +105,7 @@ namespace lsp
          * @param tp text parameters
          * @param halign horizontal font alignment
          * @param valign vertical font alignment
-         * @param scaling font scaling
+         * @param fscaling font scaling
          * @param text text to output
          */
         void draw_multiline_text(
@@ -121,7 +115,7 @@ namespace lsp
             const lsp::Color &color,
             const ws::font_parameters_t *fp,
             const ws::text_parameters_t *tp,
-            float halign, float valign, float scaling,
+            float halign, float valign, float fscaling,
             const LSPString *text
         );
     }

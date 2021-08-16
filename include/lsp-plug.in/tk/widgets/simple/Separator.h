@@ -49,6 +49,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Separator & operator = (const Separator &);
+                Separator(const Separator &);
+
             protected:
                 prop::Orientation       sOrientation;
                 prop::Color             sColor;

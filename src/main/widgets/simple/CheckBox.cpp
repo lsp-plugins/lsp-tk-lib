@@ -65,7 +65,7 @@ namespace lsp
                 // Commit
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(CheckBox, "CheckBox");
+            LSP_TK_BUILTIN_STYLE(CheckBox, "CheckBox", "root");
         }
 
         const w_class_t CheckBox::metadata      = { "CheckBox", &Widget::metadata };
@@ -237,7 +237,7 @@ namespace lsp
 
             // Draw background
             bool aa     = s->set_antialiasing(false);
-            c.copy(sBgColor);
+            get_actual_bg_color(c);
             s->fill_rect(c, 0, 0, sSize.nWidth, sSize.nHeight);
             s->set_antialiasing(true);
 

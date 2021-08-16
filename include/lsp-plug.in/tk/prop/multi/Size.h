@@ -34,6 +34,7 @@ namespace lsp
         {
             protected:
                 Size & operator = (const Size &);
+                Size(const Size &);
 
             protected:
                 enum property_t
@@ -84,6 +85,8 @@ namespace lsp
 
                 static bool         overlap(const ws::rectangle_t *a, const ws::rectangle_t *b);
                 static bool         is_empty(const ws::rectangle_t *r);
+
+                static void         init(ws::rectangle_t *dst, ssize_t left, ssize_t top, ssize_t width, ssize_t height);
         };
 
         namespace prop
@@ -95,6 +98,7 @@ namespace lsp
             {
                 private:
                     Size & operator = (const Size &);
+                    Size(const Size &);
 
                 public:
                     explicit Size(prop::Listener *listener = NULL): tk::Size(listener) {};

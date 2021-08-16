@@ -60,6 +60,7 @@ namespace lsp
 
             private:
                 FileButton & operator = (const FileButton &);
+                FileButton(const FileButton &);
 
             protected:
                 enum flags_t

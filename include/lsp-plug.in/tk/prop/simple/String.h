@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 String & operator = (const String &);
+                String(const String &);
 
             protected:
                 enum flags_t
@@ -235,6 +236,7 @@ namespace lsp
             {
                 private:
                     String & operator = (const String &);
+                    String(const String &);
 
                 public:
                     explicit String(prop::Listener *listener = NULL): tk::String(listener) {};

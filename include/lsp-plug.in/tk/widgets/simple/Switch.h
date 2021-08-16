@@ -52,6 +52,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Switch & operator = (const Switch &);
+                Switch(const Switch &);
+
             protected:
                 enum state_t
                 {

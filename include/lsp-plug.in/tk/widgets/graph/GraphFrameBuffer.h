@@ -53,6 +53,7 @@ namespace lsp
 
             private:
                 GraphFrameBuffer & operator = (const GraphFrameBuffer &);
+                GraphFrameBuffer(const GraphFrameBuffer &);
 
             protected:
                 typedef void (GraphFrameBuffer::*calc_color_t)(float *rgba, const float *value, size_t n);

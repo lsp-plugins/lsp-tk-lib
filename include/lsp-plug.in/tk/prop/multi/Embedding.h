@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 Embedding & operator = (const Embedding &);
+                Embedding(const Embedding &);
 
             protected:
                 static const prop::desc_t   DESC[];
@@ -97,6 +98,8 @@ namespace lsp
                 void            set(bool left, bool right, bool top, bool bottom);
                 void            set(bool hor, bool vert);
                 void            set(bool on);
+                void            set_horizontal(bool hor);
+                void            set_vertical(bool vert);
         };
 
         namespace prop
@@ -108,6 +111,7 @@ namespace lsp
             {
                 private:
                     Embedding & operator = (const Embedding &);
+                    Embedding(const Embedding &);
 
                 public:
                     explicit Embedding(prop::Listener *listener = NULL): tk::Embedding(listener) {}

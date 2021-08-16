@@ -59,6 +59,7 @@ namespace lsp
         {
             private:
                 CheckBox & operator = (const CheckBox &);
+                CheckBox(const CheckBox &);
 
             public:
                 static const w_class_t    metadata;

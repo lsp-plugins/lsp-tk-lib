@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <schema>
+	<!-- Metadata -->
+	<meta>
+		<title value="Test schema" />
+	</meta>
+
 	<!-- Color aliases -->
 	<colors>
 		<!-- Color definitions -->
@@ -12,6 +17,13 @@
 		<hsla   hsla="@11223388" />
 		<ared   avalue="@0f84" />
 	</colors>
+	
+	<!-- Fonts -->
+	<fonts>
+		<font1  src="path/to/some/font1.ttf" />
+		<font2  alias="font1" />
+		<font3  src="path/to/some/font3.ttf" />
+	</fonts>
 	
 	<!-- Root style -->
 	<root>

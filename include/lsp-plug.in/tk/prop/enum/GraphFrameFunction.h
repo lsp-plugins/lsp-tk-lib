@@ -34,12 +34,13 @@ namespace lsp
         {
             private:
                 GraphFrameFunction & operator = (const GraphFrameFunction &);
+                GraphFrameFunction(const GraphFrameFunction &);
 
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit GraphFrameFunction(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit GraphFrameFunction(prop::Listener *listener = NULL): Enum(ENUM, GFF_DEFAULT, listener) {};
 
             public:
                 inline graph_frame_function_t   get() const                     { return graph_frame_function_t(nValue);        }
@@ -66,6 +67,7 @@ namespace lsp
             {
                 private:
                     GraphFrameFunction & operator = (const GraphFrameFunction &);
+                    GraphFrameFunction(const GraphFrameFunction &);
 
                 public:
                     explicit GraphFrameFunction(prop::Listener *listener = NULL): tk::GraphFrameFunction(listener) {};

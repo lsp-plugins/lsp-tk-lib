@@ -90,6 +90,7 @@ namespace lsp
                     if (vAtoms[P_SIZE] >= 0)
                         pStyle->set_int(vAtoms[P_SIZE], nSize);
                 }
+                pStyle->end();
             }
 
             // Notify about property change

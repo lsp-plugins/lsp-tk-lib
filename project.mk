@@ -19,19 +19,17 @@
 #
 
 # Package version
+ARTIFACT_ID                 = LSP_TK_LIB
 ARTIFACT_NAME               = lsp-tk-lib
 ARTIFACT_DESC               = Graphical toolkit library for Linux Studio Plugins Project
-ARTIFACT_VARS               = LSP_TK_LIB
 ARTIFACT_HEADERS            = lsp-plug.in
 ARTIFACT_EXPORT_ALL         = 1
-ARTIFACT_VERSION            = 0.5.0
+ARTIFACT_VERSION            = 0.5.1
 
 # List of dependencies
-TEST_DEPENDENCIES = \
-  LSP_TEST_FW
-
 DEPENDENCIES = \
-  STDLIB \
+  LIBPTHREAD \
+  LIBDL \
   LSP_COMMON_LIB \
   LSP_LLTL_LIB \
   LSP_R3D_IFACE \
@@ -39,36 +37,53 @@ DEPENDENCIES = \
   LSP_DSP_LIB \
   LSP_WS_LIB
 
-LINUX_DEPENDENCIES = \
-  LIBSNDFILE \
-  XLIB \
-  CAIRO
-  
-BSD_DEPENDENCIES = \
-  LIBSNDFILE \
-  XLIB \
-  CAIRO
+TEST_DEPENDENCIES = \
+  LSP_TEST_FW
 
-OPTIONAL_DEPENDENCIES = \
-  LSP_R3D_BASE_LIB \
-  LSP_R3D_GLX_LIB \
-  OPENGL
-
-# For Linux-based systems, use libsndfile and xlib
 ifeq ($(PLATFORM),Linux)
-  DEPENDENCIES             += $(LINUX_DEPENDENCIES)
-  TEST_DEPENDENCIES        += LSP_R3D_BASE_LIB LSP_R3D_GLX_LIB OPENGL
+  DEPENDENCIES             += \
+    LIBSNDFILE \
+    LIBX11 \
+    LIBCAIRO \
+    LIBFREETYPE
+
+  TEST_DEPENDENCIES        += \
+    LSP_R3D_BASE_LIB \
+    LSP_R3D_GLX_LIB \
+    LIBGL
 endif
 
-# For BSD-based systems, use libsndfile and xlib
 ifeq ($(PLATFORM),BSD)
-  DEPENDENCIES             += $(BSD_DEPENDENCIES)
-  TEST_DEPENDENCIES        += LSP_R3D_BASE_LIB LSP_R3D_GLX_LIB OPENGL
+  DEPENDENCIES             += \
+    LIBSNDFILE \
+    LIBX11 \
+    LIBCAIRO \
+    LIBICONV \
+    LIBFREETYPE
+
+  TEST_DEPENDENCIES        += \
+    LSP_R3D_BASE_LIB \
+    LSP_R3D_GLX_LIB \
+    LIBGL
+endif
+
+ifeq ($(PLATFORM),Windows)
+  DEPENDENCIES             += \
+    LIBSHLWAPI \
+    LIBWINMM \
+    LIBMSACM
 endif
 
 ALL_DEPENDENCIES = \
   $(DEPENDENCIES) \
   $(TEST_DEPENDENCIES) \
-  $(OPTIONAL_DEPENDENCIES) \
-  $(LINUX_DEPENDENCIES) \
-  $(BSD_DEPENDENCIES)
+  LIBSNDFILE \
+  LIBCAIRO \
+  LIBFREETYPE \
+  LIBICONV \
+  LIBX11 \
+  LIBGL \
+  LIBSHLWAPI \
+  LIBWINMM \
+  LIBMSACM \
+

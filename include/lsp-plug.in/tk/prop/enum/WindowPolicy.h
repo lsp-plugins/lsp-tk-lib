@@ -34,12 +34,13 @@ namespace lsp
         {
             private:
                 WindowPolicy & operator = (const WindowPolicy &);
+                WindowPolicy(const WindowPolicy &);
 
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit WindowPolicy(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit WindowPolicy(prop::Listener *listener = NULL): Enum(ENUM, WP_NORMAL, listener) {};
 
             public:
                 inline window_policy_t      get() const             { return window_policy_t(nValue); }
@@ -52,6 +53,7 @@ namespace lsp
             {
                 private:
                     WindowPolicy & operator = (const WindowPolicy &);
+                    WindowPolicy(const WindowPolicy &);
 
                 public:
                     explicit WindowPolicy(prop::Listener *listener = NULL): tk::WindowPolicy(listener) {};

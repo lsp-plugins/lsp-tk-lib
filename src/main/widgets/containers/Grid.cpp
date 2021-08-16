@@ -36,6 +36,7 @@ namespace lsp
                 sHSpacing.bind("hspacing", this);
                 sVSpacing.bind("vspacing", this);
                 sOrientation.bind("orientation", this);
+                sConstraints.bind("size.constraints", this);
                 // Configure
                 sRows.set(1);
                 sColumns.set(1);
@@ -47,7 +48,7 @@ namespace lsp
                 // Commit
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Grid, "Grid");
+            LSP_TK_BUILTIN_STYLE(Grid, "Grid", "root");
         }
 
         const w_class_t Grid::metadata = { "Grid", &WidgetContainer::metadata };
@@ -87,8 +88,7 @@ namespace lsp
 
             vItems.flush();
 
-            sAlloc.vCells.flush();
-            sAlloc.vTable.flush();
+            free_cells(&sAlloc);
         }
 
         void Grid::destroy()
@@ -96,6 +96,55 @@ namespace lsp
             nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
+        }
+
+        Grid::cell_t *Grid::alloc_cell(lltl::parray<cell_t> *list)
+        {
+            cell_t *cell = static_cast<cell_t *>(malloc(sizeof(cell_t)));
+            if (cell == NULL)
+                return NULL;
+
+            if (!list->add(cell))
+            {
+                free(cell);
+                return NULL;
+            }
+
+            cell->a.nLeft   = 0;
+            cell->a.nTop    = 0;
+            cell->a.nWidth  = 0;
+            cell->a.nHeight = 0;
+            cell->s.nLeft   = 0;
+            cell->s.nTop    = 0;
+            cell->s.nWidth  = 0;
+            cell->s.nHeight = 0;
+
+            cell->pWidget   = NULL;
+            cell->nLeft     = 0;
+            cell->nTop      = 0;
+            cell->nRows     = 0;
+            cell->nCols     = 0;
+            cell->nTag      = 0;
+
+            return cell;
+        }
+
+        void Grid::free_cell(cell_t *cell)
+        {
+            if (cell == NULL)
+                return;
+
+            cell->pWidget   = NULL;
+            free(cell);
+        }
+
+        void Grid::free_cells(alloc_t *alloc)
+        {
+            for (size_t i=0, n=alloc->vCells.size(); i<n; ++i)
+                free_cell(alloc->vCells.uget(i));
+
+            alloc->vCells.flush();
+            alloc->vTable.flush();
         }
 
         status_t Grid::init()
@@ -109,6 +158,7 @@ namespace lsp
             sHSpacing.bind("hspacing", &sStyle);
             sVSpacing.bind("vspacing", &sStyle);
             sOrientation.bind("orientation", &sStyle);
+            sConstraints.bind("size.constraints", &sStyle);
 
             return STATUS_OK;
         }
@@ -125,6 +175,8 @@ namespace lsp
             if (sVSpacing.is(prop))
                 query_resize();
             if (sOrientation.is(prop))
+                query_resize();
+            if (sConstraints.is(prop))
                 query_resize();
         }
 
@@ -152,7 +204,8 @@ namespace lsp
 
         void Grid::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
 
             // Check dirty flag
             if (nFlags & REDRAW_SURFACE)
@@ -179,7 +232,7 @@ namespace lsp
 
                 if (w->pWidget == NULL)
                 {
-                    bg_color.copy(sBgColor);
+                    get_actual_bg_color(bg_color);
 
                     size_t cw   = w->a.nWidth;
                     size_t ch   = w->a.nHeight;
@@ -194,13 +247,13 @@ namespace lsp
                     continue;
                 }
 
-                if ((!force) && (!w->pWidget->redraw_pending()))
-                    continue;
-
-                // Render the widget
-                if (Size::intersection(&xr, area, &w->s))
-                    w->pWidget->render(s, &xr, force);
-                w->pWidget->commit_redraw();
+                // Render the child widget
+                if ((force) || (w->pWidget->redraw_pending()))
+                {
+                    if (Size::intersection(&xr, area, &w->s))
+                        w->pWidget->render(s, &xr, force);
+                    w->pWidget->commit_redraw();
+                }
 
                 // Fill unused space with background
                 if (force)
@@ -210,12 +263,12 @@ namespace lsp
                         // Draw widget area
                         if (Size::overlap(area, &w->a))
                         {
-                            bg_color.copy(w->pWidget->bg_color()->color());
+                            w->pWidget->get_actual_bg_color(bg_color);
                             s->fill_frame(bg_color, &w->a, &w->s);
                         }
 
                         // Need to draw spacing?
-                        bg_color.copy(sBgColor);
+                        get_actual_bg_color(bg_color);
                         if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
                         {
                             xr.nLeft    = w->a.nLeft + w->a.nWidth;
@@ -319,9 +372,7 @@ namespace lsp
                     if (!vItems.remove(i))
                         return STATUS_NO_MEM;
 
-                    sAlloc.vCells.clear();
-                    sAlloc.vTable.clear();
-
+                    free_cells(&sAlloc);
                     unlink_widget(widget);
                     return STATUS_OK;
                 }
@@ -337,10 +388,12 @@ namespace lsp
 //                );
 //
             alloc_t a;
-
             status_t res = allocate_cells(&a);
             if (res != STATUS_OK)
+            {
+                free_cells(&a);
                 return;
+            }
 
             // Distribute the size between rows and columns
             distribute_size(&a.vCols, 0, a.nCols, r->nWidth);
@@ -362,11 +415,15 @@ namespace lsp
 
             // Call parent method to realize
             WidgetContainer::realize(r);
+
+            // Destroy the previously used data
+            free_cells(&a);
         }
 
         void Grid::size_request(ws::size_limit_t *r)
         {
             alloc_t a;
+            float scaling       = lsp_max(0.0f, sScaling.get());
 
             // Allocate cells
             allocate_cells(&a);
@@ -378,6 +435,12 @@ namespace lsp
             r->nMaxHeight       = -1;
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
+
+            // Apply size constraints
+            sConstraints.apply(r, scaling);
+
+            free_cells(&a);
+
 
 //            lsp_trace("w={%d, %d}, h={%d, %d}",
 //                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight)
@@ -403,7 +466,7 @@ namespace lsp
             }
 
             // Allocate cell
-            cell_t *cell = a->vCells.add();
+            cell_t *cell = alloc_cell(&a->vCells);
             if (cell == NULL)
                 return false;
 
@@ -694,7 +757,7 @@ namespace lsp
                         if (prev == NULL)
                         {
                             // Allocate cell
-                            if ((prev = a->vCells.add()) == NULL)
+                            if ((prev = alloc_cell(&a->vCells)) == NULL)
                                 return STATUS_NO_MEM;
 
                             prev->pWidget   = NULL;
@@ -724,10 +787,16 @@ namespace lsp
             }
 
             // Mark last row and last column as non-spacing
-            h   = a->vRows.get(a->nRows - 1);
-            h->nSpacing     = 0;
-            h   = a->vCols.get(a->nCols - 1);
-            h->nSpacing     = 0;
+            if (a->nRows > 0)
+            {
+                h   = a->vRows.get(a->nRows - 1);
+                h->nSpacing     = 0;
+            }
+            if (a->nCols > 0)
+            {
+                h   = a->vCols.get(a->nCols - 1);
+                h->nSpacing     = 0;
+            }
 
             // Initialize expand flags
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
@@ -769,6 +838,10 @@ namespace lsp
 
         void Grid::distribute_size(lltl::darray<header_t> *vh, size_t first, size_t count, size_t size)
         {
+            // Check number of elements
+            if (count <= 0)
+                return;
+
             // Estimate number of expanded items and overall weight
             size_t expanded = 0, weight = 0, width = 0;
             for (size_t k=0; k<count; ++k)
@@ -853,7 +926,7 @@ namespace lsp
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
             {
                 cell_t *w       = a->vCells.uget(i);
-                if (w->pWidget == NULL)
+                if ((w->pWidget == NULL) || (!w->pWidget->visibility()->get()))
                     continue;
                 else if ((w->nRows != 1) && (w->nCols != 1))
                     continue;
@@ -877,7 +950,7 @@ namespace lsp
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
             {
                 cell_t *w       = a->vCells.uget(i);
-                if (w->pWidget == NULL)
+                if ((w->pWidget == NULL) || (!w->pWidget->visibility()->get()))
                     continue;
                 if ((w->nRows <= 1) && (w->nCols <= 1))
                     continue;
@@ -977,7 +1050,7 @@ namespace lsp
             {
                 // Get widget
                 cell_t *w       = a->vTable.uget(i);
-                if (w->pWidget == NULL)
+                if ((w->pWidget == NULL) || (!w->pWidget->visibility()->get()))
                     continue;
 
                 // Allocated widget area may be too large, restrict it with size constraints

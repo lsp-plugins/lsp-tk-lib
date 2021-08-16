@@ -35,9 +35,12 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Box, WidgetContainer)
                 prop::Integer               sSpacing;
+                prop::Integer               sBorder;            // Border size
                 prop::Boolean               sHomogeneous;
                 prop::Orientation           sOrientation;
-                prop::SizeConstraints       sConstraints;        // Size constraints
+                prop::SizeConstraints       sConstraints;       // Size constraints
+                prop::Color                 sBorderColor;       // Border color
+                prop::Boolean               sSolid;             // Solid state: acts as a widget
             LSP_TK_STYLE_DEF_END
         }
 
@@ -49,6 +52,7 @@ namespace lsp
         {
             private:
                 Box & operator = (const Box &);
+                Box(const Box &);
 
             public:
                 static const w_class_t    metadata;
@@ -61,15 +65,28 @@ namespace lsp
                     Widget             *pWidget;    // Widget contained in the cell
                 } cell_t;
 
+                enum state_t
+                {
+                    F_MOUSE_IN      = 1 << 0,
+                    F_MOUSE_DOWN    = 1 << 1,
+                    F_MOUSE_IGN     = 1 << 2,
+                };
+
             protected:
+                size_t                      nMFlags;
+                size_t                      nState;
+
                 lltl::darray<cell_t>        vVisible;
                 prop::WidgetList<Widget>    vItems;
                 prop::CollectionListener    sIListener;         // Listener to trigger vItems content change
 
                 prop::Integer               sSpacing;
+                prop::Integer               sBorder;            // Border size
                 prop::Boolean               sHomogeneous;
                 prop::Orientation           sOrientation;
-                prop::SizeConstraints       sConstraints;        // Size constraints
+                prop::SizeConstraints       sConstraints;       // Size constraints
+                prop::Color                 sBorderColor;       // Border color
+                prop::Boolean               sSolid;             // Solid state: acts as a widget
 
             protected:
                 status_t                    visible_items(lltl::darray<cell_t> *out);
@@ -82,6 +99,9 @@ namespace lsp
                 status_t                    allocate_proportional(const ws::rectangle_t *r, lltl::darray<cell_t> &visible);
                 void                        allocate_widget_space(const ws::rectangle_t *r, lltl::darray<cell_t> &visible, ssize_t spacing);
                 void                        realize_children(lltl::darray<cell_t> &visible);
+
+            protected:
+                static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual void                size_request(ws::size_limit_t *r);
@@ -105,6 +125,12 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            spacing,            &sSpacing)
 
                 /**
+                 * The size of the border around the box
+                 * @return size of border around the box
+                 */
+                LSP_TK_PROPERTY(Integer,            border,             &sBorder)
+
+                /**
                  * Get proportional flag
                  * @return proportional flag property
                  */
@@ -121,6 +147,17 @@ namespace lsp
                  * @return size constraints of the box
                  */
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
+
+                /**
+                 * Get the color of the surrounding border
+                 * @return color of the surrounding border
+                 */
+                LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
+
+                /**
+                 * Get the solid flag of the container. If container is solid, it acts as an widget
+                 */
+                LSP_TK_PROPERTY(Boolean,            solid,              &sSolid)
 
                 /**
                  * Get collection of widgets
@@ -140,6 +177,18 @@ namespace lsp
                 virtual status_t            remove(Widget *child);
 
                 virtual status_t            remove_all();
+
+                virtual status_t            on_mouse_in(const ws::event_t *e);
+
+                virtual status_t            on_mouse_out(const ws::event_t *e);
+
+                virtual status_t            on_mouse_move(const ws::event_t *e);
+
+                virtual status_t            on_mouse_down(const ws::event_t *e);
+
+                virtual status_t            on_mouse_up(const ws::event_t *e);
+
+                virtual status_t            on_submit();
 
         };
     } /* namespace tk */

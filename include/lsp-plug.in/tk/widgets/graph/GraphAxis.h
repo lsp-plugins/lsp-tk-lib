@@ -53,6 +53,7 @@ namespace lsp
 
             private:
                 GraphAxis & operator = (const GraphAxis &);
+                GraphAxis(const GraphAxis &);
 
             protected:
                 prop::Vector2D              sDirection;     // Direction

@@ -44,6 +44,7 @@ namespace lsp
         {
             private:
                 Style & operator = (const Style &);
+                Style(const Style &);
 
                 friend class IStyleFactory;
                 friend class Schema;
@@ -60,7 +61,8 @@ namespace lsp
                 enum style_flags_t
                 {
                     S_DELAYED           = 1 << 0,   // Delayed notification
-                    S_OVERRIDE          = 1 << 1    // Force overrides
+                    S_OVERRIDE          = 1 << 1,   // Force overrides
+                    S_CONFIGURED        = 1 << 2,   // The changes to style have been configured
                 };
 
                 typedef struct property_t
@@ -96,6 +98,12 @@ namespace lsp
                     IStyleListener     *pListener;  // Listener
                 } listener_t;
 
+                typedef struct prop_sync_t
+                {
+                    property_t         *pProperty;  // Property of this style
+                    property_t         *pParent;    // Property of parent style
+                } property_sync_t;
+
                 typedef struct client_t
                 {
                     atom_t              nId;
@@ -110,9 +118,11 @@ namespace lsp
                 lltl::parray<IStyleListener>    vLocks;
                 mutable Schema                 *pSchema;
                 size_t                          nFlags;
+                char                           *sName;
+                char                           *sDflParents;
 
             public:
-                explicit Style(Schema *schema);
+                explicit Style(Schema *schema, const char *name, const char *parents);
                 virtual ~Style();
 
                 virtual status_t    init();
@@ -143,6 +153,12 @@ namespace lsp
                 void                notify_listeners(property_t *prop);
                 size_t              notify_listeners_delayed(property_t *prop);
                 void                deref_property(property_t *prop);
+                status_t            inheritance_tree(lltl::parray<Style> *dst);
+
+                bool                set_configured(bool set);
+                inline const char  *name() const            { return sName;                 }
+                inline const char  *default_parents() const { return sDflParents;           }
+                inline bool         configured() const      { return nFlags & S_CONFIGURED; }
 
             public:
                 /** Set override mode for the style
@@ -150,7 +166,7 @@ namespace lsp
                  * @param set overide mode (true/false)
                  * @return previous mode
                  */
-                bool                set_override(bool set);
+                bool                    set_override(bool set);
 
                 /**
                  * Get associated schema
@@ -266,6 +282,14 @@ namespace lsp
                  * @return true if style has a child
                  */
                 bool                    has_child(Style *child, bool recursive = false);
+
+                /**
+                 * Set default parent styles of the class
+                 * @param parents string with comma-separated list of default parent classes
+                 * @return status of operation
+                 */
+                status_t                set_default_parents(const char *parents);
+                status_t                set_default_parents(const LSPString *parents);
 
             public:
                 /**
@@ -547,9 +571,10 @@ namespace lsp
             { \
                 private: \
                     Name & operator = (Name &); \
+                    Name(const Name &); \
                 \
                 public: \
-                    explicit Name(::lsp::tk::Schema *schema); \
+                    explicit Name(::lsp::tk::Schema *schema, const char *name, const char *parents); \
                 \
                 public: \
                     virtual ::lsp::status_t     init(); \
@@ -560,7 +585,7 @@ namespace lsp
             }; \
 
         #define LSP_TK_STYLE_IMPL_BEGIN(Name, Parent) \
-            Name::Name(::lsp::tk::Schema *schema): Parent(schema) {} \
+            Name::Name(::lsp::tk::Schema *schema, const char *name, const char *parents): Parent(schema, name, parents) {} \
             \
             status_t Name::init() \
             { \

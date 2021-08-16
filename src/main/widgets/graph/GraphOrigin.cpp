@@ -40,7 +40,7 @@ namespace lsp
                 sRadius.set(4.0f);
                 sColor.set("#ffffff");
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphOrigin, "GraphOrigin");
+            LSP_TK_BUILTIN_STYLE(GraphOrigin, "GraphOrigin", "root");
         }
 
         const w_class_t GraphOrigin::metadata             = { "GraphOrigin", &GraphItem::metadata };

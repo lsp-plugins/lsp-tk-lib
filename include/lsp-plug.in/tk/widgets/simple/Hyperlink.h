@@ -37,6 +37,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Hyperlink, Widget)
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
                 prop::Color                 sHoverColor;    // Hover font color
@@ -52,6 +53,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Hyperlink & operator = (const Hyperlink &);
+                Hyperlink(const Hyperlink &);
+
             protected:
                 enum state_t
                 {
@@ -66,6 +71,7 @@ namespace lsp
                 Widget                     *vMenus[3];
 
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Color                 sColor;         // Font color
                 prop::Color                 sHoverColor;    // Hover font color
@@ -97,6 +103,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
+                LSP_TK_PROPERTY(TextAdjust,         text_adjust,        &sTextAdjust)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)

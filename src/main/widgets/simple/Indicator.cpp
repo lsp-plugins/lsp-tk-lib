@@ -38,6 +38,11 @@ namespace lsp
                 sShift.bind("text.shift", this);
                 sTextGap.bind("text.gap", this);
                 sLoop.bind("text.loop", this);
+                sDarkText.bind("text.dark", this);
+                sModern.bind("modern", this);
+                sFont.bind("font", this);
+                sSpacing.bind("spacing", this);
+                sIPadding.bind("ipadding", this);
                 // Configure
                 sColor.set("#111111");
                 sTextColor.set("#00ff00");
@@ -46,8 +51,17 @@ namespace lsp
                 sShift.set(0);
                 sTextGap.set(0);
                 sLoop.set(false);
+                sDarkText.set(true);
+                sModern.set(false);
+                sFont.set_size(16);
+                sFont.set_bold(true);
+                sSpacing.set(0);
+                sIPadding.set(1);
+                // Override
+                sFont.override();
+                sSpacing.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Indicator, "Indicator");
+            LSP_TK_BUILTIN_STYLE(Indicator, "Indicator", "root");
         }
 
         typedef struct rect_t
@@ -86,6 +100,8 @@ namespace lsp
             {  12, 11,  1,  1   }   // A
         };
 
+        static const char *estimate = "0123456789WX_%:";
+
         static const uint16_t ascii_map[] =
         {
             // 0/8  1/9     2/A     3/B     4/C     5/D     6/E     7/F
@@ -118,9 +134,17 @@ namespace lsp
             sShift(&sProperties),
             sTextGap(&sProperties),
             sLoop(&sProperties),
-            sText(&sProperties)
+            sDarkText(&sProperties),
+            sText(&sProperties),
+            sModern(&sProperties),
+            sFont(&sProperties),
+            sSpacing(&sProperties),
+            sIPadding(&sProperties)
         {
             pClass      = &metadata;
+
+            nDWidth     = -1;
+            nDHeight    = -1;
         }
         
         Indicator::~Indicator()
@@ -141,7 +165,12 @@ namespace lsp
             sShift.bind("text.shift", &sStyle);
             sTextGap.bind("text.gap", &sStyle);
             sLoop.bind("text.loop", &sStyle);
+            sDarkText.bind("text.dark", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
+            sModern.bind("modern", &sStyle);
+            sFont.bind("font", &sStyle);
+            sSpacing.bind("spacing", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
 
             return STATUS_OK;
         }
@@ -163,34 +192,106 @@ namespace lsp
                 query_draw();
             if (sLoop.is(prop))
                 query_draw();
+            if (sDarkText.is(prop))
+                query_draw();
             if (sText.is(prop))
                 query_draw();
+            if (sModern.is(prop))
+                query_resize();
+            if (sFont.is(prop))
+                query_resize();
+            if (sSpacing.is(prop))
+                query_resize();
+            if (sIPadding.is(prop))
+                query_resize();
+        }
+
+        void Indicator::calc_digit_size(ssize_t *w, ssize_t *h)
+        {
+            float fscaling  = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
+            if (!sModern.get())
+            {
+                *w  = 16 * fscaling;
+                *h  = 20 * fscaling;
+                return;
+            }
+
+            // Estimate the size of the most wide char
+            LSPString text;
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            *w  = 0;
+            *h  = fp.Height;
+
+            for (const char *c = estimate; *c != '\0'; ++c)
+            {
+                text.fmt_ascii("%c", *c);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
+                *w  = lsp_max(*w, ceilf(tp.Width));
+                *h  = lsp_max(*h, ceilf(tp.Height));
+            }
         }
 
         void Indicator::draw_digit(ws::ISurface *s, float x, float y, size_t state, const lsp::Color &on, const lsp::Color &off)
         {
-            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
             const rect_t *r = segments;
+            bool dark       = sDarkText.get();
 
             for (size_t i=0, m=1; i<11; ++i, m <<= 1, ++r)
             {
-                const lsp::Color &col = (state & m) ? on : off;
-                s->wire_rect(col, x + r->x * scaling - 0.5f, y + r->y * scaling - 0.5f, r->w * scaling, r->h * scaling, scaling);
+                if (state & m)
+                    s->wire_rect(on, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
+                else if (dark)
+                    s->wire_rect(off, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
             }
+        }
+
+        void Indicator::draw_simple(ws::ISurface *s, float x, float y, char ch, const lsp::Color &on, const ws::font_parameters_t *fp)
+        {
+            float fscaling  = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
+            LSPString text;
+            ws::text_parameters_t tp;
+
+            text.fmt_ascii("%c", ch);
+            sFont.get_text_parameters(s, &tp, fscaling, &text);
+
+            sFont.draw
+            (
+                s, on,
+                x + (nDWidth - tp.Width) * 0.5f,
+                y + (nDHeight - fp->Height) + fp->Ascent,
+                fscaling,
+                &text
+            );
         }
 
         void Indicator::size_request(ws::size_limit_t *r)
         {
+            ssize_t dw, dh;
             float scaling   = lsp_max(0.0f, sScaling.get());
             size_t rows     = lsp_max(1, sRows.get());
             size_t cols     = lsp_max(1, sColumns.get());
+            ssize_t spacing = (sSpacing.get() > 0) ? lsp_max(1.0f, sSpacing.get() * scaling) : 0;
 
-            r->nMinWidth    = ceilf((16 * cols + 2) * scaling);
-            r->nMinHeight   = ceilf((20 * rows + 2) * scaling);
+            calc_digit_size(&dw, &dh);
+
+            r->nMinWidth    = ceilf(dw * cols + spacing * (cols - 1));
+            r->nMinHeight   = ceilf(dh * rows + spacing * (rows - 1));
             r->nMaxWidth    = r->nMinWidth;
             r->nMaxHeight   = r->nMinHeight;
             r->nPreWidth    = -1;
             r->nPreHeight   = -1;
+
+            // Add internal padding
+            sIPadding.add(r, scaling);
+        }
+
+        void Indicator::realize(const ws::rectangle_t *r)
+        {
+            calc_digit_size(&nDWidth, &nDHeight);
+            Widget::realize(r);
         }
 
         uint8_t Indicator::get_char(const LSPString *str, size_t index)
@@ -223,6 +324,14 @@ namespace lsp
             size_t rows     = lsp_max(1, sRows.get());
             size_t cols     = lsp_max(1, sColumns.get());
             size_t last     = rows * cols;
+            ssize_t spacing = (sSpacing.get() > 0) ? lsp_max(1.0f, sSpacing.get() * scaling) : 0;
+            bool dark       = sDarkText.get();
+            ws::rectangle_t xr;
+
+            xr.nLeft        = 0;
+            xr.nTop         = 0;
+            xr.nWidth       = sSize.nWidth;
+            xr.nHeight      = sSize.nHeight;
 
             // Prepare palette
             lsp::Color color(sColor);
@@ -238,75 +347,146 @@ namespace lsp
             s->clear(color);
 
             bool aa = s->set_antialiasing(true);
+            sIPadding.enter(&xr, scaling);
 
             LSPString text;
             sText.format(&text);
 
-            uint8_t unget = 0;
-            for (size_t offset = 0, ich = 0; offset < last; )
+            if (sModern.get())
             {
-                // Get character
-                uint8_t ch  = (unget > 0) ? unget : get_char(&text, ich++);
+                ws::font_parameters_t fp;
+                sFont.get_parameters(s, scaling, &fp);
 
-                // Check for special case
-                if (!unget)
+                for (size_t offset = 0, ich = 0; offset < last; )
                 {
-                    switch (ch)
+                    // Get character
+                    uint8_t ch  = get_char(&text, ich++);
+
+                    // Output character
+                    size_t col      = offset % cols;
+                    size_t row      = offset / cols;
+
+                    if (ch == '\n') // Need to fill up to end-of-line
                     {
-                        case 'M':
-                            unget   = ch;
-                            ch      = 'N';
-                            break;
-                        case 'm':
-                            unget   = ch;
-                            ch      = 'n';
-                            break;
-                        case 'W':
-                            unget   = ch;
-                            ch      = 'U';
-                            break;
-                        case 'w':
-                            unget   = ch;
-                            ch      = 'v';
-                            break;
+                        if (dark)
+                        {
+                            for ( ; col < cols; ++col, ++offset)
+                                draw_simple
+                                (
+                                    s,
+                                    xr.nLeft + col*(nDWidth + spacing),
+                                    xr.nTop  + row*(nDHeight + spacing),
+                                    '8', off, &fp
+                                );
+                        }
+                    }
+                    else
+                    {
+                        if (ch == ' ')
+                        {
+                            if (dark)
+                            {
+                                draw_simple
+                                (
+                                    s,
+                                    xr.nLeft + col*(nDWidth + spacing),
+                                    xr.nTop  + row*(nDHeight + spacing),
+                                    '8', off, &fp
+                                );
+                            }
+                        }
+                        else
+                            draw_simple
+                            (
+                                s,
+                                xr.nLeft + col*(nDWidth + spacing),
+                                xr.nTop  + row*(nDHeight + spacing),
+                                ch, on, &fp
+                            );
+                        ++offset;
                     }
                 }
-                else
+            }
+            else
+            {
+                uint8_t unget = 0;
+                for (size_t offset = 0, ich = 0; offset < last; )
                 {
-                    unget       = 0;
-                    if (ch == '\r')
-                        continue;
-                }
+                    // Get character
+                    uint8_t ch  = (unget > 0) ? unget : get_char(&text, ich++);
 
-                // Save state
-                size_t state    = ascii_map[ch & 0xff];
+                    // Check for special case
+                    if (!unget)
+                    {
+                        switch (ch)
+                        {
+                            case 'M':
+                                unget   = ch;
+                                ch      = 'N';
+                                break;
+                            case 'm':
+                                unget   = ch;
+                                ch      = 'n';
+                                break;
+                            case 'W':
+                                unget   = ch;
+                                ch      = 'U';
+                                break;
+                            case 'w':
+                                unget   = ch;
+                                ch      = 'v';
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        unget       = 0;
+                        if (ch == '\r')
+                            continue;
+                    }
 
-                // Lookup for extra characters
-                uint8_t ch2     = get_char(&text, ich);
-                switch (ch2)
-                {
-                    case '.':
-                    case ':':
-                        state      |= ascii_map[ch2];
-                        ++ich;
-                        break;
-                    default:
-                        break;
-                }
+                    // Save state
+                    size_t state    = ascii_map[ch & 0xff];
 
-                // Output character
-                size_t col      = offset % cols;
-                size_t row      = offset / cols;
+                    // Lookup for extra characters
+                    uint8_t ch2     = get_char(&text, ich);
+                    switch (ch2)
+                    {
+                        case '.':
+                        case ':':
+                            state      |= ascii_map[ch2];
+                            ++ich;
+                            break;
+                        default:
+                            break;
+                    }
 
-                if (ch == '\n') // Need to fill up to end-of-line
-                {
-                    for ( ; col < cols; ++col, ++offset)
-                        draw_digit(s, (col*16 + 1) * scaling, (20*row + 1) * scaling, state, on, off);
-                }
-                else
-                {
-                    draw_digit(s, (col*16 + 1) * scaling, (20*row + 1) * scaling, state, on, off);
-                    ++offset;
+                    // Output character
+                    size_t col      = offset % cols;
+                    size_t row      = offset / cols;
+
+                    if (ch == '\n') // Need to fill up to end-of-line
+                    {
+                        for ( ; col < cols; ++col, ++offset)
+                            draw_digit
+                            (
+                                s,
+                                xr.nLeft + col*(nDWidth + spacing),
+                                xr.nTop  + row*(nDHeight + spacing),
+                                state, on, off
+                            );
+                    }
+                    else
+                    {
+                        draw_digit
+                        (
+                            s,
+                            xr.nLeft + col*(nDWidth + spacing),
+                            xr.nTop  + row*(nDHeight + spacing),
+                            state, on, off
+                        );
+                        ++offset;
+                    }
                 }
             }
 

@@ -17,6 +17,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with lsp-tk-lib.  If not, see <https://www.gnu.org/licenses/>.
 #
+ifneq ($(VERBOSE),1)
+.SILENT:
+endif
 
 # Definitions
 PREFIX                     := /usr/local
@@ -25,20 +28,24 @@ BINDIR                     := $(PREFIX)/bin
 INCDIR                     := $(PREFIX)/include
 BASEDIR                    := $(CURDIR)
 BUILDDIR                   := $(BASEDIR)/.build
-CONFIG                     := $(BASEDIR)/.config.mk
 MODULES                    := $(BASEDIR)/modules
+CONFIG                     := $(BASEDIR)/.config.mk
 TEST                       := 0
 DEBUG                      := 0
 PROFILE                    := 0
 TRACE                      := 0
 
+include $(BASEDIR)/make/functions.mk
 include $(BASEDIR)/make/system.mk
-include $(BASEDIR)/project.mk
 include $(BASEDIR)/make/tools.mk
 include $(BASEDIR)/dependencies.mk
+include $(BASEDIR)/project.mk
 
-DEPENDENCIES               += $(TEST_DEPENDENCIES)
+# Compute the full list of dependencies
+UNIQ_DEPENDENCIES          := $(call uniq, $(DEPENDENCIES) $(TEST_DEPENDENCIES))
+DEPENDENCIES                = $(UNIQ_DEPENDENCIES)
 
+# Determine versions
 ifeq ($(findstring -devel,$(ARTIFACT_VERSION)),-devel)
   $(foreach dep, $(DEPENDENCIES), \
     $(eval $(dep)_BRANCH=devel) \
@@ -47,10 +54,8 @@ ifeq ($(findstring -devel,$(ARTIFACT_VERSION)),-devel)
   tmp_version :=$(shell echo "$(ARTIFACT_VERSION)" | sed s/-devel//g)
   ARTIFACT_VERSION=$(tmp_version)
 else
-  $(foreach dep, $(DEPENDENCIES), \
-    $(eval \
-      $(dep)_BRANCH="$($(dep)_VERSION)" \
-    ) \
+  $(foreach dep,$(DEPENDENCIES),\
+    $(eval $(dep)_BRANCH="$($(dep)_VERSION)") \
   )
 endif
 
@@ -91,6 +96,7 @@ define srcconfig =
   $(if $($(name)_CFLAGS),,  $(eval $(name)_CFLAGS  := "-I\"$($(name)_INC)\"" $(if $(builtin),"-D$(name)_BUILTIN")))
   $(if $($(name)_LDLAGS),,  $(eval $(name)_LDFLAGS :=))
   $(if $($(name)_OBJ),,     $(eval $(name)_OBJ     := "$($(name)_BIN)/$($(name)_NAME).o"))
+  $(if $($(name)_OBJ_TEST),,$(eval $(name)_OBJ_TEST:= "$($(name)_BIN)/$($(name)_NAME)-test.o"))
   $(if $($(name)_MFLAGS),,  $(eval $(name)_MFLAGS  := $(if $(builtin),"-D$(name)_BUILTIN -fvisibility=hidden")))
 endef
 
@@ -116,23 +122,23 @@ define vardef =
 endef
 
 # Define predefined variables
-ifndef $(ARTIFACT_VARS)_NAME
-  $(ARTIFACT_VARS)_NAME      := $(ARTIFACT_NAME)
+ifndef $(ARTIFACT_ID)_NAME
+  $(ARTIFACT_ID)_NAME        := $(ARTIFACT_NAME)
 endif
-ifndef $(ARTIFACT_VARS)_DESC
-  $(ARTIFACT_VARS)_DESC      := $(ARTIFACT_DESC)
+ifndef $(ARTIFACT_ID)_DESC
+  $(ARTIFACT_ID)_DESC        := $(ARTIFACT_DESC)
 endif
-ifndef $(ARTIFACT_VARS)_VERSION 
-  $(ARTIFACT_VARS)_VERSION   := $(ARTIFACT_VERSION)
+ifndef $(ARTIFACT_ID)_VERSION 
+  $(ARTIFACT_ID)_VERSION     := $(ARTIFACT_VERSION)
 endif
-ifndef $(ARTIFACT_VARS)_PATH
-  $(ARTIFACT_VARS)_PATH      := $(BASEDIR)
+ifndef $(ARTIFACT_ID)_PATH
+  $(ARTIFACT_ID)_PATH        := $(BASEDIR)
 endif
 
-$(ARTIFACT_VARS)_TESTING    = $(TEST)
-$(ARTIFACT_VARS)_TYPE      := src
+$(ARTIFACT_ID)_TESTING      = $(TEST)
+$(ARTIFACT_ID)_TYPE        := src
 
-OVERALL_DEPS := $(DEPENDENCIES) $(ARTIFACT_VARS)
+OVERALL_DEPS := $(DEPENDENCIES) $(ARTIFACT_ID)
 __tmp := $(foreach dep,$(OVERALL_DEPS),$(call vardef, $(dep)))
 
 CONFIG_VARS = \
@@ -155,6 +161,7 @@ CONFIG_VARS = \
     $(name)_MFLAGS \
     $(name)_LDFLAGS \
     $(name)_OBJ \
+    $(name)_OBJ_TEST \
   )
 
 .DEFAULT_GOAL      := config
@@ -162,39 +169,39 @@ CONFIG_VARS = \
 .PHONY: $(CONFIG_VARS)
 
 prepare:
-	@echo "Configuring build..."
-	@echo "# Project settings" > "$(CONFIG)"
+	echo "Configuring build..."
+	echo "# Project settings" > "$(CONFIG)"
 
 $(CONFIG_VARS): prepare
-	@echo "$(@)=$($(@))" >> "$(CONFIG)"
+	echo "$(@)=$($(@))" >> "$(CONFIG)"
 
 config: $(CONFIG_VARS)
-	@echo "Configured OK"
+	echo "Configured OK"
 
 help: | toolvars sysvars
-	@echo ""
-	@echo "List of variables for each dependency:"
-	@echo "  <ARTIFACT>_BIN            location to put all binaries when building artifact"
-	@echo "  <ARTIFACT>_BRANCH         git branch used to checkout source code"
-	@echo "  <ARTIFACT>_CFLAGS         C/C++ flags to access headers of the artifact"
-	@echo "  <ARTIFACT>_DESC           Full description of the artifact"
-	@echo "  <ARTIFACT>_INC            path to include files of the artifact"
-	@echo "  <ARTIFACT>_LDFLAGS        linker flags to link with artifact"
-	@echo "  <ARTIFACT>_MFLAGS         artifact-specific compilation flags"
-	@echo "  <ARTIFACT>_NAME           the artifact name used in pathnames"
-	@echo "  <ARTIFACT>_OBJ            path to output object file for artifact"
-	@echo "  <ARTIFACT>_PATH           location of the source code of the artifact"
-	@echo "  <ARTIFACT>_SRC            path to source code files of the artifact"
-	@echo "  <ARTIFACT>_TEST           location of test files of the artifact"
-	@echo "  <ARTIFACT>_TYPE           artifact usage type"
-	@echo "                            - src - use sources and headers from git"
-	@echo "                            - hdr - use headers only from git"
-	@echo "                            - pkg - use pkgconfig for configuration"
-	@echo "                            - lib - use system headers and -l<libname> flags"
-	@echo "                            - opt - use optional configuration"
-	@echo "  <ARTIFACT>_URL            location of the artifact git repoisitory"
-	@echo "  <ARTIFACT>_VERSION        version of the artifact used for building"
-	@echo ""
-	@echo "Artifacts used for build:"
-	@echo "  $(DEPENDENCIES)"
+	echo ""
+	echo "List of variables for each dependency:"
+	echo "  <ARTIFACT>_BIN            location to put all binaries when building artifact"
+	echo "  <ARTIFACT>_BRANCH         git branch used to checkout source code"
+	echo "  <ARTIFACT>_CFLAGS         C/C++ flags to access headers of the artifact"
+	echo "  <ARTIFACT>_DESC           Full description of the artifact"
+	echo "  <ARTIFACT>_INC            path to include files of the artifact"
+	echo "  <ARTIFACT>_LDFLAGS        linker flags to link with artifact"
+	echo "  <ARTIFACT>_MFLAGS         artifact-specific compilation flags"
+	echo "  <ARTIFACT>_NAME           the artifact name used in pathnames"
+	echo "  <ARTIFACT>_OBJ            path to output object file for artifact"
+	echo "  <ARTIFACT>_PATH           location of the source code of the artifact"
+	echo "  <ARTIFACT>_SRC            path to source code files of the artifact"
+	echo "  <ARTIFACT>_TEST           location of test files of the artifact"
+	echo "  <ARTIFACT>_TYPE           artifact usage type"
+	echo "                            - src - use sources and headers from git"
+	echo "                            - hdr - use headers only from git"
+	echo "                            - pkg - use pkgconfig for configuration"
+	echo "                            - lib - use system headers and -l<libname> flags"
+	echo "                            - opt - use optional configuration"
+	echo "  <ARTIFACT>_URL            location of the artifact git repoisitory"
+	echo "  <ARTIFACT>_VERSION        version of the artifact used for building"
+	echo ""
+	echo "Artifacts used for build:"
+	echo "  $(DEPENDENCIES)"
 

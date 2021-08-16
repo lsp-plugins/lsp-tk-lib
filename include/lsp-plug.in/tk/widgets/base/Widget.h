@@ -36,14 +36,18 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(Widget, Style)
-                prop::Allocation    sAllocation;    // Widget allocation
-                prop::Float         sScaling;       // UI scaling factor
-                prop::Float         sBrightness;    // Brightness
-                prop::Padding       sPadding;       // Widget padding
-                prop::Color         sBgColor;       // Widget color
-                prop::Boolean       sVisibility;    // Visibility
-                prop::Pointer       sPointer;       // Mouse pointer
-                prop::Integer       sTag;           // Some tag associated with widget
+                prop::Allocation    sAllocation;        // Widget allocation
+                prop::Float         sScaling;           // UI scaling factor
+                prop::Float         sFontScaling;       // UI font scaling factor
+                prop::Float         sBrightness;        // Brightness
+                prop::Float         sBgBrightness;      // Brightness for background
+                prop::Padding       sPadding;           // Widget padding
+                prop::Color         sBgColor;           // Color of the background of the widget
+                prop::Boolean       sBgInherit;         // Inhert background color from parent container
+                prop::Boolean       sVisibility;        // Visibility
+                prop::Pointer       sPointer;           // Mouse pointer
+                prop::Integer       sTag;               // Some tag associated with widget
+                prop::DrawMode      sDrawMode;          // Drawing mode
             LSP_TK_STYLE_DEF_END
         }
 
@@ -54,6 +58,7 @@ namespace lsp
         {
             private:
                 Widget & operator = (const Widget &);
+                Widget(const Widget &);
 
             public:
                 static const w_class_t    metadata;
@@ -82,27 +87,32 @@ namespace lsp
                 };
 
             protected:
-                size_t              nFlags;         // Flags
-                const w_class_t    *pClass;         // Widget class descriptor
-                Display            *pDisplay;       // Pointer to display
-                Widget             *pParent;        // Parent widget
-                ws::ISurface       *pSurface;       // Drawing surface
+                size_t              nFlags;             // Flags
+                const w_class_t    *pClass;             // Widget class descriptor
+                Display            *pDisplay;           // Pointer to display
+                Widget             *pParent;            // Parent widget
+                ws::ISurface       *pSurface;           // Drawing surface
 
-                ws::size_limit_t    sLimit;         // Cached pre-computed size limit
-                ws::rectangle_t     sSize;          // Real allocated geometry of widget
+                ws::size_limit_t    sLimit;             // Cached pre-computed size limit
+                ws::rectangle_t     sSize;              // Real allocated geometry of widget
 
-                SlotSet             sSlots;         // Slots
-                Style               sStyle;         // Style
-                PropListener        sProperties;    // Properties listener
+                SlotSet             sSlots;             // Slots
+                Style               sStyle;             // Style
+                PropListener        sProperties;        // Properties listener
 
-                prop::Allocation    sAllocation;    // Widget allocation
-                prop::Float         sScaling;       // UI scaling factor
-                prop::Float         sBrightness;    // Brightness
-                prop::Padding       sPadding;       // Widget padding
-                prop::Color         sBgColor;       // Widget color
-                prop::Boolean       sVisibility;    // Visibility
-                prop::Pointer       sPointer;       // Mouse pointer
-                prop::Integer       sTag;           // Some tag associated with widget
+                prop::Allocation    sAllocation;        // Widget allocation
+                prop::Float         sScaling;           // UI scaling factor
+                prop::Float         sFontScaling;       // UI font scaling factor
+                prop::Float         sBrightness;        // Brightness
+                prop::Float         sBgBrightness;      // Brightness for background
+                prop::Padding       sPadding;           // Widget padding
+                prop::Color         sBgColor;           // Color of the background of the widget
+                prop::Boolean       sBgInherit;         // Inhert background color from parent container
+                prop::Boolean       sBgApplyBrightness; // Apply brightness settings to the background
+                prop::Boolean       sVisibility;        // Visibility
+                prop::Pointer       sPointer;           // Mouse pointer
+                prop::Integer       sTag;               // Some tag associated with widget
+                prop::DrawMode      sDrawMode;          // Drawing mode of widget
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -378,6 +388,14 @@ namespace lsp
                 bool                    is_visible_child_of(const Widget *parent) const;
 
                 /**
+                 * Compute the actual background color and store it to the passed color value
+                 * @param color color to store the actual value
+                 * @param brightness apply brightness value, if negative then bg_brightness will be applied
+                 */
+                virtual void            get_actual_bg_color(lsp::Color *color, float brightness = -1.0f) const;
+                void                    get_actual_bg_color(lsp::Color &color, float brightness = -1.0f) const;
+
+                /**
                  * Return widget's style
                  * @return widget's style
                  */
@@ -396,16 +414,37 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              bg_color,           &sBgColor)
 
                 /**
+                 * Get the inheritance flag of the background color.
+                 * If enabled, the color is taken from the parent widget container if it
+                 * is present. Otherwise, the bg_color() property is used to draw the color.
+                 *
+                 * @return inheritance flag of the background color
+                 */
+                LSP_TK_PROPERTY(Boolean,            bg_inherit,         &sBgInherit)
+
+                /**
                  * Get brightness property
                  * @return brightness property
                  */
                 LSP_TK_PROPERTY(Float,              brightness,         &sBrightness)
 
                 /**
-                 * Get brightness property
-                 * @return brightness property
+                 * Get brightness property for background
+                 * @return brightness property for background
+                 */
+                LSP_TK_PROPERTY(Float,              bg_brightness,      &sBgBrightness)
+
+                /**
+                 * Get widget scaling property
+                 * @return widget scaling property
                  */
                 LSP_TK_PROPERTY(Float,              scaling,            &sScaling)
+
+                /**
+                 * Get font scaling property
+                 * @return font scaling property
+                 */
+                LSP_TK_PROPERTY(Float,              font_scaling,       &sFontScaling)
 
                 /**
                  * Widget allocation flags
@@ -429,6 +468,11 @@ namespace lsp
                  * Some tag associated with widget, can be used as the user decides
                  */
                 LSP_TK_PROPERTY(Integer,            tag,                &sTag)
+
+                /**
+                 * Drawing mode of the widget
+                 */
+                LSP_TK_PROPERTY(DrawMode,           draw_mode,          &sDrawMode)
 
             //---------------------------------------------------------------------------------
             // Manipulation

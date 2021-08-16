@@ -37,12 +37,13 @@ namespace lsp
         {
             private:
                 Pointer & operator = (const Pointer &);
+                Pointer(const Pointer &);
 
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit Pointer(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit Pointer(prop::Listener *listener = NULL): Enum(ENUM, ws::MP_DEFAULT, listener) {};
 
             public:
                 inline ws::mouse_pointer_t  get() const                         { return ws::mouse_pointer_t(nValue);           }
@@ -56,6 +57,7 @@ namespace lsp
             {
                 private:
                     Pointer & operator = (const Pointer &);
+                    Pointer(const Pointer &);
 
                 public:
                     explicit Pointer(prop::Listener *listener = NULL): tk::Pointer(listener) {};

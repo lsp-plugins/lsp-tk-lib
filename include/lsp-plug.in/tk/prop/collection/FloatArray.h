@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 FloatArray & operator = (const FloatArray &);
+                FloatArray(const FloatArray &);
 
             protected:
                 lltl::darray<float>     vItems;
@@ -207,6 +208,7 @@ namespace lsp
             {
                 private:
                     FloatArray & operator = (const FloatArray &);
+                    FloatArray(const FloatArray &);
 
                 public:
                     explicit inline FloatArray(prop::Listener *listener = NULL): tk::FloatArray(listener) {}

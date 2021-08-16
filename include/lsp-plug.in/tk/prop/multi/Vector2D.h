@@ -39,6 +39,7 @@ namespace lsp
         {
             private:
                 Vector2D & operator = (const Vector2D &);
+                Vector2D(const Vector2D &);
 
             protected:
                 enum property_t
@@ -79,6 +80,8 @@ namespace lsp
             public:
                 inline float        dx() const                  { return fDX;                   }
                 inline float        dy() const                  { return fDY;                   }
+                inline float        adx() const                 { return fabs(fDX);             }
+                inline float        ady() const                 { return fabs(fDY);             }
                 inline float        rho() const                 { return fRho;                  }
                 inline float        phi() const                 { return fPhi;                  }
                 inline float        rphi() const                { return fPhi;                  }
@@ -115,6 +118,7 @@ namespace lsp
             {
                 private:
                     Vector2D & operator = (const Vector2D &);
+                    Vector2D(const Vector2D &);
 
                 public:
                     explicit Vector2D(prop::Listener *listener = NULL): tk::Vector2D(listener) {};

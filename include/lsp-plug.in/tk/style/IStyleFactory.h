@@ -41,15 +41,17 @@ namespace lsp
         {
             private:
                 IStyleFactory & operator = (const IStyleFactory &);
+                IStyleFactory(const IStyleFactory &);
 
             protected:
                 const char         *sName;
+                const char         *sParents;
 
             protected:
                 static Style       *init(Style *s);
 
             public:
-                explicit            IStyleFactory(const char *name);
+                explicit            IStyleFactory(const char *name, const char *parents);
                 virtual            ~IStyleFactory();
 
             public:
@@ -57,7 +59,13 @@ namespace lsp
                  * Return the name of produced style
                  * @return name of produced style
                  */
-                inline const char  *name() const        { return sName;     }
+                inline const char  *name() const                { return sName;     }
+
+                /**
+                 * Return the list of parents for produced style
+                 * @return list of parents for produced style
+                 */
+                inline const char  *default_parents() const     { return sParents;  }
 
             public:
                 /** Create and initialize style
@@ -76,12 +84,13 @@ namespace lsp
             {
                 private:
                     StyleFactory & operator = (const StyleFactory &);
+                    StyleFactory(const StyleFactory &);
 
                 public:
-                    explicit StyleFactory(const char *name) : IStyleFactory(name) {}
+                    explicit StyleFactory(const char *name, const char *parents) : IStyleFactory(name, parents) {}
 
                 public:
-                    virtual Style      *create(Schema *schema) { return init(new IStyle(schema));   }
+                    virtual Style      *create(Schema *schema) { return init(new IStyle(schema, sName, sParents));   }
             };
     }
 }

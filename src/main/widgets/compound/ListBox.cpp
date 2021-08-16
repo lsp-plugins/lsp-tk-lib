@@ -63,7 +63,7 @@ namespace lsp
                 sHScrollSpacing.set(1);
                 sVScrollSpacing.set(1);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ListBox, "ListBox");
+            LSP_TK_BUILTIN_STYLE(ListBox, "ListBox", "root");
         }
 
         const w_class_t ListBox::metadata               = { "ListBox", &WidgetContainer::metadata };
@@ -248,6 +248,7 @@ namespace lsp
         void ListBox::allocate_items(alloc_t *alloc)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
 
             lltl::darray<item_t> *v    = &alloc->vItems;
@@ -258,7 +259,7 @@ namespace lsp
             LSPString s;
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
 
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
@@ -277,7 +278,8 @@ namespace lsp
                 // Obtain the text of item and it's parameters
                 s.clear();
                 li->text()->format(&s);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                li->text_adjust()->apply(&s);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &s);
 
                 // Estimate size
                 ai->a.nLeft     = 0;
@@ -506,11 +508,14 @@ namespace lsp
 
             bool aa;
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius      = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t hsspacing   = lsp_max(0.0f, sHScrollSpacing.get() * scaling);
             ssize_t vsspacing   = lsp_max(0.0f, sVScrollSpacing.get() * scaling);
-            lsp::Color col(sBgColor);
+
+            lsp::Color col;
+            get_actual_bg_color(col);
 
             ws::rectangle_t h, v, xa, xr;
             xa  = sSize;
@@ -608,7 +613,7 @@ namespace lsp
                     LSPString text;
                     ws::font_parameters_t fp;
                     ws::text_parameters_t tp;
-                    sFont.get_parameters(pDisplay, scaling, &fp);
+                    sFont.get_parameters(pDisplay, fscaling, &fp);
 
                     s->clip_begin(&xa);
                     for (size_t i=0, n=vVisible.size(); i<n; ++i)
@@ -626,8 +631,9 @@ namespace lsp
 
                         text.clear();
                         li->text()->format(&text);
+                        li->text_adjust()->apply(&text);
                         bool selected = vSelected.contains(li);
-                        sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                        sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 
                         if (selected)
                         {
@@ -637,7 +643,7 @@ namespace lsp
                         }
                         else
                         {
-                            col.copy(li->bg_color()->color());
+                            li->get_actual_bg_color(col);
                             s->fill_rect(col, &it->r);
                             col.copy(li->text_color()->color());
                         }
@@ -646,7 +652,7 @@ namespace lsp
                         sFont.draw(s, col,
                                 xr.nLeft,
                                 xr.nTop  + ((xr.nHeight - fp.Height) * 0.5f) + fp.Ascent,
-                                scaling, &text);
+                                fscaling, &text);
                     }
                     s->clip_end();
                 }

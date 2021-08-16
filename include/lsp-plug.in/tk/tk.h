@@ -64,6 +64,8 @@
 #include <lsp-plug.in/tk/prop/enum/Pointer.h>
 #include <lsp-plug.in/tk/prop/enum/Orientation.h>
 #include <lsp-plug.in/tk/prop/enum/Scrolling.h>
+#include <lsp-plug.in/tk/prop/enum/DrawMode.h>
+#include <lsp-plug.in/tk/prop/enum/TextAdjust.h>
 
 // Flags
 #include <lsp-plug.in/tk/prop/flags/Allocation.h>
@@ -82,7 +84,9 @@
 #include <lsp-plug.in/tk/prop/multi/Embedding.h>
 #include <lsp-plug.in/tk/prop/multi/FileMask.h>
 #include <lsp-plug.in/tk/prop/multi/Font.h>
+#include <lsp-plug.in/tk/prop/multi/Alignment.h>
 #include <lsp-plug.in/tk/prop/multi/Layout.h>
+#include <lsp-plug.in/tk/prop/multi/Arrangement.h>
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
 #include <lsp-plug.in/tk/prop/multi/Position.h>
 #include <lsp-plug.in/tk/prop/multi/RangeFloat.h>
@@ -113,7 +117,6 @@
 // Styles and schemas
 #include <lsp-plug.in/tk/style/StyleSheet.h>
 #include <lsp-plug.in/tk/style/Style.h>
-#include <lsp-plug.in/tk/style/StyleInitializer.h>
 #include <lsp-plug.in/tk/style/IStyleFactory.h>
 #include <lsp-plug.in/tk/style/Schema.h>
 
@@ -134,6 +137,7 @@
 
 // Base widgets
 #include <lsp-plug.in/tk/widgets/base/Widget.h>
+#include <lsp-plug.in/tk/widgets/base/Registry.h>
 #include <lsp-plug.in/tk/widgets/base/WidgetContainer.h>
 #include <lsp-plug.in/tk/widgets/cast.h>
 
@@ -155,6 +159,7 @@
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/Switch.h>
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
+#include <lsp-plug.in/tk/widgets/simple/Bevel.h>
 
 // Container widgets
 #include <lsp-plug.in/tk/widgets/containers/Window.h>
@@ -164,6 +169,7 @@
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
 #include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
+#include <lsp-plug.in/tk/widgets/containers/MultiLabel.h>
 
 // Compound widgets
 #include <lsp-plug.in/tk/widgets/compound/Menu.h>

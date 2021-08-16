@@ -34,12 +34,13 @@ namespace lsp
         {
             private:
                 Scrolling & operator = (const Scrolling &);
+                Scrolling(const Scrolling &);
 
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit Scrolling(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit Scrolling(prop::Listener *listener = NULL): Enum(ENUM, SCROLL_NONE, listener) {};
 
             public:
                 inline scrolling_t          get() const                 { return scrolling_t(nValue);           }
@@ -63,6 +64,7 @@ namespace lsp
             {
                 private:
                     Scrolling & operator = (const Scrolling &);
+                    Scrolling(const Scrolling &);
 
                 public:
                     explicit Scrolling(prop::Listener *listener = NULL): tk::Scrolling(listener) {};

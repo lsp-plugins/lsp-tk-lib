@@ -39,6 +39,7 @@ namespace lsp
                 prop::Color             sColor;
                 prop::Layout            sLayout;
                 prop::TextLayout        sTextLayout;
+                prop::TextAdjust        sTextAdjust;
                 prop::Float             sHValue;
                 prop::Float             sVValue;
                 prop::Integer           sHAxis;
@@ -54,6 +55,7 @@ namespace lsp
 
             private:
                 GraphText & operator = (const GraphText &);
+                GraphText(const GraphText &);
 
             private:
                 prop::String            sText;
@@ -61,6 +63,7 @@ namespace lsp
                 prop::Color             sColor;
                 prop::Layout            sLayout;
                 prop::TextLayout        sTextLayout;
+                prop::TextAdjust        sTextAdjust;
                 prop::Float             sHValue;
                 prop::Float             sVValue;
                 prop::Integer           sHAxis;
@@ -82,6 +85,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
+                LSP_TK_PROPERTY(TextAdjust,         text_adjust,        &sTextAdjust)
                 LSP_TK_PROPERTY(Float,              hvalue,             &sHValue)
                 LSP_TK_PROPERTY(Float,              vvalue,             &sVValue)
                 LSP_TK_PROPERTY(Integer,            haxis,              &sHAxis)

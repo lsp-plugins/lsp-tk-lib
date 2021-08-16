@@ -27,14 +27,14 @@ namespace lsp
     {
         const prop::desc_t Font::DESC[] =
         {
-            { ".name",      PT_STRING   },
-            { ".size",      PT_FLOAT    },
-            { ".flags",     PT_STRING   },
-            { ".bold",      PT_BOOL     },
-            { ".italic",    PT_BOOL     },
-            { ".underline", PT_BOOL     },
-            { ".aliasing",  PT_BOOL     },
-            { NULL,         PT_UNKNOWN  }
+            { ".name",          PT_STRING   },
+            { ".size",          PT_FLOAT    },
+            { ".flags",         PT_STRING   },
+            { ".bold",          PT_BOOL     },
+            { ".italic",        PT_BOOL     },
+            { ".underline",     PT_BOOL     },
+            { ".antialiasing",  PT_STRING   },
+            { NULL,             PT_UNKNOWN  }
         };
 
         const prop::enum_t Font::FLAGS[] =
@@ -42,7 +42,18 @@ namespace lsp
             { "bold",       ws::FF_BOLD             },
             { "italic",     ws::FF_ITALIC           },
             { "underline",  ws::FF_UNDERLINE        },
-            { "aliasing",   ws::FF_ANTIALIASING     },
+            { NULL,         0                       }
+        };
+
+        const prop::enum_t Font::ANTIALIAS[] =
+        {
+            { "default",    ws::FA_DEFAULT          },
+            { "enabled",    ws::FA_ENABLED          },
+            { "disabled",   ws::FA_DISABLED         },
+            { "on",         ws::FA_ENABLED          },
+            { "off",        ws::FA_DISABLED         },
+            { "true",       ws::FA_ENABLED          },
+            { "false",      ws::FA_DISABLED         },
             { NULL,         0                       }
         };
 
@@ -72,8 +83,6 @@ namespace lsp
                 pStyle->set_bool(vAtoms[P_ITALIC], f.is_italic());
             if ((mask & O_UNDERLINE) && (vAtoms[P_UNDERLINE] >= 0))
                 pStyle->set_bool(vAtoms[P_UNDERLINE], f.is_underline());
-            if ((mask & O_ANTIALIAS) && (vAtoms[P_ANTIALIAS] >= 0))
-                pStyle->set_bool(vAtoms[P_ANTIALIAS], f.is_antialiasing());
 
             // Complicated properties
             LSPString s;
@@ -81,6 +90,13 @@ namespace lsp
             {
                 Property::fmt_bit_enums(&s, FLAGS, f.flags());
                 pStyle->set_string(vAtoms[P_FLAGS], &s);
+            }
+            if ((mask & O_ANTIALIAS) && (vAtoms[P_ANTIALIAS] >= 0))
+            {
+                size_t aa = f.antialiasing();
+                const prop::enum_t *e = find_enum(aa, ANTIALIAS);
+                if (e != NULL)
+                    pStyle->set_string(vAtoms[P_ANTIALIAS], e->name);
             }
         }
 
@@ -131,8 +147,13 @@ namespace lsp
                 f.set_italic(bvalue);
             if ((property == vAtoms[P_UNDERLINE]) && (pStyle->get_bool(vAtoms[P_UNDERLINE], &bvalue) == STATUS_OK))
                 f.set_underline(bvalue);
-            if ((property == vAtoms[P_ANTIALIAS]) && (pStyle->get_bool(vAtoms[P_ANTIALIAS], &bvalue) == STATUS_OK))
-                f.set_antialiasing(bvalue);
+
+            if ((property == vAtoms[P_ANTIALIAS]) && (pStyle->get_string(vAtoms[P_ANTIALIAS], &s) == STATUS_OK))
+            {
+                const prop::enum_t *e = find_enum(&s, ANTIALIAS);
+                if (e != NULL)
+                    f.set_antialiasing(ws::font_antialias_t(e->value));
+            }
 
             if ((property == vAtoms[P_FLAGS]) && (pStyle->get_string(vAtoms[P_FLAGS], &s) == STATUS_OK))
             {
@@ -143,18 +164,17 @@ namespace lsp
 
         void Font::get(ws::Font *f, float scaling) const
         {
-            f->set(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            f->set(
+                sValue.get_name(),
+                sValue.get_size() * lsp_max(0.0f, scaling),
+                sValue.flags(),
+                sValue.antialiasing()
+            );
         }
 
         void Font::set_name(const char *name)
         {
             nOverride      |= O_NAME;
-            const char *old = sValue.get_name();
-            if (old == name)
-                return;
-            if ((old != NULL) && (name != NULL) && (::strcmp(old, name) == 0))
-                return;
-
             sValue.set_name(name);
             sync();
         }
@@ -163,9 +183,6 @@ namespace lsp
         {
             nOverride      |= O_SIZE;
             float old = sValue.get_size();
-            if (old == size)
-                return old;
-
             sValue.set_size(size);
             sync();
             return old;
@@ -175,9 +192,6 @@ namespace lsp
         {
             nOverride      |= O_FLAGS | O_BOLD;
             bool old = sValue.is_bold();
-            if (old == on)
-                return old;
-
             sValue.set_bold(on);
             sync();
             return old;
@@ -187,9 +201,6 @@ namespace lsp
         {
             nOverride      |= O_FLAGS | O_ITALIC;
             bool old = sValue.is_italic();
-            if (old == on)
-                return old;
-
             sValue.set_italic(on);
             sync();
             return old;
@@ -199,24 +210,51 @@ namespace lsp
         {
             nOverride      |= O_FLAGS | O_UNDERLINE;
             bool old = sValue.is_underline();
-            if (old == on)
-                return old;
-
             sValue.set_underline(on);
             sync();
             return old;
         }
 
-        bool Font::set_antialiasing(bool on)
+        ws::font_antialias_t Font::set_antialiasing(ws::font_antialias_t value)
         {
             nOverride      |= O_FLAGS | O_ANTIALIAS;
-            bool old = sValue.is_antialiasing();
-            if (old == on)
-                return old;
-
-            sValue.set_antialiasing(on);
+            ws::font_antialias_t old = sValue.antialiasing();
+            sValue.set_antialiasing(value);
             sync();
             return old;
+        }
+
+        ws::font_antialias_t Font::set_antialiasing(const LSPString *value)
+        {
+            ws::font_antialias_t old = sValue.antialiasing();
+            const prop::enum_t *e = find_enum(value, ANTIALIAS);
+            sValue.set_antialiasing(ws::font_antialias_t(e->value));
+            sync();
+            return old;
+        }
+
+        ws::font_antialias_t Font::set_antialiasing(const char *value)
+        {
+            ws::font_antialias_t old = sValue.antialiasing();
+            const prop::enum_t *e = find_enum(value, ANTIALIAS);
+            sValue.set_antialiasing(ws::font_antialias_t(e->value));
+            sync();
+            return old;
+        }
+
+        ws::font_antialias_t Font::set_antialias(ws::font_antialias_t value)
+        {
+            return set_antialiasing(value);
+        }
+
+        ws::font_antialias_t Font::set_antialias(const LSPString *value)
+        {
+            return set_antialiasing(value);
+        }
+
+        ws::font_antialias_t Font::set_antialias(const char *value)
+        {
+            return set_antialiasing(value);
         }
 
         size_t Font::set_flags(size_t flags)
@@ -224,9 +262,6 @@ namespace lsp
             nOverride      |= O_ALL_FLAGS;
             flags      &= ws::FF_ALL;
             size_t old  = sValue.flags();
-            if (old == flags)
-                return old;
-
             sValue.set_flags(flags);
             sync();
             return old;
@@ -236,11 +271,6 @@ namespace lsp
         {
             nOverride      |= O_SIZE | O_ALL_FLAGS;
             flags              &= ws::FF_ALL;
-
-            if ((flags == sValue.flags()) &&
-                (size == sValue.get_size()))
-                return;
-
             sValue.set_size(size);
             sValue.set_flags(flags);
             sync();
@@ -249,37 +279,14 @@ namespace lsp
         void Font::set(const char *name, size_t size, size_t flags)
         {
             nOverride      |= O_ALL;
-            bool changed = false;
 
-            // Change name
-            const char *oname = sValue.get_name();
-            if (oname == name) {} // Nothing
-            else if ((oname != NULL) && (name != NULL) && (::strcmp(oname, name) == 0)) {} // Nothing
-            else
-            {
-                sValue.set_name(name);
-                changed     = true;
-            }
-
-            // Change size
-            float osize = sValue.get_size();
-            if (size != osize)
-            {
-                sValue.set_size(size);
-                changed     = true;
-            }
-
-            // Change flags
-            size_t oflags = sValue.flags();
-            if (flags != oflags)
-            {
-                sValue.set_flags(flags);
-                changed     = true;
-            }
+            // Change fields
+            sValue.set_name(name);
+            sValue.set_size(size);
+            sValue.set_flags(flags);
 
             // Sync
-            if (changed)
-                sync();
+            sync();
         }
 
         void Font::set(const ws::Font *f)
@@ -291,7 +298,8 @@ namespace lsp
         {
             if (s == NULL)
                 return false;
-            ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            ws::Font f(&sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling));
             return s->get_font_parameters(f, fp);
         }
 
@@ -299,7 +307,14 @@ namespace lsp
         {
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_parameters(s, scaling, fp) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_parameters(s, scaling, fp);
+            s->end();
+
+            return res;
         }
 
         bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text) const
@@ -308,7 +323,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_multitext_parameters(s, tp, scaling, text, 0, text->length()) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_multitext_parameters(s, tp, scaling, text, 0, text->length());
+            s->end();
+
+            return res;
         }
 
         bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const
@@ -317,7 +339,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_multitext_parameters(s, tp, scaling, text, first, text->length()) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_multitext_parameters(s, tp, scaling, text, first, text->length());
+            s->end();
+
+            return res;
         }
 
         bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const
@@ -326,7 +355,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_multitext_parameters(s, tp, scaling, text, first, last) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_multitext_parameters(s, tp, scaling, text, first, last);
+            s->end();
+
+            return res;
         }
 
         bool Font::get_multitext_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text) const
@@ -344,16 +380,22 @@ namespace lsp
             if ((s == NULL) || (text == NULL))
                 return false;
 
-            ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            ws::Font f(&sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling));
 
             ssize_t prev = 0, curr = 0, tail = 0;
             ws::font_parameters_t fp;
-            ws::text_parameters_t xp;
+            ws::text_parameters_t xp, rp;
 
             if (!s->get_font_parameters(f, &fp))
                 return false;
 
-            float w = 0, h = 0;
+            rp.Width        = 0.0f;
+            rp.Height       = 0.0f;
+            rp.XAdvance     = 0.0f;
+            rp.YAdvance     = 0.0f;
+            rp.XBearing     = 0.0f;
+            rp.YBearing     = 0.0f;
 
             while (curr < last)
             {
@@ -378,17 +420,24 @@ namespace lsp
                 if (!s->get_text_parameters(f, &xp, str))
                     return false;
 
-                if (w < xp.Width)
-                    w       = xp.Width;
-                h      += fp.Height;
+                if (prev <= 0)
+                {
+                    rp           = xp;
+                    rp.Height    = lsp_max(xp.Height, fp.Height);
+                }
+                else
+                {
+                    rp.Width     = lsp_max(rp.Width, xp.Width);
+                    rp.XAdvance  = lsp_max(rp.XAdvance, xp.XAdvance);
+                    rp.Height   += fp.Height;
+                    rp.YAdvance += xp.YAdvance;
+                }
 
                 prev    = curr + 1;
             }
 
             // Store font parameters
-            xp.Width    = w;
-            xp.Height   = h;
-            *tp         = xp;
+            *tp         = rp;
             return true;
         }
 
@@ -398,7 +447,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_text_parameters(s, tp, scaling, text, 0, text->length()) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_text_parameters(s, tp, scaling, text, 0, text->length());
+            s->end();
+
+            return res;
         }
 
         bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const
@@ -407,7 +463,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_text_parameters(s, tp, scaling, text, first, text->length()) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_text_parameters(s, tp, scaling, text, first, text->length());
+            s->end();
+
+            return res;
         }
 
         bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const
@@ -416,7 +479,14 @@ namespace lsp
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
             ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            return (s != NULL) ? get_text_parameters(s, tp, scaling, text, first, last) : false;
+            if (s == NULL)
+                return false;
+
+            s->begin();
+            bool res = get_text_parameters(s, tp, scaling, text, first, last);
+            s->end();
+
+            return res;
         }
 
         bool Font::get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text) const
@@ -434,7 +504,8 @@ namespace lsp
             if (s == NULL)
                 return false;
 
-            ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            ws::Font f(sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling)); // Update the font size
             return s->get_text_parameters(f, tp, text, first, last);
         }
 
@@ -491,7 +562,8 @@ namespace lsp
             if (s == NULL)
                 return;
 
-            ws::Font f(sValue.get_name(), sValue.get_size() * lsp_max(0.0f, scaling), sValue.flags());
+            ws::Font f(sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling)); // Update the font size
             s->out_text(f, c, x, y, text, first, last);
         }
     }

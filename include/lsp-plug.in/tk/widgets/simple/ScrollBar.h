@@ -70,6 +70,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                ScrollBar & operator = (const ScrollBar &);
+                ScrollBar(const ScrollBar &);
+
             protected:
                 enum flags_t
                 {

@@ -36,11 +36,16 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(Led, Widget)
                 prop::Color             sColor;
                 prop::Color             sHoleColor;
-                prop::Color             sLightColor;
-                prop::SizeRange         sSizeRange;
+                prop::Color             sLedColor;
+                prop::Color             sBorderColor;
+                prop::Color             sLedBorderColor;
+                prop::SizeConstraints   sConstraints;
                 prop::Boolean           sOn;
                 prop::Boolean           sHole;
                 prop::Integer           sLed;
+                prop::Boolean           sRound;
+                prop::Integer           sBorderSize;
+                prop::Boolean           sGradient;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -49,14 +54,27 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                Led & operator = (const Led &);
+                Led(const Led &);
+
             protected:
                 prop::Color             sColor;
                 prop::Color             sHoleColor;
-                prop::Color             sLightColor;
-                prop::SizeRange         sSizeRange;
+                prop::Color             sLedColor;
+                prop::Color             sBorderColor;
+                prop::Color             sLedBorderColor;
+                prop::SizeConstraints   sConstraints;
                 prop::Boolean           sOn;
                 prop::Boolean           sHole;
                 prop::Integer           sLed;
+                prop::Boolean           sRound;
+                prop::Integer           sBorderSize;
+                prop::Boolean           sGradient;
+
+            protected:
+                void                            draw_round(ws::ISurface *s);
+                void                            draw_rect(ws::ISurface *s);
 
             protected:
                 virtual void                    size_request(ws::size_limit_t *r);
@@ -71,11 +89,16 @@ namespace lsp
             public:
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
-                LSP_TK_PROPERTY(Color,              led_color,          &sLightColor)
-                LSP_TK_PROPERTY(SizeRange,          size,               &sSizeRange)
+                LSP_TK_PROPERTY(Color,              led_color,          &sLedColor)
+                LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
+                LSP_TK_PROPERTY(Color,              led_border_color,   &sLedBorderColor)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Boolean,            on,                 &sOn)
                 LSP_TK_PROPERTY(Boolean,            hole,               &sHole)
                 LSP_TK_PROPERTY(Integer,            led,                &sLed)
+                LSP_TK_PROPERTY(Boolean,            round,              &sRound)
+                LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
+                LSP_TK_PROPERTY(Boolean,            gradient,           &sGradient)
 
             public:
                 virtual void                    draw(ws::ISurface *s);

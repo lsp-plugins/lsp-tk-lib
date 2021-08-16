@@ -442,5 +442,21 @@ namespace lsp
                 dst->nMaxHeight     = dst->nMinHeight;
         }
 
+        void Padding::add(padding_t *dst, const padding_t *src, float scale)
+        {
+            dst->nLeft          = src->nLeft    + sValue.nLeft   * scale;
+            dst->nRight         = src->nRight   + sValue.nRight  * scale;
+            dst->nTop           = src->nTop     + sValue.nTop    * scale;
+            dst->nBottom        = src->nBottom  + sValue.nBottom * scale;
+        }
+
+        void Padding::init(padding_t *dst, ssize_t left, ssize_t right, ssize_t top, ssize_t bottom)
+        {
+            dst->nLeft          = left;
+            dst->nRight         = right;
+            dst->nTop           = top;
+            dst->nBottom        = bottom;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */

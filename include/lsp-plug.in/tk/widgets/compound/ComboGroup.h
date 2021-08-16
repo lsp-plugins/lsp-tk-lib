@@ -35,19 +35,22 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(ComboGroup, WidgetContainer)
                 prop::Font                  sFont;
+                prop::TextAdjust            sTextAdjust;
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sSpinColor;
                 prop::String                sEmptyText;
                 prop::Boolean               sOpened;
                 prop::Integer               sBorder;
-                prop::Integer               sTextBorder;
+                prop::Padding               sTextPadding;
                 prop::Integer               sRadius;
                 prop::Integer               sTextRadius;
                 prop::Integer               sSpinSize;
+                prop::Integer               sSpinSpacing;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sLayout;
                 prop::SizeConstraints       sSizeConstraints;
+                prop::Alignment             sHeading;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -60,6 +63,7 @@ namespace lsp
         {
             private:
                 ComboGroup & operator = (const ComboGroup &);
+                ComboGroup(const ComboGroup &);
 
             public:
                 static const w_class_t    metadata;
@@ -117,22 +121,26 @@ namespace lsp
                 bool                        bInside;
 
                 prop::Font                  sFont;
+                prop::TextAdjust            sTextAdjust;
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sSpinColor;
                 prop::String                sEmptyText;
                 prop::Boolean               sOpened;
                 prop::Integer               sBorder;
-                prop::Integer               sTextBorder;
+                prop::Padding               sTextPadding;
                 prop::Integer               sRadius;
                 prop::Integer               sTextRadius;
                 prop::Integer               sSpinSize;
+                prop::Integer               sSpinSpacing;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sLayout;
                 prop::SizeConstraints       sSizeConstraints;
+                prop::Alignment             sHeading;
 
                 prop::WidgetList<Widget>    vWidgets;
                 prop::WidgetPtr<ListBoxItem> sSelected;
+                prop::WidgetPtr<Widget>     sActive;
                 prop::CollectionListener    sIListener;
 
             protected:
@@ -160,25 +168,30 @@ namespace lsp
                 virtual status_t            init();
 
             public:
-                LSP_TK_PROPERTY(Font,       font,               &sFont)
-                LSP_TK_PROPERTY(Color,      color,              &sColor)
-                LSP_TK_PROPERTY(Color,      text_color,         &sTextColor)
-                LSP_TK_PROPERTY(Color,      spin_color,         &sSpinColor)
-                LSP_TK_PROPERTY(String,     empty_text,         &sEmptyText)
-                LSP_TK_PROPERTY(Boolean,    opened,             &sOpened)
-                LSP_TK_PROPERTY(Integer,    border_size,        &sBorder)
-                LSP_TK_PROPERTY(Integer,    text_border,        &sTextBorder)
-                LSP_TK_PROPERTY(Integer,    border_radius,      &sRadius)
-                LSP_TK_PROPERTY(Integer,    text_radius,        &sTextRadius)
-                LSP_TK_PROPERTY(Integer,    spin_size,          &sSpinSize)
-                LSP_TK_PROPERTY(Embedding,  embedding,          &sEmbedding)
+                LSP_TK_PROPERTY(Font,                       font,                   &sFont)
+                LSP_TK_PROPERTY(TextAdjust,                 text_ajdust,            &sTextAdjust)
+                LSP_TK_PROPERTY(Color,                      color,                  &sColor)
+                LSP_TK_PROPERTY(Color,                      text_color,             &sTextColor)
+                LSP_TK_PROPERTY(Color,                      spin_color,             &sSpinColor)
+                LSP_TK_PROPERTY(String,                     empty_text,             &sEmptyText)
+                LSP_TK_PROPERTY(Boolean,                    opened,                 &sOpened)
+                LSP_TK_PROPERTY(Integer,                    border_size,            &sBorder)
+                LSP_TK_PROPERTY(Padding,                    text_padding,           &sTextPadding)
+                LSP_TK_PROPERTY(Integer,                    border_radius,          &sRadius)
+                LSP_TK_PROPERTY(Integer,                    text_radius,            &sTextRadius)
+                LSP_TK_PROPERTY(Integer,                    spin_size,              &sSpinSize)
+                LSP_TK_PROPERTY(Integer,                    spin_spacing,           &sSpinSpacing)
+                LSP_TK_PROPERTY(Embedding,                  embedding,              &sEmbedding)
                 LSP_TK_PROPERTY(WidgetList<Widget>,         children,               &vWidgets)
                 LSP_TK_PROPERTY(Layout,                     layout,                 &sLayout)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,            &sSizeConstraints)
+                LSP_TK_PROPERTY(Alignment,                  heading,                &sHeading)
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,               &sSelected)
+                LSP_TK_PROPERTY(WidgetPtr<Widget>,          active,                 &sActive)
 
                 LSP_TK_PROPERTY(Font,                       list_font,              sLBox.font())
                 LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,                  sLBox.items())
+                LSP_TK_PROPERTY(WidgetList<Widget>,         widgets,                &vWidgets)
 
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

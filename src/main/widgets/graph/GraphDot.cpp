@@ -100,7 +100,7 @@ namespace lsp
                 }
 
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphDot, "GraphDot");
+            LSP_TK_BUILTIN_STYLE(GraphDot, "GraphDot", "root");
         }
 
         const w_class_t GraphDot::metadata             = { "GraphDot", &GraphItem::metadata };

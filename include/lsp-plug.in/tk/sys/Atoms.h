@@ -39,6 +39,7 @@ namespace lsp
         {
             private:
                 Atoms & operator = (const Atoms &);
+                Atoms(const Atoms &);
 
             protected:
                 lltl::parray<char>      vAtoms;

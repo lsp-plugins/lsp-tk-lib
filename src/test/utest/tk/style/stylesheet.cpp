@@ -98,11 +98,16 @@ UTEST_BEGIN("tk.style", stylesheet)
         tk::StyleSheet ss;
         lltl::parray<LSPString> vs;
         lsp::Color c;
+        LSPString fpath;
+        bool falias;
         const char *root = NULL;
         char buf[32];
 
         UTEST_ASSERT(path.fmt("%s/schema/parse.xml", resources()) > 0);
         UTEST_ASSERT(ss.parse_file(&path) == STATUS_OK);
+
+        // Check metatdata
+        UTEST_ASSERT(ss.title()->equals_ascii("Test schema"));
 
         // Check colors
         vs.clear();
@@ -137,6 +142,24 @@ UTEST_BEGIN("tk.style", stylesheet)
         UTEST_ASSERT(ss.get_color("ared", &c) == STATUS_OK);
         UTEST_ASSERT(c.format_hsla(buf, sizeof(buf), 1) > 0);
         UTEST_ASSERT(::strcmp(buf, "@0f84") == 0);
+
+        // Check fonts
+        vs.clear();
+        UTEST_ASSERT(ss.enum_fonts(&vs) == STATUS_OK);
+        static const char *fonts[] = { "font1", "font2", "font3", NULL };
+        UTEST_ASSERT(check_list(&vs, fonts));
+
+        UTEST_ASSERT(ss.get_font("font1", &fpath, &falias) == STATUS_OK);
+        UTEST_ASSERT(fpath.equals_ascii("path/to/some/font1.ttf"));
+        UTEST_ASSERT(falias == false);
+
+        UTEST_ASSERT(ss.get_font("font2", &fpath, &falias) == STATUS_OK);
+        UTEST_ASSERT(fpath.equals_ascii("font1"));
+        UTEST_ASSERT(falias == true);
+
+        UTEST_ASSERT(ss.get_font("font3", &fpath, &falias) == STATUS_OK);
+        UTEST_ASSERT(fpath.equals_ascii("path/to/some/font3.ttf"));
+        UTEST_ASSERT(falias == false);
 
         // Check style list
         vs.clear();

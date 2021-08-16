@@ -84,6 +84,7 @@ namespace lsp
 
             private:
                 GraphDot & operator = (const GraphDot &);
+                GraphDot(const GraphDot &);
 
             protected:
                 param_t                     sHValue;            // Horizontal value

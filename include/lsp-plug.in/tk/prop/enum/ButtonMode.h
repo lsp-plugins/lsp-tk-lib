@@ -34,12 +34,13 @@ namespace lsp
         {
             private:
                 ButtonMode & operator = (const ButtonMode &);
+                ButtonMode(const ButtonMode &);
 
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit ButtonMode(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit ButtonMode(prop::Listener *listener = NULL): Enum(ENUM, BM_NORMAL, listener) {};
 
             public:
                 inline button_mode_t    get() const                 { return button_mode_t(nValue); }
@@ -60,6 +61,7 @@ namespace lsp
             {
                 private:
                     ButtonMode & operator = (const ButtonMode &);
+                    ButtonMode(const ButtonMode &);
 
                 public:
                     explicit ButtonMode(prop::Listener *listener = NULL): tk::ButtonMode(listener) {};

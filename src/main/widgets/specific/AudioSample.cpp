@@ -32,7 +32,7 @@ namespace lsp
     {
         namespace style
         {
-            static const char *label_colors[] =
+            static const char *label_text_color[] =
             {
                 "label.0.text.color",
                 "label.1.text.color",
@@ -59,13 +59,13 @@ namespace lsp
                 "label.4.text.layout"
             };
 
-            static const char *label_visibile[] =
+            static const char *label_visible[] =
             {
-                "label.0.visibile",
-                "label.1.visibile",
-                "label.2.visibile",
-                "label.3.visibile",
-                "label.4.visibile"
+                "label.0.visible",
+                "label.1.visible",
+                "label.2.visible",
+                "label.3.visible",
+                "label.4.visible"
             };
 
             LSP_TK_STYLE_IMPL_BEGIN(AudioSample, WidgetContainer)
@@ -87,18 +87,19 @@ namespace lsp
                 sLabelRadius.bind("label.radius", this);
                 sBorder.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
+                sBorderFlat.bind("border.flat", this);
                 sGlass.bind("glass", this);
                 sColor.bind("color", this);
                 sBorderColor.bind("border.color", this);
                 sGlassColor.bind("glass.color", this);
-                sIPadding.bind("padding.internal", this);
+                sIPadding.bind("ipadding", this);
 
                 for (size_t i=0; i<LABELS; ++i)
                 {
-                    sLabelColor[i].bind(label_colors[i], this);
+                    sLabelColor[i].bind(label_text_color[i], this);
                     sLabelLayout[i].bind(label_layout[i], this);
                     sLabelTextLayout[i].bind(label_text_layout[i], this);
-                    sLabelVisibility[i].bind(label_visibile[i], this);
+                    sLabelVisibility[i].bind(label_visible[i], this);
                 }
 
                 // Configure
@@ -122,6 +123,7 @@ namespace lsp
 
                 sBorder.set(4);
                 sBorderRadius.set(12);
+                sBorderFlat.set(false);
                 sGlass.set(true);
                 sColor.set("#000000");
                 sBorderColor.set("#000000");
@@ -139,7 +141,7 @@ namespace lsp
                 sMainFont.override();
                 sLabelFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(AudioSample, "AudioSample");
+            LSP_TK_BUILTIN_STYLE(AudioSample, "AudioSample", "root");
         }
 
         const w_class_t AudioSample::metadata           = { "AudioSample", &WidgetContainer::metadata };
@@ -165,6 +167,7 @@ namespace lsp
             sLabelRadius(&sProperties),
             sBorder(&sProperties),
             sBorderRadius(&sProperties),
+            sBorderFlat(&sProperties),
             sGlass(&sProperties),
             sColor(&sProperties),
             sBorderColor(&sProperties),
@@ -263,28 +266,29 @@ namespace lsp
             sLabelRadius.bind("label.radius", &sStyle);
             sBorder.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
+            sBorderFlat.bind("border.flat", &sStyle);
             sGlass.bind("glass", &sStyle);
             sColor.bind("color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sGlassColor.bind("glass.color", &sStyle);
-            sIPadding.bind("padding.internal", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
 
             for (size_t i=0; i<LABELS; ++i)
             {
                 LSPString id;
 
                 sLabel[i].bind(&sStyle, pDisplay->dictionary());
-                id.fmt_ascii("label.%d.text.color", int(i));
-                sLabelColor[i].bind(&id, &sStyle);
-                id.fmt_ascii("label.%d.layout", int(i));
-                sLabelLayout[i].bind(&id, &sStyle);
-                id.fmt_ascii("label.%d.text.layout", int(i));
-                sLabelTextLayout[i].bind(&id, &sStyle);
-                id.fmt_ascii("label.%d.visibility", int(i));
-                sLabelVisibility[i].bind(&id, &sStyle);
+                sLabelColor[i].bind(style::label_text_color[i], &sStyle);
+                sLabelLayout[i].bind(style::label_layout[i], &sStyle);
+                sLabelTextLayout[i].bind(style::label_text_layout[i], &sStyle);
+                sLabelVisibility[i].bind(style::label_visible[i], &sStyle);
             }
 
-            return STATUS_OK;
+            // Add slots
+            handler_id_t id = 0;
+            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+
+            return (id >= 0) ? STATUS_OK : -id;
         }
 
         void AudioSample::property_changed(Property *prop)
@@ -327,6 +331,8 @@ namespace lsp
                 query_resize();
             if (sBorderRadius.is(prop))
                 query_resize();
+            if (sBorderFlat.is(prop))
+                query_draw();
             if (sGlass.is(prop))
                 query_draw();
             if (sColor.is(prop))
@@ -354,6 +360,7 @@ namespace lsp
         void AudioSample::size_request(ws::size_limit_t *r)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             bool sgroups        = sSGroups.get();
 
             lltl::parray<AudioChannel> channels;
@@ -373,7 +380,7 @@ namespace lsp
                 ws::text_parameters_t tp;
                 LSPString text;
                 sMainText.format(&text);
-                sMainFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
+                sMainFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
                 r->nMinWidth            = tp.Width;
                 r->nMinHeight           = tp.Height;
             }
@@ -683,6 +690,7 @@ namespace lsp
         void AudioSample::draw_main_text(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
 
             LSPString text;
@@ -698,8 +706,8 @@ namespace lsp
 
             // Get main text parameters
             sMainText.format(&text);
-            sMainFont.get_parameters(s, scaling, &fp);
-            sMainFont.get_multitext_parameters(s, &tp, scaling, &text);
+            sMainFont.get_parameters(s, fscaling, &fp);
+            sMainFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
             // Draw main text
             lsp::Color color(sMainColor);
@@ -707,7 +715,7 @@ namespace lsp
 
             draw_multiline_text(
                 s, &sMainFont, &xr, color, &fp, &tp,
-                sMainTextLayout.halign(), sMainTextLayout.valign(), scaling,
+                sMainTextLayout.halign(), sMainTextLayout.valign(), fscaling,
                 &text
             );
         }
@@ -715,6 +723,7 @@ namespace lsp
         void AudioSample::draw_label(ws::ISurface *s, size_t idx)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
 
             ws::font_parameters_t fp;
@@ -725,8 +734,8 @@ namespace lsp
 
             // Get label text parameters
             sLabel[idx].format(&text);
-            sLabelFont.get_parameters(s, scaling, &fp);
-            sLabelFont.get_multitext_parameters(s, &tp, scaling, &text);
+            sLabelFont.get_parameters(s, fscaling, &fp);
+            sLabelFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
             ssize_t rad         = (sLabelRadius.get() > 0) ? lsp_max(1.0f, sLabelRadius.get() * scaling) : 0.0f;
             size_t padding      = ceilf(rad * M_SQRT1_2);
@@ -764,7 +773,7 @@ namespace lsp
 
             draw_multiline_text(
                 s, &sLabelFont, &xr, color, &fp, &tp,
-                sLabelTextLayout[idx].halign(), sLabelTextLayout[idx].valign(), scaling,
+                sLabelTextLayout[idx].halign(), sLabelTextLayout[idx].valign(), fscaling,
                 &text
             );
 
@@ -780,7 +789,7 @@ namespace lsp
             // Draw background
             lsp::Color color(sColor);
             color.scale_lightness(bright);
-            s->clear(&color);
+            s->clear(color);
 
             // Draw main text if it is required to be shown
             if (sMainVisibility.get())
@@ -901,7 +910,8 @@ namespace lsp
             // Prepare palette
             ws::ISurface *cv;
             lsp::Color color(sColor);
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
             color.scale_lightness(bright);
 
             s->clip_begin(area);
@@ -942,12 +952,13 @@ namespace lsp
                 if (pressed)
                     bw         += lsp_max(1.0f, scaling);
 
+                bool flat   = sBorderFlat.get();
                 if (sGlass.get())
                 {
                     cv = create_border_glass(&pGlass, s,
                             color, bg_color,
                             SURFMASK_ALL_CORNER, bw, xr,
-                            sSize.nWidth, sSize.nHeight
+                            sSize.nWidth, sSize.nHeight, flat
                         );
                     if (cv != NULL)
                         s->draw(cv, sSize.nLeft, sSize.nTop);
@@ -955,7 +966,7 @@ namespace lsp
                 else
                 {
                     drop_glass();
-                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize);
+                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize, flat);
                 }
 
                 s->set_antialiasing(aa);
@@ -1137,6 +1148,11 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t AudioSample::on_submit()
+        {
+            return STATUS_OK;
+        }
+
         status_t AudioSample::slot_on_before_popup(Widget *sender, void *ptr, void *data)
         {
             AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
@@ -1149,6 +1165,12 @@ namespace lsp
             AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
             Menu *_menu = widget_ptrcast<Menu>(sender);
             return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t AudioSample::slot_on_submit(Widget *sender, void *ptr, void *data)
+        {
+            AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
+            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
         }
     }
 }

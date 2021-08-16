@@ -39,6 +39,7 @@ namespace lsp
                 prop::Integer               sHSpacing;
                 prop::Integer               sVSpacing;
                 prop::Orientation           sOrientation;
+                prop::SizeConstraints       sConstraints;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -47,6 +48,10 @@ namespace lsp
          */
         class Grid: public WidgetContainer
         {
+            private:
+                Grid & operator = (const Grid &);
+                Grid(const Grid &);
+
             public:
                 static const w_class_t    metadata;
 
@@ -87,7 +92,7 @@ namespace lsp
 
                 typedef struct alloc_t
                 {
-                    lltl::darray<cell_t>    vCells;
+                    lltl::parray<cell_t>    vCells;
                     lltl::parray<cell_t>    vTable;
                     lltl::darray<header_t>  vRows;
                     lltl::darray<header_t>  vCols;
@@ -105,6 +110,7 @@ namespace lsp
                 prop::Integer               sHSpacing;
                 prop::Integer               sVSpacing;
                 prop::Orientation           sOrientation;
+                prop::SizeConstraints       sConstraints;
 
             protected:
                 void                        do_destroy();
@@ -125,6 +131,9 @@ namespace lsp
                 static void                 assign_coords(alloc_t *a, const ws::rectangle_t *r);
                 static void                 realize_children(alloc_t *a);
                 status_t                    attach_internal(ssize_t left, ssize_t top, Widget *widget, size_t rows, size_t cols);
+                static cell_t              *alloc_cell(lltl::parray<cell_t> *list);
+                static void                 free_cells(alloc_t *a);
+                static void                 free_cell(cell_t *cell);
 
             protected:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);
@@ -174,6 +183,13 @@ namespace lsp
                  * @return vertical spacing between cells
                  */
                 LSP_TK_PROPERTY(Integer,            vspacing,           &sVSpacing)
+
+                /**
+                 * Get size constraints
+                 *
+                 * @return size constraings
+                 */
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
 
             //---------------------------------------------------------------------------------
             // Manipulation

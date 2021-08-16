@@ -37,12 +37,13 @@ namespace lsp
         {
             private:
                 BorderStyle & operator = (const BorderStyle &);
+                BorderStyle(const BorderStyle &);
 
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit BorderStyle(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit BorderStyle(prop::Listener *listener = NULL): Enum(ENUM, ws::BS_SINGLE, listener) {};
 
             public:
                 inline ws::border_style_t   get() const     { return ws::border_style_t(nValue); }
@@ -57,6 +58,7 @@ namespace lsp
             {
                 private:
                     BorderStyle & operator = (const BorderStyle &);
+                    BorderStyle(const BorderStyle &);
 
                 public:
                     explicit BorderStyle(prop::Listener *listener = NULL): tk::BorderStyle(listener) {};

@@ -51,10 +51,8 @@ namespace lsp
         float Float::set(float v)
         {
             float prev = fValue;
-            if (v == fValue)
-                return prev;
-
             fValue  = v;
+
             sync();
             return prev;
         }

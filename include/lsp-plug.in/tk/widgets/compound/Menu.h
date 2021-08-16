@@ -56,8 +56,15 @@ namespace lsp
 
         class Menu: public WidgetContainer
         {
+            private:
+                Menu & operator = (const Menu &);
+                Menu(const Menu &);
+
             public:
                 static const w_class_t    metadata;
+
+            private:
+                static const arrangement_t arrangements[];
 
             protected:
                 friend class MenuItem;
@@ -246,6 +253,12 @@ namespace lsp
                 LSP_TK_PROPERTY(Rectangle,          trigger_area,               sWindow.trigger_area())
                 LSP_TK_PROPERTY(Integer,            trigger_screen,             sWindow.trigger_screen())
                 LSP_TK_PROPERTY(WidgetPtr<Widget>,  trigger_widget,             sWindow.trigger_widget())
+
+            public:
+                bool                        set_arrangements(const lltl::darray<arrangement_t> *list);
+                bool                        set_arrangements(const arrangement_t *list, size_t count);
+                bool                        add_arrangement(const arrangement_t *item);
+                bool                        add_arrangement(arrangement_pos_t pos, float align = 0.0f, bool stretch = true);
 
             public:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);

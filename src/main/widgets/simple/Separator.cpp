@@ -40,7 +40,7 @@ namespace lsp
                 sSizeRange.set(-1, -1);
                 sThickness.set(1);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Separator, "Separator");
+            LSP_TK_BUILTIN_STYLE(Separator, "Separator", "root");
         }
 
         const w_class_t Separator::metadata = { "Separator", &Widget::metadata };

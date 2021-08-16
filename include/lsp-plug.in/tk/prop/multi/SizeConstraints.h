@@ -34,6 +34,7 @@ namespace lsp
         {
             protected:
                 SizeConstraints & operator = (const SizeConstraints &);
+                SizeConstraints(const SizeConstraints &);
 
             protected:
                 enum property_t
@@ -97,6 +98,9 @@ namespace lsp
                 void        set_width(ssize_t min, ssize_t max);
                 void        set_height(ssize_t min, ssize_t max);
 
+                inline void set_min(ssize_t min)                            { set_min(min, min);                    }
+                inline void set_max(ssize_t max)                            { set_max(max, max);                    }
+
                 inline void set_width(ssize_t value)                        { set_width(value, value);              }
                 inline void set_height(ssize_t value)                       { set_height(value, value);             }
 
@@ -129,6 +133,9 @@ namespace lsp
                 void        tapply(ws::rectangle_t *sc, float scale);
                 static void tapply(ws::rectangle_t *dst, const ws::rectangle_t *src, const ws::size_limit_t *sc);
                 static void tapply(ws::rectangle_t *dst, const ws::size_limit_t *sc);
+
+                static void maximize(ws::size_limit_t *dst, const ws::size_limit_t *a, const ws::size_limit_t *b);
+                static void maximize(ws::size_limit_t *dst, const ws::size_limit_t *src);
         };
 
         namespace prop
@@ -140,6 +147,7 @@ namespace lsp
             {
                 private:
                     SizeConstraints & operator = (const SizeConstraints &);
+                    SizeConstraints(const SizeConstraints &);
 
                 public:
                     explicit SizeConstraints(prop::Listener *listener = NULL): tk::SizeConstraints(listener) {};

@@ -37,6 +37,7 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Integer               sBorder;        // Border size
                 prop::Integer               sBorderRadius;  // Border radius
+                prop::Boolean               sBorderFlat;    // Border is flat
                 prop::Boolean               sGlass;         // Draw glass
                 prop::Color                 sColor;         // Graph color
                 prop::Color                 sBorderColor;   // Color of the border
@@ -54,11 +55,13 @@ namespace lsp
 
             private:
                 Area3D & operator    = (const Area3D &);
+                Area3D(const Area3D &);
 
             protected:
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Integer               sBorder;        // Border size
                 prop::Integer               sBorderRadius;  // Border radius
+                prop::Boolean               sBorderFlat;    // Border is flat
                 prop::Boolean               sGlass;         // Draw glass
                 prop::Color                 sColor;         // Graph color
                 prop::Color                 sBorderColor;   // Color of the border
@@ -93,6 +96,7 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,        &sConstraints);
                 LSP_TK_PROPERTY(Integer,                    border_size,        &sBorder);
                 LSP_TK_PROPERTY(Integer,                    border_radius,      &sBorderRadius);
+                LSP_TK_PROPERTY(Boolean,                    border_flat,        &sBorderFlat);
                 LSP_TK_PROPERTY(Boolean,                    glass,              &sGlass);
                 LSP_TK_PROPERTY(Color,                      color,              &sColor);
                 LSP_TK_PROPERTY(Color,                      border_color,       &sBorderColor);

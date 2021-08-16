@@ -58,7 +58,7 @@ namespace lsp
                 sActions.override();
                 sLayout.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog, "FileDialog");
+            LSP_TK_BUILTIN_STYLE(FileDialog, "FileDialog", "Window");
 
             //-----------------------------------------------------------------
             // FileDialog::NavButton style
@@ -73,7 +73,7 @@ namespace lsp
                 sConstraints.override();
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__NavButton, "FileDialog::NavButton");
+            LSP_TK_BUILTIN_STYLE(FileDialog__NavButton, "FileDialog::NavButton", "Button");
 
             //-----------------------------------------------------------------
             // FileDialog::NavBox style
@@ -88,7 +88,7 @@ namespace lsp
                 sSpacing.override();
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__NavBox, "FileDialog::NavBox");
+            LSP_TK_BUILTIN_STYLE(FileDialog__NavBox, "FileDialog::NavBox", "Box");
 
             //-----------------------------------------------------------------
             // FileDialog::ActionButton style
@@ -103,7 +103,7 @@ namespace lsp
                 sConstraints.override();
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__ActionButton, "FileDialog::ActionButton");
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionButton, "FileDialog::ActionButton", "Button");
 
             //-----------------------------------------------------------------
             // FileDialog::ActionBox style
@@ -116,7 +116,7 @@ namespace lsp
                 // Commit
                 sSpacing.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__ActionBox, "FileDialog::ActionBox");
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionBox, "FileDialog::ActionBox", "Box");
 
             //-----------------------------------------------------------------
             // FileDialog::ActionAlign style
@@ -129,7 +129,7 @@ namespace lsp
                 // Commit
                 sLayout.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__ActionAlign, "FileDialog::ActionAlign");
+            LSP_TK_BUILTIN_STYLE(FileDialog__ActionAlign, "FileDialog::ActionAlign", "Align");
 
             //-----------------------------------------------------------------
             // FileDialog::Bookmark style
@@ -146,7 +146,7 @@ namespace lsp
                 sTextLayout.override();
                 sFollow.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark, "FileDialog::Bookmark");
+            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark, "FileDialog::Bookmark", "Hyperlink");
 
             //-----------------------------------------------------------------
             // FileDialog::Bookmark.selected style
@@ -161,7 +161,7 @@ namespace lsp
                 sColor.override();
                 sBgColor.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark_selected, "FileDialog::Bookmark.selected");
+            LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark_selected, "FileDialog::Bookmark.selected", "FileDialog::Bookmark");
 
             //-----------------------------------------------------------------
             // FileDialog::Warning
@@ -176,7 +176,20 @@ namespace lsp
                 sTextLayout.override();
                 sColor.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__Warning, "FileDialog::Warning");
+            LSP_TK_BUILTIN_STYLE(FileDialog__Warning, "FileDialog::Warning", "Label");
+
+            //-----------------------------------------------------------------
+            // FileDialog::Label
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__Label, Label)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Label, Label)
+                // Override
+                sAllocation.set_hfill(true);
+                // Commit
+                sAllocation.override();
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__Label, "FileDialog::Label", "Label");
 
             //-----------------------------------------------------------------
             // FileDialog::ExtCheck
@@ -191,7 +204,16 @@ namespace lsp
                 sColor.override();
                 sChecked.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck");
+            LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck", "CheckBox");
+
+            //-----------------------------------------------------------------
+            // FileDialog::FilterComboBox
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__FilterComboBox, ComboBox)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__FilterComboBox, ComboBox)
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__FilterComboBox, "FileDialog::FilterComboBox", "ComboBox");
         }
 
         const w_class_t FileDialog::metadata            = { "FileDialog", &Window::metadata };
@@ -240,15 +262,10 @@ namespace lsp
             pSelBookmark    = NULL;
             pPopupBookmark  = NULL;
 
-            pNavButton      = NULL;
-            pActButton      = NULL;
             pBMNormal       = NULL;
             pBMSel          = NULL;
             pWarning        = NULL;
             pExtCheck       = NULL;
-            pActionBox      = NULL;
-            pActionAlign    = NULL;
-            pNavBox         = NULL;
 
             pClass          = &metadata;
         }
@@ -359,12 +376,6 @@ namespace lsp
             lsp_trace("Scaling factor: %f", sScaling.get());
 
             // Init styles
-            pNavButton      = pDisplay->schema()->get("FileDialog::NavButton");
-            if (pNavButton == NULL)
-                return STATUS_BAD_STATE;
-            pActButton      = pDisplay->schema()->get("FileDialog::ActionButton");
-            if (pActButton == NULL)
-                return STATUS_BAD_STATE;
             pBMNormal       = pDisplay->schema()->get("FileDialog::Bookmark");
             if (pBMNormal == NULL)
                 return STATUS_BAD_STATE;
@@ -377,15 +388,6 @@ namespace lsp
             pExtCheck       = pDisplay->schema()->get("FileDialog::ExtCheck");
             if (pExtCheck == NULL)
                 return STATUS_BAD_STATE;
-            pActionBox      = pDisplay->schema()->get("FileDialog::ActionBox");
-            if (pActionBox == NULL)
-                return STATUS_BAD_STATE;
-            pActionAlign    = pDisplay->schema()->get("FileDialog::ActionAlign");
-            if (pActionBox == NULL)
-                return STATUS_BAD_STATE;
-            pNavBox         = pDisplay->schema()->get("FileDialog::NavBox");
-            if (pNavBox == NULL)
-                return STATUS_BAD_STATE;
 
             // Initialize widgets
             LSP_STATUS_ASSERT(sWPath.init());
@@ -394,16 +396,17 @@ namespace lsp
             LSP_STATUS_ASSERT(sWSearch.init());
 
             LSP_STATUS_ASSERT(sWFilter.init());
+            LSP_STATUS_ASSERT(inject_style(&sWFilter, "FileDialog::FilterComboBox"));
 
             LSP_STATUS_ASSERT(sWFiles.init());
             sWFiles.constraints()->set_min(400, 320);
             sWFiles.allocation()->set_hexpand(true);
 
             LSP_STATUS_ASSERT(sWAction.init());
-            LSP_STATUS_ASSERT(sWAction.style()->inject_parent(pActButton));
+            LSP_STATUS_ASSERT(inject_style(&sWAction, "FileDialog::ActionButton"));
 
             LSP_STATUS_ASSERT(sWCancel.init());
-            LSP_STATUS_ASSERT(sWCancel.style()->inject_parent(pActButton));
+            LSP_STATUS_ASSERT(inject_style(&sWCancel, "FileDialog::ActionButton"));
             LSP_STATUS_ASSERT(sWCancel.text()->set("actions.cancel"));
 
             LSP_STATUS_ASSERT(sWWarning.init());
@@ -412,19 +415,19 @@ namespace lsp
             sWWarning.allocation()->set_hexpand(true);
 
             LSP_STATUS_ASSERT(wGo.init());
-            LSP_STATUS_ASSERT(wGo.style()->inject_parent(pNavButton));
+            LSP_STATUS_ASSERT(inject_style(&wGo, "FileDialog::NavButton"));
             LSP_STATUS_ASSERT(wGo.text()->set("actions.nav.go"));
 
             LSP_STATUS_ASSERT(wUp.init());
-            LSP_STATUS_ASSERT(wUp.style()->inject_parent(pNavButton));
+            LSP_STATUS_ASSERT(inject_style(&wUp, "FileDialog::NavButton"));
             LSP_STATUS_ASSERT(wUp.text()->set("actions.nav.up"));
 
             LSP_STATUS_ASSERT(wBMAdd.init());
-            LSP_STATUS_ASSERT(wBMAdd.style()->inject_parent(pNavButton));
+            LSP_STATUS_ASSERT(inject_style(&wBMAdd, "FileDialog::NavButton"));
             LSP_STATUS_ASSERT(wBMAdd.text()->set("actions.to_bookmarks"));
 
             LSP_STATUS_ASSERT(wNavBox.init());
-            LSP_STATUS_ASSERT(wNavBox.style()->inject_parent(pNavBox));
+            LSP_STATUS_ASSERT(inject_style(&wNavBox, "FileDialog::NavBox"));
             wNavBox.orientation()->set_horizontal();
 
             LSP_STATUS_ASSERT(sMainGrid.init());
@@ -435,11 +438,11 @@ namespace lsp
             sMainGrid.orientation()->set(O_HORIZONTAL);
 
             LSP_STATUS_ASSERT(sActionBox.init());
-            LSP_STATUS_ASSERT(sActionBox.style()->inject_parent(pActionBox));
+            LSP_STATUS_ASSERT(inject_style(&sActionBox, "FileDialog::ActionBox"));
             sActionBox.orientation()->set_horizontal();
 
             LSP_STATUS_ASSERT(sActionAlign.init());
-            LSP_STATUS_ASSERT(sActionAlign.style()->inject_parent(pActionAlign));
+            LSP_STATUS_ASSERT(inject_style(&sActionAlign, "FileDialog::ActionAlign"));
 
             LSP_STATUS_ASSERT(sWarnBox.init());
             sWarnBox.orientation()->set_horizontal();
@@ -483,7 +486,8 @@ namespace lsp
             LSP_STATUS_ASSERT(sActionBox.add(&sWCancel));
             LSP_STATUS_ASSERT(sActionAlign.add(&sActionBox));
             // Warning box
-            LSP_STATUS_ASSERT(add_label(&sWarnBox, "labels.file_list"));
+            LSP_STATUS_ASSERT(add_label(&sWarnBox, "labels.file_list", -1.0f, &l));
+            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::Label"));
             LSP_STATUS_ASSERT(sWarnBox.add(&sWWarning));
 
             // Initialize grid
@@ -491,7 +495,8 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.add(&wNavBox));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWPath));
             // Row 2
-            LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.bookmark_list"));
+            LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.bookmark_list", -1.0f, &l));
+            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::Label"));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWarnBox));
             // Row 3
             LSP_STATUS_ASSERT(sMainGrid.add(&wOptions));
@@ -501,9 +506,11 @@ namespace lsp
             LSP_STATUS_ASSERT(add_ext_check(&sMainGrid, "labels.automatic_extension"));
             // Row 5
             LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.file_name", 1.0f, &pWSearch));
+            LSP_STATUS_ASSERT(inject_style(pWSearch, "FileDialog::Label"));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWSearch));
             // Row 6
-            LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.filter", 1.0f));
+            LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.filter", 1.0f, &l));
+            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::Label"));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWFilter));
             // Row 7
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
@@ -560,6 +567,14 @@ namespace lsp
             sync_mode();
 
             return STATUS_OK;
+        }
+
+        status_t FileDialog::inject_style(tk::Widget *w, const char *name)
+        {
+            Style *s = pDisplay->schema()->get(name);
+            if (s == NULL)
+                return STATUS_BAD_STATE;
+            return w->style()->inject_parent(s);
         }
 
         void FileDialog::sync_mode()
@@ -726,6 +741,8 @@ namespace lsp
                 result = lbl->init();
             if (result == STATUS_OK)
                 result = box->init();
+            if (result == STATUS_OK)
+                result = inject_style(lbl, "FileDialog::Label");
 
             box->spacing()->set(4);
             sAppendExt.layout()->set_align(-1.0f);
@@ -1112,7 +1129,11 @@ namespace lsp
 
         status_t FileDialog::on_dlg_search(void *data)
         {
-            return (sVisibility.get()) ? apply_filters() : STATUS_OK;
+            if (!sVisibility.get())
+                return STATUS_OK;
+
+            sWFiles.selected()->clear();
+            return apply_filters();
         }
 
         status_t FileDialog::on_dlg_action(void *data, bool list)
@@ -1124,9 +1145,10 @@ namespace lsp
             LSP_STATUS_ASSERT(sWPath.text()->format(&spath));
             LSP_STATUS_ASSERT(path.set(&spath));
 
+            f_entry_t *ent = selected_entry();
+
             if (list)
             {
-                f_entry_t *ent = selected_entry();
                 if (ent == NULL)
                     return show_message("titles.attention", "headings.attention", "messages.file.not_specified", NULL);
 
@@ -1154,13 +1176,12 @@ namespace lsp
                 if (io::Path::is_dots(&fname) || (!io::Path::valid_file_name(&fname)))
                     return show_message("titles.attention", "headings.attention", "messages.file.invalid_name", &path);
             }
-            else if ((!io::Path::is_dots(&fname)) && (io::Path::valid_file_name(&fname)))
+            else if ((ent == NULL) && (!io::Path::is_dots(&fname)) && (io::Path::valid_file_name(&fname)))
             {
                 LSP_STATUS_ASSERT(path.append_child(&fname));
             }
             else // Use selection
             {
-                f_entry_t *ent = selected_entry();
                 if (ent == NULL)
                     return show_message("titles.attention", "headings.attention", "messages.file.not_specified", NULL);
 
@@ -1841,7 +1862,7 @@ namespace lsp
             return select_current_bookmark();
         }
 
-        int FileDialog::cmp_file_entry(const f_entry_t *a, const f_entry_t *b)
+        ssize_t FileDialog::cmp_file_entry(const f_entry_t *a, const f_entry_t *b)
         {
             ssize_t delta = ((b->nFlags & F_DOTDOT) - (a->nFlags & F_DOTDOT));
             if (delta != 0)

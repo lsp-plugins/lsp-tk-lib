@@ -23,6 +23,7 @@
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/ipc/Process.h>
+#include <lsp-plug.in/runtime/system.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -34,6 +35,7 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Hyperlink, Widget)
                 // Bind
                 sTextLayout.bind("text.layout", this);
+                sTextAdjust.bind("text.adjust", this);
                 sFont.bind("font", this);
                 sColor.bind("text.color", this);
                 sHoverColor.bind("text.hover.color", this);
@@ -41,6 +43,7 @@ namespace lsp
                 sFollow.bind("follow", this);
                 // Configure
                 sTextLayout.set(0.0f, 0.0f);
+                sTextAdjust.set(TA_NONE);
                 sFont.set_underline();
                 sColor.set("#0000cc");
                 sHoverColor.set("#ff0000");
@@ -52,7 +55,7 @@ namespace lsp
                 sPointer.override();
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Hyperlink, "Hyperlink");
+            LSP_TK_BUILTIN_STYLE(Hyperlink, "Hyperlink", "root");
         }
 
         const w_class_t Hyperlink::metadata =        { "Hyperlink", &Widget::metadata };
@@ -60,6 +63,7 @@ namespace lsp
         Hyperlink::Hyperlink(Display *dpy):
             Widget(dpy),
             sTextLayout(&sProperties),
+            sTextAdjust(&sProperties),
             sFont(&sProperties),
             sColor(&sProperties),
             sHoverColor(&sProperties),
@@ -94,6 +98,7 @@ namespace lsp
                 return res;
 
             sTextLayout.bind("text.layout", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("text.color", &sStyle);
             sHoverColor.bind("text.hover.color", &sStyle);
@@ -133,6 +138,141 @@ namespace lsp
             }
         }
 
+        void Hyperlink::property_changed(Property *prop)
+        {
+            Widget::property_changed(prop);
+            if (sTextLayout.is(prop))
+                query_draw();
+            if (sTextAdjust.is(prop))
+                query_resize();
+            if (sFont.is(prop))
+                query_resize();
+            if (sColor.is(prop))
+                query_draw();
+            if (sHoverColor.is(prop))
+                query_draw();
+            if (sText.is(prop))
+                query_resize();
+            if (sConstraints.is(prop))
+                query_resize();
+        }
+
+        void Hyperlink::size_request(ws::size_limit_t *r)
+        {
+            r->nMinWidth    = 0;
+            r->nMinHeight   = 0;
+            r->nMaxWidth    = -1;
+            r->nMaxHeight   = -1;
+
+            // Form the text string
+            LSPString text;
+            sText.format(&text);
+            sTextAdjust.apply(&text);
+
+            // Estimate sizes
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
+
+            r->nMinWidth    = ceil(tp.Width);
+            r->nMinHeight   = ceil(lsp_max(tp.Height, fp.Height));
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
+
+            // Apply size constraints
+            sConstraints.apply(r, scaling);
+        }
+
+        void Hyperlink::draw(ws::ISurface *s)
+        {
+            // Form the text string
+            LSPString text;
+            sText.format(&text);
+            sTextAdjust.apply(&text);
+
+            // Estimate sizes
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+            ws::rectangle_t r;
+
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
+
+            // Estimate drawing area
+            tp.Height       = lsp_max(tp.Height, fp.Height);
+            if (tp.Width <= sSize.nWidth)
+            {
+                r.nLeft         = 0;
+                r.nWidth        = sSize.nWidth;
+            }
+            else
+            {
+                r.nLeft         = -0.5f * (tp.Width - sSize.nWidth);
+                r.nWidth        = ceil(tp.Width);
+            }
+
+            if (tp.Height <= sSize.nHeight)
+            {
+                r.nTop          = 0;
+                r.nHeight       = sSize.nHeight;
+            }
+            else
+            {
+                r.nTop          = -0.5f * (tp.Height - sSize.nHeight);
+                r.nHeight       = ceil(tp.Height);
+            }
+
+            // Initialize palette
+            lsp::Color bg_color;
+            lsp::Color f_color((nState & F_MOUSE_IN) ? sHoverColor : sColor);
+
+            get_actual_bg_color(bg_color);
+            f_color.scale_lightness(sBrightness.get());
+
+            // Draw background
+            s->clear(bg_color);
+
+            float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
+            float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
+            float dy        = (r.nHeight - tp.Height) * 0.5f;
+            ssize_t y       = r.nTop + dy * valign - fp.Descent;
+
+            // Estimate text size
+            ssize_t last = 0, curr = 0, tail = 0, len = text.length();
+
+            while (curr < len)
+            {
+                // Get next line indexes
+                curr    = text.index_of(last, '\n');
+                if (curr < 0)
+                {
+                    curr        = len;
+                    tail        = len;
+                }
+                else
+                {
+                    tail        = curr;
+                    if ((tail > last) && (text.at(tail-1) == '\r'))
+                        --tail;
+                }
+
+                // Calculate text location
+                sFont.get_text_parameters(s, &tp, fscaling, &text, last, tail);
+                float dx    = (r.nWidth - tp.Width) * 0.5f;
+                ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
+                y          += fp.Height;
+
+                sFont.draw(s, f_color, x, y, fscaling, &text, last, tail);
+                last    = curr + 1;
+            }
+        }
+
         status_t Hyperlink::create_default_menu()
         {
             // Add default menu
@@ -168,52 +308,6 @@ namespace lsp
 
             return STATUS_OK;
         }
-
-        void Hyperlink::size_request(ws::size_limit_t *r)
-        {
-            r->nMinWidth    = 0;
-            r->nMinHeight   = 0;
-            r->nMaxWidth    = -1;
-            r->nMaxHeight   = -1;
-
-            // Form the text string
-            LSPString text;
-            sText.format(&text);
-
-            // Estimate sizes
-            float scaling   = sScaling.get();
-            ws::font_parameters_t fp;
-            ws::text_parameters_t tp;
-
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
-
-            r->nMinWidth    = ceil(tp.Width);
-            r->nMinHeight   = ceil(lsp_max(tp.Height, fp.Height));
-            r->nPreWidth    = -1;
-            r->nPreHeight   = -1;
-
-            // Apply size constraints
-            sConstraints.apply(r, scaling);
-        }
-
-        void Hyperlink::property_changed(Property *prop)
-        {
-            Widget::property_changed(prop);
-            if (sTextLayout.is(prop))
-                query_draw();
-            if (sFont.is(prop))
-                query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sHoverColor.is(prop))
-                query_draw();
-            if (sText.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
-                query_resize();
-        }
-
 
         status_t Hyperlink::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
@@ -251,29 +345,7 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            #ifdef PLATFORM_WINDOWS
-                ::ShellExecuteW(
-                    NULL,               // Not associated with window
-                    L"open",            // Open hyperlink
-                    url.get_utf16(),    // The file to execute
-                    NULL,               // Parameters
-                    NULL,               // Directory
-                    SW_SHOWNORMAL       // Show command
-                );
-            #else
-
-                ipc::Process p;
-
-                if ((res = p.set_command("xdg-open")) != STATUS_OK)
-                    return STATUS_OK;
-                if ((res = p.add_arg(&url)) != STATUS_OK)
-                    return STATUS_OK;
-                if ((res = p.launch()) != STATUS_OK)
-                    return STATUS_OK;
-                p.wait();
-            #endif /* PLATFORM_WINDOWS */
-
-            return STATUS_OK;
+            return system::follow_url(&url);
         }
 
         status_t Hyperlink::copy_url(ws::clipboard_id_t cb)
@@ -302,88 +374,6 @@ namespace lsp
         {
             lsp_trace("hyperlink submitted");
             return (sFollow.get()) ? follow_url() : STATUS_OK;
-        }
-
-        void Hyperlink::draw(ws::ISurface *s)
-        {
-            // Form the text string
-            LSPString text;
-            sText.format(&text);
-
-            // Estimate sizes
-            float scaling   = sScaling.get();
-            ws::font_parameters_t fp;
-            ws::text_parameters_t tp;
-            ws::rectangle_t r;
-
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_multitext_parameters(pDisplay, &tp, scaling, &text);
-
-            // Estimate drawing area
-            tp.Height       = lsp_max(tp.Height, fp.Height);
-            if (tp.Width <= sSize.nWidth)
-            {
-                r.nLeft         = 0;
-                r.nWidth        = sSize.nWidth;
-            }
-            else
-            {
-                r.nLeft         = -0.5f * (tp.Width - sSize.nWidth);
-                r.nWidth        = ceil(tp.Width);
-            }
-
-            if (tp.Height <= sSize.nHeight)
-            {
-                r.nTop          = 0;
-                r.nHeight       = sSize.nHeight;
-            }
-            else
-            {
-                r.nTop          = -0.5f * (tp.Height - sSize.nHeight);
-                r.nHeight       = ceil(tp.Height);
-            }
-
-            // Initialize palette
-            lsp::Color bg_color(sBgColor);
-            lsp::Color f_color((nState & F_MOUSE_IN) ? sHoverColor : sColor);
-            f_color.scale_lightness(sBrightness.get());
-
-            // Draw background
-            s->clear(bg_color);
-
-            float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
-            float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
-            float dy        = (r.nHeight - tp.Height) * 0.5f;
-            ssize_t y       = r.nTop + dy * valign - fp.Descent;
-
-            // Estimate text size
-            ssize_t last = 0, curr = 0, tail = 0, len = text.length();
-
-            while (curr < len)
-            {
-                // Get next line indexes
-                curr    = text.index_of(last, '\n');
-                if (curr < 0)
-                {
-                    curr        = len;
-                    tail        = len;
-                }
-                else
-                {
-                    tail        = curr;
-                    if ((tail > last) && (text.at(tail-1) == '\r'))
-                        --tail;
-                }
-
-                // Calculate text location
-                sFont.get_text_parameters(s, &tp, scaling, &text, last, tail);
-                float dx    = (r.nWidth - tp.Width) * 0.5f;
-                ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
-                y          += fp.Height;
-
-                sFont.draw(s, f_color, x, y, scaling, &text, last, tail);
-                last    = curr + 1;
-            }
         }
 
         status_t Hyperlink::on_mouse_in(const ws::event_t *e)

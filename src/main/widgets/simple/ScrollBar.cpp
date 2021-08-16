@@ -84,7 +84,7 @@ namespace lsp
                 sTextColor.set("#000000");
                 sTextActiveColor.set("#000000");
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ScrollBar, "ScrollBar");
+            LSP_TK_BUILTIN_STYLE(ScrollBar, "ScrollBar", "root");
         }
 
         const w_class_t ScrollBar::metadata         = { "ScrollBar", &Widget::metadata };
@@ -840,7 +840,8 @@ namespace lsp
             ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
 
             // Draw background
-            lsp::Color color(sBgColor);
+            lsp::Color color;
+            get_actual_bg_color(color);
             s->clear(color);
 
             bool aa         = s->set_antialiasing(true);

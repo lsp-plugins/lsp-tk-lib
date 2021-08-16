@@ -138,7 +138,14 @@ namespace lsp
                 expr::token_t tok = t.get_token(expr::TF_GET);
                 if (tok == expr::TT_EOF)
                     break;
-                t.unget();
+
+                if (out->size() > 0)
+                {
+                    if (tok != expr::TT_COMMA)
+                        return STATUS_BAD_FORMAT;
+                }
+                else
+                    t.unget();
 
                 // Create color range
                 ColorRange *c = create_item();
@@ -251,6 +258,23 @@ namespace lsp
             sync();
 
             return STATUS_OK;
+        }
+
+        void ColorRanges::clear()
+        {
+            lltl::parray<ColorRange> ranges;
+            ranges.swap(vItems);
+
+            for (size_t i=0, n=ranges.size(); i<n; ++i)
+            {
+                ColorRange *r = ranges.uget(i);
+                if (r == NULL)
+                    continue;
+                delete r;
+            }
+            ranges.flush();
+
+            sync();
         }
 
         status_t ColorRanges::premove(const ColorRange *s)

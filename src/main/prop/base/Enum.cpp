@@ -25,10 +25,10 @@ namespace lsp
 {
     namespace tk
     {
-        Enum::Enum(const prop::enum_t *xenum, prop::Listener *listener):
+        Enum::Enum(const prop::enum_t *xenum, size_t dfl, prop::Listener *listener):
             SimpleProperty(listener)
         {
-            nValue      = 0.0f;
+            nValue      = dfl;
             pEnum       = xenum;
         }
 
@@ -73,16 +73,33 @@ namespace lsp
             nValue = v;
         }
 
+        status_t Enum::parse(const char *value)
+        {
+            LSPString s;
+            if (!s.set_utf8(value))
+                return STATUS_NO_MEM;
+            return parse(&s);
+        }
+
+        status_t Enum::parse(const LSPString *value)
+        {
+            ssize_t v;
+            size_t n = Property::parse_enums(&v, 1, value, pEnum);
+            if (n <= 0)
+                return STATUS_INVALID_VALUE;
+            else if (nValue == v)
+                return true;
+
+            nValue  = v;
+            sync();
+            return true;
+        }
+
         void Enum::push()
         {
-            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
-            {
-                if (nValue == e->value)
-                {
-                    pStyle->set_string(nAtom, e->name);
-                    break;
-                }
-            }
+            const prop::enum_t *e = Property::find_enum(nValue, pEnum);
+            if (e != NULL)
+                pStyle->set_string(nAtom, e->name);
         }
 
         ssize_t Enum::set(ssize_t v)
@@ -91,14 +108,11 @@ namespace lsp
             if (v == nValue)
                 return prev;
 
-            for (const prop::enum_t *e = pEnum; (e != NULL) && (e->name != NULL); ++e)
+            const prop::enum_t *e = Property::find_enum(v, pEnum);
+            if (e != NULL)
             {
-                if (v == e->value)
-                {
-                    nValue  = v;
-                    sync();
-                    break;
-                }
+                nValue  = v;
+                sync();
             }
 
             return prev;

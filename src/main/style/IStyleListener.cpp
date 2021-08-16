@@ -25,6 +25,10 @@ namespace lsp
 {
     namespace tk
     {
+        IStyleListener::IStyleListener()
+        {
+        }
+
         IStyleListener::~IStyleListener()
         {
         }

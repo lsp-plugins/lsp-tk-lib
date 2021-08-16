@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 Enum & operator = (const Enum &);
+                Enum(const Enum &);
 
             protected:
                 ssize_t             nValue;
@@ -58,9 +59,13 @@ namespace lsp
                 virtual void        commit(atom_t property);
 
             protected:
-                explicit Enum(const prop::enum_t *xenum, prop::Listener *listener = NULL);
+                explicit Enum(const prop::enum_t *xenum, size_t dfl, prop::Listener *listener = NULL);
                 virtual ~Enum();
 
+            public:
+                status_t            parse(const char *value);
+                status_t            parse(const LSPString *value);
+                inline ssize_t      set_index(ssize_t v)        { return set(v);            };
         };
     }
 }

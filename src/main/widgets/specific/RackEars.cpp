@@ -43,7 +43,7 @@ namespace lsp
                 // Configure
                 sFont.set_size(16.0f);
                 sFont.set_bold(true);
-                sFont.set_antialiasing(true);
+                sFont.set_antialiasing(ws::FA_ENABLED);
                 sColor.set("#00ccff");
                 sScrewColor.set("#444444");
                 sTextColor.set("#ffffff");
@@ -56,7 +56,7 @@ namespace lsp
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(RackEars, "RackEars");
+            LSP_TK_BUILTIN_STYLE(RackEars, "RackEars", "root");
         }
 
         const w_class_t RackEars::metadata              = { "RackEars", &Widget::metadata };
@@ -150,6 +150,7 @@ namespace lsp
         void RackEars::estimate_sizes(ws::rectangle_t *screw, ws::rectangle_t *btn)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t angle       = (sAngle.get() & 0x03);
             ssize_t chamfer     = lsp_max(1.0f, scaling * 3.0f);
 
@@ -167,8 +168,8 @@ namespace lsp
             LSPString text;
 
             sText.format(&text);
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 
             btn->nLeft          = 0;
             btn->nTop           = 0;
@@ -267,7 +268,9 @@ namespace lsp
             float cy            = r->nTop  + (r->nHeight * 0.5f);
 
             // Draw hole
-            lsp::Color hole(sBgColor);
+            lsp::Color hole;
+            get_actual_bg_color(hole);
+
             ws::rectangle_t h   = *r;
             ssize_t hole_r      = 0.375f * r->nHeight;
             ssize_t chamfer     = lsp_max(1.0f, lsp_min(scaling * 3.0f, 0.25f * r->nHeight));
@@ -305,7 +308,7 @@ namespace lsp
 
             gr = s->radial_gradient(cx + (rad * M_RGOLD_RATIO), cy - (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
             gr->add_color(0.0, 1.0, 1.0, 1.0);
-            gr->add_color(1.0, &screw);
+            gr->add_color(1.0, screw);
             s->fill_circle(cx, cy, rad, gr);
             delete gr;
 
@@ -315,7 +318,7 @@ namespace lsp
 
             gr = s->radial_gradient(cx - (rad * M_RGOLD_RATIO), cy + (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
             gr->add_color(0.0, 1.0, 1.0, 1.0);
-            gr->add_color(1.0, &screw);
+            gr->add_color(1.0, screw);
             ws::surf_line_cap_t cap = s->set_line_cap(ws::SURFLCAP_ROUND);
             s->line(cx + a_cos, cy + a_sin, cx - a_cos, cy - a_sin, lwidth, gr);
             s->line(cx - a_sin, cy + a_cos, cx + a_sin, cy - a_cos, lwidth, gr);
@@ -326,6 +329,7 @@ namespace lsp
         void RackEars::draw(ws::ISurface *s)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright    = sBrightness.get();
             bool aa         = s->set_antialiasing(true);
 
@@ -342,7 +346,8 @@ namespace lsp
             btn.nTop       -= sSize.nTop;
 
             // Draw background
-            lsp::Color col(sBgColor);
+            lsp::Color col;
+            get_actual_bg_color(col);
             s->clear(col);
 
             // Draw screws
@@ -404,13 +409,13 @@ namespace lsp
             LSPString text;
 
             sText.format(&text);
-            sFont.get_parameters(pDisplay, scaling, &fp);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 
             sFont.draw(s, font,
                 btn.nLeft + ((btn.nWidth  - tp.Width ) * 0.5f),
                 btn.nTop  + ((btn.nHeight - fp.Height) * 0.5f) + fp.Ascent,
-                scaling, &text
+                fscaling, &text
             );
 
             // Restore antialiasing

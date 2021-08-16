@@ -41,6 +41,7 @@ namespace lsp
                 prop::SizeConstraints           sConstraints;   // Size constraints
                 prop::Integer                   sBorder;        // Border size
                 prop::Integer                   sBorderRadius;  // Border radius
+                prop::Boolean                   sBorderFlat;    // Border is flat
                 prop::Boolean                   sGlass;         // Draw glass
                 prop::Color                     sColor;         // Graph color
                 prop::Color                     sBorderColor;   // Color of the border
@@ -59,6 +60,7 @@ namespace lsp
 
             private:
                 Graph & operator    = (const Graph &);
+                Graph(const Graph &);
 
             protected:
                 prop::WidgetList<GraphItem>     vItems;         // Overall list of graph items
@@ -70,6 +72,7 @@ namespace lsp
                 prop::SizeConstraints           sConstraints;   // Size constraints
                 prop::Integer                   sBorder;        // Border size
                 prop::Integer                   sBorderRadius;  // Border radius
+                prop::Boolean                   sBorderFlat;    // Border is flat
                 prop::Boolean                   sGlass;         // Draw glass
                 prop::Color                     sColor;         // Graph color
                 prop::Color                     sBorderColor;   // Color of the border
@@ -109,11 +112,12 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,        &sConstraints);
                 LSP_TK_PROPERTY(Integer,                    border_size,        &sBorder);
                 LSP_TK_PROPERTY(Integer,                    border_radius,      &sBorderRadius);
+                LSP_TK_PROPERTY(Boolean,                    border_flat,        &sBorderFlat);
                 LSP_TK_PROPERTY(Boolean,                    glass,              &sGlass);
                 LSP_TK_PROPERTY(Color,                      color,              &sColor);
                 LSP_TK_PROPERTY(Color,                      border_color,       &sBorderColor);
                 LSP_TK_PROPERTY(Color,                      glass_color,        &sGlassColor);
-                LSP_TK_PROPERTY(Padding,                    internal_padding,   &sIPadding);
+                LSP_TK_PROPERTY(Padding,                    ipadding,           &sIPadding);
 
             public:
                 /**
@@ -143,6 +147,7 @@ namespace lsp
                 bool                        origin(size_t index, float *x, float *y);
                 bool                        origin(GraphOrigin *o, float *x, float *y);
 
+                void                        canvas_size(ws::rectangle_t *r);
                 inline ssize_t              canvas_left() const         { return sICanvas.nLeft;                    }
                 inline ssize_t              canvas_top() const          { return sICanvas.nTop;                     }
                 inline ssize_t              canvas_width() const        { return sICanvas.nWidth;                   }

@@ -35,6 +35,14 @@ namespace lsp
             float &a, float &b, float &c
         );
 
+        bool line2d_delta_equation
+        (
+            float x1, float y,
+            float dx, float dy,
+            float &a, float &b, float &c
+        );
+
+
         bool line2d_equation
         (
             float dx, float dy,
@@ -63,18 +71,21 @@ namespace lsp
         bool clip_line2d(
             float dx, float dy,                             // Line equation
             float lc, float rc, float tc, float bc,         // Corners from left, right, top, bottom
+            float error,                                    // Allowed error
             float &cx1, float &cy1, float &cx2, float &cy2  // Results
         );
 
         bool clip_line2d(
             float a, float b, float c,                      // Line equation
             float lc, float rc, float tc, float bc,         // Corners from left, right, top, bottom
+            float error,                                    // Allowed error
             float &cx1, float &cy1, float &cx2, float &cy2  // Results
         );
 
         bool clip_line2d(
             float x1, float x2, float y1, float y2,         // Coordinates of two points
             float lc, float rc, float tc, float bc,         // Corners from left, right, top, bottom
+            float error,                                    // Allowed error
             float &cx1, float &cy1, float &cx2, float &cy2  // Results
         );
 

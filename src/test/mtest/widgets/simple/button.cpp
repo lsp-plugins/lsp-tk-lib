@@ -194,7 +194,7 @@ MTEST_BEGIN("tk.widgets.simple", button)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(5);
+        grid->rows()->set(6);
         grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -289,9 +289,69 @@ MTEST_BEGIN("tk.widgets.simple", button)
                 btn->text()->set_raw(&id);
                 btn->text_clip()->set(true);
 //                btn->constraints()->set_fixed((x + 1) * 12);
-                btn->led_color()->set_rgb24(next_color(col));
+                btn->color()->set_rgb24(next_color(col));
+                btn->text_color()->set_rgb24(next_color(col));
+
+                btn->hover_color()->set(btn->color());
+                btn->text_hover_color()->set(btn->text_color());
+                btn->hover_color()->lighten(1.25f);
+                btn->text_hover_color()->lighten(1.25f);
+
+                btn->down_color()->set_rgb24(next_color(col));
+                btn->text_down_color()->set_rgb24(next_color(col));
+
+                btn->down_hover_color()->set(btn->down_color());
+                btn->text_down_hover_color()->set(btn->text_down_color());
+
+                btn->down_hover_color()->lighten(1.25f);
+                btn->text_down_hover_color()->lighten(1.25f);
+
                 btn->hole()->set(x & 1);
                 btn->hover()->set(true);
+            }
+
+            // Create flat toggle buttons with led
+            for (ssize_t x=0; x<4; ++x)
+            {
+                // Create alignment widget
+                MTEST_ASSERT(id.fmt_ascii("button-%d-5", x));
+                MTEST_ASSERT(btn = new tk::Button(dpy));
+                MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(btn));
+                MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+
+                if (x & 1)
+                    btn->mode()->set_toggle();
+                else
+                    btn->mode()->set_trigger();
+                btn->flat()->set(true);
+                btn->text()->set_raw(&id);
+                btn->text_clip()->set(true);
+//                btn->constraints()->set_fixed((x + 1) * 12);
+                btn->color()->set_rgb24(next_color(col));
+                btn->text_color()->set_rgb24(next_color(col));
+
+                btn->hover_color()->set(btn->color());
+                btn->text_hover_color()->set(btn->text_color());
+                btn->hover_color()->lighten(1.25f);
+                btn->text_hover_color()->lighten(1.25f);
+
+                btn->down_color()->set_rgb24(next_color(col));
+                btn->text_down_color()->set_rgb24(next_color(col));
+
+                btn->down_hover_color()->set(btn->down_color());
+                btn->text_down_hover_color()->set(btn->text_down_color());
+
+                btn->down_hover_color()->lighten(1.25f);
+                btn->text_down_hover_color()->lighten(1.25f);
+
+                btn->border_size()->set(0);
+                btn->border_pressed_size()->set(0);
+                btn->border_down_size()->set(0);
+
+                btn->hole()->set(x & 1);
+                btn->hover()->set(true);
+                btn->down_colors()->set(true);
             }
         }
 

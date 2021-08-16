@@ -33,20 +33,25 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Root, Style)
                 // Bind
                 sScaling.bind("size.scaling", this);
+                sFontScaling.bind("font.scaling", this);
                 sFont.bind("font", this);
+                sDrawMode.bind("draw.mode", this);
                 // Configure
-                sFont.set_antialiasing(true);
+                sFont.set_antialiasing(ws::FA_DEFAULT);
                 sFont.set_size(12.0f);
+                sFontScaling.set(1.0f);
                 sScaling.set(1.0f);
+                sDrawMode.set(DM_CLASSIC);
             LSP_TK_STYLE_IMPL_END
 
             LSP_SYMBOL_HIDDEN
-            StyleFactory<Root> RootFactory(NULL);
+            StyleFactory<Root> RootFactory(NULL, NULL);
         }
 
-        Schema::Schema(Atoms *atoms)
+        Schema::Schema(Atoms *atoms, Display *dpy)
         {
             pAtoms          = atoms;
+            pDisplay        = dpy;
             nFlags          = 0;
             pRoot           = NULL;
         }
@@ -55,8 +60,12 @@ namespace lsp
         {
             // Manually unbind all properties before destroying context
             sScaling.unbind();
+            sFontScaling.unbind();
+            sFont.unbind();
+            sDrawMode.unbind();
 
             // Destroy named styles
+            vBuiltin.flush();
             lltl::parray<Style> vs;
             vStyles.values(&vs);
             vStyles.flush();
@@ -95,6 +104,110 @@ namespace lsp
             }
         }
 
+        status_t Schema::init_colors_from_sheet(StyleSheet *sheet)
+        {
+            lltl::parray<LSPString> vk;
+            sheet->vColors.keys(&vk);
+            for (size_t i=0, n=vk.size(); i<n; ++i)
+            {
+                LSPString *key      = vk.uget(i);
+                lsp::Color *color   = sheet->vColors.get(key);
+                if ((key == NULL) || (color == NULL))
+                    return STATUS_BAD_STATE;
+
+                lsp::Color *xc      = new lsp::Color(color);
+                if (xc == NULL)
+                    return STATUS_NO_MEM;
+
+                if (!vColors.create(key, xc))
+                {
+                    delete xc;
+                    return STATUS_NO_MEM;
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::load_fonts_from_sheet(StyleSheet *sheet, resource::ILoader *loader)
+        {
+            status_t res;
+            lltl::parray<LSPString> vk;
+            sheet->enum_fonts(&vk);
+
+            ws::IDisplay *dpy = pDisplay->display();
+            if (dpy == NULL)
+                return STATUS_BAD_STATE;
+
+            for (size_t i=0, n=vk.size(); i<n; ++i)
+            {
+                LSPString *key              = vk.uget(i);
+                StyleSheet::font_t *font    = sheet->vFonts.get(key);
+                if ((key == NULL) || (font == NULL))
+                    return STATUS_BAD_STATE;
+
+                if (font->alias)
+                {
+                    if ((res = dpy->add_font_alias(font->name.get_utf8(), font->path.get_utf8())) != STATUS_OK)
+                    {
+                        lsp_error("Could not create font alias \"%s\" -> \"%s\"",
+                            font->name.get_utf8(),
+                            font->path.get_utf8()
+                        );
+                        return res;
+                    }
+                }
+                else if ((loader != NULL) || (pDisplay->pResourceLoader != NULL))
+                {
+                    // Patch the loader (if not specified)
+                    if (loader == NULL)
+                        loader  = pDisplay->pResourceLoader;
+
+                    // Use resource resolver for loading fonts
+                    io::IInStream *is = loader->read_stream(&font->path);
+                    if (is == NULL)
+                    {
+                        lsp_error("Could not resolve font data \"%s\" located at \"%s\", error code %d",
+                            font->name.get_utf8(),
+                            font->path.get_utf8(),
+                            int(loader->last_error())
+                        );
+                        return loader->last_error();
+                    }
+
+                    if ((res = dpy->add_font(font->name.get_utf8(), is)) != STATUS_OK)
+                    {
+                        lsp_error("Could not load font data \"%s\" resolved at \"%s\", error code %d",
+                            font->name.get_utf8(),
+                            font->path.get_utf8(),
+                            int(loader->last_error())
+                        );
+                        is->close();
+                        delete is;
+                        return res;
+                    }
+
+                    is->close();
+                    delete is;
+                }
+                else
+                {
+                    // Just load font from file
+                    if ((res = dpy->add_font(font->name.get_utf8(), font->path.get_utf8())) != STATUS_OK)
+                    {
+                        lsp_error("Could not load font \"%s\" located at \"%s\", error code %d",
+                            font->name.get_utf8(),
+                            font->path.get_utf8(),
+                            int(res)
+                        );
+                        return res;
+                    }
+                }
+            }
+
+            return STATUS_OK;
+        }
+
         status_t Schema::init(lltl::parray<IStyleFactory> *list)
         {
             return init(list->array(), list->size());
@@ -126,7 +239,7 @@ namespace lsp
             // Create all necessary styles
             for (size_t i=0; i<n; ++i)
             {
-                LSP_STATUS_ASSERT(create_style(list[i]));
+                LSP_STATUS_ASSERT(create_builtin_style(list[i]));
             }
 
             // Unset 'configuring' mode
@@ -135,74 +248,53 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::apply(StyleSheet *sheet)
+        status_t Schema::apply(StyleSheet *sheet, resource::ILoader *loader)
         {
             if (sheet == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
             // Apply settings in configuration mode
             nFlags |= S_CONFIGURING;
-            status_t res = apply_internal(sheet);
+            status_t res = apply_internal(sheet, loader);
             nFlags &= ~S_CONFIGURING;
 
             return res;
         }
 
-        status_t Schema::apply_internal(StyleSheet *sheet)
+        status_t Schema::create_missing_styles(StyleSheet *sheet)
         {
-            // Destroy colors
-            destroy_colors();
-
-            // Copy colors from sheet
-            lltl::parray<LSPString> vk;
-            sheet->vColors.keys(&vk);
-            for (size_t i=0, n=vk.size(); i<n; ++i)
-            {
-                LSPString *key      = vk.uget(i);
-                lsp::Color *color   = sheet->vColors.get(key);
-                if ((key == NULL) || (color == NULL))
-                    return STATUS_BAD_STATE;
-
-                lsp::Color *xc      = new lsp::Color(color);
-                if (xc == NULL)
-                    return STATUS_NO_MEM;
-
-                if (!vColors.create(key, xc))
-                {
-                    delete xc;
-                    return STATUS_NO_MEM;
-                }
-            }
-
-            // Destroy all relations between styles
+            // List all possible styles sheet names
             status_t res;
-            lltl::parray<Style> vs;
-            if (!vStyles.values(&vs))
+            lltl::parray<LSPString>  vss;
+            if (!sheet->vStyles.keys(&vss))
                 return STATUS_NO_MEM;
 
-            for (size_t i=0, n=vs.size(); i<n; ++i)
+            // Create missing styles and reset configured flag for all styles
+            for (size_t i=0, n=vss.size(); i<n; ++i)
             {
-                Style *s = vs.uget(i);
-                s->remove_all_parents();
-                s->remove_all_children();
-            }
+                LSPString *name         = vss.uget(i);
+                Style *s                = vStyles.get(name);
+                if (s != NULL)
+                    continue;
 
-            // Initialize each style
-            lsp_trace("Applying stylesheet to root style");
-            if (sheet->pRoot != NULL)
-            {
-                res = apply_settings(pRoot, sheet->pRoot);
-                if (res == STATUS_OK)
-                    res = apply_relations(pRoot, sheet->pRoot);
-                if (res != STATUS_OK)
+                // Create new unbound style
+                if ((res = create_style(name)) != STATUS_OK)
                     return res;
+
             }
 
-            // Iterate over named styles
+            return STATUS_OK;
+        }
+
+        status_t Schema::link_styles(StyleSheet *sheet)
+        {
+            // List all possible styles sheet names
+            status_t res;
             lltl::parray<LSPString>  vss;
             if (!vStyles.keys(&vss))
                 return STATUS_NO_MEM;
 
+            // For each style: link it to parents and reset the 'configured' flag
             for (size_t i=0, n=vss.size(); i<n; ++i)
             {
                 LSPString *name         = vss.uget(i);
@@ -210,21 +302,150 @@ namespace lsp
                 if (s == NULL)
                     continue;
 
+                // Reset the 'configured' flag for styles
+                s->set_configured(false);
+
+                // Link to parents
                 StyleSheet::style_t *xs = sheet->vStyles.get(name);
                 if (xs != NULL)
                 {
-                    lsp_trace("Applying stylesheet to style '%s'", name->get_utf8());
-                    res = apply_settings(s, xs);
-
-                    if (res == STATUS_OK)
-                        res = apply_relations(s, xs);
+                    lsp_trace("Linking style '%s'", name->get_utf8());
+                    res = apply_relations(s, &xs->parents);
                 }
                 else
-                    res = s->add_parent(pRoot);
+                {
+                    lsp_trace("Linking style '%s' to default parents: '%s'", name->get_utf8(), s->default_parents());
+                    res = apply_relations(s, s->default_parents());
+                }
 
                 if (res != STATUS_OK)
                     return res;
             }
+
+            return STATUS_OK;
+        }
+
+        bool Schema::check_parents_configured(Style *s)
+        {
+            for (size_t i=0, n=s->parents(); i<n; ++i)
+            {
+                Style *sp = s->parent(i);
+                if ((sp != NULL) && (!sp->configured()))
+                    return false;
+            }
+
+            return true;
+        }
+
+        status_t Schema::configure_styles(StyleSheet *sheet)
+        {
+            // List all possible styles sheet names
+            status_t res;
+            lltl::parray<LSPString> vss;
+            if (!vStyles.keys(&vss))
+                return STATUS_NO_MEM;
+
+            // Initialize all styles in the order of their inheritance
+            for (size_t i=0; vss.size() > 0; )
+            {
+                i                      %= vss.size();
+                LSPString *name         = vss.uget(i);
+                Style *s                = vStyles.get(name);
+
+                // Style does not exists or is already configured?
+                if ((s == NULL) || (s->configured()))
+                {
+                    vss.remove(i); // Remove the key
+                    continue;
+                }
+
+                // Is there stylesheet present for this style?
+                StyleSheet::style_t *xs = sheet->vStyles.get(name);
+                if (xs == NULL)
+                {
+                    s->set_configured(true);
+                    vss.remove(i); // Remove the key
+                    continue;
+                }
+
+                // Check that parents of this style already have been configured
+                if (check_parents_configured(s))
+                {
+                    lsp_trace("Configuring style '%s'", name->get_utf8());
+                    if ((res = apply_settings(s, xs)) != STATUS_OK)
+                        return res;
+
+                    s->set_configured(true);
+                    vss.remove(i); // Remove the key
+                    continue;
+                }
+
+                // Increment the position
+                ++i;
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::unlink_styles()
+        {
+            lltl::parray<Style> vs;
+            if (!vStyles.values(&vs))
+                return STATUS_NO_MEM;
+
+            for (size_t i=0, n=vs.size(); i<n; ++i)
+            {
+                Style *s = vs.uget(i);
+                if (s != NULL)
+                    s->remove_all_parents();
+            }
+            return STATUS_OK;
+        }
+
+        status_t Schema::apply_internal(StyleSheet *sheet, resource::ILoader *loader)
+        {
+            status_t res;
+
+            // Destroy all previously loaded and used fonts and apply new
+            if (pDisplay != NULL)
+            {
+                pDisplay->display()->remove_all_fonts();
+                load_fonts_from_sheet(sheet, loader);
+            }
+
+            // Destroy colors and copy colors from sheed
+            destroy_colors();
+            if ((res = init_colors_from_sheet(sheet)) != STATUS_OK)
+                return res;
+
+            // Destroy all relations between styles
+            if ((res = unlink_styles()) != STATUS_OK)
+                return res;
+
+            // Create missing styles
+            if ((res = create_missing_styles(sheet)) != STATUS_OK)
+                return res;
+
+            // Link root style and other styles
+            lsp_trace("Linking root style");
+            if (sheet->pRoot != NULL)
+            {
+                if ((res = apply_relations(pRoot, &sheet->pRoot->parents)) != STATUS_OK)
+                    return res;
+            }
+            if ((res = link_styles(sheet)) != STATUS_OK)
+                return res;
+
+            // Configure root style and others
+            lsp_trace("Configuring root style");
+            if (sheet->pRoot != NULL)
+            {
+                if ((res = apply_settings(pRoot, sheet->pRoot)) != STATUS_OK)
+                    return res;
+                pRoot->set_configured(true);
+            }
+            if ((res = configure_styles(sheet)) != STATUS_OK)
+                return res;
 
             return STATUS_OK;
         }
@@ -244,7 +465,11 @@ namespace lsp
                 LSPString *value        = xs->properties.get(name);
                 property_type_t type    = s->get_type(name);
 
-                lsp_trace("  %s = %s", name->get_utf8(), value->get_utf8());
+                lsp_trace("  %s = %s [%d]",
+                    name->get_utf8(),
+                    value->get_utf8(),
+                    int(pAtoms->atom_id(name))
+                );
 
                 if (parse_property_value(&v, value, type) == STATUS_OK)
                 {
@@ -267,27 +492,77 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::apply_relations(Style *s, StyleSheet::style_t *xs)
+        status_t Schema::apply_relations(Style *s, const lltl::parray<LSPString> *parents)
         {
             status_t res;
 
-            for (size_t i=0, n=xs->parents.size(); i<n; ++i)
+            for (size_t i=0, n=parents->size(); i<n; ++i)
             {
-                LSPString *parent = xs->parents.get(i);
+                const LSPString *parent = parents->uget(i);
                 Style *ps = (parent->equals_ascii("root")) ? pRoot : vStyles.get(parent);
-                if (ps == NULL)
-                    continue;
-
-                lsp_trace("  parent: %s", parent->get_utf8());
-                res = s->add_parent(ps);
-                if (res != STATUS_OK)
-                    return res;
+                if (ps != NULL)
+                {
+                    lsp_trace("  parent: %s", parent->get_utf8());
+                    if ((res = s->add_parent(ps)) != STATUS_OK)
+                        return res;
+                }
             }
 
             return STATUS_OK;
         }
 
-        status_t Schema::create_style(IStyleFactory *init)
+        status_t Schema::apply_relations(Style *s, const char *list)
+        {
+            status_t res;
+            LSPString parent, text;
+            if (!text.set_utf8(list))
+                return STATUS_NO_MEM;
+
+            // Parse list of
+            ssize_t first = 0, last = -1, len = text.length();
+
+            while (true)
+            {
+                last = text.index_of(first, ',');
+                if (last < 0)
+                {
+                    last = len;
+                    break;
+                }
+
+                if (!parent.set(&text, first, last))
+                    return false;
+
+                Style *ps = (parent.equals_ascii("root")) ? pRoot : vStyles.get(&parent);
+                if (ps != NULL)
+                {
+                    lsp_trace("  parent: %s", parent.get_utf8());
+                    if ((res = s->add_parent(ps)) != STATUS_OK)
+                        return res;
+                }
+
+                first = last + 1;
+            }
+
+            // Last token pending?
+            if (last > first)
+            {
+                if (!parent.set(&text, first, last))
+                    return false;
+
+                Style *ps = (parent.equals_ascii("root")) ? pRoot : vStyles.get(&parent);
+                if (ps != NULL)
+                {
+                    lsp_trace("  parent: %s", parent.get_utf8());
+                    if ((res = s->add_parent(ps)) != STATUS_OK)
+                        return res;
+                }
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::create_builtin_style(IStyleFactory *init)
         {
             LSPString name;
 
@@ -303,7 +578,7 @@ namespace lsp
             }
 
             // Create style
-            lsp_trace("Creating style '%s'...", init->name());
+            lsp_trace("Creating style '%s' with default parents '%s'...", init->name(), init->default_parents());
             Style *style    = init->create(this);
             if (style == NULL)
                 return STATUS_NO_MEM;
@@ -323,6 +598,35 @@ namespace lsp
                 return STATUS_NO_MEM;
             }
 
+            // Register style in the list
+            if (!vBuiltin.create(&name, style))
+                return STATUS_NO_MEM;
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::create_style(const LSPString *name)
+        {
+            // Duplicates are disallowed
+            if (vStyles.contains(name))
+            {
+                lsp_warn("Duplicate style name: %s", name->get_native());
+                return STATUS_ALREADY_EXISTS;
+            }
+
+            // Create style
+            lsp_trace("Creating style '%s'...", name->get_native());
+            Style *style    = new Style(this, name->get_utf8(), "root");
+            if (style == NULL)
+                return STATUS_NO_MEM;
+
+            // Register style in the list
+            if (!vStyles.create(name, style))
+            {
+                delete style;
+                return STATUS_NO_MEM;
+            }
+
             return STATUS_OK;
         }
 
@@ -330,6 +634,9 @@ namespace lsp
         {
             // Bind properties
             sScaling.bind("size.scaling", root);
+            sFontScaling.bind("font.scaling", root);
+            sFont.bind("font", root);
+            sDrawMode.bind("draw.mode", root);
         }
 
         status_t Schema::parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt)
@@ -406,15 +713,15 @@ namespace lsp
             return (tok.get_token(expr::TF_GET) == expr::TT_EOF) ? STATUS_OK : STATUS_BAD_FORMAT;
         }
     
-        Style *Schema::get(const char *id, StyleInitializer *init)
+        Style *Schema::get(const char *id)
         {
             LSPString tmp;
             if (!tmp.set_utf8(id))
                 return NULL;
-            return get(&tmp, init);
+            return get(&tmp);
         }
 
-        Style *Schema::get(const LSPString *id, StyleInitializer *init)
+        Style *Schema::get(const LSPString *id)
         {
             // Check that style exists
             Style *s  = vStyles.get(id);
@@ -422,18 +729,15 @@ namespace lsp
                 return s;
 
             // Create style
-            s = new Style(this);
+            s = new Style(this, id->get_utf8(), NULL);
             if (s == NULL)
                 return NULL;
 
             // Initialize style
-            if (init != NULL)
+            if (s->init() != STATUS_OK)
             {
-                if (init->init(s) != STATUS_OK)
-                {
-                    delete s;
-                    return NULL;
-                }
+                delete s;
+                return NULL;
             }
 
             // Bind root style as parent automatically
@@ -483,6 +787,102 @@ namespace lsp
         const char *Schema::atom_name(atom_t id) const
         {
             return pAtoms->atom_name(id);
+        }
+
+        status_t Schema::get_language(LSPString *dst) const
+        {
+            // Check state
+            if (pRoot == NULL)
+                return STATUS_BAD_STATE;
+
+            // Get atom
+            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
+            if (atom < 0)
+                return -atom;
+
+            // Get the string value
+            return pRoot->get_string(atom, dst);
+        }
+
+        status_t Schema::set_lanugage(const LSPString *lang)
+        {
+            // Check for arguments
+            if (lang == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            // Check state
+            if (pRoot == NULL)
+                return STATUS_BAD_STATE;
+
+            // Get atom
+            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
+            if (atom < 0)
+                return -atom;
+
+            // Get the string value
+            return pRoot->set_string(atom, lang);
+        }
+
+        status_t Schema::set_lanugage(const char *lang)
+        {
+            // Check for arguments
+            if (lang == NULL)
+                return STATUS_BAD_ARGUMENTS;
+
+            // Check state
+            if (pRoot == NULL)
+                return STATUS_BAD_STATE;
+
+            // Get atom
+            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
+            if (atom < 0)
+                return -atom;
+
+            // Get the string value
+            return pRoot->set_string(atom, lang);
+        }
+
+        status_t Schema::add_font(const char *name, const char *path)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font(name, path) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::add_font(const char *name, const io::Path *path)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font(name, path) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::add_font(const char *name, const LSPString *path)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font(name, path) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::add_font(const char *name, io::IInStream *is)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font(name, is) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::add_font_alias(const char *name, const char *alias)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->add_font_alias(name, alias) : STATUS_BAD_STATE;
+        }
+
+        status_t Schema::remove_font(const char *name)
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            return (dpy != NULL) ? dpy->remove_font(name) : STATUS_BAD_STATE;
+        }
+
+        void Schema::remove_all_fonts()
+        {
+            ws::IDisplay *dpy = pDisplay->display();
+            if (dpy != NULL)
+                dpy->remove_all_fonts();
         }
     } /* namespace tk */
 } /* namespace lsp */

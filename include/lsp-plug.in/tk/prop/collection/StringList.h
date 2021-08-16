@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 StringList & operator = (const StringList &);
+                StringList(const StringList &);
 
             protected:
                 // Wrapper around the string
@@ -174,6 +175,7 @@ namespace lsp
             {
                 private:
                     StringList & operator = (const StringList &);
+                    StringList(const StringList &);
 
                 public:
                     explicit StringList(prop::Listener *listener = NULL): tk::StringList(listener) {};

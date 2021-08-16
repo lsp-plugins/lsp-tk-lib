@@ -31,6 +31,7 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(MenuItem, Widget)
                 // Bind
+                sTextAdjust.bind("text.adjust", this);
                 sType.bind("type", this);
                 sChecked.bind("checked", this);
                 sBgSelectedColor.bind("bg.selected.color", this);
@@ -41,6 +42,7 @@ namespace lsp
                 sCheckBorderColor.bind("check.border.color", this);
                 sShortcut.bind("shortcut", this);
                 // Configure
+                sTextAdjust.set(TA_NONE);
                 sType.set(MI_NORMAL);
                 sChecked.set(false);
                 sBgSelectedColor.set("#000088");
@@ -55,7 +57,7 @@ namespace lsp
                 // Commit
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(MenuItem, "MenuItem");
+            LSP_TK_BUILTIN_STYLE(MenuItem, "MenuItem", "root");
         }
 
         const w_class_t MenuItem::metadata      = { "MenuItem", &Widget::metadata };
@@ -64,6 +66,7 @@ namespace lsp
             Widget(dpy),
             sMenu(&sProperties),
             sText(&sProperties),
+            sTextAdjust(&sProperties),
             sType(&sProperties),
             sChecked(&sProperties),
             sBgSelectedColor(&sProperties),
@@ -82,6 +85,12 @@ namespace lsp
             nFlags     |= FINALIZED;
         }
 
+        void MenuItem::destroy()
+        {
+            nFlags     |= FINALIZED;
+            Widget::destroy();
+        }
+
         status_t MenuItem::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
             MenuItem *_this = widget_ptrcast<MenuItem>(ptr);
@@ -94,6 +103,7 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
+            sTextAdjust.bind("text.adjust", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sType.bind("type", &sStyle);
             sChecked.bind("checked", &sStyle);
@@ -115,6 +125,8 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
+            if (sTextAdjust.is(prop))
+                query_resize();
             if (sText.is(prop))
                 query_resize();
             if (sType.is(prop))
@@ -131,7 +143,7 @@ namespace lsp
         status_t MenuItem::on_focus_in(const ws::event_t *e)
         {
             Menu *m = widget_cast<Menu>(parent());
-            lsp_trace("this = %p", this);
+//            lsp_trace("this = %p", this);
             if (m != NULL)
                 m->select_menu_item(this, false);
             return STATUS_OK;
@@ -140,7 +152,7 @@ namespace lsp
         status_t MenuItem::on_mouse_in(const ws::event_t *e)
         {
             Menu *m = widget_cast<Menu>(parent());
-            lsp_trace("this = %p", this);
+//            lsp_trace("this = %p", this);
             if (m != NULL)
                 m->select_menu_item(this, true);
             return STATUS_OK;
@@ -149,12 +161,12 @@ namespace lsp
         status_t MenuItem::on_mouse_up(const ws::event_t *e)
         {
             // Allow only left button click
-            lsp_trace("this=%p", this);
+//            lsp_trace("this=%p", this);
             if ((e->nCode != ws::MCB_LEFT) || ((e->nState & ws::MCF_BTN_MASK) != ws::MCF_LEFT))
                 return STATUS_OK;
 
             Menu *m = widget_cast<Menu>(parent());
-            lsp_trace("parent=%p", m);
+//            lsp_trace("parent=%p", m);
 
             if (m != NULL)
                 m->submit_menu_item(this, false);

@@ -47,9 +47,13 @@ MTEST_BEGIN("tk.widgets.simple", label)
             _this->printf("Key up: %c (0x%x)\n", (char)ev->nCode, int(ev->nCode));
 
             if ((ev->nCode == '+') || (ev->nCode == ws::WSK_KEYPAD_ADD))
-                wnd->scaling()->set(wnd->scaling()->get() + 0.25f);
+                wnd->style()->schema()->scaling()->add(0.25f);
             else if ((ev->nCode == '-') || (ev->nCode == ws::WSK_KEYPAD_SUBTRACT))
-                wnd->scaling()->set(wnd->scaling()->get() - 0.25f);
+                wnd->style()->schema()->scaling()->sub(0.25f);
+            else if (ev->nCode == 'a')
+                wnd->style()->schema()->font_scaling()->add(0.25f);
+            else if (ev->nCode == 'z')
+                wnd->style()->schema()->font_scaling()->sub(0.25f);
         }
         return STATUS_OK;
     }
@@ -217,13 +221,19 @@ MTEST_BEGIN("tk.widgets.simple", label)
                     MTEST_ASSERT(widgets.push(label));
                     MTEST_ASSERT(grid->add(label) == STATUS_OK);
                     label->text()->set_raw(&id);
-                    label->font()->set_antialiasing(col & 1);
+                    label->font()->set_antialiasing((col & 1) ? ws::FA_ENABLED : ws::FA_DISABLED);
+                    if ((col%5) == 4)
+                        label->font_scaling()->set(1.5f);
                     label->text_layout()->set((x - 2) * 0.5f, (y - 2) * 0.5f);
                     label->constraints()->set(-1, -1, 64, 64);
                     label->pointer()->set(ws::MP_HAND);
                     label->bg_color()->set_rgb24(next_color(col));
                     label->color()->set_rgb24(0xffffff);
                     label->padding()->set_all(0);
+                    if (x == 0)
+                        label->hover()->set(true);
+                    else if (x == 1)
+                        label->text_adjust()->set(tk::TA_TOUPPER);
                 }
         }
 

@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 31 окт. 2020 г.
+ * Created on: 14 мая 2021 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,20 +25,14 @@ namespace lsp
 {
     namespace tk
     {
-        StyleInitializer::StyleInitializer(const char *style)
+        const prop::enum_t DrawMode::ENUM[] =
         {
-            pClass      = style;
-        }
+            { "classic",        DM_CLASSIC          },
+            { "modern",         DM_MODERN           },
+            { NULL,             -1                  }
+        };
 
-        StyleInitializer::~StyleInitializer()
-        {
-        }
-
-        status_t StyleInitializer::init(Style *style)
-        {
-            return STATUS_OK;
-        }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

@@ -45,6 +45,7 @@ namespace lsp
                 sOpened.bind("opened", this);
                 sTextFit.bind("text.fit", this);
                 sFont.bind("font", this);
+                sTextAdjust.bind("text.adjust", this);
                 sConstraints.bind("size.constraints", this);
                 sTextLayout.bind("text.layout", this);
                 // Configure
@@ -60,18 +61,19 @@ namespace lsp
                 sBorderColor.set("#000000");
                 sBorderGapColor.set("#cccccc");
                 sOpened.set(false);
-                sTextFit.set(false, true);
+                sTextFit.set(1.0f, 1.0f);
                 sFont.set_size(12.0f);
+                sTextAdjust.set(TA_NONE);
                 sConstraints.set(-1, -1, -1, 0);
                 sTextLayout.set(-1.0f, 0.0f);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(ComboBox, "ComboBox");
+            LSP_TK_BUILTIN_STYLE(ComboBox, "ComboBox", "root");
 
             // ComboBox::Window style
-            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboBox::Window");
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboBox::Window", "Window");
 
             // ComboBox::List style
-            LSP_TK_BUILTIN_STYLE(ListBox, "ComboBox::List");
+            LSP_TK_BUILTIN_STYLE(ListBox, "ComboBox::List", "ListBox");
         }
 
         //-----------------------------------------------------------------------------
@@ -154,6 +156,7 @@ namespace lsp
             sOpened(&sProperties),
             sTextFit(&sProperties),
             sFont(&sProperties),
+            sTextAdjust(&sProperties),
             sConstraints(&sProperties),
             sTextLayout(&sProperties),
             sEmptyText(&sProperties),
@@ -232,6 +235,7 @@ namespace lsp
             sOpened.bind("opened", &sStyle);
             sTextFit.bind("text.fit", &sStyle);
             sFont.bind("font", &sStyle);
+            sTextAdjust.bind("text.adjust", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sTextLayout.bind("text.layout", &sStyle);
             sEmptyText.bind(&sStyle, pDisplay->dictionary());
@@ -296,6 +300,8 @@ namespace lsp
                 query_resize();
             if (sFont.is(prop))
                 query_resize();
+            if (sTextAdjust.is(prop))
+                query_resize();
             if (sConstraints.is(prop))
                 query_resize();
             if (sTextLayout.is(prop))
@@ -336,6 +342,7 @@ namespace lsp
             ws::rectangle_t ta, sa, va; // text area, spin area, split area
 
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             estimate_parameters(&a, scaling);
 
             // Estimate size of the spin
@@ -350,13 +357,14 @@ namespace lsp
             ws::text_parameters_t tp;
             LSPString text;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
             ta.nWidth           = 0;
             ta.nHeight          = fp.Height;
 
             // Estimate the maximum text width
             sEmptyText.format(&text);
-            sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+            sTextAdjust.apply(&text);
+            sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
             ta.nWidth           = lsp_max(ta.nWidth,  tp.Width);
             ta.nHeight          = lsp_max(ta.nHeight, tp.Height);
 
@@ -368,7 +376,8 @@ namespace lsp
                     continue;
 
                 it->text()->format(&text);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sTextAdjust.apply(&text);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 ta.nWidth           = lsp_max(ta.nWidth,  tp.Width);
                 ta.nHeight          = lsp_max(ta.nHeight, tp.Height);
             }
@@ -383,6 +392,8 @@ namespace lsp
             r->nMinHeight       = lsp_max(extra, lsp_max(ta.nHeight, sa.nHeight));
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
 
             // Apply size constraints
             sConstraints.apply(r, scaling);
@@ -422,6 +433,7 @@ namespace lsp
             bool aa;
             ws::rectangle_t ta, sa, va; // text area, spin area
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
             estimate_parameters(&a, scaling);
 
@@ -437,7 +449,8 @@ namespace lsp
             va.nTop            -= sSize.nTop;
 
             // Draw background
-            lsp::Color c(sBgColor);
+            lsp::Color c;
+            get_actual_bg_color(c);
             s->clear(c);
             aa                  = s->get_antialiasing();
 
@@ -514,9 +527,10 @@ namespace lsp
                     sel->text()->format(&text);
                 else
                     sEmptyText.format(&text);
+                sTextAdjust.apply(&text);
 
-                sFont.get_parameters(s, scaling, &fp);
-                sFont.get_text_parameters(s, &tp, scaling, &text);
+                sFont.get_parameters(s, fscaling, &fp);
+                sFont.get_text_parameters(s, &tp, fscaling, &text);
                 float dy        = (ta.nHeight - fp.Height) * 0.5f;
                 float dx        = (ta.nWidth  - tp.Width ) * 0.5f;
                 ssize_t y       = ta.nTop   + dy * valign + fp.Ascent;
@@ -526,12 +540,12 @@ namespace lsp
                 {
                     c.copy(sTextColor);
                     c.scale_lightness(bright);
-                    sFont.draw(s, c, x, y, scaling, &text);
+                    sFont.draw(s, c, x, y, fscaling, &text);
                 }
                 s->clip_end();
             }
 
-            // Draw the background for spin area
+            // Draw the spin area
             if (sa.nWidth > 0)
             {
                 ssize_t radius  = a.radius;

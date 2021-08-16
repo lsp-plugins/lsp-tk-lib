@@ -40,6 +40,7 @@ namespace lsp
         {
             private:
                 MultiProperty & operator = (const MultiProperty &);
+                MultiProperty(const MultiProperty &);
 
             protected:
                 status_t        unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);

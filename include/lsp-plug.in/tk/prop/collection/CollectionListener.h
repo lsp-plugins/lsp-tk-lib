@@ -49,6 +49,7 @@ namespace lsp
             {
                 private:
                     CollectionListener &operator = (const CollectionListener &);
+                    CollectionListener(const CollectionListener &);
 
                 protected:
                     void               *pAddObj;

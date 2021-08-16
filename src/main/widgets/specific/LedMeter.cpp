@@ -51,7 +51,7 @@ namespace lsp
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(LedMeter, "LedMeter");
+            LSP_TK_BUILTIN_STYLE(LedMeter, "LedMeter", "root");
         }
 
         const w_class_t LedMeter::metadata              = { "LedMeter", &WidgetContainer::metadata };
@@ -173,6 +173,7 @@ namespace lsp
 
             bool pack       = (sSGroups.get()) && (list.size() >= 2);
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float seg_size  = 4.0f * scaling;
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle   = sAngle.get();
@@ -186,8 +187,8 @@ namespace lsp
             {
                 LSPString text;
                 sEstText.format(&text);
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 tp.Height           = lsp_max(tp.Height, fp.Height);
             }
 
@@ -279,6 +280,7 @@ namespace lsp
             get_visible_items(&list);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float seg_size      = 4.0f * scaling;
             ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle       = sAngle.get();
@@ -311,8 +313,8 @@ namespace lsp
             {
                 LSPString text;
                 sEstText.format(&text);
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 tp.Height           = lsp_max(tp.Height, fp.Height);
 
                 if (angle & 1) // Vertical
@@ -337,7 +339,7 @@ namespace lsp
             ssize_t hitems      = (pack && has_text) ? ((list.size() + 1) >> 1) : list.size();
             size_t hlimit       = (pack && has_text) ? list.size() & (~1) : hitems;
             ssize_t payload     = (pack && has_text) ? (hitems << 1) : hitems;
-            ssize_t hsegsize    = ((angle & 1) ? xr.nWidth : xr.nHeight) / payload;
+            ssize_t hsegsize    = ((angle & 1) ? xr.nWidth : xr.nHeight) / lsp_max(1, payload);
             ssize_t hgap        = ((angle & 1) ? xr.nWidth : xr.nHeight) - (hsegsize * payload);
 
             // Allocate meters
@@ -492,11 +494,13 @@ namespace lsp
         void LedMeter::draw(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
             bool has_text       = sTextVisible.get();
             ssize_t angle       = sAngle.get();
 
-            lsp::Color col(sBgColor);
+            lsp::Color col;
+            get_actual_bg_color(col);
             s->clear(col);
             col.copy(sColor);
             s->fill_rect(col, &sAAll);
@@ -507,7 +511,7 @@ namespace lsp
 
                 c->draw_meter(s, angle, scaling, bright);
                 if (has_text)
-                    c->draw_label(s, &sFont, scaling, bright);
+                    c->draw_label(s, &sFont, fscaling, bright);
 
                 // Commit pending redraw request
                 c->commit_redraw();

@@ -230,6 +230,14 @@ namespace lsp
             return (r->nWidth <= 0) || (r->nHeight <= 0);
         }
 
+        void Size::init(ws::rectangle_t *dst, ssize_t left, ssize_t top, ssize_t width, ssize_t height)
+        {
+            dst->nLeft          = left;
+            dst->nTop           = top;
+            dst->nWidth         = width;
+            dst->nHeight        = height;
+        }
+
         namespace prop
         {
             void Size::commit_value(size_t width, size_t height, float scale)

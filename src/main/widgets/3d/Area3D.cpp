@@ -36,6 +36,7 @@ namespace lsp
                 sConstraints.bind("size.constraints", this);
                 sBorder.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
+                sBorderFlat.bind("border.flat", this);
                 sGlass.bind("glass.visibility", this);
                 sColor.bind("color", this);
                 sBorderColor.bind("border.color", this);
@@ -44,12 +45,13 @@ namespace lsp
                 sConstraints.set_all(-1);
                 sBorder.set(4);
                 sBorderRadius.set(12);
+                sBorderFlat.set(false);
                 sGlass.set(true);
                 sColor.set("#000000");
                 sBorderColor.set("#000000");
                 sGlassColor.set("#ffffff");
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Area3D, "Area3D");
+            LSP_TK_BUILTIN_STYLE(Area3D, "Area3D", "root");
         }
 
         const w_class_t Area3D::metadata      = { "Area3D", &Widget::metadata };
@@ -59,6 +61,7 @@ namespace lsp
             sConstraints(&sProperties),
             sBorder(&sProperties),
             sBorderRadius(&sProperties),
+            sBorderFlat(&sProperties),
             sGlass(&sProperties),
             sColor(&sProperties),
             sBorderColor(&sProperties),
@@ -125,22 +128,11 @@ namespace lsp
             sConstraints.bind("size.constraints", &sStyle);
             sBorder.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
+            sBorderFlat.bind("border.flat", &sStyle);
             sGlass.bind("glass.visibility", &sStyle);
             sColor.bind("color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sGlassColor.bind("glass.color", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sConstraints.init(sclass);
-//                sBorder.init(sclass, 4);
-//                sBorderRadius.init(sclass, 12);
-//                sGlass.init(sclass, true);
-//                sColor.init(sclass, "#000000");
-//                sBorderColor.init(sclass, "#000000");
-//                sGlassColor.init(sclass, "#ffffff");
-//            }
 
             // Add slots
             handler_id_t id = 0;
@@ -157,6 +149,8 @@ namespace lsp
                 query_resize();
             if (sBorderRadius.is(prop))
                 query_resize();
+            if (sBorderFlat.is(prop))
+                query_draw();
             if (sGlass.is(prop))
                 query_draw();
             if (sColor.is(prop))
@@ -315,7 +309,8 @@ namespace lsp
             // Prepare palette
             ws::ISurface *cv;
             lsp::Color color(sColor);
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
             color.scale_lightness(bright);
 
             s->clip_begin(area);
@@ -337,12 +332,14 @@ namespace lsp
                 color.scale_lightness(bright);
                 bg_color.scale_lightness(bright);
 
+                bool flat = sBorderFlat.get();
                 if (sGlass.get())
                 {
                     cv = create_border_glass(&pGlass, s,
                             color, bg_color,
                             SURFMASK_ALL_CORNER, bw, xr,
-                            sSize.nWidth, sSize.nHeight
+                            sSize.nWidth, sSize.nHeight,
+                            flat
                         );
                     if (cv != NULL)
                         s->draw(cv, sSize.nLeft, sSize.nTop);
@@ -350,7 +347,7 @@ namespace lsp
                 else
                 {
                     drop_glass();
-                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize);
+                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize, flat);
                 }
 
                 s->set_antialiasing(aa);

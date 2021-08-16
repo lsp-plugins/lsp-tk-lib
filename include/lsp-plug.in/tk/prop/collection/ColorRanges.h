@@ -37,6 +37,7 @@ namespace lsp
         {
             private:
                 ColorRanges & operator = (const ColorRanges &);
+                ColorRanges(const ColorRanges &);
 
             protected:
                 class Changes: public prop::Listener
@@ -77,6 +78,11 @@ namespace lsp
                 virtual ~ColorRanges();
 
             public:
+                /**
+                 * Clear the collection
+                 */
+                void                clear();
+
                 /**
                  * Insert color range at the specified position
                  * @param index index to place the string
@@ -150,6 +156,7 @@ namespace lsp
             {
                 private:
                     ColorRanges & operator = (const ColorRanges &);
+                    ColorRanges(const ColorRanges &);
 
                 public:
                     explicit ColorRanges(prop::Listener *listener = NULL): tk::ColorRanges(listener) {};

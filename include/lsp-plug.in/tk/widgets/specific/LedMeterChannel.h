@@ -67,6 +67,7 @@ namespace lsp
 
             private:
                 LedMeterChannel & operator = (const LedMeterChannel &);
+                LedMeterChannel(const LedMeterChannel &);
 
                 friend class LedMeter;
 
@@ -101,7 +102,7 @@ namespace lsp
 
             protected:
                 void                        draw_meter(ws::ISurface *s, ssize_t angle, float scaling, float bright);
-                void                        draw_label(ws::ISurface *s, const Font *f, float scaling, float bright);
+                void                        draw_label(ws::ISurface *s, const Font *f, float fscaling, float bright);
                 const lsp::Color           *get_color(float value, const ColorRanges *ranges, const Color *dfl);
 
             public:

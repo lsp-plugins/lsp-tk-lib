@@ -194,7 +194,7 @@ MTEST_BEGIN("tk.widgets.simple", knob)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(4);
+        grid->rows()->set(5);
         grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -253,7 +253,7 @@ MTEST_BEGIN("tk.widgets.simple", knob)
             // Create knob
             for (size_t x=0; x<4; ++x)
             {
-                MTEST_ASSERT(id.fmt_ascii("knob-%d-2", x));
+                MTEST_ASSERT(id.fmt_ascii("knob-%d-3", x));
                 MTEST_ASSERT(kn = new tk::Knob(dpy));
                 MTEST_ASSERT(init_widget(kn, vh, id.get_ascii()) == STATUS_OK);
                 MTEST_ASSERT(widgets.push(kn));
@@ -264,6 +264,31 @@ MTEST_BEGIN("tk.widgets.simple", knob)
                 kn->scale_color()->set_rgb24(next_color(col));
                 kn->bg_color()->set_rgb24(0);
                 kn->cycling()->set(true);
+            }
+
+            // Create knob
+            for (size_t x=0; x<4; ++x)
+            {
+                MTEST_ASSERT(id.fmt_ascii("knob-%d-4", x));
+                MTEST_ASSERT(kn = new tk::Knob(dpy));
+                MTEST_ASSERT(init_widget(kn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(kn));
+                MTEST_ASSERT(grid->add(kn) == STATUS_OK);
+
+                kn->balance()->set(x * 0.25f);
+                kn->size()->set((x+3) * 8);
+                kn->scale_color()->set_rgb24(0x2d7990);
+                kn->balance_color()->set_rgb24(0x91d870);
+                kn->bg_color()->set_rgb24(0x24272e);
+                kn->cycling()->set(x & 1);
+                kn->scale_marks()->set(false);
+                kn->scale()->set(4.0f);
+                kn->balance_color_custom()->set(true);
+                kn->color()->set_rgb24(0x24272e);
+                kn->tip_color()->set_rgb24(0xa8aed3);
+                kn->flat()->set(true);
+                kn->hole_size()->set(0);
+                kn->gap_size()->set(0);
             }
         }
 

@@ -27,10 +27,12 @@ namespace lsp
 {
     namespace tk
     {
-        Style::Style(Schema *schema)
+        Style::Style(Schema *schema, const char *name, const char *parents)
         {
             pSchema     = schema;
             nFlags      = 0;
+            sName       = (name != NULL)    ? strdup(name)      : NULL;
+            sDflParents = (parents != NULL) ? strdup(parents)   : NULL;
         }
         
         Style::~Style()
@@ -82,6 +84,20 @@ namespace lsp
             for (size_t i=0, n=vProperties.size(); i<n; ++i)
                 undef_property(vProperties.uget(i));
             vProperties.flush();
+
+            // Destroy name
+            if (sName != NULL)
+            {
+                free(sName);
+                sName       = NULL;
+            }
+
+            // Destroy parents
+            if (sDflParents != NULL)
+            {
+                free(sDflParents);
+                sDflParents = NULL;
+            }
         }
 
         void Style::undef_property(property_t *property)
@@ -125,6 +141,13 @@ namespace lsp
         bool Style::override_mode() const
         {
             return (nFlags & S_OVERRIDE) ? true : !config_mode();
+        }
+
+        bool Style::set_configured(bool set)
+        {
+            bool res = nFlags & S_CONFIGURED;
+            nFlags = lsp_setflag(nFlags, S_CONFIGURED, set);
+            return res;
         }
 
         status_t Style::copy_property(property_t *dst, const property_t *src)
@@ -381,12 +404,91 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Style::inheritance_tree(lltl::parray<Style> *dst)
+        {
+            for (size_t i=0, n=vParents.size(); i<n; ++i)
+            {
+                Style *s    = vParents.uget(i);
+                if (s == NULL)
+                    continue;
+
+                status_t res = s->inheritance_tree(dst);
+                if (res != STATUS_OK)
+                    return res;
+
+                if (!dst->add(s))
+                    return STATUS_NO_MEM;
+            }
+
+            return STATUS_OK;
+        }
+
         void Style::synchronize()
         {
-            // For each property: copy value from parent and notify children and listeners for changes
-            property_t *vp = vProperties.array();
-            for (size_t i=0, n=vProperties.size(); i < n; ++i)
-                sync_property(&vp[i]);
+            // Obtain the inheritance tree
+            lltl::parray<Style> itree;
+            status_t res = inheritance_tree(&itree);
+            if (res != STATUS_OK)
+                return;
+
+            // Process each property
+            lltl::darray<prop_sync_t> psync;
+            for (size_t i=0, n=vProperties.size(); i<n; ++i)
+            {
+                property_t *p = vProperties.uget(i);
+                if ((p == NULL) || (p->flags & F_OVERRIDDEN))
+                    continue;
+
+                prop_sync_t *ps = psync.append();
+                if (ps == NULL)
+                    return;
+
+                ps->pProperty   = p;
+                ps->pParent     = get_parent_property(p->id);
+            }
+
+            // Deploy each property according to the order of the inheritance tree
+            for (size_t i=0, n=itree.size(); i<n; ++i)
+            {
+                Style *owner    = itree.uget(i);
+                for (size_t j=0, m=psync.size(); j < m; ++j)
+                {
+                    prop_sync_t *ps     = psync.uget(j);
+                    property_t *parent  = ps->pParent;
+                    if ((parent == NULL) || (parent->owner != owner))
+                        continue;
+
+                    property_t *p   = ps->pProperty;
+                    size_t changes  = p->changes;
+                    res = copy_property(p, parent);
+
+                    // Deploy changes if there are any
+                    if ((res == STATUS_OK) && (changes != p->changes))
+                    {
+                        notify_listeners(p);
+                        notify_children(p);
+                    }
+                }
+            }
+
+            // Deploy self property
+            for (size_t j=0, m=psync.size(); j < m; ++j)
+            {
+                prop_sync_t *ps     = psync.uget(j);
+                if (ps->pParent != NULL)
+                    continue;
+
+                property_t *p   = ps->pProperty;
+                size_t changes  = p->changes;
+                res             = set_property_default(p);
+
+                // Deploy changes if there are any
+                if ((res == STATUS_OK) && (changes != p->changes))
+                {
+                    notify_listeners(p);
+                    notify_children(p);
+                }
+            }
 
             // Call all children for synchronize()
             for (size_t i=0, n=vChildren.size(); i<n; ++i)
@@ -1427,6 +1529,24 @@ namespace lsp
         const char *Style::atom_name(atom_t id) const
         {
             return pSchema->atom_name(id);
+        }
+
+        status_t Style::set_default_parents(const char *parents)
+        {
+            char *copy = (parents != NULL) ? strdup(parents) : NULL;
+            if ((parents != NULL) && (copy == NULL))
+                return STATUS_NO_MEM;
+
+            if (sDflParents != NULL)
+                free(sDflParents);
+            sDflParents = copy;
+
+            return STATUS_OK;
+        }
+
+        status_t Style::set_default_parents(const LSPString *parents)
+        {
+            return set_default_parents((parents != NULL) ? parents->get_utf8() : NULL);
         }
 
     } /* namespace tk */

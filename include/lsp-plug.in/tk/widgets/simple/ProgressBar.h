@@ -57,6 +57,10 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                ProgressBar & operator = (const ProgressBar &);
+                ProgressBar(const ProgressBar &);
+
             protected:
                 ws::rectangle_t                 sTextArea;          // Actual text area used
 

@@ -39,7 +39,13 @@ namespace lsp
              */
             class Listener
             {
+                private:
+                    Listener & operator = (const Listener &);
+                    Listener(const Listener &);
+
                 public:
+                    explicit Listener();
+
                     /**
                      * Virtual destructor
                      */

@@ -65,7 +65,7 @@ namespace lsp
                 // Commit
                 sBgColor.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(AudioChannel, "AudioChannel");
+            LSP_TK_BUILTIN_STYLE(AudioChannel, "AudioChannel", "root");
         }
 
         const w_class_t AudioChannel::metadata      = { "AudioChannel", &Widget::metadata };
@@ -303,7 +303,8 @@ namespace lsp
             r.nTop              = 0;
 
             // Clear the surface
-            lsp::Color bg(sBgColor);
+            lsp::Color bg;
+            get_actual_bg_color(bg);
             bg.scale_lightness(bright);
             s->clear(bg);
 

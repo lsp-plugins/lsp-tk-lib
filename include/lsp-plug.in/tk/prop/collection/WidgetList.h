@@ -36,6 +36,7 @@ namespace lsp
         {
             private:
                 GenericWidgetList & operator = (const GenericWidgetList &);
+                GenericWidgetList(const GenericWidgetList &);
 
             protected:
                 typedef struct item_t
@@ -75,6 +76,7 @@ namespace lsp
             {
                 private:
                     WidgetList<widget_t> & operator = (const WidgetList<widget_t> &);
+                    WidgetList(const WidgetList<widget_t> &);
 
                 protected:
                     inline widget_t    *wcast(Widget *w)                    { return (w != NULL) ? static_cast<widget_t*>(w) : NULL;    }
@@ -103,6 +105,7 @@ namespace lsp
                 {
                     private:
                         WidgetList<widget_t> & operator = (const WidgetList<widget_t> &);
+                        WidgetList(const WidgetList<widget_t> &);
 
                     public:
                         explicit WidgetList(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::WidgetList<widget_t>(listener, clistener) {}

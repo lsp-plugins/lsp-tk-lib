@@ -57,6 +57,7 @@ namespace lsp
         {
             private:
                 RadioButton & operator = (const RadioButton &);
+                RadioButton(const RadioButton &);
 
             public:
                 static const w_class_t    metadata;

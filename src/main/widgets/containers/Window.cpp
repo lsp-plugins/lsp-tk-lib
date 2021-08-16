@@ -59,7 +59,7 @@ namespace lsp
                 // Commit
                 sVisibility.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Window, "Window");
+            LSP_TK_BUILTIN_STYLE(Window, "Window", "root");
         }
 
         const w_class_t Window::metadata = { "Window", &WidgetContainer::metadata };
@@ -220,9 +220,9 @@ namespace lsp
             r.nHeight           = lsp_max(r.nHeight, 1);
 
             // Check if we need to resize window
-            lsp_trace("size constraints: w={%d, %d}, h={%d, %d}",
-                    int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
-            );
+//            lsp_trace("size constraints: w={%d, %d}, h={%d, %d}",
+//                    int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
+//            );
             pWindow->set_size_constraints(&sr);
             if ((sSize.nWidth != r.nWidth) && (sSize.nHeight != r.nHeight))
                 pWindow->resize(r.nWidth, r.nHeight);
@@ -291,19 +291,23 @@ namespace lsp
                 return STATUS_OK;
 
             size_t flags = nFlags;
-            ws::ISurface *bs = get_surface(s);
 
-            ws::rectangle_t xr;
-            s->begin();
+            ws::ISurface *bs = get_surface(s);
+            bs->begin();
+            {
+                ws::rectangle_t xr;
                 xr.nLeft    = 0;
                 xr.nTop     = 0;
                 xr.nWidth   = sSize.nWidth;
                 xr.nHeight  = sSize.nHeight;
                 render(bs, &xr, flags);
+            }
+            bs->end();
 
+            s->begin();
                 s->draw(bs, 0, 0);
-                commit_redraw();
             s->end();
+            commit_redraw();
 
             // And also update pointer
             update_pointer();
@@ -367,7 +371,8 @@ namespace lsp
             if (!bMapped)
                 return;
 
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
+            get_actual_bg_color(bg_color);
 
             if ((pChild == NULL) || (!pChild->visibility()->get()))
             {
@@ -396,7 +401,9 @@ namespace lsp
                     0, 0, sSize.nWidth, sSize.nHeight,
                     pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
                 );
-                s->fill_frame(pChild->bg_color()->color(), &pr, &cr);
+
+                pChild->get_actual_bg_color(bg_color);
+                s->fill_frame(bg_color, &pr, &cr);
 
                 float scaling   = sScaling.get();
                 float border    = sBorderSize.get() * scaling;
@@ -476,11 +483,15 @@ namespace lsp
                     return;
                 pWindow->set_role(text.get_utf8());
             }
+            if (sPadding.is(prop))
+                query_resize();
             if (sBorderColor.is(prop))
                 query_draw();
-            if (sBorderSize.is(prop) || sScaling.is(prop))
+            if (sBorderSize.is(prop))
                 query_resize();
-            if (sBorderRadius.is(prop) || sScaling.is(prop))
+            if (sBorderRadius.is(prop))
+                query_resize();
+            if (sScaling.is(prop))
                 query_resize();
             if (sBorderStyle.is(prop))
                 pWindow->set_border_style(sBorderStyle.get());
@@ -492,10 +503,10 @@ namespace lsp
             {
                 ws::size_limit_t l;
                 sSizeConstraints.compute(&l, sScaling.get());
-                lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
-                        int(l.nMinWidth), int(l.nMaxWidth),
-                        int(l.nMinHeight), int(l.nMaxHeight)
-                    );
+//                lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
+//                        int(l.nMinWidth), int(l.nMaxWidth),
+//                        int(l.nMinHeight), int(l.nMaxHeight)
+//                    );
                 pWindow->set_size_constraints(&l);
             }
             if (sWindowSize.is(prop) || sScaling.is(prop))
@@ -512,10 +523,10 @@ namespace lsp
                     pWindow->set_size_constraints(-1, -1, -1, -1);
                     pWindow->resize(rect.nWidth, rect.nHeight);
                     pWindow->set_size_constraints(&l);
-                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
-                            int(l.nMinWidth), int(l.nMaxWidth),
-                            int(l.nMinHeight), int(l.nMaxHeight)
-                        );
+//                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
+//                            int(l.nMinWidth), int(l.nMaxWidth),
+//                            int(l.nMinHeight), int(l.nMaxHeight)
+//                        );
                 }
 
                 query_resize();
@@ -657,7 +668,7 @@ namespace lsp
                 //-------------------------------------------------------------
                 // Window state and geometry handling
                 case ws::UIE_SHOW:
-                    lsp_trace("show event received");
+//                    lsp_trace("show event received");
                     if (!bMapped)
                     {
                         bMapped     = true;
@@ -667,7 +678,7 @@ namespace lsp
                     break;
 
                 case ws::UIE_HIDE:
-                    lsp_trace("hide event received");
+//                    lsp_trace("hide event received");
                     if (bMapped)
                     {
                         bMapped     = false;
@@ -694,7 +705,7 @@ namespace lsp
                     {
                         ws::rectangle_t r;
 
-                        lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+//                        lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
 
                         sPosition.commit_value(e->nLeft, e->nTop);
                         sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
@@ -704,7 +715,7 @@ namespace lsp
                         r.nWidth    = e->nWidth;
                         r.nHeight   = e->nHeight;
 
-                        realize(&r);
+                        realize_widget(&r);
                     }
                     break;
 
@@ -724,7 +735,7 @@ namespace lsp
                     else if (h != NULL)
                         result          = h->handle_event(e);
 
-                    release_mouse_handler(e);
+                    release_mouse_handler(e, true);
                     break;
                 }
 
@@ -776,7 +787,7 @@ namespace lsp
                     else if (h != NULL)
                         result          = h->handle_event(e);
 
-                    release_mouse_handler(e);
+                    release_mouse_handler(e, true);
                     break;
                 }
 
@@ -860,6 +871,33 @@ namespace lsp
                     break;
                 }
 
+                case ws::UIE_MOUSE_IN:
+                {
+                    Widget *w   = hMouse.pWidget;
+                    if (!(hMouse.nState & ws::MCF_BTN_MASK))
+                    {
+                        w = acquire_mouse_handler(e);
+                        hMouse.nState   = e->nState;
+                        hMouse.nLeft    = e->nLeft;
+                        hMouse.nTop     = e->nTop;
+                    }
+
+                    if (w != this)
+                        WidgetContainer::handle_event(e);
+
+                    break;
+                }
+
+                case ws::UIE_MOUSE_OUT:
+                {
+                    Widget *w   = hMouse.pWidget;
+                    if (!(hMouse.nState & ws::MCF_BTN_MASK))
+                        release_mouse_handler(e, false);
+                    if (w != this)
+                        WidgetContainer::handle_event(e);
+                    break;
+                }
+
                 //-------------------------------------------------------------
                 // Other events
                 default:
@@ -873,11 +911,11 @@ namespace lsp
             return result;
         }
 
-        Widget *Window::sync_mouse_handler(const ws::event_t *e)
+        Widget *Window::sync_mouse_handler(const ws::event_t *e, bool lookup)
         {
             // Update current widget
             Widget *old     = hMouse.pWidget;
-            Widget *child   = find_widget(e->nLeft, e->nTop);
+            Widget *child   = (lookup) ? find_widget(e->nLeft, e->nTop) : NULL;
             if (child == old)
                 return old;
 
@@ -923,10 +961,10 @@ namespace lsp
             if ((hMouse.nState & ws::MCF_BTN_MASK) && (old))
                 return old;
 
-            return sync_mouse_handler(e);
+            return sync_mouse_handler(e, true);
         }
 
-        Widget *Window::release_mouse_handler(const ws::event_t *e)
+        Widget *Window::release_mouse_handler(const ws::event_t *e, bool lookup)
         {
             Widget *old = hMouse.pWidget;
 
@@ -939,7 +977,7 @@ namespace lsp
             if (hMouse.nState & ws::MCF_BTN_MASK)
                 return old;
 
-            return sync_mouse_handler(e);
+            return sync_mouse_handler(e, lookup);
         }
 
         bool Window::take_focus(Widget *w)
@@ -1010,7 +1048,7 @@ namespace lsp
 
         void Window::realize(const ws::rectangle_t *r)
         {
-            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
+//            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             sPosition.commit_value(r->nLeft, r->nTop);
             sWindowSize.commit_value(r->nWidth, r->nHeight, sScaling.get());
 
@@ -1064,7 +1102,7 @@ namespace lsp
                 old->handle_event(&ev);
 
                 if ((valid()) && (sVisibility.get()))
-                    sync_mouse_handler(&ev);
+                    sync_mouse_handler(&ev, true);
             }
         }
 
@@ -1096,8 +1134,8 @@ namespace lsp
             // Apply constraints to the window
             sSizeConstraints.apply(r, scaling);
 
-            lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this,
-                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
+//            lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this,
+//                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
         status_t Window::set_icon(const void *bgra, size_t width, size_t height)

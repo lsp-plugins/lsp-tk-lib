@@ -39,7 +39,7 @@ namespace lsp
                 sColor.set("#ffffff");
                 sFill.set(false);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Void, "Void");
+            LSP_TK_BUILTIN_STYLE(Void, "Void", "root");
         }
 
         const w_class_t Void::metadata      = { "Void", &Widget::metadata };
@@ -77,7 +77,7 @@ namespace lsp
                 if (sFill.get())
                     color.copy(sColor);
                 else
-                    color.copy(sBgColor);
+                    get_actual_bg_color(color);
                 s->clip_begin(area);
                 s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
                 s->clip_end();

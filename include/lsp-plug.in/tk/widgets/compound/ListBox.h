@@ -58,6 +58,7 @@ namespace lsp
         {
             private:
                 ListBox & operator = (const ListBox &);
+                ListBox(const ListBox &);
 
             public:
                 static const w_class_t      metadata;

@@ -36,6 +36,7 @@ namespace lsp
         {
             private:
                 GenericWidgetSet & operator = (const GenericWidgetSet &);
+                GenericWidgetSet(const GenericWidgetSet &);
 
             protected:
                 const w_class_t                *pMeta;
@@ -64,6 +65,7 @@ namespace lsp
             {
                 private:
                     WidgetSet<widget_t> & operator = (const WidgetSet<widget_t> &);
+                    WidgetSet(const WidgetSet<widget_t> &);
 
                 protected:
                     inline widget_t    *wcast(Widget *w)                    { return (w != NULL) ? static_cast<widget_t*>(w) : NULL;    }
@@ -109,6 +111,7 @@ namespace lsp
                 {
                     private:
                         WidgetSet<widget_t> & operator = (const WidgetSet<widget_t> &);
+                        WidgetSet(const WidgetSet<widget_t> &);
 
                     public:
                         explicit WidgetSet(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::WidgetSet<widget_t>(listener, clistener) {}

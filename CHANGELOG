@@ -2,5 +2,50 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 0.5.1 ===
+* Updated code to match lltl library headers.
+* Better integration with system::follow_url() routine.
+* Added automatic style creation from XML schema.
+* Added simple language configuration support by the tk::Schema class.
+* Fixed allocation for invisible widgets inside the tk::Grid container.
+* Updated behaviour of TextDataSink to be more memory-effective.
+* Property 'size_constraints' renamed to 'constraints' for tk::Align and tk::Group widgets.
+* Added 'set_horizontal' and 'set_vertical' methods to the embedding property.
+* Fixed crash on empty tk::Grid container, added constraints() property to the tk::Grid widget.
+* Added parse() method to all enumeration properties.
+* Fixed knob behaviour which didn't trigger SLOT_CHANGE event when dragging knob's scale.
+* Added ipadding() property for internal padding of the tk::Group widget.
+* Fixed bugs reladed to SLOT_CHANGE notification delivery for tk::Switch widget.
+* Added drawing mode for the widget that allows to switch between different kinds of widget look.
+* Added basic background color inheritance support to widgets.
+* Rendering of graph widget has been fixed and enhanced with "border.flat" property.
+* Replaced text_border property for tk::Group widget with text_padding property.
+* Added heading property for tk::Group widget.
+* Replaced text_border property for tk::ComboGroup widget with text_padding property.
+* Added heading property for tk::ComboGroup widget.
+* Fixed missing builtin styles for tk::ComboGroup widget.
+* Added spin_spacing property to tk::ComboGroup widget.
+* Added 'balance_color', 'balance_color_custom', 'flat' and 'scale_marks' properties to the tk::Knob widget.
+* Added font scaling feature to the tk::Font property.
+* Added freetype2 library dependencies for UNIX-compatible operating systems.
+* Added possibility to specify custom fonts in the stylesheet data.
+* Added font loading support by the tk::Schema object.
+* Fixed bug in menu item allocation that could yield to ugly-looking menus.
+* Implemented proper UI schema loading at the runtime.
+* Added tk::Registry class for managing widgets.
+* Denied copy constructor usage for all widget classes.
+* Added tk::Bevel widget which allows to draw bevels/facets in the UI.
+* Added tk::Arrangement property which allows to arrange some element inside of another.
+* Indicator now supports modern-style drawing.
+* Added tk::MultiLabel widget for drawing vector glyphs.
+* Added tk::TextAdjust property and support of this property by several widgets.
+* Added support of hovers by the tk::Label widget.
+* Fixed bug with UIE_MOUSE_IN and UIE_MOUSE_OUT event delivery when entering/leaving window.
+* tk::Button now allows to use different colors for different states.
+* Removed obsolete tk::StyleInitializer class.
+* Fixed memory corruption in tk::Grid widget related to invalid cell pointers after reallocation of memory chunk.
+* Additional feature added to ComboGroup that allows to select the active visible widget.
+* Updated build system.
+
 === 0.5.0 ===
 * Initial release.

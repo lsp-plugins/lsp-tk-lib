@@ -27,6 +27,10 @@ namespace lsp
     {
         namespace prop
         {
+            Listener::Listener()
+            {
+            }
+
             Listener::~Listener()
             {
             }

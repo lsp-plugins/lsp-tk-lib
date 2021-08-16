@@ -34,12 +34,13 @@ namespace lsp
         {
             private:
                 MenuItemType & operator = (const MenuItemType &);
+                MenuItemType(const MenuItemType &);
 
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit MenuItemType(prop::Listener *listener = NULL): Enum(ENUM, listener) {};
+                explicit MenuItemType(prop::Listener *listener = NULL): Enum(ENUM, MI_NORMAL, listener) {};
 
             public:
                 inline menu_item_type_t     get() const                 { return menu_item_type_t(nValue);          }
@@ -62,6 +63,7 @@ namespace lsp
             {
                 private:
                     MenuItemType & operator = (const MenuItemType &);
+                    MenuItemType(const MenuItemType &);
 
                 public:
                     explicit MenuItemType(prop::Listener *listener = NULL): tk::MenuItemType(listener) {};

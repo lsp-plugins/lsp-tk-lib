@@ -73,17 +73,17 @@ namespace lsp
                 sIPadding.override();
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Menu, "Menu");
+            LSP_TK_BUILTIN_STYLE(Menu, "Menu", "root");
 
             // Menu::Window style
-            LSP_TK_BUILTIN_STYLE(PopupWindow, "Menu::Window");
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "Menu::Window", "Window");
 
             // Menu::Scroll style
             LSP_TK_STYLE_DEF_BEGIN(Menu__MenuScroll, Widget)
             LSP_TK_STYLE_DEF_END
             LSP_TK_STYLE_IMPL_BEGIN(Menu__MenuScroll, Widget)
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Menu__MenuScroll, "Menu::MenuScroll");
+            LSP_TK_BUILTIN_STYLE(Menu__MenuScroll, "Menu::MenuScroll", "root");
         }
 
         //-----------------------------------------------------------------------------
@@ -99,7 +99,7 @@ namespace lsp
         Widget *Menu::Window::sync_mouse_handler(const ws::event_t *e)
         {
             Widget *old     = hMouse.pWidget;
-            Widget *curr    = PopupWindow::sync_mouse_handler(e);
+            Widget *curr    = PopupWindow::sync_mouse_handler(e, true);
 
             if (curr != old)
                 curr->take_focus();
@@ -141,7 +141,7 @@ namespace lsp
                     // We're root menu
                     if (get_screen_rectangle(&xr) != STATUS_OK)
                         break;
-                    lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
+//                    lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
                     xe.nLeft       += xr.nLeft;
                     xe.nTop        += xr.nTop;
 
@@ -174,7 +174,7 @@ namespace lsp
                     // We're root menu
                     if (get_screen_rectangle(&xr) != STATUS_OK)
                         break;
-                    lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
+                    // lsp_trace("root coords: {%d, %d, %d, %d}", int(xr.nLeft), int(xr.nTop), int(xr.nWidth), int(xr.nHeight));
                     xe.nLeft       += xr.nLeft;
                     xe.nTop        += xr.nTop;
 
@@ -191,8 +191,8 @@ namespace lsp
                     xe.nLeft       -= xr.nLeft;
                     xe.nTop        -= xr.nTop;
 
-                    lsp_trace("handler=%p, coords: {%d, %d}", m,
-                            int(xe.nLeft), int(xe.nTop));
+//                    lsp_trace("handler=%p, coords: {%d, %d}", m,
+//                            int(xe.nLeft), int(xe.nTop));
                     result          = (m != pMenu) ?
                             m->sWindow.handle_event(&xe) :
                             PopupWindow::handle_event(&xe);
@@ -264,6 +264,12 @@ namespace lsp
         // Menu implementation
         const w_class_t Menu::metadata      = { "Menu", &WidgetContainer::metadata };
 
+        const arrangement_t Menu::arrangements[] =
+        {
+            { A_RIGHT,  0.0f,   false },
+            { A_LEFT,   0.0f,   false }
+        };
+
         Menu::Menu(Display *dpy):
             WidgetContainer(dpy),
             sWindow(dpy, this),
@@ -332,8 +338,7 @@ namespace lsp
                 sWindow.destroy();
                 return result;
             }
-            sWindow.add_arrangement(A_RIGHT, 0.0f, false);
-            sWindow.add_arrangement(A_LEFT, 0.0f, false);
+            sWindow.set_arrangements(arrangements, 2);
             sWindow.layout()->set(-1.0f, -1.0f, 1.0f, 1.0f);
             sWindow.auto_close()->set(false);
 
@@ -462,6 +467,7 @@ namespace lsp
         void Menu::allocate_items(lltl::darray<item_t> *out, istats_t *st)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
 
             st->full_w          = 0;
@@ -490,11 +496,44 @@ namespace lsp
             st->check_h         = st->check_w;
 
             // Size of text, shortcut and reference
-            LSPString s;
+            LSPString caption, shortcut;
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
 
+            // First pass: estimate that there are certain elements present
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                // Keep only visible items
+                MenuItem *mi        = vItems.get(i);
+                if ((mi == NULL) || (!mi->visibility()->get()))
+                    continue;
+
+                // Estimate type of item
+                menu_item_type_t mt = mi->type()->get();
+                if ((mt == MI_CHECK) || (mt == MI_RADIO))
+                    st->ckbox           = true;
+                else if (mt != MI_SEPARATOR)
+                {
+                    if (mi->shortcut()->valid())
+                    {
+                        mi->shortcut()->format(&shortcut);
+                        sFont.get_text_parameters(pDisplay, &tp, fscaling, &shortcut);
+
+                        st->shortcut        = true;
+                        st->scut_w          = lsp_max(st->scut_w, ceilf(tp.Width));
+                        st->scut_h          = lsp_max(st->scut_h, ceilf(lsp_max(fp.Height, tp.Height)));
+                    }
+                    if (mi->menu()->is_set())
+                    {
+                        st->submenu         = true;
+                        st->link_w          = lsp_max(st->link_w, ssize_t(lsp_max(2.0f, M_SQRT1_2 * fp.Height)));
+                        st->link_h          = lsp_max(st->link_h, fp.Height);
+                    }
+                }
+            }
+
+            // Second pass: estimate parameters for each item
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Keep only visible items
@@ -514,7 +553,6 @@ namespace lsp
                 // Estimate type of item
                 menu_item_type_t mt = mi->type()->get();
                 bool xsep           = (mt != MI_SEPARATOR);
-                bool check          = (mt == MI_CHECK) || (mt == MI_RADIO);
 
                 // Reduce padding
                 if (xsep)
@@ -534,8 +572,9 @@ namespace lsp
 
                 if (xsep)
                 {
-                    mi->text()->format(&s);
-                    sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                    mi->text()->format(&caption);
+                    mi->text_adjust()->apply(&caption);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &caption);
 
                     pi->text.nWidth     = tp.Width;
                     pi->text.nHeight    = lsp_max(fp.Height, tp.Height);
@@ -553,9 +592,8 @@ namespace lsp
                 // Check box/radio
                 pi->check.nLeft     = 0;
                 pi->check.nTop      = 0;
-                if (check)
+                if ((xsep) && (st->ckbox))
                 {
-                    st->ckbox           = true;
                     pi->check.nWidth    = st->check_w;
                     pi->check.nHeight   = st->check_h;
                     pi->area.nWidth    += pi->check.nWidth + spacing;
@@ -570,16 +608,14 @@ namespace lsp
                 // Estimate size of shortcut
                 pi->scut.nLeft      = 0;
                 pi->scut.nTop       = 0;
-                if ((xsep) && (mi->shortcut()->valid()))
+                if ((xsep) && (st->shortcut))
                 {
-                    mi->shortcut()->format(&s);
-                    sFont.get_text_parameters(pDisplay, &tp, scaling, &s);
+                    mi->shortcut()->format(&shortcut);
+                    sFont.get_text_parameters(pDisplay, &tp, fscaling, &shortcut);
 
                     st->shortcut        = true;
-                    pi->scut.nWidth     = tp.Width;
+                    pi->scut.nWidth     = st->scut_w;
                     pi->scut.nHeight    = lsp_max(fp.Height, tp.Height);
-                    st->scut_w          = lsp_max(st->scut_w, pi->scut.nWidth);
-                    st->scut_h          = lsp_max(st->scut_h, pi->scut.nHeight);
 
                     pi->area.nWidth    += pi->scut.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->scut.nHeight);
@@ -593,17 +629,13 @@ namespace lsp
                 // Estimate submenu reference size
                 pi->ref.nLeft       = 0;
                 pi->ref.nTop        = 0;
-                if ((xsep) && (mi->menu()->is_set()))
+                if ((xsep) && (st->submenu))
                 {
                     st->submenu         = true;
                     pi->ref.nHeight     = fp.Height;
                     pi->ref.nWidth      = lsp_max(2.0f, M_SQRT1_2 * fp.Height);
 
-                    st->link_w          = lsp_max(st->link_w, pi->ref.nWidth);
-                    st->link_h          = lsp_max(st->link_h, pi->ref.nHeight);
-
-                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), pi->ref.nWidth + spacing);
-//                    pi->area.nWidth    += pi->ref.nWidth + spacing;
+                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), st->link_w + spacing);
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->ref.nHeight);
                 }
                 else
@@ -621,47 +653,57 @@ namespace lsp
                 st->full_w              = lsp_max(st->full_w, pi->area.nWidth);
                 st->item_w              = lsp_max(st->item_w, st->full_w);
                 st->item_h              = lsp_max(st->item_h, pi->area.nHeight);
+
+//                lsp_trace("menu item text=%s, text.w={%d, %d}, check.w={%d, %d}, scut.w=%d, ref.w=%d, area.w={%d, %d}, st.w=%d, it.w=%d",
+//                    (xsep) ? caption.get_utf8() : "-",
+//                    int(pi->text.nWidth), int(pi->text.nHeight),
+//                    int(pi->check.nWidth), int(pi->check.nHeight),
+//                    int(pi->scut.nWidth),
+//                    int(pi->ref.nWidth),
+//                    int(pi->area.nWidth), int(pi->area.nHeight),
+//                    int(st->full_w),
+//                    int(st->item_w)
+//                );
             }
         }
 
         Menu *Menu::root_menu()
         {
             Menu *curr  = this;
-            lsp_trace("this = %p", this);
             while ((curr->pParentMenu != NULL))
                 curr        = curr->pParentMenu;
 
-            lsp_trace("root = %p", curr);
+//            lsp_trace("this = %p, root = %p", this, curr);
             return curr;
         }
 
         Menu *Menu::find_menu(const ws::event_t *ev, ws::rectangle_t *xr)
         {
-            lsp_trace("this = %p", this);
+            // lsp_trace("this = %p", this);
 
             // Get last child
             Menu *curr = this;
             while (curr->pChildMenu != NULL)
                 curr = curr->pChildMenu;
 
-            lsp_trace("last = %p", curr);
+            // lsp_trace("last = %p", curr);
 
             // Seek from last child to parent
             while (curr != NULL)
             {
                 curr->sWindow.get_screen_rectangle(xr);
-                lsp_trace("pos={%d, %d}, curr = %p, param = {%d, %d, %d, %d}",
-                        int(ev->nLeft), int(ev->nTop), curr,
-                        int(xr->nLeft), int(xr->nTop), int(xr->nWidth), int(xr->nHeight));
+//                lsp_trace("pos={%d, %d}, curr = %p, param = {%d, %d, %d, %d}",
+//                        int(ev->nLeft), int(ev->nTop), curr,
+//                        int(xr->nLeft), int(xr->nTop), int(xr->nWidth), int(xr->nHeight));
                 if (Position::inside(xr, ev->nLeft, ev->nTop))
                 {
-                    lsp_trace("found handler: %p", curr);
+//                    lsp_trace("found handler: %p", curr);
                     return curr;
                 }
                 curr    = curr->pParentMenu;
             }
 
-            lsp_trace("not found handler");
+//            lsp_trace("not found handler");
 
             return NULL;
         }
@@ -801,6 +843,7 @@ namespace lsp
         {
             ws::rectangle_t xr, r;
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
             ssize_t border      = lsp_max(0, sBorderSize.get() * scaling);
 
@@ -810,7 +853,8 @@ namespace lsp
             xr.nHeight          = sSize.nHeight - border * 2;
 
             // Draw background
-            lsp::Color color(sBgColor);
+            lsp::Color color;
+            get_actual_bg_color(color);
             s->clear(color);
 
             // Apply internal padding
@@ -819,7 +863,7 @@ namespace lsp
             ws::font_parameters_t fp;
             LSPString text;
 
-            sFont.get_parameters(pDisplay, scaling, &fp);
+            sFont.get_parameters(pDisplay, fscaling, &fp);
 
             float aa            = s->set_antialiasing(true);
 
@@ -856,18 +900,19 @@ namespace lsp
 
                 // Draw text
                 mi->text()->format(&text);
+                mi->text_adjust()->apply(&text);
                 if (nSelected == i)
                     color.copy(mi->text_selected_color()->color());
                 else
                     color.copy(mi->text_color()->color());
                 color.scale_lightness(bright);
-                sFont.draw(s, color, pi->text.nLeft, pi->text.nTop + fp.Ascent, scaling, &text);
+                sFont.draw(s, color, pi->text.nLeft, pi->text.nTop + fp.Ascent, fscaling, &text);
 
                 // Draw shortcut
                 if (mi->shortcut()->valid())
                 {
                     mi->shortcut()->format(&text);
-                    sFont.draw(s, color, pi->scut.nLeft, pi->scut.nTop + fp.Ascent, scaling, &text);
+                    sFont.draw(s, color, pi->scut.nLeft, pi->scut.nTop + fp.Ascent, fscaling, &text);
                 }
 
                 // Draw reference
@@ -939,19 +984,19 @@ namespace lsp
                     {
                         color.copy(mi->check_border_color()->color());
                         color.scale_lightness(bright);
-                        s->fill_circle(xc, yc, br, &color);
+                        s->fill_circle(xc, yc, br, color);
                         br                  = lsp_max(0.0f, br - bw);
 
                         color.copy(mi->check_bg_color()->color());
                         color.scale_lightness(bright);
-                        s->fill_circle(xc, yc, br, &color);
+                        s->fill_circle(xc, yc, br, color);
                         br                  = lsp_max(0, br - bw);
 
                         if (mi->checked()->get())
                         {
                             color.copy(mi->check_color()->color());
                             color.scale_lightness(bright);
-                            s->fill_circle(xc, yc, br, &color);
+                            s->fill_circle(xc, yc, br, color);
                         }
                     }
                     else
@@ -961,7 +1006,7 @@ namespace lsp
                         else
                             color.copy(mi->check_bg_color()->color());
                         color.scale_lightness(bright);
-                        s->fill_circle(xc, yc, br, &color);
+                        s->fill_circle(xc, yc, br, color);
                     }
 
                 }
@@ -1171,6 +1216,7 @@ namespace lsp
             sWindow.show();
 
             // Take focus if there is no parent menu
+            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
             if (pParentMenu == NULL)
             {
                 sWindow.grab_events(ws::GRAB_MENU);
@@ -1182,7 +1228,16 @@ namespace lsp
         {
             nSelected = -1;
 
+            // Hide all nested menus and disconnect from parent
+            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
             hide_nested_menus(this);
+            if (pParentMenu != NULL)
+            {
+                if (pParentMenu->pChildMenu == this)
+                    pParentMenu->pChildMenu = NULL;
+                pParentMenu     = NULL;
+            }
+
             sWindow.hide();
         }
 
@@ -1223,7 +1278,7 @@ namespace lsp
         {
             sWindow.take_focus();
 
-            lsp_trace("sel = %d, nSelected = %d", int(sel), int(nSelected));
+//            lsp_trace("sel = %d, nSelected = %d", int(sel), int(nSelected));
 
             if (sel != nSelected)
             {
@@ -1278,6 +1333,9 @@ namespace lsp
                 pm->pChildMenu  = NULL;
 
                 // Hide menu and move forward
+                lsp_trace("menu = %p, parent = %p", cm, cm->pParentMenu);
+                lsp_trace("menu = %p, child  = %p", pm, pm->pChildMenu);
+//                lsp_trace("this=%p is hiding nested menu %p", this, cm);
                 cm->hide();
                 pm  = cm;
             }
@@ -1308,14 +1366,20 @@ namespace lsp
             if (pChildMenu != menu)
             {
                 if (pChildMenu != NULL)
+                {
                     pChildMenu->hide();
+                }
             }
             hide_nested_menus(menu);
 
             menu->pParentMenu   = this;
             pChildMenu          = menu;
 
+            lsp_trace("menu = %p, parent=%p", menu, menu->pParentMenu);
+            lsp_trace("menu = %p, child=%p", this, pChildMenu);
+
             // Show the nested menu
+            menu->set_arrangements(arrangements, 2);
             menu->show(w);
         }
 
@@ -1479,7 +1543,7 @@ namespace lsp
             ssize_t scroll      = sScrolling.get() * scaling;
             ssize_t amount      = lsp_max(1, sIStats.item_h >> 1);
 
-            lsp_trace("scroll=%d, amount=%d, dir=%d, max=%d", int(scroll), int(amount), int(dir), int(sIStats.max_scroll));
+//            lsp_trace("scroll=%d, amount=%d, dir=%d, max=%d", int(scroll), int(amount), int(dir), int(sIStats.max_scroll));
 
             scroll              = lsp_limit(scroll + dir * amount, 0, sIStats.max_scroll);
 
@@ -1542,6 +1606,26 @@ namespace lsp
             nMouseScroll    = 0;
             sMouseTimer.cancel();
             return STATUS_OK;
+        }
+
+        bool Menu::set_arrangements(const lltl::darray<arrangement_t> *list)
+        {
+            return sWindow.set_arrangements(list);
+        }
+
+        bool Menu::set_arrangements(const arrangement_t *list, size_t count)
+        {
+            return sWindow.set_arrangements(list, count);
+        }
+
+        bool Menu::add_arrangement(const arrangement_t *item)
+        {
+            return sWindow.add_arrangement(item);
+        }
+
+        bool Menu::add_arrangement(arrangement_pos_t pos, float align, bool stretch)
+        {
+            return sWindow.add_arrangement(pos, align, stretch);
         }
 
     } /* namespace tk */

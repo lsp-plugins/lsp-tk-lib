@@ -93,6 +93,15 @@ namespace lsp
         };
 
         /**
+         * Widget draw mode
+         */
+        enum draw_mode_t
+        {
+            DM_CLASSIC,         //!< Classic draw mode
+            DM_MODERN,          //!< Modern draw mode
+        };
+
+        /**
          * Key modifiers for shortcuts
          */
         enum key_modifier_t
@@ -137,12 +146,19 @@ namespace lsp
         enum graph_frame_function_t
         {
             GFF_RAINBOW,                //!< GFF_RAINBOW
-            GFF_FOG,              //!< GFF_FOG_COLOR
+            GFF_FOG,                    //!< GFF_FOG_COLOR
             GFF_COLOR,                  //!< GFF_COLOR
             GFF_LIGHTNESS,              //!< GFF_LIGHTNESS
             GFF_LIGHTNESS2,             //!< GFF_LIGHTNESS2
 
             GFF_DEFAULT = GFF_RAINBOW   //!< GFF_DEFAULT default function
+        };
+
+        enum text_adjust_t
+        {
+            TA_NONE,                    //!< No text adjust
+            TA_TOUPPER,                 //!< Convert to upper case
+            TA_TOLOWER                  //!< Convert to lower case
         };
 
         typedef struct w_class_t

@@ -40,6 +40,7 @@ namespace lsp
         {
             protected:
                 TextLayout & operator = (const TextLayout &);
+                TextLayout(const TextLayout &);
 
             protected:
                 enum property_t
@@ -90,6 +91,7 @@ namespace lsp
             {
                 private:
                     TextLayout & operator = (const TextLayout &);
+                    TextLayout(const TextLayout &);
 
                 public:
                     explicit TextLayout(prop::Listener *listener = NULL): tk::TextLayout(listener) {};

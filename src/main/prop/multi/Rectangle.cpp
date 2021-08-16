@@ -207,6 +207,22 @@ namespace lsp
             sync();
         }
 
+        void Rectangle::enter_border(ws::rectangle_t *r, const ws::rectangle_t *sr, ssize_t border)
+        {
+            r->nLeft    = sr->nLeft     + border;
+            r->nTop     = sr->nTop      + border;
+            r->nWidth   = sr->nWidth    - border * 2;
+            r->nHeight  = sr->nHeight   - border * 2;
+        }
+
+        void Rectangle::enter_border(ws::rectangle_t *r, ssize_t border)
+        {
+            r->nLeft   += border;
+            r->nTop    += border;
+            r->nWidth  += border * 2;
+            r->nHeight += border * 2;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

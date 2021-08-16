@@ -53,7 +53,7 @@ namespace lsp
                 sColor.set("#ff0000");
                 sFunction.set(GFF_DEFAULT);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(GraphFrameBuffer, "GraphFrameBuffer");
+            LSP_TK_BUILTIN_STYLE(GraphFrameBuffer, "GraphFrameBuffer", "root");
         }
 
         const w_class_t GraphFrameBuffer::metadata             = { "GraphFrameBuffer", &GraphItem::metadata };
@@ -121,20 +121,6 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sFunction.bind("function", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sData.init(sclass, 0, 0, 0.0f, 1.0f, 0.0f);
-//                sTransparency.init(sclass, 0.5f);
-//                sAngle.init(sclass, 0);
-//                sHPos.init(sclass, -1.0f);
-//                sVPos.init(sclass, 1.0f);
-//                sHScale.init(sclass, 1.0f);
-//                sVScale.init(sclass, 1.0f);
-//                sColor.init(sclass, "#ff0000");
-//                sFunction.init(sclass, GFF_DEFAULT);
-//            }
-
             return STATUS_OK;
         }
 
@@ -189,6 +175,7 @@ namespace lsp
 
                 if (pCalcColor != func)
                 {
+                    pCalcColor  = func;
                     bClear      = true;
                     query_draw();
                 }

@@ -52,7 +52,7 @@ namespace lsp
                 sAspect.set(1.41);
                 sButtonPointer.set(ws::MP_DEFAULT);
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(Switch, "Switch");
+            LSP_TK_BUILTIN_STYLE(Switch, "Switch", "root");
         }
 
         static const float ANGLE = 15.0f * M_PI / 180.0f;
@@ -104,7 +104,7 @@ namespace lsp
             pClass      = &metadata;
 
             handler_id_t id = 0;
-            id = sSlots.add(SLOT_FOCUS_IN, slot_on_change, self());
+            id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }
@@ -145,10 +145,7 @@ namespace lsp
             if (sAngle.is(prop))
                 query_resize();
             if (sDown.is(prop))
-            {
                 sync_state(sDown.get());
-                sSlots.execute(SLOT_CHANGE, this);
-            }
         }
 
         ws::mouse_pointer_t Switch::current_pointer()
@@ -159,11 +156,13 @@ namespace lsp
         void Switch::draw(ws::ISurface *s)
         {
             // Prepare palette
-            lsp::Color bg_color(sBgColor);
+            lsp::Color bg_color;
             lsp::Color border(sBorderColor);
             lsp::Color bcl(sColor);
             lsp::Color font(sTextColor);
             lsp::Color hole(sHoleColor);
+
+            get_actual_bg_color(bg_color);
 
             float bright    = sBrightness.get();
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -495,7 +494,12 @@ namespace lsp
                     nState     &= ~S_PRESSED;
 
                 if (nBMask == 0)
-                    sDown.set(nState & S_TOGGLED);
+                {
+                    bool oval = sDown.commit_value(nState & S_TOGGLED);
+                    bool nval = sDown.get();
+                    if (oval != nval)
+                        sSlots.execute(SLOT_CHANGE, this, &nval);
+                }
 
                 query_draw();
             }

@@ -142,6 +142,28 @@ namespace lsp
             sync();
         }
 
+        void Embedding::set_horizontal(bool hor)
+        {
+            size_t flags    = nFlags;
+            flags = lsp_setflag(flags, M_HOR, hor);
+            if (flags == nFlags)
+                return;
+
+            nFlags  = flags;
+            sync();
+        }
+
+        void Embedding::set_vertical(bool vert)
+        {
+            size_t flags    = nFlags;
+            flags = lsp_setflag(flags, M_VERT, vert);
+            if (flags == nFlags)
+                return;
+
+            nFlags  = flags;
+            sync();
+        }
+
         void Embedding::set(bool on)
         {
             size_t flags    = nFlags;

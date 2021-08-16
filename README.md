@@ -36,6 +36,7 @@ The full list of provided widgets:
   * Box - container for packaging widgets in a single horizontal row or vertical column.
   * Grid - container for packaging widgets into table.
   * Group - container for surrounding widgets into a distinguishable group.
+  * MultiLabel - widget that allows to implement overlay of multiple labels on the same area.
   * ScrollArea - container that allows to package widget into limited rectangular space.
   * Window - window widget.
 * Dialogs:
@@ -50,6 +51,7 @@ The full list of provided widgets:
   * GraphMesh - widget for drawing meshes on the graph widget.
   * GraphOrigin - widget for defining origins within the graph widget.
 * Simple widgets:
+  * Bevel - simple widget that allows to draw bevels/facets in the UI.
   * Button - simple button which can operate in different modes.
   * CheckBox - squared single on/off toggle.
   * Edit - single line text edit widget.

@@ -32,7 +32,7 @@ namespace lsp
                 // Bind
                 // Configure
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(WidgetContainer, "WidgetContainer");
+            LSP_TK_BUILTIN_STYLE(WidgetContainer, "WidgetContainer", "root");
         }
 
         const w_class_t WidgetContainer::metadata = { "WidgetContainer", &Widget::metadata };
@@ -62,5 +62,29 @@ namespace lsp
         {
             return STATUS_NOT_IMPLEMENTED;
         }
+
+        void WidgetContainer::get_child_bg_color(lsp::Color *color) const
+        {
+            if ((!sBgInherit.get()) || (pParent == NULL))
+            {
+                color->copy(sBgColor.color());
+                return;
+            }
+
+            WidgetContainer *pw = widget_cast<WidgetContainer>(pParent);
+            if (pw == NULL)
+            {
+                color->copy(sBgColor.color());
+                return;
+            }
+
+            pw->get_child_bg_color(color);
+        }
+
+        void WidgetContainer::get_child_bg_color(lsp::Color &color) const
+        {
+            get_child_bg_color(&color);
+        }
+
     } /* namespace tk */
 } /* namespace lsp */

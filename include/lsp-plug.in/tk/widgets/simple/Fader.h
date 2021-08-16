@@ -34,15 +34,28 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(Fader, Widget)
-                prop::Color                     sColor;
-                prop::Color                     sHoleColor;
+                prop::Color                     sBtnColor;
+                prop::Color                     sBtnBorderColor;
+                prop::Color                     sScaleColor;
+                prop::Color                     sScaleBorderColor;
+                prop::Color                     sBalanceColor;
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
                 prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;
                 prop::Float                     sBtnAspect;
                 prop::Integer                   sAngle;
+                prop::Integer                   sScaleWidth;
+                prop::Integer                   sScaleBorder;
+                prop::Integer                   sScaleRadius;
+                prop::Boolean                   sScaleGradient;
+                prop::Integer                   sBtnBorder;
+                prop::Integer                   sBtnRadius;
+                prop::Boolean                   sBtnGradient;
                 prop::Pointer                   sBtnPointer;
+                prop::Float                     sBalance;
+                prop::Float                     sScaleBrightness;
+                prop::Boolean                   sBalanceColorCustom;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -53,6 +66,10 @@ namespace lsp
         {
             public:
                 static const w_class_t    metadata;
+
+            private:
+                Fader & operator = (const Fader &);
+                Fader(const Fader &);
 
             protected:
                 enum flags_t
@@ -71,15 +88,28 @@ namespace lsp
                 ws::rectangle_t                 sButton;
                 ws::rectangle_t                 sHole;
 
-                prop::Color                     sColor;
-                prop::Color                     sHoleColor;
+                prop::Color                     sBtnColor;
+                prop::Color                     sBtnBorderColor;
+                prop::Color                     sScaleColor;
+                prop::Color                     sScaleBorderColor;
+                prop::Color                     sBalanceColor;
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
                 prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;
                 prop::Float                     sBtnAspect;
                 prop::Integer                   sAngle;
+                prop::Integer                   sScaleWidth;
+                prop::Integer                   sScaleBorder;
+                prop::Integer                   sScaleRadius;
+                prop::Boolean                   sScaleGradient;
+                prop::Integer                   sBtnBorder;
+                prop::Integer                   sBtnRadius;
+                prop::Boolean                   sBtnGradient;
                 prop::Pointer                   sBtnPointer;
+                prop::Float                     sBalance;
+                prop::Float                     sScaleBrightness;
+                prop::Boolean                   sBalanceColorCustom;
 
             protected:
                 float                           limit_value(float value);
@@ -104,32 +134,28 @@ namespace lsp
                 virtual status_t                init();
 
             public:
-                inline Color                   *color()                     { return &sColor;       }
-                inline const Color             *color() const               { return &sColor;       }
-
-                inline Color                   *hole_color()                { return &sHoleColor;   }
-                inline const Color             *hole_color() const          { return &sHoleColor;   }
-
-                inline SizeRange               *size()                      { return &sSizeRange;   }
-                inline const SizeRange         *size() const                { return &sSizeRange;   }
-
-                inline RangeFloat              *value()                     { return &sValue;       }
-                inline const RangeFloat        *value() const               { return &sValue;       }
-
-                inline StepFloat               *step()                      { return &sStep;        }
-                inline const StepFloat         *step() const                { return &sStep;        }
-
-                inline SizeRange               *button_width()              { return &sBtnWidth;    }
-                inline const SizeRange         *button_width() const        { return &sBtnWidth;    }
-
-                inline Float                   *button_aspect()             { return &sBtnAspect;   }
-                inline const Float             *button_aspect() const       { return &sBtnAspect;   }
-
-                inline Pointer                 *button_pointer()            { return &sBtnPointer;  }
-                inline const Pointer           *button_pointer() const      { return &sBtnPointer;  }
-
-                inline Integer                 *angle()                     { return &sAngle;       }
-                inline const Integer           *angle() const               { return &sAngle;       }
+                LSP_TK_PROPERTY(Color,          button_color,               &sBtnColor);
+                LSP_TK_PROPERTY(Color,          button_border_color,        &sBtnBorderColor);
+                LSP_TK_PROPERTY(Color,          scale_color,                &sScaleColor);
+                LSP_TK_PROPERTY(Color,          scale_border_color,         &sScaleBorderColor);
+                LSP_TK_PROPERTY(Color,          balance_color,              &sBalanceColor);
+                LSP_TK_PROPERTY(SizeRange,      size,                       &sSizeRange);
+                LSP_TK_PROPERTY(RangeFloat,     value,                      &sValue);
+                LSP_TK_PROPERTY(StepFloat,      step,                       &sStep);
+                LSP_TK_PROPERTY(SizeRange,      button_width,               &sBtnWidth);
+                LSP_TK_PROPERTY(Float,          button_aspect,              &sBtnAspect);
+                LSP_TK_PROPERTY(Pointer,        button_pointer,             &sBtnPointer);
+                LSP_TK_PROPERTY(Integer,        angle,                      &sAngle);
+                LSP_TK_PROPERTY(Integer,        scale_width,                &sScaleWidth);
+                LSP_TK_PROPERTY(Integer,        scale_border,               &sScaleBorder);
+                LSP_TK_PROPERTY(Integer,        scale_radius,               &sScaleRadius);
+                LSP_TK_PROPERTY(Boolean,        scale_gradient,             &sScaleGradient);
+                LSP_TK_PROPERTY(Integer,        button_border,              &sBtnBorder);
+                LSP_TK_PROPERTY(Integer,        button_radius,              &sBtnRadius);
+                LSP_TK_PROPERTY(Boolean,        button_gradient,            &sBtnGradient);
+                LSP_TK_PROPERTY(Float,          balance,                    &sBalance);
+                LSP_TK_PROPERTY(Float,          scale_brightness,           &sScaleBrightness);
+                LSP_TK_PROPERTY(Boolean,        balance_color_custom,       &sBalanceColorCustom);
 
             public:
 

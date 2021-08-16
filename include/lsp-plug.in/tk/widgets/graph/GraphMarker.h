@@ -64,6 +64,7 @@ namespace lsp
 
             private:
                 GraphMarker & operator = (const GraphMarker &);
+                GraphMarker(const GraphMarker &);
 
             protected:
                 enum flags_t

@@ -44,6 +44,7 @@ namespace lsp
         {
             private:
                 WidgetContainer & operator = (const WidgetContainer &);
+                WidgetContainer(const WidgetContainer &);
 
             public:
                 static const w_class_t    metadata;
@@ -57,6 +58,14 @@ namespace lsp
 
             //---------------------------------------------------------------------------------
             // Manipulation
+            public:
+                /**
+                 * Get the actual background color of the child widget
+                 * @param color actual background color of the child widget
+                 */
+                virtual void        get_child_bg_color(lsp::Color *color) const;
+                virtual void        get_child_bg_color(lsp::Color &color) const;
+
             public:
                 /** Add child to widget container
                  *

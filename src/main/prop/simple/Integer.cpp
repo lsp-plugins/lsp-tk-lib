@@ -52,9 +52,6 @@ namespace lsp
         ssize_t Integer::set(ssize_t v)
         {
             float prev = nValue;
-            if (v == nValue)
-                return prev;
-
             nValue  = v;
             sync();
             return prev;

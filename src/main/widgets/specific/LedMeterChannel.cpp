@@ -78,7 +78,7 @@ namespace lsp
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
-            LSP_TK_BUILTIN_STYLE(LedMeterChannel, "LedMeterChannel");
+            LSP_TK_BUILTIN_STYLE(LedMeterChannel, "LedMeterChannel", "root");
         }
 
         const w_class_t LedMeterChannel::metadata           = { "LedMeterChannel", &Widget::metadata };
@@ -221,6 +221,7 @@ namespace lsp
         void LedMeterChannel::size_request(ws::size_limit_t *r)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float seg_size  = 4.0f * scaling;
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle   = sAngle.get();
@@ -233,8 +234,8 @@ namespace lsp
             {
                 LSPString text;
                 sEstText.format(&text);
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
                 tp.Height           = lsp_max(tp.Height, fp.Height);
             }
 
@@ -282,6 +283,7 @@ namespace lsp
             Widget::realize(r);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float seg_size      = 4.0f * scaling;
             ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle       = sAngle.get();
@@ -318,8 +320,8 @@ namespace lsp
             {
                 LSPString text;
                 sEstText.format(&text);
-                sFont.get_parameters(pDisplay, scaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, scaling, &text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 
                 if (angle & 1) // Vertical
                 {
@@ -531,7 +533,7 @@ namespace lsp
             return dfl->color();
         }
 
-        void LedMeterChannel::draw_label(ws::ISurface *s, const Font *f, float scaling, float bright)
+        void LedMeterChannel::draw_label(ws::ISurface *s, const Font *f, float fscaling, float bright)
         {
             if (!sActive.get())
                 return;
@@ -541,8 +543,8 @@ namespace lsp
 
             LSPString text;
             sText.format(&text);
-            sFont.get_parameters(s, scaling, &fp);
-            sFont.get_text_parameters(s, &tp, scaling, &text);
+            sFont.get_parameters(s, fscaling, &fp);
+            sFont.get_text_parameters(s, &tp, fscaling, &text);
 
             ssize_t fx  = sAText.nLeft + ((sAText.nWidth  - tp.Width ) * 0.5f) + tp.XBearing;
             ssize_t fy  = sAText.nTop  + ((sAText.nHeight - fp.Height) * 0.5f) + fp.Ascent;
@@ -552,16 +554,18 @@ namespace lsp
             xcol.scale_lightness(bright);
 
             s->clip_begin(&sAText);
-                sFont.draw(s, xcol, fx, fy, scaling, &text);
+                sFont.draw(s, xcol, fx, fy, fscaling, &text);
             s->clip_end();
         }
 
         void LedMeterChannel::draw(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
+            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
 
-            lsp::Color col(sBgColor);
+            lsp::Color col;
+            get_actual_bg_color(col);
             s->clear(col);
             col.copy(sColor);
             s->fill_rect(col, &sAAll);
@@ -569,7 +573,7 @@ namespace lsp
             draw_meter(s, sAngle.get(), scaling, bright);
 
             if (sTextVisible.get())
-                draw_label(s, &sFont, scaling, bright);
+                draw_label(s, &sFont, fscaling, bright);
         }
     }
 }

@@ -44,6 +44,7 @@ namespace lsp
 
             protected:
                 virtual status_t        receive(const LSPString *text, const char *mime);
+                virtual status_t        error(status_t code);
 
             public:
                 explicit TextDataSink();

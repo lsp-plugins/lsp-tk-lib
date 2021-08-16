@@ -34,6 +34,7 @@ namespace lsp
         {
             private:
                 GraphFrameData & operator = (const GraphFrameData &);
+                GraphFrameData(const GraphFrameData &);
 
             protected:
                 static const prop::desc_t   DESC[];
@@ -126,6 +127,7 @@ namespace lsp
             {
                 private:
                     GraphFrameData &operator = (const GraphFrameData &);
+                    GraphFrameData(const GraphFrameData &);
 
                 public:
                     explicit inline GraphFrameData(prop::Listener *listener = NULL): tk::GraphFrameData(listener) {}
