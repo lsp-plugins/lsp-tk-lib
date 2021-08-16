@@ -2,6 +2,8 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 0.5.2 ===
+
 === 0.5.1 ===
 * Updated code to match lltl library headers.
 * Better integration with system::follow_url() routine.
