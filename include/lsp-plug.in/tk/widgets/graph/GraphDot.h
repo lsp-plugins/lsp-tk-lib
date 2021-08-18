@@ -100,6 +100,7 @@ namespace lsp
                 prop::Integer               sHoverBorderSize;   // Border size (when hover)
                 prop::Integer               sGap;               // Gap size
                 prop::Integer               sHoverGap;          // Gap size (when hover)
+
                 prop::Color                 sColor;             // Color of the dot
                 prop::Color                 sHoverColor;        // Color of the dot (when hover)
                 prop::Color                 sBorderColor;       // Color of the border
@@ -146,6 +147,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            hover_size,         &sHoverSize)
                 LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
                 LSP_TK_PROPERTY(Integer,            hover_border_size,  &sHoverBorderSize)
+                LSP_TK_PROPERTY(Integer,            gap,                &sGap)
+                LSP_TK_PROPERTY(Integer,            hover_gap,          &sHoverGap)
+
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)
                 LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)

@@ -218,26 +218,6 @@ namespace lsp
             sGapColor.bind("gap.color", &sStyle);
             sHoverGapColor.bind("hover.gap.color", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sOrigin.init(sclass, 0);
-//                sHAxis.init(sclass, 0);
-//                sVAxis.init(sclass, 1);
-//                sSize.init(sclass, 4);
-//                sHoverSize.init(sclass, 4);
-//                sBorderSize.init(sclass, 0);
-//                sHoverBorderSize.init(sclass, 12);
-//                sGap.init(sclass, 1);
-//                sHoverGap.init(sclass, 1);
-//                sColor.init(sclass, "#cccccc");
-//                sHoverColor.init(sclass, "#ffffff");
-//                sBorderColor.init(sclass, "#cccccc");
-//                sHoverBorderColor.init(sclass, "#ffffff");
-//                sGapColor.init(sclass, "#000000");
-//                sHoverGapColor.init(sclass, "#000000");
-//            }
-
             // Add handler
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
