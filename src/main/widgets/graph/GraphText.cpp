@@ -198,10 +198,11 @@ namespace lsp
 //            s->fill_rect(tmp, &r);
 
             // Center point
+            sPadding.enter(&r, scaling);
             float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
             float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
             float dy        = (r.nHeight - tp.Height) * 0.5f;
-            ssize_t ty       = r.nTop + dy * valign - fp.Descent;
+            ssize_t ty      = r.nTop + dy * valign - fp.Descent;
 
             // Estimate text size
             ssize_t last = 0, curr = 0, tail = 0, len = text.length();

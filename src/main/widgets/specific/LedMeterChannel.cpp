@@ -548,8 +548,9 @@ namespace lsp
 
             ssize_t fx  = sAText.nLeft + ((sAText.nWidth  - tp.Width ) * 0.5f) + tp.XBearing;
             ssize_t fy  = sAText.nTop  + ((sAText.nHeight - fp.Height) * 0.5f) + fp.Ascent;
+            float value = (sPeakVisible.get()) ? sValue.limit(sPeak.get()) : sValue.get();
 
-            const lsp::Color *col   = get_color(sValue.get(), &sTextRanges, &sTextColor);
+            const lsp::Color *col   = get_color(value, &sTextRanges, &sTextColor);
             lsp::Color xcol(*col);
             xcol.scale_lightness(bright);
 
