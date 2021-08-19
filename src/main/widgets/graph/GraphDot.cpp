@@ -96,7 +96,7 @@ namespace lsp
                 {
                     sEditable[i].set(false);
                     sValue[i].set_all(0.0f, -1.0f, 1.0f);
-                    sStep[i].set(1.0f, 0.1f, 10.0f);
+                    sStep[i].set(1.0f, 10.0f, 0.1f);
                 }
 
             LSP_TK_STYLE_IMPL_END
@@ -566,7 +566,7 @@ namespace lsp
                 return STATUS_OK;
 
             float step      = sZValue.sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
-            float delta     = (e->nCode == ws::MCD_UP) ? -step : step;
+            float delta     = (e->nCode == ws::MCD_DOWN) ? -step : step;
 
             float old       = sZValue.sValue.get();
             sZValue.sValue.add(delta);

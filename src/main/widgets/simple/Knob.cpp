@@ -373,9 +373,7 @@ namespace lsp
         status_t Knob::on_mouse_scroll(const ws::event_t *e)
         {
 //            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
-            float step = (e->nState & ws::MCF_SHIFT) ? sStep.step_decel() :
-                         (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
-                         sStep.step();
+            float step = sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
 
             // Update value
             float delta = 0.0;
