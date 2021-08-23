@@ -266,6 +266,11 @@ namespace lsp
             return pDisplay->main();
         }
 
+        status_t Display::wait_events(wssize_t millis)
+        {
+            return (pDisplay != NULL) ? pDisplay->wait_events(millis) : STATUS_BAD_STATE;
+        }
+
         status_t Display::main_iteration()
         {
             if (pDisplay == NULL)

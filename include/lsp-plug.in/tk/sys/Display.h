@@ -131,6 +131,13 @@ namespace lsp
                  */
                 status_t main_iteration();
 
+                /**
+                 * Wait for new events
+                 *
+                 * @param millis maximum amount of time to wait for new event
+                 */
+                status_t wait_events(wssize_t millis);
+
                 /** Interrupt main loop function
                  *
                  */
