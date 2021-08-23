@@ -141,17 +141,6 @@ namespace lsp
             sValue.bind(&id, style);
             id.fmt_ascii("%s.step", prefix);
             sStep.bind(&id, style);
-
-//            Style *sclass = pDot->style_class();
-//            if (sclass != NULL)
-//            {
-//                id.fmt_ascii("%s.editable", prefix);
-//                sEditable.init(sclass, false);
-//                id.fmt_ascii("%s.value", prefix);
-//                sValue.init(sclass, 0.0f, -1.0f, 1.0f);
-//                id.fmt_ascii("%s.step", prefix);
-//                sStep.init(sclass, 1.0f, 10.0f, 0.1f);
-//            }
         }
 
         GraphDot::GraphDot(Display *dpy):
@@ -351,11 +340,11 @@ namespace lsp
 
         status_t GraphDot::on_change()
         {
-            lsp_trace("hvalue = %f, vvalue=%f, zvalue=%f",
-                    sHValue.sValue.get(),
-                    sVValue.sValue.get(),
-                    sZValue.sValue.get()
-                );
+//            lsp_trace("hvalue=%f, vvalue=%f, zvalue=%f",
+//                    sHValue.sValue.get(),
+//                    sVValue.sValue.get(),
+//                    sZValue.sValue.get()
+//                );
             return STATUS_OK;
         }
 
@@ -400,13 +389,13 @@ namespace lsp
             float r    = lsp_max(2.0f, fdot + fpad);
 
             // Update coordinates
-            lsp_trace("mx = %d, my = %d", int(mx), int(my));
+//            lsp_trace("mx = %d, my = %d", int(mx), int(my));
 
             float dx        = mx - cv->canvas_aleft() - x;
             float dy        = my - cv->canvas_atop()  - y;
 
-            lsp_trace("x = %f, y = %f", x, y);
-            lsp_trace("dx = %f, dy = %f", dx, dy);
+//            lsp_trace("x = %f, y = %f", x, y);
+//            lsp_trace("dx = %f, dy = %f", dx, dy);
 
             return dx*dx + dy*dy <= r*r;
         }
@@ -420,7 +409,7 @@ namespace lsp
 
             // Get axises
             GraphAxis *xaxis    = cv->axis(sHAxis.get());
-            GraphAxis *yaxis   = cv->axis(sVAxis.get());
+            GraphAxis *yaxis    = cv->axis(sVAxis.get());
 
             // Check that mouse button state matches
             size_t bflag    = (nXFlags & F_FINE_TUNE) ? ws::MCF_RIGHT : ws::MCF_LEFT;
@@ -431,8 +420,8 @@ namespace lsp
             }
 
             // Update the difference relative to the sensitivity
-            lsp_trace("xy=(%d, %d), mxy=(%d, %d)",
-                    int(x), int(y), int(nMouseX), int(nMouseY));
+//            lsp_trace("xy=(%d, %d), mxy=(%d, %d)",
+//                    int(x), int(y), int(nMouseX), int(nMouseY));
 
             float dx = x - nMouseX, dy = y - nMouseY;
             bool modified = false;
@@ -445,7 +434,7 @@ namespace lsp
                     sHValue.sStep.get(flags & ws::MCF_CONTROL, flags & ws::MCF_SHIFT);
 
                 float rx = nMouseX - cv->canvas_aleft() + step * dx;
-                float ry = nMouseY - cv->canvas_atop() + step * dy;
+                float ry = nMouseY - cv->canvas_atop()  + step * dy;
 
                 float old       = sHValue.sValue.get();
                 float nvalue    = fLastX;
@@ -463,7 +452,7 @@ namespace lsp
             }
 
             // Update VValue
-            if (sHValue.sEditable.get())
+            if (sVValue.sEditable.get())
             {
                 float step = (nXFlags & F_FINE_TUNE) ?
                     sVValue.sStep.get(flags & ws::MCF_CONTROL, !(flags & ws::MCF_SHIFT)) :
@@ -476,7 +465,7 @@ namespace lsp
                 float nvalue    = fLastY;
                 if ((nMouseX == x) && (nMouseY == y))
                     nvalue          = fLastY;
-                else if (xaxis != NULL)
+                else if (yaxis != NULL)
                     nvalue          = yaxis->project(rx, ry);
                 nvalue          = sVValue.sValue.limit(nvalue);
 

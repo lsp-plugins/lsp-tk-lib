@@ -189,9 +189,11 @@ namespace lsp
 
                 float x1, y1, x2, y2;
 
-                if (!clip_line2d(la, lb, lc,
+                if (!clip_line2d_eq(
+                        la, lb, lc,
                         cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
-                        2.0f, x1, y1, x2, y2
+                        2.0f,
+                        x1, y1, x2, y2
                         )
                     )
                     return false;
@@ -266,8 +268,10 @@ namespace lsp
                     return false;
 
                 float x1, y1, x2, y2;
-                if (!clip_line2d(la, lb, lc,
+                if (!clip_line2d_eq(
+                        la, lb, lc,
                         cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
+                        2.0f,
                         x1, y1, x2, y2)
                     )
                     return false;

@@ -171,10 +171,11 @@ namespace lsp
             }
 
             // Now we need to clip the line
-            if (!clip_line2d(a, b, c,
+            if (!clip_line2d_eq(
+                a, b, c,
                 sr.nLeft, sr.nLeft + sr.nWidth,
                 sr.nTop,  sr.nTop  + sr.nHeight,
-                0,
+                0.0f,
                 ap.x, ap.y, bp.x, bp.y))
             {
                 s->clip_begin(area);

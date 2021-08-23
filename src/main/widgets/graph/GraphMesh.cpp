@@ -112,19 +112,6 @@ namespace lsp
             sFillColor.bind("fill.color", &sStyle);
             sData.bind("data", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sOrigin.init(sclass, 0);
-//                sXAxis.init(sclass, 0);
-//                sYAxis.init(sclass, 1);
-//                sWidth.init(sclass, 3);
-//                sFill.init(sclass, false);
-//                sColor.init(sclass, "#00ff00");
-//                sFillColor.init(sclass, "#8800ff00");
-//                sData.init(sclass, 0);
-//            }
-
             return STATUS_OK;
         }
 

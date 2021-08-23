@@ -199,7 +199,7 @@ namespace lsp
 
         void Knob::update_value(float delta)
         {
-            lsp_trace("value=%f, delta=%f", sValue.get(), delta);
+//            lsp_trace("value=%f, delta=%f", sValue.get(), delta);
 
             // Check that value is in range
             float old = sValue.add(delta, sCycling.get());
@@ -344,7 +344,7 @@ namespace lsp
 
         status_t Knob::on_mouse_move(const ws::event_t *e)
         {
-            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
+//            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
             if (nState == S_MOVING)
             {
                 if (!(nButtons & (ws::MCF_LEFT | ws::MCF_RIGHT)))
