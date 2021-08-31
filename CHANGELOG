@@ -5,6 +5,7 @@
 === 0.5.2 ===
 - Bugfixes for the tk::GraphDot widget.
 - Added new Display::wait_events() method for polling display for incoming events.
+- Updated rendering of tk::LedMeterChannel widget.
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.

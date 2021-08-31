@@ -422,7 +422,7 @@ namespace lsp
             float seg_size      = 4.0f * scaling;
             float range         = sValue.range();
             ssize_t segments    = (angle & 1) ? (sAMeter.nHeight / seg_size) : (sAMeter.nWidth / seg_size);
-            float step          = range / segments;
+            float step          = range / lsp_max(1, segments - 1);
             lsp::Color fc, bc;
             const lsp::Color *lc;
 
@@ -448,14 +448,14 @@ namespace lsp
             float value         = sValue.get();
 
             float first         = sValue.min();
-            float vmin          = sValue.min();
+            float vmin          = first - 0.5f * step;
 
             float aa            = s->set_antialiasing(true);
 
             s->clip_begin(&sAMeter);
-                for (ssize_t i=1; i<=segments; ++i)
+                for (ssize_t i=0; i<segments; ++i)
                 {
-                    float vmax          = (i < segments) ? first + step * i : sValue.max();
+                    float vmax          = first + step * (i + 0.5f);
 
                     // Estimate the segment color (special values for peak and balance
                     if ((has_balance) && (vmin <= balance) && (balance < vmax))
