@@ -314,8 +314,11 @@ namespace lsp
                 }
                 else
                 {
-                    lsp_trace("Linking style '%s' to default parents: '%s'", name->get_utf8(), s->default_parents());
-                    res = apply_relations(s, s->default_parents());
+                    const char *default_parents = s->default_parents();
+                    if (default_parents == NULL)
+                        default_parents = "root";
+                    lsp_trace("Linking style '%s' to default parents: '%s'", name->get_utf8(), default_parents);
+                    res = apply_relations(s, default_parents);
                 }
 
                 if (res != STATUS_OK)
