@@ -432,6 +432,7 @@ namespace lsp
             get_actual_bg_color(bg_color);
             cap.scale_lightness(bright);
             tip.scale_lightness(bright);
+            hcol.scale_lightness(bright);
 
             // Draw background
             s->clear(bg_color);
