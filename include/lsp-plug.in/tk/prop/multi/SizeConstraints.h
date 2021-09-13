@@ -136,6 +136,9 @@ namespace lsp
 
                 static void maximize(ws::size_limit_t *dst, const ws::size_limit_t *a, const ws::size_limit_t *b);
                 static void maximize(ws::size_limit_t *dst, const ws::size_limit_t *src);
+
+                static void add(ws::size_limit_t *dst, ssize_t width, ssize_t height);
+                static void scale(ws::size_limit_t *dst, float scale);
         };
 
         namespace prop

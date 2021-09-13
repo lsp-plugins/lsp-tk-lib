@@ -155,19 +155,13 @@ namespace lsp
                 ssize_t chamfer     = lsp_max(0.0f, border);
                 ssize_t hole        = (sHole.get()) ? lsp_max(1, scaling) : 0;
                 ssize_t light       = (sLed.get() > 0) ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
-                ssize_t outer       = lsp_max(hole, light);
-                extra               = (chamfer + outer) * 2;
+                extra               = lsp_max(hole, light);
 
                 r->nMinWidth        = lsp_max(chamfer * 2, r->nMinWidth);
                 r->nMinHeight       = lsp_max(chamfer * 2, r->nMinHeight);
             }
 
-            r->nMinWidth       += extra;
-            r->nMinHeight      += extra;
-            if (r->nMaxWidth >= 0)
-                r->nMaxWidth       += extra;
-            if (r->nMaxHeight >= 0)
-                r->nMaxHeight      += extra;
+            SizeConstraints::add(r, extra, extra);
         }
 
         void Led::draw(ws::ISurface *s)

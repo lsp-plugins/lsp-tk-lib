@@ -622,10 +622,10 @@ namespace lsp
                 ssize_t tminw   = ceil(tp.Width);
                 ssize_t tminh   = ceil(lsp_max(tp.Height, fp.Height));
 
-                xr.nWidth       = lsp_max(xr.nWidth, tminw);
-                xr.nHeight      = lsp_max(xr.nHeight, tminh);
-
                 sTextPadding.add(&xr, scaling);
+
+                xr.nWidth          = lsp_max(xr.nWidth, tminw);
+                xr.nHeight         = lsp_max(xr.nHeight, tminh);
             }
 
             float border        = sBorderSize.get() * scaling;
@@ -637,8 +637,8 @@ namespace lsp
             ssize_t light       = (nState & S_LED)  ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
             ssize_t outer       = lsp_max(hole, light);
 
-            xr.nWidth          += (chamfer + outer) * 2;
-            xr.nHeight         += (chamfer + outer) * 2;
+            xr.nWidth          += chamfer * 2;
+            xr.nHeight         += chamfer * 2;
 
             r->nMinWidth        = xr.nWidth;
             r->nMinHeight       = xr.nHeight;
@@ -647,7 +647,9 @@ namespace lsp
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
 
+            // Update constraints
             sConstraints.apply(r, scaling);
+            SizeConstraints::add(r, outer, outer);
         }
 
         void Button::realize(const ws::rectangle_t *r)
