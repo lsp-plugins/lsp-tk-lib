@@ -155,7 +155,7 @@ namespace lsp
                 ssize_t chamfer     = lsp_max(0.0f, border);
                 ssize_t hole        = (sHole.get()) ? lsp_max(1, scaling) : 0;
                 ssize_t light       = (sLed.get() > 0) ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
-                extra               = lsp_max(hole, light);
+                extra               = lsp_max(hole, light) * 2;
 
                 r->nMinWidth        = lsp_max(chamfer * 2, r->nMinWidth);
                 r->nMinHeight       = lsp_max(chamfer * 2, r->nMinHeight);

@@ -622,10 +622,10 @@ namespace lsp
                 ssize_t tminw   = ceil(tp.Width);
                 ssize_t tminh   = ceil(lsp_max(tp.Height, fp.Height));
 
-                sTextPadding.add(&xr, scaling);
-
                 xr.nWidth          = lsp_max(xr.nWidth, tminw);
                 xr.nHeight         = lsp_max(xr.nHeight, tminh);
+
+                sTextPadding.add(&xr, scaling);
             }
 
             float border        = sBorderSize.get() * scaling;
@@ -635,7 +635,7 @@ namespace lsp
             ssize_t chamfer     = lsp_max(0.0f, border);
             ssize_t hole        = (nState & S_HOLE) ? lsp_max(1, scaling) : 0;
             ssize_t light       = (nState & S_LED)  ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
-            ssize_t outer       = lsp_max(hole, light);
+            ssize_t outer       = lsp_max(hole, light)*2;
 
             xr.nWidth          += chamfer * 2;
             xr.nHeight         += chamfer * 2;
