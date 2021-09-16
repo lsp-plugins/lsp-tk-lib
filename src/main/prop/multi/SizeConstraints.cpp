@@ -79,10 +79,17 @@ namespace lsp
                 }
                 else if (n == 2)
                 {
-                    p.nMinWidth     = -1;
-                    p.nMinHeight    = -1;
-                    p.nMaxWidth     = lsp_max(xv[0], -1);
-                    p.nMaxHeight    = lsp_max(xv[1], -1);
+                    p.nMinWidth     = lsp_max(xv[0], -1);
+                    p.nMinHeight    = lsp_max(xv[1], -1);
+                    p.nMaxWidth     = -1;
+                    p.nMaxHeight    = -1;
+                }
+                else if (n == 1)
+                {
+                    p.nMinWidth     = lsp_max(xv[0], -1);
+                    p.nMinHeight    = p.nMinWidth;
+                    p.nMaxWidth     = -1;
+                    p.nMaxHeight    = -1;
                 }
             }
         }
