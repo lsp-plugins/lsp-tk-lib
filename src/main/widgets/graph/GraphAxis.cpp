@@ -95,20 +95,6 @@ namespace lsp
             sOrigin.bind("origin", &sStyle);
             sColor.bind("color", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sDirection.init_cart(sclass, 1.0f, 0.0f);
-//                sMin.init(sclass, -1.0f);
-//                sMax.init(sclass, 1.0f);
-//                sLogScale.init(sclass, false);
-//                sBasis.init(sclass, true);
-//                sWidth.init(sclass, 1);
-//                sLength.init(sclass, -1.0f);
-//                sOrigin.init(sclass, 0);
-//                sColor.init(sclass, "#ffffff");
-//            }
-
             pClass          = &metadata;
 
             return STATUS_OK;
@@ -320,9 +306,9 @@ namespace lsp
         void GraphAxis::ortogonal_shift(float x, float y, float shift, float &nx, float &ny)
         {
             // When rotating 90 degrees left, we get: dy' = dx, dx' = -dy
-            float fdx   = sDirection.dx(), fdy = -sDirection.dy();
-            nx               = x + shift * fdy;
-            ny               = y - shift * fdx;
+            float fdx   = -sDirection.dy(), fdy = sDirection.dx();
+            nx               = x + shift * fdx;
+            ny               = y - shift * fdy;
         }
 
         bool GraphAxis::angle(float x, float y, float angle, float &a, float &b, float &c)
