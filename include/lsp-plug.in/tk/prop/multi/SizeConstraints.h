@@ -40,6 +40,8 @@ namespace lsp
                 enum property_t
                 {
                     P_VALUE,
+                    P_MIN,
+                    P_MAX,
                     P_MIN_WIDTH,
                     P_MIN_HEIGHT,
                     P_MAX_WIDTH,

@@ -28,6 +28,8 @@ namespace lsp
         const prop::desc_t SizeConstraints::DESC[] =
         {
             { "",               PT_STRING   },
+            { ".min",           PT_STRING   },
+            { ".max",           PT_STRING   },
             { ".width.min",     PT_INT      },
             { ".height.min",    PT_INT      },
             { ".width.max",     PT_INT      },
@@ -66,9 +68,9 @@ namespace lsp
                 p.nMaxHeight    = lsp_max(v, -1);
 
             LSPString s;
+            ssize_t xv[4];
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
             {
-                ssize_t xv[4];
                 size_t n = Property::parse_ints(xv, 4, &s);
                 if (n == 4)
                 {
@@ -79,17 +81,45 @@ namespace lsp
                 }
                 else if (n == 2)
                 {
+                    p.nMinWidth     = -1;
+                    p.nMinHeight    = -1;
+                    p.nMaxWidth     = lsp_max(xv[0], -1);
+                    p.nMaxHeight    = lsp_max(xv[1], -1);
+                }
+                else if (n == 1)
+                {
+                    p.nMinWidth     = -1;
+                    p.nMinHeight    = -1;
+                    p.nMaxWidth     = lsp_max(xv[0], -1);
+                    p.nMaxHeight    = p.nMinWidth;
+                }
+            }
+            if ((property == vAtoms[P_MIN]) && (pStyle->get_string(vAtoms[P_MIN], &s) == STATUS_OK))
+            {
+                size_t n = Property::parse_ints(xv, 2, &s);
+                if (n == 2)
+                {
                     p.nMinWidth     = lsp_max(xv[0], -1);
                     p.nMinHeight    = lsp_max(xv[1], -1);
-                    p.nMaxWidth     = -1;
-                    p.nMaxHeight    = -1;
                 }
                 else if (n == 1)
                 {
                     p.nMinWidth     = lsp_max(xv[0], -1);
                     p.nMinHeight    = p.nMinWidth;
-                    p.nMaxWidth     = -1;
-                    p.nMaxHeight    = -1;
+                }
+            }
+            if ((property == vAtoms[P_MAX]) && (pStyle->get_string(vAtoms[P_MIN], &s) == STATUS_OK))
+            {
+                size_t n = Property::parse_ints(xv, 2, &s);
+                if (n == 2)
+                {
+                    p.nMaxWidth     = lsp_max(xv[0], -1);
+                    p.nMaxHeight    = lsp_max(xv[1], -1);
+                }
+                else if (n == 1)
+                {
+                    p.nMaxWidth     = lsp_max(xv[0], -1);
+                    p.nMaxHeight    = p.nMaxWidth;
                 }
             }
         }
@@ -114,6 +144,16 @@ namespace lsp
             {
                 if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nMinWidth), long(p.nMinHeight), long(p.nMaxWidth), long(p.nMaxHeight)))
                     pStyle->set_string(vAtoms[P_VALUE], &s);
+            }
+            if (vAtoms[P_MIN] >= 0)
+            {
+                if (s.fmt_ascii("%ld %ld", long(p.nMinWidth), long(p.nMinHeight)))
+                    pStyle->set_string(vAtoms[P_MIN], &s);
+            }
+            if (vAtoms[P_MAX] >= 0)
+            {
+                if (s.fmt_ascii("%ld %ld", long(p.nMaxWidth), long(p.nMaxHeight)))
+                    pStyle->set_string(vAtoms[P_MAX], &s);
             }
         }
 
