@@ -168,9 +168,9 @@ namespace lsp
             float scaling   = lsp_max(0.0f, sScaling.get());
             size_t angle    = sAngle.get() & 3;
 
-            border.scale_lightness(bright);
-            font.scale_lightness(bright);
-            bcl.scale_lightness(bright);
+            border.scale_lch_luminance(bright);
+            font.scale_lch_luminance(bright);
+            bcl.scale_lch_luminance(bright);
 
             // Draw background
             ws::rectangle_t r   = sButton;

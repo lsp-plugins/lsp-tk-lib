@@ -244,9 +244,9 @@ namespace lsp
                 lsp::Color col(sInvColor);
                 lsp::Color text(sInvTextColor);
                 lsp::Color line(sInvLineColor);
-                col.scale_lightness(bright);
-                text.scale_lightness(bright);
-                line.scale_lightness(bright);
+                col.scale_lch_luminance(bright);
+                text.scale_lch_luminance(bright);
+                line.scale_lch_luminance(bright);
 
                 s->clip_begin(&clip);
                     draw_button(s, col, text, line);
@@ -260,9 +260,9 @@ namespace lsp
                 lsp::Color col(sColor);
                 lsp::Color text(sTextColor);
                 lsp::Color line(sLineColor);
-                col.scale_lightness(bright);
-                text.scale_lightness(bright);
-                line.scale_lightness(bright);
+                col.scale_lch_luminance(bright);
+                text.scale_lch_luminance(bright);
+                line.scale_lch_luminance(bright);
 
                 s->clip_begin(&clip);
                     draw_button(s, col, text, line);
@@ -303,7 +303,7 @@ namespace lsp
                     gr = s->radial_gradient(b.nWidth, b.nTop, b_rad * 0.25f, b.nWidth, b.nTop, b_rad * 3.0f);
 
                 lsp::Color dcol(col);
-                dcol.scale_lightness(bright);
+                dcol.scale_lch_luminance(bright);
                 gr->add_color(0.0f, dcol);
                 dcol.darken(0.9f);
                 gr->add_color(1.0f, dcol);

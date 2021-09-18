@@ -494,8 +494,8 @@ namespace lsp
                     // Compute color of the segment
                     fc.copy(lc);
                     bc.copy(lc);
-                    fc.scale_lightness(bright);
-                    bc.scale_lightness(bright);
+                    fc.scale_lch_luminance(bright);
+                    bc.scale_lch_luminance(bright);
 
                     if (matched)
                         bc.alpha(0.5f);
@@ -552,7 +552,7 @@ namespace lsp
 
             const lsp::Color *col   = get_color(value, &sTextRanges, &sTextColor);
             lsp::Color xcol(*col);
-            xcol.scale_lightness(bright);
+            xcol.scale_lch_luminance(bright);
 
             s->clip_begin(&sAText);
                 sFont.draw(s, xcol, fx, fy, fscaling, &text);

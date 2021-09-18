@@ -192,7 +192,7 @@ namespace lsp
             lsp::Color border_color((on) ? sLedBorderColor : sBorderColor);
 
             get_actual_bg_color(bg_color);
-            col.scale_lightness(brightness);
+            col.scale_lch_luminance(brightness);
 
             // Draw background
             s->fill_rect(bg_color, 0, 0, sSize.nWidth, sSize.nHeight);
@@ -242,7 +242,7 @@ namespace lsp
                 else
                 {
                     lsp::Color c(col);
-                    c.scale_lightness(0.4f);
+                    c.scale_lch_luminance(0.4f);
 
                     // Draw led glass
                     g = s->radial_gradient(cx, cy, r * 0.25f, cx, cy, r);
@@ -296,8 +296,8 @@ namespace lsp
 
             get_actual_bg_color(bg_color);
 
-            color.scale_lightness(brightness);
-            border_color.scale_lightness(brightness);
+            color.scale_lch_luminance(brightness);
+            border_color.scale_lch_luminance(brightness);
 
             // Draw background
             bool aa     = s->set_antialiasing(false);

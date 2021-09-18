@@ -135,7 +135,7 @@ namespace lsp
             float scaling = lsp_max(0.0f, sScaling.get());
             float width   = (sWidth.get() > 0) ? lsp_max(1.0f, sWidth.get() * scaling) : 0;
             lsp::Color color(sColor);
-            color.scale_lightness(sBrightness.get());
+            color.scale_lch_luminance(sBrightness.get());
 
             // Draw
             float cx = 0.0f, cy = 0.0f;

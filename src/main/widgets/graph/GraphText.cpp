@@ -151,7 +151,7 @@ namespace lsp
             float bright    = sBrightness.get();
 
             lsp::Color font_color(sColor);
-            font_color.scale_lightness(bright);
+            font_color.scale_lch_luminance(bright);
 
             // Get center
             float x = 0.0f, y = 0.0f;

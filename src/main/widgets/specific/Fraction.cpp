@@ -488,9 +488,9 @@ namespace lsp
             lsp::Color bc(sDen.sColor);
 
             get_actual_bg_color(bg_color);
-            color.scale_lightness(bright);
-            tc.scale_lightness(bright);
-            bc.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
+            tc.scale_lch_luminance(bright);
+            bc.scale_lch_luminance(bright);
 
             // Clear
             s->clear(bg_color);

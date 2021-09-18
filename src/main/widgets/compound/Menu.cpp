@@ -885,7 +885,7 @@ namespace lsp
                 if (mi->type()->separator())
                 {
                     color.copy(mi->text_color()->color());
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
                     s->fill_rect(color, &pi->text);
                     continue;
                 }
@@ -894,7 +894,7 @@ namespace lsp
                 if (nSelected == i)
                 {
                     color.copy(mi->bg_selected_color()->color());
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
                     s->fill_rect(color, &pi->area);
                 }
 
@@ -905,7 +905,7 @@ namespace lsp
                     color.copy(mi->text_selected_color()->color());
                 else
                     color.copy(mi->text_color()->color());
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 sFont.draw(s, color, pi->text.nLeft, pi->text.nTop + fp.Ascent, fscaling, &text);
 
                 // Draw shortcut
@@ -938,7 +938,7 @@ namespace lsp
                     if (bw > 0)
                     {
                         color.copy(mi->check_border_color()->color());
-                        color.scale_lightness(bright);
+                        color.scale_lch_luminance(bright);
                         s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         r.nLeft            += bw;
                         r.nTop             += bw;
@@ -947,7 +947,7 @@ namespace lsp
                         br                  = lsp_max(0, br - bw);
 
                         color.copy(mi->check_bg_color()->color());
-                        color.scale_lightness(bright);
+                        color.scale_lch_luminance(bright);
                         s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
 
                         r.nLeft            += bw;
@@ -959,7 +959,7 @@ namespace lsp
                         if (mi->checked()->get())
                         {
                             color.copy(mi->check_color()->color());
-                            color.scale_lightness(bright);
+                            color.scale_lch_luminance(bright);
                             s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         }
                     }
@@ -969,7 +969,7 @@ namespace lsp
                             color.copy(mi->check_color()->color());
                         else
                             color.copy(mi->check_bg_color()->color());
-                        color.scale_lightness(bright);
+                        color.scale_lch_luminance(bright);
                         s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
                     }
                 }
@@ -983,19 +983,19 @@ namespace lsp
                     if (bw > 0)
                     {
                         color.copy(mi->check_border_color()->color());
-                        color.scale_lightness(bright);
+                        color.scale_lch_luminance(bright);
                         s->fill_circle(xc, yc, br, color);
                         br                  = lsp_max(0.0f, br - bw);
 
                         color.copy(mi->check_bg_color()->color());
-                        color.scale_lightness(bright);
+                        color.scale_lch_luminance(bright);
                         s->fill_circle(xc, yc, br, color);
                         br                  = lsp_max(0, br - bw);
 
                         if (mi->checked()->get())
                         {
                             color.copy(mi->check_color()->color());
-                            color.scale_lightness(bright);
+                            color.scale_lch_luminance(bright);
                             s->fill_circle(xc, yc, br, color);
                         }
                     }
@@ -1005,7 +1005,7 @@ namespace lsp
                             color.copy(mi->check_color()->color());
                         else
                             color.copy(mi->check_bg_color()->color());
-                        color.scale_lightness(bright);
+                        color.scale_lch_luminance(bright);
                         s->fill_circle(xc, yc, br, color);
                     }
 
@@ -1017,14 +1017,14 @@ namespace lsp
             if (sUp.visibility()->get())
             {
                 color.copy((sUp.active())   ? sScrollSelectedColor.color() : sScrollColor.color());
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 sUp.get_rectangle(&xr);
                 s->fill_rect(color, &xr);
             }
             if (sDown.visibility()->get())
             {
                 color.copy((sDown.active()) ? sScrollSelectedColor.color() : sScrollColor.color());
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 sDown.get_rectangle(&xr);
                 s->fill_rect(color, &xr);
             }
@@ -1036,7 +1036,7 @@ namespace lsp
             if (sUp.visibility()->get())
             {
                 color.copy((sUp.active())   ? sScrollTextSelectedColor.color() : sScrollTextColor.color());
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 sUp.get_rectangle(&xr);
 
                 float x = xr.nLeft + xr.nWidth * 0.5f;
@@ -1052,7 +1052,7 @@ namespace lsp
             if (sDown.visibility()->get())
             {
                 color.copy((sDown.active()) ? sScrollTextSelectedColor.color() : sScrollTextColor.color());
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 sDown.get_rectangle(&xr);
 
                 float x = xr.nLeft + xr.nWidth * 0.5f;
@@ -1072,7 +1072,7 @@ namespace lsp
             if (border > 0)
             {
                 color.copy(sBorderColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 s->fill_frame(
                     color,
                     0, 0, sSize.nWidth, sSize.nHeight,

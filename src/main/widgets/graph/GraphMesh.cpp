@@ -152,8 +152,8 @@ namespace lsp
             float width     = (sWidth.get() > 0) ? lsp_max(1.0f, sWidth.get() * scaling) : 0.0f;
             float bright    = sBrightness.get();
             lsp::Color line(sColor), fill(sFillColor);
-            line.scale_lightness(bright);
-            fill.scale_lightness(bright);
+            line.scale_lch_luminance(bright);
+            fill.scale_lch_luminance(bright);
 
             float cx = 0.0f, cy = 0.0f;
             cv->origin(sOrigin.get(), &cx, &cy);

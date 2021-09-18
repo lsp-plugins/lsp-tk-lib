@@ -559,7 +559,7 @@ namespace lsp
 
                     // Draw frame
                     color.copy(sColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
                     s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
@@ -575,7 +575,7 @@ namespace lsp
 
                     // Draw text background
                     color.copy(sColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
                     s->fill_round_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
@@ -585,7 +585,7 @@ namespace lsp
                     ws::text_parameters_t tp;
                     ws::font_parameters_t fp;
                     color.copy(sTextColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     if (it != NULL)
                         it->text()->format(&text);
@@ -604,7 +604,7 @@ namespace lsp
 
                     // Draw arrows
                     color.copy(sSpinColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->fill_triangle(
                         tloc.nLeft, tloc.nTop + (fp.Height*3.0f)/7.0f,

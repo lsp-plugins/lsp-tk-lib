@@ -231,9 +231,9 @@ namespace lsp
                 bcol_r.copy(sRBorderColor);
             }
 
-            bcol_l.scale_lightness(brightness);
-            bcol_r.scale_lightness(brightness);
-            color.scale_lightness(brightness);
+            bcol_l.scale_lch_luminance(brightness);
+            bcol_r.scale_lch_luminance(brightness);
+            color.scale_lch_luminance(brightness);
 
             // Get basis
             GraphAxis *basis    = cv->axis(sBasis.get());

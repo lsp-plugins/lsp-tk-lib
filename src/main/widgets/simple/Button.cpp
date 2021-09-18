@@ -390,9 +390,9 @@ namespace lsp
 
             get_actual_bg_color(bg_color);
 
-            color.scale_lightness(brightness);
-            tcolor.scale_lightness(brightness);
-            border_color.scale_lightness(brightness);
+            color.scale_lch_luminance(brightness);
+            tcolor.scale_lch_luminance(brightness);
+            border_color.scale_lch_luminance(brightness);
 
             // Draw background
             bool aa     = s->set_antialiasing(false);

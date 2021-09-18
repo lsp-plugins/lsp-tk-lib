@@ -301,7 +301,7 @@ namespace lsp
             {
                 float radius    = fdot + fpad + fborder;
                 lsp::Color gcol((nXFlags & F_HIGHLIGHT) ? sHoverBorderColor : sBorderColor);
-                gcol.scale_lightness(bright);
+                gcol.scale_lch_luminance(bright);
 
                 // Draw border
                 ws::IGradient *gr   = s->radial_gradient(x, y, 0.0f, x, y, radius);
@@ -318,7 +318,7 @@ namespace lsp
                 {
                     s->set_antialiasing(sSmooth.get());
                     lsp::Color hole((nXFlags & F_HIGHLIGHT) ? sHoverGapColor : sGapColor);
-                    hole.scale_lightness(bright);
+                    hole.scale_lch_luminance(bright);
                     s->set_antialiasing(sSmooth.get());
                     s->fill_circle(x, y, fpad + fdot, hole);
                 }
@@ -326,7 +326,7 @@ namespace lsp
 
             // Draw the inner contents
             lsp::Color color((nXFlags & F_HIGHLIGHT) ? sHoverColor : sColor);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
             s->set_antialiasing(sSmooth.get());
             s->fill_circle(x, y, fdot, color);
             s->set_antialiasing(aa);

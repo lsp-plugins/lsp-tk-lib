@@ -304,7 +304,7 @@ namespace lsp
 
             // Draw screw
             lsp::Color screw(sScrewColor);
-            screw.scale_lightness(0.5f);
+            screw.scale_lch_luminance(0.5f);
 
             gr = s->radial_gradient(cx + (rad * M_RGOLD_RATIO), cy - (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
             gr->add_color(0.0, 1.0, 1.0, 1.0);
@@ -370,8 +370,8 @@ namespace lsp
             lsp::Color logo(sColor);
             lsp::Color font(sTextColor);
 
-            logo.scale_lightness(bright);
-            font.scale_lightness(bright);
+            logo.scale_lch_luminance(bright);
+            font.scale_lch_luminance(bright);
 
             float logo_l        = logo.lightness();
             ssize_t chamfer     = lsp_max(1.0f, scaling * 3.0f);

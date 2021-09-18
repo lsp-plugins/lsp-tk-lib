@@ -122,7 +122,7 @@ namespace lsp
 
         float Color::hsl_hue(float h)
         {
-            float old = sColor.hue();
+            float old = sColor.hsl_hue();
             sColor.hue(h);
             sync();
             return old;
@@ -130,7 +130,7 @@ namespace lsp
 
         float Color::hsl_saturation(float s)
         {
-            float old = sColor.saturation();
+            float old = sColor.hsl_saturation();
             sColor.saturation(s);
             sync();
             return old;
@@ -138,7 +138,7 @@ namespace lsp
 
         float Color::hsl_lightness(float l)
         {
-            float old = sColor.lightness();
+            float old = sColor.hsl_lightness();
             sColor.lightness(l);
             sync();
             return old;

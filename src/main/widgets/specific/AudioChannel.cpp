@@ -210,8 +210,8 @@ namespace lsp
             // Draw the poly
             lsp::Color fill(sColor);
             lsp::Color wire(sWaveBorderColor);
-            fill.scale_lightness(bright);
-            wire.scale_lightness(bright);
+            fill.scale_lch_luminance(bright);
+            wire.scale_lch_luminance(bright);
 
             bool aa             = s->set_antialiasing(true);
             s->draw_poly(fill, wire, border, x, y, n_points);
@@ -254,8 +254,8 @@ namespace lsp
 
                 lsp::Color fill(sFadeInColor);
                 lsp::Color wire(sFadeInBorderColor);
-                fill.scale_lightness(bright);
-                wire.scale_lightness(bright);
+                fill.scale_lch_luminance(bright);
+                wire.scale_lch_luminance(bright);
 
                 s->draw_poly(fill, wire, border, x, y, 6);
             }
@@ -283,8 +283,8 @@ namespace lsp
 
                 lsp::Color fill(sFadeOutColor);
                 lsp::Color wire(sFadeOutBorderColor);
-                fill.scale_lightness(bright);
-                wire.scale_lightness(bright);
+                fill.scale_lch_luminance(bright);
+                wire.scale_lch_luminance(bright);
 
                 s->draw_poly(fill, wire, border, x, y, 6);
             }
@@ -305,7 +305,7 @@ namespace lsp
             // Clear the surface
             lsp::Color bg;
             get_actual_bg_color(bg);
-            bg.scale_lightness(bright);
+            bg.scale_lch_luminance(bright);
             s->clear(bg);
 
             size_t samples      = vSamples.size();
@@ -320,7 +320,7 @@ namespace lsp
                 if (line_w > 0)
                 {
                     lsp::Color line(sLineColor);
-                    line.scale_lightness(bright);
+                    line.scale_lch_luminance(bright);
 
                     float sy            = r.nHeight * 0.5f;
                     bool aa             = s->set_antialiasing(false);

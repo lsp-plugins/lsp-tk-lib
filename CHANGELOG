@@ -7,6 +7,8 @@
 - Added new Display::wait_events() method for polling display for incoming events.
 - Updated rendering of tk::LedMeterChannel widget.
 - Fixed NULL dereference when linking styles in the schema.
+- Refactoring of widget rendering, allmost all usages of Color::scale_lightness
+  replaced with Color::scale_lch_luminance.
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.

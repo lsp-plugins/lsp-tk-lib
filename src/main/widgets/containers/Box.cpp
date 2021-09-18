@@ -247,7 +247,7 @@ namespace lsp
                 if (border > 0)
                 {
                     border_color.copy(sBorderColor);
-                    border_color.scale_lightness(bright);
+                    border_color.scale_lch_luminance(bright);
                     Rectangle::enter_border(&xr, &sSize, border);
                     s->fill_frame(border_color, &sSize, &xr);
                 }
@@ -311,7 +311,7 @@ namespace lsp
                         if (border > 0)
                         {
                             border_color.copy(sBorderColor);
-                            border_color.scale_lightness(bright);
+                            border_color.scale_lch_luminance(bright);
                             Rectangle::enter_border(&xr, &sSize, border);
                             s->fill_frame(border_color, &sSize, &xr);
                         }

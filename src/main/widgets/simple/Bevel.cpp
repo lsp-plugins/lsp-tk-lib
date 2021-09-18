@@ -204,8 +204,8 @@ namespace lsp
 
             lsp::Color col(sColor), bcol(sBorderColor);
             float brightness    = sBrightness.get();
-            col.scale_lightness(brightness);
-            bcol.scale_lightness(brightness);
+            col.scale_lch_luminance(brightness);
+            bcol.scale_lch_luminance(brightness);
 
             // Find across all corner points the points which lay 'below' the split boundary
             // This can be done by computing the scalar multiplication between normal and a

@@ -411,28 +411,21 @@ namespace lsp
             {
                 scol.copy(sBalanceColor);
                 sdcol.copy(sScaleColor);
-
-                scol.scale_lightness(bright);
-                sdcol.scale_lightness(bright);
             }
             else
             {
                 scol.copy(sScaleColor);
                 sdcol.copy(sScaleColor);
-
-                scol.scale_lightness(bright);
-                sdcol.scale_lightness(sScaleBrightness.get() * bright);
+                sdcol.scale_hsl_lightness(sScaleBrightness.get());
             }
 
             lsp::Color hcol(sHoleColor);
             lsp::Color bg_color;
-            lsp::Color cap(sColor);
-            lsp::Color tip(sTipColor);
 
             get_actual_bg_color(bg_color);
-            cap.scale_lightness(bright);
-            tip.scale_lightness(bright);
-            hcol.scale_lightness(bright);
+            hcol.scale_lch_luminance(bright);
+            scol.scale_lch_luminance(bright);
+            sdcol.scale_lch_luminance(bright);
 
             // Draw background
             s->clear(bg_color);
@@ -497,8 +490,8 @@ namespace lsp
                 {
                     if (sBalanceTipColorCustom.get())
                     {
-                        scol.copy(sTipColor);
-                        scol.scale_lightness(bright);
+                        scol.copy(sBalanceTipColor);
+                        scol.scale_lch_luminance(bright);
                     }
 
                     delta = btsz / (xr - scale * 0.5f);
@@ -522,6 +515,11 @@ namespace lsp
 
             if (sFlat.get())
             {
+                lsp::Color cap(sColor);
+                lsp::Color tip(sTipColor);
+                cap.scale_lch_luminance(bright);
+                tip.scale_lch_luminance(bright);
+
                 // Draw cap
                 s->fill_circle(c_x, c_y, xr, cap);
 
@@ -531,12 +529,17 @@ namespace lsp
             }
             else
             {
+                lsp::Color cap(sColor);
+                lsp::Color tip(sTipColor);
+
                 for (size_t i=0; i<=chamfer; ++i, --xr)
                 {
                     // Compute color
-                    float bright = float(i + 1.0f) / (chamfer + 1);
-                    scol.blend(cap, hcol, bright);
+                    float xb = float(i + 1.0f) / (chamfer + 1);
+                    scol.blend(cap, hcol, xb);
                     sdcol.blend(scol, hcol, 0.5f);
+                    scol.scale_hsl_lightness(bright);
+                    sdcol.scale_hsl_lightness(bright);
 
                     // Draw cap
                     ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, xr, c_x + xr, c_y - xr, xr * 4.0);
@@ -547,7 +550,8 @@ namespace lsp
 
                     // Draw tip
                     scol.copy(tip);
-                    scol.blend(hcol, bright);
+                    scol.blend(hcol, xb);
+                    scol.scale_lch_luminance(bright);
                     s->line(c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
                             c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, scol);
                 }
