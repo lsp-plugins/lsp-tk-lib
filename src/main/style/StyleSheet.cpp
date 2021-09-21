@@ -161,7 +161,8 @@ namespace lsp
                 F_COLORS        = 1 << 0,
                 F_FONTS         = 1 << 1,
                 F_ROOT          = 1 << 2,
-                F_META          = 1 << 3
+                F_META          = 1 << 3,
+                F_CONST         = 1 << 4
             };
             size_t flags = 0;
 
@@ -196,6 +197,16 @@ namespace lsp
                             }
                             res = parse_fonts(p);
                             flags  |= F_FONTS;
+                        }
+                        else if (p->name()->equals_ascii("constants"))
+                        {
+                            if (flags & F_CONST)
+                            {
+                                sError.set_ascii("Duplicate element 'constants'");
+                                return STATUS_BAD_FORMAT;
+                            }
+                            res = parse_constants(p);
+                            flags  |= F_CONST;
                         }
                         else if (p->name()->equals_ascii("style"))
                             res = parse_style(p, false);
@@ -376,6 +387,60 @@ namespace lsp
                         // Drop color on error
                         if (res != STATUS_OK)
                             delete c;
+                        break;
+                    }
+
+                    case xml::XT_END_ELEMENT:
+                        return STATUS_OK;
+
+                    default:
+                        return STATUS_CORRUPTED;
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
+        }
+
+        status_t StyleSheet::parse_constants(xml::PullParser *p)
+        {
+            status_t item, res = STATUS_OK;
+
+            while (true)
+            {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                switch (item)
+                {
+                    case xml::XT_CHARACTERS:
+                    case xml::XT_COMMENT:
+                        break;
+
+                    case xml::XT_START_ELEMENT:
+                    {
+                        // Check that color has not been previously defined
+                        if (vConstants.exists(p->name()))
+                        {
+                            sError.fmt_utf8("Duplicated constant name: '%s'", p->name()->get_utf8());
+                            return STATUS_DUPLICATED;
+                        }
+
+                        // Create color object
+                        LSPString *value = new LSPString();
+                        if (value == NULL)
+                            return STATUS_NO_MEM;
+
+                        // Try to parse color
+                        if ((res = parse_constant(p, value)) == STATUS_OK)
+                        {
+                            if (!vConstants.put(p->name(), value, NULL))
+                                res = STATUS_NO_MEM;
+                        }
+
+                        // Drop color on error
+                        if (res != STATUS_OK)
+                            delete value;
                         break;
                     }
 
@@ -612,6 +677,59 @@ namespace lsp
                     return res;
             }
         }
+
+        status_t StyleSheet::parse_constant(xml::PullParser *p, LSPString *value)
+        {
+            status_t item, res = STATUS_OK;
+            bool set = false;
+
+            while (true)
+            {
+                if ((item = p->read_next()) < 0)
+                    return -item;
+
+                switch (item)
+                {
+                    case xml::XT_CHARACTERS:
+                    case xml::XT_COMMENT:
+                        break;
+
+                    case xml::XT_ATTRIBUTE:
+                        // Value already has been set?
+                        if (set)
+                        {
+                            sError.fmt_utf8("Value has already been set");
+                            return STATUS_BAD_FORMAT;
+                        }
+                        set = true;
+
+                        // Parse value
+                        if (p->name()->equals_ascii("value"))
+                            res = (value->set(p->value())) ? STATUS_OK : STATUS_NO_MEM;
+                        else
+                        {
+                            sError.fmt_utf8("Unknown property '%s' for constant", p->name()->get_utf8());
+                            return STATUS_CORRUPTED;
+                        }
+                        break;
+
+                    case xml::XT_END_ELEMENT:
+                        if (!value)
+                        {
+                            sError.fmt_utf8("Not specified value for constant '%s'", p->name()->get_utf8());
+                            return STATUS_BAD_FORMAT;
+                        }
+                        return STATUS_OK;
+
+                    default:
+                        return STATUS_CORRUPTED;
+                }
+
+                if (res != STATUS_OK)
+                    return res;
+            }
+        }
+
 
         status_t StyleSheet::parse_font(xml::PullParser *p, font_t *font)
         {
@@ -1039,7 +1157,7 @@ namespace lsp
             return (name.set_utf8(style)) ? enum_parents(&name, names) : STATUS_NO_MEM;
         }
 
-        ssize_t StyleSheet::get_property(const LSPString *style, const LSPString *property, LSPString *dst)
+        ssize_t StyleSheet::get_property(const LSPString *style, const LSPString *property, LSPString *dst) const
         {
             style_t *s = (style != NULL) ? vStyles.get(style) : pRoot;
             if (s == NULL)
@@ -1051,7 +1169,7 @@ namespace lsp
             return (dst->set(value)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        ssize_t StyleSheet::get_property(const char *style, const char *property, LSPString *dst)
+        ssize_t StyleSheet::get_property(const char *style, const char *property, LSPString *dst) const
         {
             LSPString s, p;
             if (!p.set_utf8(property))
@@ -1065,7 +1183,7 @@ namespace lsp
             return get_property(&s, &p, dst);
         }
 
-        ssize_t StyleSheet::get_color(const LSPString *color, lsp::Color *dst)
+        ssize_t StyleSheet::get_color(const LSPString *color, lsp::Color *dst) const
         {
             lsp::Color *xcol = vColors.get(color);
             if (xcol == NULL)
@@ -1075,7 +1193,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        ssize_t StyleSheet::get_color(const char *color, lsp::Color *dst)
+        ssize_t StyleSheet::get_color(const char *color, lsp::Color *dst) const
         {
             LSPString c;
             if (!c.set_utf8(color))
@@ -1083,7 +1201,24 @@ namespace lsp
             return get_color(&c, dst);
         }
 
-        ssize_t StyleSheet::get_font(const LSPString *font, LSPString *path, bool *alias)
+        ssize_t StyleSheet::get_constant(const LSPString *name, LSPString *dst) const
+        {
+            LSPString *value = vConstants.get(name);
+            if (value == NULL)
+                return STATUS_NOT_FOUND;
+
+            return (dst->set(name)) ? STATUS_OK : STATUS_NO_MEM;
+        }
+
+        ssize_t StyleSheet::get_constant(const char *name, LSPString *dst) const
+        {
+            LSPString n;
+            if (!n.set_utf8(name))
+                return STATUS_NOT_FOUND;
+            return get_constant(&n, dst);
+        }
+
+        ssize_t StyleSheet::get_font(const LSPString *font, LSPString *path, bool *alias) const
         {
             font_t *f = vFonts.get(font);
             if (f == NULL)
@@ -1100,7 +1235,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        ssize_t StyleSheet::get_font(const char *font, LSPString *path, bool *alias)
+        ssize_t StyleSheet::get_font(const char *font, LSPString *path, bool *alias) const
         {
             LSPString c;
             if (!c.set_utf8(font))
