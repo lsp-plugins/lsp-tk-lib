@@ -124,14 +124,14 @@ namespace lsp
 
             public:
                 inline const LSPString *title() const                               { return &sTitle;       }
-                status_t            enum_colors(lltl::parray<LSPString> *names);
-                status_t            enum_styles(lltl::parray<LSPString> *names);
-                status_t            enum_fonts(lltl::parray<LSPString> *names);
-                status_t            enum_constants(lltl::parray<LSPString> *names);
-                status_t            enum_properties(const LSPString *style, lltl::parray<LSPString> *names);
-                status_t            enum_properties(const char *style, lltl::parray<LSPString> *names);
-                status_t            enum_parents(const LSPString *style, lltl::parray<LSPString> *names);
-                status_t            enum_parents(const char *style, lltl::parray<LSPString> *names);
+                status_t            enum_colors(lltl::parray<LSPString> *names) const;
+                status_t            enum_styles(lltl::parray<LSPString> *names) const;
+                status_t            enum_fonts(lltl::parray<LSPString> *names) const;
+                status_t            enum_constants(lltl::parray<LSPString> *names) const;
+                status_t            enum_properties(const LSPString *style, lltl::parray<LSPString> *names) const;
+                status_t            enum_properties(const char *style, lltl::parray<LSPString> *names) const;
+                status_t            enum_parents(const LSPString *style, lltl::parray<LSPString> *names) const;
+                status_t            enum_parents(const char *style, lltl::parray<LSPString> *names) const;
 
                 ssize_t             get_property(const LSPString *style, const LSPString *property, LSPString *dst) const;
                 ssize_t             get_property(const char *style, const char *property, LSPString *dst) const;

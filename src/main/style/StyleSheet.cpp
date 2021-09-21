@@ -1109,22 +1109,27 @@ namespace lsp
             return res;
         }
 
-        status_t StyleSheet::enum_colors(lltl::parray<LSPString> *names)
+        status_t StyleSheet::enum_colors(lltl::parray<LSPString> *names) const
         {
             return (vColors.keys(names)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t StyleSheet::enum_fonts(lltl::parray<LSPString> *names)
+        status_t StyleSheet::enum_fonts(lltl::parray<LSPString> *names) const
         {
             return (vFonts.keys(names)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t StyleSheet::enum_styles(lltl::parray<LSPString> *names)
+        status_t StyleSheet::enum_styles(lltl::parray<LSPString> *names) const
         {
             return (vStyles.keys(names)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t StyleSheet::enum_properties(const LSPString *style, lltl::parray<LSPString> *names)
+        status_t StyleSheet::enum_constants(lltl::parray<LSPString> *names) const
+        {
+            return (vConstants.keys(names)) ? STATUS_OK : STATUS_NO_MEM;
+        }
+
+        status_t StyleSheet::enum_properties(const LSPString *style, lltl::parray<LSPString> *names) const
         {
             style_t *s = (style != NULL) ? vStyles.get(style) : pRoot;
             if (s == NULL)
@@ -1132,7 +1137,7 @@ namespace lsp
             return (s->properties.keys(names)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t StyleSheet::enum_properties(const char *style, lltl::parray<LSPString> *names)
+        status_t StyleSheet::enum_properties(const char *style, lltl::parray<LSPString> *names) const
         {
             if (style == NULL)
                 return enum_properties(static_cast<LSPString *>(NULL), names);
@@ -1140,7 +1145,7 @@ namespace lsp
             return (name.set_utf8(style)) ? enum_properties(&name, names) : STATUS_NO_MEM;
         }
 
-        status_t StyleSheet::enum_parents(const LSPString *style, lltl::parray<LSPString> *names)
+        status_t StyleSheet::enum_parents(const LSPString *style, lltl::parray<LSPString> *names) const
         {
             style_t *s = (style != NULL) ? vStyles.get(style) : pRoot;
             if (s == NULL)
@@ -1149,7 +1154,7 @@ namespace lsp
             return (names->add(s->parents)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
-        status_t StyleSheet::enum_parents(const char *style, lltl::parray<LSPString> *names)
+        status_t StyleSheet::enum_parents(const char *style, lltl::parray<LSPString> *names) const
         {
             if (style == NULL)
                 return enum_parents(static_cast<LSPString *>(NULL), names);
@@ -1207,7 +1212,7 @@ namespace lsp
             if (value == NULL)
                 return STATUS_NOT_FOUND;
 
-            return (dst->set(name)) ? STATUS_OK : STATUS_NO_MEM;
+            return (dst->set(value)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
         ssize_t StyleSheet::get_constant(const char *name, LSPString *dst) const
