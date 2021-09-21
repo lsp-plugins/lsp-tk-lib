@@ -101,23 +101,23 @@ namespace lsp
             protected:
                 status_t            create_builtin_style(IStyleFactory *init);
                 status_t            create_style(const LSPString *name);
-                status_t            create_missing_styles(StyleSheet *sheet);
+                status_t            create_missing_styles(const StyleSheet *sheet);
                 status_t            unlink_styles();
-                status_t            link_styles(StyleSheet *sheet);
-                status_t            configure_styles(StyleSheet *sheet);
+                status_t            link_styles(const StyleSheet *sheet);
+                status_t            configure_styles(const StyleSheet *sheet);
                 static bool         check_parents_configured(Style *s);
 
                 status_t            apply_settings(Style *s, StyleSheet::style_t *xs);
                 status_t            apply_relations(Style *s, const lltl::parray<LSPString> *parents);
                 status_t            apply_relations(Style *s, const char *parents);
                 void                destroy_colors();
-                status_t            init_colors_from_sheet(StyleSheet *sheet);
-                status_t            load_fonts_from_sheet(StyleSheet *sheet, resource::ILoader *loader);
+                status_t            init_colors_from_sheet(const StyleSheet *sheet);
+                status_t            load_fonts_from_sheet(const StyleSheet *sheet, resource::ILoader *loader);
                 static status_t     parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt);
 
                 void                bind(Style *root);
 
-                status_t            apply_internal(StyleSheet *sheet, resource::ILoader *loader);
+                status_t            apply_internal(const StyleSheet *sheet, resource::ILoader *loader);
 
             public:
                 explicit Schema(Atoms *atoms, Display *dpy);
@@ -151,7 +151,7 @@ namespace lsp
                  * @param loader resource loader
                  * @return status of operation
                  */
-                status_t            apply(StyleSheet *sheet, resource::ILoader *loader = NULL);
+                status_t            apply(const StyleSheet *sheet, resource::ILoader *loader = NULL);
 
             public:
                 LSP_TK_PROPERTY(Float,          scaling,            &sScaling)

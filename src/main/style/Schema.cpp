@@ -104,7 +104,7 @@ namespace lsp
             }
         }
 
-        status_t Schema::init_colors_from_sheet(StyleSheet *sheet)
+        status_t Schema::init_colors_from_sheet(const StyleSheet *sheet)
         {
             lltl::parray<LSPString> vk;
             sheet->vColors.keys(&vk);
@@ -129,7 +129,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::load_fonts_from_sheet(StyleSheet *sheet, resource::ILoader *loader)
+        status_t Schema::load_fonts_from_sheet(const StyleSheet *sheet, resource::ILoader *loader)
         {
             status_t res;
             lltl::parray<LSPString> vk;
@@ -248,7 +248,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::apply(StyleSheet *sheet, resource::ILoader *loader)
+        status_t Schema::apply(const StyleSheet *sheet, resource::ILoader *loader)
         {
             if (sheet == NULL)
                 return STATUS_BAD_ARGUMENTS;
@@ -261,7 +261,7 @@ namespace lsp
             return res;
         }
 
-        status_t Schema::create_missing_styles(StyleSheet *sheet)
+        status_t Schema::create_missing_styles(const StyleSheet *sheet)
         {
             // List all possible styles sheet names
             status_t res;
@@ -286,7 +286,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::link_styles(StyleSheet *sheet)
+        status_t Schema::link_styles(const StyleSheet *sheet)
         {
             // List all possible styles sheet names
             status_t res;
@@ -340,7 +340,7 @@ namespace lsp
             return true;
         }
 
-        status_t Schema::configure_styles(StyleSheet *sheet)
+        status_t Schema::configure_styles(const StyleSheet *sheet)
         {
             // List all possible styles sheet names
             status_t res;
@@ -405,7 +405,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::apply_internal(StyleSheet *sheet, resource::ILoader *loader)
+        status_t Schema::apply_internal(const StyleSheet *sheet, resource::ILoader *loader)
         {
             status_t res;
 
