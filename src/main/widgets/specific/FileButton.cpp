@@ -303,7 +303,7 @@ namespace lsp
                     gr = s->radial_gradient(b.nWidth, b.nTop, b_rad * 0.25f, b.nWidth, b.nTop, b_rad * 3.0f);
 
                 lsp::Color dcol(col);
-                dcol.scale_lch_luminance(bright);
+                dcol.scale_hsl_lightness(bright);
                 gr->add_color(0.0f, dcol);
                 dcol.darken(0.9f);
                 gr->add_color(1.0f, dcol);
