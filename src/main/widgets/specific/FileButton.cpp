@@ -119,7 +119,7 @@ namespace lsp
 
             // Additional slots
             handler_id_t id = 0;
-            id = sSlots.add(SLOT_CHANGE, slot_on_submit, self());
+            id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }

@@ -134,6 +134,11 @@ namespace lsp
                 status_t            remove(size_t index, size_t count);
 
                 /**
+                 * Clear the list.
+                 */
+                void                clear();
+
+                /**
                  * Remove string at the specified index
                  * @param index index of the string
                  * @return status of operation

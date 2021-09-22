@@ -229,6 +229,19 @@ namespace lsp
             return STATUS_OK;
         }
 
+        void StringList::clear()
+        {
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                StringItem *si = vItems.uget(i);
+                if (si != NULL)
+                    delete si;
+            }
+            vItems.flush();
+
+            sync();
+        }
+
         status_t StringList::premove(const String *s)
         {
             // Lookup for the entry
