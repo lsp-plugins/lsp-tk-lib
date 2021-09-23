@@ -116,6 +116,7 @@ namespace lsp
                 Window                      sWindow;        // Popup window
 
                 ws::rectangle_t             sLabel;
+                ws::rectangle_t             sText;          // Text parameters
                 ws::rectangle_t             sArea;
                 size_t                      nMBState;       // Mouse button state
                 bool                        bInside;

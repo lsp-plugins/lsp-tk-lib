@@ -86,6 +86,7 @@ namespace lsp
 
                 public:
                     inline size_t       size() const                        { return sList.size();                                  }
+                    inline bool         is_empty() const                    { return sList.is_empty();                              }
                     inline status_t     add(widget_t *w)                    { return GenericWidgetList::add(w, false);              }
                     inline status_t     madd(widget_t *w)                   { return GenericWidgetList::add(w, true);               }
                     inline status_t     insert(widget_t *w, size_t index)   { return GenericWidgetList::insert(w, index, false);    }
