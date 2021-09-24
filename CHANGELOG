@@ -9,6 +9,8 @@
 - Fixed NULL dereference when linking styles in the schema.
 - Refactoring of widget rendering, allmost all usages of Color::scale_lightness
   replaced with Color::scale_lch_luminance.
+- Added 'reduce' options to prop::Allocation property.
+- Added 'reduce' options handling by tk::Box and tk::Grid widgets.
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.
