@@ -409,11 +409,14 @@ namespace lsp
             ws::size_limit_t sr;
             lltl::parray<cell_t>    expand;
             size_t n_expand     = 0;
+            size_t num_reduce   = 0;
+            size_t n_reduced    = 0;
 
             for (size_t i=0, n=visible.size(); i<n; ++i)
             {
                 // Get widget
-                cell_t *w =          visible.uget(i);
+                cell_t *w               = visible.uget(i);
+                tk::Allocation *alloc   = w->pWidget->allocation();
 
                 // Request size limit and padding of the widget
                 w->pWidget->get_padded_size_limits(&sr);
@@ -425,7 +428,12 @@ namespace lsp
                     n_left             -= w->a.nWidth;
 
                     // Estimate number of expanded widgets and their allocated space
-                    if (w->pWidget->allocation()->hexpand())
+                    if (alloc->hreduce())
+                    {
+                        n_reduced      += w->a.nWidth;
+                        ++num_reduce;
+                    }
+                    else if (alloc->hexpand())
                     {
                         n_expand           += w->a.nWidth;
                         if (!expand.add(w))
@@ -439,7 +447,12 @@ namespace lsp
                     n_left             -= w->a.nHeight;
 
                     // Estimate number of expanded widgets and their allocated space
-                    if (w->pWidget->allocation()->vexpand())
+                    if (alloc->vreduce())
+                    {
+                        n_reduced          += w->a.nWidth;
+                        ++num_reduce;
+                    }
+                    else if (alloc->vexpand())
                     {
                         n_expand           += w->a.nHeight;
                         if (!expand.add(w))
@@ -453,44 +466,85 @@ namespace lsp
             {
                 ssize_t total = 0;
 
-                if (expand.is_empty())
+                if (num_reduce >= visible.size())
                 {
-                    // Split unused space between all visible widgets
-                    for (size_t i=0, n=visible.size(); i<n; ++i)
+                    // All widgets are marked as 'reduced', just distribute unused space between all
+                    if (horizontal)
                     {
-                        // Get widget
-                        cell_t *w = visible.uget(i);
-
-                        if (horizontal)
+                        for (size_t i=0, n=visible.size(); i<n; ++i)
                         {
+                            cell_t *w = visible.uget(i);
+
                             ssize_t delta   = (w->a.nWidth * n_left) / n_size;
                             w->a.nWidth    += delta;
                             total          += delta;
                         }
-                        else // vertical
+                    }
+                    else
+                    {
+                        for (size_t i=0, n=visible.size(); i<n; ++i)
                         {
+                            cell_t *w = visible.uget(i);
+                            if (w->pWidget->allocation()->vreduce())
+                                continue;
+
                             ssize_t delta   = (w->a.nHeight * n_left) / n_size;
                             w->a.nHeight   += delta;
                             total          += delta;
                         }
                     }
                 }
-                else if (n_expand == 0) // All widgets have minimum width 0
+                else if (expand.is_empty())
                 {
-                    // Split unused space between all expanded widgets
-                    ssize_t delta   = n_left / expand.size();
-                    for (size_t i=0, n=expand.size(); i<n; ++i)
-                    {
-                        // Get widget
-                        cell_t *w       = expand.uget(i);
+                    // Distribute unused space between all visible widgets (excluding reduced)
+                    n_size     -= n_reduced; // Exclude reduced widgets from overall size
 
-                        if (horizontal)
+                    if (horizontal)
+                    {
+                        for (size_t i=0, n=visible.size(); i<n; ++i)
                         {
+                            cell_t *w = visible.uget(i);
+                            if (w->pWidget->allocation()->hreduce())
+                                continue;
+
+                            ssize_t delta   = (w->a.nWidth * n_left) / n_size;
                             w->a.nWidth    += delta;
                             total          += delta;
                         }
-                        else // vertical
+                    }
+                    else
+                    {
+                        for (size_t i=0, n=visible.size(); i<n; ++i)
                         {
+                            cell_t *w = visible.uget(i);
+                            if (w->pWidget->allocation()->vreduce())
+                                continue;
+
+                            ssize_t delta   = (w->a.nHeight * n_left) / n_size;
+                            w->a.nHeight   += delta;
+                            total          += delta;
+                        }
+                    }
+                }
+                else if (n_expand == 0) // Expand flag is set but all widgets have minimum width 0
+                {
+                    // Distribute unused space between all expanded widgets
+                    ssize_t delta   = n_left / expand.size();
+
+                    if (horizontal)
+                    {
+                        for (size_t i=0, n=expand.size(); i<n; ++i)
+                        {
+                            cell_t *w       = expand.uget(i);
+                            w->a.nWidth    += delta;
+                            total          += delta;
+                        }
+                    }
+                    else
+                    {
+                        for (size_t i=0, n=expand.size(); i<n; ++i)
+                        {
+                            cell_t *w       = expand.uget(i);
                             w->a.nHeight   += delta;
                             total          += delta;
                         }
@@ -498,21 +552,22 @@ namespace lsp
                 }
                 else
                 {
-                    // Split unused space between all expanded widgets
-                    // Distribute space proportionally to the current area size
-                    for (size_t i=0, n=expand.size(); i<n; ++i)
+                    // Distribute space proportionally to the current area size of all expanded widgets
+                    if (horizontal)
                     {
-                        // Get widget
-                        cell_t *w       = expand.uget(i);
-
-                        if (horizontal)
+                        for (size_t i=0, n=expand.size(); i<n; ++i)
                         {
+                            cell_t *w       = expand.uget(i);
                             ssize_t delta   = (w->a.nWidth * n_left) / n_expand;
                             w->a.nWidth    += delta;
                             total          += delta;
                         }
-                        else // vertical
+                    }
+                    else
+                    {
+                        for (size_t i=0, n=expand.size(); i<n; ++i)
                         {
+                            cell_t *w       = expand.uget(i);
                             ssize_t delta   = (w->a.nHeight * n_left) / n_expand;
                             w->a.nHeight   += delta;
                             total          += delta;
@@ -524,19 +579,59 @@ namespace lsp
             }
 
             // FOURTH PASS: utilize still unallocated pixels between all visible widgets
-            while (n_left > 0)
+            if (num_reduce >= visible.size())
             {
-                for (size_t i=0, n=visible.size(); i<n; ++i)
+                if (horizontal)
                 {
-                    // Get widget
-                    cell_t *w = visible.uget(i);
-                    if (horizontal)
+                    for (size_t i=0, n=visible.size(); n_left > 0; --n_left)
+                    {
+                        cell_t *w = visible.uget(i);
                         w->a.nWidth     ++;
-                    else // vertical
+                        if ((++i) >= n)
+                            i   = 0;
+                    }
+                }
+                else
+                {
+                    for (size_t i=0, n=visible.size(); n_left > 0; --n_left)
+                    {
+                        cell_t *w = visible.uget(i);
                         w->a.nHeight    ++;
-
-                    if ((n_left--) <= 0)
-                        break;
+                        if ((++i) >= n)
+                            i   = 0;
+                    }
+                }
+            }
+            else
+            {
+                // Skip all 'reduced' widgets and distribute the rest amount of space between other widgets
+                if (horizontal)
+                {
+                    for (size_t i=0, n=visible.size(); n_left > 0; )
+                    {
+                        cell_t *w = visible.uget(i);
+                        if (!w->pWidget->allocation()->hreduce())
+                        {
+                            w->a.nWidth     ++;
+                            --n_left;
+                        }
+                        if ((++i) >= n)
+                            i   = 0;
+                    }
+                }
+                else
+                {
+                    for (size_t i=0, n=visible.size(); n_left > 0; )
+                    {
+                        cell_t *w = visible.uget(i);
+                        if (!w->pWidget->allocation()->vreduce())
+                        {
+                            w->a.nHeight    ++;
+                            --n_left;
+                        }
+                        if ((++i) >= n)
+                            i   = 0;
+                    }
                 }
             }
 
