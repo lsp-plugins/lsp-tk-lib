@@ -31,6 +31,8 @@ namespace lsp
             ".vfill",
             ".hexpand",
             ".vexpand",
+            ".hreduce",
+            ".vreduce",
             NULL
         };
     
@@ -56,13 +58,31 @@ namespace lsp
             psync(flags);
         }
 
+        void Allocation::set_reduce(bool hor, bool vert)
+        {
+            size_t flags = nFlags;
+            flags = lsp_setflag(flags, 1 << F_HREDUCE, hor);
+            flags = lsp_setflag(flags, 1 << F_VREDUCE, vert);
+            if (flags == nFlags)
+                return;
+
+            psync(flags);
+        }
+
         void Allocation::set(bool hfill, bool vfill, bool hexpand, bool vexpand)
+        {
+            set(hfill, vfill, hexpand, vexpand, false, false);
+        }
+
+        void Allocation::set(bool hfill, bool vfill, bool hexpand, bool vexpand, bool hreduce, bool vreduce)
         {
             size_t flags = nFlags;
             flags   = lsp_setflag(flags, 1 << F_HFILL, hfill);
             flags   = lsp_setflag(flags, 1 << F_VFILL, vfill);
             flags   = lsp_setflag(flags, 1 << F_HEXPAND, hexpand);
             flags   = lsp_setflag(flags, 1 << F_VEXPAND, vexpand);
+            flags   = lsp_setflag(flags, 1 << F_HREDUCE, hreduce);
+            flags   = lsp_setflag(flags, 1 << F_VREDUCE, vreduce);
             if (flags == nFlags)
                 return;
 

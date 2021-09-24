@@ -52,6 +52,8 @@ namespace lsp
                     F_VFILL,
                     F_HEXPAND,
                     F_VEXPAND,
+                    F_HREDUCE,
+                    F_VREDUCE,
 
                     F_TOTAL
                 };
@@ -67,20 +69,27 @@ namespace lsp
                 inline  bool    vfill() const                   { return Flags::get(F_VFILL);           }
                 inline  bool    hexpand() const                 { return Flags::get(F_HEXPAND);         }
                 inline  bool    vexpand() const                 { return Flags::get(F_VEXPAND);         }
+                inline  bool    hreduce() const                 { return Flags::get(F_HREDUCE);         }
+                inline  bool    vreduce() const                 { return Flags::get(F_VREDUCE);         }
 
                 inline bool     set_hfill(bool set = true)      { return Flags::set(F_HFILL, set);      }
                 inline bool     set_vfill(bool set = true)      { return Flags::set(F_VFILL, set);      }
                 inline bool     set_hexpand(bool set = true)    { return Flags::set(F_HEXPAND, set);    }
                 inline bool     set_vexpand(bool set = true)    { return Flags::set(F_VEXPAND, set);    }
+                inline bool     set_hreduce(bool set = true)    { return Flags::set(F_HREDUCE, set);    }
+                inline bool     set_vreduce(bool set = true)    { return Flags::set(F_VREDUCE, set);    }
 
                 void            set_fill(bool hor, bool vert);
                 void            set_expand(bool hor, bool vert);
-                void            set_embed(bool hor, bool vert);
+                void            set_reduce(bool hor, bool vert);
                 void            set(bool hfill, bool vfill, bool hexpand, bool vexpand);
+                void            set(bool hfill, bool vfill, bool hexpand, bool vexpand, bool hreduce, bool vreduce);
 
                 inline void     set_fill(bool fill = true)      { set_fill(fill, fill);                 }
                 inline void     set_expand(bool expand = true)  { set_expand(expand, expand);           }
+                inline void     set_reduce(bool reduce= true)   { set_reduce(reduce, reduce);           }
                 inline void     set(bool fill, bool expand)     { set(fill, fill, expand, expand);      }
+                inline void     set(bool fill, bool expand, bool reduce)    { set(fill, fill, expand, expand, reduce, reduce);      }
         };
 
         namespace prop
