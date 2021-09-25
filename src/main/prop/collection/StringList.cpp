@@ -151,7 +151,7 @@ namespace lsp
         StringList::StringItem *StringList::create_item()
         {
             // Here may be some additional initialization stuff
-            return new StringItem(&sChanges);
+            return new StringItem(pDict, &sChanges);
         }
 
         String *StringList::insert(size_t index)

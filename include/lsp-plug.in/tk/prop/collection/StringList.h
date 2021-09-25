@@ -44,7 +44,10 @@ namespace lsp
                 class StringItem: public tk::String
                 {
                     public:
-                        explicit inline StringItem(prop::Listener *listener = NULL): tk::String(NULL) {};
+                        explicit inline StringItem(i18n::IDictionary *dict, prop::Listener *listener = NULL): tk::String(NULL)
+                        {
+                            pDict       = dict;
+                        }
 
                     public:
                         inline void invalidate(i18n::IDictionary *dict)
