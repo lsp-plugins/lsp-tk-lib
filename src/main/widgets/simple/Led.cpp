@@ -177,12 +177,12 @@ namespace lsp
             ws::IGradient *g    = NULL;
             float scaling       = lsp_max(0.0f, sScaling.get());
             float brightness    = sBrightness.get();
-            size_t sz_hole      = (sHole.get()) ? lsp_max(1.0f, scaling) : 0;
-            size_t sz_led       = lsp_max(0.0f, sLed.get() * scaling);
+            ssize_t sz_hole     = (sHole.get()) ? lsp_max(1.0f, scaling) : 0;
+            ssize_t sz_led      = lsp_max(0.0f, sLed.get() * scaling);
             bool gradient       = sGradient.get();
-            size_t light        = (sLed.get() > 0) ? lsp_max(1.0f, sLed.get() * scaling) : 0.0f;
-            size_t border       = (gradient) ? 0 : lsp_max(0.0f, scaling * sBorderSize.get());
-            size_t extra        = lsp_max(sz_hole, sz_led) + border;
+            ssize_t light       = (sLed.get() > 0) ? lsp_max(1.0f, sLed.get() * scaling) : 0.0f;
+            ssize_t border      = (gradient) ? 0 : lsp_max(0.0f, scaling * sBorderSize.get());
+            ssize_t extra       = lsp_max(sz_hole, sz_led) + border;
             bool on             = sOn.get();
 
             // Estimate palette
