@@ -449,7 +449,7 @@ namespace lsp
                     // Estimate number of expanded widgets and their allocated space
                     if (alloc->vreduce())
                     {
-                        n_reduced          += w->a.nWidth;
+                        n_reduced          += w->a.nHeight;
                         ++num_reduce;
                     }
                     else if (alloc->vexpand())
