@@ -70,7 +70,7 @@ namespace lsp
             LSP_TK_BUILTIN_STYLE(ComboBox, "ComboBox", "root");
 
             // ComboBox::Window style
-            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboBox::Window", "Window");
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboBox::Window", "PopupWindow");
 
             // ComboBox::List style
             LSP_TK_BUILTIN_STYLE(ListBox, "ComboBox::List", "ListBox");
