@@ -59,6 +59,7 @@ namespace lsp
                 status_t        premove(const Widget *w);
                 status_t        remove(size_t index);
                 status_t        remove(size_t index, size_t count);
+                status_t        truncate(size_t count);
                 status_t        insert(Widget *w, size_t index, bool manage);
                 void            clear();
                 void            flush();

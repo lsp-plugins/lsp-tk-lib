@@ -145,6 +145,12 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t GenericWidgetList::truncate(size_t count)
+        {
+            size_t n = sList.size();
+            return (n > count) ? remove(count, n - count) : STATUS_OK;
+        }
+
         status_t GenericWidgetList::remove(size_t index, size_t count)
         {
             lltl::darray<item_t> removed;
