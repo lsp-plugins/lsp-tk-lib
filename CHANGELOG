@@ -12,6 +12,7 @@
 - Added 'reduce' options to prop::Allocation property.
 - Added 'reduce' options handling by tk::Box and tk::Grid widgets.
 - Fixed bug in prop::StringList which could yield to ignore of localization parameters.
+- Implemented tk::Schema::add methods for adding custom styles at the initialization stage. 
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.

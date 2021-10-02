@@ -248,6 +248,47 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Schema::add(lltl::parray<IStyleFactory> *list)
+        {
+            return add(list->array(), list->size());
+        }
+
+        status_t Schema::add(lltl::parray<IStyleFactory> &list)
+        {
+            return add(list.array(), list.size());
+        }
+
+        status_t Schema::add(IStyleFactory **list, size_t n)
+        {
+            size_t old  = nFlags;
+            nFlags     |= S_CONFIGURING;
+
+            // Create all necessary styles
+            for (size_t i=0; i<n; ++i)
+            {
+                LSP_STATUS_ASSERT(create_builtin_style(list[i]));
+            }
+
+            // Unset 'configuring' mode
+            nFlags      = old;
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::add(IStyleFactory *factory)
+        {
+            size_t old  = nFlags;
+            nFlags     |= S_CONFIGURING;
+
+            // Create necessary style
+            LSP_STATUS_ASSERT(create_builtin_style(factory));
+
+            // Unset 'configuring' mode
+            nFlags      = old;
+
+            return STATUS_OK;
+        }
+
         status_t Schema::apply(const StyleSheet *sheet, resource::ILoader *loader)
         {
             if (sheet == NULL)

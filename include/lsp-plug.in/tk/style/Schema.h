@@ -146,6 +146,29 @@ namespace lsp
                 status_t            init(IStyleFactory **list, size_t n);
 
                 /**
+                 * Register additional styles
+                 * @param list list of styles to register
+                 * @return status of operation
+                 */
+                status_t            add(lltl::parray<IStyleFactory> *list);
+                status_t            add(lltl::parray<IStyleFactory> &list);
+
+                /**
+                 * Register additional styles
+                 * @param list array of pointers to style initializers
+                 * @param n number of elements in array
+                 * @return status of operation
+                 */
+                status_t            add(IStyleFactory **list, size_t n);
+
+                /**
+                 * Register additional style
+                 * @param factory style factory
+                 * @return status of operation
+                 */
+                status_t            add(IStyleFactory *factory);
+
+                /**
                  * Apply stylesheet settings to the schema
                  * @param sheet style sheet
                  * @param loader resource loader
