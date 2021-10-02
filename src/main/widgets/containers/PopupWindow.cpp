@@ -231,42 +231,24 @@ namespace lsp
             bool arranged = false;
             ws::rectangle_t wrect;
 
-            // Perform forced preferred arrange
-            for (size_t i=0, n=vArrangements.size(); i<n; ++i)
+            // Perform the following order:
+            //   - forced preferred arrange
+            //   - non-forced preferred arrange
+            //   - forced preferred arrange with truncate option
+            //   - non-forced preferred arrange with truncate option
+            for (size_t mode=0; (!arranged) && (mode<4); ++mode)
             {
-                arrangement_t *ar = vArrangements.uget(i);
-                if ((arranged = arrange_preferred(&wrect, &trg, ar, true)))
-                    break;
+                for (size_t i=0, n=vArrangements.size(); (!arranged) && (i<n); ++i)
+                    arranged = arrange_preferred(&wrect, &trg, vArrangements.uget(i), mode & 1, mode & 2);
             }
 
-            // Perform non-forced preferred arrange
-            for (size_t i=0, n=vArrangements.size(); i<n; ++i)
+            // Perform :
+            //   - flexible arrange
+            //   - flexible arrange with force flag
+            for (size_t mode=0; (!arranged) && (mode<2); ++mode)
             {
-                arrangement_t *ar = vArrangements.uget(i);
-                if ((arranged = arrange_preferred(&wrect, &trg, ar, false)))
-                    break;
-            }
-
-            // Perform flexible arrange
-            if (!arranged)
-            {
-                for (size_t i=0, n=vArrangements.size(); i<n; ++i)
-                {
-                    arrangement_t *ar = vArrangements.uget(i);
-                    if ((arranged = arrange_window(&wrect, &trg, ar, false)))
-                        break;
-                }
-            }
-
-            // Perform flexible arrange with force flag
-            if (!arranged)
-            {
-                for (size_t i=0, n=vArrangements.size(); i<n; ++i)
-                {
-                    arrangement_t *ar = vArrangements.uget(i);
-                    if ((arranged = arrange_window(&wrect, &trg, ar, true)))
-                        break;
-                }
+                for (size_t i=0, n=vArrangements.size(); (!arranged) && (i<n); ++i)
+                    arranged = arrange_window(&wrect, &trg, vArrangements.uget(i), mode & 1);
             }
 
             // Perform forced arrange
@@ -339,13 +321,13 @@ namespace lsp
             // Add self padding
             sPadding.add(r, scaling);
 
-//            lsp_trace("this=%p, w={%d, %d, %d}, h={%d, %d, %d}", this,
-//                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nPreWidth),
-//                    int(r->nMinHeight), int(r->nMaxHeight), int(r->nPreHeight)
-//                );
+            lsp_trace("this=%p, w={%d, %d, %d}, h={%d, %d, %d}", this,
+                    int(r->nMinWidth), int(r->nMaxWidth), int(r->nPreWidth),
+                    int(r->nMinHeight), int(r->nMaxHeight), int(r->nPreHeight)
+                );
         }
 
-        bool PopupWindow::arrange_preferred(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force)
+        bool PopupWindow::arrange_preferred(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force, bool truncate)
         {
             ws::rectangle_t ws;
             ws::size_limit_t sr;
@@ -374,6 +356,12 @@ namespace lsp
                     ws.nTop    += trg->nHeight;
                     if ((force) && (ar->bStretch) && (ws.nWidth < trg->nWidth))
                         ws.nWidth   = trg->nWidth;
+                    if ((truncate) && ((ws.nTop + ws.nHeight) > sh))
+                    {
+                        ws.nHeight  = sh - ws.nTop;
+                        if (ws.nHeight < sr.nMinHeight)
+                            return false;
+                    }
                     break;
 
                 case A_TOP:
@@ -385,6 +373,14 @@ namespace lsp
                     ws.nTop     = trg->nTop - ws.nHeight;
                     if ((force) && (ar->bStretch) && (ws.nWidth < trg->nWidth))
                         ws.nWidth   = trg->nWidth;
+
+                    if ((truncate) && (ws.nTop < 0))
+                    {
+                        ws.nHeight += ws.nTop;
+                        ws.nTop     = 0;
+                        if (ws.nHeight < sr.nMinHeight)
+                            return false;
+                    }
                     break;
 
                 case A_LEFT:
@@ -396,6 +392,13 @@ namespace lsp
                     ws.nLeft    = trg->nLeft - ws.nWidth;
                     if ((force) && (ar->bStretch) && (ws.nHeight < trg->nHeight))
                         ws.nHeight = trg->nHeight;
+                    if ((truncate) && (ws.nLeft < 0))
+                    {
+                        ws.nWidth  += ws.nLeft;
+                        ws.nLeft    = 0;
+                        if (ws.nWidth < sr.nMinWidth)
+                            return false;
+                    }
                     break;
 
                 case A_RIGHT:
@@ -406,7 +409,13 @@ namespace lsp
 
                     ws.nLeft   += trg->nWidth;
                     if ((force) && (ar->bStretch) && (ws.nHeight < trg->nHeight))
-                        ws.nHeight = trg->nHeight;
+                        ws.nHeight  = trg->nHeight;
+                    if ((truncate) && ((ws.nLeft + ws.nWidth) > sh))
+                    {
+                        ws.nWidth   = sh - ws.nLeft;
+                        if (ws.nWidth < sr.nMinWidth)
+                            return false;
+                    }
                     break;
 
                 default:
