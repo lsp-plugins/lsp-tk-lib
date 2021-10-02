@@ -694,32 +694,37 @@ namespace lsp
                     return STATUS_OK;
 
                 // Different behaviour for slider
-                ssize_t range   = (sOrientation.horizontal()) ? sSpareSpace.nWidth : sSpareSpace.nHeight;
+                ssize_t range   = (sOrientation.horizontal()) ?
+                                    lsp_max(0, sSpareSpace.nWidth - sSlider.nWidth) :
+                                    lsp_max(0, sSpareSpace.nHeight - sSlider.nHeight);
 
-                float value     = (sOrientation.horizontal()) ? e->nLeft : e->nTop;
-                float result    = fLastValue;
-                float delta     = sValue.range() * float(value - nLastV) / range; // normalized
-                float accel     = 1.0f;;
+                if (range > 0)
+                {
+                    float value     = (sOrientation.horizontal()) ? e->nLeft : e->nTop;
+                    float result    = fLastValue;
+                    float delta     = sValue.range() * float(value - nLastV) / range; // normalized
+                    float accel     = 1.0f;
 
-                if (nXFlags & F_PRECISION)
-                {
-                    accel = (e->nState & ws::MCF_SHIFT)   ? 1.0f :
-                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
-                            sStep.decel();
-                }
-                else
-                {
-                    accel = (e->nState & ws::MCF_SHIFT)   ? sStep.decel() :
-                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
-                            1.0f;
-                }
+                    if (nXFlags & F_PRECISION)
+                    {
+                        accel = (e->nState & ws::MCF_SHIFT)   ? 1.0f :
+                                (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                                sStep.decel();
+                    }
+                    else
+                    {
+                        accel = (e->nState & ws::MCF_SHIFT)   ? sStep.decel() :
+                                (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                                1.0f;
+                    }
 
-                result      = sValue.limit(result + delta*accel);
-                if (result != sValue.get())
-                {
-                    fCurrValue  = result;
-                    sValue.set(result);
-                    sSlots.execute(SLOT_CHANGE, this);
+                    result      = sValue.limit(result + delta*accel);
+                    if (result != sValue.get())
+                    {
+                        fCurrValue  = result;
+                        sValue.set(result);
+                        sSlots.execute(SLOT_CHANGE, this);
+                    }
                 }
             }
             else
