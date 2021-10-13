@@ -387,6 +387,7 @@ namespace lsp
             lsp::Color color(select_color());
             lsp::Color tcolor(select_text_color());
             lsp::Color border_color(select_border_color());
+            lsp::Color xc;
 
             get_actual_bg_color(bg_color);
 
@@ -476,11 +477,13 @@ namespace lsp
                             float bright = float(i + 1.0f) / (chamfer + 1);
 
                             // Create gradient
-                            g = create_gradient(s, r, pressed, 0, delta);
-                            color.lightness(bright);
-                            g->add_color(0.0, color.red(), color.green(), color.blue());
-                            color.lightness(xb * bright);
-                            g->add_color(1.0, color.red(), color.green(), color.blue());
+                            g = create_gradient(s, r, pressed, 0.5f * delta, delta);
+                            xc.copy(color);
+                            xc.scale_hsl_lightness(bright);
+                            g->add_color(0.0, xc.red(), xc.green(), xc.blue());
+                            xc.copy(color);
+                            xc.scale_hsl_lightness(xb * bright);
+                            g->add_color(1.0, xc.red(), xc.green(), xc.blue());
                             s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
                             delete g;
 
@@ -504,11 +507,13 @@ namespace lsp
                 // Draw button face
                 if (gradient)
                 {
-                    g = create_gradient(s, r, pressed, 0, delta);
-                    color.lightness(1.0f);
-                    g->add_color(0.0, color.red(), color.green(), color.blue());
-                    color.lightness(xb);
-                    g->add_color(1.0, color.red(), color.green(), color.blue());
+                    g = create_gradient(s, r, pressed, 0.5f * delta, delta);
+                    xc.copy(color);
+                    xc.scale_hsl_lightness(1.0f);
+                    g->add_color(0.0, xc.red(), xc.green(), xc.blue());
+                    xc.copy(color);
+                    xc.scale_hsl_lightness(xb);
+                    g->add_color(1.0, xc.red(), xc.green(), xc.blue());
                     s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
                     delete g;
                 }

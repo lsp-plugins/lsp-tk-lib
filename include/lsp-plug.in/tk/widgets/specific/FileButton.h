@@ -41,8 +41,13 @@ namespace lsp
                 prop::TextLayout        sTextLayout;        // Text layout
                 prop::Padding           sTextPadding;       // Text padding
                 prop::SizeConstraints   sConstraints;       // Size constraints
+                prop::Boolean           sGradient;          // Use gradient when drawing
+                prop::Integer           sBorderSize;        // Border size
+                prop::Integer           sBorderPressedSize; // Border size when pressed
                 prop::Color             sColor;             // Color
                 prop::Color             sInvColor;          // Progress color
+                prop::Color             sBorderColor;       // Border Color
+                prop::Color             sInvBorderColor;    // Inverse color of border
                 prop::Color             sLineColor;         // Color of lines
                 prop::Color             sInvLineColor;      // Inverse color of lines
                 prop::Color             sTextColor;         // Text color
@@ -78,8 +83,13 @@ namespace lsp
                 prop::TextLayout        sTextLayout;        // Text layout
                 prop::Padding           sTextPadding;       // Text padding
                 prop::SizeConstraints   sConstraints;       // Size constraints
+                prop::Boolean           sGradient;          // Use gradient when drawing
+                prop::Integer           sBorderSize;        // Border size
+                prop::Integer           sBorderPressedSize; // Border size when pressed
                 prop::Color             sColor;             // Color
                 prop::Color             sInvColor;          // Progress color
+                prop::Color             sBorderColor;       // Border Color
+                prop::Color             sInvBorderColor;    // Inverse color of border
                 prop::Color             sLineColor;         // Color of lines
                 prop::Color             sInvLineColor;      // Inverse color of lines
                 prop::Color             sTextColor;         // Text color
@@ -98,8 +108,9 @@ namespace lsp
                 virtual void        realize(const ws::rectangle_t *r);
                 virtual void        property_changed(Property *prop);
 
-                void                draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color & line);
+                void                draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color &line, lsp::Color &border);
                 status_t            handle_mouse_move(const ws::event_t *ev);
+                static void         init_points(float *xa, float *ya, const ws::rectangle_t &b);
 
             public:
                 explicit FileButton(Display *dpy);
@@ -115,8 +126,13 @@ namespace lsp
                 LSP_TK_PROPERTY(TextLayout,             text_layout,        &sTextLayout);
                 LSP_TK_PROPERTY(Padding,                text_padding,       &sTextPadding);
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,        &sConstraints);
+                LSP_TK_PROPERTY(Boolean,                gradient,           &sGradient)
+                LSP_TK_PROPERTY(Integer,                border_size,        &sBorderSize)
+                LSP_TK_PROPERTY(Integer,                border_pressed_size,&sBorderPressedSize)
                 LSP_TK_PROPERTY(Color,                  color,              &sColor);
                 LSP_TK_PROPERTY(Color,                  inv_color,          &sInvColor);
+                LSP_TK_PROPERTY(Color,                  border_color,       &sBorderColor);
+                LSP_TK_PROPERTY(Color,                  inv_border_color,   &sInvBorderColor);
                 LSP_TK_PROPERTY(Color,                  line_color,         &sLineColor);
                 LSP_TK_PROPERTY(Color,                  inv_line_color,     &sInvLineColor);
                 LSP_TK_PROPERTY(Color,                  text_color,         &sTextColor);

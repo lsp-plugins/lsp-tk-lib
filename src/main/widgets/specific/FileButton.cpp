@@ -35,8 +35,13 @@ namespace lsp
                 sTextLayout.bind("text.layout", this);
                 sTextPadding.bind("text.padding", this);
                 sConstraints.bind("size.constraints", this);
+                sGradient.bind("gradient", this);
+                sBorderSize.bind("border.size", this);
+                sBorderPressedSize.bind("border.pressed.size", this);
                 sColor.bind("color", this);
                 sInvColor.bind("inv.color", this);
+                sBorderColor.bind("border.color", this);
+                sInvBorderColor.bind("border.inv.color", this);
                 sLineColor.bind("line.color", this);
                 sInvLineColor.bind("line.inv.color", this);
                 sTextColor.bind("text.color", this);
@@ -47,8 +52,13 @@ namespace lsp
                 sTextLayout.set(0.0f, 0.0f);
                 sTextPadding.set(2, 2, 2, 2);
                 sConstraints.set_all(-1);
+                sGradient.set(true);
+                sBorderSize.set(4);
+                sBorderPressedSize.set(3);
                 sColor.set("#cccccc");
                 sInvColor.set("#00cc00");
+                sBorderColor.set("#000000");
+                sInvBorderColor.set("#ffffff");
                 sLineColor.set("#000000");
                 sInvLineColor.set("#000000");
                 sTextColor.set("#cccccc");
@@ -74,8 +84,13 @@ namespace lsp
             sTextLayout(&sProperties),
             sTextPadding(&sProperties),
             sConstraints(&sProperties),
+            sGradient(&sProperties),
+            sBorderSize(&sProperties),
+            sBorderPressedSize(&sProperties),
             sColor(&sProperties),
             sInvColor(&sProperties),
+            sBorderColor(&sProperties),
+            sInvBorderColor(&sProperties),
             sLineColor(&sProperties),
             sInvLineColor(&sProperties),
             sTextColor(&sProperties),
@@ -110,8 +125,13 @@ namespace lsp
             sTextLayout.bind("text.layout", &sStyle);
             sTextPadding.bind("text.padding", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
+            sGradient.bind("gradient", &sStyle);
+            sBorderSize.bind("border.size", &sStyle);
+            sBorderPressedSize.bind("border.pressed.size", &sStyle);
             sColor.bind("color", &sStyle);
             sInvColor.bind("inv.color", &sStyle);
+            sBorderColor.bind("border.color", &sStyle);
+            sInvBorderColor.bind("border.inv.color", &sStyle);
             sLineColor.bind("line.color", &sStyle);
             sInvLineColor.bind("line.inv.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
@@ -142,9 +162,19 @@ namespace lsp
                 query_resize();
             if (sConstraints.is(prop))
                 query_resize();
+            if (sGradient.is(prop))
+                query_draw();
+            if (sBorderSize.is(prop))
+                query_resize();
+            if (sBorderPressedSize.is(prop))
+                query_resize();
             if (sColor.is(prop))
                 query_draw();
             if (sInvColor.is(prop))
+                query_draw();
+            if (sBorderColor.is(prop))
+                query_draw();
+            if (sInvBorderColor.is(prop))
                 query_draw();
             if (sLineColor.is(prop))
                 query_draw();
@@ -198,7 +228,9 @@ namespace lsp
             xr.nHeight      = xr.nWidth;
 
             // Apply chamfer size
-            size_t max_chamfer  = lsp_max(1.0f, scaling * 4.0f);
+            size_t border_norm  = lsp_max(0.0f, scaling * sBorderSize.get());
+            size_t border_down  = lsp_max(0.0f, scaling * sBorderPressedSize.get());
+            size_t max_chamfer  = lsp_max(border_norm, border_down);
             xr.nWidth          += max_chamfer << 1;
             xr.nHeight         += max_chamfer << 1;
 
@@ -244,12 +276,14 @@ namespace lsp
                 lsp::Color col(sInvColor);
                 lsp::Color text(sInvTextColor);
                 lsp::Color line(sInvLineColor);
+                lsp::Color border(sBorderColor);
                 col.scale_lch_luminance(bright);
                 text.scale_lch_luminance(bright);
                 line.scale_lch_luminance(bright);
+                border.scale_lch_luminance(bright);
 
                 s->clip_begin(&clip);
-                    draw_button(s, col, text, line);
+                    draw_button(s, col, text, line, border);
                 s->clip_end();
             }
 
@@ -260,68 +294,93 @@ namespace lsp
                 lsp::Color col(sColor);
                 lsp::Color text(sTextColor);
                 lsp::Color line(sLineColor);
+                lsp::Color border(sInvBorderColor);
                 col.scale_lch_luminance(bright);
                 text.scale_lch_luminance(bright);
                 line.scale_lch_luminance(bright);
+                border.scale_lch_luminance(bright);
 
                 s->clip_begin(&clip);
-                    draw_button(s, col, text, line);
+                    draw_button(s, col, text, line, border);
                 s->clip_end();
             }
         }
 
-        void FileButton::draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color & line)
+        void FileButton::init_points(float *xa, float *ya, const ws::rectangle_t &b)
+        {
+            float k     = b.nWidth * 0.125f;
+            for (size_t j=0; j<NPOINTS; ++j)
+            {
+                xa[j] = b.nLeft + xx[j] * k;
+                ya[j] = b.nTop  + yy[j] * k;
+            }
+        }
+
+        void FileButton::draw_button(ws::ISurface *s, lsp::Color &col, lsp::Color &text, lsp::Color &line, lsp::Color &border)
         {
             float xa[NPOINTS], ya[NPOINTS];
 
             float scaling           = lsp_max(0.0f, sScaling.get());
             float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
-            size_t max_chamfer      = lsp_max(1.0f, scaling * 4.0f);
-            size_t min_chamfer      = lsp_max(1.0f, scaling * 3.0f);
+            size_t border_norm      = lsp_max(0.0f, scaling * sBorderSize.get());
+            size_t border_down      = lsp_max(0.0f, scaling * sBorderPressedSize.get());
             float line_width        = lsp_max(1.0f, scaling);
 
             ws::IGradient *gr = NULL;
 
             // Determine button parameters
             float b_rad  = sButton.nWidth;
-            ssize_t b_rr = (nXFlags & FB_DOWN) ? min_chamfer : max_chamfer;    // Button rounding radius
+            ssize_t b_rr = (nXFlags & FB_DOWN) ? border_down : border_norm;    // Button rounding radius
 
             // Change size if pressed
             ws::rectangle_t b = sButton;
             b.nLeft            -= sSize.nLeft;
             b.nTop             -= sSize.nTop;
 
-            float aa    = s->set_antialiasing(true);
+            float aa        = s->set_antialiasing(true);
+            bool gradient   = sGradient.get();
 
-            for (ssize_t i=0; (i++)<b_rr; )
+            if (gradient)
             {
-                float bright = sqrtf(i * i) / b_rr;
-
-                if (nXFlags & FB_DOWN)
-                    gr = s->radial_gradient(b.nLeft, b.nHeight, b_rad * 0.25f, b.nLeft, b.nHeight, b_rad * 3.0f);
-                else
-                    gr = s->radial_gradient(b.nWidth, b.nTop, b_rad * 0.25f, b.nWidth, b.nTop, b_rad * 3.0f);
-
-                lsp::Color dcol(col);
-                dcol.scale_hsl_lightness(bright);
-                gr->add_color(0.0f, dcol);
-                dcol.darken(0.9f);
-                gr->add_color(1.0f, dcol);
-
-                float k     = b.nWidth * 0.125f;
-                for (size_t j=0; j<NPOINTS; ++j)
+                for (ssize_t i=0; i < b_rr; ++i)
                 {
-                    xa[j] = b.nLeft + xx[j] * k;
-                    ya[j] = b.nTop  + yy[j] * k;
+                    float z = i + 1.0f;
+                    float bright = sqrtf(z * z) / b_rr;
+
+                    lsp::Color dcol(col);
+                    dcol.scale_hsl_lightness(bright);
+
+                    if (nXFlags & FB_DOWN)
+                        gr = s->radial_gradient(b.nLeft, b.nHeight, b_rad * 0.25f, b.nLeft, b.nHeight, b_rad * 3.0f);
+                    else
+                        gr = s->radial_gradient(b.nWidth, b.nTop, b_rad * 0.25f, b.nWidth, b.nTop, b_rad * 3.0f);
+
+                    gr->add_color(0.0f, dcol);
+                    dcol.darken(0.9f);
+                    gr->add_color(1.0f, dcol);
+
+                    init_points(xa, ya, b);
+                    s->fill_poly(gr, xa, ya, NPOINTS);
+                    delete gr; // Delete gradient!
+
+                    b.nLeft        += 1;
+                    b.nTop         += 1;
+                    b.nWidth       -= 2;
+                    b.nHeight      -= 2;
                 }
+            }
+            else
+            {
+                init_points(xa, ya, b);
+                s->fill_poly(border, xa, ya, NPOINTS);
 
-                s->fill_poly(gr, xa, ya, NPOINTS);
-                delete gr; // Delete gradient!
+                b.nLeft        += b_rr;
+                b.nTop         += b_rr;
+                b.nWidth       -= b_rr * 2;
+                b.nHeight      -= b_rr * 2;
 
-                b.nLeft        += 1;
-                b.nTop         += 1;
-                b.nWidth       -= 2;
-                b.nHeight      -= 2;
+                init_points(xa, ya, b);
+                s->fill_poly(col, xa, ya, NPOINTS);
             }
 
             // Clear canvas

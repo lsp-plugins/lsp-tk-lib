@@ -201,6 +201,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            text_clip,          &sTextClip)
                 LSP_TK_PROPERTY(Padding,            text_padding,       &sTextPadding)
                 LSP_TK_PROPERTY(Boolean,            hover,              &sHover)
+                LSP_TK_PROPERTY(Boolean,            gradient,           &sGradient)
 
             public:
                 virtual void        draw(ws::ISurface *s);
