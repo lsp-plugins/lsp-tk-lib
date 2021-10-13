@@ -410,5 +410,49 @@ namespace lsp
             sync();
         }
 
+        float Color::cyan(float c)
+        {
+            float old = sColor.cyan();
+            sColor.cyan(c);
+            sync();
+            return old;
+        }
+
+        float Color::magenta(float m)
+        {
+            float old = sColor.magenta();
+            sColor.magenta(m);
+            sync();
+            return old;
+        }
+
+        float Color::yellow(float y)
+        {
+            float old = sColor.yellow();
+            sColor.yellow(y);
+            sync();
+            return old;
+        }
+
+        float Color::black(float k)
+        {
+            float old = sColor.black();
+            sColor.black(k);
+            sync();
+            return old;
+        }
+
+        void Color::set_cmyk(float c, float m, float y, float k)
+        {
+            sColor.set_cmyk(c, m, y, k);
+            sync();
+        }
+
+        void Color::set_cmyka(float c, float m, float y, float k, float a)
+        {
+            sColor.set_cmyka(c, m, y, k, a);
+            sync();
+        }
+
     } /* namespace tk */
 } /* namespace lsp */

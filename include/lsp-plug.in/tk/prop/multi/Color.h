@@ -206,6 +206,23 @@ namespace lsp
                 void set_hcl(float h, float c, float l);
                 void set_hcla(float h, float c, float l, float alpha);
 
+            public:
+                inline float cyan() const               { return sColor.cyan();             }
+                inline float magenta() const            { return sColor.magenta();          }
+                inline float yellow() const             { return sColor.yellow();           }
+                inline float black() const              { return sColor.black();            }
+
+                float cyan(float c);
+                float magenta(float m);
+                float yellow(float y);
+                float black(float k);
+
+                inline void get_cmyk(float &c, float &m, float &y, float &k) const              { sColor.get_cmyk(c, m, y, k);      }
+                inline void get_cmyk(float &c, float &m, float &y, float &k, float &a) const    { sColor.get_cmyka(c, m, y, k, a);  }
+
+                void set_cmyk(float c, float m, float y, float k);
+                void set_cmyka(float c, float m, float y, float k, float a);
+
             public: // Alpha-channel manipulation
                 inline float alpha() const              { return sColor.alpha();            }
                 float alpha(float a);
