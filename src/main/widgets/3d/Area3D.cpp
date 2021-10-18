@@ -299,8 +299,10 @@ namespace lsp
 
         void Area3D::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
+        #ifdef LSP_TRACE
             system::time_t start, end;
             system::get_time(&start);
+        #endif /* LSP_TRACE */
 
             if (nFlags & REDRAW_SURFACE)
                 force = true;
@@ -359,9 +361,11 @@ namespace lsp
             }
             s->clip_end();
 
+        #ifdef LSP_TRACE
             system::get_time(&end);
             float time = float(end.seconds - start.seconds) + (end.nanos - start.nanos) * 1e-9f;
             lsp_trace("render time: %.3f ms", time);
+        #endif /* LSP_TRACE */
         }
 
         status_t Area3D::on_draw3d(ws::IR3DBackend *r3d)

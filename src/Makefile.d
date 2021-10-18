@@ -10144,6 +10144,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/3d/Area3D.o: main/widgets/3d/Area3D.cpp \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/smath.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation/linear.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/runtime/system.h \
  $(LSP_TK_LIB_INC)/private/tk/style/BuiltinStyle.h
 $(LSP_TK_LIB_BIN)/main/util/URLSink.o: main/util/URLSink.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
