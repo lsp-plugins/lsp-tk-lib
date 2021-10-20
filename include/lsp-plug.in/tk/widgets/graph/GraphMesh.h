@@ -38,6 +38,7 @@ namespace lsp
                 prop::Integer               sXAxis;         // Index of X axis
                 prop::Integer               sYAxis;         // Index of Y axis
                 prop::Integer               sWidth;         // Width of the mesh line
+                prop::Integer               sStrobes;       // Number of strobes
                 prop::Boolean               sFill;          // Fill poly
                 prop::Color                 sColor;         // Mesh color
                 prop::Color                 sFillColor;     // Fill color
@@ -59,6 +60,7 @@ namespace lsp
                 prop::Integer               sXAxis;         // Index of X axis
                 prop::Integer               sYAxis;         // Index of Y axis
                 prop::Integer               sWidth;         // Width of the mesh line
+                prop::Integer               sStrobes;       // Number of strobes
                 prop::Boolean               sFill;          // Fill poly
                 prop::Color                 sColor;         // Mesh color
                 prop::Color                 sFillColor;     // Fill color
@@ -68,9 +70,12 @@ namespace lsp
                 size_t                      nCapacity;      // Capacity of the temporary buffer
 
             protected:
-                virtual void                property_changed(Property *prop);
-
                 void                        do_destroy();
+                size_t                      find_offset(size_t *found, const float *v, size_t count, size_t strobes);
+                size_t                      get_length(const float *v, size_t off, size_t count);
+
+            protected:
+                virtual void                property_changed(Property *prop);
 
             public:
                 explicit GraphMesh(Display *dpy);
@@ -84,6 +89,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            haxis,                      &sXAxis)
                 LSP_TK_PROPERTY(Integer,            vaxis,                      &sYAxis)
                 LSP_TK_PROPERTY(Integer,            width,                      &sWidth)
+                LSP_TK_PROPERTY(Integer,            strobes,                    &sStrobes)
                 LSP_TK_PROPERTY(Boolean,            fill,                       &sFill)
                 LSP_TK_PROPERTY(Color,              color,                      &sColor)
                 LSP_TK_PROPERTY(Color,              fill_color,                 &sFillColor)

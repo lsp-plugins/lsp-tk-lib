@@ -37,6 +37,7 @@ namespace lsp
                 sXAxis.bind("haxis", this);
                 sYAxis.bind("vaxis", this);
                 sWidth.bind("width", this);
+                sStrobes.bind("strobes", this);
                 sFill.bind("fill", this);
                 sColor.bind("color", this);
                 sFillColor.bind("fill.color", this);
@@ -46,6 +47,7 @@ namespace lsp
                 sXAxis.set(0);
                 sYAxis.set(1);
                 sWidth.set(3);
+                sStrobes.set(0);
                 sFill.set(false);
                 sColor.set("#00ff00");
                 sFillColor.set("#8800ff00");
@@ -62,6 +64,7 @@ namespace lsp
             sXAxis(&sProperties),
             sYAxis(&sProperties),
             sWidth(&sProperties),
+            sStrobes(&sProperties),
             sFill(&sProperties),
             sColor(&sProperties),
             sFillColor(&sProperties),
@@ -107,6 +110,7 @@ namespace lsp
             sXAxis.bind("haxis", &sStyle);
             sYAxis.bind("vaxis", &sStyle);
             sWidth.bind("width", &sStyle);
+            sStrobes.bind("strobes", &sStyle);
             sFill.bind("fill", &sStyle);
             sColor.bind("color", &sStyle);
             sFillColor.bind("fill.color", &sStyle);
@@ -127,6 +131,8 @@ namespace lsp
                 query_draw();
             if (sWidth.is(prop))
                 query_draw();
+            if (sStrobes.is(prop))
+                query_draw();
             if (sFill.is(prop))
                 query_draw();
             if (sColor.is(prop))
@@ -137,6 +143,39 @@ namespace lsp
                 query_draw();
         }
 
+        size_t GraphMesh::find_offset(size_t *found, const float *v, size_t count, size_t strobes)
+        {
+            size_t nf       = 0;    // No strobes found
+            while (count > 0)
+            {
+                float s         = v[--count];
+                if (s < 0.5f)
+                    continue;
+                if ((strobes--) <= 0)   // We found start point?
+                    break;
+                ++nf;                   // Remember that we found the strobe
+            }
+
+            if (found != NULL)
+                *found = nf;
+
+            return count;
+        }
+
+        size_t GraphMesh::get_length(const float *v, size_t off, size_t count)
+        {
+            size_t start = off;
+            while (true)
+            {
+                if ((++off) >= count)
+                    return count - start;
+                if (v[off] >= 0.5f)
+                    break;
+            }
+
+            return off - start;
+        }
+
         void GraphMesh::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             // Get graph
@@ -144,7 +183,14 @@ namespace lsp
             if (cv == NULL)
                 return;
 
+            // Check that data is valid
             if ((!sData.valid()) || (sData.size() < 0))
+                return;
+
+            // Get axes
+            GraphAxis *xaxis    = cv->axis(sXAxis.get());
+            GraphAxis *yaxis    = cv->axis(sYAxis.get());
+            if ((xaxis == NULL) || (yaxis == NULL))
                 return;
 
             // Prepare palette
@@ -169,30 +215,77 @@ namespace lsp
                 nCapacity           = cap_size;
             }
 
-            // Initialize dimensions as zeros
+            // Initialize X and Y vectors
             size_t vec_size     = sData.size();
             float *x_vec        = &vBuffer[0];
             float *y_vec        = &x_vec[vec_size];
-            dsp::fill(x_vec, cx, vec_size);
-            dsp::fill(y_vec, cy, vec_size);
-
-            // Calculate coordinates for each dot
-            GraphAxis *xaxis    = cv->axis(sXAxis.get());
-            GraphAxis *yaxis    = cv->axis(sYAxis.get());
-            if ((xaxis == NULL) || (yaxis == NULL))
-                return;
-
-            if (!xaxis->apply(x_vec, y_vec, sData.x(), vec_size))
-                return;
-            if (!yaxis->apply(x_vec, y_vec, sData.y(), vec_size))
-                return;
+            const float *x_src  = sData.x();
+            const float *y_src  = sData.y();
 
             // Now we have dots in x_vec[] and y_vec[]
             bool aa = s->set_antialiasing(sSmooth.get());
-            if (sFill.get())
-                s->draw_poly(fill, line, width, x_vec, y_vec, vec_size);
-            else if (width > 0)
-                s->wire_poly(line, width, x_vec, y_vec, vec_size);
+
+            if (sData.strobe())
+            {
+                const float *s_src  = sData.s();
+
+                // Draw mesh divided into segments using strobes
+                size_t strobes      = lsp_max(sStrobes.get(), 0);
+                size_t found        = 0;
+                size_t off          = (sData.strobe()) ? find_offset(&found, s_src, vec_size, strobes) : 0;
+                ssize_t op          = strobes - found + 1;      // Initial opacity coefficient
+                float kop           = 1.0f / (strobes + 1.0f);  // Opacity coefficient
+
+                while (off < vec_size)
+                {
+                    // Get length of the vector before new strobe series starts
+                    size_t length       = get_length(s_src, off, vec_size);
+                    float ka            = (op++) * kop;
+
+                    // Initialize dimensions as zeros
+                    dsp::fill(x_vec, cx, vec_size);
+                    dsp::fill(y_vec, cy, vec_size);
+
+                    // Calculate coordinates for each dot
+                    if (!xaxis->apply(x_vec, y_vec, &x_src[off], length))
+                        return;
+                    if (!yaxis->apply(x_vec, y_vec, &y_src[off], length))
+                        return;
+
+                    // Draw part of mesh
+                    line.copy(sColor);
+                    line.alpha(1.0f - (1.0f - line.alpha()) * ka);
+
+                    if (sFill.get())
+                    {
+                        fill.copy(sFillColor);
+                        fill.alpha(1.0f - (1.0f - line.alpha()) * ka);
+                        s->draw_poly(fill, line, width, x_vec, y_vec, length);
+                    }
+                    else if (width > 0)
+                        s->wire_poly(line, width, x_vec, y_vec, length);
+
+                    // Update offset
+                    off                += length;
+                }
+            }
+            else
+            {
+                // Initialize dimensions as zeros
+                dsp::fill(x_vec, cx, vec_size);
+                dsp::fill(y_vec, cy, vec_size);
+
+                // Calculate coordinates for each dot
+                if (!xaxis->apply(x_vec, y_vec, x_src, vec_size))
+                    return;
+                if (!yaxis->apply(x_vec, y_vec, y_src, vec_size))
+                    return;
+
+                if (sFill.get())
+                    s->draw_poly(fill, line, width, x_vec, y_vec, vec_size);
+                else if (width > 0)
+                    s->wire_poly(line, width, x_vec, y_vec, vec_size);
+            }
 
             s->set_antialiasing(aa);
         }
