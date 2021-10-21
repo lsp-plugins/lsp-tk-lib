@@ -88,6 +88,12 @@ namespace lsp
                 inline const float *y() const                   { return &vData[nStride];                       }
                 inline const float *s() const                   { return (bStrobe) ? &vData[nStride*2] : NULL;  }
 
+                inline float       *x()                         { return vData;                                 }
+                inline float       *y()                         { return &vData[nStride];                       }
+                inline float       *s()                         { return (bStrobe) ? &vData[nStride*2] : NULL;  }
+
+                inline void         touch()                     { sync();                                       }
+
                 bool                set_size(size_t size, bool strobe);
                 bool                set_size(size_t size);
                 bool                set_strobe(bool strobe);

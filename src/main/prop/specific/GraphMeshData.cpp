@@ -155,6 +155,7 @@ namespace lsp
                 vData           = xp;
                 pPtr            = ptr;
                 nStride         = stride;
+                bStrobe         = strobe;
             }
             else
             {
