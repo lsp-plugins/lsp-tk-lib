@@ -509,9 +509,10 @@ namespace lsp
             {
                 LedMeterChannel *c = vVisible.uget(i);
 
-                c->draw_meter(s, angle, scaling, bright);
+                float mbright   = lsp_min(bright, c->brightness()->get());
+                c->draw_meter(s, angle, scaling, mbright);
                 if (has_text)
-                    c->draw_label(s, &sFont, fscaling, bright);
+                    c->draw_label(s, &sFont, fscaling, mbright);
 
                 // Commit pending redraw request
                 c->commit_redraw();

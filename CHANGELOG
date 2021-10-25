@@ -15,6 +15,7 @@
 - Added support of CIE XYZ D65, CIE LAB D65, CIE LCH D65 and CMYK color schemes for tk::Color property.
 - Implemented tk::Schema::add methods for adding custom styles at the initialization stage.
 - Fixed bug in clipboard paste for tk::TextDataSink class.
+- Updated brightness control for LED channels grouped into LED meters.
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.
