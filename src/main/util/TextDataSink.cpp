@@ -57,15 +57,18 @@ namespace lsp
 
         ssize_t TextDataSink::open(const char * const *mime_types)
         {
-            ssize_t found = -1, idx = 0;
+            ssize_t self_idx = 0, found = -1;
 
-            for (const char *const *p = mimes; (*p != NULL) && (found < 0); ++p, ++idx)
+            for (const char *const *p = mimes; (*p != NULL) && (found < 0); ++p, ++self_idx)
             {
-                for (const char *const *v = mime_types; (*v != NULL) && (found < 0); ++v)
+                ssize_t src_idx = 0;
+                for (const char *const *v = mime_types; (*v != NULL) && (found < 0); ++v, ++src_idx)
                 {
                     if (!::strcasecmp(*p, *v))
                     {
-                        found   = idx;
+                        found   = src_idx;
+                        nMime   = self_idx;
+                        pMime   = *p;
                         break;
                     }
                 }
@@ -74,10 +77,8 @@ namespace lsp
             if (found < 0)
                 return -STATUS_UNSUPPORTED_FORMAT;
 
-            nMime   = found;
-            pMime   = mimes[found];
             lsp_trace("Selected mime type: %s, index=%d", pMime, found);
-            return STATUS_OK;
+            return found;
         }
 
         status_t TextDataSink::write(const void *buf, size_t count)
