@@ -13,7 +13,8 @@
 - Added 'reduce' options handling by tk::Box and tk::Grid widgets.
 - Fixed bug in prop::StringList which could yield to ignore of localization parameters.
 - Added support of CIE XYZ D65, CIE LAB D65, CIE LCH D65 and CMYK color schemes for tk::Color property.
-- Implemented tk::Schema::add methods for adding custom styles at the initialization stage. 
+- Implemented tk::Schema::add methods for adding custom styles at the initialization stage.
+- Fixed bug in clipboard paste for tk::TextDataSink class.
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.
