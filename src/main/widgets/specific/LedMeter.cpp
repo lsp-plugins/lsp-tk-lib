@@ -503,6 +503,7 @@ namespace lsp
             get_actual_bg_color(col);
             s->clear(col);
             col.copy(sColor);
+            col.scale_lch_luminance(bright);
             s->fill_rect(col, &sAAll);
 
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
