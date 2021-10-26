@@ -585,13 +585,15 @@ namespace lsp
 
         void Widget::query_resize()
         {
-            if (!sVisibility.get())
-                return;
-            else if (nFlags & REALIZE_ACTIVE)
+            if (nFlags & REALIZE_ACTIVE)
                 return;
 
             // Update flags
             nFlags     |= (RESIZE_PENDING | SIZE_INVALID);
+
+            if (!sVisibility.get())
+                return;
+
             if (pParent != NULL)
                 pParent->query_resize();
         }

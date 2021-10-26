@@ -383,6 +383,8 @@ namespace lsp
 
         void Grid::realize(const ws::rectangle_t *r)
         {
+            free_cells(&sAlloc);
+
 //            lsp_trace("this=%p, size={%d, %d, %d, %d}",
 //                    this, int(r->nLeft), int(r->nTop), int(r->nWidth), int(r->nHeight)
 //                );

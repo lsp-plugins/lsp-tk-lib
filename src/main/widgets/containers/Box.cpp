@@ -699,6 +699,9 @@ namespace lsp
 
         void Box::realize(const ws::rectangle_t *r)
         {
+            // Flush previously visible widgets
+            vVisible.flush();
+
             // Call parent method to realize
             WidgetContainer::realize(r);
 
