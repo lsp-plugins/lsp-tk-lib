@@ -106,6 +106,18 @@ namespace lsp
                     delete f;
             }
             vf.flush();
+
+            // Delete constants
+            lltl::parray<LSPString> vv;
+            vConstants.values(&vv);
+            vConstants.flush();
+            for (size_t i=0, n=vv.size(); i<n; ++i)
+            {
+                LSPString *s = vv.uget(i);
+                if (s != NULL)
+                    delete s;
+            }
+            vv.flush();
         }
 
         status_t StyleSheet::parse_document(xml::PullParser *p)
