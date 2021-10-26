@@ -170,7 +170,8 @@ namespace lsp
 
         status_t Window::sync_size()
         {
-            lsp_trace("Synchronizing size");
+            if (tag()->get() == 0x100500)
+                lsp_trace("Synchronizing size");
 
             // Request size limits of the window
             ws::size_limit_t sr;
@@ -491,15 +492,15 @@ namespace lsp
                 query_resize();
             if (sBorderRadius.is(prop))
                 query_resize();
-            if (sScaling.is(prop))
-                query_resize();
+
+
             if (sBorderStyle.is(prop))
                 pWindow->set_border_style(sBorderStyle.get());
             if (sActions.is(prop))
                 pWindow->set_window_actions(sActions.actions());
             if (sPosition.is(prop))
                 pWindow->move(sPosition.left(), sPosition.top());
-            if (sSizeConstraints.is(prop) || sScaling.is(prop) || (sActions.is(prop)))
+            if (sSizeConstraints.is(prop) || sScaling.is(prop) || sActions.is(prop) || sFontScaling.is(prop))
             {
                 ws::size_limit_t l;
                 sSizeConstraints.compute(&l, sScaling.get());
@@ -509,7 +510,7 @@ namespace lsp
 //                    );
                 pWindow->set_size_constraints(&l);
             }
-            if (sWindowSize.is(prop) || sScaling.is(prop))
+            if (sWindowSize.is(prop) || sScaling.is(prop) || sFontScaling.is(prop))
             {
                 float scaling = lsp_max(0.0f, sScaling.get());
                 if ((scaling != fScaling) && (bMapped))
