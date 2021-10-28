@@ -170,9 +170,6 @@ namespace lsp
 
         status_t Window::sync_size()
         {
-            if (tag()->get() == 0x100500)
-                lsp_trace("Synchronizing size");
-
             // Request size limits of the window
             ws::size_limit_t sr;
             ws::rectangle_t r;
@@ -500,35 +497,30 @@ namespace lsp
                 pWindow->set_window_actions(sActions.actions());
             if (sPosition.is(prop))
                 pWindow->move(sPosition.left(), sPosition.top());
-            if (sSizeConstraints.is(prop) || sScaling.is(prop) || sActions.is(prop) || sFontScaling.is(prop))
+            if (sSizeConstraints.is(prop) || sScaling.is(prop) || sActions.is(prop) || sFontScaling.is(prop) || sWindowSize.is(prop))
             {
-                ws::size_limit_t l;
-                sSizeConstraints.compute(&l, sScaling.get());
-//                lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
-//                        int(l.nMinWidth), int(l.nMaxWidth),
-//                        int(l.nMinHeight), int(l.nMaxHeight)
-//                    );
-                pWindow->set_size_constraints(&l);
-            }
-            if (sWindowSize.is(prop) || sScaling.is(prop) || sFontScaling.is(prop))
-            {
-                float scaling = lsp_max(0.0f, sScaling.get());
-                if ((scaling != fScaling) && (bMapped))
-                {
-                    ws::rectangle_t rect;
-                    ws::size_limit_t l;
-                    sWindowSize.compute(&rect, scaling);
-                    sSizeConstraints.compute(&l, scaling);
-
-                    fScaling    = scaling;
-                    pWindow->set_size_constraints(-1, -1, -1, -1);
-                    pWindow->resize(rect.nWidth, rect.nHeight);
-                    pWindow->set_size_constraints(&l);
-//                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
-//                            int(l.nMinWidth), int(l.nMaxWidth),
-//                            int(l.nMinHeight), int(l.nMaxHeight)
-//                        );
-                }
+//                float scaling = lsp_max(0.0f, sScaling.get());
+//
+//                ws::size_limit_t l;
+//                sSizeConstraints.compute(&l, scaling);
+//                pWindow->set_size_constraints(&l);
+//
+//                if ((scaling != fScaling) && (bMapped))
+//                {
+//                    ws::rectangle_t rect;
+//                    ws::size_limit_t l;
+//                    sWindowSize.compute(&rect, scaling);
+//                    sSizeConstraints.compute(&l, scaling);
+//
+//                    fScaling    = scaling;
+//                    pWindow->set_size_constraints(-1, -1, -1, -1);
+//                    pWindow->resize(rect.nWidth, rect.nHeight);
+//                    pWindow->set_size_constraints(&l);
+////                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
+////                            int(l.nMinWidth), int(l.nMaxWidth),
+////                            int(l.nMinHeight), int(l.nMaxHeight)
+////                        );
+//                }
 
                 query_resize();
             }
@@ -706,17 +698,19 @@ namespace lsp
                     {
                         ws::rectangle_t r;
 
-//                        lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+                        if (!(nFlags & RESIZE_PENDING))
+                        {
+                            lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+                            sPosition.commit_value(e->nLeft, e->nTop);
+                            sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
 
-                        sPosition.commit_value(e->nLeft, e->nTop);
-                        sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
+                            r.nLeft     = e->nLeft;
+                            r.nTop      = e->nTop;
+                            r.nWidth    = e->nWidth;
+                            r.nHeight   = e->nHeight;
 
-                        r.nLeft     = e->nLeft;
-                        r.nTop      = e->nTop;
-                        r.nWidth    = e->nWidth;
-                        r.nHeight   = e->nHeight;
-
-                        realize_widget(&r);
+                            realize_widget(&r);
+                        }
                     }
                     break;
 
