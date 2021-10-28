@@ -16,6 +16,7 @@
 - Implemented tk::Schema::add methods for adding custom styles at the initialization stage.
 - Fixed bug in clipboard paste for tk::TextDataSink class.
 - Updated brightness control for LED channels grouped into LED meters.
+- Added border radius support to the tk::Menu widget.
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.

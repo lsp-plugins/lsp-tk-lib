@@ -415,9 +415,9 @@ namespace lsp
                     lsp::Color bc(sBorderColor);
                     bc.scale_lch_luminance(sBrightness.get());
 
-                    s->wire_round_rect(
+                    s->wire_round_rect_inside(
                         bc, SURFMASK_ALL_CORNER, radius,
-                        bw + 0.5, bw + 0.5, sSize.nWidth - border-1, sSize.nHeight - border-1,
+                        bw, bw, sSize.nWidth, sSize.nHeight,
                         border
                     );
                     s->set_antialiasing(aa);

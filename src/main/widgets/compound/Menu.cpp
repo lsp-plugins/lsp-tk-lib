@@ -35,6 +35,7 @@ namespace lsp
                 sFont.bind("font", this);
                 sScrolling.bind("scrolling", this);
                 sBorderSize.bind("border.size", this);
+                sBorderRadius.bind("border.radius", this);
                 sBorderColor.bind("border.color", this);
                 sScrollColor.bind("scroll.color", this);
                 sScrollTextColor.bind("scroll.text.color", this);
@@ -51,6 +52,7 @@ namespace lsp
                 sFont.set_size(12.0f);
                 sScrolling.set(0.0f);
                 sBorderSize.set(1);
+                sBorderRadius.set(0);
                 sBorderColor.set("#000000");
                 sScrollColor.set("#cccccc");
                 sScrollTextColor.set("#000000");
@@ -278,6 +280,7 @@ namespace lsp
             sFont(&sProperties),
             sScrolling(&sProperties),
             sBorderSize(&sProperties),
+            sBorderRadius(&sProperties),
             sBorderColor(&sProperties),
             sScrollColor(&sProperties),
             sScrollSelectedColor(&sProperties),
@@ -363,6 +366,7 @@ namespace lsp
             sFont.bind("font", &sStyle);
             sScrolling.bind("scrolling", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
+            sBorderRadius.bind("border.radius", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sScrollColor.bind("scroll.color", &sStyle);
             sScrollTextColor.bind("scroll.text.color", &sStyle);
@@ -418,6 +422,8 @@ namespace lsp
                 query_resize();
             if (sBorderSize.is(prop))
                 query_resize();
+            if (sBorderRadius.is(prop))
+                query_resize();
             if (sBorderColor.is(prop))
                 query_draw();
             if (sScrollColor.is(prop))
@@ -448,15 +454,15 @@ namespace lsp
             lltl::darray<item_t> items;
 
             float scaling   = lsp_max(0.0f, sScaling.get());
-            ssize_t border  = lsp_max(0.0f, scaling * sBorderSize.get()) * 2;
+            ssize_t border_w= lsp_max(0.0f, ceilf(scaling * (sBorderSize.get() + sBorderRadius.get() * M_SQRT1_2)));
 
             allocate_items(&items, &st);
 
             // Compute minimum and maximum size
-            r->nMinWidth    = st.full_w + border;
-            r->nMinHeight   = st.item_h + border;
+            r->nMinWidth    = st.full_w + border_w * 2;
+            r->nMinHeight   = st.item_h + border_w * 2;
             r->nMaxWidth    = r->nMinWidth;
-            r->nMaxHeight   = st.full_h + border;
+            r->nMaxHeight   = st.full_h + border_w * 2;
             r->nPreWidth    = -1;
             r->nPreHeight   = -1;
 
@@ -720,13 +726,13 @@ namespace lsp
             // Estimate scrolling position
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t scroll      = lsp_max(0, sScrolling.get() * scaling);
-            ssize_t border      = lsp_max(0.0f, scaling * sBorderSize.get());
+            ssize_t border_w    = lsp_max(0.0f, ceilf(scaling * (sBorderSize.get() + sBorderRadius.get() * M_SQRT1_2)));
             ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
 
-            rr.nLeft            = border;
-            rr.nTop             = border;
-            rr.nWidth           = r->nWidth  - border * 2;
-            rr.nHeight          = r->nHeight - border * 2;
+            rr.nLeft            = border_w;
+            rr.nTop             = border_w;
+            rr.nWidth           = r->nWidth  - border_w * 2;
+            rr.nHeight          = r->nHeight - border_w * 2;
 
             // Apply internal padding
             sIPadding.enter(&rr, scaling);
@@ -741,16 +747,16 @@ namespace lsp
 
             // Allocate space for buttons
             xr.nLeft            = rr.nLeft;
-            xr.nTop             = rr.nTop - border;
+            xr.nTop             = rr.nTop - border_w;
             xr.nWidth           = rr.nWidth;
-            xr.nHeight          = lsp_max(4, st.item_h >> 1) + border;
+            xr.nHeight          = lsp_max(4, st.item_h >> 1) + border_w;
             sUp.visibility()->set(scroll > 0);
             sUp.realize_widget(&xr);
 
             xr.nWidth           = rr.nWidth;
-            xr.nHeight          = lsp_max(4, st.item_h >> 1) + border;
+            xr.nHeight          = lsp_max(4, st.item_h >> 1) + border_w;
             xr.nLeft            = rr.nLeft;
-            xr.nTop             = rr.nTop + rr.nHeight - xr.nHeight + border;
+            xr.nTop             = rr.nTop + rr.nHeight - xr.nHeight + border_w;
             sDown.visibility()->set(scroll < st.max_scroll);
             sDown.realize_widget(&xr);
 
@@ -845,12 +851,14 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
-            ssize_t border      = lsp_max(0, sBorderSize.get() * scaling);
+            ssize_t border      = lsp_max(0, ceilf(sBorderSize.get() * scaling));
+            ssize_t border_r    = lsp_max(0.0f, ceilf(scaling * sBorderRadius.get()));
+            ssize_t border_w    = lsp_max(0.0f, ceilf(scaling * (sBorderSize.get() + sBorderRadius.get() * M_SQRT1_2)));
 
-            xr.nLeft            = border;
-            xr.nTop             = border;
-            xr.nWidth           = sSize.nWidth  - border * 2;
-            xr.nHeight          = sSize.nHeight - border * 2;
+            xr.nLeft            = border_w;
+            xr.nTop             = border_w;
+            xr.nWidth           = sSize.nWidth  - border_w * 2;
+            xr.nHeight          = sSize.nHeight - border_w * 2;
 
             // Draw background
             lsp::Color color;
@@ -1066,18 +1074,22 @@ namespace lsp
                     );
             }
 
-            s->set_antialiasing(false);
-
             // Draw border
             if (border > 0)
             {
+                s->set_antialiasing(true);
                 color.copy(sBorderColor);
                 color.scale_lch_luminance(bright);
-                s->fill_frame(
-                    color,
+                s->wire_round_rect_inside(
+                    color, ws::CORNERS_ALL, border_r,
                     0, 0, sSize.nWidth, sSize.nHeight,
-                    border, border, sSize.nWidth - border * 2, sSize.nHeight - border * 2
+                    border
                 );
+//                s->fill_frame(
+//                    color,
+//                    0, 0, sSize.nWidth, sSize.nHeight,
+//                    border, border, sSize.nWidth - border * 2, sSize.nHeight - border * 2
+//                );
             }
 
             s->set_antialiasing(aa);

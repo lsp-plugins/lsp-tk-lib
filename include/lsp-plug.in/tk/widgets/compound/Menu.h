@@ -39,6 +39,7 @@ namespace lsp
                 prop::Font              sFont;
                 prop::Float             sScrolling;
                 prop::Integer           sBorderSize;
+                prop::Integer           sBorderRadius;
                 prop::Color             sBorderColor;
                 prop::Color             sScrollColor;
                 prop::Color             sScrollSelectedColor;
@@ -172,6 +173,7 @@ namespace lsp
                 prop::Font              sFont;
                 prop::Float             sScrolling;
                 prop::Integer           sBorderSize;
+                prop::Integer           sBorderRadius;
                 prop::Color             sBorderColor;
                 prop::Color             sScrollColor;
                 prop::Color             sScrollSelectedColor;
@@ -239,6 +241,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            spacing,                    &sSpacing)
                 LSP_TK_PROPERTY(Float,              scrolling,                  &sScrolling)
                 LSP_TK_PROPERTY(Integer,            border_size,                &sBorderSize)
+                LSP_TK_PROPERTY(Integer,            border_radius,              &sBorderRadius)
                 LSP_TK_PROPERTY(Color,              border_color,               &sBorderColor)
                 LSP_TK_PROPERTY(Color,              scroll_selected_color,      &sScrollSelectedColor)
                 LSP_TK_PROPERTY(Color,              scroll_text_color,          &sScrollTextColor)
