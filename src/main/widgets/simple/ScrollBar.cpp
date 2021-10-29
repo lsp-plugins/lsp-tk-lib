@@ -228,6 +228,10 @@ namespace lsp
 
             if (sValue.is(prop))
                 update_slider();
+            if (sStep.is(prop))
+                update_slider();
+            if (sAccelStep.is(prop))
+                update_slider();
             if (sConstraints.is(prop))
                 query_resize();
             if (sOrientation.is(prop))
