@@ -125,6 +125,8 @@ namespace lsp
             status_t item, res = STATUS_OK;
             bool read = false;
 
+            lsp_trace("parser = %p", p);
+
             while (true)
             {
                 if ((item = p->read_next()) < 0)
@@ -155,7 +157,10 @@ namespace lsp
                         break;
 
                     default:
+                    {
+                        sError.set_ascii("parse_document: Unexpected XML element");
                         return STATUS_CORRUPTED;
+                    }
                 }
             }
 
@@ -167,6 +172,8 @@ namespace lsp
 
         status_t StyleSheet::parse_schema(xml::PullParser *p)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
             enum
             {
@@ -243,10 +250,14 @@ namespace lsp
 
                     case xml::XT_END_ELEMENT:
                         if (!p->name()->equals_ascii("schema"))
+                        {
+                            sError.fmt_utf8("Unexpected end element: '%s'", p->name()->get_utf8());
                             return STATUS_CORRUPTED;
+                        }
                         return STATUS_OK;
 
                     default:
+                        sError.fmt_utf8("parse_schema: Unexpected XML element");
                         return STATUS_CORRUPTED;
                 }
 
@@ -257,6 +268,8 @@ namespace lsp
 
         status_t StyleSheet::parse_metadata(xml::PullParser *p)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
             enum
             {
@@ -300,6 +313,7 @@ namespace lsp
                         return STATUS_OK;
 
                     default:
+                        sError.set_ascii("parse_metadata: Unexpected XML element");
                         return STATUS_CORRUPTED;
                 }
 
@@ -310,6 +324,8 @@ namespace lsp
 
         status_t StyleSheet::parse_string_value(xml::PullParser *p, LSPString *value)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
             bool set = false;
 
@@ -352,6 +368,7 @@ namespace lsp
                         return STATUS_OK;
 
                     default:
+                        sError.set_ascii("parse_string_value: Unsupported XML document");
                         return STATUS_CORRUPTED;
                 }
 
@@ -362,6 +379,8 @@ namespace lsp
 
         status_t StyleSheet::parse_colors(xml::PullParser *p)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
 
             while (true)
@@ -406,6 +425,7 @@ namespace lsp
                         return STATUS_OK;
 
                     default:
+                        sError.set_ascii("parse_colors: Unsupported XML element");
                         return STATUS_CORRUPTED;
                 }
 
@@ -416,6 +436,8 @@ namespace lsp
 
         status_t StyleSheet::parse_constants(xml::PullParser *p)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
 
             while (true)
@@ -460,6 +482,7 @@ namespace lsp
                         return STATUS_OK;
 
                     default:
+                        sError.set_ascii("parse_constants: Unsupported XML element");
                         return STATUS_CORRUPTED;
                 }
 
@@ -470,6 +493,8 @@ namespace lsp
 
         status_t StyleSheet::parse_fonts(xml::PullParser *p)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
 
             while (true)
@@ -520,6 +545,7 @@ namespace lsp
                         return STATUS_OK;
 
                     default:
+                        sError.set_ascii("parse_fonts: Unsupported XML element");
                         return STATUS_CORRUPTED;
                 }
 
@@ -530,6 +556,8 @@ namespace lsp
 
         status_t StyleSheet::parse_style(xml::PullParser *p, bool root)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
             bool bParents = false;
             bool bClass = false;
@@ -616,6 +644,7 @@ namespace lsp
                         break;
 
                     default:
+                        sError.set_ascii("parse_style: Unsupported XML element");
                         res = STATUS_CORRUPTED;
                         break;
                 }
@@ -630,6 +659,8 @@ namespace lsp
 
         status_t StyleSheet::parse_color(xml::PullParser *p, lsp::Color *color)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
             bool value = false;
 
@@ -682,6 +713,7 @@ namespace lsp
                         return STATUS_OK;
 
                     default:
+                        sError.set_ascii("parse_color: Unsupported XML element");
                         return STATUS_CORRUPTED;
                 }
 
@@ -692,6 +724,8 @@ namespace lsp
 
         status_t StyleSheet::parse_constant(xml::PullParser *p, LSPString *value)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
             bool set = false;
 
@@ -734,6 +768,7 @@ namespace lsp
                         return STATUS_OK;
 
                     default:
+                        sError.set_ascii("parse_constant: Unsupported XML element");
                         return STATUS_CORRUPTED;
                 }
 
@@ -745,6 +780,8 @@ namespace lsp
 
         status_t StyleSheet::parse_font(xml::PullParser *p, font_t *font)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
             enum {
                 LC_FLAG_SRC     = 1 << 0,
@@ -805,6 +842,7 @@ namespace lsp
                         return STATUS_OK;
 
                     default:
+                        sError.set_ascii("parse_font: Unsupported XML element");
                         return STATUS_CORRUPTED;
                 }
 
@@ -815,6 +853,8 @@ namespace lsp
 
         status_t StyleSheet::parse_property(xml::PullParser *p, style_t *style, const LSPString *name)
         {
+            lsp_trace("parser = %p", p);
+
             status_t item, res = STATUS_OK;
             bool bValue = false;
             LSPString value;
@@ -883,6 +923,7 @@ namespace lsp
                     }
 
                     default:
+                        sError.set_ascii("parse_property: Unsupported XML element");
                         return STATUS_CORRUPTED;
                 }
 
