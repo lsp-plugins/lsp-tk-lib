@@ -256,6 +256,7 @@ namespace lsp
             switch (sAngle.get() & 0x03)
             {
                 case 0:
+                default:
                     sx          = (fw * width ) / nCols;
                     sy          = (fh * height) / nRows;
 
@@ -293,9 +294,6 @@ namespace lsp
                         x          += sx * nRows;
                     if (sy < 0.0f)
                         y          -= sy * nCols;
-                    break;
-
-                default:
                     break;
             }
 
