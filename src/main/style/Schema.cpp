@@ -350,7 +350,7 @@ namespace lsp
                 StyleSheet::style_t *xs = sheet->vStyles.get(name);
                 if (xs != NULL)
                 {
-                    lsp_trace("Linking style '%s'", name->get_utf8());
+                    //lsp_trace("Linking style '%s'", name->get_utf8());
                     res = apply_relations(s, &xs->parents);
                 }
                 else
@@ -358,7 +358,7 @@ namespace lsp
                     const char *default_parents = s->default_parents();
                     if (default_parents == NULL)
                         default_parents = "root";
-                    lsp_trace("Linking style '%s' to default parents: '%s'", name->get_utf8(), default_parents);
+                    //lsp_trace("Linking style '%s' to default parents: '%s'", name->get_utf8(), default_parents);
                     res = apply_relations(s, default_parents);
                 }
 
@@ -415,7 +415,7 @@ namespace lsp
                 // Check that parents of this style already have been configured
                 if (check_parents_configured(s))
                 {
-                    lsp_trace("Configuring style '%s'", name->get_utf8());
+                    //lsp_trace("Configuring style '%s'", name->get_utf8());
                     if ((res = apply_settings(s, xs)) != STATUS_OK)
                         return res;
 
@@ -471,7 +471,7 @@ namespace lsp
                 return res;
 
             // Link root style and other styles
-            lsp_trace("Linking root style");
+            //lsp_trace("Linking root style");
             if (sheet->pRoot != NULL)
             {
                 if ((res = apply_relations(pRoot, &sheet->pRoot->parents)) != STATUS_OK)
@@ -481,7 +481,7 @@ namespace lsp
                 return res;
 
             // Configure root style and others
-            lsp_trace("Configuring root style");
+            //lsp_trace("Configuring root style");
             if (sheet->pRoot != NULL)
             {
                 if ((res = apply_settings(pRoot, sheet->pRoot)) != STATUS_OK)
@@ -509,11 +509,11 @@ namespace lsp
                 LSPString *value        = xs->properties.get(name);
                 property_type_t type    = s->get_type(name);
 
-                lsp_trace("  %s = %s [%d]",
-                    name->get_utf8(),
-                    value->get_utf8(),
-                    int(pAtoms->atom_id(name))
-                );
+//                lsp_trace("  %s = %s [%d]",
+//                    name->get_utf8(),
+//                    value->get_utf8(),
+//                    int(pAtoms->atom_id(name))
+//                );
 
                 if (parse_property_value(&v, value, type) == STATUS_OK)
                 {
@@ -546,7 +546,7 @@ namespace lsp
                 Style *ps = (parent->equals_ascii("root")) ? pRoot : vStyles.get(parent);
                 if (ps != NULL)
                 {
-                    lsp_trace("  parent: %s", parent->get_utf8());
+//                    lsp_trace("  parent: %s", parent->get_utf8());
                     if ((res = s->add_parent(ps)) != STATUS_OK)
                         return res;
                 }
@@ -580,7 +580,7 @@ namespace lsp
                 Style *ps = (parent.equals_ascii("root")) ? pRoot : vStyles.get(&parent);
                 if (ps != NULL)
                 {
-                    lsp_trace("  parent: %s", parent.get_utf8());
+//                    lsp_trace("  parent: %s", parent.get_utf8());
                     if ((res = s->add_parent(ps)) != STATUS_OK)
                         return res;
                 }
@@ -597,7 +597,7 @@ namespace lsp
                 Style *ps = (parent.equals_ascii("root")) ? pRoot : vStyles.get(&parent);
                 if (ps != NULL)
                 {
-                    lsp_trace("  parent: %s", parent.get_utf8());
+//                    lsp_trace("  parent: %s", parent.get_utf8());
                     if ((res = s->add_parent(ps)) != STATUS_OK)
                         return res;
                 }
@@ -622,7 +622,7 @@ namespace lsp
             }
 
             // Create style
-            lsp_trace("Creating style '%s' with default parents '%s'...", init->name(), init->default_parents());
+//            lsp_trace("Creating style '%s' with default parents '%s'...", init->name(), init->default_parents());
             Style *style    = init->create(this);
             if (style == NULL)
                 return STATUS_NO_MEM;
@@ -659,7 +659,7 @@ namespace lsp
             }
 
             // Create style
-            lsp_trace("Creating style '%s'...", name->get_native());
+//            lsp_trace("Creating style '%s'...", name->get_native());
             Style *style    = new Style(this, name->get_utf8(), "root");
             if (style == NULL)
                 return STATUS_NO_MEM;
