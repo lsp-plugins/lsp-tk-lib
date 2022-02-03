@@ -331,7 +331,7 @@ namespace lsp
         status_t Menu::init()
         {
             // Initialize parent widget
-            status_t result = Widget::init();
+            status_t result = WidgetContainer::init();
             if (result != STATUS_OK)
                 return result;
 
