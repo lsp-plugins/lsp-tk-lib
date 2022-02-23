@@ -35,7 +35,6 @@ TEST_DEPENDENCIES = \
 ifeq ($(PLATFORM),Linux)
   DEPENDENCIES             += \
     LIBSNDFILE \
-    LIBICONV \
     LIBX11 \
     LIBCAIRO \
     LIBFREETYPE
@@ -49,6 +48,7 @@ endif
 ifeq ($(PLATFORM),BSD)
   DEPENDENCIES             += \
     LIBSNDFILE \
+    LIBICONV \
     LIBX11 \
     LIBCAIRO \
     LIBICONV \
