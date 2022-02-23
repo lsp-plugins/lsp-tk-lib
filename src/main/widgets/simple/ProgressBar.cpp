@@ -304,7 +304,7 @@ namespace lsp
             if (border > 0)
             {
                 lsp::Color bcolor(sBorderColor);
-                bcolor.scale_lightness(bright);
+                bcolor.scale_lch_luminance(bright);
 
                 s->fill_round_rect(bcolor, SURFMASK_ALL_CORNER, radius, &xr);
                 radius      = lsp_max(0, radius - border);
@@ -317,7 +317,7 @@ namespace lsp
                 if (gap > 0)
                 {
                     bcolor.copy(sBorderGapColor);
-                    bcolor.scale_lightness(bright);
+                    bcolor.scale_lch_luminance(bright);
 
                     s->fill_round_rect(bcolor, SURFMASK_ALL_CORNER, radius, &xr);
                     radius      = lsp_max(0, radius - gap);
@@ -336,7 +336,7 @@ namespace lsp
             if (split > 0)
             {
                 lsp::Color color(sColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
 
                 s->clip_begin(xr.nLeft, xr.nTop, split, xr.nHeight);
                 s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
@@ -345,7 +345,7 @@ namespace lsp
             if (split < xr.nWidth)
             {
                 lsp::Color color(sInvColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
 
                 s->clip_begin(xr.nLeft + split, xr.nTop, xr.nWidth - split, xr.nHeight);
                 s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
@@ -366,7 +366,7 @@ namespace lsp
                 if (split > 0)
                 {
                     lsp::Color color(sTextColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->clip_begin(xr.nLeft, xr.nTop, split, xr.nHeight);
                     out_text(s, &text, color);
@@ -376,7 +376,7 @@ namespace lsp
                 if (split < sTextArea.nWidth)
                 {
                     lsp::Color color(sInvTextColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->clip_begin(xr.nLeft + split, xr.nTop, xr.nWidth - split, xr.nHeight);
                     out_text(s, &text, color);

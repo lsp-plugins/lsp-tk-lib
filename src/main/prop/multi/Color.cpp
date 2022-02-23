@@ -29,17 +29,7 @@ namespace lsp
         const prop::desc_t Color::DESC[] =
         {
             { "",           PT_STRING   },
-            { ".r",         PT_FLOAT    },
-            { ".g",         PT_FLOAT    },
-            { ".b",         PT_FLOAT    },
-            { ".h",         PT_FLOAT    },
-            { ".s",         PT_FLOAT    },
-            { ".l",         PT_FLOAT    },
             { ".a",         PT_FLOAT    },
-            { ".rgb",       PT_STRING   },
-            { ".rgba",      PT_STRING   },
-            { ".hsl",       PT_STRING   },
-            { ".hsla",      PT_STRING   },
             { NULL,         PT_UNKNOWN  }
         };
 
@@ -56,55 +46,15 @@ namespace lsp
         void Color::push()
         {
             lsp::Color &c = sColor;
-            char buf[32];
-
-            // R, G, B components
-            if (vAtoms[P_R] >= 0)
-                pStyle->set_float(vAtoms[P_R], c.red());
-            if (vAtoms[P_G] >= 0)
-                pStyle->set_float(vAtoms[P_G], c.green());
-            if (vAtoms[P_B] >= 0)
-                pStyle->set_float(vAtoms[P_B], c.blue());
-
-            // H, S, L components
-            if (vAtoms[P_H] >= 0)
-                pStyle->set_float(vAtoms[P_H], c.hue());
-            if (vAtoms[P_S] >= 0)
-                pStyle->set_float(vAtoms[P_S], c.saturation());
-            if (vAtoms[P_L] >= 0)
-                pStyle->set_float(vAtoms[P_L], c.lightness());
+            char buf[64];
 
             // Alpha component
             if (vAtoms[P_A] >= 0)
                 pStyle->set_float(vAtoms[P_A], c.alpha());
 
-            // Mixed components
-            if (vAtoms[P_RGB] >= 0)
-            {
-                c.format_rgb(buf, sizeof(buf)/sizeof(char));
-                pStyle->set_string(vAtoms[P_RGB], buf);
-            }
-            if (vAtoms[P_RGBA] >= 0)
-            {
-                c.format_rgba(buf, sizeof(buf)/sizeof(char));
-                pStyle->set_string(vAtoms[P_RGBA], buf);
-            }
-            if (vAtoms[P_HSL] >= 0)
-            {
-                c.format_hsl(buf, sizeof(buf)/sizeof(char));
-                pStyle->set_string(vAtoms[P_HSL], buf);
-            }
-            if (vAtoms[P_HSLA] >= 0)
-            {
-                c.format_hsla(buf, sizeof(buf)/sizeof(char));
-                pStyle->set_string(vAtoms[P_HSLA], buf);
-            }
             if (vAtoms[P_VALUE] >= 0)
             {
-                if (c.is_rgb())
-                    c.format_rgba(buf, sizeof(buf)/sizeof(char));
-                else
-                    c.format_hsla(buf, sizeof(buf)/sizeof(char));
+                c.format4(buf, sizeof(buf)/sizeof(char));
                 pStyle->set_string(vAtoms[P_VALUE], buf);
             }
         }
@@ -114,46 +64,12 @@ namespace lsp
             float v;
             lsp::Color &c = sColor;
 
-            if ((property == vAtoms[P_R]) && (pStyle->get_float(vAtoms[P_R], &v) == STATUS_OK))
-                c.red(v);
-            if ((property == vAtoms[P_G]) && (pStyle->get_float(vAtoms[P_G], &v) == STATUS_OK))
-                c.green(v);
-            if ((property == vAtoms[P_B]) && (pStyle->get_float(vAtoms[P_B], &v) == STATUS_OK))
-                c.blue(v);
-
-            if ((property == vAtoms[P_H]) && (pStyle->get_float(vAtoms[P_H], &v) == STATUS_OK))
-                c.hue(v);
-            if ((property == vAtoms[P_S]) && (pStyle->get_float(vAtoms[P_S], &v) == STATUS_OK))
-                c.saturation(v);
-            if ((property == vAtoms[P_L]) && (pStyle->get_float(vAtoms[P_L], &v) == STATUS_OK))
-                c.lightness(v);
-
             if ((property == vAtoms[P_A]) && (pStyle->get_float(vAtoms[P_A], &v) == STATUS_OK))
                 c.alpha(v);
 
             const char *s;
-            if ((property == vAtoms[P_HSL]) && (pStyle->get_string(vAtoms[P_HSL], &s) == STATUS_OK))
-                c.parse_hsl(s);
-            if ((property == vAtoms[P_HSLA]) && (pStyle->get_string(vAtoms[P_HSLA], &s) == STATUS_OK))
-                c.parse_hsla(s);
-
-            if ((property == vAtoms[P_RGB]) && (pStyle->get_string(vAtoms[P_RGB], &s) == STATUS_OK))
-                c.parse_rgb(s);
-            if ((property == vAtoms[P_RGBA]) && (pStyle->get_string(vAtoms[P_RGBA], &s) == STATUS_OK))
-                c.parse_rgba(s);
-
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
-            {
-                status_t res = c.parse4(s);
-                if (res != STATUS_OK)
-                    res = c.parse3(s);
-                if (res != STATUS_OK)
-                {
-                    const lsp::Color *col = pStyle->schema()->color(s);
-                    if (col != NULL)
-                        c.copy(col);
-                }
-            }
+                parse(&c, s, pStyle);
         }
 
         float Color::red(float r)
@@ -199,6 +115,30 @@ namespace lsp
         float Color::lightness(float l)
         {
             float old = sColor.lightness();
+            sColor.lightness(l);
+            sync();
+            return old;
+        };
+
+        float Color::hsl_hue(float h)
+        {
+            float old = sColor.hsl_hue();
+            sColor.hue(h);
+            sync();
+            return old;
+        };
+
+        float Color::hsl_saturation(float s)
+        {
+            float old = sColor.hsl_saturation();
+            sColor.saturation(s);
+            sync();
+            return old;
+        };
+
+        float Color::hsl_lightness(float l)
+        {
+            float old = sColor.hsl_lightness();
             sColor.lightness(l);
             sync();
             return old;
@@ -263,9 +203,7 @@ namespace lsp
         bool Color::parse(lsp::Color *c, const char *s, Style *style)
         {
             // Try to parse color
-            status_t res = c->parse4(s);
-            if (res != STATUS_OK)
-                res = c->parse3(s);
+            status_t res = c->parse(s);
             if ((res != STATUS_OK) && (style != NULL))
             {
                 const lsp::Color *col = style->schema()->color(s);
@@ -326,6 +264,194 @@ namespace lsp
             sColor.swap(&c->sColor);
             sync();
             c->sync();
+        }
+
+        float Color::xyz_x(float x)
+        {
+            float old = sColor.xyz_x();
+            sColor.xyz_x(x);
+            sync();
+            return old;
+        };
+
+        float Color::xyz_y(float y)
+        {
+            float old = sColor.xyz_y();
+            sColor.xyz_y(y);
+            sync();
+            return old;
+        };
+
+        float Color::xyz_z(float z)
+        {
+            float old = sColor.xyz_z();
+            sColor.xyz_z(z);
+            sync();
+            return old;
+        };
+
+        void Color::set_xyz(float x, float y, float z)
+        {
+            sColor.set_xyz(x, y, z);
+            sync();
+        }
+
+        void Color::set_xyza(float x, float y, float z, float a)
+        {
+            sColor.set_xyza(x, y, z, a);
+            sync();
+        }
+
+        float Color::lab_l(float l)
+        {
+            float old = sColor.lab_l();
+            sColor.lab_l(l);
+            sync();
+            return old;
+        };
+
+        float Color::lab_a(float a)
+        {
+            float old = sColor.lab_a();
+            sColor.lab_a(a);
+            sync();
+            return old;
+        };
+
+        float Color::lab_b(float b)
+        {
+            float old = sColor.lab_b();
+            sColor.lab_b(b);
+            sync();
+            return old;
+        };
+
+        void Color::set_lab(float l, float a, float b)
+        {
+            sColor.set_lab(l, a, b);
+            sync();
+        }
+
+        void Color::set_laba(float l, float a, float b, float alpha)
+        {
+            sColor.set_laba(l, a, b, alpha);
+            sync();
+        }
+
+        float Color::lch_l(float l)
+        {
+            float old = sColor.lch_l();
+            sColor.lch_l(l);
+            sync();
+            return old;
+        }
+
+        float Color::lch_c(float c)
+        {
+            float old = sColor.lch_c();
+            sColor.lch_c(c);
+            sync();
+            return old;
+        }
+
+        float Color::lch_h(float h)
+        {
+            float old = sColor.lch_h();
+            sColor.lch_h(h);
+            sync();
+            return old;
+        }
+
+        float Color::hcl_l(float l)
+        {
+            float old = sColor.hcl_l();
+            sColor.hcl_l(l);
+            sync();
+            return old;
+        }
+
+        float Color::hcl_c(float c)
+        {
+            float old = sColor.hcl_c();
+            sColor.hcl_c(c);
+            sync();
+            return old;
+        }
+
+        float Color::hcl_h(float h)
+        {
+            float old = sColor.hcl_h();
+            sColor.hcl_h(h);
+            sync();
+            return old;
+        }
+
+        void Color::set_lch(float l, float c, float h)
+        {
+            sColor.set_lch(l, c, h);
+            sync();
+        }
+
+        void Color::set_lcha(float l, float c, float h, float alpha)
+        {
+            sColor.set_lcha(l, c, h, alpha);
+            sync();
+        }
+
+        void Color::set_hcl(float h, float c, float l)
+        {
+            sColor.set_hcl(h, c, l);
+            sync();
+        }
+
+        void Color::set_hcla(float h, float c, float l, float alpha)
+        {
+            sColor.set_hcla(h, c, l, alpha);
+            sync();
+        }
+
+        float Color::cyan(float c)
+        {
+            float old = sColor.cyan();
+            sColor.cyan(c);
+            sync();
+            return old;
+        }
+
+        float Color::magenta(float m)
+        {
+            float old = sColor.magenta();
+            sColor.magenta(m);
+            sync();
+            return old;
+        }
+
+        float Color::yellow(float y)
+        {
+            float old = sColor.yellow();
+            sColor.yellow(y);
+            sync();
+            return old;
+        }
+
+        float Color::black(float k)
+        {
+            float old = sColor.black();
+            sColor.black(k);
+            sync();
+            return old;
+        }
+
+        void Color::set_cmyk(float c, float m, float y, float k)
+        {
+            sColor.set_cmyk(c, m, y, k);
+            sync();
+        }
+
+        void Color::set_cmyka(float c, float m, float y, float k, float a)
+        {
+            sColor.set_cmyka(c, m, y, k, a);
+            sync();
         }
 
     } /* namespace tk */

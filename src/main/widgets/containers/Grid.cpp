@@ -383,6 +383,8 @@ namespace lsp
 
         void Grid::realize(const ws::rectangle_t *r)
         {
+            free_cells(&sAlloc);
+
 //            lsp_trace("this=%p, size={%d, %d, %d, %d}",
 //                    this, int(r->nLeft), int(r->nTop), int(r->nWidth), int(r->nHeight)
 //                );
@@ -798,26 +800,44 @@ namespace lsp
                 h->nSpacing     = 0;
             }
 
-            // Initialize expand flags
+            // Initialize 'expand' and 'reduce' flags
             for (size_t i=0, n=a->vCells.size(); i<n; ++i)
             {
                 cell_t *c       = a->vCells.uget(i);
+                if (c->pWidget == NULL)
+                    continue;
 
-                // Horizontal
-                if ((c->pWidget != NULL) && (c->pWidget->allocation()->hexpand()))
+                // Estimate horizontal and vertical flags
+                tk::Allocation *alloc = c->pWidget->allocation();
+                size_t hflags = 0, vflags = 0;
+                if (alloc->hexpand())
+                    hflags     |= F_EXPAND;
+                if (alloc->vexpand())
+                    vflags     |= F_EXPAND;
+                if (alloc->hreduce())
+                    hflags     |= F_REDUCE;
+                if (alloc->vreduce())
+                    vflags     |= F_REDUCE;
+
+                // Apply horizontal flags if present
+                if (hflags)
+                {
                     for (size_t j=0; j<c->nCols; ++j)
                     {
                         h               = a->vCols.uget(c->nLeft + j);
-                        h->nFlags      |= F_EXPAND;
+                        h->nFlags      |= hflags;
                     }
+                }
 
-                // Vertical
-                if ((c->pWidget != NULL) && (c->pWidget->allocation()->vexpand()))
+                // Apply vertical flags if present
+                if (vflags)
+                {
                     for (size_t j=0; j<c->nRows; ++j)
                     {
                         h               = a->vRows.uget(c->nTop + j);
-                        h->nFlags      |= F_EXPAND;
+                        h->nFlags      |= vflags;
                     }
+                }
             }
 
             return STATUS_OK;
@@ -842,8 +862,8 @@ namespace lsp
             if (count <= 0)
                 return;
 
-            // Estimate number of expanded items and overall weight
-            size_t expanded = 0, weight = 0, width = 0;
+            // Estimate number of expanded items, reduced items and overall weight
+            size_t expanded = 0, reduced = 0, weight = 0, width = 0;
             for (size_t k=0; k<count; ++k)
             {
                 header_t *h     = vh->uget(first + k);
@@ -852,7 +872,9 @@ namespace lsp
                 if ((k+1) < count)
                     width          += h->nSpacing;
 
-                if (h->nFlags & F_EXPAND)
+                if (h->nFlags & F_REDUCE)
+                    reduced ++;
+                else if (h->nFlags & F_EXPAND)
                     expanded ++;
             }
 
@@ -860,17 +882,19 @@ namespace lsp
                 return;
             size_t left = size - width;
 
-            // Form list of items for size distribution
+            // Form list of items for size distribution excluding reduced (if possible)
             lltl::parray<header_t> vl;
             for (size_t k=0; k<count; ++k)
             {
                 header_t *h     = vh->uget(first + k);
                 if (expanded > 0)
                 {
-                    if (h->nFlags & F_EXPAND)
+                    if ((!(h->nFlags & F_REDUCE)) && (h->nFlags & F_EXPAND))
                         vl.add(h);
                 }
-                else
+                else if (reduced >= count)
+                    vl.add(h);
+                else if (!(h->nFlags & F_REDUCE))
                     vl.add(h);
             }
             count   = vl.size();
@@ -883,10 +907,7 @@ namespace lsp
                 for (size_t k=0; k<count; ++k)
                 {
                     header_t *h     = vl.uget(k);
-                    size_t hw       = h->nSize * h->nWeight;
-//                    if ((k + 1) < count)
-//                        hw             += h->nSpacing;
-                    size_t delta    = (hw * left) / weight;
+                    size_t delta    = (h->nSize * h->nWeight * left) / weight;
                     h->nSize       += delta;
                     total          += delta;
                 }

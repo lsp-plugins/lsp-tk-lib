@@ -147,17 +147,17 @@ namespace lsp
             return (a < 0.0) ? M_PI*2 + a : a;
         }
 
-        bool clip_line2d(
+        bool clip_line2d_vec(
             float dx, float dy,
             float lc, float rc, float tc, float bc,
             float error,
             float &cx1, float &cy1, float &cx2, float &cy2
         )
         {
-            return clip_line2d(dy, dx, 0.0f, lc, rc, tc, bc, error, cx1, cy1, cx2, cy2);
+            return clip_line2d_eq(dy, dx, 0.0f, lc, rc, tc, bc, error, cx1, cy1, cx2, cy2);
         }
 
-        bool clip_line2d(
+        bool clip_line2d_coord(
             float x1, float x2, float y1, float y2,
             float lc, float rc, float tc, float bc,
             float error,
@@ -168,7 +168,7 @@ namespace lsp
             if (!line2d_equation(x1, y1, x2, y2, a, b, c))
                 return false;
 
-            return clip_line2d(a, b, c, lc, rc, tc, bc, error, cx1, cy1, cx2, cy2);
+            return clip_line2d_eq(a, b, c, lc, rc, tc, bc, error, cx1, cy1, cx2, cy2);
         }
 
         bool vclip_line2d(
@@ -211,7 +211,7 @@ namespace lsp
             return true;
         }
 
-        bool clip_line2d(
+        bool clip_line2d_eq(
             float a, float b, float c,
             float lc, float rc, float tc, float bc,
             float error,

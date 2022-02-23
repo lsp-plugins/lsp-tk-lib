@@ -70,7 +70,7 @@ namespace lsp
             LSP_TK_BUILTIN_STYLE(ComboBox, "ComboBox", "root");
 
             // ComboBox::Window style
-            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboBox::Window", "Window");
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "ComboBox::Window", "PopupWindow");
 
             // ComboBox::List style
             LSP_TK_BUILTIN_STYLE(ListBox, "ComboBox::List", "ListBox");
@@ -458,7 +458,7 @@ namespace lsp
             if (a.border > 0)
             {
                 c.copy(sBorderColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->set_antialiasing(true);
                 s->fill_round_rect(c, SURFMASK_ALL_CORNER, a.radius, 0, 0, sSize.nWidth, sSize.nHeight);
 
@@ -486,7 +486,7 @@ namespace lsp
                 if (a.bgap > 0)
                 {
                     c.copy(sBorderGapColor);
-                    c.scale_lightness(bright);
+                    c.scale_lch_luminance(bright);
                     s->fill_round_rect(c, SURFMASK_L_CORNER, radius, &ta);
 
                     ta.nLeft       += a.bgap;
@@ -498,7 +498,7 @@ namespace lsp
 
                 // Draw the prime color
                 c.copy(sColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_round_rect(c, SURFMASK_L_CORNER, radius, &ta);
 
                 // Now reset parameters of ta before rendering the text
@@ -539,7 +539,7 @@ namespace lsp
                 s->clip_begin(&ta);
                 {
                     c.copy(sTextColor);
-                    c.scale_lightness(bright);
+                    c.scale_lch_luminance(bright);
                     sFont.draw(s, c, x, y, fscaling, &text);
                 }
                 s->clip_end();
@@ -555,7 +555,7 @@ namespace lsp
                 if (a.bgap > 0)
                 {
                     c.copy(sBorderGapColor);
-                    c.scale_lightness(bright);
+                    c.scale_lch_luminance(bright);
                     s->fill_round_rect(c, SURFMASK_R_CORNER, radius, &sa);
 
                     sa.nTop        += a.bgap;
@@ -566,12 +566,12 @@ namespace lsp
 
                 // Draw the prime color
                 c.copy(sSpinColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_round_rect(c, SURFMASK_R_CORNER, radius, &sa);
 
                 // Draw arrows
                 c.copy(sSpinTextColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_triangle(
                     sa.nLeft + sa.nWidth/6.0f, sa.nTop + (sa.nHeight*3.0f)/7.0f,
                     sa.nLeft + sa.nWidth*0.5f, sa.nTop + sa.nHeight/7.0f,
@@ -593,7 +593,7 @@ namespace lsp
                 if (a.sgap > 0)
                 {
                     c.copy(sBorderGapColor);
-                    c.scale_lightness(bright);
+                    c.scale_lch_luminance(bright);
                     s->fill_rect(c, &va);
 
                     va.nLeft       += a.sgap;
@@ -603,7 +603,7 @@ namespace lsp
                 if (va.nWidth > 0)
                 {
                     c.copy(sBorderColor);
-                    c.scale_lightness(bright);
+                    c.scale_lch_luminance(bright);
                     s->fill_rect(c, &va);
                 }
             }

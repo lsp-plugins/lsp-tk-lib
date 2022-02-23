@@ -270,7 +270,7 @@ namespace lsp
             lsp::Color bg_color;
 
             get_actual_bg_color(bg_color);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
 
             s->clip_begin(area);
             {
@@ -288,8 +288,8 @@ namespace lsp
                 // Draw the glass and the border
                 color.copy(sGlassColor);
                 bg_color.copy(sBorderColor);
-                color.scale_lightness(bright);
-                bg_color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
+                bg_color.scale_lch_luminance(bright);
 
                 bool flat = sBorderFlat.get();
 
@@ -320,7 +320,7 @@ namespace lsp
             // Clear canvas
             lsp::Color c(sColor);
             // c.set_rgb24(0x888888);
-            c.scale_lightness(sBrightness.get());
+            c.scale_lch_luminance(sBrightness.get());
             s->clear(c);
 
             // Sync internal lists of axes and origins

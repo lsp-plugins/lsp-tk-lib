@@ -68,22 +68,22 @@ namespace lsp
             float x, float y    // Coordinates of dot
         );
 
-        bool clip_line2d(
-            float dx, float dy,                             // Line equation
+        bool clip_line2d_vec(
+            float dx, float dy,                             // Line direction
             float lc, float rc, float tc, float bc,         // Corners from left, right, top, bottom
             float error,                                    // Allowed error
             float &cx1, float &cy1, float &cx2, float &cy2  // Results
         );
 
-        bool clip_line2d(
+        bool clip_line2d_eq(
             float a, float b, float c,                      // Line equation
             float lc, float rc, float tc, float bc,         // Corners from left, right, top, bottom
             float error,                                    // Allowed error
             float &cx1, float &cy1, float &cx2, float &cy2  // Results
         );
 
-        bool clip_line2d(
-            float x1, float x2, float y1, float y2,         // Coordinates of two points
+        bool clip_line2d_coord(
+            float x1, float x2, float y1, float y2,         // Coordinates of two points laying on line
             float lc, float rc, float tc, float bc,         // Corners from left, right, top, bottom
             float error,                                    // Allowed error
             float &cx1, float &cy1, float &cx2, float &cy2  // Results

@@ -33,6 +33,7 @@ namespace lsp
         const prop::desc_t GraphMeshData::DESC[] =
         {
             { ".size",      PT_INT      },
+            { ".strobe",    PT_BOOL     },
             NULL
         };
 
@@ -48,6 +49,7 @@ namespace lsp
             vData       = NULL;
             nSize       = 0;
             nStride     = 0;
+            bStrobe     = false;
             pPtr        = NULL;
         }
 
@@ -60,6 +62,7 @@ namespace lsp
 
             vData       = NULL;
             nSize       = 0;
+            bStrobe     = false;
             nStride     = 0;
             pPtr        = NULL;
         }
@@ -71,7 +74,11 @@ namespace lsp
 
             ssize_t v;
             if ((property == vAtoms[P_SIZE]) && (pStyle->get_int(vAtoms[P_SIZE], &v) == STATUS_OK))
-                resize_buffer(v);
+                resize_buffer(v, bStrobe);
+
+            bool strobe;
+            if ((property == vAtoms[P_STROBE]) && (pStyle->get_bool(vAtoms[P_STROBE], &strobe) == STATUS_OK))
+                resize_buffer(nSize, strobe);
 
             // Update/notify listeners
             if (pStyle->config_mode())
@@ -89,6 +96,8 @@ namespace lsp
                 {
                     if (vAtoms[P_SIZE] >= 0)
                         pStyle->set_int(vAtoms[P_SIZE], nSize);
+                    if (vAtoms[P_STROBE] >= 0)
+                        pStyle->set_bool(vAtoms[P_STROBE], bStrobe);
                 }
                 pStyle->end();
             }
@@ -98,21 +107,22 @@ namespace lsp
                 pListener->notify(this);
         }
 
-        bool GraphMeshData::resize_buffer(size_t size)
+        bool GraphMeshData::resize_buffer(size_t size, bool strobe)
         {
             // Did not even changed?
-            if (nSize == size)
+            if ((nSize == size) && (bStrobe == strobe))
                 return true;
 
             // Need to re-allocate?
             size_t stride   = lsp::align_size(size*sizeof(float), DATA_ALIGNMENT) / sizeof(float);
 
-            if (stride != nStride)
+            if ((stride != nStride) || (strobe != bStrobe))
             {
                 size_t count    = (stride < nStride) ? size : nSize;
                 size_t n        = stride - size;
                 uint8_t *ptr    = NULL;
-                float *xp       = lsp::alloc_aligned<float>(ptr, stride*2, DATA_ALIGNMENT);
+                size_t nc       = (strobe) ? 3 : 2;
+                float *xp       = lsp::alloc_aligned<float>(ptr, stride * nc, DATA_ALIGNMENT);
                 if (xp == NULL)
                     return false;
 
@@ -124,21 +134,36 @@ namespace lsp
                     dsp::copy(&xp[stride], &vData[nStride], count);
                     dsp::fill_zero(&xp[stride + count], n);
 
+                    // Copy strobe data if present
+                    if (strobe)
+                    {
+                        if (bStrobe)
+                        {
+                            dsp::copy(&xp[stride*2], &vData[nStride], count);
+                            dsp::fill_zero(&xp[stride*2 + count], n);
+                        }
+                        else
+                            dsp::fill_zero(&xp[stride*2], stride);
+                    }
+
                     // Free previously allocated data
                     lsp::free_aligned(pPtr);
                 }
                 else
-                    dsp::fill_zero(xp, stride * 2);
+                    dsp::fill_zero(xp, stride * nc);
 
                 vData           = xp;
                 pPtr            = ptr;
                 nStride         = stride;
+                bStrobe         = strobe;
             }
             else
             {
                 size_t n        = nStride - size;
                 dsp::fill_zero(&vData[size], n);
                 dsp::fill_zero(&vData[nStride + size], n);
+                if (strobe)
+                    dsp::fill_zero(&vData[nStride*2 + size], n);
             }
 
             // Update size
@@ -146,17 +171,31 @@ namespace lsp
             return true;
         }
 
-        bool GraphMeshData::set_size(size_t size)
+        bool GraphMeshData::set_size(size_t size, bool strobe)
         {
-            // Size does not change?
-            if (size == nSize)
-                return true;
-
             // Try to resize the buffer
-            bool res = resize_buffer(size);
+            bool res = resize_buffer(size, strobe);
             if (res)
                 sync();
 
+            return res;
+        }
+
+        bool GraphMeshData::set_size(size_t size)
+        {
+            // Try to resize the buffer
+            bool res = resize_buffer(size, bStrobe);
+            if (res)
+                sync();
+
+            return res;
+        }
+
+        bool GraphMeshData::set_strobe(bool strobe)
+        {
+            bool res = resize_buffer(nSize, strobe);
+            if (res)
+                sync();
             return res;
         }
 
@@ -173,7 +212,7 @@ namespace lsp
 
         bool GraphMeshData::set_x(const float *v, size_t size)
         {
-            if (!resize_buffer(size))
+            if (!resize_buffer(size, bStrobe))
                 return false;
 
             if (vData != NULL)
@@ -185,7 +224,7 @@ namespace lsp
 
         bool GraphMeshData::set_y(const float *v, size_t size)
         {
-            if (!resize_buffer(size))
+            if (!resize_buffer(size, bStrobe))
                 return false;
 
             if (vData != NULL)
@@ -195,9 +234,23 @@ namespace lsp
             return true;
         }
 
+        bool GraphMeshData::set_s(const float *v, size_t size)
+        {
+            if (!bStrobe)
+                return false;
+            if (!resize_buffer(size, bStrobe))
+                return false;
+
+            if (vData != NULL)
+                copy_data(&vData[nStride*2], v, size);
+            sync();
+
+            return true;
+        }
+
         bool GraphMeshData::set(const float *x, const float *y, size_t size)
         {
-            if (!resize_buffer(size))
+            if (!resize_buffer(size, bStrobe))
                 return false;
 
             if (vData != NULL)

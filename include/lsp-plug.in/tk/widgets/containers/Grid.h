@@ -59,6 +59,7 @@ namespace lsp
                 enum flags_t
                 {
                     F_EXPAND        = 1 << 0,       // Widget in the cell has 'expand' flag
+                    F_REDUCE        = 1 << 1,       // Widget in the cell has 'reduce' flag
                 };
 
                 typedef struct cell_t

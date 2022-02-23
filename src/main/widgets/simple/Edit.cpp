@@ -491,7 +491,7 @@ namespace lsp
             if (border > 0)
             {
                 color.copy(sBorderColor);
-                color.scale_lightness(lightness);
+                color.scale_lch_luminance(lightness);
                 s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
                 xr.nLeft       += border;
@@ -504,7 +504,7 @@ namespace lsp
                 if (gap > 0)
                 {
                     color.copy(sBorderGapColor);
-                    color.scale_lightness(lightness);
+                    color.scale_lch_luminance(lightness);
                     s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
                     xr.nLeft       += gap;
@@ -517,7 +517,7 @@ namespace lsp
 
             // Draw main background
             color.copy(sColor);
-            color.scale_lightness(lightness);
+            color.scale_lch_luminance(lightness);
             s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
             // Draw text
@@ -584,9 +584,9 @@ namespace lsp
                 lsp::Color scolor(sSelectionColor);
                 lsp::Color stcolor(sTextSelectedColor);
                 color.copy(sTextColor);
-                color.scale_lightness(lightness);
-                scolor.scale_lightness(lightness);
-                stcolor.scale_lightness(lightness);
+                color.scale_lch_luminance(lightness);
+                scolor.scale_lch_luminance(lightness);
+                stcolor.scale_lch_luminance(lightness);
 
                 ssize_t xshift  = (sSelection.reverted() && sCursor.inserting()) ? cursize : 0;
 
@@ -612,7 +612,7 @@ namespace lsp
             else
             {
                 color.copy(sTextColor);
-                color.scale_lightness(lightness);
+                color.scale_lch_luminance(lightness);
 
                 sFont.draw(s, color, xr.nLeft + sTextPos, xr.nTop + fp.Ascent, fscaling, text);
             }
@@ -623,7 +623,7 @@ namespace lsp
             if (sCursor.visible() && sCursor.shining())
             {
                 color.copy(sCursorColor);
-                color.scale_lightness(lightness);
+                color.scale_lch_luminance(lightness);
 
                 if (sCursor.inserting())
                     s->fill_rect(color, xr.nLeft, xr.nTop, cursize, xr.nHeight);
@@ -638,7 +638,7 @@ namespace lsp
                     {
                         // Draw background
                         lsp::Color bcolor(sColor);
-                        bcolor.scale_lightness(lightness);
+                        bcolor.scale_lch_luminance(lightness);
 
                         sFont.get_text_parameters(s, &tp, fscaling, text, sCursor.position(), sCursor.position() + 1);
                         ssize_t xw = (tp.XAdvance > tp.Width) ? tp.XAdvance : tp.Width + 1;

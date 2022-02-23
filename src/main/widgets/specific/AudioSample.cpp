@@ -481,8 +481,8 @@ namespace lsp
             // Draw the poly
             lsp::Color fill(c->sColor);
             lsp::Color wire(c->sWaveBorderColor);
-            fill.scale_lightness(bright);
-            wire.scale_lightness(bright);
+            fill.scale_lch_luminance(bright);
+            wire.scale_lch_luminance(bright);
 
             bool aa             = s->set_antialiasing(true);
             s->draw_poly(fill, wire, border, x, y, n_points);
@@ -528,8 +528,8 @@ namespace lsp
 
                 lsp::Color fill(c->sFadeInColor);
                 lsp::Color wire(c->sFadeInBorderColor);
-                fill.scale_lightness(bright);
-                wire.scale_lightness(bright);
+                fill.scale_lch_luminance(bright);
+                wire.scale_lch_luminance(bright);
 
                 s->draw_poly(fill, wire, border, x, y, 6);
             }
@@ -557,8 +557,8 @@ namespace lsp
 
                 lsp::Color fill(c->sFadeOutColor);
                 lsp::Color wire(c->sFadeOutBorderColor);
-                fill.scale_lightness(bright);
-                wire.scale_lightness(bright);
+                fill.scale_lch_luminance(bright);
+                wire.scale_lch_luminance(bright);
 
                 s->draw_poly(fill, wire, border, x, y, 6);
             }
@@ -612,8 +612,8 @@ namespace lsp
             // Draw the poly
             lsp::Color fill(c->sColor);
             lsp::Color wire(c->sWaveBorderColor);
-            fill.scale_lightness(bright);
-            wire.scale_lightness(bright);
+            fill.scale_lch_luminance(bright);
+            wire.scale_lch_luminance(bright);
             s->draw_poly(fill, wire, border, x, y, n_points);
 
             // Free allocated data
@@ -653,8 +653,8 @@ namespace lsp
 
                 lsp::Color fill(c->sFadeInColor);
                 lsp::Color wire(c->sFadeInBorderColor);
-                fill.scale_lightness(bright);
-                wire.scale_lightness(bright);
+                fill.scale_lch_luminance(bright);
+                wire.scale_lch_luminance(bright);
 
                 s->draw_poly(fill, wire, border, x, y, 4);
             }
@@ -678,8 +678,8 @@ namespace lsp
 
                 lsp::Color fill(c->sFadeOutColor);
                 lsp::Color wire(c->sFadeOutBorderColor);
-                fill.scale_lightness(bright);
-                wire.scale_lightness(bright);
+                fill.scale_lch_luminance(bright);
+                wire.scale_lch_luminance(bright);
 
                 s->draw_poly(fill, wire, border, x, y, 4);
             }
@@ -711,7 +711,7 @@ namespace lsp
 
             // Draw main text
             lsp::Color color(sMainColor);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
 
             draw_multiline_text(
                 s, &sMainFont, &xr, color, &fp, &tp,
@@ -759,7 +759,7 @@ namespace lsp
 
             // Draw label background
             lsp::Color color(sLabelBgColor);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
             s->fill_round_rect(color, SURFMASK_ALL_CORNER, rad, &xr);
 
             // Draw label text
@@ -769,7 +769,7 @@ namespace lsp
             xr.nHeight         -= padding * 2;
 
             color.copy(sLabelColor[idx]);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
 
             draw_multiline_text(
                 s, &sLabelFont, &xr, color, &fp, &tp,
@@ -788,7 +788,7 @@ namespace lsp
 
             // Draw background
             lsp::Color color(sColor);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
             s->clear(color);
 
             // Draw main text if it is required to be shown
@@ -843,7 +843,7 @@ namespace lsp
                     // Draw lines
                     color.copy(sLineColor);
                     xr.nTop             = y + xr.nHeight;
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
                     bool aa             = s->set_antialiasing(false);
                     for (size_t i=0; i<items; i += 2)
                     {
@@ -875,7 +875,7 @@ namespace lsp
                     // Draw lines
                     color.copy(sLineColor);
                     xr.nTop             = y;
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
                     float sy            = xr.nHeight * 0.5f;
                     bool aa             = s->set_antialiasing(false);
                     for (size_t i=0; i<items; ++i)
@@ -912,7 +912,7 @@ namespace lsp
             lsp::Color color(sColor);
             lsp::Color bg_color;
             get_actual_bg_color(bg_color);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
 
             s->clip_begin(area);
             {
@@ -945,8 +945,8 @@ namespace lsp
                 // Draw the glass and the border
                 color.copy(sGlassColor);
                 bg_color.copy(sColor);
-                color.scale_lightness(bright);
-                bg_color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
+                bg_color.scale_lch_luminance(bright);
 
                 // Update border width if widget is in pressed state
                 if (pressed)
@@ -1078,22 +1078,24 @@ namespace lsp
 
             if (Position::rinside(&sSize, e->nLeft, e->nTop, xr))
             {
-                if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
+                if (sActive.get())
                 {
-                    if (sActive.get())
-                        sSlots.execute(SLOT_SUBMIT, this, NULL);
-                }
-                else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
-                {
-                    Menu *popup = sPopup.get();
-                    if (popup != NULL)
+                    if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
                     {
-                        ws::rectangle_t sr;
-                        Window *wnd = widget_cast<Window>(this->toplevel());
-                        wnd->get_screen_rectangle(&sr);
-                        sr.nLeft       += e->nLeft;
-                        sr.nTop        += e->nTop;
-                        popup->show(this, sr.nLeft, sr.nTop);
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
+                    }
+                    else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
+                    {
+                        Menu *popup = sPopup.get();
+                        if (popup != NULL)
+                        {
+                            ws::rectangle_t sr;
+                            Window *wnd = widget_cast<Window>(this->toplevel());
+                            wnd->get_screen_rectangle(&sr);
+                            sr.nLeft       += e->nLeft;
+                            sr.nTop        += e->nTop;
+                            popup->show(this, sr.nLeft, sr.nTop);
+                        }
                     }
                 }
             }

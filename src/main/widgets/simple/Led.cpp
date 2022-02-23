@@ -155,19 +155,13 @@ namespace lsp
                 ssize_t chamfer     = lsp_max(0.0f, border);
                 ssize_t hole        = (sHole.get()) ? lsp_max(1, scaling) : 0;
                 ssize_t light       = (sLed.get() > 0) ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
-                ssize_t outer       = lsp_max(hole, light);
-                extra               = (chamfer + outer) * 2;
+                extra               = lsp_max(hole, light) * 2;
 
                 r->nMinWidth        = lsp_max(chamfer * 2, r->nMinWidth);
                 r->nMinHeight       = lsp_max(chamfer * 2, r->nMinHeight);
             }
 
-            r->nMinWidth       += extra;
-            r->nMinHeight      += extra;
-            if (r->nMaxWidth >= 0)
-                r->nMaxWidth       += extra;
-            if (r->nMaxHeight >= 0)
-                r->nMaxHeight      += extra;
+            SizeConstraints::add(r, extra, extra);
         }
 
         void Led::draw(ws::ISurface *s)
@@ -183,12 +177,12 @@ namespace lsp
             ws::IGradient *g    = NULL;
             float scaling       = lsp_max(0.0f, sScaling.get());
             float brightness    = sBrightness.get();
-            size_t sz_hole      = (sHole.get()) ? lsp_max(1.0f, scaling) : 0;
-            size_t sz_led       = lsp_max(0.0f, sLed.get() * scaling);
+            ssize_t sz_hole     = (sHole.get()) ? lsp_max(1.0f, scaling) : 0;
+            ssize_t sz_led      = lsp_max(0.0f, sLed.get() * scaling);
             bool gradient       = sGradient.get();
-            size_t light        = (sLed.get() > 0) ? lsp_max(1.0f, sLed.get() * scaling) : 0.0f;
-            size_t border       = (gradient) ? 0 : lsp_max(0.0f, scaling * sBorderSize.get());
-            size_t extra        = lsp_max(sz_hole, sz_led) + border;
+            ssize_t light       = (sLed.get() > 0) ? lsp_max(1.0f, sLed.get() * scaling) : 0.0f;
+            ssize_t border      = (gradient) ? 0 : lsp_max(0.0f, scaling * sBorderSize.get());
+            ssize_t extra       = lsp_max(sz_hole, sz_led) + border;
             bool on             = sOn.get();
 
             // Estimate palette
@@ -198,7 +192,7 @@ namespace lsp
             lsp::Color border_color((on) ? sLedBorderColor : sBorderColor);
 
             get_actual_bg_color(bg_color);
-            col.scale_lightness(brightness);
+            col.scale_lch_luminance(brightness);
 
             // Draw background
             s->fill_rect(bg_color, 0, 0, sSize.nWidth, sSize.nHeight);
@@ -248,7 +242,7 @@ namespace lsp
                 else
                 {
                     lsp::Color c(col);
-                    c.scale_lightness(0.4f);
+                    c.scale_lch_luminance(0.4f);
 
                     // Draw led glass
                     g = s->radial_gradient(cx, cy, r * 0.25f, cx, cy, r);
@@ -302,8 +296,8 @@ namespace lsp
 
             get_actual_bg_color(bg_color);
 
-            color.scale_lightness(brightness);
-            border_color.scale_lightness(brightness);
+            color.scale_lch_luminance(brightness);
+            border_color.scale_lch_luminance(brightness);
 
             // Draw background
             bool aa     = s->set_antialiasing(false);

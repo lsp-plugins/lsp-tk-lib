@@ -88,17 +88,17 @@ namespace lsp
                 } bm_entry_t;
 
             protected:
-                Edit                        sWPath;
-                Edit                        sWSearch;
-                ComboBox                    sWFilter;
-                ListBox                     sWFiles;
-                Button                      sWAction;
-                Button                      sWCancel;
-                Grid                        sMainGrid;
-                ScrollArea                  sSBBookmarks;
-                Box                         wOptions;
-                Separator                   wSeparator;
-                Box                         sBookmarks;
+                Edit                        sWPath;         // Current path
+                Edit                        sWSearch;       // File pattern search input
+                ComboBox                    sWFilter;       // File extension filter
+                ListBox                     sWFiles;        // File list in the directory
+                Button                      sWAction;       // Action button (save/load)
+                Button                      sWCancel;       // Cancel button
+                Grid                        sMainGrid;      // The main grid containing all widgets
+                ScrollArea                  sSBBookmarks;   // Scroll area for holding bookmark list
+                Box                         wOptions;       // Additional options below the bookmark list
+                Separator                   wSeparator;     // Separator between options and bookmark list
+                Box                         sBookmarks;     // List of bookmarks
                 Menu                        sBMPopup;
                 Button                      wBMAdd;
                 Box                         sActionBox;

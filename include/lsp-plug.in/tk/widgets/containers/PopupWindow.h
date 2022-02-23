@@ -69,7 +69,7 @@ namespace lsp
                 virtual status_t                sync_size();
                 virtual void                    size_request(ws::size_limit_t *r);
                 bool                            init_window();
-                bool                            arrange_preferred(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force);
+                bool                            arrange_preferred(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force, bool truncate);
                 bool                            arrange_window(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force);
                 void                            forced_arrange(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar);
 

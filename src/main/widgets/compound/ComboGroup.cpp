@@ -163,6 +163,11 @@ namespace lsp
             sLabel.nWidth       = 0;
             sLabel.nHeight      = 0;
 
+            sText.nLeft         = 0;
+            sText.nTop          = 0;
+            sText.nWidth        = 0;
+            sText.nHeight       = 0;
+
             sArea.nLeft         = 0;
             sArea.nTop          = 0;
             sArea.nWidth        = 0;
@@ -247,7 +252,7 @@ namespace lsp
                     if (!visible)
                     {
                         ws::rectangle_t r;
-                        this->get_padded_screen_rectangle(&r, &sLabel);
+                        this->get_padded_screen_rectangle(&r, &sText);
                         sWindow.trigger_area()->set(&r);
                         sWindow.trigger_widget()->set(this);
                         sWindow.show(this);
@@ -332,12 +337,13 @@ namespace lsp
 
         void ComboGroup::allocate(alloc_t *alloc)
         {
+            bool has_list   = sLBox.items()->size() > 1;
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
-            ssize_t spin    = lsp_max(0.0f, sSpinSize.get() * scaling);
-            ssize_t spin_sp = lsp_max(0.0f, sSpinSpacing.get() * scaling);
+            ssize_t spin    = (has_list) ? lsp_max(0.0f, sSpinSize.get() * scaling) : 0;
+            ssize_t spin_sp = (has_list) ? lsp_max(0.0f, sSpinSpacing.get() * scaling) : 0;
 
             // Text allocation
             ws::rectangle_t xr;
@@ -440,6 +446,10 @@ namespace lsp
             alloc_t alloc;
             allocate(&alloc);
 
+            sText           = alloc.text;
+            sText.nLeft    += r->nLeft;
+            sText.nTop     += r->nTop;
+
             sHeading.happly(&sLabel, &alloc.text, r->nWidth);
             sLabel.nLeft   += r->nLeft;
             sLabel.nTop    += r->nTop;
@@ -467,7 +477,7 @@ namespace lsp
                 return active;
 
             ListBoxItem *it = sSelected.get();
-            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : NULL;
+            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : 0;
             return vWidgets.get(index);
         }
 
@@ -487,6 +497,7 @@ namespace lsp
             lsp::Color color;
 
             ws::rectangle_t xr;
+            bool has_list   = sLBox.items()->size() > 1;
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright    = lsp_max(0.0f, sBrightness.get());
@@ -559,7 +570,7 @@ namespace lsp
 
                     // Draw frame
                     color.copy(sColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
                     s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
@@ -568,14 +579,14 @@ namespace lsp
                 // Draw text (and image)
                 if (Size::overlap(area, &sLabel))
                 {
-                    ssize_t spin        = lsp_max(0.0f, sSpinSize.get() * scaling);
-                    ssize_t spin_sp     = lsp_max(0.0f, sSpinSpacing.get() * scaling);
+                    ssize_t spin        = (has_list) ? lsp_max(0.0f, sSpinSize.get() * scaling) : 0;
+                    ssize_t spin_sp     = (has_list) ? lsp_max(0.0f, sSpinSpacing.get() * scaling) : 0;
                     ListBoxItem *it     = current_item();
                     ir                  = lsp_max(0.0f, sTextRadius.get() * scaling);
 
                     // Draw text background
                     color.copy(sColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
                     s->fill_round_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
@@ -585,7 +596,7 @@ namespace lsp
                     ws::text_parameters_t tp;
                     ws::font_parameters_t fp;
                     color.copy(sTextColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     if (it != NULL)
                         it->text()->format(&text);
@@ -603,21 +614,24 @@ namespace lsp
                             fscaling, &text);
 
                     // Draw arrows
-                    color.copy(sSpinColor);
-                    color.scale_lightness(bright);
+                    if (spin > 0)
+                    {
+                        color.copy(sSpinColor);
+                        color.scale_lch_luminance(bright);
 
-                    s->fill_triangle(
-                        tloc.nLeft, tloc.nTop + (fp.Height*3.0f)/7.0f,
-                        tloc.nLeft + spin*0.4f, tloc.nTop + fp.Height/7.0f,
-                        tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*3.0f)/7.0f,
-                        color
-                    );
-                    s->fill_triangle(
-                        tloc.nLeft, tloc.nTop + (fp.Height*4.0f)/7.0f,
-                        tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*4.0f)/7.0f,
-                        tloc.nLeft + spin*0.4f, tloc.nTop + (fp.Height*6.0f)/7.0f,
-                        color
-                    );
+                        s->fill_triangle(
+                            tloc.nLeft, tloc.nTop + (fp.Height*3.0f)/7.0f,
+                            tloc.nLeft + spin*0.4f, tloc.nTop + fp.Height/7.0f,
+                            tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*3.0f)/7.0f,
+                            color
+                        );
+                        s->fill_triangle(
+                            tloc.nLeft, tloc.nTop + (fp.Height*4.0f)/7.0f,
+                            tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*4.0f)/7.0f,
+                            tloc.nLeft + spin*0.4f, tloc.nTop + (fp.Height*6.0f)/7.0f,
+                            color
+                        );
+                    }
                 }
 
                 s->clip_end();
@@ -708,7 +722,12 @@ namespace lsp
             if (prev == mask)
             {
                 if ((e->nCode == ws::MCB_LEFT) && (bInside))
-                    sOpened.toggle();
+                {
+                    if (sLBox.items()->size() > 1)
+                        sOpened.toggle();
+                    else
+                        sOpened.set(false);
+                }
             }
 
             if (nMBState == 0)

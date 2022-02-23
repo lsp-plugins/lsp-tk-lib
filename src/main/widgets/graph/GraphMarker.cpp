@@ -151,33 +151,6 @@ namespace lsp
             sHLBorderColor.bind("hover.border.left.color", &sStyle);
             sHRBorderColor.bind("hover.border.right.color", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sOrigin.init(sclass, 0);
-//                sBasis.init(sclass, 0);
-//                sParallel.init(sclass, 1);
-//                sValue.init(sclass, 0.0f, -1.0f, 1.0f);
-//                sOffset.init(sclass, 0.0f);
-//                sStep.init(sclass, 1.0f, 10.0f, 0.1f);
-//                sDirection.init_cart(sclass, 1.0f, 0.0f);
-//                sWidth.init(sclass, 1);
-//                sHWidth.init(sclass, 3);
-//                sEditable.init(sclass, false);
-//                sLBorder.init(sclass, 0);
-//                sRBorder.init(sclass, 0);
-//                sHLBorder.init(sclass, 0);
-//                sHRBorder.init(sclass, 0);
-//                sColor.init(sclass, "#ffffff");
-//                sHColor.init(sclass, "#ffffff");
-//                sLBorderColor.init(sclass, "#ffffff");
-//                sRBorderColor.init(sclass, "#ffffff");
-//                sHLBorderColor.init(sclass, "#ffffff");
-//                sHRBorderColor.init(sclass, "#ffffff");
-//
-//                sSmooth.override(sclass, false);
-//            }
-
             // Add handler
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -258,9 +231,9 @@ namespace lsp
                 bcol_r.copy(sRBorderColor);
             }
 
-            bcol_l.scale_lightness(brightness);
-            bcol_r.scale_lightness(brightness);
-            color.scale_lightness(brightness);
+            bcol_l.scale_lch_luminance(brightness);
+            bcol_r.scale_lch_luminance(brightness);
+            color.scale_lch_luminance(brightness);
 
             // Get basis
             GraphAxis *basis    = cv->axis(sBasis.get());

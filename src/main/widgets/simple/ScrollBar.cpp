@@ -228,6 +228,10 @@ namespace lsp
 
             if (sValue.is(prop))
                 update_slider();
+            if (sStep.is(prop))
+                update_slider();
+            if (sAccelStep.is(prop))
+                update_slider();
             if (sConstraints.is(prop))
                 query_resize();
             if (sOrientation.is(prop))
@@ -694,32 +698,37 @@ namespace lsp
                     return STATUS_OK;
 
                 // Different behaviour for slider
-                ssize_t range   = (sOrientation.horizontal()) ? sSpareSpace.nWidth : sSpareSpace.nHeight;
+                ssize_t range   = (sOrientation.horizontal()) ?
+                                    lsp_max(0, sSpareSpace.nWidth - sSlider.nWidth) :
+                                    lsp_max(0, sSpareSpace.nHeight - sSlider.nHeight);
 
-                float value     = (sOrientation.horizontal()) ? e->nLeft : e->nTop;
-                float result    = fLastValue;
-                float delta     = sValue.range() * float(value - nLastV) / range; // normalized
-                float accel     = 1.0f;;
+                if (range > 0)
+                {
+                    float value     = (sOrientation.horizontal()) ? e->nLeft : e->nTop;
+                    float result    = fLastValue;
+                    float delta     = sValue.range() * float(value - nLastV) / range; // normalized
+                    float accel     = 1.0f;
 
-                if (nXFlags & F_PRECISION)
-                {
-                    accel = (e->nState & ws::MCF_SHIFT)   ? 1.0f :
-                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
-                            sStep.decel();
-                }
-                else
-                {
-                    accel = (e->nState & ws::MCF_SHIFT)   ? sStep.decel() :
-                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
-                            1.0f;
-                }
+                    if (nXFlags & F_PRECISION)
+                    {
+                        accel = (e->nState & ws::MCF_SHIFT)   ? 1.0f :
+                                (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                                sStep.decel();
+                    }
+                    else
+                    {
+                        accel = (e->nState & ws::MCF_SHIFT)   ? sStep.decel() :
+                                (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                                1.0f;
+                    }
 
-                result      = sValue.limit(result + delta*accel);
-                if (result != sValue.get())
-                {
-                    fCurrValue  = result;
-                    sValue.set(result);
-                    sSlots.execute(SLOT_CHANGE, this);
+                    result      = sValue.limit(result + delta*accel);
+                    if (result != sValue.get())
+                    {
+                        fCurrValue  = result;
+                        sValue.set(result);
+                        sSlots.execute(SLOT_CHANGE, this);
+                    }
                 }
             }
             else
@@ -854,7 +863,7 @@ namespace lsp
             if (border > 0)
             {
                 color.copy(sBorderColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
 
                 s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
                 xr.nLeft       += border;
@@ -868,7 +877,7 @@ namespace lsp
             if (gap > 0)
             {
                 color.copy(sBorderGapColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
             }
 
@@ -879,7 +888,7 @@ namespace lsp
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 s->fill_round_rect(color, SURFMASK_L_CORNER, radius, &xr);
 
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
@@ -894,7 +903,7 @@ namespace lsp
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 s->fill_round_rect(color, SURFMASK_R_CORNER, radius, &xr);
 
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
@@ -913,7 +922,7 @@ namespace lsp
                 if (xr.nWidth > 0)
                 {
                     color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
                     s->fill_rect(color, &xr);
                 }
 
@@ -926,7 +935,7 @@ namespace lsp
                 if (xr.nWidth > 0)
                 {
                     color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
                     s->fill_rect(color, &xr);
                 }
             }
@@ -937,7 +946,7 @@ namespace lsp
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 s->fill_round_rect(color, SURFMASK_T_CORNER, radius, &xr);
 
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
@@ -952,7 +961,7 @@ namespace lsp
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 s->fill_round_rect(color, SURFMASK_B_CORNER, radius, &xr);
 
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
@@ -971,7 +980,7 @@ namespace lsp
                 if (xr.nHeight > 0)
                 {
                     color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
                     s->fill_rect(color, &xr);
                 }
 
@@ -984,7 +993,7 @@ namespace lsp
                 if (xr.nHeight > 0)
                 {
                     color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
                     s->fill_rect(color, &xr);
                 }
             }
@@ -998,7 +1007,7 @@ namespace lsp
             if (sborder > 0)
             {
                 color.copy(sSliderBorderColor);
-                color.scale_lightness(bright);
+                color.scale_lch_luminance(bright);
                 s->fill_rect(color, &xr);
 
                 xr.nLeft       += sborder;
@@ -1008,7 +1017,7 @@ namespace lsp
             }
 
             color.copy((nXFlags & F_SLIDER_ACTIVE) ? sSliderActiveColor : sSliderColor);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
             s->fill_rect(color, &xr);
 
             s->set_antialiasing(aa);

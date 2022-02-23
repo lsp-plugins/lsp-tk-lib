@@ -96,7 +96,7 @@ namespace lsp
 
             // Prepare palette
             lsp::Color color(sColor);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
 
             // Draw self
             s->clip_begin(area);

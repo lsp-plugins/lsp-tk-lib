@@ -23,6 +23,7 @@
 #include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp/dsp.h>
+#include <lsp-plug.in/runtime/system.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -298,6 +299,11 @@ namespace lsp
 
         void Area3D::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
+        #ifdef LSP_TRACE
+            system::time_t start, end;
+            system::get_time(&start);
+        #endif /* LSP_TRACE */
+
             if (nFlags & REDRAW_SURFACE)
                 force = true;
 
@@ -311,7 +317,7 @@ namespace lsp
             lsp::Color color(sColor);
             lsp::Color bg_color;
             get_actual_bg_color(bg_color);
-            color.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
 
             s->clip_begin(area);
             {
@@ -328,18 +334,18 @@ namespace lsp
 
                 // Draw the glass and the border
                 color.copy(sGlassColor);
-                bg_color.copy(sColor);
-                color.scale_lightness(bright);
-                bg_color.scale_lightness(bright);
+                bg_color.copy(sBorderColor);
+                color.scale_lch_luminance(bright);
+                bg_color.scale_lch_luminance(bright);
 
                 bool flat = sBorderFlat.get();
+
                 if (sGlass.get())
                 {
                     cv = create_border_glass(&pGlass, s,
                             color, bg_color,
                             SURFMASK_ALL_CORNER, bw, xr,
-                            sSize.nWidth, sSize.nHeight,
-                            flat
+                            sSize.nWidth, sSize.nHeight, flat
                         );
                     if (cv != NULL)
                         s->draw(cv, sSize.nLeft, sSize.nTop);
@@ -347,12 +353,19 @@ namespace lsp
                 else
                 {
                     drop_glass();
-                    draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize, flat);
+                    if (bw > 0)
+                        draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize, flat);
                 }
 
                 s->set_antialiasing(aa);
             }
             s->clip_end();
+
+        #ifdef LSP_TRACE
+            system::get_time(&end);
+            float time = float(end.seconds - start.seconds) + (end.nanos - start.nanos) * 1e-9f;
+            lsp_trace("render time: %.3f ms", time);
+        #endif /* LSP_TRACE */
         }
 
         status_t Area3D::on_draw3d(ws::IR3DBackend *r3d)

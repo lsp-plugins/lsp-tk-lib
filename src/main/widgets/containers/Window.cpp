@@ -170,8 +170,6 @@ namespace lsp
 
         status_t Window::sync_size()
         {
-            lsp_trace("Synchronizing size");
-
             // Request size limits of the window
             ws::size_limit_t sr;
             ws::rectangle_t r;
@@ -415,11 +413,11 @@ namespace lsp
                     float bw = border * 0.5f;
 
                     lsp::Color bc(sBorderColor);
-                    bc.scale_lightness(sBrightness.get());
+                    bc.scale_lch_luminance(sBrightness.get());
 
-                    s->wire_round_rect(
+                    s->wire_round_rect_inside(
                         bc, SURFMASK_ALL_CORNER, radius,
-                        bw + 0.5, bw + 0.5, sSize.nWidth - border-1, sSize.nHeight - border-1,
+                        bw, bw, sSize.nWidth, sSize.nHeight,
                         border
                     );
                     s->set_antialiasing(aa);
@@ -491,43 +489,38 @@ namespace lsp
                 query_resize();
             if (sBorderRadius.is(prop))
                 query_resize();
-            if (sScaling.is(prop))
-                query_resize();
+
+
             if (sBorderStyle.is(prop))
                 pWindow->set_border_style(sBorderStyle.get());
             if (sActions.is(prop))
                 pWindow->set_window_actions(sActions.actions());
             if (sPosition.is(prop))
                 pWindow->move(sPosition.left(), sPosition.top());
-            if (sSizeConstraints.is(prop) || sScaling.is(prop) || (sActions.is(prop)))
+            if (sSizeConstraints.is(prop) || sScaling.is(prop) || sActions.is(prop) || sFontScaling.is(prop) || sWindowSize.is(prop))
             {
-                ws::size_limit_t l;
-                sSizeConstraints.compute(&l, sScaling.get());
-//                lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
-//                        int(l.nMinWidth), int(l.nMaxWidth),
-//                        int(l.nMinHeight), int(l.nMaxHeight)
-//                    );
-                pWindow->set_size_constraints(&l);
-            }
-            if (sWindowSize.is(prop) || sScaling.is(prop))
-            {
-                float scaling = lsp_max(0.0f, sScaling.get());
-                if ((scaling != fScaling) && (bMapped))
-                {
-                    ws::rectangle_t rect;
-                    ws::size_limit_t l;
-                    sWindowSize.compute(&rect, scaling);
-                    sSizeConstraints.compute(&l, scaling);
-
-                    fScaling    = scaling;
-                    pWindow->set_size_constraints(-1, -1, -1, -1);
-                    pWindow->resize(rect.nWidth, rect.nHeight);
-                    pWindow->set_size_constraints(&l);
-//                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
-//                            int(l.nMinWidth), int(l.nMaxWidth),
-//                            int(l.nMinHeight), int(l.nMaxHeight)
-//                        );
-                }
+//                float scaling = lsp_max(0.0f, sScaling.get());
+//
+//                ws::size_limit_t l;
+//                sSizeConstraints.compute(&l, scaling);
+//                pWindow->set_size_constraints(&l);
+//
+//                if ((scaling != fScaling) && (bMapped))
+//                {
+//                    ws::rectangle_t rect;
+//                    ws::size_limit_t l;
+//                    sWindowSize.compute(&rect, scaling);
+//                    sSizeConstraints.compute(&l, scaling);
+//
+//                    fScaling    = scaling;
+//                    pWindow->set_size_constraints(-1, -1, -1, -1);
+//                    pWindow->resize(rect.nWidth, rect.nHeight);
+//                    pWindow->set_size_constraints(&l);
+////                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
+////                            int(l.nMinWidth), int(l.nMaxWidth),
+////                            int(l.nMinHeight), int(l.nMaxHeight)
+////                        );
+//                }
 
                 query_resize();
             }
@@ -705,17 +698,19 @@ namespace lsp
                     {
                         ws::rectangle_t r;
 
-//                        lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+                        if (!(nFlags & RESIZE_PENDING))
+                        {
+                            lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+                            sPosition.commit_value(e->nLeft, e->nTop);
+                            sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
 
-                        sPosition.commit_value(e->nLeft, e->nTop);
-                        sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
+                            r.nLeft     = e->nLeft;
+                            r.nTop      = e->nTop;
+                            r.nWidth    = e->nWidth;
+                            r.nHeight   = e->nHeight;
 
-                        r.nLeft     = e->nLeft;
-                        r.nTop      = e->nTop;
-                        r.nWidth    = e->nWidth;
-                        r.nHeight   = e->nHeight;
-
-                        realize_widget(&r);
+                            realize_widget(&r);
+                        }
                     }
                     break;
 

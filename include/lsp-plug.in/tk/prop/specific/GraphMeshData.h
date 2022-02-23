@@ -42,6 +42,7 @@ namespace lsp
                 enum property_t
                 {
                     P_SIZE,
+                    P_STROBE,
 
                     P_COUNT
                 };
@@ -62,6 +63,7 @@ namespace lsp
                 float          *vData;
                 size_t          nSize;
                 size_t          nStride;
+                bool            bStrobe;
                 uint8_t        *pPtr;
 
                 atom_t          vAtoms[P_COUNT];    // Atoms
@@ -71,24 +73,36 @@ namespace lsp
                 void            copy_data(float *dst, const float *src, size_t n);
                 void            sync();
                 void            commit(atom_t property);
-                bool            resize_buffer(size_t size);
+                bool            resize_buffer(size_t size, bool strobe);
 
             public:
                 explicit GraphMeshData(prop::Listener *listener);
                 virtual ~GraphMeshData();
 
             public:
-                inline size_t       size() const                { return nSize;                 }
-                inline size_t       capacity() const            { return nStride*2;             }
-                inline bool         valid() const               { return vData != NULL;         }
-                inline const float *x() const                   { return vData;                 }
-                inline const float *y() const                   { return &vData[nStride];       }
+                inline size_t       size() const                { return nSize;                                 }
+                inline size_t       capacity() const            { return nStride*(2 + bStrobe);                 }
+                inline bool         valid() const               { return vData != NULL;                         }
+                inline bool         strobe() const              { return bStrobe;                               }
+                inline const float *x() const                   { return vData;                                 }
+                inline const float *y() const                   { return &vData[nStride];                       }
+                inline const float *s() const                   { return (bStrobe) ? &vData[nStride*2] : NULL;  }
 
+                inline float       *x()                         { return vData;                                 }
+                inline float       *y()                         { return &vData[nStride];                       }
+                inline float       *s()                         { return (bStrobe) ? &vData[nStride*2] : NULL;  }
+
+                inline void         touch()                     { sync();                                       }
+
+                bool                set_size(size_t size, bool strobe);
                 bool                set_size(size_t size);
+                bool                set_strobe(bool strobe);
                 bool                set_x(const float *v, size_t size);
                 inline bool         set_x(const float *v)       { return set_x(v, nSize);       }
                 bool                set_y(const float *v, size_t size);
                 inline bool         set_y(const float *v)       { return set_y(v, nSize);       }
+                bool                set_s(const float *v, size_t size);
+                inline bool         set_s(const float *v)       { return set_s(v, nSize);       }
                 bool                set(const float *x, const float *y, size_t size);
         };
 

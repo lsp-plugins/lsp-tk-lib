@@ -319,7 +319,7 @@ namespace lsp
             }
 
             color->copy(sIBGColor);
-            color->scale_lightness(ibg_bright);
+            color->scale_lch_luminance(ibg_bright);
         }
 
         void Group::get_child_bg_color(lsp::Color &color) const
@@ -409,7 +409,7 @@ namespace lsp
 
                     // Draw frame
                     color.copy(sColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
                     s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
@@ -428,7 +428,7 @@ namespace lsp
 
                     // Draw text background
                     color.copy(sColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
                     s->fill_round_rect(color, mask, ir, &sLabel);
@@ -438,7 +438,7 @@ namespace lsp
                     ws::text_parameters_t tp;
                     ws::font_parameters_t fp;
                     color.copy(sTextColor);
-                    color.scale_lightness(bright);
+                    color.scale_lch_luminance(bright);
 
                     sText.format(&text);
                     sTextAdjust.apply(&text);

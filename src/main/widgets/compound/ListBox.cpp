@@ -760,6 +760,7 @@ namespace lsp
                 return;
 
             item->set_parent(_this);
+            _this->query_resize();
         }
 
         void ListBox::on_remove_item(void *obj, Property *prop, void *w)
@@ -777,6 +778,7 @@ namespace lsp
                 _this->vSelected.remove(item);
 
             _this->unlink_widget(item);
+            _this->query_resize();
         }
 
         status_t ListBox::on_mouse_down(const ws::event_t *e)

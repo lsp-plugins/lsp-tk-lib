@@ -25,6 +25,12 @@
 		<font3  src="path/to/some/font3.ttf" />
 	</fonts>
 	
+	<!-- Constants -->
+	<constants>
+		<key1   value="value1" />
+		<key2   value="value2" />
+	</constants>
+	
 	<!-- Root style -->
 	<root>
 		<b.value value="true" />

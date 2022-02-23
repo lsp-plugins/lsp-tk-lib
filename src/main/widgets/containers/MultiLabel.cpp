@@ -232,7 +232,7 @@ namespace lsp
 
                         // Copy color preferencies
                         color.copy((hover) ? l->sHoverColor : l->sColor);
-                        color.scale_lightness(sBrightness.get());
+                        color.scale_lch_luminance(sBrightness.get());
 
                         float halign    = lsp_limit(l->sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
                         float valign    = lsp_limit(l->sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
@@ -312,7 +312,7 @@ namespace lsp
 
                         // Copy color preferencies
                         color.copy(l->sColor);
-                        color.scale_lightness(sBrightness.get());
+                        color.scale_lch_luminance(sBrightness.get());
 
                         float halign    = lsp_limit(l->sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
                         float valign    = lsp_limit(l->sTextLayout.valign() + 1.0f, 0.0f, 2.0f);

@@ -41,7 +41,7 @@ namespace lsp
         r3d::color_t    c;
     } axis_point3d_t;
 
-    static const axis_point3d_t axis_lines[] =
+    static axis_point3d_t axis_lines[] =
     {
         // X axis (red)
         { { 0.0f, 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f, 0.0f, 1.0f } },
@@ -54,12 +54,12 @@ namespace lsp
         { { 0.0f, 0.0f, 2.0f, 1.0f }, { 0.0f, 0.0f, 1.0f, 1.0f } }
     };
 
-    static const axis_point3d_t dot[] = {
+    static axis_point3d_t dot[] = {
         { { 0.0f, 0.0f, 0.0f, 1.0f}, { 1.0f, 1.0f, 1.0f, 1.0f } }
     };
 
     // 3D mesh data for box: vertex, normal, color
-    static const r3d::dot4_t box_vertex[] =
+    static r3d::dot4_t box_vertex[] =
     {
         D3(  1.0f,  1.0f,  1.0f ),
         D3( -1.0f,  1.0f,  1.0f ),
@@ -72,7 +72,7 @@ namespace lsp
         D3(  1.0f, -1.0f, -1.0f )
     };
 
-    static const r3d::color_t box_colors[] =
+    static r3d::color_t box_colors[] =
     {
         C3( 1.0f, 0.0f, 0.0f ),
         C3( 0.0f, 1.0f, 0.0f ),
@@ -85,7 +85,7 @@ namespace lsp
         C3( 0.5f, 0.5f, 0.5f )
     };
 
-    static const r3d::vec4_t box_normal[] =
+    static r3d::vec4_t box_normal[] =
     {
         V3(  1.0f,  0.0f,  0.0f ),
         V3( -1.0f,  0.0f,  0.0f ),
@@ -96,7 +96,7 @@ namespace lsp
     };
 
     // Indices
-    static const uint32_t box_vertex_idx[] =
+    static uint32_t box_vertex_idx[] =
     {
         0, 1, 2,  0, 2, 3,
         0, 4, 5,  0, 5, 1,
@@ -106,7 +106,7 @@ namespace lsp
         5, 4, 7,  5, 7, 6
     };
 
-    static const uint32_t box_normal_idx[] =
+    static uint32_t box_normal_idx[] =
     {
         4, 4, 4,  4, 4, 4,
         2, 2, 2,  2, 2, 2,

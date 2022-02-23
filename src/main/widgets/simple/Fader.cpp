@@ -503,23 +503,18 @@ namespace lsp
             {
                 scol.copy(sBalanceColor);
                 sdcol.copy(sScaleColor);
-
-                scol.scale_lightness(bright);
-                sdcol.scale_lightness(bright);
             }
             else
             {
                 scol.copy(sScaleColor);
                 sdcol.copy(sScaleColor);
-
-                scol.scale_lightness(bright);
-                sdcol.scale_lightness(sScaleBrightness.get() * bright);
+                sdcol.scale_hsl_lightness(sScaleBrightness.get());
             }
 
             get_actual_bg_color(bg_color);
-            button.scale_lightness(bright);
-            scol.scale_lightness(bright);
-            sdcol.scale_lightness(bright);
+            button.scale_lch_luminance(bright);
+            scol.scale_lch_luminance(bright);
+            sdcol.scale_lch_luminance(bright);
 
             // Clear surface
             s->clear(bg_color);
@@ -539,7 +534,7 @@ namespace lsp
                     // Compute button
                     float l = float(schamfer - i) / schamfer;
                     sborder.lightness(l);
-                    sborder.scale_lightness(bright);
+                    sborder.scale_lch_luminance(bright);
 
                     if (angle & 1) // vertical
                         g = s->radial_gradient(0, sSize.nHeight, scaling, 0, sSize.nHeight, delta);
@@ -561,7 +556,7 @@ namespace lsp
             else
             {
                 // Just draw simple border
-                sborder.scale_lightness(bright);
+                sborder.scale_lch_luminance(bright);
                 s->fill_round_rect(sborder, SURFMASK_ALL_CORNER, sradius, &h);
                 sradius         = lsp_max(0, sradius - schamfer);
                 h.nLeft        += schamfer;
@@ -659,7 +654,7 @@ namespace lsp
             else
             {
                 // Just draw simple border
-                bborder.scale_lightness(bright);
+                bborder.scale_lch_luminance(bright);
                 s->fill_round_rect(bborder, SURFMASK_ALL_CORNER, bradius, &h);
                 bradius         = lsp_max(0, bradius - bchamfer);
                 h.nLeft        += bchamfer;

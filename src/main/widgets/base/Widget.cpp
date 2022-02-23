@@ -585,13 +585,15 @@ namespace lsp
 
         void Widget::query_resize()
         {
-            if (!sVisibility.get())
-                return;
-            else if (nFlags & REALIZE_ACTIVE)
+            if (nFlags & REALIZE_ACTIVE)
                 return;
 
             // Update flags
             nFlags     |= (RESIZE_PENDING | SIZE_INVALID);
+
+            if (!sVisibility.get())
+                return;
+
             if (pParent != NULL)
                 pParent->query_resize();
         }
@@ -830,7 +832,7 @@ namespace lsp
             if ((!sBgInherit.get()) || (pParent == NULL))
             {
                 color->copy(sBgColor.color());
-                color->scale_lightness(brightness);
+                color->scale_lch_luminance(brightness);
                 return;
             }
 
@@ -838,12 +840,12 @@ namespace lsp
             if (pw == NULL)
             {
                 color->copy(sBgColor.color());
-                color->scale_lightness(brightness);
+                color->scale_lch_luminance(brightness);
                 return;
             }
 
             pw->get_child_bg_color(color);
-            color->scale_lightness(brightness);
+            color->scale_lch_luminance(brightness);
         }
 
         void Widget::get_actual_bg_color(lsp::Color &color, float brightness) const

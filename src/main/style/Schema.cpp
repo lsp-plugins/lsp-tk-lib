@@ -104,7 +104,7 @@ namespace lsp
             }
         }
 
-        status_t Schema::init_colors_from_sheet(StyleSheet *sheet)
+        status_t Schema::init_colors_from_sheet(const StyleSheet *sheet)
         {
             lltl::parray<LSPString> vk;
             sheet->vColors.keys(&vk);
@@ -129,7 +129,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::load_fonts_from_sheet(StyleSheet *sheet, resource::ILoader *loader)
+        status_t Schema::load_fonts_from_sheet(const StyleSheet *sheet, resource::ILoader *loader)
         {
             status_t res;
             lltl::parray<LSPString> vk;
@@ -248,7 +248,48 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::apply(StyleSheet *sheet, resource::ILoader *loader)
+        status_t Schema::add(lltl::parray<IStyleFactory> *list)
+        {
+            return add(list->array(), list->size());
+        }
+
+        status_t Schema::add(lltl::parray<IStyleFactory> &list)
+        {
+            return add(list.array(), list.size());
+        }
+
+        status_t Schema::add(IStyleFactory **list, size_t n)
+        {
+            size_t old  = nFlags;
+            nFlags     |= S_CONFIGURING;
+
+            // Create all necessary styles
+            for (size_t i=0; i<n; ++i)
+            {
+                LSP_STATUS_ASSERT(create_builtin_style(list[i]));
+            }
+
+            // Unset 'configuring' mode
+            nFlags      = old;
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::add(IStyleFactory *factory)
+        {
+            size_t old  = nFlags;
+            nFlags     |= S_CONFIGURING;
+
+            // Create necessary style
+            LSP_STATUS_ASSERT(create_builtin_style(factory));
+
+            // Unset 'configuring' mode
+            nFlags      = old;
+
+            return STATUS_OK;
+        }
+
+        status_t Schema::apply(const StyleSheet *sheet, resource::ILoader *loader)
         {
             if (sheet == NULL)
                 return STATUS_BAD_ARGUMENTS;
@@ -261,7 +302,7 @@ namespace lsp
             return res;
         }
 
-        status_t Schema::create_missing_styles(StyleSheet *sheet)
+        status_t Schema::create_missing_styles(const StyleSheet *sheet)
         {
             // List all possible styles sheet names
             status_t res;
@@ -286,7 +327,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::link_styles(StyleSheet *sheet)
+        status_t Schema::link_styles(const StyleSheet *sheet)
         {
             // List all possible styles sheet names
             status_t res;
@@ -309,13 +350,16 @@ namespace lsp
                 StyleSheet::style_t *xs = sheet->vStyles.get(name);
                 if (xs != NULL)
                 {
-                    lsp_trace("Linking style '%s'", name->get_utf8());
+                    //lsp_trace("Linking style '%s'", name->get_utf8());
                     res = apply_relations(s, &xs->parents);
                 }
                 else
                 {
-                    lsp_trace("Linking style '%s' to default parents: '%s'", name->get_utf8(), s->default_parents());
-                    res = apply_relations(s, s->default_parents());
+                    const char *default_parents = s->default_parents();
+                    if (default_parents == NULL)
+                        default_parents = "root";
+                    //lsp_trace("Linking style '%s' to default parents: '%s'", name->get_utf8(), default_parents);
+                    res = apply_relations(s, default_parents);
                 }
 
                 if (res != STATUS_OK)
@@ -337,7 +381,7 @@ namespace lsp
             return true;
         }
 
-        status_t Schema::configure_styles(StyleSheet *sheet)
+        status_t Schema::configure_styles(const StyleSheet *sheet)
         {
             // List all possible styles sheet names
             status_t res;
@@ -371,7 +415,7 @@ namespace lsp
                 // Check that parents of this style already have been configured
                 if (check_parents_configured(s))
                 {
-                    lsp_trace("Configuring style '%s'", name->get_utf8());
+                    //lsp_trace("Configuring style '%s'", name->get_utf8());
                     if ((res = apply_settings(s, xs)) != STATUS_OK)
                         return res;
 
@@ -402,7 +446,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Schema::apply_internal(StyleSheet *sheet, resource::ILoader *loader)
+        status_t Schema::apply_internal(const StyleSheet *sheet, resource::ILoader *loader)
         {
             status_t res;
 
@@ -427,7 +471,7 @@ namespace lsp
                 return res;
 
             // Link root style and other styles
-            lsp_trace("Linking root style");
+            //lsp_trace("Linking root style");
             if (sheet->pRoot != NULL)
             {
                 if ((res = apply_relations(pRoot, &sheet->pRoot->parents)) != STATUS_OK)
@@ -437,7 +481,7 @@ namespace lsp
                 return res;
 
             // Configure root style and others
-            lsp_trace("Configuring root style");
+            //lsp_trace("Configuring root style");
             if (sheet->pRoot != NULL)
             {
                 if ((res = apply_settings(pRoot, sheet->pRoot)) != STATUS_OK)
@@ -465,11 +509,11 @@ namespace lsp
                 LSPString *value        = xs->properties.get(name);
                 property_type_t type    = s->get_type(name);
 
-                lsp_trace("  %s = %s [%d]",
-                    name->get_utf8(),
-                    value->get_utf8(),
-                    int(pAtoms->atom_id(name))
-                );
+//                lsp_trace("  %s = %s [%d]",
+//                    name->get_utf8(),
+//                    value->get_utf8(),
+//                    int(pAtoms->atom_id(name))
+//                );
 
                 if (parse_property_value(&v, value, type) == STATUS_OK)
                 {
@@ -502,7 +546,7 @@ namespace lsp
                 Style *ps = (parent->equals_ascii("root")) ? pRoot : vStyles.get(parent);
                 if (ps != NULL)
                 {
-                    lsp_trace("  parent: %s", parent->get_utf8());
+//                    lsp_trace("  parent: %s", parent->get_utf8());
                     if ((res = s->add_parent(ps)) != STATUS_OK)
                         return res;
                 }
@@ -536,7 +580,7 @@ namespace lsp
                 Style *ps = (parent.equals_ascii("root")) ? pRoot : vStyles.get(&parent);
                 if (ps != NULL)
                 {
-                    lsp_trace("  parent: %s", parent.get_utf8());
+//                    lsp_trace("  parent: %s", parent.get_utf8());
                     if ((res = s->add_parent(ps)) != STATUS_OK)
                         return res;
                 }
@@ -553,7 +597,7 @@ namespace lsp
                 Style *ps = (parent.equals_ascii("root")) ? pRoot : vStyles.get(&parent);
                 if (ps != NULL)
                 {
-                    lsp_trace("  parent: %s", parent.get_utf8());
+//                    lsp_trace("  parent: %s", parent.get_utf8());
                     if ((res = s->add_parent(ps)) != STATUS_OK)
                         return res;
                 }
@@ -578,7 +622,7 @@ namespace lsp
             }
 
             // Create style
-            lsp_trace("Creating style '%s' with default parents '%s'...", init->name(), init->default_parents());
+//            lsp_trace("Creating style '%s' with default parents '%s'...", init->name(), init->default_parents());
             Style *style    = init->create(this);
             if (style == NULL)
                 return STATUS_NO_MEM;
@@ -615,7 +659,7 @@ namespace lsp
             }
 
             // Create style
-            lsp_trace("Creating style '%s'...", name->get_native());
+//            lsp_trace("Creating style '%s'...", name->get_native());
             Style *style    = new Style(this, name->get_utf8(), "root");
             if (style == NULL)
                 return STATUS_NO_MEM;

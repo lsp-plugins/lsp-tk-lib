@@ -422,7 +422,7 @@ namespace lsp
             float seg_size      = 4.0f * scaling;
             float range         = sValue.range();
             ssize_t segments    = (angle & 1) ? (sAMeter.nHeight / seg_size) : (sAMeter.nWidth / seg_size);
-            float step          = range / segments;
+            float step          = range / lsp_max(1, segments - 1);
             lsp::Color fc, bc;
             const lsp::Color *lc;
 
@@ -448,14 +448,14 @@ namespace lsp
             float value         = sValue.get();
 
             float first         = sValue.min();
-            float vmin          = sValue.min();
+            float vmin          = first - 0.5f * step;
 
             float aa            = s->set_antialiasing(true);
 
             s->clip_begin(&sAMeter);
-                for (ssize_t i=1; i<=segments; ++i)
+                for (ssize_t i=0; i<segments; ++i)
                 {
-                    float vmax          = (i < segments) ? first + step * i : sValue.max();
+                    float vmax          = first + step * (i + 0.5f);
 
                     // Estimate the segment color (special values for peak and balance
                     if ((has_balance) && (vmin <= balance) && (balance < vmax))
@@ -494,8 +494,8 @@ namespace lsp
                     // Compute color of the segment
                     fc.copy(lc);
                     bc.copy(lc);
-                    fc.scale_lightness(bright);
-                    bc.scale_lightness(bright);
+                    fc.scale_lch_luminance(bright);
+                    bc.scale_lch_luminance(bright);
 
                     if (matched)
                         bc.alpha(0.5f);
@@ -548,10 +548,11 @@ namespace lsp
 
             ssize_t fx  = sAText.nLeft + ((sAText.nWidth  - tp.Width ) * 0.5f) + tp.XBearing;
             ssize_t fy  = sAText.nTop  + ((sAText.nHeight - fp.Height) * 0.5f) + fp.Ascent;
+            float value = (sPeakVisible.get()) ? sValue.limit(sPeak.get()) : sValue.get();
 
-            const lsp::Color *col   = get_color(sValue.get(), &sTextRanges, &sTextColor);
+            const lsp::Color *col   = get_color(value, &sTextRanges, &sTextColor);
             lsp::Color xcol(*col);
-            xcol.scale_lightness(bright);
+            xcol.scale_lch_luminance(bright);
 
             s->clip_begin(&sAText);
                 sFont.draw(s, xcol, fx, fy, fscaling, &text);

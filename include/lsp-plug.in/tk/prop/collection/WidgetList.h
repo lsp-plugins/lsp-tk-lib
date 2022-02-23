@@ -59,6 +59,7 @@ namespace lsp
                 status_t        premove(const Widget *w);
                 status_t        remove(size_t index);
                 status_t        remove(size_t index, size_t count);
+                status_t        truncate(size_t count);
                 status_t        insert(Widget *w, size_t index, bool manage);
                 void            clear();
                 void            flush();
@@ -86,6 +87,7 @@ namespace lsp
 
                 public:
                     inline size_t       size() const                        { return sList.size();                                  }
+                    inline bool         is_empty() const                    { return sList.is_empty();                              }
                     inline status_t     add(widget_t *w)                    { return GenericWidgetList::add(w, false);              }
                     inline status_t     madd(widget_t *w)                   { return GenericWidgetList::add(w, true);               }
                     inline status_t     insert(widget_t *w, size_t index)   { return GenericWidgetList::insert(w, index, false);    }

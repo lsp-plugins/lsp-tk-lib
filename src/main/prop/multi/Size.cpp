@@ -147,79 +147,39 @@ namespace lsp
 
         bool Size::intersection(ws::rectangle_t *dst, const ws::rectangle_t *a, const ws::rectangle_t *b)
         {
-            // Obtain horizontal coordinates
-            ssize_t l1 = a->nLeft, r1 = a->nLeft + a->nWidth;
-            ssize_t l2 = b->nLeft, r2 = b->nLeft + b->nWidth;
-
-            // We need to guarantee that l1 <= r1 and l2 <= r2
-            if (l1 > r1)
-                swap(l1, r1);
-            if (l2 > r2)
-                swap(l2, r2);
-
-            // Check simple case for horizontal coordinates
-            if ((l1 <= l2) && (r1 <= l2))   // A is at the left of B?
-                return false;
-            if ((l1 >= r2) && (r1 >= r2))   // A is at the right of B?
+            // Check horizontal intersection
+            ssize_t left    = lsp_max(a->nLeft, b->nLeft);
+            ssize_t right   = lsp_min(a->nLeft + a->nWidth, b->nLeft + b->nWidth);
+            if (left >= right)
                 return false;
 
-            // Obtain vertical coordinates
-            ssize_t t1 = a->nTop, b1 = a->nTop + a->nHeight;
-            ssize_t t2 = b->nTop, b2 = b->nTop + b->nHeight;
-
-            // We need to guarantee that t1 <= b1 and t2 <= b2
-            if (t1 > b1)
-                swap(t1, b1);
-            if (t2 > b2)
-                swap(t2, b2);
-
-            // Check simple case for vertical coordinates
-            if ((t1 <= t2) && (b1 <= t2))    // A is at the top of B ?
-                return false;
-            if ((t1 >= b2) && (b1 <= b2))    // A is at the bottom of B ?
+            // Check vertial intersection
+            ssize_t top     = lsp_max(a->nTop, b->nTop);
+            ssize_t bottom  = lsp_min(a->nTop + a->nHeight, b->nTop + b->nHeight);
+            if (top >= bottom)
                 return false;
 
             // A is crossing B, compute boundaries
-            dst->nLeft      = lsp_max(l1, l2);
-            dst->nTop       = lsp_max(t1, t2);
-            dst->nWidth     = lsp_min(r1, r2) - dst->nLeft;
-            dst->nHeight    = lsp_min(b1, b2) - dst->nTop;
+            dst->nLeft      = left;
+            dst->nTop       = top;
+            dst->nWidth     = right - left;
+            dst->nHeight    = bottom - top;
 
             return true;
         }
 
         bool Size::overlap(const ws::rectangle_t *a, const ws::rectangle_t *b)
         {
-            // Obtain horizontal coordinates
-            ssize_t l1 = a->nLeft, r1 = a->nLeft + a->nWidth;
-            ssize_t l2 = b->nLeft, r2 = b->nLeft + b->nWidth;
-
-            // We need to guarantee that l1 <= r1 and l2 <= r2
-            if (l1 > r1)
-                swap(l1, r1);
-            if (l2 > r2)
-                swap(l2, r2);
-
-            // Check simple case for horizontal coordinates
-            if ((l1 <= l2) && (r1 <= l2))   // A is at the left of B?
-                return false;
-            if ((l1 >= r2) && (r1 >= r2))   // A is at the right of B?
+            // Check horizontal intersection
+            ssize_t left    = lsp_max(a->nLeft, b->nLeft);
+            ssize_t right   = lsp_min(a->nLeft + a->nWidth, b->nLeft + b->nWidth);
+            if (left >= right)
                 return false;
 
-            // Obtain vertical coordinates
-            ssize_t t1 = a->nTop, b1 = a->nTop + a->nHeight;
-            ssize_t t2 = b->nTop, b2 = b->nTop + b->nHeight;
-
-            // We need to guarantee that t1 <= b1 and t2 <= b2
-            if (t1 > b1)
-                swap(t1, b1);
-            if (t2 > b2)
-                swap(t2, b2);
-
-            // Check simple case for vertical coordinates
-            if ((t1 <= t2) && (b1 <= t2))    // A is at the top of B ?
-                return false;
-            if ((t1 >= b2) && (b1 <= b2))    // A is at the bottom of B ?
+            // Check vertial intersection
+            ssize_t top     = lsp_max(a->nTop, b->nTop);
+            ssize_t bottom  = lsp_min(a->nTop + a->nHeight, b->nTop + b->nHeight);
+            if (top >= bottom)
                 return false;
 
             return true;

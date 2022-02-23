@@ -81,6 +81,7 @@ namespace lsp
                 lltl::pphash<LSPString, style_t>    vStyles;    // Additional named styles
                 lltl::pphash<LSPString, font_t>     vFonts;     // Additional fonts
                 lltl::pphash<LSPString, lsp::Color> vColors;    // Color map
+                lltl::pphash<LSPString, LSPString>  vConstants; // Global constants
                 LSPString                           sError;     // Error text
 
             public:
@@ -92,10 +93,12 @@ namespace lsp
                 status_t            parse_schema(xml::PullParser *p);
                 status_t            parse_colors(xml::PullParser *p);
                 status_t            parse_fonts(xml::PullParser *p);
+                status_t            parse_constants(xml::PullParser *p);
 
                 status_t            parse_metadata(xml::PullParser *p);
                 status_t            parse_style(xml::PullParser *p, bool root);
                 status_t            parse_color(xml::PullParser *p, lsp::Color *color);
+                status_t            parse_constant(xml::PullParser *p, LSPString *value);
                 status_t            parse_font(xml::PullParser *p, font_t *font);
                 status_t            parse_property(xml::PullParser *p, style_t *style, const LSPString *name);
 
@@ -121,20 +124,23 @@ namespace lsp
 
             public:
                 inline const LSPString *title() const                               { return &sTitle;       }
-                status_t            enum_colors(lltl::parray<LSPString> *names);
-                status_t            enum_styles(lltl::parray<LSPString> *names);
-                status_t            enum_fonts(lltl::parray<LSPString> *names);
-                status_t            enum_properties(const LSPString *style, lltl::parray<LSPString> *names);
-                status_t            enum_properties(const char *style, lltl::parray<LSPString> *names);
-                status_t            enum_parents(const LSPString *style, lltl::parray<LSPString> *names);
-                status_t            enum_parents(const char *style, lltl::parray<LSPString> *names);
+                status_t            enum_colors(lltl::parray<LSPString> *names) const;
+                status_t            enum_styles(lltl::parray<LSPString> *names) const;
+                status_t            enum_fonts(lltl::parray<LSPString> *names) const;
+                status_t            enum_constants(lltl::parray<LSPString> *names) const;
+                status_t            enum_properties(const LSPString *style, lltl::parray<LSPString> *names) const;
+                status_t            enum_properties(const char *style, lltl::parray<LSPString> *names) const;
+                status_t            enum_parents(const LSPString *style, lltl::parray<LSPString> *names) const;
+                status_t            enum_parents(const char *style, lltl::parray<LSPString> *names) const;
 
-                ssize_t             get_property(const LSPString *style, const LSPString *property, LSPString *dst);
-                ssize_t             get_property(const char *style, const char *property, LSPString *dst);
-                ssize_t             get_color(const LSPString *color, lsp::Color *dst);
-                ssize_t             get_color(const char *color, lsp::Color *dst);
-                ssize_t             get_font(const LSPString *font, LSPString *path, bool *alias);
-                ssize_t             get_font(const char *font, LSPString *path, bool *alias);
+                ssize_t             get_property(const LSPString *style, const LSPString *property, LSPString *dst) const;
+                ssize_t             get_property(const char *style, const char *property, LSPString *dst) const;
+                ssize_t             get_color(const LSPString *color, lsp::Color *dst) const;
+                ssize_t             get_color(const char *color, lsp::Color *dst) const;
+                ssize_t             get_font(const LSPString *font, LSPString *path, bool *alias) const;
+                ssize_t             get_font(const char *font, LSPString *path, bool *alias) const;
+                ssize_t             get_constant(const LSPString *name, LSPString *dst) const;
+                ssize_t             get_constant(const char *name, LSPString *dst) const;
 
             public:
                 const LSPString    *error() const { return &sError;     }

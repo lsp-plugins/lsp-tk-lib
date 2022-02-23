@@ -33,6 +33,7 @@ namespace lsp
             { "popup",          ws::BS_POPUP        },
             { "combo",          ws::BS_COMBO        },
             { "sizeable",       ws::BS_SIZEABLE     },
+            { "dropdown",       ws::BS_DROPDOWN     },
             { NULL,             -1                  }
         };
 

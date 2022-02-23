@@ -95,20 +95,6 @@ namespace lsp
             sOrigin.bind("origin", &sStyle);
             sColor.bind("color", &sStyle);
 
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sDirection.init_cart(sclass, 1.0f, 0.0f);
-//                sMin.init(sclass, -1.0f);
-//                sMax.init(sclass, 1.0f);
-//                sLogScale.init(sclass, false);
-//                sBasis.init(sclass, true);
-//                sWidth.init(sclass, 1);
-//                sLength.init(sclass, -1.0f);
-//                sOrigin.init(sclass, 0);
-//                sColor.init(sclass, "#ffffff");
-//            }
-
             pClass          = &metadata;
 
             return STATUS_OK;
@@ -149,7 +135,7 @@ namespace lsp
             float scaling = lsp_max(0.0f, sScaling.get());
             float width   = (sWidth.get() > 0) ? lsp_max(1.0f, sWidth.get() * scaling) : 0;
             lsp::Color color(sColor);
-            color.scale_lightness(sBrightness.get());
+            color.scale_lch_luminance(sBrightness.get());
 
             // Draw
             float cx = 0.0f, cy = 0.0f;
@@ -189,9 +175,11 @@ namespace lsp
 
                 float x1, y1, x2, y2;
 
-                if (!clip_line2d(la, lb, lc,
+                if (!clip_line2d_eq(
+                        la, lb, lc,
                         cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
-                        2.0f, x1, y1, x2, y2
+                        2.0f,
+                        x1, y1, x2, y2
                         )
                     )
                     return false;
@@ -266,8 +254,10 @@ namespace lsp
                     return false;
 
                 float x1, y1, x2, y2;
-                if (!clip_line2d(la, lb, lc,
+                if (!clip_line2d_eq(
+                        la, lb, lc,
                         cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
+                        2.0f,
                         x1, y1, x2, y2)
                     )
                     return false;
@@ -316,9 +306,9 @@ namespace lsp
         void GraphAxis::ortogonal_shift(float x, float y, float shift, float &nx, float &ny)
         {
             // When rotating 90 degrees left, we get: dy' = dx, dx' = -dy
-            float fdx   = sDirection.dx(), fdy = -sDirection.dy();
-            nx               = x + shift * fdy;
-            ny               = y - shift * fdx;
+            float fdx   = -sDirection.dy(), fdy = sDirection.dx();
+            nx               = x + shift * fdx;
+            ny               = y - shift * fdy;
         }
 
         bool GraphAxis::angle(float x, float y, float angle, float &a, float &b, float &c)

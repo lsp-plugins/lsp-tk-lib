@@ -245,7 +245,7 @@ namespace lsp
             if (border > 0)
             {
                 c.copy((state & XF_HOVER) ? sBorderHoverColor : sBorderColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_round_rect(c, SURFMASK_ALL_CORNER, brad, &xr);
 
                 xr.nLeft           += border;
@@ -261,7 +261,7 @@ namespace lsp
             if (bgap > 0)
             {
                 c.copy((state & XF_HOVER) ? sBorderGapHoverColor : sBorderGapColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_round_rect(c, SURFMASK_ALL_CORNER, frad, &fr);
 
                 fr.nLeft           += bgap;
@@ -273,7 +273,7 @@ namespace lsp
 
             // Draw fill
             c.copy((state & XF_HOVER) ? sFillHoverColor : sFillColor);
-            c.scale_lightness(bright);
+            c.scale_lch_luminance(bright);
             s->fill_round_rect(c, SURFMASK_ALL_CORNER, frad, &fr);
 
             // Draw check
@@ -286,7 +286,7 @@ namespace lsp
                 brad                = lsp_max(irad, brad - ckgap);
 
                 c.copy((state & XF_HOVER) ? sHoverColor : sColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_round_rect(c, SURFMASK_ALL_CORNER, brad, &xr);
             }
 

@@ -49,9 +49,9 @@ namespace lsp
         #define LSP_TK_BUILTIN_STYLE_VAR(Name) Style ## Builtin
 
         #define LSP_TK_BUILTIN_STYLE(Style, Name, Parents) \
-            static StyleFactory<Style> Style ## Factory(Name, Parents); \
+            static ::lsp::tk::StyleFactory<Style> Style ## Factory(Name, Parents); \
             \
-            static BuiltinStyle Style ## Builtin(& Style ## Factory);
+            static ::lsp::tk::BuiltinStyle Style ## Builtin(& Style ## Factory);
 
 
     }

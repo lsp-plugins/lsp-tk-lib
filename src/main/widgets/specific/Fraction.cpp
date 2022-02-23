@@ -41,6 +41,7 @@ namespace lsp
                 "den.opened"
             };
 
+            // Fraction style
             LSP_TK_STYLE_IMPL_BEGIN(Fraction, Widget)
                 // Bind
                 sColor.bind("color", this);
@@ -68,6 +69,12 @@ namespace lsp
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Fraction, "Fraction", "root");
+
+            // ComboBox::Window style
+            LSP_TK_BUILTIN_STYLE(PopupWindow, "Fraction::Window", "PopupWindow");
+
+            // Fraction::List style
+            LSP_TK_BUILTIN_STYLE(ListBox, "Fraction::List", "ListBox");
         }
 
         //-----------------------------------------------------------------------------
@@ -488,9 +495,9 @@ namespace lsp
             lsp::Color bc(sDen.sColor);
 
             get_actual_bg_color(bg_color);
-            color.scale_lightness(bright);
-            tc.scale_lightness(bright);
-            bc.scale_lightness(bright);
+            color.scale_lch_luminance(bright);
+            tc.scale_lch_luminance(bright);
+            bc.scale_lch_luminance(bright);
 
             // Clear
             s->clear(bg_color);

@@ -503,15 +503,17 @@ namespace lsp
             get_actual_bg_color(col);
             s->clear(col);
             col.copy(sColor);
+            col.scale_lch_luminance(bright);
             s->fill_rect(col, &sAAll);
 
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 LedMeterChannel *c = vVisible.uget(i);
 
-                c->draw_meter(s, angle, scaling, bright);
+                float mbright   = lsp_min(bright, c->brightness()->get());
+                c->draw_meter(s, angle, scaling, mbright);
                 if (has_text)
-                    c->draw_label(s, &sFont, fscaling, bright);
+                    c->draw_label(s, &sFont, fscaling, mbright);
 
                 // Commit pending redraw request
                 c->commit_redraw();

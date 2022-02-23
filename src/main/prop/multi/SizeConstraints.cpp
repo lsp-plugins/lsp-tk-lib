@@ -28,6 +28,8 @@ namespace lsp
         const prop::desc_t SizeConstraints::DESC[] =
         {
             { "",               PT_STRING   },
+            { ".min",           PT_STRING   },
+            { ".max",           PT_STRING   },
             { ".width.min",     PT_INT      },
             { ".height.min",    PT_INT      },
             { ".width.max",     PT_INT      },
@@ -66,9 +68,9 @@ namespace lsp
                 p.nMaxHeight    = lsp_max(v, -1);
 
             LSPString s;
+            ssize_t xv[4];
             if ((property == vAtoms[P_VALUE]) && (pStyle->get_string(vAtoms[P_VALUE], &s) == STATUS_OK))
             {
-                ssize_t xv[4];
                 size_t n = Property::parse_ints(xv, 4, &s);
                 if (n == 4)
                 {
@@ -83,6 +85,41 @@ namespace lsp
                     p.nMinHeight    = -1;
                     p.nMaxWidth     = lsp_max(xv[0], -1);
                     p.nMaxHeight    = lsp_max(xv[1], -1);
+                }
+                else if (n == 1)
+                {
+                    p.nMinWidth     = -1;
+                    p.nMinHeight    = -1;
+                    p.nMaxWidth     = lsp_max(xv[0], -1);
+                    p.nMaxHeight    = p.nMinWidth;
+                }
+            }
+            if ((property == vAtoms[P_MIN]) && (pStyle->get_string(vAtoms[P_MIN], &s) == STATUS_OK))
+            {
+                size_t n = Property::parse_ints(xv, 2, &s);
+                if (n == 2)
+                {
+                    p.nMinWidth     = lsp_max(xv[0], -1);
+                    p.nMinHeight    = lsp_max(xv[1], -1);
+                }
+                else if (n == 1)
+                {
+                    p.nMinWidth     = lsp_max(xv[0], -1);
+                    p.nMinHeight    = p.nMinWidth;
+                }
+            }
+            if ((property == vAtoms[P_MAX]) && (pStyle->get_string(vAtoms[P_MIN], &s) == STATUS_OK))
+            {
+                size_t n = Property::parse_ints(xv, 2, &s);
+                if (n == 2)
+                {
+                    p.nMaxWidth     = lsp_max(xv[0], -1);
+                    p.nMaxHeight    = lsp_max(xv[1], -1);
+                }
+                else if (n == 1)
+                {
+                    p.nMaxWidth     = lsp_max(xv[0], -1);
+                    p.nMaxHeight    = p.nMaxWidth;
                 }
             }
         }
@@ -107,6 +144,16 @@ namespace lsp
             {
                 if (s.fmt_ascii("%ld %ld %ld %ld", long(p.nMinWidth), long(p.nMinHeight), long(p.nMaxWidth), long(p.nMaxHeight)))
                     pStyle->set_string(vAtoms[P_VALUE], &s);
+            }
+            if (vAtoms[P_MIN] >= 0)
+            {
+                if (s.fmt_ascii("%ld %ld", long(p.nMinWidth), long(p.nMinHeight)))
+                    pStyle->set_string(vAtoms[P_MIN], &s);
+            }
+            if (vAtoms[P_MAX] >= 0)
+            {
+                if (s.fmt_ascii("%ld %ld", long(p.nMaxWidth), long(p.nMaxHeight)))
+                    pStyle->set_string(vAtoms[P_MAX], &s);
             }
         }
 
@@ -404,6 +451,38 @@ namespace lsp
         void SizeConstraints::maximize(ws::size_limit_t *dst, const ws::size_limit_t *src)
         {
             maximize(dst, dst, src);
+        }
+
+        void SizeConstraints::add(ws::size_limit_t *dst, ssize_t width, ssize_t height)
+        {
+            dst->nMinWidth   = lsp_max(0, lsp_max(0, dst->nMinWidth ) + width );
+            dst->nMinHeight  = lsp_max(0, lsp_max(0, dst->nMinHeight) + height);
+            if (dst->nMaxWidth >= 0)
+                dst->nMaxWidth   = lsp_max(0, dst->nMaxWidth  + width );
+            if (dst->nMaxHeight >= 0)
+                dst->nMaxHeight  = lsp_max(0, dst->nMaxHeight + height);
+            if (dst->nPreWidth >= 0)
+                dst->nPreWidth   = lsp_max(0, dst->nPreWidth  + width );
+            if (dst->nPreHeight >= 0)
+                dst->nPreHeight  = lsp_max(0, dst->nPreHeight + height);
+        }
+
+        void SizeConstraints::scale(ws::size_limit_t *dst, float scale)
+        {
+            if (dst->nMinWidth >= 0)
+                dst->nMinWidth  = lsp_max(0, ceilf(dst->nMinWidth * scale));
+            if (dst->nMinHeight >= 0)
+                dst->nMinHeight = lsp_max(0, ceilf(dst->nMinHeight * scale));
+
+            if (dst->nMaxWidth >= 0)
+                dst->nMaxWidth  = lsp_max(0, ceilf(dst->nMaxWidth * scale));
+            if (dst->nMaxHeight >= 0)
+                dst->nMaxHeight = lsp_max(0, ceilf(dst->nMaxHeight * scale));
+
+            if (dst->nPreWidth >= 0)
+                dst->nPreWidth  = lsp_max(0, ceilf(dst->nPreWidth * scale));
+            if (dst->nPreHeight >= 0)
+                dst->nPreHeight = lsp_max(0, ceilf(dst->nPreHeight * scale));
         }
 
     } /* namespace tk */

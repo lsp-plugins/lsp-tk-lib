@@ -43,7 +43,7 @@ namespace lsp
             for (size_t i=vWidgets.size(); (i--) > 0;)
             {
                 tk::Widget *w = vWidgets.uget(i);
-                lsp_trace("w = %p (%s)", w, w->get_class()->name);
+//                lsp_trace("w = %p (%s)", w, w->get_class()->name);
 
                 if (w != NULL)
                 {
@@ -65,7 +65,7 @@ namespace lsp
             else if (!vWidgets.add(w))
                 return STATUS_NO_MEM;
 
-            lsp_trace("w = %p (%s)", w, w->get_class()->name);
+//            lsp_trace("w = %p (%s)", w, w->get_class()->name);
 
             return STATUS_OK;
         }

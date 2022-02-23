@@ -339,9 +339,9 @@ namespace lsp
             lsp::Color off(sTextColor);
 
             off.blend(color, 0.05f);
-            on.scale_lightness(bright);
-            off.scale_lightness(bright);
-            color.scale_lightness(bright);
+            on.scale_lch_luminance(bright);
+            off.scale_lch_luminance(bright);
+            color.scale_lch_luminance(bright);
 
             // Draw glass
             s->clear(color);

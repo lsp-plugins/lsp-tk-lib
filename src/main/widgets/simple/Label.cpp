@@ -170,7 +170,7 @@ namespace lsp
             lsp::Color f_color((hover) ? sHoverColor : sColor);
 
             get_actual_bg_color(bg_color);
-            f_color.scale_lightness(sBrightness.get());
+            f_color.scale_lch_luminance(sBrightness.get());
 
             // Draw background
             s->clear(bg_color);

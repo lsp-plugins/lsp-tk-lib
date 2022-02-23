@@ -387,12 +387,13 @@ namespace lsp
             lsp::Color color(select_color());
             lsp::Color tcolor(select_text_color());
             lsp::Color border_color(select_border_color());
+            lsp::Color xc;
 
             get_actual_bg_color(bg_color);
 
-            color.scale_lightness(brightness);
-            tcolor.scale_lightness(brightness);
-            border_color.scale_lightness(brightness);
+            color.scale_lch_luminance(brightness);
+            tcolor.scale_lch_luminance(brightness);
+            border_color.scale_lch_luminance(brightness);
 
             // Draw background
             bool aa     = s->set_antialiasing(false);
@@ -476,11 +477,13 @@ namespace lsp
                             float bright = float(i + 1.0f) / (chamfer + 1);
 
                             // Create gradient
-                            g = create_gradient(s, r, pressed, 0, delta);
-                            color.lightness(bright);
-                            g->add_color(0.0, color.red(), color.green(), color.blue());
-                            color.lightness(xb * bright);
-                            g->add_color(1.0, color.red(), color.green(), color.blue());
+                            g = create_gradient(s, r, pressed, 0.5f * delta, delta);
+                            xc.copy(color);
+                            xc.scale_hsl_lightness(bright);
+                            g->add_color(0.0, xc.red(), xc.green(), xc.blue());
+                            xc.copy(color);
+                            xc.scale_hsl_lightness(xb * bright);
+                            g->add_color(1.0, xc.red(), xc.green(), xc.blue());
                             s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
                             delete g;
 
@@ -504,11 +507,13 @@ namespace lsp
                 // Draw button face
                 if (gradient)
                 {
-                    g = create_gradient(s, r, pressed, 0, delta);
-                    color.lightness(1.0f);
-                    g->add_color(0.0, color.red(), color.green(), color.blue());
-                    color.lightness(xb);
-                    g->add_color(1.0, color.red(), color.green(), color.blue());
+                    g = create_gradient(s, r, pressed, 0.5f * delta, delta);
+                    xc.copy(color);
+                    xc.scale_hsl_lightness(1.0f);
+                    g->add_color(0.0, xc.red(), xc.green(), xc.blue());
+                    xc.copy(color);
+                    xc.scale_hsl_lightness(xb);
+                    g->add_color(1.0, xc.red(), xc.green(), xc.blue());
                     s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
                     delete g;
                 }
@@ -622,8 +627,8 @@ namespace lsp
                 ssize_t tminw   = ceil(tp.Width);
                 ssize_t tminh   = ceil(lsp_max(tp.Height, fp.Height));
 
-                xr.nWidth       = lsp_max(xr.nWidth, tminw);
-                xr.nHeight      = lsp_max(xr.nHeight, tminh);
+                xr.nWidth          = lsp_max(xr.nWidth, tminw);
+                xr.nHeight         = lsp_max(xr.nHeight, tminh);
 
                 sTextPadding.add(&xr, scaling);
             }
@@ -635,10 +640,10 @@ namespace lsp
             ssize_t chamfer     = lsp_max(0.0f, border);
             ssize_t hole        = (nState & S_HOLE) ? lsp_max(1, scaling) : 0;
             ssize_t light       = (nState & S_LED)  ? lsp_max(1, scaling * (sLed.get() + 2)) : 0;
-            ssize_t outer       = lsp_max(hole, light);
+            ssize_t outer       = lsp_max(hole, light)*2;
 
-            xr.nWidth          += (chamfer + outer) * 2;
-            xr.nHeight         += (chamfer + outer) * 2;
+            xr.nWidth          += chamfer * 2;
+            xr.nHeight         += chamfer * 2;
 
             r->nMinWidth        = xr.nWidth;
             r->nMinHeight       = xr.nHeight;
@@ -647,7 +652,9 @@ namespace lsp
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
 
+            // Update constraints
             sConstraints.apply(r, scaling);
+            SizeConstraints::add(r, outer, outer);
         }
 
         void Button::realize(const ws::rectangle_t *r)

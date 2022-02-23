@@ -98,7 +98,7 @@ UTEST_BEGIN("tk.style", stylesheet)
         tk::StyleSheet ss;
         lltl::parray<LSPString> vs;
         lsp::Color c;
-        LSPString fpath;
+        LSPString fpath, value;
         bool falias;
         const char *root = NULL;
         char buf[32];
@@ -160,6 +160,20 @@ UTEST_BEGIN("tk.style", stylesheet)
         UTEST_ASSERT(ss.get_font("font3", &fpath, &falias) == STATUS_OK);
         UTEST_ASSERT(fpath.equals_ascii("path/to/some/font3.ttf"));
         UTEST_ASSERT(falias == false);
+
+        // Check constants
+        vs.clear();
+        UTEST_ASSERT(ss.enum_constants(&vs) == STATUS_OK);
+        static const char *constants[] = { "key1", "key2", NULL };
+        UTEST_ASSERT(check_list(&vs, constants));
+
+        UTEST_ASSERT(ss.get_constant("key1", &value) == STATUS_OK);
+        UTEST_ASSERT(value.equals_ascii("value1"));
+
+        UTEST_ASSERT(ss.get_constant("key2", &value) == STATUS_OK);
+        UTEST_ASSERT(value.equals_ascii("value2"));
+
+        UTEST_ASSERT(ss.get_constant("key3", &value) == STATUS_NOT_FOUND);
 
         // Check style list
         vs.clear();

@@ -223,7 +223,7 @@ namespace lsp
             if (border > 0)
             {
                 c.copy((state & XF_HOVER) ? sBorderHoverColor : sBorderColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_circle(cx, cy, r, c);
                 r                  -= border;
             }
@@ -233,14 +233,14 @@ namespace lsp
             if (bgap > 0)
             {
                 c.copy((state & XF_HOVER) ? sBorderGapHoverColor : sBorderGapColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_circle(cx, cy, frad, c);
                 frad               -= bgap;
             }
 
             // Draw fill
             c.copy((state & XF_HOVER) ? sFillHoverColor : sFillColor);
-            c.scale_lightness(bright);
+            c.scale_lch_luminance(bright);
             s->fill_circle(cx, cy, frad, c);
 
             // Draw check
@@ -248,7 +248,7 @@ namespace lsp
             {
                 r                  -= ckgap;
                 c.copy((state & XF_HOVER) ? sHoverColor : sColor);
-                c.scale_lightness(bright);
+                c.scale_lch_luminance(bright);
                 s->fill_circle(cx, cy, r, c);
             }
 

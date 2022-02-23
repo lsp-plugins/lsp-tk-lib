@@ -171,10 +171,11 @@ namespace lsp
             }
 
             // Now we need to clip the line
-            if (!clip_line2d(a, b, c,
+            if (!clip_line2d_eq(
+                a, b, c,
                 sr.nLeft, sr.nLeft + sr.nWidth,
                 sr.nTop,  sr.nTop  + sr.nHeight,
-                0,
+                0.0f,
                 ap.x, ap.y, bp.x, bp.y))
             {
                 s->clip_begin(area);
@@ -203,8 +204,8 @@ namespace lsp
 
             lsp::Color col(sColor), bcol(sBorderColor);
             float brightness    = sBrightness.get();
-            col.scale_lightness(brightness);
-            bcol.scale_lightness(brightness);
+            col.scale_lch_luminance(brightness);
+            bcol.scale_lch_luminance(brightness);
 
             // Find across all corner points the points which lay 'below' the split boundary
             // This can be done by computing the scalar multiplication between normal and a
