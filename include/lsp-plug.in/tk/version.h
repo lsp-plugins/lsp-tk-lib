@@ -22,9 +22,9 @@
 #ifndef LSP_PLUG_IN_TK_VERSION_H_
 #define LSP_PLUG_IN_TK_VERSION_H_
 
-#define LSP_TK_MAJOR                0
-#define LSP_TK_MINOR                5
-#define LSP_TK_MICRO                2
+#define LSP_TK_MAJOR                1
+#define LSP_TK_MINOR                0
+#define LSP_TK_MICRO                0
 
 #ifdef LSP_TK_LIB_BUILTIN
     #define LSP_TK_LIB_EXPORT

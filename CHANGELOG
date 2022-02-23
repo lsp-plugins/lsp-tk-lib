@@ -2,22 +2,22 @@
 * RECENT CHANGES
 *******************************************************************************
 
-=== 0.5.2 ===
-- Bugfixes for the tk::GraphDot widget.
-- Added new Display::wait_events() method for polling display for incoming events.
-- Updated rendering of tk::LedMeterChannel widget.
-- Fixed NULL dereference when linking styles in the schema.
-- Refactoring of widget rendering, allmost all usages of Color::scale_lightness
+=== 1.0.0 ===
+* Bugfixes for the tk::GraphDot widget.
+* Added new Display::wait_events() method for polling display for incoming events.
+* Updated rendering of tk::LedMeterChannel widget.
+* Fixed NULL dereference when linking styles in the schema.
+* Refactoring of widget rendering, allmost all usages of Color::scale_lightness
   replaced with Color::scale_lch_luminance.
-- Added 'reduce' options to prop::Allocation property.
-- Added 'reduce' options handling by tk::Box and tk::Grid widgets.
-- Fixed bug in prop::StringList which could yield to ignore of localization parameters.
-- Added support of CIE XYZ D65, CIE LAB D65, CIE LCH D65 and CMYK color schemes for tk::Color property.
-- Implemented tk::Schema::add methods for adding custom styles at the initialization stage.
-- Fixed bug in clipboard paste for tk::TextDataSink class.
-- Updated brightness control for LED channels grouped into LED meters.
-- Added border radius support to the tk::Menu widget.
-- Fixed prolbem with scrollbar sync for the tk::ListBox widget.
+* Added 'reduce' options to prop::Allocation property.
+* Added 'reduce' options handling by tk::Box and tk::Grid widgets.
+* Fixed bug in prop::StringList which could yield to ignore of localization parameters.
+* Added support of CIE XYZ D65, CIE LAB D65, CIE LCH D65 and CMYK color schemes for tk::Color property.
+* Implemented tk::Schema::add methods for adding custom styles at the initialization stage.
+* Fixed bug in clipboard paste for tk::TextDataSink class.
+* Updated brightness control for LED channels grouped into LED meters.
+* Added border radius support to the tk::Menu widget.
+* Fixed prolbem with scrollbar sync for the tk::ListBox widget.
 
 === 0.5.1 ===
 * Updated code to match lltl library headers.
