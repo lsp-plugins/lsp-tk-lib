@@ -1146,6 +1146,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/AudioSample.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/helpers/draw.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_TK_LIB_INC)/private/tk/style/BuiltinStyle.h
 $(LSP_TK_LIB_BIN)/main/widgets/specific/AudioChannel.o: \
  main/widgets/specific/AudioChannel.cpp \
@@ -1338,6 +1339,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/AudioChannel.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_TK_LIB_INC)/private/tk/style/BuiltinStyle.h
 $(LSP_TK_LIB_BIN)/main/widgets/simple/Void.o: \
  main/widgets/simple/Void.cpp \
@@ -5361,6 +5363,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphMesh.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/dsp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/version.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/types.h \
@@ -5981,6 +5984,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphFrameBuffer.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/dsp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/version.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/types.h \
@@ -12277,6 +12281,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/i18n/Dictionary.h \
  $(LSP_TK_LIB_INC)/private/tk/style/BuiltinStyle.h
 $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
@@ -13844,7 +13849,8 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphMeshData.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/smath.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/interpolation/linear.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h
 $(LSP_TK_LIB_BIN)/main/prop/specific/GraphFrameData.o: \
  main/prop/specific/GraphFrameData.cpp \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
@@ -14036,6 +14042,7 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphFrameData.o: \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/fmt/bookmarks.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/bits.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/bits.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/dsp.h \
