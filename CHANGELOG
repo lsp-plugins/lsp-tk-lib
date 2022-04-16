@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.2 ===
+- Added template get() method for the tk::Registry that allows to obtain widget of specific type.
 
 === 1.0.1 ===
 * Updated build scripts.
