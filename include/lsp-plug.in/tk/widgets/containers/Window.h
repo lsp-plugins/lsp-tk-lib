@@ -71,7 +71,7 @@ namespace lsp
 
                 typedef struct key_handler_t
                 {
-                    size_t              nKeys;              // Number of keys pressed
+                    lltl::darray<ws::code_t> vKeys;         // List of pressed keys
                     Widget             *pWidget;            // Keyboard handler
                 } key_handler_t;
 
@@ -126,6 +126,8 @@ namespace lsp
                 inline bool         check_focus(Widget *w) const    { return pFocused == w; }
                 virtual bool        take_focus(Widget *w);
                 bool                kill_focus(Widget *w);
+                size_t              make_key_pressed(ws::code_t code);
+                size_t              make_key_released(ws::code_t code);
 
             protected:
                 virtual Widget     *find_widget(ssize_t x, ssize_t y);

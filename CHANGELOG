@@ -4,6 +4,7 @@
 
 === 1.0.2 ===
 - Added template get() method for the tk::Registry that allows to obtain widget of specific type.
+- Updated key event handling algorithm in the tk::Window class. 
 
 === 1.0.1 ===
 * Updated build scripts.
