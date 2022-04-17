@@ -529,6 +529,7 @@ namespace lsp
             LSP_STATUS_ASSERT(inject_style(&sWPath, "FileDialog::Path"));
 
             LSP_STATUS_ASSERT(sWSearch.init());
+            LSP_STATUS_ASSERT(inject_style(&sWSearch, "FileDialog::Search"));
 
             LSP_STATUS_ASSERT(sWFilter.init());
             LSP_STATUS_ASSERT(inject_style(&sWFilter, "FileDialog::FilterComboBox"));

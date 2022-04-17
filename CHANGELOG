@@ -4,7 +4,10 @@
 
 === 1.0.2 ===
 - Added template get() method for the tk::Registry that allows to obtain widget of specific type.
-- Updated key event handling algorithm in the tk::Window class. 
+- Updated key event handling algorithm in the tk::Window class.
+- Added FileDialog::Search style for the 'Search' edit control.
+- Changed the space allocation algorithm for the edit control (now border gap does not depend
+  on border size).
 
 === 1.0.1 ===
 * Updated build scripts.
