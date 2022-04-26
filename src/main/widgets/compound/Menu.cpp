@@ -98,10 +98,10 @@ namespace lsp
             pClass = &metadata;
         }
 
-        Widget *Menu::Window::process_mouse_handler(const ws::event_t *e)
+        Widget *Menu::Window::sync_mouse_handler(const ws::event_t *e, bool lookup)
         {
             Widget *old     = hMouse.pWidget;
-            Widget *curr    = PopupWindow::sync_mouse_handler(e, true);
+            Widget *curr    = PopupWindow::sync_mouse_handler(e, lookup);
 
             if ((curr != old) && (curr != NULL))
                 curr->take_focus();
@@ -111,12 +111,12 @@ namespace lsp
 
         Widget *Menu::Window::acquire_mouse_handler(const ws::event_t *e)
         {
-            return process_mouse_handler(e);
+            return sync_mouse_handler(e, true);
         }
 
-        Widget *Menu::Window::release_mouse_handler(const ws::event_t *e)
+        Widget *Menu::Window::release_mouse_handler(const ws::event_t *e, bool lookup)
         {
-            return process_mouse_handler(e);
+            return sync_mouse_handler(e, lookup);
         }
 
         status_t Menu::Window::handle_event(const ws::event_t *e)

@@ -121,9 +121,9 @@ namespace lsp
                         explicit Window(Display *dpy, Menu *menu);
 
                     protected:
-                        virtual Widget     *process_mouse_handler(const ws::event_t *e);
+                        virtual Widget     *sync_mouse_handler(const ws::event_t *e, bool lookup);
                         virtual Widget     *acquire_mouse_handler(const ws::event_t *e);
-                        virtual Widget     *release_mouse_handler(const ws::event_t *e);
+                        virtual Widget     *release_mouse_handler(const ws::event_t *e, bool lookup);
 
                     public:
                         virtual status_t    handle_event(const ws::event_t *e);
