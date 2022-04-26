@@ -38,7 +38,7 @@ namespace lsp
             { ".max",           PT_FLOAT    },
             { ".default",       PT_FLOAT    },
             { ".size",          PT_STRING   },
-            NULL
+            { NULL,             PT_UNKNOWN  }
         };
 
         void GraphFrameData::Listener::notify(atom_t property)

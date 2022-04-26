@@ -34,7 +34,7 @@ namespace lsp
         {
             { ".size",      PT_INT      },
             { ".strobe",    PT_BOOL     },
-            NULL
+            { NULL,         PT_UNKNOWN  }
         };
 
         void GraphMeshData::Listener::notify(atom_t property)
