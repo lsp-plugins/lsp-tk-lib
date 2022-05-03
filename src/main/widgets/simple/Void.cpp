@@ -92,8 +92,6 @@ namespace lsp
 
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
-
-            lsp_trace("this=%p, w={%d, %d}, h={%d, %d}", this, int(r->nMinWidth), int(r->nMaxWidth), int(r->nMinHeight), int(r->nMaxHeight));
         }
 
         void Void::property_changed(Property *prop)

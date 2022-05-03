@@ -221,8 +221,11 @@ namespace lsp
 //                    int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
 //            );
             pWindow->set_size_constraints(&sr);
-            if ((sSize.nWidth != r.nWidth) && (sSize.nHeight != r.nHeight))
+            if ((sSize.nWidth != r.nWidth) || (sSize.nHeight != r.nHeight))
+            {
                 pWindow->resize(r.nWidth, r.nHeight);
+                sWindowSize.commit_value(r.nWidth, r.nHeight, scaling);
+            }
 
             // Realize widget container
             WidgetContainer::realize_widget(&r);
@@ -726,14 +729,15 @@ namespace lsp
 
                         if (!(nFlags & RESIZE_PENDING))
                         {
-                            lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
-                            sPosition.commit_value(e->nLeft, e->nTop);
-                            sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
+                            lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
 
                             r.nLeft     = e->nLeft;
                             r.nTop      = e->nTop;
                             r.nWidth    = e->nWidth;
                             r.nHeight   = e->nHeight;
+
+                            sPosition.commit_value(r.nLeft, r.nTop);
+                            sWindowSize.commit_value(r.nWidth, r.nHeight, sScaling.get());
 
                             realize_widget(&r);
                         }
@@ -935,6 +939,14 @@ namespace lsp
             update_pointer();
 
             return result;
+        }
+
+        status_t Window::resize_window(const ws::rectangle_t *size)
+        {
+            sPosition.set(size->nLeft, size->nTop);
+            sWindowSize.set(size->nWidth, size->nHeight, sScaling.get());
+
+            return STATUS_OK;
         }
 
         Widget *Window::sync_mouse_handler(const ws::event_t *e, bool lookup)

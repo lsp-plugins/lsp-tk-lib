@@ -180,6 +180,13 @@ namespace lsp
                 virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr);
                 virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r);
 
+                /**
+                 * Resize the underlying window to the specified geometry
+                 * @param size the actual size of the underlying window
+                 * @return status of operation
+                 */
+                status_t                        resize_window(const ws::rectangle_t *size);
+
                 inline bool                     override_pointer() const    { return bOverridePointer; }
 
             public:
