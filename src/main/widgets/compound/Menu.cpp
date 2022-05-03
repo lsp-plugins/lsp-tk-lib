@@ -98,12 +98,12 @@ namespace lsp
             pClass = &metadata;
         }
 
-        Widget *Menu::Window::sync_mouse_handler(const ws::event_t *e)
+        Widget *Menu::Window::sync_mouse_handler(const ws::event_t *e, bool lookup)
         {
             Widget *old     = hMouse.pWidget;
-            Widget *curr    = PopupWindow::sync_mouse_handler(e, true);
+            Widget *curr    = PopupWindow::sync_mouse_handler(e, lookup);
 
-            if (curr != old)
+            if ((curr != old) && (curr != NULL))
                 curr->take_focus();
 
             return curr;
@@ -111,12 +111,12 @@ namespace lsp
 
         Widget *Menu::Window::acquire_mouse_handler(const ws::event_t *e)
         {
-            return sync_mouse_handler(e);
+            return sync_mouse_handler(e, true);
         }
 
-        Widget *Menu::Window::release_mouse_handler(const ws::event_t *e)
+        Widget *Menu::Window::release_mouse_handler(const ws::event_t *e, bool lookup)
         {
-            return sync_mouse_handler(e);
+            return sync_mouse_handler(e, lookup);
         }
 
         status_t Menu::Window::handle_event(const ws::event_t *e)
@@ -1402,13 +1402,13 @@ namespace lsp
                 case ws::WSK_KEYPAD_UP:
                 case ws::WSK_UP:
                     nKeyScroll      = -1;
-                    on_key_scroll(nKeyScroll);
+                    handle_key_scroll(nKeyScroll);
                     break;
 
                 case ws::WSK_KEYPAD_DOWN:
                 case ws::WSK_DOWN:
                     nKeyScroll      = 1;
-                    on_key_scroll(nKeyScroll);
+                    handle_key_scroll(nKeyScroll);
                     break;
 
                 default:
@@ -1502,16 +1502,16 @@ namespace lsp
         status_t Menu::key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             Menu *m = widget_ptrcast<Menu>(arg);
-            return (m != NULL) ? m->on_key_scroll(m->nKeyScroll) : STATUS_OK;
+            return (m != NULL) ? m->handle_key_scroll(m->nKeyScroll) : STATUS_OK;
         }
 
         status_t Menu::mouse_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
         {
             Menu *m = widget_ptrcast<Menu>(arg);
-            return (m != NULL) ? m->on_mouse_scroll(m->nMouseScroll) : STATUS_OK;
+            return (m != NULL) ? m->handle_mouse_scroll(m->nMouseScroll) : STATUS_OK;
         }
 
-        status_t Menu::on_key_scroll(ssize_t dir)
+        status_t Menu::handle_key_scroll(ssize_t dir)
         {
             // If we have no potential items for selection - return immediately
             ssize_t last = ssize_t(vVisible.size()) - 1;
@@ -1549,7 +1549,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t Menu::on_mouse_scroll(ssize_t dir)
+        status_t Menu::handle_mouse_scroll(ssize_t dir)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t scroll      = sScrolling.get() * scaling;

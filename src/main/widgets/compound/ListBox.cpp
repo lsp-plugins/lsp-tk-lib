@@ -785,7 +785,7 @@ namespace lsp
         {
             if (nBMask == 0)
             {
-                nXFlags        &= nXFlags &= ~(F_SUBMIT | F_CHANGED);
+                nXFlags        &= ~(F_SUBMIT | F_CHANGED);
                 if (e->nCode == ws::MCB_LEFT)
                 {
                     nLastIndex      = nCurrIndex;

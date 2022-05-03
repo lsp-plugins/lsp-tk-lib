@@ -364,8 +364,7 @@ namespace lsp
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
-            if (border > 0)
-                border         += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
+            border         += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get()) : 0;
 
             size_t extra    = lsp_max(radius, border);
 
@@ -398,8 +397,7 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t radius      = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
-            if (border > 0)
-                border             += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
+            border             += (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
 
             border              = lsp_max(border, radius - truncf(M_SQRT1_2 * (radius - border)));
 

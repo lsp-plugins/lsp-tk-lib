@@ -71,7 +71,7 @@ namespace lsp
 
                 typedef struct key_handler_t
                 {
-                    size_t              nKeys;              // Number of keys pressed
+                    lltl::darray<ws::code_t> vKeys;         // List of pressed keys
                     Widget             *pWidget;            // Keyboard handler
                 } key_handler_t;
 
@@ -126,6 +126,8 @@ namespace lsp
                 inline bool         check_focus(Widget *w) const    { return pFocused == w; }
                 virtual bool        take_focus(Widget *w);
                 bool                kill_focus(Widget *w);
+                size_t              make_key_pressed(ws::code_t code);
+                size_t              make_key_released(ws::code_t code);
 
             protected:
                 virtual Widget     *find_widget(ssize_t x, ssize_t y);
@@ -173,10 +175,17 @@ namespace lsp
 
                 inline ssize_t                  screen()                    { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
-                virtual status_t                get_screen_rectangle(ws::rectangle_t *r, ws::rectangle_t *sr);
+                virtual status_t                get_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr);
                 virtual status_t                get_screen_rectangle(ws::rectangle_t *r);
-                virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r, ws::rectangle_t *sr);
+                virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr);
                 virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r);
+
+                /**
+                 * Resize the underlying window to the specified geometry
+                 * @param size the actual size of the underlying window
+                 * @return status of operation
+                 */
+                status_t                        resize_window(const ws::rectangle_t *size);
 
                 inline bool                     override_pointer() const    { return bOverridePointer; }
 

@@ -95,7 +95,6 @@ namespace lsp
             hMouse.nTop     = 0;
             hMouse.pWidget  = NULL;
 
-            hKeys.nKeys     = 0;
             hKeys.pWidget   = NULL;
 
             pClass          = &metadata;
@@ -222,8 +221,11 @@ namespace lsp
 //                    int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
 //            );
             pWindow->set_size_constraints(&sr);
-            if ((sSize.nWidth != r.nWidth) && (sSize.nHeight != r.nHeight))
+            if ((sSize.nWidth != r.nWidth) || (sSize.nHeight != r.nHeight))
+            {
                 pWindow->resize(r.nWidth, r.nHeight);
+                sWindowSize.commit_value(r.nWidth, r.nHeight, scaling);
+            }
 
             // Realize widget container
             WidgetContainer::realize_widget(&r);
@@ -320,7 +322,7 @@ namespace lsp
             return pWindow->get_absolute_geometry(r);
         }
 
-        status_t Window::get_screen_rectangle(ws::rectangle_t *r, ws::rectangle_t *sr)
+        status_t Window::get_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr)
         {
             *r = *sr;
             if (pWindow == NULL)
@@ -347,7 +349,7 @@ namespace lsp
             return res;
         }
 
-        status_t Window::get_padded_screen_rectangle(ws::rectangle_t *r, ws::rectangle_t *sr)
+        status_t Window::get_padded_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr)
         {
             *r = *sr;
             if (pWindow == NULL)
@@ -651,6 +653,33 @@ namespace lsp
             return (pChild != NULL) ? remove(pChild) : STATUS_OK;
         }
 
+        size_t Window::make_key_pressed(ws::code_t code)
+        {
+            for (size_t i=0, n=hKeys.vKeys.size(); i<n; ++i)
+            {
+                ws::code_t *xc = hKeys.vKeys.uget(i);
+                if ((xc != NULL) && (code == *xc))
+                    return hKeys.vKeys.size();
+            }
+
+            hKeys.vKeys.add(code);
+            return hKeys.vKeys.size();
+        }
+
+        size_t Window::make_key_released(ws::code_t code)
+        {
+            for (size_t i=0; i < hKeys.vKeys.size(); )
+            {
+                ws::code_t *xc = hKeys.vKeys.uget(i);
+                if ((xc != NULL) && (code == *xc))
+                    hKeys.vKeys.remove(i);
+                else
+                    ++i;
+            }
+
+            return hKeys.vKeys.size();
+        }
+
         status_t Window::handle_event(const ws::event_t *e)
         {
             status_t result = STATUS_OK;
@@ -700,14 +729,15 @@ namespace lsp
 
                         if (!(nFlags & RESIZE_PENDING))
                         {
-                            lsp_trace("resize to: %d, %d, %d, %d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
-                            sPosition.commit_value(e->nLeft, e->nTop);
-                            sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
+                            lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
 
                             r.nLeft     = e->nLeft;
                             r.nTop      = e->nTop;
                             r.nWidth    = e->nWidth;
                             r.nHeight   = e->nHeight;
+
+                            sPosition.commit_value(r.nLeft, r.nTop);
+                            sWindowSize.commit_value(r.nWidth, r.nHeight, sScaling.get());
 
                             realize_widget(&r);
                         }
@@ -791,12 +821,14 @@ namespace lsp
                 case ws::UIE_KEY_DOWN:
                 {
                     // Find the keyboard event handler
-                    Widget *h       = (hKeys.pWidget != NULL) ? hKeys.pWidget : pFocused;
+                    lsp_trace("key down: keys.pWidget = %p, pFocused = %p, nkeys=%d",
+                        hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
+                    Widget *h       = pFocused; //(hKeys.pWidget != NULL) ? hKeys.pWidget : pFocused;
                     if (h == NULL)
                         h               = find_widget(e->nLeft, e->nTop);
 
                     // Take focus first and acquire keyboard lock
-                    ++hKeys.nKeys;
+                    make_key_pressed(e->nCode);
                     hKeys.pWidget       = h;
 
                     // Handle key press event
@@ -814,8 +846,11 @@ namespace lsp
                     Widget *h       = hKeys.pWidget;
 
                     // Release key lock state
-                    if ((--hKeys.nKeys) <= 0)
+                    if (make_key_released(e->nCode) <= 0)
                         hKeys.pWidget       = NULL;
+
+                    lsp_trace("key up  : keys.pWidget = %p, pFocused = %p, nkeys=%d",
+                            hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
 
                     // Handle key press event
                     if (h == this)
@@ -906,6 +941,14 @@ namespace lsp
             return result;
         }
 
+        status_t Window::resize_window(const ws::rectangle_t *size)
+        {
+            sPosition.set(size->nLeft, size->nTop);
+            sWindowSize.set(size->nWidth, size->nHeight, sScaling.get());
+
+            return STATUS_OK;
+        }
+
         Widget *Window::sync_mouse_handler(const ws::event_t *e, bool lookup)
         {
             // Update current widget
@@ -982,6 +1025,7 @@ namespace lsp
             if (w == old)
                 return false;
             pFocused    = w;
+            lsp_trace("take_focus: %p", pFocused);
 
             // Notify previous focus holder about focus change
             if (old != NULL)

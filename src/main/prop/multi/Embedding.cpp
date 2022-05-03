@@ -32,7 +32,7 @@ namespace lsp
             { ".right",     PT_BOOL     },
             { ".top",       PT_BOOL     },
             { ".bottom",    PT_BOOL     },
-            NULL
+            { NULL,         PT_UNKNOWN  }
         };
 
         Embedding::Embedding(prop::Listener *listener):

@@ -26,6 +26,8 @@
     #error "use <lsp-plug.in/tk/tk.h>"
 #endif
 
+#include <lsp-plug.in/tk/widgets/cast.h>
+
 namespace lsp
 {
     namespace tk
@@ -141,6 +143,28 @@ namespace lsp
                  * @return the resolved widget or NULL
                  */
                 tk::Widget                 *find(const LSPString *uid);
+
+                /**
+                 * Get widget of specific type by it's unique identifier
+                 * @param uid unique identifier of widget
+                 * @return the resolved widget or NULL
+                 */
+                template <class Widget>
+                    inline Widget          *get(const char *uid)
+                    {
+                        return tk::widget_cast<Widget>(find(uid));
+                    }
+
+                /**
+                 * Get widget of specific type by it's unique identifier
+                 * @param uid unique identifier of widget
+                 * @return the resolved widget or NULL
+                 */
+                template <class Widget>
+                    inline Widget          *get(const LSPString *uid)
+                    {
+                        return tk::widget_cast<Widget>(find(uid));
+                    }
 
                 /**
                  * Check that registry contains the widget

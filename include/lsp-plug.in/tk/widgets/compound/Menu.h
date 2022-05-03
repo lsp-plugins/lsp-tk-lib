@@ -121,9 +121,9 @@ namespace lsp
                         explicit Window(Display *dpy, Menu *menu);
 
                     protected:
-                        virtual Widget     *sync_mouse_handler(const ws::event_t *e);
+                        virtual Widget     *sync_mouse_handler(const ws::event_t *e, bool lookup);
                         virtual Widget     *acquire_mouse_handler(const ws::event_t *e);
-                        virtual Widget     *release_mouse_handler(const ws::event_t *e);
+                        virtual Widget     *release_mouse_handler(const ws::event_t *e, bool lookup);
 
                     public:
                         virtual status_t    handle_event(const ws::event_t *e);
@@ -225,9 +225,9 @@ namespace lsp
 
                 virtual void                sync_scroll(MenuItem *item);
 
-                virtual status_t            on_key_scroll(ssize_t dir);
+                virtual status_t            handle_key_scroll(ssize_t dir);
 
-                virtual status_t            on_mouse_scroll(ssize_t dir);
+                virtual status_t            handle_mouse_scroll(ssize_t dir);
 
             public:
                 explicit Menu(Display *dpy);

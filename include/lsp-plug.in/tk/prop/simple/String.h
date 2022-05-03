@@ -251,7 +251,7 @@ namespace lsp
                     inline LSPString   *formatted()                         { return tk::String::fmt_for_update();      }
                     bool                invalidate();
                     inline status_t     commit_raw(const LSPString *s)      { return tk::String::commit_raw(s);         }
-                    inline status_t     commit(const LSPString *s, const expr::Parameters *params = NULL)   { return tk::String::commit(s, params);     }
+                    inline status_t     commit_value(const LSPString *s, const expr::Parameters *params = NULL)   { return tk::String::commit(s, params);     }
 
                     /**
                      * Bind property with specified name to the style of linked widget
