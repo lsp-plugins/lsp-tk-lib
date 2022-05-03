@@ -24,7 +24,7 @@
 
 #define LSP_TK_MAJOR                1
 #define LSP_TK_MINOR                0
-#define LSP_TK_MICRO                2
+#define LSP_TK_MICRO                3
 
 #ifdef LSP_TK_LIB_BUILTIN
     #define LSP_TK_LIB_EXPORT
