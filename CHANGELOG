@@ -3,6 +3,9 @@
 *******************************************************************************
 
 === 1.0.3 ===
+- Added Window::has_parent() method to check that window is embedded into another window.
+- Added Display::enum_monitors() method to query current state of connected monitors.
+- Added xrandr library dependency for the X.11-compatible systems.
 
 === 1.0.2 ===
 * Added template get() method for the tk::Registry that allows to obtain widget of specific type.

@@ -1222,5 +1222,10 @@ namespace lsp
             return pWindow->set_focus(false) == STATUS_OK;
         }
 
+        bool Window::has_parent() const
+        {
+            return (pWindow != NULL) ? pWindow->has_parent() : false;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */

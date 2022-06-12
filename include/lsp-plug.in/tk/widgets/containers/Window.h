@@ -234,6 +234,8 @@ namespace lsp
 
                 virtual bool            kill_focus();
 
+                virtual bool            has_parent() const;
+
             public:
                 status_t                grab_events(ws::grab_t grab);
                 status_t                ungrab_events();

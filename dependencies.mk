@@ -36,6 +36,7 @@ ifeq ($(PLATFORM),Linux)
   DEPENDENCIES             += \
     LIBSNDFILE \
     LIBX11 \
+    LIBXRANDR \
     LIBCAIRO \
     LIBFREETYPE
 
@@ -50,6 +51,7 @@ ifeq ($(PLATFORM),BSD)
     LIBSNDFILE \
     LIBICONV \
     LIBX11 \
+    LIBXRANDR \
     LIBCAIRO \
     LIBICONV \
     LIBFREETYPE
@@ -75,6 +77,7 @@ ALL_DEPENDENCIES = \
   LIBFREETYPE \
   LIBICONV \
   LIBX11 \
+  LIBXRANDR \
   LIBGL \
   LIBSHLWAPI \
   LIBWINMM \

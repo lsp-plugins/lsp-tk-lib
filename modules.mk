@@ -111,6 +111,10 @@ LIBX11_VERSION             := system
 LIBX11_NAME                := x11
 LIBX11_TYPE                := pkg
 
+LIBXRANDR_VERSION          := system
+LIBXRANDR_NAME             := xrandr
+LIBXRANDR_TYPE             := pkg
+
 LIBGL_VERSION              := system
 LIBGL_NAME                 := gl
 LIBGL_TYPE                 := pkg
