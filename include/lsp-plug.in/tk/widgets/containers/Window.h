@@ -186,6 +186,7 @@ namespace lsp
                  * @return status of operation
                  */
                 status_t                        resize_window(const ws::rectangle_t *size);
+                status_t                        resize_window(ssize_t width, ssize_t height);
 
                 inline bool                     override_pointer() const    { return bOverridePointer; }
 

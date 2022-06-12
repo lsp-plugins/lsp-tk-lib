@@ -949,6 +949,12 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t Window::resize_window(ssize_t width, ssize_t height)
+        {
+            sWindowSize.set(width, height, sScaling.get());
+            return STATUS_OK;
+        }
+
         Widget *Window::sync_mouse_handler(const ws::event_t *e, bool lookup)
         {
             // Update current widget
