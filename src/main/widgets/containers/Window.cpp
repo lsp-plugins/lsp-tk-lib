@@ -559,14 +559,17 @@ namespace lsp
             Window *wnd = pActor;
             pActor      = NULL;
 
+            // Update window parameters
+            if (pWindow != NULL)
+            {
+                sync_size();
+                update_pointer();
+            }
+
             // Call parent widget to show
             WidgetContainer::show_widget();
             if (pWindow == NULL)
                 return;
-
-            // Update window parameters
-            sync_size();
-            update_pointer();
 
             // There is no actor - simple show
             if (wnd == NULL)
@@ -591,11 +594,11 @@ namespace lsp
                     rw.nWidth       = 0;
                     rw.nHeight      = 0;
 
-                    wnd->get_rectangle(&r);
+                    wnd->get_screen_rectangle(&r);
                     pWindow->get_geometry(&rw);
 
-                    ssize_t left    = r.nLeft + ((r.nWidth - rw.nWidth) >> 1);
-                    ssize_t top     = r.nTop  + ((r.nHeight - rw.nHeight) >> 1);
+                    ssize_t left    = r.nLeft + ((r.nWidth - rw.nWidth) / 2);
+                    ssize_t top     = r.nTop  + ((r.nHeight - rw.nHeight) / 2);
 
                     sPosition.set(left, top);
                     break;

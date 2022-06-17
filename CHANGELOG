@@ -6,6 +6,7 @@
 - Added Window::has_parent() method to check that window is embedded into another window.
 - Added Display::enum_monitors() method to query current state of connected monitors.
 - Added xrandr library dependency for the X.11-compatible systems.
+- Updated window appearance algorithm.
 * Updated build scripts.
 
 === 1.0.2 ===
