@@ -42,6 +42,7 @@ namespace lsp
                 prop::Boolean               sHover;         // Hover enable
                 prop::String                sText;          // Text to display
                 prop::SizeConstraints       sConstraints;   // Size constraints
+                prop::Padding               sIPadding;      // Internal padding
             LSP_TK_STYLE_DEF_END
         }
 
@@ -76,6 +77,7 @@ namespace lsp
                 prop::Boolean               sHover;         // Hover enable
                 prop::String                sText;          // Text to display
                 prop::SizeConstraints       sConstraints;   // Size constraints
+                prop::Padding               sIPadding;      // Internal padding
                 prop::WidgetPtr<Menu>       sPopup;         // Popup menu
 
             protected:
@@ -102,6 +104,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            hover,              &sHover)
                 LSP_TK_PROPERTY(String,             text,               &sText)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
+                LSP_TK_PROPERTY(Padding,            ipadding,           &sIPadding)
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,              &sPopup)
 
             public:
