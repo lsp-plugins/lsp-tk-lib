@@ -336,6 +336,14 @@ namespace lsp
                  * @return status of operation
                  */
                 status_t queue_destroy(Widget *widget);
+
+                /** Enumerate all monitors in the system for the display,
+                 * the resultint pointer is valid until the next enum_monitors() call.
+                 *
+                 * @param count pointer to store number of enumerated monitors
+                 * @return pointer to the array of enumerated monitors
+                 */
+                const ws::MonitorInfo *enum_monitors(size_t *count);
         };
     }
 

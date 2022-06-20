@@ -40,6 +40,7 @@ namespace lsp
                 sHoverColor.bind("text.hover.color", this);
                 sHover.bind("text.hover", this);
                 sConstraints.bind("size.constraints", this);
+                sIPadding.bind("ipadding", this);
                 // Configure
                 sTextLayout.set(0.0f, 0.0f);
                 sTextAdjust.set(TA_NONE);
@@ -48,6 +49,7 @@ namespace lsp
                 sHoverColor.set("#ff0000");
                 sHover.set(false);
                 sConstraints.set(-1, -1, -1, -1);
+                sIPadding.set(0, 0, 0, 0);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Label, "Label", "root");
         }
@@ -91,6 +93,7 @@ namespace lsp
             sHover.bind("text.hover", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
             sPopup.bind(NULL);
 
             handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
@@ -121,6 +124,8 @@ namespace lsp
                 query_resize();
             if (sConstraints.is(prop))
                 query_resize();
+            if (sIPadding.is(prop))
+                query_resize();
         }
 
         void Label::draw(ws::ISurface *s)
@@ -136,32 +141,33 @@ namespace lsp
             bool hover      = (nState & F_MOUSE_IN) && (sHover.get());
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
-            ws::rectangle_t r;
+            ws::rectangle_t r, size;
 
             sFont.get_parameters(s, fscaling, &fp);
             sFont.get_multitext_parameters(s, &tp, fscaling, &text);
+            sIPadding.sub(&size, &sSize, scaling);
 
             // Estimate drawing area
             tp.Height       = lsp_max(tp.Height, fp.Height);
-            if (tp.Width <= sSize.nWidth)
+            if (tp.Width <= size.nWidth)
             {
                 r.nLeft         = 0;
-                r.nWidth        = sSize.nWidth;
+                r.nWidth        = size.nWidth;
             }
             else
             {
-                r.nLeft         = -0.5f * (tp.Width - sSize.nWidth);
+                r.nLeft         = -0.5f * (tp.Width - size.nWidth);
                 r.nWidth        = ceil(tp.Width);
             }
 
-            if (tp.Height <= sSize.nHeight)
+            if (tp.Height <= size.nHeight)
             {
                 r.nTop          = 0;
-                r.nHeight       = sSize.nHeight;
+                r.nHeight       = size.nHeight;
             }
             else
             {
-                r.nTop          = -0.5f * (tp.Height - sSize.nHeight);
+                r.nTop          = -0.5f * (tp.Height - size.nHeight);
                 r.nHeight       = ceil(tp.Height);
             }
 
@@ -238,6 +244,7 @@ namespace lsp
 
             // Apply size constraints
             sConstraints.apply(r, scaling);
+            sIPadding.add(r, scaling);
         }
 
         status_t Label::on_mouse_in(const ws::event_t *e)

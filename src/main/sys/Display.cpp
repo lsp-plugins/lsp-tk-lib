@@ -444,6 +444,11 @@ namespace lsp
         {
             return vGarbage.add(widget) ? STATUS_OK : STATUS_NO_MEM;
         }
+
+        const ws::MonitorInfo *Display::enum_monitors(size_t *count)
+        {
+            return pDisplay->enum_monitors(count);
+        }
     }
 
 } /* namespace lsp */
