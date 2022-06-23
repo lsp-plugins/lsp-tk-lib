@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.4 ===
+* Updated build scripts.
 
 === 1.0.3 ===
 * Added Window::has_parent() method to check that window is embedded into another window.
