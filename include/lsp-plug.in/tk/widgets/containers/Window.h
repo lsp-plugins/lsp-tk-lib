@@ -233,8 +233,6 @@ namespace lsp
 
                 virtual bool            take_focus();
 
-                virtual bool            kill_focus();
-
                 virtual bool            has_parent() const;
 
             public:

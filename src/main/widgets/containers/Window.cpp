@@ -1221,14 +1221,7 @@ namespace lsp
         {
             if (pWindow == NULL)
                 return false;
-            return pWindow->set_focus(true) == STATUS_OK;
-        }
-
-        bool Window::kill_focus()
-        {
-            if (pWindow == NULL)
-                return false;
-            return pWindow->set_focus(false) == STATUS_OK;
+            return pWindow->take_focus() == STATUS_OK;
         }
 
         bool Window::has_parent() const
