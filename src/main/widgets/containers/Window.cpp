@@ -461,18 +461,8 @@ namespace lsp
                 // Make formatted title of the window
                 LSPString text;
                 status_t res = sTitle.format(&text);
-                if (res != STATUS_OK)
-                    return;
-
-                // Perform ASCII formatting
-                char *ascii = text.clone_ascii();
-                const char *caption = text.get_utf8();
-                if (caption == NULL)
-                    caption = "";
-
-                pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
-                if (ascii != NULL)
-                    ::free(ascii);
+                if (res == STATUS_OK)
+                    pWindow->set_caption(&text);
             }
             if (sRole.is(prop))
             {
