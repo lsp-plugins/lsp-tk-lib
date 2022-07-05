@@ -195,7 +195,7 @@ namespace lsp
             col.scale_lch_luminance(brightness);
 
             // Draw background
-            s->fill_rect(bg_color, 0, 0, sSize.nWidth, sSize.nHeight);
+            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, 0, 0, sSize.nWidth, sSize.nHeight);
 
             // Move to center of the led
             ssize_t xr          = lsp_min(sSize.nWidth, sSize.nHeight) >> 1;
@@ -211,7 +211,7 @@ namespace lsp
             // Draw light
             if ((light > 0) && (on))
             {
-                g = s->radial_gradient(cx, cy, r + border, cx, cy, xr);
+                g = s->radial_gradient(cx, cy, cx, cy, xr);
                 g->add_color(0.0, col, 0.5f);
                 g->add_color(1.0, col, 1.0f);
                 s->fill_circle(cx, cy, xr, g);
@@ -226,14 +226,14 @@ namespace lsp
                     lsp::Color c_light(col);
                     c_light.lightness(c_light.lightness() * 1.5);
 
-                    g = s->radial_gradient(cx, cy, r * 0.25, cx, cy, r);
+                    g = s->radial_gradient(cx, cy, cx, cy, r);
                     g->add_color(0.0f, c_light);
                     g->add_color(1.0f, col);
                     s->fill_circle(cx, cy, r, g);
                     delete g;
 
                     // Add blink
-                    g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), r * 0.125f, cx, cy, r);
+                    g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), cx, cy, r);
                     g->add_color(0.0, 1.0, 1.0, 1.0, 0.0f);
                     g->add_color(1.0, 1.0, 1.0, 1.0, 1.0f);
                     s->fill_circle(cx, cy, r, g);
@@ -245,14 +245,14 @@ namespace lsp
                     c.scale_lch_luminance(0.4f);
 
                     // Draw led glass
-                    g = s->radial_gradient(cx, cy, r * 0.25f, cx, cy, r);
+                    g = s->radial_gradient(cx, cy, cx, cy, r);
                     g->add_color(0.0, col);
                     g->add_color(1.0, c);
                     s->fill_circle(cx, cy, r, g);
                     delete g;
 
                     // Add blink
-                    g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), r * 0.125f, cx, cy, r);
+                    g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), cx, cy, r);
                     g->add_color(0.0, 1.0, 1.0, 1.0, 0.5);
                     g->add_color(1.0, 1.0, 1.0, 1.0, 1.0);
                     s->fill_circle(cx, cy, r, g);
@@ -301,15 +301,17 @@ namespace lsp
 
             // Draw background
             bool aa     = s->set_antialiasing(false);
-            s->fill_rect(bg_color, 0, 0, sSize.nWidth, sSize.nHeight);
+            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, 0, 0, sSize.nWidth, sSize.nHeight);
 
             // Draw hole
             if (hole > 0)
             {
                 lsp::Color hcolor(sHoleColor);
                 size_t hole         = lsp_max(1, scaling);
-                s->fill_rect(hcolor, r.nLeft - hole, r.nTop - hole,
-                        r.nWidth + hole*2, r.nHeight + hole * 2);
+                s->fill_rect(hcolor,
+                    SURFMASK_NONE, 0.0f,
+                    r.nLeft - hole, r.nTop - hole,
+                    r.nWidth + hole*2, r.nHeight + hole * 2);
             }
 
             // Draw light
@@ -368,15 +370,15 @@ namespace lsp
 
                         // Create gradient
                         g = s->radial_gradient(
-                            r.nLeft + r.nWidth, r.nTop, 0,
-                            r.nLeft + r.nWidth, r.nTop, delta
-                        );
+                            r.nLeft + r.nWidth, r.nTop,
+                            r.nLeft + r.nWidth, r.nTop,
+                            delta);
 
                         color.lightness(bright);
                         g->add_color(0.0, color.red(), color.green(), color.blue());
                         color.lightness(xb * bright);
                         g->add_color(1.0, color.red(), color.green(), color.blue());
-                        s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                        s->fill_rect(g, SURFMASK_NONE, 0.0f, &r);
                         delete g;
 
                         // Update rect
@@ -388,27 +390,27 @@ namespace lsp
 
                     // Draw face
                     g = s->radial_gradient(
-                            r.nLeft + r.nWidth, r.nTop, 0,
-                            r.nLeft + r.nWidth, r.nTop, delta
-                        );
+                        r.nLeft + r.nWidth, r.nTop,
+                        r.nLeft + r.nWidth, r.nTop,
+                        delta);
                     color.lightness(1.0f);
                     g->add_color(0.0, color.red(), color.green(), color.blue());
                     color.lightness(xb);
                     g->add_color(1.0, color.red(), color.green(), color.blue());
-                    s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                    s->fill_rect(g, SURFMASK_NONE, 0.0f, &r);
                     delete g;
                 }
                 else
                 {
                     // Draw border
-                    s->fill_rect(border_color, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                    s->fill_rect(border_color, SURFMASK_NONE, 0.0f, &r);
                     r.nLeft        += chamfer;
                     r.nTop         += chamfer;
                     r.nWidth       -= chamfer * 2;
                     r.nHeight      -= chamfer * 2;
 
                     // Draw face
-                    s->fill_rect(color, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                    s->fill_rect(color, SURFMASK_NONE, 0.0f, &r);
                 }
             }
 

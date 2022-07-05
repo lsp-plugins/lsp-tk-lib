@@ -304,7 +304,7 @@ namespace lsp
                 gcol.scale_lch_luminance(bright);
 
                 // Draw border
-                ws::IGradient *gr   = s->radial_gradient(x, y, 0.0f, x, y, radius);
+                ws::IGradient *gr   = s->radial_gradient(x, y, x, y, radius);
                 if (gr != NULL)
                 {
                     gr->add_color(0.0f, gcol);

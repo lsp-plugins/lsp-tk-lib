@@ -242,9 +242,9 @@ namespace lsp
             for (size_t i=0, m=1; i<11; ++i, m <<= 1, ++r)
             {
                 if (state & m)
-                    s->wire_rect(on, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
+                    s->wire_rect(on, SURFMASK_NONE, 0.0f, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
                 else if (dark)
-                    s->wire_rect(off, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
+                    s->wire_rect(off, SURFMASK_NONE, 0.0f, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
             }
         }
 

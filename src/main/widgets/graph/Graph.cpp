@@ -275,10 +275,10 @@ namespace lsp
             s->clip_begin(area);
             {
                 // Draw widget background
-                s->fill_rect(bg_color, &sSize);
+                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
 
                 bool aa = s->set_antialiasing(true);
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
+                s->fill_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
                 // Get surface of widget
                 cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);

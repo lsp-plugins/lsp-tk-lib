@@ -542,7 +542,7 @@ namespace lsp
                     sdcol.scale_hsl_lightness(bright);
 
                     // Draw cap
-                    ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, xr, c_x + xr, c_y - xr, xr * 4.0);
+                    ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, c_x + xr, c_y - xr, xr * 4.0);
                     gr->add_color(0.0f, scol);
                     gr->add_color(1.0f, sdcol);
                     s->fill_circle(c_x, c_y, xr, gr);

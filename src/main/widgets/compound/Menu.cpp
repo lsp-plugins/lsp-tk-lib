@@ -894,7 +894,7 @@ namespace lsp
                 {
                     color.copy(mi->text_color()->color());
                     color.scale_lch_luminance(bright);
-                    s->fill_rect(color, &pi->text);
+                    s->fill_rect(color, SURFMASK_NONE, 0.0f, &pi->text);
                     continue;
                 }
 
@@ -903,7 +903,7 @@ namespace lsp
                 {
                     color.copy(mi->bg_selected_color()->color());
                     color.scale_lch_luminance(bright);
-                    s->fill_rect(color, &pi->area);
+                    s->fill_rect(color, SURFMASK_NONE, 0.0f, &pi->area);
                 }
 
                 // Draw text
@@ -947,7 +947,7 @@ namespace lsp
                     {
                         color.copy(mi->check_border_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         r.nLeft            += bw;
                         r.nTop             += bw;
                         r.nWidth           -= bw * 2;
@@ -956,7 +956,7 @@ namespace lsp
 
                         color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
 
                         r.nLeft            += bw;
                         r.nTop             += bw;
@@ -968,7 +968,7 @@ namespace lsp
                         {
                             color.copy(mi->check_color()->color());
                             color.scale_lch_luminance(bright);
-                            s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                            s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         }
                     }
                     else
@@ -978,7 +978,7 @@ namespace lsp
                         else
                             color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                     }
                 }
                 else if (mi->type()->radio())
@@ -1027,14 +1027,14 @@ namespace lsp
                 color.copy((sUp.active())   ? sScrollSelectedColor.color() : sScrollColor.color());
                 color.scale_lch_luminance(bright);
                 sUp.get_rectangle(&xr);
-                s->fill_rect(color, &xr);
+                s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
             }
             if (sDown.visibility()->get())
             {
                 color.copy((sDown.active()) ? sScrollSelectedColor.color() : sScrollColor.color());
                 color.scale_lch_luminance(bright);
                 sDown.get_rectangle(&xr);
-                s->fill_rect(color, &xr);
+                s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
             }
 
             // Draw scroll button text
@@ -1080,16 +1080,11 @@ namespace lsp
                 s->set_antialiasing(true);
                 color.copy(sBorderColor);
                 color.scale_lch_luminance(bright);
-                s->wire_round_rect_inside(
+                s->wire_rect(
                     color, ws::CORNERS_ALL, border_r,
                     0, 0, sSize.nWidth, sSize.nHeight,
                     border
                 );
-//                s->fill_frame(
-//                    color,
-//                    0, 0, sSize.nWidth, sSize.nHeight,
-//                    border, border, sSize.nWidth - border * 2, sSize.nHeight - border * 2
-//                );
             }
 
             s->set_antialiasing(aa);

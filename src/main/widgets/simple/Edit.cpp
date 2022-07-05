@@ -490,7 +490,7 @@ namespace lsp
             {
                 color.copy(sBorderColor);
                 color.scale_lch_luminance(lightness);
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
+                s->fill_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
                 xr.nLeft       += border;
                 xr.nTop        += border;
@@ -503,7 +503,7 @@ namespace lsp
                 {
                     color.copy(sBorderGapColor);
                     color.scale_lch_luminance(lightness);
-                    s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
+                    s->fill_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
                     xr.nLeft       += gap;
                     xr.nTop        += gap;
@@ -516,7 +516,7 @@ namespace lsp
             // Draw main background
             color.copy(sColor);
             color.scale_lch_luminance(lightness);
-            s->fill_round_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
+            s->fill_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
             // Draw text
             xr.nLeft    = sTextArea.nLeft  - sSize.nLeft;
@@ -596,7 +596,7 @@ namespace lsp
                 }
 
                 sFont.get_text_parameters(s, &tp, fscaling, text, first, last);
-                s->fill_rect(scolor, xpos + xshift, xr.nTop, tp.XAdvance, xr.nHeight);
+                s->fill_rect(scolor, SURFMASK_NONE, 0.0f, xpos + xshift, xr.nTop, tp.XAdvance, xr.nHeight);
                 sFont.draw(s, stcolor, xpos, xr.nTop + fp.Ascent, fscaling, text, first, last);
                 xpos           += /*tp.XBearing + */ tp.XAdvance;
 
@@ -624,13 +624,13 @@ namespace lsp
                 color.scale_lch_luminance(lightness);
 
                 if (sCursor.inserting())
-                    s->fill_rect(color, xr.nLeft, xr.nTop, cursize, xr.nHeight);
+                    s->fill_rect(color, SURFMASK_NONE, 0.0f, xr.nLeft, xr.nTop, cursize, xr.nHeight);
                 else // replacing
                 {
                     if (cpos >= text->length())
                     {
                         sFont.get_text_parameters(s, &tp, fscaling, "_");
-                        s->fill_rect(color, xr.nLeft, xr.nTop, tp.Width, xr.nHeight);
+                        s->fill_rect(color, SURFMASK_NONE, 0.0f, xr.nLeft, xr.nTop, tp.Width, xr.nHeight);
                     }
                     else
                     {
@@ -640,7 +640,7 @@ namespace lsp
 
                         sFont.get_text_parameters(s, &tp, fscaling, text, sCursor.position(), sCursor.position() + 1);
                         ssize_t xw = (tp.XAdvance > tp.Width) ? tp.XAdvance : tp.Width + 1;
-                        s->fill_rect(color, xr.nLeft + tp.XBearing - 1, xr.nTop, xw, xr.nHeight);
+                        s->fill_rect(color, SURFMASK_NONE, 0.0f, xr.nLeft + tp.XBearing - 1, xr.nTop, xw, xr.nHeight);
 
                         // Draw letter
                         sFont.draw(s, bcolor, xr.nLeft, xr.nTop + fp.Ascent, fscaling, text, sCursor.position(), sCursor.position() + 1);

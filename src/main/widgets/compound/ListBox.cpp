@@ -545,9 +545,9 @@ namespace lsp
                     if (force)
                     {
                         s->clip_begin(area);
-                        s->fill_rect(col, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
-                        s->fill_rect(col, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight + hsspacing);
-                        s->fill_rect(col, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight + hsspacing);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
                         s->clip_end();
                     }
                 }
@@ -557,8 +557,8 @@ namespace lsp
                     if (force)
                     {
                         s->clip_begin(area);
-                        s->fill_rect(col, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
-                        s->fill_rect(col, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
                         s->clip_end();
                     }
                 }
@@ -577,7 +577,7 @@ namespace lsp
                 if (force)
                 {
                     s->clip_begin(area);
-                    s->fill_rect(col, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight);
+                    s->fill_rect(col, SURFMASK_NONE, 0.0f, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight);
                     s->clip_end();
                 }
             }
@@ -594,14 +594,14 @@ namespace lsp
                         aa = s->set_antialiasing(true);
                             col.copy(sBorderColor);
                             xr = sArea;
-                            s->fill_round_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
+                            s->fill_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
 
                             col.copy(sListBgColor);
                             xr.nLeft       += border;
                             xr.nTop        += border;
                             xr.nWidth      -= border * 2;
                             xr.nHeight     -= border * 2;
-                            s->fill_round_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
+                            s->fill_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
 
                         s->set_antialiasing(aa);
                     s->clip_end();
@@ -638,13 +638,13 @@ namespace lsp
                         if (selected)
                         {
                             col.copy(li->bg_selected_color()->color());
-                            s->fill_rect(col, &it->r);
+                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
                             col.copy(li->text_selected_color()->color());
                         }
                         else
                         {
                             li->get_actual_bg_color(col);
-                            s->fill_rect(col, &it->r);
+                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
                             col.copy(li->text_color()->color());
                         }
 

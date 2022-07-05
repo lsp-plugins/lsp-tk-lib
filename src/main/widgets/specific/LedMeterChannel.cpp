@@ -506,8 +506,8 @@ namespace lsp
                     }
 
                     // Draw the bar
-                    s->fill_rect(bc, bx, by, bw, bh);
-                    s->fill_rect(fc, fx, fy, fw, fh);
+                    s->fill_rect(bc, SURFMASK_NONE, 0.0f, bx, by, bw, bh);
+                    s->fill_rect(fc, SURFMASK_NONE, 0.0f, fx, fy, fw, fh);
 
                     // Update coordinates and value
                     vmin                = vmax;
@@ -569,7 +569,7 @@ namespace lsp
             get_actual_bg_color(col);
             s->clear(col);
             col.copy(sColor);
-            s->fill_rect(col, &sAAll);
+            s->fill_rect(col, SURFMASK_NONE, 0.0f, &sAAll);
 
             draw_meter(s, sAngle.get(), scaling, bright);
 

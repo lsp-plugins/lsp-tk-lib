@@ -460,7 +460,7 @@ namespace lsp
                 c.copy(sBorderColor);
                 c.scale_lch_luminance(bright);
                 s->set_antialiasing(true);
-                s->fill_round_rect(c, SURFMASK_ALL_CORNER, a.radius, 0, 0, sSize.nWidth, sSize.nHeight);
+                s->fill_rect(c, SURFMASK_ALL_CORNER, a.radius, 0, 0, sSize.nWidth, sSize.nHeight);
 
                 a.radius        = lsp_max(0, a.radius - a.border);
 
@@ -487,7 +487,7 @@ namespace lsp
                 {
                     c.copy(sBorderGapColor);
                     c.scale_lch_luminance(bright);
-                    s->fill_round_rect(c, SURFMASK_L_CORNER, radius, &ta);
+                    s->fill_rect(c, SURFMASK_L_CORNER, radius, &ta);
 
                     ta.nLeft       += a.bgap;
                     ta.nTop        += a.bgap;
@@ -499,7 +499,7 @@ namespace lsp
                 // Draw the prime color
                 c.copy(sColor);
                 c.scale_lch_luminance(bright);
-                s->fill_round_rect(c, SURFMASK_L_CORNER, radius, &ta);
+                s->fill_rect(c, SURFMASK_L_CORNER, radius, &ta);
 
                 // Now reset parameters of ta before rendering the text
                 ta.nLeft        = a.spad;
@@ -556,7 +556,7 @@ namespace lsp
                 {
                     c.copy(sBorderGapColor);
                     c.scale_lch_luminance(bright);
-                    s->fill_round_rect(c, SURFMASK_R_CORNER, radius, &sa);
+                    s->fill_rect(c, SURFMASK_R_CORNER, radius, &sa);
 
                     sa.nTop        += a.bgap;
                     sa.nWidth      -= a.bgap;
@@ -567,7 +567,7 @@ namespace lsp
                 // Draw the prime color
                 c.copy(sSpinColor);
                 c.scale_lch_luminance(bright);
-                s->fill_round_rect(c, SURFMASK_R_CORNER, radius, &sa);
+                s->fill_rect(c, SURFMASK_R_CORNER, radius, &sa);
 
                 // Draw arrows
                 c.copy(sSpinTextColor);
@@ -594,7 +594,7 @@ namespace lsp
                 {
                     c.copy(sBorderGapColor);
                     c.scale_lch_luminance(bright);
-                    s->fill_rect(c, &va);
+                    s->fill_rect(c, SURFMASK_NONE, 0.0f, &va);
 
                     va.nLeft       += a.sgap;
                     va.nWidth      -= a.sgap*2;
@@ -604,7 +604,7 @@ namespace lsp
                 {
                     c.copy(sBorderColor);
                     c.scale_lch_luminance(bright);
-                    s->fill_rect(c, &va);
+                    s->fill_rect(c, SURFMASK_NONE, 0.0f, &va);
                 }
             }
 

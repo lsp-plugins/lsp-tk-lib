@@ -215,7 +215,7 @@ namespace lsp
             if (sAlloc.vTable.is_empty())
             {
                 s->clip_begin(area);
-                    s->fill_rect(bg_color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+                    s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }
@@ -242,7 +242,7 @@ namespace lsp
                         ch         += vspacing;
 
                     s->clip_begin(area);
-                        s->fill_rect(bg_color, w->a.nLeft, w->a.nTop, cw, ch);
+                        s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, w->a.nLeft, w->a.nTop, cw, ch);
                     s->clip_end();
                     continue;
                 }
@@ -277,7 +277,7 @@ namespace lsp
                             xr.nHeight  = w->a.nHeight;
 
                             if (Size::overlap(area, &xr))
-                                s->fill_rect(bg_color, &xr);
+                                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
 
                             if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
                             {
@@ -287,7 +287,7 @@ namespace lsp
                                 xr.nHeight  = vspacing;
 
                                 if (Size::overlap(area, &xr))
-                                    s->fill_rect(bg_color, &xr);
+                                    s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
                             }
                         }
                         else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
@@ -298,7 +298,7 @@ namespace lsp
                             xr.nHeight  = vspacing;
 
                             if (Size::overlap(area, &xr))
-                                s->fill_rect(bg_color, &xr);
+                                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
                         }
                     }
                     s->clip_end();

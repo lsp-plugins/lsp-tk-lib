@@ -417,7 +417,7 @@ namespace lsp
                     lsp::Color bc(sBorderColor);
                     bc.scale_lch_luminance(sBrightness.get());
 
-                    s->wire_round_rect_inside(
+                    s->wire_rect(
                         bc, SURFMASK_ALL_CORNER, radius,
                         bw, bw, sSize.nWidth, sSize.nHeight,
                         border

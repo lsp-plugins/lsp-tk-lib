@@ -100,7 +100,7 @@ namespace lsp
 
             // Draw self
             s->clip_begin(area);
-                s->fill_rect(color, sSize.nLeft, sSize.nTop, sSize.nWidth, sSize.nHeight);
+                s->fill_rect(color, SURFMASK_NONE, 0.0f, &sSize);
             s->clip_end();
         }
 

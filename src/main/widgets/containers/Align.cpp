@@ -119,7 +119,7 @@ namespace lsp
             if ((pWidget == NULL) || (!pWidget->visibility()->get()))
             {
                 s->clip_begin(area);
-                s->fill_rect(bg_color, &sSize);
+                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }

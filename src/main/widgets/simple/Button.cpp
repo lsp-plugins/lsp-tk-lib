@@ -345,7 +345,7 @@ namespace lsp
                 query_draw();
         }
 
-        ws::IGradient *Button::create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float r1, float r2)
+        ws::IGradient *Button::create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float radius)
         {
             // Create gradient
             float xoff  = 0.0f;
@@ -363,12 +363,12 @@ namespace lsp
             }
 
             if (pressed & S_PRESSED)
-                r2 *= 1.25f;
+                radius *= 1.25f;
 
             return s->radial_gradient(
-                r.nLeft + xoff, r.nTop + yoff, r1,
-                r.nLeft + xoff, r.nTop + yoff, r2
-            );
+                r.nLeft + xoff, r.nTop + yoff,
+                r.nLeft + xoff, r.nTop + yoff,
+                radius);
         }
 
         void Button::draw(ws::ISurface *s)
@@ -397,15 +397,17 @@ namespace lsp
 
             // Draw background
             bool aa     = s->set_antialiasing(false);
-            s->fill_rect(bg_color, 0, 0, sSize.nWidth, sSize.nHeight);
+            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, 0, 0, sSize.nWidth, sSize.nHeight);
 
             // Draw hole
             if (pressed & S_HOLE)
             {
                 lsp::Color hcolor(sHoleColor);
                 size_t hole         = lsp_max(1, scaling);
-                s->fill_rect(hcolor, r.nLeft - hole, r.nTop - hole,
-                        r.nWidth + hole*2, r.nHeight + hole * 2);
+                s->fill_rect(hcolor,
+                    SURFMASK_NONE, 0.0f,
+                    r.nLeft - hole, r.nTop - hole,
+                    r.nWidth + hole*2, r.nHeight + hole * 2);
             }
 
             // Draw light
@@ -477,14 +479,14 @@ namespace lsp
                             float bright = float(i + 1.0f) / (chamfer + 1);
 
                             // Create gradient
-                            g = create_gradient(s, r, pressed, 0.5f * delta, delta);
+                            g = create_gradient(s, r, pressed, delta);
                             xc.copy(color);
                             xc.scale_hsl_lightness(bright);
                             g->add_color(0.0, xc.red(), xc.green(), xc.blue());
                             xc.copy(color);
                             xc.scale_hsl_lightness(xb * bright);
                             g->add_color(1.0, xc.red(), xc.green(), xc.blue());
-                            s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                            s->fill_rect(g, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop, r.nWidth, r.nHeight);
                             delete g;
 
                             // Update rect
@@ -496,7 +498,7 @@ namespace lsp
                     }
                     else
                     {
-                        s->fill_rect(border_color, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                        s->fill_rect(border_color, SURFMASK_NONE, 0.0f, &r);
                         r.nLeft        += chamfer;
                         r.nTop         += chamfer;
                         r.nWidth       -= chamfer * 2;
@@ -507,18 +509,18 @@ namespace lsp
                 // Draw button face
                 if (gradient)
                 {
-                    g = create_gradient(s, r, pressed, 0.5f * delta, delta);
+                    g = create_gradient(s, r, pressed, delta);
                     xc.copy(color);
                     xc.scale_hsl_lightness(1.0f);
                     g->add_color(0.0, xc.red(), xc.green(), xc.blue());
                     xc.copy(color);
                     xc.scale_hsl_lightness(xb);
                     g->add_color(1.0, xc.red(), xc.green(), xc.blue());
-                    s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                    s->fill_rect(g, SURFMASK_NONE, 0.0f, &r);
                     delete g;
                 }
                 else
-                    s->fill_rect(color, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                    s->fill_rect(color, SURFMASK_NONE, 0.0f, &r);
 
                 // Do we have a text?
                 LSPString text;

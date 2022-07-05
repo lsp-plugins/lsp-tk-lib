@@ -238,7 +238,7 @@ namespace lsp
             // Draw background
             bool aa     = s->set_antialiasing(false);
             get_actual_bg_color(c);
-            s->fill_rect(c, 0, 0, sSize.nWidth, sSize.nHeight);
+            s->fill_rect(c, SURFMASK_NONE, 0.0f, 0, 0, sSize.nWidth, sSize.nHeight);
             s->set_antialiasing(true);
 
             // Draw border
@@ -246,7 +246,7 @@ namespace lsp
             {
                 c.copy((state & XF_HOVER) ? sBorderHoverColor : sBorderColor);
                 c.scale_lch_luminance(bright);
-                s->fill_round_rect(c, SURFMASK_ALL_CORNER, brad, &xr);
+                s->fill_rect(c, SURFMASK_ALL_CORNER, brad, &xr);
 
                 xr.nLeft           += border;
                 xr.nTop            += border;
@@ -262,7 +262,7 @@ namespace lsp
             {
                 c.copy((state & XF_HOVER) ? sBorderGapHoverColor : sBorderGapColor);
                 c.scale_lch_luminance(bright);
-                s->fill_round_rect(c, SURFMASK_ALL_CORNER, frad, &fr);
+                s->fill_rect(c, SURFMASK_ALL_CORNER, frad, &fr);
 
                 fr.nLeft           += bgap;
                 fr.nTop            += bgap;
@@ -274,7 +274,7 @@ namespace lsp
             // Draw fill
             c.copy((state & XF_HOVER) ? sFillHoverColor : sFillColor);
             c.scale_lch_luminance(bright);
-            s->fill_round_rect(c, SURFMASK_ALL_CORNER, frad, &fr);
+            s->fill_rect(c, SURFMASK_ALL_CORNER, frad, &fr);
 
             // Draw check
             if (state & XF_CHECKED)
@@ -287,7 +287,7 @@ namespace lsp
 
                 c.copy((state & XF_HOVER) ? sHoverColor : sColor);
                 c.scale_lch_luminance(bright);
-                s->fill_round_rect(c, SURFMASK_ALL_CORNER, brad, &xr);
+                s->fill_rect(c, SURFMASK_ALL_CORNER, brad, &xr);
             }
 
             // Restore antialiasing

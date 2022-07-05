@@ -286,10 +286,10 @@ namespace lsp
                 float bright = float(chamfer - i) / chamfer;
                 hole.lightness(bright);
 
-                gr = s->radial_gradient(r->nLeft, r->nTop + r->nHeight, scaling, r->nLeft, r->nTop + r->nHeight, delta);
+                gr = s->radial_gradient(r->nLeft, r->nTop + r->nHeight, r->nLeft, r->nTop + r->nHeight, delta);
                 gr->add_color(0.0, hole);
                 gr->add_color(1.0, 0.5 * hole.red(), 0.5 *  hole.green(), 0.5 * hole.blue());
-                s->fill_round_rect(gr, SURFMASK_ALL_CORNER, hole_r, &h);
+                s->fill_rect(gr, SURFMASK_ALL_CORNER, hole_r, &h);
                 delete gr;
 
                 h.nLeft        += 1;
@@ -300,13 +300,13 @@ namespace lsp
             }
 
             hole.copy(sHoleColor);
-            s->fill_round_rect(hole, SURFMASK_ALL_CORNER, hole_r, &h);
+            s->fill_rect(hole, SURFMASK_ALL_CORNER, hole_r, &h);
 
             // Draw screw
             lsp::Color screw(sScrewColor);
             screw.scale_lch_luminance(0.5f);
 
-            gr = s->radial_gradient(cx + (rad * M_RGOLD_RATIO), cy - (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
+            gr = s->radial_gradient(cx + (rad * M_RGOLD_RATIO), cy - (rad * M_RGOLD_RATIO), cx, cy, rad);
             gr->add_color(0.0, 1.0, 1.0, 1.0);
             gr->add_color(1.0, screw);
             s->fill_circle(cx, cy, rad, gr);
@@ -316,7 +316,7 @@ namespace lsp
             ssize_t lwidth  = 3.0f * scaling;
             float a_cos     = (rad - lwidth) * cosf(angle), a_sin = (rad - lwidth) * sinf(angle);
 
-            gr = s->radial_gradient(cx - (rad * M_RGOLD_RATIO), cy + (rad * M_RGOLD_RATIO), 0, cx, cy, rad);
+            gr = s->radial_gradient(cx - (rad * M_RGOLD_RATIO), cy + (rad * M_RGOLD_RATIO), cx, cy, rad);
             gr->add_color(0.0, 1.0, 1.0, 1.0);
             gr->add_color(1.0, screw);
             ws::surf_line_cap_t cap = s->set_line_cap(ws::SURFLCAP_ROUND);
@@ -382,19 +382,19 @@ namespace lsp
 
                 ws::IGradient *gr = (nXFlags & XF_DOWN) ?
                         s->radial_gradient(
-                            btn.nLeft, btn.nTop + btn.nHeight, btn.nWidth >> 2,
-                            btn.nLeft, btn.nTop + btn.nHeight, btn.nWidth
-                        ) :
+                            btn.nLeft, btn.nTop + btn.nHeight,
+                            btn.nLeft, btn.nTop + btn.nHeight,
+                            btn.nWidth) :
                         s->radial_gradient(
-                            btn.nLeft + btn.nWidth, btn.nTop, btn.nWidth >> 2,
-                            btn.nLeft + btn.nWidth, btn.nTop, btn.nWidth
-                        );
+                            btn.nLeft + btn.nWidth, btn.nTop,
+                            btn.nLeft + btn.nWidth, btn.nTop,
+                            btn.nWidth);
 
                 logo.lightness(bright * 1.5f);
                 gr->add_color(0.0f, logo);
                 logo.lightness(bright);
                 gr->add_color(1.0f, logo);
-                s->fill_round_rect(gr, SURFMASK_ALL_CORNER, chamfer - i + 1, btn.nLeft, btn.nTop, btn.nWidth, btn.nHeight);
+                s->fill_rect(gr, SURFMASK_ALL_CORNER, chamfer - i + 1, btn.nLeft, btn.nTop, btn.nWidth, btn.nHeight);
                 delete gr;
 
                 btn.nLeft      += 1;

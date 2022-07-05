@@ -141,7 +141,7 @@ namespace lsp
             if (fabs(sDirection.rho()) <= 1e-5f)
             {
                 s->clip_begin(area);
-                    s->fill_rect(bg, &sSize);
+                    s->fill_rect(bg, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }
@@ -165,7 +165,7 @@ namespace lsp
             if (!line2d_delta_equation(cp.x, cp.y, dx, dy, a, b, c))
             {
                 s->clip_begin(area);
-                    s->fill_rect(bg, &sSize);
+                    s->fill_rect(bg, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }
@@ -179,7 +179,7 @@ namespace lsp
                 ap.x, ap.y, bp.x, bp.y))
             {
                 s->clip_begin(area);
-                    s->fill_rect(bg, &sSize);
+                    s->fill_rect(bg, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }
@@ -229,7 +229,7 @@ namespace lsp
             bool aa = s->set_antialiasing(true);
             s->clip_begin(area);
             {
-                s->fill_rect(bg, &sSize);
+                s->fill_rect(bg, SURFMASK_NONE, 0.0f, &sSize);
 
                 if (n > 0)
                 {

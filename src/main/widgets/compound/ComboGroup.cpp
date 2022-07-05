@@ -540,7 +540,7 @@ namespace lsp
             else
             {
                 get_actual_bg_color(color);
-                s->fill_rect(color, &sSize);
+                s->fill_rect(color, SURFMASK_NONE, 0.0f, &sSize);
                 bg   = true;
             }
 
@@ -573,7 +573,7 @@ namespace lsp
                     color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
-                    s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
+                    s->wire_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
                 }
 
                 // Draw text (and image)
@@ -589,7 +589,7 @@ namespace lsp
                     color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
-                    s->fill_round_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
+                    s->fill_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
 
                     // Draw text
                     LSPString text;

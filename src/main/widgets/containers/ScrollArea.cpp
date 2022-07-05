@@ -359,7 +359,7 @@ namespace lsp
                     if (force)
                     {
                         s->clip_begin(area);
-                        s->fill_rect(col, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
                         s->clip_end();
                     }
                 }
@@ -380,7 +380,7 @@ namespace lsp
             if ((pWidget == NULL) || (!pWidget->visibility()->get()))
             {
                 s->clip_begin(area);
-                    s->fill_rect(col, &xa);
+                    s->fill_rect(col, SURFMASK_NONE, 0.0f, &xa);
                 s->clip_end();
                 return;
             }
