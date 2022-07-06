@@ -311,7 +311,7 @@ namespace lsp
             b1          = bc - ((2 - pos) * 0.1);
             b2          = bc - (pos * 0.1);
             wid        -= dw1 + dw2;
-            float s1    = wid * 0.125f;
+            float s1    = (wid + scaling) * 0.125f;
             float s2    = wid * 0.125f;
 
             font.lightness((angle & 2) ? b2 : b1);
