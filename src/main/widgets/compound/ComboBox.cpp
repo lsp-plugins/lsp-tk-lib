@@ -573,15 +573,15 @@ namespace lsp
                 c.copy(sSpinTextColor);
                 c.scale_lch_luminance(bright);
                 s->fill_triangle(
+                    c,
                     sa.nLeft + sa.nWidth/6.0f, sa.nTop + (sa.nHeight*3.0f)/7.0f,
                     sa.nLeft + sa.nWidth*0.5f, sa.nTop + sa.nHeight/7.0f,
-                    sa.nLeft + (sa.nWidth*5.0f)/6.0f, sa.nTop + (sa.nHeight*3.0f)/7.0f,
-                    c);
+                    sa.nLeft + (sa.nWidth*5.0f)/6.0f, sa.nTop + (sa.nHeight*3.0f)/7.0f);
                 s->fill_triangle(
+                    c,
                     sa.nLeft + sa.nWidth/6.0f, sa.nTop + (sa.nHeight*4.0f)/7.0f,
                     sa.nLeft + (sa.nWidth*5.0f)/6.0f, sa.nTop + (sa.nHeight*4.0f)/7.0f,
-                    sa.nLeft + sa.nWidth*0.5f, sa.nTop + (sa.nHeight*6.0f)/7.0f,
-                    c);
+                    sa.nLeft + sa.nWidth*0.5f, sa.nTop + (sa.nHeight*6.0f)/7.0f);
             }
 
             // Draw the spin separator

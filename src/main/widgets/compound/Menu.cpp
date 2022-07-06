@@ -929,11 +929,10 @@ namespace lsp
                     float x = pi->ref.nLeft + pi->ref.nWidth * 0.25f;
                     float y = pi->ref.nTop  + pi->ref.nHeight * 0.25f;
                     s->fill_triangle(
-                            x, y,
-                            x + pi->ref.nWidth * 0.5f, y + pi->ref.nHeight * 0.25f,
-                            x, y + pi->ref.nHeight * 0.5f,
-                            color
-                        );
+                        color,
+                        x, y,
+                        x + pi->ref.nWidth * 0.5f, y + pi->ref.nHeight * 0.25f,
+                        x, y + pi->ref.nHeight * 0.5f);
                 }
 
                 // Need to draw check box/radio?
@@ -992,19 +991,19 @@ namespace lsp
                     {
                         color.copy(mi->check_border_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_circle(xc, yc, br, color);
+                        s->fill_circle(color, xc, yc, br);
                         br                  = lsp_max(0.0f, br - bw);
 
                         color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_circle(xc, yc, br, color);
+                        s->fill_circle(color, xc, yc, br);
                         br                  = lsp_max(0, br - bw);
 
                         if (mi->checked()->get())
                         {
                             color.copy(mi->check_color()->color());
                             color.scale_lch_luminance(bright);
-                            s->fill_circle(xc, yc, br, color);
+                            s->fill_circle(color, xc, yc, br);
                         }
                     }
                     else
@@ -1014,7 +1013,7 @@ namespace lsp
                         else
                             color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_circle(xc, yc, br, color);
+                        s->fill_circle(color, xc, yc, br);
                     }
 
                 }
@@ -1051,11 +1050,10 @@ namespace lsp
                 float y = xr.nTop;
 
                 s->fill_triangle(
-                        x, y + xr.nHeight * 0.25f,
-                        x + xr.nHeight, y + xr.nHeight * 0.75f,
-                        x - xr.nHeight, y + xr.nHeight * 0.75f,
-                        color
-                    );
+                    color,
+                    x, y + xr.nHeight * 0.25f,
+                    x + xr.nHeight, y + xr.nHeight * 0.75f,
+                    x - xr.nHeight, y + xr.nHeight * 0.75f);
             }
             if (sDown.visibility()->get())
             {
@@ -1067,11 +1065,10 @@ namespace lsp
                 float y = xr.nTop;
 
                 s->fill_triangle(
-                        x, xr.nTop + xr.nHeight * 0.75f,
-                        x - xr.nHeight, y + xr.nHeight * 0.25f,
-                        x + xr.nHeight, y + xr.nHeight * 0.25f,
-                        color
-                    );
+                    color,
+                    x, xr.nTop + xr.nHeight * 0.75f,
+                    x - xr.nHeight, y + xr.nHeight * 0.25f,
+                    x + xr.nHeight, y + xr.nHeight * 0.25f);
             }
 
             // Draw border

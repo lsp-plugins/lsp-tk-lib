@@ -309,7 +309,7 @@ namespace lsp
                 {
                     gr->add_color(0.0f, gcol);
                     gr->add_color(1.0f, gcol, 1.0f);
-                    s->fill_circle(x, y, radius, gr);
+                    s->fill_circle(gr, x, y, radius);
                     delete gr;
                 }
 
@@ -320,7 +320,7 @@ namespace lsp
                     lsp::Color hole((nXFlags & F_HIGHLIGHT) ? sHoverGapColor : sGapColor);
                     hole.scale_lch_luminance(bright);
                     s->set_antialiasing(sSmooth.get());
-                    s->fill_circle(x, y, fpad + fdot, hole);
+                    s->fill_circle(hole, x, y, fpad + fdot);
                 }
             }
 
@@ -328,7 +328,7 @@ namespace lsp
             lsp::Color color((nXFlags & F_HIGHLIGHT) ? sHoverColor : sColor);
             color.scale_lch_luminance(bright);
             s->set_antialiasing(sSmooth.get());
-            s->fill_circle(x, y, fdot, color);
+            s->fill_circle(color, x, y, fdot);
             s->set_antialiasing(aa);
         }
 

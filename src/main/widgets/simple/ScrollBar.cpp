@@ -893,10 +893,10 @@ namespace lsp
 
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
-                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.5f,
-                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.25f,
-                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.75f,
-                        color);
+                    color,
+                    xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.5f,
+                    xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.25f,
+                    xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.75f);
 
                 // Draw inc button
                 xr              = sIncButton;
@@ -908,10 +908,10 @@ namespace lsp
 
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
-                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.5f,
-                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.75f,
-                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.25f,
-                        color);
+                    color,
+                    xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.5f,
+                    xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.75f,
+                    xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.25f);
 
                 // Draw the dec spare
                 xr.nLeft        = sSpareSpace.nLeft - sSize.nLeft;
@@ -951,10 +951,10 @@ namespace lsp
 
                 color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
-                        xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.25f,
-                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.75f,
-                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.75f,
-                        color);
+                    color,
+                    xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.25f,
+                    xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.75f,
+                    xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.75f);
 
                 // Draw inc button
                 xr              = sIncButton;
@@ -966,10 +966,10 @@ namespace lsp
 
                 color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
                 s->fill_triangle(
-                        xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.75f,
-                        xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.25f,
-                        xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.25f,
-                        color);
+                    color,
+                    xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.75f,
+                    xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.25f,
+                    xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.25f);
 
                 // Draw the dec spare
                 xr.nLeft        = sSpareSpace.nLeft - sSize.nLeft;

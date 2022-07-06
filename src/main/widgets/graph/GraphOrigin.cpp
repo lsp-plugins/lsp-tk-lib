@@ -115,7 +115,7 @@ namespace lsp
             float x=0.0f, y=0.0f;
             cv->origin(this, &x, &y);
             bool aa = s->set_antialiasing(sSmooth.get());
-            s->fill_circle(x, y, radius, color);
+            s->fill_circle(color, x, y, radius);
             s->set_antialiasing(aa);
         }
     }

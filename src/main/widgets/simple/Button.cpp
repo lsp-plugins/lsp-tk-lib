@@ -427,28 +427,28 @@ namespace lsp
                 g   =  s->linear_gradient(h_p, c_y, 0, c_y);
                 g->add_color(0.0, lc, 0.5f);
                 g->add_color(1.0, color, 1.0f);
-                s->fill_triangle(0, 0, c_x, c_y, 0, ye, g);
+                s->fill_triangle(g, 0, 0, c_x, c_y, 0, ye);
                 delete g;
 
                 // Right
                 g   =  s->linear_gradient(xe - h_p, c_y, xe, c_y);
                 g->add_color(0.0, lc, 0.5f);
                 g->add_color(1.0, color, 1.0f);
-                s->fill_triangle(xe, ye, c_x, c_y, xe, 0, g);
+                s->fill_triangle(g, xe, ye, c_x, c_y, xe, 0);
                 delete g;
 
                 // Top
                 g   =  s->linear_gradient(c_x, v_p, c_x, 0);
                 g->add_color(0.0, lc, 0.5f);
                 g->add_color(1.0, color, 1.0f);
-                s->fill_triangle(0, 0, xe, 0, c_x, c_y, g);
+                s->fill_triangle(g, 0, 0, xe, 0, c_x, c_y);
                 delete g;
 
                 // Bottom
                 g   =  s->linear_gradient(c_x, ye - v_p, c_x, ye);
                 g->add_color(0.0, lc, 0.5f);
                 g->add_color(1.0, color, 1.0f);
-                s->fill_triangle(xe, ye, 0, ye, c_x, c_y, g);
+                s->fill_triangle(g, xe, ye, 0, ye, c_x, c_y);
                 delete g;
 
 //                s->set_antialiasing(aa);

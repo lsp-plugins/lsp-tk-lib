@@ -206,7 +206,7 @@ namespace lsp
             // Draw hole
             bool aa = s->set_antialiasing(true);
             if (sHole.get())
-                s->fill_circle(cx, cy, r + sz_hole + border, hole);
+                s->fill_circle(hole, cx, cy, r + sz_hole + border);
 
             // Draw light
             if ((light > 0) && (on))
@@ -214,7 +214,7 @@ namespace lsp
                 g = s->radial_gradient(cx, cy, cx, cy, xr);
                 g->add_color(0.0, col, 0.5f);
                 g->add_color(1.0, col, 1.0f);
-                s->fill_circle(cx, cy, xr, g);
+                s->fill_circle(g, cx, cy, xr);
                 delete g;
             }
 
@@ -229,14 +229,14 @@ namespace lsp
                     g = s->radial_gradient(cx, cy, cx, cy, r);
                     g->add_color(0.0f, c_light);
                     g->add_color(1.0f, col);
-                    s->fill_circle(cx, cy, r, g);
+                    s->fill_circle(g, cx, cy, r);
                     delete g;
 
                     // Add blink
                     g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), cx, cy, r);
                     g->add_color(0.0, 1.0, 1.0, 1.0, 0.0f);
                     g->add_color(1.0, 1.0, 1.0, 1.0, 1.0f);
-                    s->fill_circle(cx, cy, r, g);
+                    s->fill_circle(g, cx, cy, r);
                     delete g;
                 }
                 else
@@ -248,23 +248,23 @@ namespace lsp
                     g = s->radial_gradient(cx, cy, cx, cy, r);
                     g->add_color(0.0, col);
                     g->add_color(1.0, c);
-                    s->fill_circle(cx, cy, r, g);
+                    s->fill_circle(g, cx, cy, r);
                     delete g;
 
                     // Add blink
                     g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), cx, cy, r);
                     g->add_color(0.0, 1.0, 1.0, 1.0, 0.5);
                     g->add_color(1.0, 1.0, 1.0, 1.0, 1.0);
-                    s->fill_circle(cx, cy, r, g);
+                    s->fill_circle(g, cx, cy, r);
                     delete g;
                 }
             }
             else
             {
                 // Draw border
-                s->fill_circle(cx, cy, r + border, border_color);
+                s->fill_circle(border_color, cx, cy, r + border);
                 // Draw led
-                s->fill_circle(cx, cy, r, col);
+                s->fill_circle(col, cx, cy, r);
             }
 
             s->set_antialiasing(aa);
@@ -330,28 +330,28 @@ namespace lsp
                 g   =  s->linear_gradient(h_p, c_y, 0, c_y);
                 g->add_color(0.0, lc, 0.5f);
                 g->add_color(1.0, color, 1.0f);
-                s->fill_triangle(0, 0, c_x, c_y, 0, ye, g);
+                s->fill_triangle(g, 0, 0, c_x, c_y, 0, ye);
                 delete g;
 
                 // Right
                 g   =  s->linear_gradient(xe - h_p, c_y, xe, c_y);
                 g->add_color(0.0, lc, 0.5f);
                 g->add_color(1.0, color, 1.0f);
-                s->fill_triangle(xe, ye, c_x, c_y, xe, 0, g);
+                s->fill_triangle(g, xe, ye, c_x, c_y, xe, 0);
                 delete g;
 
                 // Top
                 g   =  s->linear_gradient(c_x, v_p, c_x, 0);
                 g->add_color(0.0, lc, 0.5f);
                 g->add_color(1.0, color, 1.0f);
-                s->fill_triangle(0, 0, xe, 0, c_x, c_y, g);
+                s->fill_triangle(g, 0, 0, xe, 0, c_x, c_y);
                 delete g;
 
                 // Bottom
                 g   =  s->linear_gradient(c_x, ye - v_p, c_x, ye);
                 g->add_color(0.0, lc, 0.5f);
                 g->add_color(1.0, color, 1.0f);
-                s->fill_triangle(xe, ye, 0, ye, c_x, c_y, g);
+                s->fill_triangle(g, xe, ye, 0, ye, c_x, c_y);
                 delete g;
             }
 

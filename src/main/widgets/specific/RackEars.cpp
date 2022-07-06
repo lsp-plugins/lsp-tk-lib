@@ -309,7 +309,7 @@ namespace lsp
             gr = s->radial_gradient(cx + (rad * M_RGOLD_RATIO), cy - (rad * M_RGOLD_RATIO), cx, cy, rad);
             gr->add_color(0.0, 1.0, 1.0, 1.0);
             gr->add_color(1.0, screw);
-            s->fill_circle(cx, cy, rad, gr);
+            s->fill_circle(gr, cx, cy, rad);
             delete gr;
 
             // Draw screw cross

@@ -620,17 +620,15 @@ namespace lsp
                         color.scale_lch_luminance(bright);
 
                         s->fill_triangle(
+                            color,
                             tloc.nLeft, tloc.nTop + (fp.Height*3.0f)/7.0f,
                             tloc.nLeft + spin*0.4f, tloc.nTop + fp.Height/7.0f,
-                            tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*3.0f)/7.0f,
-                            color
-                        );
+                            tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*3.0f)/7.0f);
                         s->fill_triangle(
+                            color,
                             tloc.nLeft, tloc.nTop + (fp.Height*4.0f)/7.0f,
                             tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*4.0f)/7.0f,
-                            tloc.nLeft + spin*0.4f, tloc.nTop + (fp.Height*6.0f)/7.0f,
-                            color
-                        );
+                            tloc.nLeft + spin*0.4f, tloc.nTop + (fp.Height*6.0f)/7.0f);
                     }
                 }
 

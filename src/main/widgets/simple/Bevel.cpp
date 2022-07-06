@@ -233,12 +233,12 @@ namespace lsp
 
                 if (n > 0)
                 {
-                    s->fill_triangle(ap.x, ap.y, bp.x, bp.y, vp[0].x, vp[0].y, col);
+                    s->fill_triangle(col, ap.x, ap.y, bp.x, bp.y, vp[0].x, vp[0].y);
                     if (n > 1)
                     {
-                        s->fill_triangle(ap.x, ap.y, bp.x, bp.y, vp[1].x, vp[1].y, col);
-                        s->fill_triangle(ap.x, ap.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y, col);
-                        s->fill_triangle(bp.x, bp.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y, col);
+                        s->fill_triangle(col, ap.x, ap.y, bp.x, bp.y, vp[1].x, vp[1].y);
+                        s->fill_triangle(col, ap.x, ap.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y);
+                        s->fill_triangle(col, bp.x, bp.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y);
                     }
                 }
 

@@ -224,7 +224,7 @@ namespace lsp
             {
                 c.copy((state & XF_HOVER) ? sBorderHoverColor : sBorderColor);
                 c.scale_lch_luminance(bright);
-                s->fill_circle(cx, cy, r, c);
+                s->fill_circle(c, cx, cy, r);
                 r                  -= border;
             }
 
@@ -234,14 +234,14 @@ namespace lsp
             {
                 c.copy((state & XF_HOVER) ? sBorderGapHoverColor : sBorderGapColor);
                 c.scale_lch_luminance(bright);
-                s->fill_circle(cx, cy, frad, c);
+                s->fill_circle(c, cx, cy, frad);
                 frad               -= bgap;
             }
 
             // Draw fill
             c.copy((state & XF_HOVER) ? sFillHoverColor : sFillColor);
             c.scale_lch_luminance(bright);
-            s->fill_circle(cx, cy, frad, c);
+            s->fill_circle(c, cx, cy, frad);
 
             // Draw check
             if (state & XF_CHECKED)
@@ -249,7 +249,7 @@ namespace lsp
                 r                  -= ckgap;
                 c.copy((state & XF_HOVER) ? sHoverColor : sColor);
                 c.scale_lch_luminance(bright);
-                s->fill_circle(cx, cy, r, c);
+                s->fill_circle(c, cx, cy, r);
             }
 
             // Restore antialiasing
