@@ -847,7 +847,7 @@ namespace lsp
                     bool aa             = s->set_antialiasing(false);
                     for (size_t i=0; i<items; i += 2)
                     {
-                        s->line(xr.nLeft, xr.nTop, xr.nLeft + xr.nWidth, xr.nTop, line_w, color);
+                        s->line(color, xr.nLeft, xr.nTop, xr.nLeft + xr.nWidth, xr.nTop, line_w);
                         xr.nTop            += xr.nHeight * 2;
                     }
                     s->set_antialiasing(aa);
@@ -880,7 +880,7 @@ namespace lsp
                     bool aa             = s->set_antialiasing(false);
                     for (size_t i=0; i<items; ++i)
                     {
-                        s->line(xr.nLeft, xr.nTop + sy, xr.nLeft + xr.nWidth, xr.nTop + sy, line_w, color);
+                        s->line(color, xr.nLeft, xr.nTop + sy, xr.nLeft + xr.nWidth, xr.nTop + sy, line_w);
                         xr.nTop            += xr.nHeight;
                     }
                     s->set_antialiasing(aa);

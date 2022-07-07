@@ -264,7 +264,7 @@ namespace lsp
                         if (Size::overlap(area, &w->a))
                         {
                             w->pWidget->get_actual_bg_color(bg_color);
-                            s->fill_frame(bg_color, &w->a, &w->s);
+                            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &w->a, &w->s);
                         }
 
                         // Need to draw spacing?

@@ -145,7 +145,7 @@ namespace lsp
                     s->clip_begin(area);
                     {
                         pWidget->get_actual_bg_color(bg_color);
-                        s->fill_frame(bg_color, &sSize, &cr);
+                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &cr);
                     }
                     s->clip_end();
                 }

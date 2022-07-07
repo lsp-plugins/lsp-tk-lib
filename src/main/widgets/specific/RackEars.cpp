@@ -320,8 +320,8 @@ namespace lsp
             gr->add_color(0.0, 1.0, 1.0, 1.0);
             gr->add_color(1.0, screw);
             ws::surf_line_cap_t cap = s->set_line_cap(ws::SURFLCAP_ROUND);
-            s->line(cx + a_cos, cy + a_sin, cx - a_cos, cy - a_sin, lwidth, gr);
-            s->line(cx - a_sin, cy + a_cos, cx + a_sin, cy - a_cos, lwidth, gr);
+            s->line(gr, cx + a_cos, cy + a_sin, cx - a_cos, cy - a_sin, lwidth);
+            s->line(gr, cx - a_sin, cy + a_cos, cx + a_sin, cy - a_cos, lwidth);
             s->set_line_cap(cap);
             delete gr;
         }

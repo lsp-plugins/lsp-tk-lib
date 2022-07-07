@@ -543,7 +543,7 @@ namespace lsp
             ssize_t cx      = sSize.nWidth >> 1;
             ssize_t cy      = sSize.nHeight >> 1;
             bool aa         = s->set_antialiasing(true);
-            s->line(cx + dx, cy - dy, cx - dx, cy + dy, lw, color);
+            s->line(color, cx + dx, cy - dy, cx - dx, cy + dy, lw);
 
             // Output numerator and denominator
 //            s->fill_rect(&tc, sNum.sArea.nLeft, sNum.sArea.nTop, 1, 1);

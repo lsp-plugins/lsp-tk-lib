@@ -589,7 +589,7 @@ namespace lsp
                 {
                     // Draw the frame around
                     s->clip_begin(area);
-                        s->fill_frame(col, &sArea, &sList);
+                        s->fill_frame(col, SURFMASK_NONE, 0.0f, &sArea, &sList);
 
                         aa = s->set_antialiasing(true);
                             col.copy(sBorderColor);

@@ -317,10 +317,9 @@ namespace lsp
                     g->add_color(1.0f, bcol_l, 1.0f);
 
                     s->parametric_bar(
+                        g,
                         ll[0], ll[1], ll[2], bl[0], bl[1], bl[2],
-                        cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
-                        g
-                    );
+                        cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top());
 
                     delete g;
                 }
@@ -334,20 +333,19 @@ namespace lsp
                     g->add_color(1.0f, bcol_r, 1.0f);
 
                     s->parametric_bar(
+                        g,
                         ll[0], ll[1], ll[2], br[0], br[1], br[2],
-                        cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
-                        g
-                    );
+                        cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top());
 
                     delete g;
                 }
             }
 
             s->parametric_line(
+                color,
                 ll[0], ll[1], ll[2],
                 cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
-                l_width, color
-            );
+                l_width);
 
             s->set_antialiasing(aa);
         }

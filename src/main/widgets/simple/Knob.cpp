@@ -481,7 +481,7 @@ namespace lsp
                         float scr   = (i & 1) ? r2 : r3;
                         float f_sin = sinf(angle), f_cos = cosf(angle);
 
-                        s->line(c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling, bg_color);
+                        s->line(bg_color, c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling);
                     }
                 }
 
@@ -524,8 +524,9 @@ namespace lsp
                 s->fill_circle(cap, c_x, c_y, xr);
 
                 // Draw tip
-                s->line(c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
-                            c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, tip);
+                s->line(tip,
+                    c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
+                    c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling);
             }
             else
             {
@@ -552,8 +553,9 @@ namespace lsp
                     scol.copy(tip);
                     scol.blend(hcol, xb);
                     scol.scale_lch_luminance(bright);
-                    s->line(c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
-                            c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, scol);
+                    s->line(scol,
+                        c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
+                        c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling);
                 }
             }
 

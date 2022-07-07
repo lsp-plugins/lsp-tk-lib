@@ -244,7 +244,7 @@ namespace lsp
 
                 // Draw the border
                 if (border > 0)
-                    s->line(ap.x, ap.y, bp.x, bp.y, border, bcol);
+                    s->line(bcol, ap.x, ap.y, bp.x, bp.y, border);
             }
             s->clip_end();
             s->set_antialiasing(aa);

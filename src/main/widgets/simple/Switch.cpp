@@ -327,16 +327,16 @@ namespace lsp
             font.lightness((angle & 2) ? b1 : b2);
             if (angle & 1)
                 s->line(
+                    font,
                     r.nLeft + w, r.nTop + cx - (angle - 2) * (wid >> 2) + s2,
                     r.nLeft + w, r.nTop + cx - (angle - 2) * (wid >> 2) - s2,
-                    2.0f * scaling, font
-                );
+                    2.0f * scaling);
             else
                 s->line(
+                    font,
                     r.nLeft + cx - (angle - 1) * (wid >> 2) + s2, r.nTop + h,
                     r.nLeft + cx - (angle - 1) * (wid >> 2) - s2, r.nTop + h,
-                    2.0f * scaling, font
-                );
+                    2.0f * scaling);
 
             s->set_antialiasing(aa);
         }

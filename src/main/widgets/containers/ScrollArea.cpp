@@ -407,7 +407,7 @@ namespace lsp
                     s->clip_begin(&xa);
                     {
                         pWidget->get_actual_bg_color(col);
-                        s->fill_frame(col, &xa, &xr);
+                        s->fill_frame(col, SURFMASK_NONE, 0.0f, &xa, &xr);
                     }
                     s->clip_end();
                 }

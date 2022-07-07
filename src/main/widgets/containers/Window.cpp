@@ -397,13 +397,14 @@ namespace lsp
                 pChild->get_padded_rectangle(&pr);
                 pChild->get_rectangle(&cr);
 
-                s->fill_frame(bg_color,
+                s->fill_frame(
+                    bg_color, SURFMASK_NONE, 0.0f,
                     0, 0, sSize.nWidth, sSize.nHeight,
                     pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
                 );
 
                 pChild->get_actual_bg_color(bg_color);
-                s->fill_frame(bg_color, &pr, &cr);
+                s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &pr, &cr);
 
                 float scaling   = sScaling.get();
                 float border    = sBorderSize.get() * scaling;

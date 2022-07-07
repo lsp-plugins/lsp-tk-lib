@@ -366,7 +366,7 @@ namespace lsp
                         s->clip_begin(area);
                         {
                             pWidget->get_actual_bg_color(color);
-                            s->fill_frame(color, &sSize, &xr);
+                            s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                         }
                         s->clip_end();
                     }
@@ -404,7 +404,7 @@ namespace lsp
                         xr.nHeight -= xg;
 
                         ssize_t ir  = lsp_max(0, radius - border);
-                        s->fill_round_frame(color, ir, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, &sSize, &xr);
+                        s->fill_frame(color, ir, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, &sSize, &xr);
                     }
 
                     // Draw frame
