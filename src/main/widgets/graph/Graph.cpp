@@ -283,7 +283,7 @@ namespace lsp
                 // Get surface of widget
                 cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);
                 if (cv != NULL)
-                    s->draw(cv, sCanvas.nLeft, sCanvas.nTop);
+                    s->draw(cv, sCanvas.nLeft, sCanvas.nTop, 1.0f, 1.0f, 0.0f);
 
                 // Draw the glass and the border
                 color.copy(sGlassColor);
@@ -301,7 +301,7 @@ namespace lsp
                             sSize.nWidth, sSize.nHeight, flat
                         );
                     if (cv != NULL)
-                        s->draw(cv, sSize.nLeft, sSize.nTop);
+                        s->draw(cv, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
                 }
                 else
                 {

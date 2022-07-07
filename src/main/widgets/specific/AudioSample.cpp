@@ -933,13 +933,17 @@ namespace lsp
                         ws::rectangle_t xr  = sGraph;
                         xr.nLeft           += xbw;
                         xr.nTop            += xbw;
+
                         xr.nWidth           = lsp_max(0, xr.nWidth  - xbw * 2);
                         xr.nHeight          = lsp_max(0, xr.nHeight - xbw * 2);
 
-                        s->draw(cv, &xr);
+                        float sx            = float(xr.nWidth ) / float(cv->width());
+                        float sy            = float(xr.nHeight) / float(cv->height());
+
+                        s->draw(cv, xr.nLeft, xr.nTop, sx, sy, 0.0f);
                     }
                     else
-                        s->draw(cv, sGraph.nLeft, sGraph.nTop);
+                        s->draw(cv, sGraph.nLeft, sGraph.nTop, 1.0f, 1.0f, 0.0f);
                 }
 
                 // Draw the glass and the border
@@ -961,7 +965,7 @@ namespace lsp
                             sSize.nWidth, sSize.nHeight, flat
                         );
                     if (cv != NULL)
-                        s->draw(cv, sSize.nLeft, sSize.nTop);
+                        s->draw(cv, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
                 }
                 else
                 {

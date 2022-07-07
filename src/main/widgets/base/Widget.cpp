@@ -607,7 +607,7 @@ namespace lsp
 
             // Render to the main surface
             s->clip_begin(area);
-                s->draw(src, sSize.nLeft, sSize.nTop);
+                s->draw(src, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
             s->clip_end();
         }
 

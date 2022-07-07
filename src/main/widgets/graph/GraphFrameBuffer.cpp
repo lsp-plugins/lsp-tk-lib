@@ -298,7 +298,7 @@ namespace lsp
             }
 
             // Draw the buffer
-            s->draw_rotate_alpha(pp, x, y, sx, sy, ra, sTransparency.get());
+            s->draw_rotate(pp, x, y, sx, sy, ra, sTransparency.get());
         }
 
         void GraphFrameBuffer::calc_rainbow_color(float *rgba, const float *v, size_t n)

@@ -305,7 +305,7 @@ namespace lsp
             bs->end();
 
             s->begin();
-                s->draw(bs, 0, 0);
+                s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
             s->end();
             commit_redraw();
 
