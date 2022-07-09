@@ -273,28 +273,25 @@ namespace lsp
             r3d->set_bg_color(&c);
 
             // Perform a draw call
-            void *buf       = s->start_direct();
-            {
-                // Estimate the right memory offset
-                size_t stride   = s->stride();
-                uint8_t *dst    = reinterpret_cast<uint8_t *>(buf);
+            size_t count        = sCanvas.nWidth * sCanvas.nHeight;
+            size_t stride       = sCanvas.nWidth * sizeof(uint32_t);
+            uint8_t *buf        = static_cast<uint8_t *>(malloc(count * sizeof(uint32_t)));
+            if (buf == NULL)
+                return;
+            lsp_finally( free(buf); );
 
-                r3d->locate(sCanvas.nLeft, sCanvas.nTop, sCanvas.nWidth, sCanvas.nHeight);
-                pDisplay->sync();
+            r3d->locate(sCanvas.nLeft, sCanvas.nTop, sCanvas.nWidth, sCanvas.nHeight);
+            pDisplay->sync();
 
-                r3d->begin_draw();
-                    sSlots.execute(SLOT_DRAW3D, this, r3d);
-                    r3d->sync();
-                    r3d->read_pixels(dst, stride, r3d::PIXEL_RGBA);
+            r3d->begin_draw();
+                sSlots.execute(SLOT_DRAW3D, this, r3d);
+                r3d->sync();
+                r3d->read_pixels(buf, stride, r3d::PIXEL_RGBA);
+            r3d->end_draw();
 
-                    for (ssize_t i=0; i<sCanvas.nHeight; ++i)
-                    {
-                        dsp::abgr32_to_bgrff32(dst, dst, sCanvas.nWidth);
-                        dst    += stride;
-                    }
-                r3d->end_draw();
-            }
-            s->end_direct();
+            dsp::abgr32_to_bgrff32(buf, buf, count);
+            s->draw_raw(buf, sCanvas.nWidth, sCanvas.nHeight, stride,
+                sCanvas.nLeft, sCanvas.nTop, 1.0f, 1.0f, 0.0f);
         }
 
         void Area3D::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -327,10 +324,8 @@ namespace lsp
                 bool aa = s->set_antialiasing(true);
                 s->fill_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
-                // Get surface of widget
-                cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);
-                if (cv != NULL)
-                    s->draw(cv, sCanvas.nLeft, sCanvas.nTop, 1.0f, 1.0f, 0.0f);
+                // Draw the contents
+                draw(s);
 
                 // Draw the glass and the border
                 color.copy(sGlassColor);
