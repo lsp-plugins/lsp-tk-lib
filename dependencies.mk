@@ -66,7 +66,10 @@ ifeq ($(PLATFORM),Windows)
   DEPENDENCIES             += \
     LIBSHLWAPI \
     LIBWINMM \
-    LIBMSACM
+    LIBMSACM \
+    LIBD2D1 \
+    LIBOLE \
+    LIBWINCODEC
 endif
 
 ALL_DEPENDENCIES = \
@@ -82,4 +85,7 @@ ALL_DEPENDENCIES = \
   LIBSHLWAPI \
   LIBWINMM \
   LIBMSACM \
+  LIBD2D1 \
+  LIBOLE \
+  LIBWINCODEC
 
