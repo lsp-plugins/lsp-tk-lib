@@ -75,8 +75,10 @@ namespace lsp
             nCols               = 0;
             pCalcColor          = &GraphFrameBuffer::calc_rainbow_color;
             fRGBA               = NULL;
+            vRGBA               = NULL;
             pfRGBA              = NULL;
             nCapacity           = 0;
+            nPixels             = 0;
 
             pClass              = &metadata;
         }
@@ -100,6 +102,7 @@ namespace lsp
                 lsp::free_aligned(pfRGBA);
 
             fRGBA               = NULL;
+            vRGBA               = NULL;
             pfRGBA              = NULL;
             nCapacity           = 0;
         }
@@ -184,38 +187,48 @@ namespace lsp
 
         void GraphFrameBuffer::draw(ws::ISurface *s)
         {
+            // Allocate RGBA buffer
+            size_t pixels   = nRows * nCols;
+
+            if ((nCapacity != sData.stride()) || (pixels != nPixels))
+            {
+                // Free previous buffer
+                bClear          = true;
+                if (pfRGBA != NULL)
+                {
+                    free_aligned(pfRGBA);
+                    fRGBA           = NULL;
+                    vRGBA           = NULL;
+                }
+
+                // Allocate new buffer
+                size_t frgba_size   = sData.stride() * sizeof(float) * 4;  // 4 float components per dot
+                size_t vrgba_size   = pixels * sizeof(uint32_t); // 4 bytes per dot
+
+                uint8_t *ptr        = lsp::alloc_aligned<uint8_t>(pfRGBA, frgba_size + vrgba_size, 0x40);
+                if (ptr == NULL)
+                    return;
+
+                fRGBA           = reinterpret_cast<float *>(ptr);
+                ptr            += frgba_size;
+                vRGBA           = ptr;
+                nCapacity       = sData.stride();
+                nPixels         = pixels;
+            }
+
             // Need to deploy new changes?
-            size_t changes = (bClear) ? sData.rows() : sData.changes();
+            size_t changes = (bClear) ? nRows : sData.changes();
             if (changes <= 0)
                 return;
 
-            // Allocate RGBA buffer
-            if (nCapacity != sData.stride())
-            {
-                uint8_t *ptr    = NULL;
-                float *rgba     = lsp::alloc_aligned<float>(ptr, sData.stride() * 4, 0x40); // 4 components per dot
-                if (rgba == NULL)
-                    return;
-                if (pfRGBA != NULL)
-                    lsp::free_aligned(pfRGBA);
-                fRGBA           = rgba;
-                pfRGBA          = ptr;
-                nCapacity       = sData.stride();
-            }
+            // Process the pixel data
+            size_t vstride      = nCols * sizeof(uint32_t);
+            uint8_t *xp         = vRGBA;
+            if (changes < nRows)
+                ::memmove(&xp[vstride * changes], xp, (nRows - changes) * vstride);
 
-            // Get target buffer for rendering
-            uint8_t *xp     = static_cast<uint8_t *>(s->start_direct());
-            if (xp == NULL)
-                return;
-
-            // Shift buffer
-            size_t stride   = s->stride();
-            ::memmove(&xp[stride * changes], xp, (sData.rows() - changes) * stride);
-
-            // Draw dots
-            uint32_t row    = sData.last();
-
-            for (size_t i=1; i<=changes; ++i, xp += stride)
+            uint32_t row        = sData.last();
+            for (size_t i=1; i<=changes; ++i, xp += vstride)
             {
                 const float *p = sData.row(row - i);
                 if (p == NULL)
@@ -225,7 +238,8 @@ namespace lsp
                 dsp::rgba_to_bgra32(xp, fRGBA, nCols);
             }
 
-            s->end_direct();
+            s->draw_raw(vRGBA, nCols, nRows, vstride,
+                0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 
             // Commit pending changes
             bClear      = false;
