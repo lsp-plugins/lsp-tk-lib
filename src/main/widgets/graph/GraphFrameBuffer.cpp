@@ -238,6 +238,8 @@ namespace lsp
                 dsp::rgba_to_bgra32(xp, fRGBA, nCols);
             }
 
+            lsp::Color c(0.0f, 0.0f, 0.0f, 1.0f);
+            s->clear(c);
             s->draw_raw(vRGBA, nCols, nRows, vstride,
                 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 
