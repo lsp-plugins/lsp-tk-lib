@@ -291,7 +291,7 @@ namespace lsp
                  * @param r parameters of the drag rectangle to receive notifications, optional, can be NULL
                  * @return status of operation
                  */
-                status_t accept_drag(ws::IDataSink *sink, ws::drag_t action, const ws::rectangle_t *r);
+                status_t accept_drag(ws::IDataSink *sink, ws::drag_t action, const ws::rectangle_t *r=NULL);
 
                 /**
                  * Get NULL-terminated list of provided MIME types for a drag
