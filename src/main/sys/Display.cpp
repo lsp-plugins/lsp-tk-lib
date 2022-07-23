@@ -430,9 +430,9 @@ namespace lsp
             return pDisplay->reject_drag();
         }
 
-        status_t Display::accept_drag(ws::IDataSink *sink, ws::drag_t action, bool internal, const ws::rectangle_t *r)
+        status_t Display::accept_drag(ws::IDataSink *sink, ws::drag_t action, const ws::rectangle_t *r)
         {
-            return pDisplay->accept_drag(sink, action, internal, r);
+            return pDisplay->accept_drag(sink, action, r);
         }
 
         const char * const *Display::get_drag_mime_types()

@@ -278,7 +278,7 @@ namespace lsp
             uint8_t *buf        = static_cast<uint8_t *>(malloc(count * sizeof(uint32_t)));
             if (buf == NULL)
                 return;
-            lsp_finally( free(buf); );
+            lsp_finally{ free(buf); };
 
             r3d->locate(sCanvas.nLeft, sCanvas.nTop, sCanvas.nWidth, sCanvas.nHeight);
             pDisplay->sync();
