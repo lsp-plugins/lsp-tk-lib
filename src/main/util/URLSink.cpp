@@ -62,6 +62,8 @@ namespace lsp
             "text/x-moz-url",
             "application/x-kde4-urilist",
             "text/plain",
+            "application/x-windows-filenamew",
+            "application/x-windows-filename",
             NULL
         };
 
@@ -148,6 +150,12 @@ namespace lsp
                     case TEXT_PLAIN:
                         if (data.set_native(reinterpret_cast<const char *>(raw_data), raw_size))
                             res = STATUS_OK;
+                        break;
+                    case APPLICATION_X_WINDOWS_FILENAMEW:
+                        res = fetch_win_filenamew(&data, sProtocol, raw_data, raw_size);
+                        break;
+                    case APPLICATION_X_WINDOWS_FILENAME:
+                        res = fetch_win_filenamea(&data, sProtocol, raw_data, raw_size);
                         break;
                 }
 

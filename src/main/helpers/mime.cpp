@@ -255,6 +255,45 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t fetch_win_filenamew(LSPString *dst, const char *protocol, const void *src, size_t bytes)
+        {
+            LSPString line;
+
+            const lsp_utf16_t *str = reinterpret_cast<const lsp_utf16_t *>(src);
+            size_t nlen = bytes / sizeof(lsp_utf16_t);
+            while ((nlen > 0) && (str[nlen-1] == 0))
+                --nlen;
+
+            if (!line.append_ascii("file://"))
+                return STATUS_NO_MEM;
+            if (!line.append_utf16(str, nlen))
+                return STATUS_NO_MEM;
+            if (!line.starts_with_ascii(protocol))
+                return STATUS_NOT_FOUND;
+
+            line.swap(dst);
+            return STATUS_OK;
+        }
+
+        status_t fetch_win_filenamea(LSPString *dst, const char *protocol, const void *src, size_t bytes)
+        {
+            LSPString line;
+
+            const char *str = reinterpret_cast<const char *>(src);
+            size_t nlen = bytes / sizeof(char);
+            while ((nlen > 0) && (str[nlen-1] == 0))
+                --nlen;
+
+            if (!line.append_ascii("file://"))
+                return STATUS_NO_MEM;
+            if (!line.append_ascii(str, nlen))
+                return STATUS_NO_MEM;
+            if (!line.starts_with_ascii(protocol))
+                return STATUS_NOT_FOUND;
+
+            line.swap(dst);
+            return STATUS_OK;
+        }
     }
 }
 

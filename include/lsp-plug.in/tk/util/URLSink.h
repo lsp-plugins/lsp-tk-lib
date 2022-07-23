@@ -46,7 +46,9 @@ namespace lsp
                     TEXT_URI_LIST,
                     TEXT_X_MOZ_URL,
                     APPLICATION_X_KDE4_URILIST,
-                    TEXT_PLAIN
+                    TEXT_PLAIN,
+                    APPLICATION_X_WINDOWS_FILENAMEW,
+                    APPLICATION_X_WINDOWS_FILENAME,
                 };
 
             protected:
