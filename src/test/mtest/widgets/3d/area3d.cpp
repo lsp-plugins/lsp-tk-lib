@@ -125,15 +125,6 @@ MTEST_BEGIN("tk.widgets.3d", area3d)
         char           *label;
     } handler_t;
 
-    typedef struct osc_t
-    {
-        float       A0; // Initial amplitude
-        float       X0; // Initial location
-        float       W0; // Frequency
-        float       P0; // Initial phase
-        float       R0; // Reduction/Decay
-    } osc_t;
-
     class Scene: public tk::Timer
     {
         protected:
