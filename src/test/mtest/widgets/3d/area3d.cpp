@@ -177,7 +177,7 @@ MTEST_BEGIN("tk.widgets.3d", area3d)
 
                 nPeriod         = 0x100000;
                 nYaw            = 0;
-                nStep           = (nPeriod * FRAME_PERIOD) / 5000.0f;
+                nStep           = (nPeriod * FRAME_PERIOD) / 10000.0f;
 
                 fFov            = 70.0f;
 
