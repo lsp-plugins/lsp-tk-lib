@@ -20,7 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
-#include <time.h>
+#include <lsp-plug.in/runtime/system.h>
 
 namespace lsp
 {
@@ -142,9 +142,9 @@ namespace lsp
             if (delay > 0)
             {
                 // Shift the timestamp by delta
-                struct timespec ts;
-                clock_gettime(CLOCK_REALTIME, &ts);
-                ws::timestamp_t delta = (ts.tv_sec * 1000L) + (ts.tv_nsec / 1000000L); // Get delta in milliseconds
+                system::time_t ts;
+                system::get_time(&ts);
+                ws::timestamp_t delta = (ts.seconds * 1000L) + (ts.nanos / 1000000L); // Get delta in milliseconds
                 delay      += delta;
             }
 
