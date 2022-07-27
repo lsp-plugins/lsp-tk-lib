@@ -269,12 +269,11 @@ namespace lsp
             c.r     = sColor.red();
             c.g     = sColor.green();
             c.b     = sColor.blue();
-            c.a     = 1.0f;
+            c.a     = 0.0f;
             r3d->set_bg_color(&c);
 
             // Perform a draw call
             size_t count        = sCanvas.nWidth * sCanvas.nHeight;
-            size_t stride       = sCanvas.nWidth * sizeof(uint32_t);
             uint8_t *buf        = static_cast<uint8_t *>(malloc(count * sizeof(uint32_t)));
             if (buf == NULL)
                 return;
@@ -286,11 +285,11 @@ namespace lsp
             r3d->begin_draw();
                 sSlots.execute(SLOT_DRAW3D, this, r3d);
                 r3d->sync();
-                r3d->read_pixels(buf, stride, r3d::PIXEL_RGBA);
+                r3d->read_pixels(buf, r3d::PIXEL_BGRA);
             r3d->end_draw();
 
-            dsp::abgr32_to_bgrff32(buf, buf, count);
-            s->draw_raw(buf, sCanvas.nWidth, sCanvas.nHeight, stride,
+            dsp::pbgra32_set_alpha(buf, buf, 0xff, count);
+            s->draw_raw(buf, sCanvas.nWidth, sCanvas.nHeight, sCanvas.nWidth * 4,
                 sCanvas.nLeft, sCanvas.nTop, 1.0f, 1.0f, 0.0f);
         }
 
@@ -358,7 +357,7 @@ namespace lsp
 
         #ifdef LSP_TRACE
             system::get_time(&end);
-            float time = float(end.seconds - start.seconds) + (end.nanos - start.nanos) * 1e-9f;
+            float time = float(end.seconds - start.seconds) * 1000.0f + (end.nanos - start.nanos) * 1e-6f;
             lsp_trace("render time: %.3f ms", time);
         #endif /* LSP_TRACE */
         }
