@@ -12,3 +12,4 @@
 *.core
 /.config.mk
 **/vgcore*
+/DebugWin/
