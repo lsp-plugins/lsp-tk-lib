@@ -26,17 +26,12 @@
 #define LSP_TK_MINOR                0
 #define LSP_TK_MICRO                4
 
-#ifdef LSP_TK_LIB_BUILTIN
-    #define LSP_TK_LIB_EXPORT
-    #define LSP_TK_LIB_CEXPORT
-    #define LSP_TK_LIB_IMPORT           LSP_SYMBOL_IMPORT
-    #define LSP_TK_LIB_CIMPORT          LSP_CSYMBOL_IMPORT
+#if defined(LSP_TK_LIB_PUBLISHER)
+    #define LSP_TK_LIB_PUBLIC               LSP_EXPORT_MODIFIER
+#elif defined(LSP_TK_LIB_BUILTIN) || defined(LSP_IDE_DEBUG)
+    #define LSP_TK_LIB_PUBLIC
 #else
-    #define LSP_TK_LIB_EXPORT           LSP_SYMBOL_EXPORT
-    #define LSP_TK_LIB_CEXPORT          LSP_CSYMBOL_EXPORT
-    #define LSP_TK_LIB_IMPORT           LSP_SYMBOL_IMPORT
-    #define LSP_TK_LIB_CIMPORT          LSP_CSYMBOL_IMPORT
+    #define LSP_TK_LIB_PUBLIC               LSP_IMPORT_MODIFIER
 #endif
-
 
 #endif /* LSP_PLUG_IN_TK_VERSION_H_ */

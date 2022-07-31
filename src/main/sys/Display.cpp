@@ -84,7 +84,7 @@ namespace lsp
             // Destroy display
             if (pDisplay != NULL)
             {
-                ws::lsp_ws_free_display(pDisplay);
+                ws::free_display(pDisplay);
                 pDisplay = NULL;
             }
 
@@ -151,7 +151,7 @@ namespace lsp
         status_t Display::init(int argc, const char **argv)
         {
             // Create display
-            ws::IDisplay *dpy = ws::lsp_ws_create_display(argc, argv);
+            ws::IDisplay *dpy = ws::create_display(argc, argv);
             if (dpy == NULL)
                 return STATUS_NO_MEM;
 
@@ -160,7 +160,7 @@ namespace lsp
             if (res != STATUS_OK)
             {
                 dpy->destroy();
-                ws::lsp_ws_free_display(dpy);
+                ws::free_display(dpy);
             }
 
             return res;

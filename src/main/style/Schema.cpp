@@ -44,8 +44,7 @@ namespace lsp
                 sDrawMode.set(DM_CLASSIC);
             LSP_TK_STYLE_IMPL_END
 
-            LSP_SYMBOL_HIDDEN
-            StyleFactory<Root> RootFactory(NULL, NULL);
+            static StyleFactory<Root> RootFactory(NULL, NULL);
         }
 
         Schema::Schema(Atoms *atoms, Display *dpy)

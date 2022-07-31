@@ -28,7 +28,7 @@ namespace lsp
 {
     namespace tk
     {
-        class LSP_SYMBOL_HIDDEN BuiltinStyle
+        class LSP_HIDDEN_MODIFIER BuiltinStyle
         {
             private:
                 static BuiltinStyle        *pRoot;

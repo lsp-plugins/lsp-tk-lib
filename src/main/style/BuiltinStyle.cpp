@@ -25,7 +25,6 @@ namespace lsp
 {
     namespace tk
     {
-        LSP_SYMBOL_HIDDEN
         BuiltinStyle *BuiltinStyle::pRoot    = NULL;
 
         BuiltinStyle::BuiltinStyle(IStyleFactory *init)
@@ -34,7 +33,7 @@ namespace lsp
             pNext   = pRoot;
             pRoot   = this;
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
