@@ -533,7 +533,7 @@ namespace lsp
                 wnd->discard_widget(this);
 
             // Update current parent
-            pParent = parent;
+            pParent                 = parent;
         }
 
         Widget *Widget::toplevel()

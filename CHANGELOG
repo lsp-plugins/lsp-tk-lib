@@ -6,6 +6,7 @@
 * Added support of modern C++ 11 standard and above.
 * Updated build scripts.
 * Added more formats for URLSink (Windows support).
+* Fixed bug in ListBox widget that could result in memory corruption.
 
 === 1.0.3 ===
 * Added Window::has_parent() method to check that window is embedded into another window.

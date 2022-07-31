@@ -718,7 +718,7 @@ namespace lsp
 
                         if (!(nFlags & RESIZE_PENDING))
                         {
-                            lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+//                            lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
 
                             r.nLeft     = e->nLeft;
                             r.nTop      = e->nTop;
@@ -737,12 +737,14 @@ namespace lsp
                 // Mouse handling
                 case ws::UIE_MOUSE_UP:
                 {
-//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
-//                            int(e->nCode), int(e->nState), int(hMouse.nState));
                     Widget *h       = acquire_mouse_handler(e);
+//                    int old_state   = hMouse.nState;
                     hMouse.nState  &= ~(1 << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
+
+//                    lsp_trace("MOUSE_UP this = %p, e->nCode = %d, e->nState=0x%x state = 0x%x -> 0x%x",
+//                        this, int(e->nCode), int(e->nState), int(old_state), int(hMouse.nState));
 
                     if (h == this)
                         result          = WidgetContainer::handle_event(e);
@@ -755,12 +757,14 @@ namespace lsp
 
                 case ws::UIE_MOUSE_DOWN:
                 {
-//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
-//                            int(e->nCode), int(e->nState), int(hMouse.nState));
                     Widget *h       = acquire_mouse_handler(e);
+//                    int old_state   = hMouse.nState;
                     hMouse.nState  |= (1 << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
+
+//                    lsp_trace("MOUSE_DOWN this = %p, e->nCode = %d, e->nState=0x%x state = 0x%x -> 0x%x",
+//                        this, int(e->nCode), int(e->nState), int(old_state), int(hMouse.nState));
 
                     // Take focus first
                     take_focus(h);
@@ -776,8 +780,8 @@ namespace lsp
 
                 case ws::UIE_MOUSE_MOVE:
                 {
-//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
-//                            int(e->nCode), int(e->nState), int(hMouse.nState));
+//                    lsp_trace("MOUSE_MOVE this = %p, e->nCode = %d, e->nState=0x%x state = 0x%x",
+//                        this, int(e->nCode), int(e->nState), int(hMouse.nState));
                     Widget *h       = acquire_mouse_handler(e);
                     hMouse.nState   = e->nState;
                     hMouse.nLeft    = e->nLeft;

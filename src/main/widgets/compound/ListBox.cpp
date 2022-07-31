@@ -773,11 +773,15 @@ namespace lsp
             if (_this == NULL)
                 return;
 
-            // Remove widget from selection list
+            // Special logic if the message was originated by the item list
             if (_this->vItems.is(prop))
+            {
+                // Remove widget from selection list
                 _this->vSelected.remove(item);
+                // Unlink widget
+                _this->unlink_widget(item);
+            }
 
-            _this->unlink_widget(item);
             _this->query_resize();
         }
 
