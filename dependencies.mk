@@ -18,10 +18,9 @@
 # along with lsp-tk-lib.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-# List of dependencies
+#------------------------------------------------------------------------------
+# List of common dependencies
 DEPENDENCIES = \
-  LIBPTHREAD \
-  LIBDL \
   LSP_COMMON_LIB \
   LSP_LLTL_LIB \
   LSP_R3D_IFACE \
@@ -35,6 +34,7 @@ TEST_DEPENDENCIES = \
 #------------------------------------------------------------------------------
 # Linux dependencies
 LINUX_DEPENDENCIES = \
+  LIBPTHREAD \
   LIBDL \
   LIBSNDFILE \
   LIBCAIRO \
@@ -55,6 +55,7 @@ endif
 #------------------------------------------------------------------------------
 # BSD dependencies
 BSD_DEPENDENCIES = \
+  LIBPTHREAD \
   LIBDL \
   LIBSNDFILE \
   LIBICONV \
