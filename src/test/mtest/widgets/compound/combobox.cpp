@@ -73,7 +73,7 @@ MTEST_BEGIN("tk.widgets.compound", combobox)
     static status_t slot_mouse_move(tk::Widget *sender, void *ptr, void *data)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
-//        h->test->printf("MOUSE_MOVE: %s\n", h->label);
+        h->test->printf("MOUSE_MOVE: %s\n", h->label);
 
         return STATUS_OK;
     }

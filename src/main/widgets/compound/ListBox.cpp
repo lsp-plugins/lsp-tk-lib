@@ -759,7 +759,11 @@ namespace lsp
             if (_this == NULL)
                 return;
 
-            item->set_parent(_this);
+            // Change parent only if we are working with the main item list.
+            if (_this->vItems.is(prop))
+            {
+                item->set_parent(_this);
+            }
             _this->query_resize();
         }
 
