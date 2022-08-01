@@ -404,7 +404,7 @@ namespace lsp
                         xr.nHeight -= xg;
 
                         ssize_t ir  = lsp_max(0, radius - border);
-                        s->fill_frame(color, ir, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, &sSize, &xr);
+                        s->fill_frame(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &sSize, &xr);
                     }
 
                     // Draw frame
