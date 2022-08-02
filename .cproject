@@ -217,9 +217,6 @@
 							<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.923169735" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 						</tool>
 					</fileInfo>
-					<fileInfo id="cdt.managedbuild.config.gnu.exe.release.1708893648.707292261" name="main.cpp" rcbsApplicability="disable" resourcePath="modules/lsp-r3d-wgl-lib/src/test/main.cpp" toolsToInvoke="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.672828855.1923955609">
-						<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.672828855.1923955609" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.release.672828855"/>
-					</fileInfo>
 					<sourceEntries>
 						<entry excluding="modules/lsp-r3d-wgl-lib/src/test/main.cpp|modules/lsp-r3d-base-lib/src/test|modules/lsp-runtime-lib/src/test|modules/lsp-r3d-iface/src/test/main.cpp|modules/lsp-lltl-lib/src/test|modules/lsp-dsp-lib/src/test|modules/lsp-test-fw/src/test|modules/lsp-common-lib/src/test|modules/lsp-r3d-glx-lib/src/test/main.cpp|src/old-tk|src/tk-old|modules/lsp-ws-lib/src/test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
@@ -242,7 +239,7 @@
 					<folderInfo id="cdt.managedbuild.config.gnu.exe.debug.2059524684.1392737267." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.exe.debug.493860970" name="Linux GCC" nonInternalBuilderId="cdt.managedbuild.target.gnu.builder.exe.debug" superClass="cdt.managedbuild.toolchain.gnu.exe.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.347035334" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
-							<builder autoBuildTarget="all" buildPath="${workspace_loc:/lsp-tk-lib}/DebugWin" cleanBuildTarget="clean" id="org.eclipse.cdt.build.core.internal.builder.261120890" incrementalBuildTarget="all" managedBuildOn="true" name="CDT Internal Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="org.eclipse.cdt.build.core.internal.builder"/>
+							<builder autoBuildTarget="all" buildPath="${workspace_loc:/lsp-tk-lib}/DebugWin" cleanBuildTarget="clean" id="org.eclipse.cdt.build.core.internal.builder.261120890" incrementalBuildTarget="all" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="CDT Internal Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="org.eclipse.cdt.build.core.internal.builder"/>
 							<tool id="cdt.managedbuild.tool.gnu.archiver.base.284304589" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
 							<tool commandLinePattern="${COMMAND} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS} ${FLAGS}" id="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug.744229200" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.exe.debug">
 								<option id="gnu.cpp.compiler.exe.debug.option.optimization.level.1612409710" name="Optimization Level" superClass="gnu.cpp.compiler.exe.debug.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.none" valueType="enumerated"/>
