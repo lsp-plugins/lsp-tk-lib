@@ -106,7 +106,7 @@ namespace lsp
             do_destroy();
         }
 
-        status_t Window::init()
+        status_t Window::init_internal(bool create_handle)
         {
             status_t result;
 
@@ -120,14 +120,16 @@ namespace lsp
                 return STATUS_BAD_STATE;
 
             // Create and initialize window
-            pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
+            if (create_handle)
+            {
+                pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
+                if (pWindow == NULL)
+                    return STATUS_UNKNOWN_ERR;
 
-            if (pWindow == NULL)
-                return STATUS_UNKNOWN_ERR;
-
-            // Initialize
-            if ((result = pWindow->init()) != STATUS_SUCCESS)
-                return result;
+                // Initialize
+                if ((result = pWindow->init()) != STATUS_SUCCESS)
+                    return result;
+            }
 
             // Bind properties
             sTitle.bind(&sStyle, pDisplay->dictionary());
@@ -153,7 +155,8 @@ namespace lsp
                 return - id;
 
             // Set self event handler
-            pWindow->set_handler(this);
+            if (pWindow != NULL)
+                pWindow->set_handler(this);
 
             // Bind redraw handler
             sRedraw.bind(dpy);
@@ -165,6 +168,11 @@ namespace lsp
                 show_widget();
 
             return STATUS_OK;
+        }
+
+        status_t Window::init()
+        {
+            return init_internal(true);
         }
 
         status_t Window::sync_size()

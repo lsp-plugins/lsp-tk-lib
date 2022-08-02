@@ -128,6 +128,7 @@ namespace lsp
                 bool                kill_focus(Widget *w);
                 size_t              make_key_pressed(ws::code_t code);
                 size_t              make_key_released(ws::code_t code);
+                status_t            init_internal(bool create_handle);
 
             protected:
                 virtual Widget     *find_widget(ssize_t x, ssize_t y);

@@ -621,7 +621,9 @@ namespace lsp
             // Check surface
             if (pSurface != NULL)
             {
-                if ((width != ssize_t(pSurface->width())) || (height != ssize_t(pSurface->height())))
+                if ((!pSurface->valid()) ||
+                    (width != ssize_t(pSurface->width())) ||
+                    (height != ssize_t(pSurface->height())))
                 {
                     pSurface->destroy();
                     delete pSurface;

@@ -68,7 +68,7 @@ namespace lsp
 
         status_t PopupWindow::init()
         {
-            status_t res = Window::init();
+            status_t res = Window::init_internal(false);
             if (res != STATUS_OK)
                 return res;
 

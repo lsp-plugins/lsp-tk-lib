@@ -872,7 +872,6 @@ namespace lsp
             LSPString text;
 
             sFont.get_parameters(pDisplay, fscaling, &fp);
-
             float aa            = s->set_antialiasing(true);
 
             for (ssize_t i=0, n=vVisible.size(); i<n; ++i)
@@ -1070,7 +1069,6 @@ namespace lsp
                     x - xr.nHeight, y + xr.nHeight * 0.25f,
                     x + xr.nHeight, y + xr.nHeight * 0.25f);
             }
-
             // Draw border
             if (border > 0)
             {
@@ -1083,7 +1081,6 @@ namespace lsp
                     border
                 );
             }
-
             s->set_antialiasing(aa);
         }
 
