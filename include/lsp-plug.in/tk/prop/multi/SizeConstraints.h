@@ -141,6 +141,8 @@ namespace lsp
 
                 static void add(ws::size_limit_t *dst, ssize_t width, ssize_t height);
                 static void scale(ws::size_limit_t *dst, float scale);
+
+                static bool match(const ws::rectangle_t *r, const ws::size_limit_t *sr);
         };
 
         namespace prop

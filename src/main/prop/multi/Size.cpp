@@ -168,6 +168,19 @@ namespace lsp
             return true;
         }
 
+        bool Size::inside(const ws::rectangle_t *outer, const ws::rectangle_t *inner)
+        {
+            if (inner->nLeft < outer->nLeft)
+                return false;
+            if (inner->nTop < outer->nTop)
+                return false;
+            if ((inner->nLeft + inner->nWidth) > (outer->nLeft + outer->nWidth))
+                return false;
+            if ((inner->nTop + inner->nHeight) > (outer->nTop + outer->nHeight))
+                return false;
+            return true;
+        }
+
         bool Size::overlap(const ws::rectangle_t *a, const ws::rectangle_t *b)
         {
             // Check horizontal intersection

@@ -82,6 +82,7 @@ namespace lsp
 
                 static bool         intersection(ws::rectangle_t *dst, const ws::rectangle_t *a, const ws::rectangle_t *b);
                 static inline bool  intersection(ws::rectangle_t *dst, const ws::rectangle_t *src) { return intersection(dst, dst, src); }
+                static bool         inside(const ws::rectangle_t *outer, const ws::rectangle_t *inner);
 
                 static bool         overlap(const ws::rectangle_t *a, const ws::rectangle_t *b);
                 static bool         is_empty(const ws::rectangle_t *r);
