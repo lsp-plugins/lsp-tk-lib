@@ -7,6 +7,7 @@
 * Updated build scripts.
 * Added more formats for URLSink (Windows support).
 * Fixed bug in ListBox widget that could result in memory corruption.
+* Migrated from popup window arrangement paradigm to the tether paradigm.
 
 === 1.0.3 ===
 * Added Window::has_parent() method to check that window is embedded into another window.

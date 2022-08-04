@@ -52,17 +52,6 @@ namespace lsp
         };
 
         /**
-         * Arrangement position
-         */
-        enum arrangement_pos_t
-        {
-            A_LEFT,             //!< A_LEFT arrangement at the left side of area
-            A_RIGHT,            //!< A_RIGHT arrangement at the right side of area
-            A_TOP,              //!< A_TOP arrangement at the top side of area
-            A_BOTTOM            //!< A_BOTTOM arrangement at the bottom side of area
-        };
-
-        /**
          * Tether flags
          */
         enum tether_flags_t
@@ -196,13 +185,6 @@ namespace lsp
             size_t              nTop;           // Padding from top
             size_t              nBottom;        // Padding from bottom
         } padding_t;
-
-        typedef struct arrangement_t
-        {
-            arrangement_pos_t   enPosition;     // Position relative to the area
-            float               fAlign;         // Alignment, for horizontal arrangement -1 is leftmost, +1 is rightmost
-            bool                bStretch;       // Stretch parameters
-        } arrangement_t;
 
         typedef struct tether_t
         {

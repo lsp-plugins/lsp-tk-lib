@@ -59,7 +59,6 @@ namespace lsp
                 prop::Integer                   sTrgScreen;         // The target screen to appear
                 prop::Boolean                   sAutoClose;         // Automatically close when the pointer delivers event ouside the window
 
-//                lltl::darray<arrangement_t>     vArrangements;      // Arrangements
                 lltl::darray<tether_t>          vTether;            // List of tether rules
                 bool                            bInitialized;       // Initalization flag
 
@@ -70,9 +69,6 @@ namespace lsp
                 virtual status_t                sync_size();
                 virtual void                    size_request(ws::size_limit_t *r);
                 bool                            init_window();
-                bool                            arrange_preferred(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force, bool truncate);
-                bool                            arrange_window(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force);
-                void                            forced_arrange(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar);
                 void                            arrange_window_geometry();
 
             public:
