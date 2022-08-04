@@ -59,7 +59,8 @@ namespace lsp
                 prop::Integer                   sTrgScreen;         // The target screen to appear
                 prop::Boolean                   sAutoClose;         // Automatically close when the pointer delivers event ouside the window
 
-                lltl::darray<arrangement_t>     vArrangements;      // Arrangements
+//                lltl::darray<arrangement_t>     vArrangements;      // Arrangements
+                lltl::darray<tether_t>          vTether;            // List of tether rules
                 bool                            bInitialized;       // Initalization flag
 
             protected:
@@ -72,6 +73,7 @@ namespace lsp
                 bool                            arrange_preferred(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force, bool truncate);
                 bool                            arrange_window(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar, bool force);
                 void                            forced_arrange(ws::rectangle_t *dst, const ws::rectangle_t *trg, const arrangement_t *ar);
+                void                            arrange_window_geometry();
 
             public:
                 explicit PopupWindow(Display *dpy);
@@ -86,10 +88,10 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            auto_close,                 &sAutoClose)
 
             public:
-                bool                            set_arrangements(const lltl::darray<arrangement_t> *list);
-                bool                            set_arrangements(const arrangement_t *list, size_t count);
-                bool                            add_arrangement(const arrangement_t *item);
-                bool                            add_arrangement(arrangement_pos_t pos, float align = 0.0f, bool stretch = true);
+                bool                            set_tether(const lltl::darray<tether_t> *list);
+                bool                            set_tether(const tether_t *list, size_t count);
+                bool                            add_tether(const tether_t *item);
+                bool                            add_tether(size_t flags, float halign=1.0f, float valign=1.0f);
 
             public:
                 virtual status_t                handle_event(const ws::event_t *e);

@@ -266,10 +266,20 @@ namespace lsp
         // Menu implementation
         const w_class_t Menu::metadata      = { "Menu", &WidgetContainer::metadata };
 
-        const arrangement_t Menu::arrangements[] =
+        const tether_t Menu::tether_list_ltr[] =
         {
-            { A_RIGHT,  0.0f,   false },
-            { A_LEFT,   0.0f,   false }
+            { TF_RIGHT | TF_TOP | TF_VERTICAL | TF_VMAXIMIZE,       1.0f,  1.0f  },
+            { TF_RIGHT | TF_BOTTOM | TF_VERTICAL | TF_VMAXIMIZE,    1.0f,  -1.0f },
+            { TF_LEFT  | TF_TOP | TF_VERTICAL | TF_VMAXIMIZE,      -1.0f,  1.0f  },
+            { TF_LEFT  | TF_BOTTOM | TF_VERTICAL | TF_VMAXIMIZE,   -1.0f,  -1.0f },
+        };
+
+        const tether_t Menu::tether_list_rtl[] =
+        {
+            { TF_LEFT  | TF_TOP | TF_VERTICAL | TF_VMAXIMIZE,      -1.0f,  1.0f  },
+            { TF_LEFT  | TF_BOTTOM | TF_VERTICAL | TF_VMAXIMIZE,   -1.0f,  -1.0f },
+            { TF_RIGHT | TF_TOP | TF_VERTICAL | TF_VMAXIMIZE,       1.0f,  1.0f  },
+            { TF_RIGHT | TF_BOTTOM | TF_VERTICAL | TF_VMAXIMIZE,    1.0f,  -1.0f },
         };
 
         Menu::Menu(Display *dpy):
@@ -341,7 +351,7 @@ namespace lsp
                 sWindow.destroy();
                 return result;
             }
-            sWindow.set_arrangements(arrangements, 2);
+            sWindow.set_tether(tether_list_ltr, sizeof(tether_list_ltr)/sizeof(tether_t));
             sWindow.layout()->set(-1.0f, -1.0f, 1.0f, 1.0f);
             sWindow.auto_close()->set(false);
 
@@ -1361,6 +1371,16 @@ namespace lsp
                 cmenu->select_first_item(false);
         }
 
+        bool Menu::check_rtl_direction()
+        {
+            ws::rectangle_t pr, cr;
+            if ((pParentMenu == NULL) || (pParentMenu->sWindow.get_screen_rectangle(&pr) != STATUS_OK))
+                return false;
+            if (sWindow.get_screen_rectangle(&cr) != STATUS_OK)
+                return false;
+            return cr.nLeft < pr.nLeft;
+        }
+
         void Menu::show_submenu(Menu *menu, Widget *w)
         {
             // Hide all nested menus for cmenu
@@ -1379,8 +1399,11 @@ namespace lsp
             lsp_trace("menu = %p, parent=%p", menu, menu->pParentMenu);
             lsp_trace("menu = %p, child=%p", this, pChildMenu);
 
-            // Show the nested menu
-            menu->set_arrangements(arrangements, 2);
+            // Show the nested menu depending on the position of parent
+            if (check_rtl_direction())
+                menu->set_tether(tether_list_rtl, sizeof(tether_list_rtl)/sizeof(tether_t));
+            else
+                menu->set_tether(tether_list_ltr, sizeof(tether_list_ltr)/sizeof(tether_t));
             menu->show(w);
         }
 
@@ -1609,24 +1632,24 @@ namespace lsp
             return STATUS_OK;
         }
 
-        bool Menu::set_arrangements(const lltl::darray<arrangement_t> *list)
+        bool Menu::set_tether(const lltl::darray<tether_t> *list)
         {
-            return sWindow.set_arrangements(list);
+            return sWindow.set_tether(list);
         }
 
-        bool Menu::set_arrangements(const arrangement_t *list, size_t count)
+        bool Menu::set_tether(const tether_t *list, size_t count)
         {
-            return sWindow.set_arrangements(list, count);
+            return sWindow.set_tether(list, count);
         }
 
-        bool Menu::add_arrangement(const arrangement_t *item)
+        bool Menu::add_tether(const tether_t *item)
         {
-            return sWindow.add_arrangement(item);
+            return sWindow.add_tether(item);
         }
 
-        bool Menu::add_arrangement(arrangement_pos_t pos, float align, bool stretch)
+        bool Menu::add_tether(size_t pos, float halign, float valign)
         {
-            return sWindow.add_arrangement(pos, align, stretch);
+            return sWindow.add_tether(pos, halign, valign);
         }
 
     } /* namespace tk */

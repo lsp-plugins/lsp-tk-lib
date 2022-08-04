@@ -34,19 +34,24 @@ namespace lsp
          */
         ssize_t get_axis_size(ssize_t min, ssize_t pre, ssize_t max)
         {
-            min     = lsp_min(0, min);
-            if (pre < 0)
-                return min;
+            min     = lsp_max(0, min);
             if (max < 0)
                 return lsp_max(min, pre);
-            max     = lsp_max(min, max);
-            return lsp_limit(pre, min, max);
+            return lsp_max(min, max);
         }
 
         ssize_t limit_size(ssize_t value, ssize_t min, ssize_t max)
         {
             value = ((max >= 0) && (value > max)) ? max : value;
             return ((min >= 0) && (value < min)) ? min : value;
+        }
+
+        ssize_t make_fit_range(ssize_t v, ssize_t w, ssize_t vmin, ssize_t vmax)
+        {
+            if (v < vmin)
+                return v;
+            ssize_t ve = v + w;
+            return (ve < vmax) ? v : v + vmax - ve;
         }
 
         void apply_stretching(
@@ -108,14 +113,15 @@ namespace lsp
             return STATUS_OK;
         }
 
-        bool arrange_optimistic_2d(
+        bool arrange_optimistic(
             ws::rectangle_t *dst,
             const ws::rectangle_t *trg,
             const ws::size_limit_t *src,
-            const ws::rectangle_t *range,
             const tether_t *rule,
+            const ws::rectangle_t *range,
+            bool allow_sizing,
             bool allow_crossing,
-            bool allow_sizing)
+            bool allow_directions)
         {
             // Update the parameters of triggered rectangle
             ws::rectangle_t xtrg, t;
@@ -137,12 +143,28 @@ namespace lsp
             ssize_t ty      = (rule->nFlags & TF_BOTTOM) ? bottom : trg->nTop;
 
             // Now get the size for both axes
-            t.nWidth        = (allow_sizing) ? lsp_min(0, src->nMinWidth)  : get_axis_size(src->nMinWidth,  src->nPreWidth,  src->nMaxWidth);
-            t.nHeight       = (allow_sizing) ? lsp_min(0, src->nMinHeight) : get_axis_size(src->nMinHeight, src->nPreHeight, src->nMaxHeight);
-            t.nLeft         = tx + t.nWidth  * rule->fHAlign;
-            t.nTop          = ty + t.nHeight * rule->fHAlign;
+            t.nWidth        = get_axis_size(src->nMinWidth,  src->nPreWidth,  src->nMaxWidth);
+            t.nHeight       = get_axis_size(src->nMinHeight, src->nPreHeight, src->nMaxHeight);
+            t.nLeft         = tx + (rule->fHAlign * 0.5f - 0.5f) * t.nWidth;
+            t.nTop          = ty + (rule->fVAlign * 0.5f - 0.5f) * t.nHeight;
 
-            if (!Size::inside(&t, range))
+            // Maximize if necessary
+            if (rule->nFlags & TF_HMAXIMIZE)
+                t.nLeft         = make_fit_range(t.nLeft, t.nWidth,  range->nLeft, range->nLeft + range->nWidth);
+            if (rule->nFlags & TF_VMAXIMIZE)
+                t.nTop          = make_fit_range(t.nTop,  t.nHeight, range->nTop,  range->nTop  + range->nHeight);
+
+            // Check the pririty
+            if (allow_directions)
+            {
+                // Check the pririty of each direction and shift the range
+                if (rule->nFlags & TF_VERTICAL)
+                    t.nLeft         = make_fit_range(t.nLeft, t.nWidth, range->nLeft, range->nLeft + range->nWidth);
+                else
+                    t.nTop          = make_fit_range(t.nTop, t.nHeight, range->nTop, range->nTop + range->nHeight);
+            }
+
+            if (!Size::inside(range, &t))
             {
                 // Need to do extra job related to the trimming of the rectangle
                 if (!allow_sizing)
@@ -160,6 +182,41 @@ namespace lsp
             return true;
         }
 
+        bool arrange_full_area(
+            ws::rectangle_t *dst,
+            const ws::rectangle_t *trg,
+            const ws::size_limit_t *src,
+            const ws::rectangle_t *range,
+            bool match_rect,
+            bool force)
+        {
+            ws::rectangle_t t;
+
+            // Check that we hit the rectangle
+            if ((match_rect) && (!Size::overlap(trg, range)))
+                return false;
+
+            // Now get the size for both axes
+            t.nLeft         = trg->nLeft;
+            t.nTop          = trg->nTop;
+            t.nWidth        = get_axis_size(src->nMinWidth,  src->nPreWidth,  src->nMaxWidth);
+            t.nHeight       = get_axis_size(src->nMinHeight, src->nPreHeight, src->nMaxHeight);
+
+            // Place the window to fit the range
+            t.nLeft         = make_fit_range(t.nLeft, t.nWidth, range->nLeft, range->nLeft + range->nWidth);
+            t.nTop          = make_fit_range(t.nTop, t.nHeight, range->nTop, range->nTop + range->nHeight);
+            if (Size::inside(range, &t))
+            {
+                *dst            = t;
+                return true;
+            }
+            else if (!force)
+                return false;
+
+            Size::intersection(dst, &t, range);
+            return true;
+        }
+
         status_t arrange_rectangle(
             ws::rectangle_t *dst,
             const ws::rectangle_t *trg,
@@ -172,18 +229,23 @@ namespace lsp
             // Validate arguments
             if ((dst == NULL) || (trg == NULL) || (src == NULL))
                 return STATUS_BAD_ARGUMENTS;
-            // Check the simpliest case
+            // Check the simpliest case, when there are no rules
             if ((ranges == NULL) || (num_ranges == 0))
                 return arrange_direct(dst, trg, src);
             if ((rules == NULL) || (num_rules == 0))
                 return arrange_direct(dst, trg, src);
 
-            // Try to arrange without crossings
-            for (size_t flags=0; flags <= 3; ++flags)
-                for (size_t i=0; i<num_ranges; ++i)
-                    for (size_t j=0; j<num_rules; ++j)
-                        if (arrange_optimistic_2d(dst, trg, src, &ranges[i], &rules[j], flags & 2, flags & 1))
+            // Try to perform optimistic arrange
+            for (size_t flags=0; flags <= 7; ++flags)
+                for (size_t i=0; i<num_rules; ++i)
+                    for (size_t j=0; j<num_ranges; ++j)
+                        if (arrange_optimistic(dst, trg, src, &rules[i], &ranges[j], flags & 1, flags & 2, flags & 4))
                             return STATUS_OK;
+
+            for (size_t flags=0; flags <= 3; ++flags)
+                for (size_t j=0; j<num_ranges; ++j)
+                    if (arrange_full_area(dst, trg, src, &ranges[j], !(flags & 1), !(flags & 2)) == STATUS_OK)
+                        return STATUS_OK;
 
             // All our tries were senseless
             return arrange_direct(dst, trg, src);

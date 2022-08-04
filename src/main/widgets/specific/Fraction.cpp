@@ -174,8 +174,10 @@ namespace lsp
 
             // Configure Window
             sWindow.add(&sList);
-            sWindow.add_arrangement(A_BOTTOM, 0, true);
-            sWindow.add_arrangement(A_TOP, 0, true);
+            sWindow.add_tether(TF_LEFT | TF_TOP | TF_HORIZONTAL | TF_HSTRETCH, 1.0f, 1.0f);
+            sWindow.add_tether(TF_LEFT | TF_TOP | TF_HORIZONTAL | TF_HSTRETCH, 1.0f, -1.0f);
+            sWindow.add_tether(TF_LEFT | TF_BOTTOM | TF_HORIZONTAL | TF_HSTRETCH, 1.0f, 1.0f);
+            sWindow.add_tether(TF_LEFT | TF_BOTTOM | TF_HORIZONTAL | TF_HSTRETCH, 1.0f, -1.0f);
             sWindow.layout()->set_scale(1.0f);
 
             return STATUS_OK;

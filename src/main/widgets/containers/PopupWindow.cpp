@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/arrange.h>
 #include <lsp-plug.in/common/debug.h>
 #include <private/tk/style/BuiltinStyle.h>
 
@@ -84,29 +85,32 @@ namespace lsp
             return STATUS_OK;
         }
 
-        bool PopupWindow::set_arrangements(const lltl::darray<arrangement_t> *list)
+        bool PopupWindow::set_tether(const lltl::darray<tether_t> *list)
         {
-            return vArrangements.set(list);
+            return vTether.set(list);
         }
 
-        bool PopupWindow::set_arrangements(const arrangement_t *list, size_t count)
+        bool PopupWindow::set_tether(const tether_t *list, size_t count)
         {
-            return vArrangements.set_n(count, list);
+            return vTether.set_n(count, list);
         }
 
-        bool PopupWindow::add_arrangement(const arrangement_t *item)
+        bool PopupWindow::add_tether(const tether_t *item)
         {
-            return vArrangements.add(item);
+            return vTether.add(item);
         }
 
-        bool PopupWindow::add_arrangement(arrangement_pos_t pos, float align, bool stretch)
+        bool PopupWindow::add_tether(size_t flags, float halign, float valign)
         {
-            arrangement_t item;
-            item.enPosition     = pos;
-            item.fAlign         = align;
-            item.bStretch       = stretch;
+            tether_t *item      = vTether.add();
+            if (item == NULL)
+                return false;
 
-            return add_arrangement(&item);
+            item->nFlags        = flags;
+            item->fHAlign       = halign;
+            item->fVAlign       = valign;
+
+            return true;
         }
 
         status_t PopupWindow::post_init()
@@ -175,6 +179,7 @@ namespace lsp
                 sVisibility.set(false);
         }
 
+        /*
         bool PopupWindow::init_window()
         {
             // Passed argument
@@ -278,12 +283,125 @@ namespace lsp
             realize(&wrect);
             pWindow->show((rwnd != NULL) ? rwnd->native() : NULL);
             return true;
+        }*/
+
+        bool PopupWindow::init_window()
+        {
+            // Passed argument
+            Widget *w           = sTrgWidget.get();
+            ssize_t screen      = sTrgScreen.get();
+
+            sTrgWidget.set(NULL);
+            sTrgScreen.set(-1);
+
+            ws::IDisplay *dpy   = pDisplay->display();
+
+            // Estimate the target screen to show the window
+            Window *rwnd    = (w != NULL) ? widget_cast<Window>(w->toplevel()) : NULL;
+            if ((rwnd != NULL) && (screen < 0))
+                screen          = rwnd->screen();
+            if ((screen < 0) || (screen >= ssize_t(dpy->screens())))
+                screen      = dpy->default_screen();
+
+            // Destroy the window if it does not match requirements
+            if ((pWindow != NULL) && (pWindow->screen() != size_t(screen)))
+            {
+                pWindow->destroy();
+                delete pWindow;
+                pWindow = NULL;
+            }
+
+            // Now we are ready to create window
+            ws::IWindow *wnd = pWindow;
+            if (wnd == NULL)
+            {
+                // Create window
+                wnd = dpy->create_window(screen);
+                if (wnd == NULL)
+                    return false;
+
+                // Initialize window
+                status_t result = wnd->init();
+                if (result != STATUS_OK)
+                {
+                    wnd->destroy();
+                    delete wnd;
+                    return false;
+                }
+
+                wnd->set_handler(this);
+                wnd->set_border_style(sBorderStyle.get());
+                wnd->set_window_actions(sActions.get_all());
+                pWindow = wnd;
+            }
+
+            // Window has been created, adjust position
+            arrange_window_geometry();
+            pWindow->show((rwnd != NULL) ? rwnd->native() : NULL);
+            return true;
+        }
+
+        void PopupWindow::arrange_window_geometry()
+        {
+            // Obtain information about possible regions of placing the window
+            lltl::darray<ws::rectangle_t> areas;
+            size_t n_monitors = 0;
+            const ws::MonitorInfo *mi = pWindow->display()->enum_monitors(&n_monitors);
+            if (mi != NULL)
+            {
+                // Add primary monitor first
+                for (size_t i=0; i<n_monitors; ++i)
+                {
+                    if (!mi[i].primary)
+                        continue;
+                    ws::rectangle_t *r = areas.add(&mi[i].rect);
+                    if (r != NULL)
+                        pWindow->display()->work_area_geometry(r);
+                }
+                // Add secondary monitors last
+                for (size_t i=0; i<n_monitors; ++i)
+                {
+                    if (mi[i].primary)
+                        continue;
+                    areas.add(&mi[i].rect);
+                }
+            }
+            else
+            {
+                ws::rectangle_t *r = areas.add();
+                if (r != NULL)
+                {
+                    r->nLeft        = 0;
+                    r->nTop         = 0;
+                    pWindow->display()->screen_size(pWindow->screen(), &r->nWidth, &r->nHeight);
+                }
+            }
+
+            // Arrange the window
+            ws::rectangle_t trg, wrect;
+            ws::size_limit_t sr;
+            get_padded_size_limits(&sr);
+            sTrgArea.get(&trg);
+
+            arrange_rectangle(
+                &wrect, &trg, &sr,
+                areas.array(), areas.size(),
+                vTether.array(), vTether.size());
+
+            wrect.nWidth    = lsp_max(1, wrect.nWidth);
+            wrect.nHeight   = lsp_max(1, wrect.nHeight);
+
+            lsp_trace("window geometry: {%d %d %d %d}", int(wrect.nLeft), int(wrect.nTop), int(wrect.nWidth), int(wrect.nHeight));
+            pWindow->set_geometry(&wrect);
+            realize(&wrect);
         }
 
         void PopupWindow::size_request(ws::size_limit_t *r)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
+            bool pre_w          = false;
+            bool pre_h          = false;
 
             r->nMinWidth        = border * 2;
             r->nMinHeight       = r->nMinWidth;
@@ -308,6 +426,10 @@ namespace lsp
                 r->nMaxHeight      += lsp_max(0, cr.nMaxHeight);
                 r->nPreWidth       += lsp_max(0, cr.nPreWidth);
                 r->nPreHeight      += lsp_max(0, cr.nPreHeight);
+                if (cr.nPreWidth  >= 0)
+                    pre_w               = true;
+                if (cr.nPreHeight >= 0)
+                    pre_h               = true;
             }
 
             // Window should be at least of 1x1 pixel size
@@ -315,8 +437,8 @@ namespace lsp
             r->nMinHeight       = lsp_max(1, r->nMinHeight);
             r->nMaxWidth        = lsp_max(1, r->nMaxWidth);
             r->nMaxHeight       = lsp_max(1, r->nMaxHeight);
-            r->nPreWidth        = lsp_max(1, r->nPreWidth);
-            r->nPreHeight       = lsp_max(1, r->nPreHeight);
+            r->nPreWidth        = (pre_w) ? lsp_max(1, r->nPreWidth)   : -1;
+            r->nPreHeight       = (pre_h) ? lsp_max(1, r->nPreHeight) : -1;
 
             // Add self padding
             sPadding.add(r, scaling);

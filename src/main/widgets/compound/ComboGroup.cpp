@@ -134,6 +134,12 @@ namespace lsp
         // ComboGroup implementation
         const w_class_t ComboGroup::metadata        = { "ComboGroup", &WidgetContainer::metadata };
 
+        const tether_t ComboGroup::tether_list[] =
+        {
+            { TF_LEFT | TF_BOTTOM | TF_HORIZONTAL | TF_HSTRETCH,     1.0f,  1.0f  },
+            { TF_LEFT | TF_TOP | TF_HORIZONTAL | TF_HSTRETCH,        1.0f,  -1.0f },
+        };
+
         ComboGroup::ComboGroup(Display *dpy):
             WidgetContainer(dpy),
             sLBox(dpy, this),
@@ -199,8 +205,7 @@ namespace lsp
 
             // Configure Window
             sWindow.add(&sLBox);
-            sWindow.add_arrangement(A_BOTTOM, 0, true);
-            sWindow.add_arrangement(A_TOP, 0, true);
+            sWindow.set_tether(tether_list, sizeof(tether_list)/sizeof(tether_t));
             sWindow.layout()->set_scale(1.0f);
 
             sFont.bind("font", &sStyle);

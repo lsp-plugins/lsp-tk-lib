@@ -68,6 +68,9 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            private:
+                static const tether_t       tether_list[];
+
             protected:
                 typedef struct alloc_t
                 {

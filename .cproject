@@ -39,12 +39,13 @@
 									<listOptionValue builtIn="false" value="LSP_IDE_DEBUG"/>
 									<listOptionValue builtIn="false" value="LSP_TRACE"/>
 									<listOptionValue builtIn="false" value="USE_LIBX11"/>
+									<listOptionValue builtIn="false" value="USE_LIBXRANDR"/>
 									<listOptionValue builtIn="false" value="USE_LIBFREETYPE"/>
 									<listOptionValue builtIn="false" value="USE_LIBSNDFILE"/>
 									<listOptionValue builtIn="false" value="USE_LIBCAIRO"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.dialect.std.1989774018" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.c++11" valueType="enumerated"/>
-								<option id="gnu.cpp.compiler.option.other.other.1804512181" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -msse -msse2 -msse3 -mssse3 -mavx -mavx2 $(shell pkg-config --cflags cairo freetype2)" valueType="string"/>
+								<option id="gnu.cpp.compiler.option.other.other.1804512181" name="Other flags" superClass="gnu.cpp.compiler.option.other.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -msse -msse2 -msse3 -mssse3 -mavx -mavx2 $(shell pkg-config --cflags cairo freetype2 xrandr)" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1903750940" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.debug.940991091" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.debug">
@@ -71,6 +72,7 @@
 									<listOptionValue builtIn="false" value="USE_LIBCAIRO"/>
 								</option>
 								<option id="gnu.c.compiler.option.misc.other.263560418" name="Other flags" superClass="gnu.c.compiler.option.misc.other" useByScannerDiscovery="false" value="-c -fmessage-length=0 -msse -msse2 -msse3 -mssse3 -mavx -mavx2 " valueType="string"/>
+								<option id="gnu.c.compiler.option.dialect.std.178081055" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1117530945" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.debug.988113576" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.debug"/>
@@ -80,7 +82,7 @@
 									<listOptionValue builtIn="false" value="GL"/>
 									<listOptionValue builtIn="false" value="dl"/>
 								</option>
-								<option id="gnu.cpp.link.option.flags.878692709" name="Linker flags" superClass="gnu.cpp.link.option.flags" useByScannerDiscovery="false" value="$(shell pkg-config --libs x11 cairo sndfile freetype2)" valueType="string"/>
+								<option id="gnu.cpp.link.option.flags.878692709" name="Linker flags" superClass="gnu.cpp.link.option.flags" useByScannerDiscovery="false" value="$(shell pkg-config --libs x11 cairo sndfile freetype2 xrandr)" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.1234269312" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -382,14 +384,15 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="DebugLinux"/>
 		<configuration configurationName="Multiple configurations">
 			<resource resourceType="PROJECT" workspacePath="/lsp-tk-lib"/>
 		</configuration>
 		<configuration configurationName="DebugWin"/>
-		<configuration configurationName="Debug">
+		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/lsp-tk-lib"/>
 		</configuration>
-		<configuration configurationName="Release">
+		<configuration configurationName="Debug">
 			<resource resourceType="PROJECT" workspacePath="/lsp-tk-lib"/>
 		</configuration>
 	</storageModule>

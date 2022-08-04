@@ -343,6 +343,13 @@ namespace lsp
                  * @return pointer to the array of enumerated monitors
                  */
                 const ws::MonitorInfo *enum_monitors(size_t *count);
+
+                /**
+                 * Obtain the size of work area on the primary display
+                 * @param r rectangle to store the geometry of work area
+                 * @return status of operation
+                 */
+                status_t work_area_geometry(ws::rectangle_t *r);
         };
     }
 

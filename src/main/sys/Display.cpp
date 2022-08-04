@@ -449,6 +449,11 @@ namespace lsp
         {
             return pDisplay->enum_monitors(count);
         }
+
+        status_t Display::work_area_geometry(ws::rectangle_t *r)
+        {
+            return pDisplay->work_area_geometry(r);
+        }
     }
 
 } /* namespace lsp */

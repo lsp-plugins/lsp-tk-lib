@@ -79,6 +79,9 @@ namespace lsp
             // Stretching
             TF_HSTRETCH     = 1 << 3,   // Stretch horizontally
             TF_VSTRETCH     = 1 << 4,   // Stretch vertically
+            // Maximizing
+            TF_HMAXIMIZE    = 1 << 5,   // Maximize horizontally
+            TF_VMAXIMIZE    = 1 << 6,   // Maximize vertically
         };
 
         enum scrolling_t
