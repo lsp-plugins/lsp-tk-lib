@@ -138,15 +138,9 @@ namespace lsp
                 nFlags          |= TF_INFINITE;
             nRepeatInterval = interval;
 
-            // Submit first task
+            // Submit first task: compute the acutal time when the event should trigger
             if (delay > 0)
-            {
-                // Shift the timestamp by delta
-                system::time_t ts;
-                system::get_time(&ts);
-                ws::timestamp_t delta = (ts.seconds * 1000L) + (ts.nanos / 1000000L); // Get delta in milliseconds
-                delay      += delta;
-            }
+                delay      += system::get_time_millis();
 
             nTaskID     = pDisplay->submit_task(delay, execute, this);
             if (nTaskID < 0)
