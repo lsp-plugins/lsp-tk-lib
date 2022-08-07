@@ -124,6 +124,7 @@ namespace lsp
                 ssize_t                         nCurrIndex;
                 ssize_t                         nLastIndex;
                 size_t                          nKeyScroll;     // Key scroll direction
+                item_t                         *pHoverItem;     // Hover item
 
                 Timer                           sKeyTimer;      // Key scroll timer
                 ScrollBar                       sHBar;
@@ -228,19 +229,15 @@ namespace lsp
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
 
                 virtual status_t            on_mouse_down(const ws::event_t *e);
-
                 virtual status_t            on_mouse_up(const ws::event_t *e);
-
+                virtual status_t            on_mouse_out(const ws::event_t *e);
                 virtual status_t            on_mouse_move(const ws::event_t *e);
-
                 virtual status_t            on_mouse_scroll(const ws::event_t *e);
 
                 virtual status_t            on_key_down(const ws::event_t *e);
-
                 virtual status_t            on_key_up(const ws::event_t *e);
 
                 virtual status_t            on_change();
-
                 virtual status_t            on_submit();
         };
     } /* namespace tk */

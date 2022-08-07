@@ -95,6 +95,7 @@ namespace lsp
             nCurrIndex      = -1;
             nLastIndex      = -1;
             nKeyScroll      = SCR_NONE;
+            pHoverItem      = NULL;
 
             sArea.nLeft     = 0;
             sArea.nTop      = 0;
@@ -641,6 +642,12 @@ namespace lsp
                             s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
                             col.copy(li->text_selected_color()->color());
                         }
+                        else if (it == pHoverItem)
+                        {
+                            col.copy(li->bg_hover_color()->color());
+                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
+                            col.copy(li->text_hover_color()->color());
+                        }
                         else
                         {
                             li->get_actual_bg_color(col);
@@ -650,9 +657,9 @@ namespace lsp
 
                         li->padding()->enter(&xr, &it->r, scaling);
                         sFont.draw(s, col,
-                                xr.nLeft,
-                                xr.nTop  + ((xr.nHeight - fp.Height) * 0.5f) + fp.Ascent,
-                                fscaling, &text);
+                            xr.nLeft,
+                            xr.nTop  + ((xr.nHeight - fp.Height) * 0.5f) + fp.Ascent,
+                            fscaling, &text);
                     }
                     s->clip_end();
                 }
@@ -825,11 +832,8 @@ namespace lsp
 
         status_t ListBox::on_mouse_move(const ws::event_t *e)
         {
-            if (nBMask != ws::MCF_LEFT)
-                return STATUS_OK;
-
             item_t *it  = find_item(e->nLeft, e->nTop);
-            if (it != NULL)
+            if ((it != NULL) && (nBMask == ws::MCF_LEFT))
             {
                 nCurrIndex      = it->index;
                 if (e->nState & ws::MCF_SHIFT)
@@ -837,7 +841,22 @@ namespace lsp
                 else
                     select_single(nCurrIndex, e->nState & ws::MCF_CONTROL);
             }
+            if (pHoverItem != it)
+            {
+                pHoverItem  = it;
+                query_draw();
+            }
 
+            return STATUS_OK;
+        }
+
+        status_t ListBox::on_mouse_out(const ws::event_t *e)
+        {
+            if (pHoverItem != NULL)
+            {
+                pHoverItem      = NULL;
+                query_draw();
+            }
             return STATUS_OK;
         }
 
