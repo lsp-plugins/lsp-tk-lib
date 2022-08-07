@@ -102,7 +102,10 @@ MTEST_BEGIN("tk.widgets.containers", popup)
 
             h->wnd->trigger_area()->set(&r);
             h->wnd->trigger_widget()->set(sender);
+            h->wnd->auto_close()->set(true);
             h->wnd->visibility()->set(true);
+            h->wnd->grab_events(ws::GRAB_DROPDOWN);
+            h->wnd->take_focus();
         }
         else
             h->wnd->visibility()->set(false);
