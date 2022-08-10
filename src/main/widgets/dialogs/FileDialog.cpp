@@ -617,6 +617,7 @@ namespace lsp
             LSP_STATUS_ASSERT(wSAAccess.add(&wSABox));
 
             LSP_STATUS_ASSERT(add_label(&wSABox, "labels.volume_list", -1.0f, &l));
+            l->slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll);
             LSP_STATUS_ASSERT(inject_style(l, "FileDialog::BookmarkLabel"));
 
             LSP_STATUS_ASSERT(wVolumes.init());
@@ -625,6 +626,7 @@ namespace lsp
             LSP_STATUS_ASSERT(wSABox.add(&wVolumes));
 
             LSP_STATUS_ASSERT(add_label(&wSABox, "labels.bookmark_list", -1.0f, &l));
+            l->slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll);
             LSP_STATUS_ASSERT(inject_style(l, "FileDialog::BookmarkLabel"));
 
             LSP_STATUS_ASSERT(wBookmarks.init());
@@ -1951,19 +1953,21 @@ namespace lsp
             LSPString url;
 
             ent->sBookmark.origin   = bookmarks::BM_LSP;
-            if ((res = path->get_last(&ent->sBookmark.name)) != STATUS_OK)
+            if (name == NULL)
+                res     = path->get_last(&ent->sBookmark.name);
+            else
+                res = (ent->sBookmark.name.set(name)) ? STATUS_OK : STATUS_NO_MEM;
+            if (res != STATUS_OK)
                 return res;
             if ((res = path->get(&ent->sBookmark.path)) != STATUS_OK)
                 return res;
-            if (name == NULL)
-                name    = &ent->sBookmark.name;
 
             // Initialize data
             if ((res = ent->sPath.set(path)) != STATUS_OK)
                 return res;
             if ((res = ent->sHlink.init()) != STATUS_OK)
                 return res;
-            if ((res = ent->sHlink.text()->set_raw(name)) != STATUS_OK)
+            if ((res = ent->sHlink.text()->set_raw(&ent->sBookmark.name)) != STATUS_OK)
                 return res;
             if ((res = path->get(&url)) != STATUS_OK)
                 return res;
