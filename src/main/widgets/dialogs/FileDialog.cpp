@@ -349,9 +349,28 @@ namespace lsp
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__NavLabel, "FileDialog::NavLabel", "Label");
+
+            //-----------------------------------------------------------------
+            // FileDialog::BookmarkLabel
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__BookmarkLabel, Label)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__BookmarkLabel, Label)
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__BookmarkLabel, "FileDialog::BookmarkLabel", "Label");
         }
 
         const w_class_t FileDialog::metadata            = { "FileDialog", &Window::metadata };
+
+        template <class T>
+        static inline void destroy_widget(T * &w)
+        {
+            if (w == NULL)
+                return;
+            w->destroy();
+            delete w;
+            w = NULL;
+        }
 
         FileDialog::FileDialog(Display *dpy):
             Window(dpy),
@@ -363,10 +382,12 @@ namespace lsp
             sWAction(dpy),
             sWCancel(dpy),
             sMainGrid(dpy),
-            sSBBookmarks(dpy),
+            wSAAccess(dpy),
+            wSABox(dpy),
             wOptions(dpy),
             wSeparator(dpy),
-            sBookmarks(dpy),
+            wVolumes(dpy),
+            wBookmarks(dpy),
             sBMPopup(dpy),
             wBMAdd(dpy),
             sActionBox(dpy),
@@ -439,10 +460,12 @@ namespace lsp
             sActionBox.destroy();
             sActionAlign.destroy();
             sWarnBox.destroy();
-            sSBBookmarks.destroy();
+            wSAAccess.destroy();
+            wSABox.destroy();
             wOptions.destroy();
             wSeparator.destroy();
-            sBookmarks.destroy();
+            wVolumes.destroy();
+            wBookmarks.destroy();
             sBMPopup.destroy();
             wBMAdd.destroy();
             sMainGrid.destroy();
@@ -455,25 +478,14 @@ namespace lsp
 
             pWSearch = NULL;
 
-            if (pWConfirm != NULL)
-            {
-                pWConfirm->destroy();
-                delete pWConfirm;
-                pWConfirm = NULL;
-            }
-
-            if (pWMessage != NULL)
-            {
-                pWMessage->destroy();
-                delete pWMessage;
-                pWMessage = NULL;
-            }
+            destroy_widget(pWConfirm);
+            destroy_widget(pWMessage);
         }
 
         void FileDialog::drop_bookmarks()
         {
             // Deactivate currently selected bookmark
-            sBookmarks.remove_all();
+            wBookmarks.remove_all();
             pSelBookmark    = NULL;
             pPopupBookmark  = NULL;
 
@@ -581,18 +593,33 @@ namespace lsp
             LSP_STATUS_ASSERT(inject_style(&sWarnBox, "FileDialog::WarningBox"));
             sWarnBox.orientation()->set_horizontal();
 
-            LSP_STATUS_ASSERT(sSBBookmarks.init());
-            LSP_STATUS_ASSERT(inject_style(&sSBBookmarks, "FileDialog::BookmarkArea"));
+            LSP_STATUS_ASSERT(wSAAccess.init());
+            LSP_STATUS_ASSERT(inject_style(&wSAAccess, "FileDialog::BookmarkArea"));
 
-            LSP_STATUS_ASSERT(sBookmarks.init());
-            LSP_STATUS_ASSERT(inject_style(&sBookmarks, "FileDialog::BookmarkBox"));
-            sBookmarks.orientation()->set_vertical();
-            LSP_STATUS_ASSERT(sSBBookmarks.add(&sBookmarks));
+            LSP_STATUS_ASSERT(wSABox.init());
+            wSABox.orientation()->set_vertical();
+            LSP_STATUS_ASSERT(wSAAccess.add(&wSABox));
+
+            LSP_STATUS_ASSERT(add_label(&wSABox, "labels.volume_list", -1.0f, &l));
+            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::BookmarkLabel"));
+
+            LSP_STATUS_ASSERT(wVolumes.init());
+            LSP_STATUS_ASSERT(inject_style(&wVolumes, "FileDialog::BookmarkBox"));
+            wVolumes.orientation()->set_vertical();
+            LSP_STATUS_ASSERT(wSABox.add(&wVolumes));
+
+            LSP_STATUS_ASSERT(add_label(&wSABox, "labels.bookmark_list", -1.0f, &l));
+            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::BookmarkLabel"));
+
+            LSP_STATUS_ASSERT(wBookmarks.init());
+            LSP_STATUS_ASSERT(inject_style(&wBookmarks, "FileDialog::BookmarkBox"));
+            wBookmarks.orientation()->set_vertical();
+            LSP_STATUS_ASSERT(wSABox.add(&wBookmarks));
 
             LSP_STATUS_ASSERT(wOptions.init());
             LSP_STATUS_ASSERT(inject_style(&wOptions, "FileDialog::OptionBox"));
             wOptions.orientation()->set_vertical();
-            LSP_STATUS_ASSERT(wOptions.add(&sSBBookmarks));
+            LSP_STATUS_ASSERT(wOptions.add(&wSAAccess));
 
             LSP_STATUS_ASSERT(wSeparator.init());
             LSP_STATUS_ASSERT(inject_style(&wSeparator, "FileDialog::OptionSeparator"));
@@ -621,11 +648,9 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.add(&wNavBox));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWPath));
             // Row 2
-            LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.bookmark_list", -1.0f, &l));
-            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::Label"));
+            LSP_STATUS_ASSERT(sMainGrid.add(&wOptions, 2, 1)); // 2 rows
             LSP_STATUS_ASSERT(sMainGrid.add(&sWarnBox));
             // Row 3
-            LSP_STATUS_ASSERT(sMainGrid.add(&wOptions));
             LSP_STATUS_ASSERT(sMainGrid.add(&sWFiles));
             // Row 4
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
@@ -663,8 +688,8 @@ namespace lsp
             if (id >= 0) id = wUp.slots()->bind(SLOT_SUBMIT, slot_on_up, self());
             if (id >= 0) id = wBMAdd.slots()->bind(SLOT_SUBMIT, slot_on_bm_add, self());
             if (id >= 0) id = sWPath.slots()->bind(SLOT_KEY_UP, slot_on_path_key_up, self());
-            if (id >= 0) id = sBookmarks.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll, self());
-            if (id >= 0) id = sSBBookmarks.slots()->bind(SLOT_REALIZED, slot_on_bm_realized, self());
+            if (id >= 0) id = wBookmarks.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll, self());
+            if (id >= 0) id = wSAAccess.slots()->bind(SLOT_REALIZED, slot_on_bm_realized, self());
 
             if (id < 0)
                 return -id;
@@ -1193,8 +1218,8 @@ namespace lsp
                 return STATUS_OK;
 
             ws::rectangle_t sa, sb;
-            _this->sBookmarks.get_rectangle(&sa);
-            _this->sBookmarks.get_rectangle(&sb);
+            _this->wBookmarks.get_rectangle(&sa);
+            _this->wBookmarks.get_rectangle(&sb);
             float ydelta    = float(sb.nHeight) / n;
 
             if (sa.nHeight >= (ydelta * 4))
@@ -1583,7 +1608,7 @@ namespace lsp
                 ent->sHlink.popup()->set(&sBMPopup);
                 if (b->origin & bookmarks::BM_LSP)
                 {
-                    if ((res = sBookmarks.add(&ent->sHlink)) != STATUS_OK)
+                    if ((res = wBookmarks.add(&ent->sHlink)) != STATUS_OK)
                         break;
                 }
                 ent->sBookmark.path.swap(&b->path);
@@ -1656,7 +1681,7 @@ namespace lsp
         {
             // Make invisible for LSP toolkit
             entry->sBookmark.origin &= ~bookmarks::BM_LSP;
-            sBookmarks.remove(&entry->sHlink);
+            wBookmarks.remove(&entry->sHlink);
             if (pSelBookmark == entry)
                 pSelBookmark = NULL;
             if (pPopupBookmark == entry)
@@ -1723,7 +1748,7 @@ namespace lsp
         status_t FileDialog::sync_bookmarks()
         {
             status_t res;
-            if ((res = sBookmarks.remove_all()) != STATUS_OK)
+            if ((res = wBookmarks.remove_all()) != STATUS_OK)
                 return res;
 
             for (size_t i=0, n=vBookmarks.size(); i<n; ++i)
@@ -1731,12 +1756,12 @@ namespace lsp
                 bm_entry_t *ent = vBookmarks.uget(i);
                 if ((ent == NULL) || (!(ent->sBookmark.origin & bookmarks::BM_LSP)))
                     continue;
-                if ((res = sBookmarks.add(&ent->sHlink)) != STATUS_OK)
+                if ((res = wBookmarks.add(&ent->sHlink)) != STATUS_OK)
                     break;
             }
 
             if (res != STATUS_OK)
-                sBookmarks.remove_all();
+                wBookmarks.remove_all();
 
             return (res == STATUS_OK) ? save_bookmarks(NULL) : res;
         }

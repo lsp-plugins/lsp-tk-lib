@@ -8,6 +8,7 @@
 		<bg2 value="#2f3037" />
 		<bg3 value="#45464d" />
 		<fg value="#ebecee" />
+		<fgh value="#fcfdff" />
 		<hole value="#000000" />
 		<glass value="#101010" />
 		<fgwarn value="#ffff00" />
@@ -99,8 +100,10 @@
 	<style class="ListBoxItem" parents="root">
 		<bg.color value="bg" />
 		<bg.selected.color value="fg" />
+		<bg.hover.color value="fgh" />
 		<text.color value="fg" />
 		<text.selected.color value="bg" />
+		<text.hover.color value="bg" />
 	</style>
 	
 	<style class="ScrollBar" parents="root">

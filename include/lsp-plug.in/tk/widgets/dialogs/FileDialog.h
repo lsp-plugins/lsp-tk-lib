@@ -95,10 +95,12 @@ namespace lsp
                 Button                      sWAction;       // Action button (save/load)
                 Button                      sWCancel;       // Cancel button
                 Grid                        sMainGrid;      // The main grid containing all widgets
-                ScrollArea                  sSBBookmarks;   // Scroll area for holding bookmark list
+                ScrollArea                  wSAAccess;      // Scroll area for holding access lists
+                Box                         wSABox;         // Scroll area box
                 Box                         wOptions;       // Additional options below the bookmark list
                 Separator                   wSeparator;     // Separator between options and bookmark list
-                Box                         sBookmarks;     // List of bookmarks
+                Box                         wVolumes;       // List of volumes
+                Box                         wBookmarks;     // List of bookmarks
                 Menu                        sBMPopup;
                 Button                      wBMAdd;
                 Box                         sActionBox;
@@ -109,9 +111,9 @@ namespace lsp
                 Button                      wGo;
                 Button                      wUp;
                 Box                         wNavBox;
+                Label                       sWWarning;
                 MessageBox                 *pWConfirm;
                 MessageBox                 *pWMessage;
-                Label                       sWWarning;
                 Label                      *pWSearch;
 
                 lltl::parray<Widget>        vWidgets;
