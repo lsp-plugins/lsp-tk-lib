@@ -1236,13 +1236,13 @@ namespace lsp
             ScrollArea *_area = widget_cast<ScrollArea>(sender);
             if ((_this == NULL) || (_area == NULL))
                 return STATUS_OK;
-            size_t n    = _this->vBookmarks.size();
+            size_t n    = _this->vBookmarks.size() + _this->vVolumes.size();
             if (n <= 0)
                 return STATUS_OK;
 
             ws::rectangle_t sa, sb;
-            _this->wBookmarks.get_rectangle(&sa);
-            _this->wBookmarks.get_rectangle(&sb);
+            _this->wSAAccess.get_rectangle(&sa);
+            _this->wSABox.get_rectangle(&sb);
             float ydelta    = float(sb.nHeight) / n;
 
             if (sa.nHeight >= (ydelta * 4))
