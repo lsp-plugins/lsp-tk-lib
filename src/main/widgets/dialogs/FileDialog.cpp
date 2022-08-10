@@ -388,7 +388,8 @@ namespace lsp
             wSeparator(dpy),
             wVolumes(dpy),
             wBookmarks(dpy),
-            sBMPopup(dpy),
+            wVolPopup(dpy),
+            wBMPopup(dpy),
             wBMAdd(dpy),
             sActionBox(dpy),
             sActionAlign(dpy),
@@ -436,6 +437,7 @@ namespace lsp
             nFlags     |= FINALIZED;
             Window::destroy();
 
+            drop_volumes();
             drop_bookmarks();
             destroy_file_entries(&vFiles);
 
@@ -466,7 +468,8 @@ namespace lsp
             wSeparator.destroy();
             wVolumes.destroy();
             wBookmarks.destroy();
-            sBMPopup.destroy();
+            wVolPopup.destroy();
+            wBMPopup.destroy();
             wBMAdd.destroy();
             sMainGrid.destroy();
             sWWarning.destroy();
@@ -482,24 +485,37 @@ namespace lsp
             destroy_widget(pWMessage);
         }
 
-        void FileDialog::drop_bookmarks()
+        void FileDialog::drop_bookmark_list(lltl::parray<bm_entry_t> *list)
         {
-            // Deactivate currently selected bookmark
-            wBookmarks.remove_all();
-            pSelBookmark    = NULL;
-            pPopupBookmark  = NULL;
-
-            // Destroy bookmarks storage
-            for (size_t i=0, n=vBookmarks.size(); i<n; ++i)
+            for (size_t i=0, n=list->size(); i<n; ++i)
             {
-                bm_entry_t *ent = vBookmarks.uget(i);
+                bm_entry_t *ent = list->uget(i);
+                if (pSelBookmark == ent)
+                    pSelBookmark    = NULL;
+                if (pPopupBookmark == ent)
+                    pPopupBookmark  = NULL;
+
                 if (ent != NULL)
                 {
                     ent->sHlink.destroy();
                     delete ent;
                 }
             }
-            vBookmarks.flush();
+            list->flush();
+        }
+
+        void FileDialog::drop_bookmarks()
+        {
+            // Deactivate currently selected bookmark
+            wBookmarks.remove_all();
+            drop_bookmark_list(&vBookmarks);
+        }
+
+        void FileDialog::drop_volumes()
+        {
+            // Deactivate currently selected bookmark
+            wVolumes.remove_all();
+            drop_bookmark_list(&vVolumes);
         }
 
         void FileDialog::destroy_file_entries(lltl::parray<f_entry_t> *list)
@@ -625,7 +641,8 @@ namespace lsp
             LSP_STATUS_ASSERT(inject_style(&wSeparator, "FileDialog::OptionSeparator"));
             wSeparator.orientation()->set_horizontal();
 
-            LSP_STATUS_ASSERT(init_bm_popup_menu());
+            LSP_STATUS_ASSERT(init_bm_popup_menu(&wVolPopup, false));
+            LSP_STATUS_ASSERT(init_bm_popup_menu(&wBMPopup, true));
 
             // Initialize supplementary elements
             // Path box
@@ -751,18 +768,22 @@ namespace lsp
                 sWAction.text()->set("actions.open");
         }
 
-        status_t FileDialog::init_bm_popup_menu()
+        status_t FileDialog::init_bm_popup_menu(tk::Menu *menu, bool editable)
         {
-            LSP_STATUS_ASSERT(sBMPopup.init());
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.open", slot_on_bm_menu_open));
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.link.follow", slot_on_bm_menu_follow));
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.link.copy", slot_on_bm_menu_copy));
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.delete", slot_on_bm_menu_delete));
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, NULL, NULL));
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.move_first", slot_on_bm_menu_first));
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.move_up", slot_on_bm_menu_up));
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.move_down", slot_on_bm_menu_down));
-            LSP_STATUS_ASSERT(add_menu_item(&sBMPopup, "actions.edit.move_last", slot_on_bm_menu_last));
+            LSP_STATUS_ASSERT(menu->init());
+            LSP_STATUS_ASSERT(add_menu_item(menu, "actions.open", slot_on_bm_menu_open));
+            LSP_STATUS_ASSERT(add_menu_item(menu, "actions.link.follow", slot_on_bm_menu_follow));
+            LSP_STATUS_ASSERT(add_menu_item(menu, "actions.link.copy", slot_on_bm_menu_copy));
+
+            if (editable)
+            {
+                LSP_STATUS_ASSERT(add_menu_item(menu, "actions.edit.delete", slot_on_bm_menu_delete));
+                LSP_STATUS_ASSERT(add_menu_item(menu, NULL, NULL));
+                LSP_STATUS_ASSERT(add_menu_item(menu, "actions.edit.move_first", slot_on_bm_menu_first));
+                LSP_STATUS_ASSERT(add_menu_item(menu, "actions.edit.move_up", slot_on_bm_menu_up));
+                LSP_STATUS_ASSERT(add_menu_item(menu, "actions.edit.move_down", slot_on_bm_menu_down));
+                LSP_STATUS_ASSERT(add_menu_item(menu, "actions.edit.move_last", slot_on_bm_menu_last));
+            }
 
             return STATUS_OK;
         }
@@ -1412,6 +1433,7 @@ namespace lsp
                 pWConfirm->hide();
             hide();
             destroy_file_entries(&vFiles);
+            drop_volumes();
             drop_bookmarks();
 
             // Execute slots
@@ -1423,6 +1445,7 @@ namespace lsp
             // Hide dialogs
             if (pWConfirm != NULL)
                 pWConfirm->hide();
+            drop_volumes();
             drop_bookmarks();
             hide();
             destroy_file_entries(&vFiles);
@@ -1434,7 +1457,9 @@ namespace lsp
         status_t FileDialog::on_show()
         {
             sync_filters();
+            refresh_volumes();
             refresh_bookmarks();
+            select_current_bookmark();
             refresh_current_path();
             return STATUS_OK;
         }
@@ -1448,7 +1473,12 @@ namespace lsp
         status_t FileDialog::on_bm_submit(Widget *sender)
         {
             bm_entry_t *bm = find_bookmark(sender);
-            return (bm != NULL) ? sPath.set_raw(&bm->sBookmark.path) : STATUS_OK;
+            if (bm == NULL)
+                return STATUS_OK;
+            status_t res = sPath.set_raw(&bm->sBookmark.path);
+            if (res == STATUS_OK)
+                select_bookmark(bm);
+            return res;
         }
 
         status_t FileDialog::on_dlg_go(void *data)
@@ -1545,10 +1575,79 @@ namespace lsp
             return bookmarks::read_bookmarks_qt5(&vbm, &path);
         }
 
+        ssize_t FileDialog::compare_volume_info(const system::volume_info_t *a, const system::volume_info_t *b)
+        {
+            return a->target.compare_to(&b->target);
+        }
+
+        status_t FileDialog::refresh_volumes()
+        {
+            status_t res;
+            io::Path path;
+
+            // Drop previously created volumes
+            drop_volumes();
+
+            // Obtain the volume information
+            lltl::parray<system::volume_info_t> vi;
+            if ((res = system::get_volume_info(&vi)) != STATUS_OK)
+                return res;
+            lsp_finally { system::free_volume_info(&vi); };
+            vi.qsort(compare_volume_info);
+
+            // Create widgets
+            bm_entry_t *ent = NULL;
+            lsp_finally {
+                if (ent != NULL)
+                {
+                    ent->sHlink.destroy();
+                    delete ent;
+                }
+            };
+
+            for (size_t i=0, n=vi.size(); i<n; ++i)
+            {
+                system::volume_info_t *v = vi.uget(i);
+                if ((v == NULL) || (!(v->flags & (system::VF_DRIVE | system::VF_REMOTE))))
+                    continue;
+
+                // Allocate entry
+                if ((ent = new bm_entry_t(pDisplay)) == NULL)
+                {
+                    res = STATUS_NO_MEM;
+                    break;
+                }
+
+                // Initialize data
+                if ((res = path.set(&v->target)) != STATUS_OK)
+                    break;
+                if ((res = init_bookmark_entry(ent, &v->target, &path, false)) != STATUS_OK)
+                    break;
+                ent->sBookmark.origin = 0;
+
+                // Add to the list
+                if ((res = wVolumes.add(&ent->sHlink)) != STATUS_OK)
+                    break;
+
+                // Commit to list
+                res     = (vVolumes.add(ent)) ? STATUS_OK : STATUS_NO_MEM;
+                if (res != STATUS_OK)
+                    break;
+                ent     = NULL;
+            }
+
+            if (res != STATUS_OK)
+                drop_volumes();
+
+            return STATUS_OK;
+        }
+
         status_t FileDialog::refresh_bookmarks()
         {
+            io::Path path;
+
+            // Drop previously created bookmarks
             drop_bookmarks();
-            LSPString url;
 
             // Read LSP bookmarks
             lltl::parray<bookmarks::bookmark_t> bm, tmp;
@@ -1571,6 +1670,14 @@ namespace lsp
 
             // Create widgets
             bm_entry_t *ent = NULL;
+            lsp_finally {
+                if (ent != NULL)
+                {
+                    ent->sHlink.destroy();
+                    delete ent;
+                }
+            };
+
             for (size_t i=0, n=bm.size(); i<n; ++i)
             {
                 bookmarks::bookmark_t *b = bm.uget(i);
@@ -1585,56 +1692,31 @@ namespace lsp
                 }
 
                 // Initialize data
-                if ((res = ent->sPath.set(&b->path)) != STATUS_OK)
+                if ((res = path.set(&b->path)) != STATUS_OK)
                     break;
-                if ((res = ent->sPath.canonicalize()) != STATUS_OK)
+                if ((res = init_bookmark_entry(ent, &b->name, &path, true)) != STATUS_OK)
                     break;
-                if ((res = ent->sHlink.init()) != STATUS_OK)
-                    break;
-                if ((res = ent->sHlink.text()->set_raw(&b->name)) != STATUS_OK)
-                    break;
-                res = (url.set_ascii("file://")) ? STATUS_OK : STATUS_NO_MEM;
-                if (res == STATUS_OK)
-                    res = (url.append(&b->path)) ? STATUS_OK : STATUS_NO_MEM;
-                if (res != STATUS_OK)
-                    break;
+                ent->sBookmark.origin = b->origin;
 
-                ent->sHlink.style()->inject_parent(pBMNormal);
-                ent->sHlink.url()->set_raw(&url);
-
-                ent->sHlink.slots()->bind(SLOT_SUBMIT, slot_on_bm_submit, self());
-                ent->sHlink.slots()->bind(SLOT_BEFORE_POPUP, slot_on_bm_popup, self());
-                ent->sHlink.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll);
-                ent->sHlink.popup()->set(&sBMPopup);
                 if (b->origin & bookmarks::BM_LSP)
                 {
                     if ((res = wBookmarks.add(&ent->sHlink)) != STATUS_OK)
                         break;
                 }
-                ent->sBookmark.path.swap(&b->path);
-                ent->sBookmark.name.swap(&b->name);
-                ent->sBookmark.origin = b->origin;
 
-                // Commit to list if
-                res = (vBookmarks.add(ent)) ? STATUS_OK : STATUS_NO_MEM;
+                // Commit to list
+                res     = (vBookmarks.add(ent)) ? STATUS_OK : STATUS_NO_MEM;
                 if (res != STATUS_OK)
                     break;
+                ent     = NULL;
             }
 
             bookmarks::destroy_bookmarks(&bm);
 
             if (res != STATUS_OK)
-            {
                 drop_bookmarks();
-                if (ent != NULL)
-                {
-                    ent->sHlink.destroy();
-                    delete ent;
-                }
-                return res;
-            }
 
-            return select_current_bookmark();
+            return res;
         }
 
         status_t FileDialog::save_bookmarks(lltl::parray<bookmarks::bookmark_t> *vbm)
@@ -1699,6 +1781,25 @@ namespace lsp
             return sync_bookmarks();
         }
 
+        void FileDialog::select_bookmark(bm_entry_t *bm)
+        {
+            // Check state
+            if (bm == pSelBookmark)
+                return;
+
+            // Deactivate selected bookmark
+            if (pSelBookmark != NULL)
+            {
+                pSelBookmark->sHlink.style()->remove_parent(pBMSel);
+                pSelBookmark->sHlink.style()->inject_parent(pBMNormal);
+            }
+            pSelBookmark = bm;
+            if (pSelBookmark != NULL)
+            {
+                pSelBookmark->sHlink.style()->remove_parent(pBMNormal);
+                pSelBookmark->sHlink.style()->inject_parent(pBMSel);
+            }
+        }
 
         status_t FileDialog::select_current_bookmark()
         {
@@ -1714,32 +1815,26 @@ namespace lsp
             if ((res = path.canonicalize()) != STATUS_OK)
                 return res;
 
-            bm_entry_t *found = NULL;
+            // Lookup around volumes
+            for (size_t i=0, n=vVolumes.size(); i<n; ++i)
+            {
+                bm_entry_t *ent = vVolumes.uget(i);
+                if ((ent != NULL) && (ent->sPath.equals(&path)))
+                {
+                    select_bookmark(ent);
+                    return STATUS_OK;
+                }
+            }
+
+            // Lookup around bookmarks
             for (size_t i=0, n=vBookmarks.size(); i<n; ++i)
             {
                 bm_entry_t *ent = vBookmarks.uget(i);
                 if ((ent != NULL) && (ent->sPath.equals(&path)))
                 {
-                    found = ent;
-                    break;
+                    select_bookmark(ent);
+                    return STATUS_OK;
                 }
-            }
-
-            // Check state
-            if (found == pSelBookmark)
-                return STATUS_OK;
-
-            // Deactivate selected bookmark
-            if (pSelBookmark != NULL)
-            {
-                pSelBookmark->sHlink.style()->remove_parent(pBMSel);
-                pSelBookmark->sHlink.style()->inject_parent(pBMNormal);
-            }
-            pSelBookmark = found;
-            if (pSelBookmark != NULL)
-            {
-                pSelBookmark->sHlink.style()->remove_parent(pBMNormal);
-                pSelBookmark->sHlink.style()->inject_parent(pBMSel);
             }
 
             return STATUS_OK;
@@ -1772,6 +1867,12 @@ namespace lsp
             if (hlink == NULL)
                 return NULL;
 
+            for (size_t i=0, n=vVolumes.size(); i<n; ++i)
+            {
+                bm_entry_t *ent = vVolumes.uget(i);
+                if ((ent != NULL) && (hlink == &ent->sHlink))
+                    return ent;
+            }
             for (size_t i=0, n=vBookmarks.size(); i<n; ++i)
             {
                 bm_entry_t *ent = vBookmarks.uget(i);
@@ -1832,7 +1933,7 @@ namespace lsp
                 return STATUS_NO_MEM;
             }
 
-            if ((res = init_bookmark_entry(ent, &path)) != STATUS_OK)
+            if ((res = init_bookmark_entry(ent, NULL, &path, true)) != STATUS_OK)
             {
                 vBookmarks.premove(ent);
                 ent->sHlink.destroy();
@@ -1844,7 +1945,7 @@ namespace lsp
             return sync_bookmarks();
         }
 
-        status_t FileDialog::init_bookmark_entry(bm_entry_t *ent, const io::Path *path)
+        status_t FileDialog::init_bookmark_entry(bm_entry_t *ent, const LSPString *name, const io::Path *path, bool editable)
         {
             status_t res;
             LSPString url;
@@ -1854,13 +1955,15 @@ namespace lsp
                 return res;
             if ((res = path->get(&ent->sBookmark.path)) != STATUS_OK)
                 return res;
+            if (name == NULL)
+                name    = &ent->sBookmark.name;
 
             // Initialize data
             if ((res = ent->sPath.set(path)) != STATUS_OK)
                 return res;
             if ((res = ent->sHlink.init()) != STATUS_OK)
                 return res;
-            if ((res = ent->sHlink.text()->set_raw(&ent->sBookmark.name)) != STATUS_OK)
+            if ((res = ent->sHlink.text()->set_raw(name)) != STATUS_OK)
                 return res;
             if ((res = path->get(&url)) != STATUS_OK)
                 return res;
@@ -1869,13 +1972,12 @@ namespace lsp
 
             ent->sHlink.text_layout()->set_halign(-1.0f);
             ent->sHlink.follow()->set(false);
+            ent->sHlink.style()->inject_parent(pBMNormal);
             ent->sHlink.url()->set_raw(&url);
-            ent->sHlink.padding()->set_horizontal(8, 8);
-            ent->sHlink.padding()->set_vertical(2, 2);
             ent->sHlink.slots()->bind(SLOT_SUBMIT, slot_on_bm_submit, self());
             ent->sHlink.slots()->bind(SLOT_BEFORE_POPUP, slot_on_bm_popup, self());
             ent->sHlink.slots()->bind(SLOT_MOUSE_SCROLL, slot_on_bm_scroll);
-            ent->sHlink.popup()->set(&sBMPopup);
+            ent->sHlink.popup()->set((editable) ? &wBMPopup : &wVolPopup);
 
             return STATUS_OK;
         }
