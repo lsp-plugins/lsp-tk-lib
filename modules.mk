@@ -117,6 +117,11 @@ LIBICONV_NAME              := libiconv
 LIBICONV_TYPE              := opt
 LIBICONV_LDFLAGS           := -liconv
 
+LIBMPR_VERSION             := system
+LIBMPR_NAME                := libmpr
+LIBMPR_TYPE                := opt
+LIBMPR_LDFLAGS             := -lmpr
+
 LIBMSACM_VERSION           := system
 LIBMSACM_NAME              := libmsacm
 LIBMSACM_TYPE              := opt
