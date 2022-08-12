@@ -217,6 +217,7 @@ namespace lsp
                 static status_t         read_gtk2_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
                 static status_t         read_gtk3_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
                 static status_t         read_qt5_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
+                static status_t         read_lnk_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
                 status_t                save_bookmarks(lltl::parray<bookmarks::bookmark_t> *vbm);
                 status_t                sync_bookmarks();
                 status_t                refresh_volumes();

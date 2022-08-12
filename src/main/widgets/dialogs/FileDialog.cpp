@@ -1577,6 +1577,18 @@ namespace lsp
             return bookmarks::read_bookmarks_qt5(&vbm, &path);
         }
 
+        status_t FileDialog::read_lnk_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm)
+        {
+            io::Path path;
+            status_t res = system::get_home_directory(&path);
+            if (res != STATUS_OK)
+                return res;
+            if ((res = path.append_child(LNK_BOOKMARK_PATH)) != STATUS_OK)
+                return res;
+
+            return bookmarks::read_bookmarks_lnk(&vbm, &path);
+        }
+
         ssize_t FileDialog::compare_volume_info(const system::volume_info_t *a, const system::volume_info_t *b)
         {
             return a->target.compare_to(&b->target);
@@ -1664,6 +1676,8 @@ namespace lsp
                 bookmarks::merge_bookmarks(&bm, &changes, &tmp, bookmarks::BM_GTK3);
             if ((res = read_qt5_bookmarks(tmp)) == STATUS_OK)
                 bookmarks::merge_bookmarks(&bm, &changes, &tmp, bookmarks::BM_QT5);
+            if ((res = read_lnk_bookmarks(tmp)) == STATUS_OK)
+                bookmarks::merge_bookmarks(&bm, &changes, &tmp, bookmarks::BM_LNK);
             bookmarks::destroy_bookmarks(&tmp);
 
             // Check if we need to store bookmarks
