@@ -2108,9 +2108,11 @@ namespace lsp
                 const char *text = "unknown I/O error";
                 switch (xres)
                 {
-                    case STATUS_PERMISSION_DENIED:    text = "permission denied"; break;
-                    case STATUS_NOT_FOUND:    text = "directory does not exist"; break;
-                    case STATUS_NO_MEM:    text = "not enough memory"; break;
+                    case STATUS_PERMISSION_DENIED:      text = "permission denied"; break;
+                    case STATUS_NOT_FOUND:              text = "directory does not exist"; break;
+                    case STATUS_NOT_DIRECTORY:          text = "not a directory"; break;
+                    case STATUS_NO_MEM:                 text = "not enough memory"; break;
+                    case STATUS_NO_DATA:                text = "no data"; break;
                     default: break;
                 }
 
