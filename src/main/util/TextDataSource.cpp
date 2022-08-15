@@ -60,36 +60,35 @@ namespace lsp
             }
 
             // Analyze found MIME type
-            void *data      = NULL;
+            char *data      = NULL;
             size_t bytes    = 0;
             switch (idx)
             {
                 case 0: // UTF8_STRING
                 case 1: // text/plain;charset=utf-8
                     data    = sText.clone_utf8(&bytes);
-                    bytes  -= sizeof(char);             // 1 extra byte for zero character
+                    while ((bytes > 0) && (data[bytes-1] == '\0'))
+                        --bytes;
                     break;
                 case 2: // text/plain;charset=UTF-16LE
-                    data    = __IF_LEBE(
-                            sText.clone_utf16(&bytes),
-                            sText.clone_native(&bytes, "UTF16-LE")
-                        );
-                    bytes  -= sizeof(lsp_utf16_t);      // 2 extra bytes for zero character
+                    data = reinterpret_cast<char *>(sText.clone_utf16le(&bytes));
+                    while ((bytes >= 2) && (data[bytes-1] == '\0') && (data[bytes-2] == '\0'))
+                        bytes -= 2;
                     break;
                 case 3: // text/plain;charset=UTF-16BE
-                    data = __IF_LEBE(
-                            sText.clone_native(&bytes, "UTF16-BE"),
-                            sText.clone_utf16(&bytes)
-                        );
-                    bytes  -= sizeof(lsp_utf16_t);      // 2 extra bytes for zero character
+                    data = reinterpret_cast<char *>(sText.clone_utf16be(&bytes));
+                    while ((bytes >= 2) && (data[bytes-1] == '\0') && (data[bytes-2] == '\0'))
+                        bytes -= 2;
                     break;
                 case 4:
                     data    = sText.clone_ascii(&bytes);
-                    bytes  -= sizeof(char);             // 1 extra byte for zero character
+                    while ((bytes > 0) && (data[bytes-1] == '\0'))
+                        --bytes;
                     break;
                 case 5:
                     data    = sText.clone_native(&bytes);
-                    bytes  -= sizeof(char);             // 4 extra byte for zero character
+                    while ((bytes > 0) && (data[bytes-1] == '\0'))
+                        --bytes;
                     break;
                 default:
                     break;
