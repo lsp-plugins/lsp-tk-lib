@@ -320,9 +320,9 @@ namespace lsp
             ssize_t w = ssize_t(r.nWidth >> 1), h = ssize_t(r.nHeight >> 1);
 
             if (angle & 1)
-                s->wire_arc(font, r.nLeft + w, r.nTop + cx + (angle - 2) * (wid >> 2), s1, 0, M_PI * 2.0, 2.0f * scaling);
+                s->wire_arc(font, r.nLeft + w, r.nTop + cx + (angle - 2) * (wid >> 2), s1, 0, M_PI * 2.0f, 2.0f * scaling);
             else
-                s->wire_arc(font, r.nLeft + cx + (angle - 1) * (wid >> 2), r.nTop + h, s1, 0, M_PI * 2.0, 2.0f * scaling);
+                s->wire_arc(font, r.nLeft + cx + (angle - 1) * (wid >> 2), r.nTop + h, s1, 0, M_PI * 2.0f, 2.0f * scaling);
 
             font.lightness((angle & 2) ? b1 : b2);
             if (angle & 1)
