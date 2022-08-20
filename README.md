@@ -6,14 +6,20 @@ Graphical toolkit library used by Linux Studio Plugins Project.
 
 ## Key features
 
+* Supported platforms:
+  * FreeBSD (X11/Cairo);
+  * GNU/Linux (X11/Cairo);
+  * Windows (WinAPI/D2D1).
 * Pretty leightweight, only about 2 MB of compiled code.
-* No global state, all operations are performed on tk::Display main object and
-  tk::Widget-derived objects. This makes possible to have multiple versions of
-  library for instances in the same runtime under certain circumstances.
-* Basic styling support. Style schema can be loaded from the XML file.
+* Almost minimum global state (used only in case when underlying API requires global variables),
+  all operations are performed on `tk::Display` main object and objects derived from `tk::Widget`.
+  This makes possible to have multiple versions of library for instances in the same runtime under
+  certain circumstances.
+* Basic styling support. Style schema can be loaded from the XML file and updated in runtime.
 * Automatic space and widget layout allocation.
 * Dynamic widget scaling is supported for High DPI displays.
-* Multilingual support, languages may be switched at runtime.
+* Multilingual support, languages may be switched in runtime without need of application reload.
+  There is also a flexible way to manage access to the dicionary data.
 * All widgets provide set of object properties which change the appearance and
   behaviour of the widget in runtime.
 * Slots (one publisher - multiple subscribers) for handling UI events.
@@ -33,7 +39,7 @@ The full list of provided widgets:
   * Menu - popup menu.
 * Widget containers:
   * Align - widget alignment among the surrounding container.
-  * Box - container for packaging widgets in a single horizontal row or vertical column.
+  * Box - container for packaging widgets into a single horizontal row or vertical column.
   * Grid - container for packaging widgets into table.
   * Group - container for surrounding widgets into a distinguishable group.
   * MultiLabel - widget that allows to implement overlay of multiple labels on the same area.
@@ -42,8 +48,8 @@ The full list of provided widgets:
 * Dialogs:
   * FileDialog - widget for selecting files for load/save operations.
   * MessageBox - widget for displaying popup messages.
-* 2D graph rendering:
-  * Graph - widget for rendering 2D graphical data.
+* 2D graph widgets for rendering graphs and plots:
+  * Graph - widget for rendering 2D graphical data (graphs and plots).
   * GraphAxis - axis on a graph widget.
   * GraphDot - dot on a graph widget.
   * GraphFrameBuffer - frame buffer for drawing on the graph widget.
@@ -57,7 +63,7 @@ The full list of provided widgets:
   * Edit - single line text edit widget.
   * Fader - fader widget.
   * Hyperlink - hyperlink widget.
-  * Indicator - 7-segment indicator.
+  * Indicator - 7-segment LED indicator.
   * Knob - single rotating knob.
   * Label - single/multiline text.
   * Led - led widget.
@@ -66,7 +72,7 @@ The full list of provided widgets:
   * ProgressBar - widget for displaying progress of some long lasting process.
   * RadioButton - rounded single on/off toggle.
   * ScrollBar - single scroll bar.
-  * Separator - separator used in widget containers
+  * Separator - separator widget to visually separate space allocated in widget containers.
   * Switch - an analog-looking on/off toggle.
   * Void - void widget which can be used for filling empty area.
 * Specifific widgets
@@ -93,6 +99,57 @@ LSP theme:
 Drak flat theme:
 
 ![Indicator widget](res/doc/filedialog-dark.png)
+
+## Multilingual support
+
+Each string is associated with a dot-separated text key which defines the corresponding
+path in the dictionary to access the localized string nb. All dictionaries for the same language
+are stored as JSON files in a directory with the symbolic name of the language (for example, `en`).
+All possible languages are stored in a single localization directory which is passed to the
+toolkit. Additional fallback `default` directory is also considered for searching keys which
+are not present in the current language.
+
+Example of a dictionary `actions.json`:
+```
+{
+	"cancel": "Cancel",
+	"nav": {
+		"go": "Go",
+		"up": "Up"
+	},
+	"to_bookmarks": "+Bookmarks",
+	"dlg": {
+		"open": "Open dialog",
+		"save": "Save dialog"
+	},
+	"open": "Open",
+	"save": "Save",
+	"link": {
+		"follow": "Follow link",
+		"copy": "Copy link"
+	},
+	"edit": {
+		"delete": "Delete",
+		"move_first": "Move first",
+		"move_last": "Move last",
+		"move_up": "Move up",
+		"move_down": "Move down",
+		"cut": "Cut",
+		"copy": "Copy",
+		"paste": "Paste"
+	},
+	"confirm": {
+		"yes": "Yes",
+		"no": "No"
+	},
+	"ok": "OK"
+}
+```
+
+The string `Open dialog` from the localization data can be accessed in the toolkit by specifying
+path `actions.dlg.open`. Additionally, there is a way to manage access to the localization data
+in case when bundles are organized in some other way or stored as built-in into application resources.
+
 
 ## Example
 

@@ -33,6 +33,11 @@ namespace lsp
 {
     namespace tk
     {
+        /**
+         * A localized string that requires access to dictionary to resolve the actual
+         * localized string value. There is also possible to define raw text without
+         * access to the dictionary.
+         */
         class String: public SimpleProperty
         {
             private:
