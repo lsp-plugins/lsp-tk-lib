@@ -253,7 +253,7 @@ namespace lsp
                     if (!mi[i].primary)
                         continue;
                     primary = mi;
-                    ws::rectangle_t *r = areas.add(&wa);
+                    ws::rectangle_t *r = areas.add(&mi[i].rect);
                     if ((has_wa) && (r != NULL))
                         Size::intersection(r, &wa); // Compute intersection if overlap
                 }
