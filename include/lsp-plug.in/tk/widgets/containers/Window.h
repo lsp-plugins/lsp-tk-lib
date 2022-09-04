@@ -125,7 +125,7 @@ namespace lsp
                 // Focus operations
                 inline bool         check_focus(Widget *w) const    { return pFocused == w; }
                 virtual bool        take_focus(Widget *w);
-                bool                kill_focus(Widget *w);
+                bool                do_kill_focus(Widget *w);
                 size_t              make_key_pressed(ws::code_t code);
                 size_t              make_key_released(ws::code_t code);
                 status_t            init_internal(bool create_handle);

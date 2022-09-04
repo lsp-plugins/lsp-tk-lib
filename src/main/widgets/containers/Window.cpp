@@ -898,7 +898,7 @@ namespace lsp
                         h->handle_event(&ev);
                     }
 
-                    kill_focus(pFocused);
+                    do_kill_focus(pFocused);
                     break;
                 }
 
@@ -1054,7 +1054,7 @@ namespace lsp
             return true;
         }
 
-        bool Window::kill_focus(Widget *w)
+        bool Window::do_kill_focus(Widget *w)
         {
             // Check that widget owns focus
             if (w != pFocused)
@@ -1132,7 +1132,7 @@ namespace lsp
                 return;
 
             // Kill focus on the widget
-            kill_focus(w);
+            do_kill_focus(w);
 
             // Send UIE_MOUSE_OUT and discard mouse handler
             Widget *old = hMouse.pWidget;
