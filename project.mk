@@ -23,5 +23,5 @@ ARTIFACT_ID                 = LSP_TK_LIB
 ARTIFACT_NAME               = lsp-tk-lib
 ARTIFACT_DESC               = Graphical toolkit library for Linux Studio Plugins Project
 ARTIFACT_HEADERS            = lsp-plug.in
-ARTIFACT_VERSION            = 1.0.4
+ARTIFACT_VERSION            = 1.0.5-devel
 ARTIFACT_EXPORT_ALL         = 1
