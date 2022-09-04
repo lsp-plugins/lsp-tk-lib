@@ -504,7 +504,7 @@ namespace lsp
             s->clear(col);
             col.copy(sColor);
             col.scale_lch_luminance(bright);
-            s->fill_rect(col, &sAAll);
+            s->fill_rect(col, SURFMASK_NONE, 0.0f, &sAAll);
 
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {

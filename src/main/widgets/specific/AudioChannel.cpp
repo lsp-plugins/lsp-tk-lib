@@ -324,7 +324,7 @@ namespace lsp
 
                     float sy            = r.nHeight * 0.5f;
                     bool aa             = s->set_antialiasing(false);
-                    s->line(r.nLeft, sy, r.nLeft + r.nWidth, sy, line_w, line);
+                    s->line(line, r.nLeft, sy, r.nLeft + r.nWidth, sy, line_w);
                     s->set_antialiasing(aa);
                 }
             }

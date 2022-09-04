@@ -102,7 +102,10 @@ MTEST_BEGIN("tk.widgets.containers", popup)
 
             h->wnd->trigger_area()->set(&r);
             h->wnd->trigger_widget()->set(sender);
+            h->wnd->auto_close()->set(true);
             h->wnd->visibility()->set(true);
+            h->wnd->grab_events(ws::GRAB_DROPDOWN);
+            h->wnd->take_focus();
         }
         else
             h->wnd->visibility()->set(false);
@@ -224,7 +227,13 @@ MTEST_BEGIN("tk.widgets.containers", popup)
             LSPString id;
             size_t col = 0;
 
-            tk::arrangement_pos_t arr[] = { tk::A_BOTTOM, tk::A_TOP, tk::A_RIGHT, tk::A_LEFT };
+            size_t tether[] =
+            {
+                tk::TF_BOTTOM,
+                tk::TF_TOP,
+                tk::TF_RIGHT,
+                tk::TF_LEFT,
+            };
 
             for (size_t i=0; i<4; ++i)
             {
@@ -232,7 +241,7 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(id.fmt_ascii("popup-%d", int(i)));
                 MTEST_ASSERT(pw = new tk::PopupWindow(dpy));
                 MTEST_ASSERT(init_widget(pw, vh, NULL, id.get_ascii()) == STATUS_OK);
-                pw->add_arrangement(arr[i]);
+                pw->add_tether(tether[i]);
                 pw->bg_color()->set_rgb24(next_color(col));
                 pw->constraints()->set(32, 128, 0, 0);
 
@@ -261,8 +270,8 @@ MTEST_BEGIN("tk.widgets.containers", popup)
                 MTEST_ASSERT(id.fmt_ascii("popup-%d", int(i+4)));
                 MTEST_ASSERT(pw = new tk::PopupWindow(dpy));
                 MTEST_ASSERT(init_widget(pw, vh, NULL, id.get_ascii()) == STATUS_OK);
-                pw->add_arrangement(arr[i*2]);
-                pw->add_arrangement(arr[i*2+1]);
+                pw->add_tether(tether[i*2]);
+                pw->add_tether(tether[i*2+1]);
                 pw->bg_color()->set_rgb24(next_color(col));
                 pw->constraints()->set(32, 128, 0, 0);
 

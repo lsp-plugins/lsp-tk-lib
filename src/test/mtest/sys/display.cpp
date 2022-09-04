@@ -69,14 +69,14 @@ MTEST_BEGIN("tk.sys", display)
         wnd->size()->set(320, 200);
         wnd->slot(tk::SLOT_CLOSE)->bind(slot_close, this);
         wnd->slot(tk::SLOT_KEY_UP)->bind(slot_key_up, this);
-        wnd->pointer()->set(ws::MP_TABLE_CELL);
+        wnd->pointer()->set(ws::MP_HOURGLASS);
         wnd->layout()->set(-0.5, 0.5, 0.5, 0.5);
 
         // Initialize void widget
         MTEST_ASSERT(wVoid->init() == STATUS_OK);
         wVoid->bg_color()->set_rgb(0, 1.0, 0.0);
         wVoid->constraints()->set(160, 100, 320, 200);
-        wVoid->pointer()->set(ws::MP_DRAW);
+        wVoid->pointer()->set(ws::MP_HAND);
         MTEST_ASSERT(wnd->add(wVoid) == STATUS_OK);
 
         // Show window

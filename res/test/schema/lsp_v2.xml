@@ -109,8 +109,10 @@
 		
 		<bg.color value="bg2" />
 		<bg.selected.color value="bc" />
+		<bg.hover.color value="bc2" />
 		<text.color value="fg2" />
 		<text.selected.color value="fg2" />
+		<text.hover.color value="fg2" />
 	</style>
 	
 	<style class="ScrollBar" parents="root">

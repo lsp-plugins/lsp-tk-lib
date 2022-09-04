@@ -74,9 +74,11 @@ namespace lsp
                 size_t                      nCols;              // Cached number of columns
                 calc_color_t                pCalcColor;         // Function to compute
 
-                float                      *fRGBA;              // RGBA buffer
+                float                      *fRGBA;              // RGBA buffer for applying effects
+                uint8_t                    *vRGBA;              // RGBA buffer for drawing
                 uint8_t                    *pfRGBA;             // Unaligned RGBA buffer
                 size_t                      nCapacity;          // RGBA buffer capacity
+                size_t                      nPixels;            // Number of pixels
 
             protected:
                 void                        calc_rainbow_color(float *rgba, const float *value, size_t n);

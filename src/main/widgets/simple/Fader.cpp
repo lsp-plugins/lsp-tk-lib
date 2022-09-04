@@ -537,13 +537,13 @@ namespace lsp
                     sborder.scale_lch_luminance(bright);
 
                     if (angle & 1) // vertical
-                        g = s->radial_gradient(0, sSize.nHeight, scaling, 0, sSize.nHeight, delta);
+                        g = s->radial_gradient(0, sSize.nHeight, scaling, sSize.nHeight, delta);
                     else // horizontal
-                        g = s->radial_gradient(0, sSize.nHeight, scaling, 0, sSize.nHeight, delta);
+                        g = s->radial_gradient(0, sSize.nHeight, scaling, sSize.nHeight, delta);
 
                     g->add_color(0.0, sborder);
                     g->add_color(1.0, 0.5 * sborder.red(), 0.5 *  sborder.green(), 0.5 * sborder.blue());
-                    s->fill_round_rect(g, SURFMASK_ALL_CORNER, sradius, &h);
+                    s->fill_rect(g, SURFMASK_ALL_CORNER, sradius, &h);
                     delete g;
 
                     h.nLeft        += 1;
@@ -557,7 +557,7 @@ namespace lsp
             {
                 // Just draw simple border
                 sborder.scale_lch_luminance(bright);
-                s->fill_round_rect(sborder, SURFMASK_ALL_CORNER, sradius, &h);
+                s->fill_rect(sborder, SURFMASK_ALL_CORNER, sradius, &h);
                 sradius         = lsp_max(0, sradius - schamfer);
                 h.nLeft        += schamfer;
                 h.nTop         += schamfer;
@@ -567,7 +567,7 @@ namespace lsp
 
             // Draw the scale
             {
-                s->fill_round_rect(sdcol, SURFMASK_ALL_CORNER, sradius, &h);
+                s->fill_rect(sdcol, SURFMASK_ALL_CORNER, sradius, &h);
                 float balance   = sValue.get_normalized(sBalance.get());
                 float value     = sValue.get_normalized();
 
@@ -605,7 +605,7 @@ namespace lsp
                 }
 
                 s->clip_begin(&c);
-                s->fill_round_rect(scol, SURFMASK_ALL_CORNER, sradius, &h);
+                s->fill_rect(scol, SURFMASK_ALL_CORNER, sradius, &h);
                 s->clip_end();
             }
 
@@ -626,12 +626,12 @@ namespace lsp
                     float l        = float(i + 1.0f) / (bchamfer + 1);
 
                     // Create gradient
-                    g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, 0, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
+                    g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
                     bborder.lightness(1.0f);
                     g->add_color(0.0, bborder.red(), bborder.green(), bborder.blue());
                     bborder.lightness(xb * l);
                     g->add_color(1.0, bborder.red(), bborder.green(), bborder.blue());
-                    s->fill_round_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
+                    s->fill_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
                     delete g;
 
                     // Update rect
@@ -643,19 +643,19 @@ namespace lsp
                 }
 
                 // Draw button face
-                g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, 0, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
+                g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
                 button.lightness(1.0f);
                 g->add_color(0.0, button.red(), button.green(), button.blue());
                 button.lightness(xb);
                 g->add_color(1.0, button.red(), button.green(), button.blue());
-                s->fill_round_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
+                s->fill_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
                 delete g;
             }
             else
             {
                 // Just draw simple border
                 bborder.scale_lch_luminance(bright);
-                s->fill_round_rect(bborder, SURFMASK_ALL_CORNER, bradius, &h);
+                s->fill_rect(bborder, SURFMASK_ALL_CORNER, bradius, &h);
                 bradius         = lsp_max(0, bradius - bchamfer);
                 h.nLeft        += bchamfer;
                 h.nTop         += bchamfer;
@@ -663,7 +663,7 @@ namespace lsp
                 h.nHeight      -= (bchamfer << 1);
 
                 // Fill the button
-                s->fill_round_rect(button, SURFMASK_ALL_CORNER, bradius, &h);
+                s->fill_rect(button, SURFMASK_ALL_CORNER, bradius, &h);
             }
 
             // Restore antialiasing

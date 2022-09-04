@@ -84,7 +84,7 @@ namespace lsp
             // Destroy display
             if (pDisplay != NULL)
             {
-                ws::lsp_ws_free_display(pDisplay);
+                ws::free_display(pDisplay);
                 pDisplay = NULL;
             }
 
@@ -151,7 +151,7 @@ namespace lsp
         status_t Display::init(int argc, const char **argv)
         {
             // Create display
-            ws::IDisplay *dpy = ws::lsp_ws_create_display(argc, argv);
+            ws::IDisplay *dpy = ws::create_display(argc, argv);
             if (dpy == NULL)
                 return STATUS_NO_MEM;
 
@@ -160,7 +160,7 @@ namespace lsp
             if (res != STATUS_OK)
             {
                 dpy->destroy();
-                ws::lsp_ws_free_display(dpy);
+                ws::free_display(dpy);
             }
 
             return res;
@@ -430,9 +430,9 @@ namespace lsp
             return pDisplay->reject_drag();
         }
 
-        status_t Display::accept_drag(ws::IDataSink *sink, ws::drag_t action, bool internal, const ws::rectangle_t *r)
+        status_t Display::accept_drag(ws::IDataSink *sink, ws::drag_t action, const ws::rectangle_t *r)
         {
-            return pDisplay->accept_drag(sink, action, internal, r);
+            return pDisplay->accept_drag(sink, action, r);
         }
 
         const char * const *Display::get_drag_mime_types()
@@ -448,6 +448,11 @@ namespace lsp
         const ws::MonitorInfo *Display::enum_monitors(size_t *count)
         {
             return pDisplay->enum_monitors(count);
+        }
+
+        status_t Display::work_area_geometry(ws::rectangle_t *r)
+        {
+            return pDisplay->work_area_geometry(r);
         }
     }
 

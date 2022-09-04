@@ -243,13 +243,13 @@ namespace lsp
             if ((vVisible.is_empty()) && (force))
             {
                 s->clip_begin(area);
-                s->fill_rect(bg_color, &sSize);
+                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
                 if (border > 0)
                 {
                     border_color.copy(sBorderColor);
                     border_color.scale_lch_luminance(bright);
                     Rectangle::enter_border(&xr, &sSize, border);
-                    s->fill_frame(border_color, &sSize, &xr);
+                    s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                 }
 
                 s->clip_end();
@@ -282,7 +282,7 @@ namespace lsp
                     {
                         w->get_actual_bg_color(bg_color);
                         if (Size::overlap(area, &wc->a))
-                            s->fill_frame(bg_color, &wc->a, &wc->s);
+                            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &wc->a, &wc->s);
 
                         // Draw spacing
                         if (((i + 1) < n) && (spacing > 0))
@@ -304,7 +304,7 @@ namespace lsp
                             }
 
                             if (Size::overlap(area, &xr))
-                                s->fill_rect(bg_color, &xr);
+                                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
                         }
 
                         // Draw border
@@ -313,7 +313,7 @@ namespace lsp
                             border_color.copy(sBorderColor);
                             border_color.scale_lch_luminance(bright);
                             Rectangle::enter_border(&xr, &sSize, border);
-                            s->fill_frame(border_color, &sSize, &xr);
+                            s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                         }
                     }
                     s->clip_end();

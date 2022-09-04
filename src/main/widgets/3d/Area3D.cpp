@@ -269,32 +269,28 @@ namespace lsp
             c.r     = sColor.red();
             c.g     = sColor.green();
             c.b     = sColor.blue();
-            c.a     = 1.0f;
+            c.a     = 0.0f;
             r3d->set_bg_color(&c);
 
             // Perform a draw call
-            void *buf       = s->start_direct();
-            {
-                // Estimate the right memory offset
-                size_t stride   = s->stride();
-                uint8_t *dst    = reinterpret_cast<uint8_t *>(buf);
+            size_t count        = sCanvas.nWidth * sCanvas.nHeight;
+            uint8_t *buf        = static_cast<uint8_t *>(malloc(count * sizeof(uint32_t)));
+            if (buf == NULL)
+                return;
+            lsp_finally{ free(buf); };
 
-                r3d->locate(sCanvas.nLeft, sCanvas.nTop, sCanvas.nWidth, sCanvas.nHeight);
-                pDisplay->sync();
+            r3d->locate(sCanvas.nLeft, sCanvas.nTop, sCanvas.nWidth, sCanvas.nHeight);
+            pDisplay->sync();
 
-                r3d->begin_draw();
-                    sSlots.execute(SLOT_DRAW3D, this, r3d);
-                    r3d->sync();
-                    r3d->read_pixels(dst, stride, r3d::PIXEL_RGBA);
+            r3d->begin_draw();
+                sSlots.execute(SLOT_DRAW3D, this, r3d);
+                r3d->sync();
+                r3d->read_pixels(buf, r3d::PIXEL_BGRA);
+            r3d->end_draw();
 
-                    for (ssize_t i=0; i<sCanvas.nHeight; ++i)
-                    {
-                        dsp::abgr32_to_bgrff32(dst, dst, sCanvas.nWidth);
-                        dst    += stride;
-                    }
-                r3d->end_draw();
-            }
-            s->end_direct();
+            dsp::pbgra32_set_alpha(buf, buf, 0xff, count);
+            s->draw_raw(buf, sCanvas.nWidth, sCanvas.nHeight, sCanvas.nWidth * 4,
+                sCanvas.nLeft, sCanvas.nTop, 1.0f, 1.0f, 0.0f);
         }
 
         void Area3D::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -322,15 +318,13 @@ namespace lsp
             s->clip_begin(area);
             {
                 // Draw widget background
-                s->fill_rect(bg_color, &sSize);
+                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
 
                 bool aa = s->set_antialiasing(true);
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
+                s->fill_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
-                // Get surface of widget
-                cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);
-                if (cv != NULL)
-                    s->draw(cv, sCanvas.nLeft, sCanvas.nTop);
+                // Draw the contents
+                draw(s);
 
                 // Draw the glass and the border
                 color.copy(sGlassColor);
@@ -348,7 +342,7 @@ namespace lsp
                             sSize.nWidth, sSize.nHeight, flat
                         );
                     if (cv != NULL)
-                        s->draw(cv, sSize.nLeft, sSize.nTop);
+                        s->draw(cv, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
                 }
                 else
                 {
@@ -363,7 +357,7 @@ namespace lsp
 
         #ifdef LSP_TRACE
             system::get_time(&end);
-            float time = float(end.seconds - start.seconds) + (end.nanos - start.nanos) * 1e-9f;
+            float time = float(end.seconds - start.seconds) * 1000.0f + (end.nanos - start.nanos) * 1e-6f;
             lsp_trace("render time: %.3f ms", time);
         #endif /* LSP_TRACE */
         }

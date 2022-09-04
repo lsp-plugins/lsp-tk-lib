@@ -141,7 +141,7 @@ namespace lsp
             if (fabs(sDirection.rho()) <= 1e-5f)
             {
                 s->clip_begin(area);
-                    s->fill_rect(bg, &sSize);
+                    s->fill_rect(bg, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }
@@ -165,7 +165,7 @@ namespace lsp
             if (!line2d_delta_equation(cp.x, cp.y, dx, dy, a, b, c))
             {
                 s->clip_begin(area);
-                    s->fill_rect(bg, &sSize);
+                    s->fill_rect(bg, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }
@@ -179,7 +179,7 @@ namespace lsp
                 ap.x, ap.y, bp.x, bp.y))
             {
                 s->clip_begin(area);
-                    s->fill_rect(bg, &sSize);
+                    s->fill_rect(bg, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }
@@ -229,22 +229,22 @@ namespace lsp
             bool aa = s->set_antialiasing(true);
             s->clip_begin(area);
             {
-                s->fill_rect(bg, &sSize);
+                s->fill_rect(bg, SURFMASK_NONE, 0.0f, &sSize);
 
                 if (n > 0)
                 {
-                    s->fill_triangle(ap.x, ap.y, bp.x, bp.y, vp[0].x, vp[0].y, col);
+                    s->fill_triangle(col, ap.x, ap.y, bp.x, bp.y, vp[0].x, vp[0].y);
                     if (n > 1)
                     {
-                        s->fill_triangle(ap.x, ap.y, bp.x, bp.y, vp[1].x, vp[1].y, col);
-                        s->fill_triangle(ap.x, ap.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y, col);
-                        s->fill_triangle(bp.x, bp.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y, col);
+                        s->fill_triangle(col, ap.x, ap.y, bp.x, bp.y, vp[1].x, vp[1].y);
+                        s->fill_triangle(col, ap.x, ap.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y);
+                        s->fill_triangle(col, bp.x, bp.y, vp[0].x, vp[0].y, vp[1].x, vp[1].y);
                     }
                 }
 
                 // Draw the border
                 if (border > 0)
-                    s->line(ap.x, ap.y, bp.x, bp.y, border, bcol);
+                    s->line(bcol, ap.x, ap.y, bp.x, bp.y, border);
             }
             s->clip_end();
             s->set_antialiasing(aa);

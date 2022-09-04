@@ -275,15 +275,15 @@ namespace lsp
             s->clip_begin(area);
             {
                 // Draw widget background
-                s->fill_rect(bg_color, &sSize);
+                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
 
                 bool aa = s->set_antialiasing(true);
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
+                s->fill_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
                 // Get surface of widget
                 cv  = get_surface(s, sCanvas.nWidth, sCanvas.nHeight);
                 if (cv != NULL)
-                    s->draw(cv, sCanvas.nLeft, sCanvas.nTop);
+                    s->draw(cv, sCanvas.nLeft, sCanvas.nTop, 1.0f, 1.0f, 0.0f);
 
                 // Draw the glass and the border
                 color.copy(sGlassColor);
@@ -301,7 +301,7 @@ namespace lsp
                             sSize.nWidth, sSize.nHeight, flat
                         );
                     if (cv != NULL)
-                        s->draw(cv, sSize.nLeft, sSize.nTop);
+                        s->draw(cv, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
                 }
                 else
                 {

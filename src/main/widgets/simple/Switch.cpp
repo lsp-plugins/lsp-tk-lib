@@ -199,13 +199,13 @@ namespace lsp
 
                     // Create gradient
                     g = s->radial_gradient(
-                        r.nLeft + r.nWidth, r.nTop, 0,
-                        r.nLeft + r.nWidth, r.nTop, delta * 2.0f
-                    );
+                        r.nLeft + r.nWidth, r.nTop,
+                        r.nLeft + r.nWidth, r.nTop,
+                        delta * 2.0f);
 
                     g->add_color(0.0, bc.red(), bc.green(), bc.blue());
                     g->add_color(1.0, 0.5 * bc.red(), 0.5 *  bc.green(), 0.5 * bc.blue());
-                    s->wire_rect(g, r.nLeft, r.nTop, r.nWidth-1, r.nHeight-1, 1.0f);
+                    s->wire_rect(g, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop, r.nWidth-1, r.nHeight-1, 1.0f);
                     delete g;
 
                     // Update rect
@@ -219,13 +219,13 @@ namespace lsp
                 bc.lightness(xb);
                 size_t zbw      = lsp_max(1, xbw * scaling);
                 g = s->radial_gradient(
-                    r.nLeft + r.nWidth, r.nTop, 0,
-                    r.nLeft + r.nWidth, r.nTop, delta * 2.0f
-                );
+                    r.nLeft + r.nWidth, r.nTop,
+                    r.nLeft + r.nWidth, r.nTop,
+                    delta * 2.0f);
 
                 g->add_color(0.0, bc.red(), bc.green(), bc.blue());
                 g->add_color(1.0, 0.5 * bc.red(), 0.5 *  bc.green(), 0.5 * bc.blue());
-                s->fill_rect(g, r.nLeft, r.nTop, r.nWidth, r.nHeight);
+                s->fill_rect(g, SURFMASK_NONE, 0.0f, &r);
                 delete g;
 
                 // Update rect
@@ -236,7 +236,7 @@ namespace lsp
             }
 
             // Draw hole
-            s->wire_rect(hole, r.nLeft, r.nTop, r.nWidth-1, r.nHeight-1, lsp_max(1.0f, scaling));
+            s->wire_rect(hole, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop, r.nWidth-1, r.nHeight-1, lsp_max(1.0f, scaling));
             r.nLeft        += 1;
             r.nTop         += 1;
             r.nWidth       -= 2;
@@ -267,9 +267,9 @@ namespace lsp
                 bcl.lightness(bright);
 
                 if (angle & 1)
-                    s->fill_rect(bcl, r.nLeft, r.nTop + i, r.nWidth, dw1 - i);
+                    s->fill_rect(bcl, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop + i, r.nWidth, dw1 - i);
                 else
-                    s->fill_rect(bcl, r.nLeft + i, r.nTop, dw1 - i, r.nHeight);
+                    s->fill_rect(bcl, SURFMASK_NONE, 0.0f, r.nLeft + i, r.nTop, dw1 - i, r.nHeight);
             }
 
             for (ssize_t i=0; i < dc1; ++i)
@@ -278,9 +278,9 @@ namespace lsp
                 bcl.lightness(bright);
 
                 if (angle & 1)
-                    s->fill_rect(bcl, r.nLeft, r.nTop + dw1 + i, r.nWidth, dc1 - i);
+                    s->fill_rect(bcl, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop + dw1 + i, r.nWidth, dc1 - i);
                 else
-                    s->fill_rect(bcl, r.nLeft + dw1 + i, r.nTop, dc1 - i, r.nHeight);
+                    s->fill_rect(bcl, SURFMASK_NONE, 0.0f, r.nLeft + dw1 + i, r.nTop, dc1 - i, r.nHeight);
             }
 
             for (ssize_t i=0; i < dw2; ++i)
@@ -290,9 +290,9 @@ namespace lsp
                 bcl.lightness(bright);
 
                 if (angle & 1)
-                    s->fill_rect(bcl, r.nLeft, r.nTop + r.nHeight - dw2, r.nWidth, dw2 - i);
+                    s->fill_rect(bcl, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop + r.nHeight - dw2, r.nWidth, dw2 - i);
                 else
-                    s->fill_rect(bcl, r.nLeft + r.nWidth - dw2, r.nTop, dw2 - i, r.nHeight);
+                    s->fill_rect(bcl, SURFMASK_NONE, 0.0f, r.nLeft + r.nWidth - dw2, r.nTop, dw2 - i, r.nHeight);
             }
 
             for (ssize_t i=0; i < dc2; ++i)
@@ -301,9 +301,9 @@ namespace lsp
                 bcl.lightness(bright);
 
                 if (angle & 1)
-                    s->fill_rect(bcl, r.nLeft, r.nTop + cx, r.nWidth, dc2 - i);
+                    s->fill_rect(bcl, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop + cx, r.nWidth, dc2 - i);
                 else
-                    s->fill_rect(bcl, r.nLeft + cx, r.nTop, dc2 - i, r.nHeight);
+                    s->fill_rect(bcl, SURFMASK_NONE, 0.0f, r.nLeft + cx, r.nTop, dc2 - i, r.nHeight);
             }
 
             // Draw symbols
@@ -311,7 +311,7 @@ namespace lsp
             b1          = bc - ((2 - pos) * 0.1);
             b2          = bc - (pos * 0.1);
             wid        -= dw1 + dw2;
-            float s1    = wid * 0.125f;
+            float s1    = (wid + scaling) * 0.125f;
             float s2    = wid * 0.125f;
 
             font.lightness((angle & 2) ? b2 : b1);
@@ -320,23 +320,23 @@ namespace lsp
             ssize_t w = ssize_t(r.nWidth >> 1), h = ssize_t(r.nHeight >> 1);
 
             if (angle & 1)
-                s->wire_arc(r.nLeft + w, r.nTop + cx + (angle - 2) * (wid >> 2), s1, 0, M_PI * 2.0, 2.0f * scaling, font);
+                s->wire_arc(font, r.nLeft + w, r.nTop + cx + (angle - 2) * (wid >> 2), s1, 0, M_PI * 2.0f, 2.0f * scaling);
             else
-                s->wire_arc(r.nLeft + cx + (angle - 1) * (wid >> 2), r.nTop + h, s1, 0, M_PI * 2.0, 2.0f * scaling, font);
+                s->wire_arc(font, r.nLeft + cx + (angle - 1) * (wid >> 2), r.nTop + h, s1, 0, M_PI * 2.0f, 2.0f * scaling);
 
             font.lightness((angle & 2) ? b1 : b2);
             if (angle & 1)
                 s->line(
+                    font,
                     r.nLeft + w, r.nTop + cx - (angle - 2) * (wid >> 2) + s2,
                     r.nLeft + w, r.nTop + cx - (angle - 2) * (wid >> 2) - s2,
-                    2.0f * scaling, font
-                );
+                    2.0f * scaling);
             else
                 s->line(
+                    font,
                     r.nLeft + cx - (angle - 1) * (wid >> 2) + s2, r.nTop + h,
                     r.nLeft + cx - (angle - 1) * (wid >> 2) - s2, r.nTop + h,
-                    2.0f * scaling, font
-                );
+                    2.0f * scaling);
 
             s->set_antialiasing(aa);
         }

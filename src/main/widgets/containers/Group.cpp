@@ -366,7 +366,7 @@ namespace lsp
                         s->clip_begin(area);
                         {
                             pWidget->get_actual_bg_color(color);
-                            s->fill_frame(color, &sSize, &xr);
+                            s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                         }
                         s->clip_end();
                     }
@@ -377,7 +377,7 @@ namespace lsp
                 s->clip_begin(area);
                 {
                     get_child_bg_color(color);
-                    s->fill_rect(color, &sSize);
+                    s->fill_rect(color, SURFMASK_NONE, 0.0f, &sSize);
                     bg   = true;
                 }
                 s->clip_end();
@@ -404,7 +404,7 @@ namespace lsp
                         xr.nHeight -= xg;
 
                         ssize_t ir  = lsp_max(0, radius - border);
-                        s->fill_round_frame(color, ir, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, &sSize, &xr);
+                        s->fill_frame(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &sSize, &xr);
                     }
 
                     // Draw frame
@@ -412,7 +412,7 @@ namespace lsp
                     color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
-                    s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
+                    s->wire_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
                 }
 
                 // Draw text
@@ -431,7 +431,7 @@ namespace lsp
                     color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
-                    s->fill_round_rect(color, mask, ir, &sLabel);
+                    s->fill_rect(color, mask, ir, &sLabel);
 
                     // Draw text
                     LSPString text;

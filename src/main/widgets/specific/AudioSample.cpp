@@ -760,7 +760,7 @@ namespace lsp
             // Draw label background
             lsp::Color color(sLabelBgColor);
             color.scale_lch_luminance(bright);
-            s->fill_round_rect(color, SURFMASK_ALL_CORNER, rad, &xr);
+            s->fill_rect(color, SURFMASK_ALL_CORNER, rad, &xr);
 
             // Draw label text
             xr.nLeft           += padding;
@@ -847,7 +847,7 @@ namespace lsp
                     bool aa             = s->set_antialiasing(false);
                     for (size_t i=0; i<items; i += 2)
                     {
-                        s->line(xr.nLeft, xr.nTop, xr.nLeft + xr.nWidth, xr.nTop, line_w, color);
+                        s->line(color, xr.nLeft, xr.nTop, xr.nLeft + xr.nWidth, xr.nTop, line_w);
                         xr.nTop            += xr.nHeight * 2;
                     }
                     s->set_antialiasing(aa);
@@ -880,7 +880,7 @@ namespace lsp
                     bool aa             = s->set_antialiasing(false);
                     for (size_t i=0; i<items; ++i)
                     {
-                        s->line(xr.nLeft, xr.nTop + sy, xr.nLeft + xr.nWidth, xr.nTop + sy, line_w, color);
+                        s->line(color, xr.nLeft, xr.nTop + sy, xr.nLeft + xr.nWidth, xr.nTop + sy, line_w);
                         xr.nTop            += xr.nHeight;
                     }
                     s->set_antialiasing(aa);
@@ -917,10 +917,10 @@ namespace lsp
             s->clip_begin(area);
             {
                 // Draw widget background
-                s->fill_rect(bg_color, &sSize);
+                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
 
                 bool aa = s->set_antialiasing(true);
-                s->fill_round_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
+                s->fill_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
                 // Get surface of widget
                 cv  = get_surface(s, sGraph.nWidth, sGraph.nHeight);
@@ -933,13 +933,17 @@ namespace lsp
                         ws::rectangle_t xr  = sGraph;
                         xr.nLeft           += xbw;
                         xr.nTop            += xbw;
+
                         xr.nWidth           = lsp_max(0, xr.nWidth  - xbw * 2);
                         xr.nHeight          = lsp_max(0, xr.nHeight - xbw * 2);
 
-                        s->draw(cv, &xr);
+                        float sx            = float(xr.nWidth ) / float(cv->width());
+                        float sy            = float(xr.nHeight) / float(cv->height());
+
+                        s->draw(cv, xr.nLeft, xr.nTop, sx, sy, 0.0f);
                     }
                     else
-                        s->draw(cv, sGraph.nLeft, sGraph.nTop);
+                        s->draw(cv, sGraph.nLeft, sGraph.nTop, 1.0f, 1.0f, 0.0f);
                 }
 
                 // Draw the glass and the border
@@ -961,7 +965,7 @@ namespace lsp
                             sSize.nWidth, sSize.nHeight, flat
                         );
                     if (cv != NULL)
-                        s->draw(cv, sSize.nLeft, sSize.nTop);
+                        s->draw(cv, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
                 }
                 else
                 {

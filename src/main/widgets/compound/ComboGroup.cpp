@@ -134,6 +134,12 @@ namespace lsp
         // ComboGroup implementation
         const w_class_t ComboGroup::metadata        = { "ComboGroup", &WidgetContainer::metadata };
 
+        const tether_t ComboGroup::tether_list[] =
+        {
+            { TF_LEFT | TF_BOTTOM | TF_HORIZONTAL | TF_HSTRETCH,     1.0f,  1.0f  },
+            { TF_LEFT | TF_TOP | TF_HORIZONTAL | TF_HSTRETCH,        1.0f,  -1.0f },
+        };
+
         ComboGroup::ComboGroup(Display *dpy):
             WidgetContainer(dpy),
             sLBox(dpy, this),
@@ -199,8 +205,7 @@ namespace lsp
 
             // Configure Window
             sWindow.add(&sLBox);
-            sWindow.add_arrangement(A_BOTTOM, 0, true);
-            sWindow.add_arrangement(A_TOP, 0, true);
+            sWindow.set_tether(tether_list, sizeof(tether_list)/sizeof(tether_t));
             sWindow.layout()->set_scale(1.0f);
 
             sFont.bind("font", &sStyle);
@@ -484,7 +489,7 @@ namespace lsp
         ListBoxItem *ComboGroup::current_item()
         {
             ListBoxItem *it = sSelected.get();
-            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : NULL;
+            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : -1;
             return (index >= 0) ? it : NULL;
         }
 
@@ -531,7 +536,7 @@ namespace lsp
                         s->clip_begin(area);
                         {
                             widget->get_actual_bg_color(color);
-                            s->fill_frame(color, &sSize, &xr);
+                            s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                         }
                         s->clip_end();
                     }
@@ -540,7 +545,7 @@ namespace lsp
             else
             {
                 get_actual_bg_color(color);
-                s->fill_rect(color, &sSize);
+                s->fill_rect(color, SURFMASK_NONE, 0.0f, &sSize);
                 bg   = true;
             }
 
@@ -565,7 +570,7 @@ namespace lsp
                         xr.nHeight -= xg;
 
                         ssize_t ir  = lsp_max(0, radius - border);
-                        s->fill_round_frame(color, ir, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, &sSize, &xr);
+                        s->fill_frame(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &sSize, &xr);
                     }
 
                     // Draw frame
@@ -573,7 +578,7 @@ namespace lsp
                     color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
-                    s->wire_round_rect_inside(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
+                    s->wire_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
                 }
 
                 // Draw text (and image)
@@ -589,7 +594,7 @@ namespace lsp
                     color.scale_lch_luminance(bright);
 
                     s->set_antialiasing(true);
-                    s->fill_round_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
+                    s->fill_rect(color, SURFMASK_RB_CORNER, ir, &sLabel);
 
                     // Draw text
                     LSPString text;
@@ -620,17 +625,15 @@ namespace lsp
                         color.scale_lch_luminance(bright);
 
                         s->fill_triangle(
+                            color,
                             tloc.nLeft, tloc.nTop + (fp.Height*3.0f)/7.0f,
                             tloc.nLeft + spin*0.4f, tloc.nTop + fp.Height/7.0f,
-                            tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*3.0f)/7.0f,
-                            color
-                        );
+                            tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*3.0f)/7.0f);
                         s->fill_triangle(
+                            color,
                             tloc.nLeft, tloc.nTop + (fp.Height*4.0f)/7.0f,
                             tloc.nLeft + spin*0.8f, tloc.nTop + (fp.Height*4.0f)/7.0f,
-                            tloc.nLeft + spin*0.4f, tloc.nTop + (fp.Height*6.0f)/7.0f,
-                            color
-                        );
+                            tloc.nLeft + spin*0.4f, tloc.nTop + (fp.Height*6.0f)/7.0f);
                     }
                 }
 

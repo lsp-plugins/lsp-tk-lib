@@ -149,7 +149,7 @@ namespace lsp
 
                 static status_t     slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t     slot_on_submit(Widget *sender, void *ptr, void *data);
-                static ws::IGradient   *create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float r1, float r2);
+                static ws::IGradient   *create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float radius);
 
 
                 prop::Color        &select4(prop::Color &dfl, prop::Color &hover, prop::Color &down, prop::Color &hover_down);

@@ -65,7 +65,8 @@ namespace lsp
                 static const w_class_t    metadata;
 
             private:
-                static const arrangement_t arrangements[];
+                static const tether_t       tether_list_ltr[];
+                static const tether_t       tether_list_rtl[];
 
             protected:
                 friend class MenuItem;
@@ -203,6 +204,7 @@ namespace lsp
                 void                        show_submenu(Menu *parent, Widget *w);
                 Menu                       *root_menu();
                 Menu                       *find_menu(const ws::event_t *ev, ws::rectangle_t *xr);
+                bool                        check_rtl_direction();
 
             protected:
                 virtual void                property_changed(Property *prop);
@@ -258,10 +260,10 @@ namespace lsp
                 LSP_TK_PROPERTY(WidgetPtr<Widget>,  trigger_widget,             sWindow.trigger_widget())
 
             public:
-                bool                        set_arrangements(const lltl::darray<arrangement_t> *list);
-                bool                        set_arrangements(const arrangement_t *list, size_t count);
-                bool                        add_arrangement(const arrangement_t *item);
-                bool                        add_arrangement(arrangement_pos_t pos, float align = 0.0f, bool stretch = true);
+                bool                        set_tether(const lltl::darray<tether_t> *list);
+                bool                        set_tether(const tether_t *list, size_t count);
+                bool                        add_tether(const tether_t *item);
+                bool                        add_tether(size_t pos, float halign=1.0f, float valign=1.0f);
 
             public:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y);

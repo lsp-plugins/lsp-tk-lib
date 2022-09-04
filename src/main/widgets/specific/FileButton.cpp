@@ -351,9 +351,9 @@ namespace lsp
                     dcol.scale_hsl_lightness(bright);
 
                     if (nXFlags & FB_DOWN)
-                        gr = s->radial_gradient(b.nLeft, b.nHeight, b_rad * 0.25f, b.nLeft, b.nHeight, b_rad * 3.0f);
+                        gr = s->radial_gradient(b.nLeft, b.nHeight, b.nLeft, b.nHeight, b_rad * 3.0f);
                     else
-                        gr = s->radial_gradient(b.nWidth, b.nTop, b_rad * 0.25f, b.nWidth, b.nTop, b_rad * 3.0f);
+                        gr = s->radial_gradient(b.nWidth, b.nTop, b.nWidth, b.nTop, b_rad * 3.0f);
 
                     gr->add_color(0.0f, dcol);
                     dcol.darken(0.9f);
@@ -386,10 +386,10 @@ namespace lsp
             // Clear canvas
             float k     = b.nWidth * 0.125f;
 
-            s->wire_rect(line, b.nLeft + k + 0.5f, b.nTop + 0.5f, 5.5*k, 3.5*k - 0.5f, line_width);
-            s->fill_rect(line, b.nLeft + k*2.5f, b.nTop, 4.0*k, 3.5*k);
-            s->fill_rect(col, b.nLeft + 4.5*k, b.nTop + 0.5*k, k, 2.5*k);
-            s->fill_rect(line, b.nLeft + 0.5*k, b.nTop + 4.0*k, 7.0*k, 3.5*k);
+            s->wire_rect(line, SURFMASK_NONE, 0.0f, b.nLeft + k + 0.5f, b.nTop + 0.5f, 5.5*k, 3.5*k - 0.5f, line_width);
+            s->fill_rect(line, SURFMASK_NONE, 0.0f, b.nLeft + k*2.5f, b.nTop, 4.0*k, 3.5*k);
+            s->fill_rect(col, SURFMASK_NONE, 0.0f, b.nLeft + 4.5*k, b.nTop + 0.5*k, k, 2.5*k);
+            s->fill_rect(line, SURFMASK_NONE, 0.0f, b.nLeft + 0.5*k, b.nTop + 4.0*k, 7.0*k, 3.5*k);
             for (size_t i=0; i<NPOINTS; ++i)
             {
                 xa[i] = b.nLeft + xx[i] * k;

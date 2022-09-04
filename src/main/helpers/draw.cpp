@@ -40,7 +40,7 @@ namespace lsp
             {
                 float hthick  = thick * 0.5f;
 
-                s->wire_round_rect(
+                s->wire_rect(
                     c, mask, lsp_max(0.0f, iradius - hthick),
                     size->nLeft + hthick, size->nTop + hthick,
                     size->nWidth - thick, size->nHeight - thick,
@@ -56,26 +56,24 @@ namespace lsp
                     l.blend(c, bright);
 
                     ws::IGradient *g = s->radial_gradient(
-                            size->nLeft, size->nTop + size->nHeight, i,
-                            size->nLeft, size->nTop + size->nHeight, pr * 1.5f
-                    );
+                        size->nLeft, size->nTop + size->nHeight,
+                        size->nLeft, size->nTop + size->nHeight,
+                        pr * 1.5f);
                     g->add_color(0.0f, l);
                     g->add_color(1.0f, c);
-                    s->wire_round_rect(
-                            g, mask, iradius - i,
-                            size->nLeft + i + 0.5f, size->nTop + i + 0.5f,
-                            size->nWidth - (i << 1) - 1, size->nHeight - (i << 1) - 1,
-                            1.0f
-                    );
+                    s->wire_rect(
+                        g, mask, iradius - i,
+                        size->nLeft + i + 0.5f, size->nTop + i + 0.5f,
+                        size->nWidth - (i << 1) - 1, size->nHeight - (i << 1) - 1,
+                        1.0f);
                     delete g;
                 }
 
-                s->wire_round_rect(
-                        c, mask, iradius - thick,
-                        size->nLeft + thick + 0.5f, size->nTop + thick + 0.5f,
-                        size->nWidth - (thick << 1) - 1, size->nHeight - (thick << 1) - 1,
-                        1.0f
-                );
+                s->wire_rect(
+                    c, mask, iradius - thick,
+                    size->nLeft + thick + 0.5f, size->nTop + thick + 0.5f,
+                    size->nWidth - (thick << 1) - 1, size->nHeight - (thick << 1) - 1,
+                    1.0f);
             }
 
             s->set_antialiasing(aa);
@@ -110,12 +108,12 @@ namespace lsp
                 // Draw glass effect
                 size_t pr   = sqrtf(float(width)*float(width) + float(height)*float(height));
 
-                ws::IGradient *gr = (*g)->radial_gradient(width, 0, 1, width, 0, pr);
+                ws::IGradient *gr = (*g)->radial_gradient(width, 0, width, 0, pr);
                 gr->add_color(0.0f, c, 0.85f);
                 gr->add_color(1.0f, c, 1.0f);
 
                 bool aa = (*g)->set_antialiasing(true);
-                (*g)->fill_round_rect(gr, mask, radius, 0, 0, width, height);
+                (*g)->fill_rect(gr, mask, radius, 0, 0, width, height);
                 (*g)->set_antialiasing(aa);
                 delete gr;
             }
@@ -162,7 +160,7 @@ namespace lsp
                 {
                     float hthick  = thick * 0.5f;
 
-                    (*g)->wire_round_rect(
+                    (*g)->wire_rect(
                         bc, mask, lsp_max(0.0f, radius - hthick),
                         hthick, hthick, width - thick, height - thick,
                         thick
@@ -177,35 +175,32 @@ namespace lsp
                         l.blend(bc, bright);
                         ssize_t xrr = lsp_max(0, radius - i);
 
-                        gr = (*g)->radial_gradient(0, height, i, 0, height, pr * 1.5f);
+                        gr = (*g)->radial_gradient(0, height, i, height, pr * 1.5f);
                         gr->add_color(0.0f, l);
                         gr->add_color(1.0f, bc);
-                        (*g)->wire_round_rect(
-                                gr, mask, xrr,
-                                i+ 0.5f, i + 0.5f, width - (i << 1) - 1, height - (i << 1) - 1,
-                                1.0f
-                            );
+                        (*g)->wire_rect(
+                            gr, mask, xrr,
+                            i+ 0.5f, i + 0.5f, width - (i << 1) - 1, height - (i << 1) - 1,
+                            1.0f);
                         delete gr;
                     }
 
-                    (*g)->wire_round_rect(
-                            bc, mask, lsp_max(0, radius - thick),
-                            thick + 0.5f, thick + 0.5f,
-                            width - (thick << 1) - 1, height - (thick << 1) - 1,
-                            1.0f
-                        );
+                    (*g)->wire_rect(
+                        bc, mask, lsp_max(0, radius - thick),
+                        thick + 0.5f, thick + 0.5f,
+                        width - (thick << 1) - 1, height - (thick << 1) - 1,
+                        1.0f);
                 }
 
                 // Draw glass effect
-                gr = (*g)->radial_gradient(width, 0, 1, width, 0, pr);
+                gr = (*g)->radial_gradient(width, 0, width, 0, pr);
                 gr->add_color(0.0f, gc, 0.85f);
                 gr->add_color(1.0f, gc, 1.0f);
 
-                (*g)->fill_round_rect(
-                        gr, mask, lsp_max(0, radius - thick),
-                        thick, thick,
-                        width - (thick << 1), height - (thick << 1)
-                    );
+                (*g)->fill_rect(
+                    gr, mask, lsp_max(0, radius - thick),
+                    thick, thick,
+                    width - (thick << 1), height - (thick << 1));
                 (*g)->set_antialiasing(aa);
                 delete gr;
             }
@@ -224,10 +219,10 @@ namespace lsp
         {
             // Draw border
             bool aa = s->set_antialiasing(true);
-            s->fill_round_rect(
-                    c, mask, radius - thick,
-                    left + thick, top + thick,
-                    width - (thick << 1) - 1, height - (thick << 1) - 1);
+            s->fill_rect(
+                c, mask, radius - thick,
+                left + thick, top + thick,
+                width - (thick << 1) - 1, height - (thick << 1) - 1);
             s->set_antialiasing(aa);
         }
 

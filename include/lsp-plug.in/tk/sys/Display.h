@@ -288,11 +288,10 @@ namespace lsp
                  * Accept drag request
                  * @param sink the sink that will handle data transfer
                  * @param action drag action
-                 * @param internal true if we want to receive notifications inside of the drag rectangle
-                 * @param r parameters of the drag rectangle, can be NULL
+                 * @param r parameters of the drag rectangle to receive notifications, optional, can be NULL
                  * @return status of operation
                  */
-                status_t accept_drag(ws::IDataSink *sink, ws::drag_t action, bool internal, const ws::rectangle_t *r);
+                status_t accept_drag(ws::IDataSink *sink, ws::drag_t action, const ws::rectangle_t *r=NULL);
 
                 /**
                  * Get NULL-terminated list of provided MIME types for a drag
@@ -344,6 +343,13 @@ namespace lsp
                  * @return pointer to the array of enumerated monitors
                  */
                 const ws::MonitorInfo *enum_monitors(size_t *count);
+
+                /**
+                 * Obtain the size of work area on the primary display
+                 * @param r rectangle to store the geometry of work area
+                 * @return status of operation
+                 */
+                status_t work_area_geometry(ws::rectangle_t *r);
         };
     }
 

@@ -141,6 +141,14 @@ namespace lsp
 
         //-----------------------------------------------------------------------------
         // Combo item implementation
+        const tether_t Fraction::tether_list[] =
+        {
+            { TF_LEFT  | TF_TOP | TF_HORIZONTAL | TF_HSTRETCH,      1.0f,  1.0f   },
+            { TF_LEFT  | TF_BOTTOM | TF_HORIZONTAL | TF_HSTRETCH,   1.0f,  -1.0f  },
+            { TF_LEFT  | TF_TOP | TF_HORIZONTAL | TF_HSTRETCH,      1.0f,  -1.0f  },
+            { TF_LEFT  | TF_BOTTOM | TF_HORIZONTAL | TF_HSTRETCH,   1.0f,  1.0f   },
+        };
+
         Fraction::Combo::Combo(Display *dpy, Fraction *frac):
             sList(dpy, frac, this),
             sWindow(dpy, frac, this),
@@ -174,8 +182,7 @@ namespace lsp
 
             // Configure Window
             sWindow.add(&sList);
-            sWindow.add_arrangement(A_BOTTOM, 0, true);
-            sWindow.add_arrangement(A_TOP, 0, true);
+            sWindow.set_tether(tether_list, sizeof(tether_list)/sizeof(tether_t));
             sWindow.layout()->set_scale(1.0f);
 
             return STATUS_OK;
@@ -309,8 +316,11 @@ namespace lsp
 
             ws::rectangle_t r;
             this->get_padded_screen_rectangle(&r);
+
             r.nLeft    += cb->sArea.nLeft - (cb->sArea.nWidth  >> 1);
-            r.nTop     += cb->sArea.nTop  - (cb->sArea.nHeight >> 1) - r.nHeight;
+            r.nTop     += cb->sArea.nTop  - (cb->sArea.nHeight >> 1);
+            r.nWidth    = cb->sArea.nWidth;
+            r.nHeight   = cb->sArea.nHeight;
 
             cb->sWindow.trigger_area()->set(&r);
             cb->sWindow.trigger_widget()->set(this);
@@ -543,19 +553,21 @@ namespace lsp
             ssize_t cx      = sSize.nWidth >> 1;
             ssize_t cy      = sSize.nHeight >> 1;
             bool aa         = s->set_antialiasing(true);
-            s->line(cx + dx, cy - dy, cx - dx, cy + dy, lw, color);
+            s->line(color, cx + dx, cy - dy, cx - dx, cy + dy, lw);
 
             // Output numerator and denominator
-//            s->fill_rect(&tc, sNum.sArea.nLeft, sNum.sArea.nTop, 1, 1);
-//            s->wire_rect(&tc,
-//                    sNum.sArea.nLeft - sNum.sArea.nWidth*0.5f, sNum.sArea.nTop  - sNum.sArea.nHeight*0.5f,
-//                    sNum.sArea.nWidth, sNum.sArea.nHeight, 1.0f
-//                );
-//            s->fill_rect(&bc, sDen.sArea.nLeft, sDen.sArea.nTop, 1, 1);
-//            s->wire_rect(&bc,
-//                    sDen.sArea.nLeft - sDen.sArea.nWidth*0.5f, sDen.sArea.nTop  - sDen.sArea.nHeight*0.5f,
-//                    sDen.sArea.nWidth, sDen.sArea.nHeight, 1.0f
-//                );
+//            s->fill_rect(tc, SURFMASK_NONE, 0, sNum.sArea.nLeft, sNum.sArea.nTop, 1, 1);
+//            s->wire_rect(
+//                tc,
+//                SURFMASK_NONE, 0,
+//                sNum.sArea.nLeft - sNum.sArea.nWidth*0.5f, sNum.sArea.nTop  - sNum.sArea.nHeight*0.5f,
+//                sNum.sArea.nWidth, sNum.sArea.nHeight, 1.0f);
+//            s->fill_rect(bc, SURFMASK_NONE, 0, sDen.sArea.nLeft, sDen.sArea.nTop, 1, 1);
+//            s->wire_rect(
+//                bc,
+//                SURFMASK_NONE, 0,
+//                sDen.sArea.nLeft - sDen.sArea.nWidth*0.5f, sDen.sArea.nTop  - sDen.sArea.nHeight*0.5f,
+//                sDen.sArea.nWidth, sDen.sArea.nHeight, 1.0f);
 
             sFont.draw(
                 s, tc,
@@ -616,6 +628,9 @@ namespace lsp
 
             if ((nMBState == mask) && (mask == ws::MCF_LEFT))
             {
+                ssize_t x, y;
+                pDisplay->get_pointer_location(0, &x, &y);
+
                 if ((enTrgState == NUM_CLICK) && (check_mouse_over(&sNum.sArea, e)))
                     sNum.sOpened.set(true);
                 else if ((enTrgState == DENOM_CLICK) && (check_mouse_over(&sDen.sArea, e)))

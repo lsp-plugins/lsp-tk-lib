@@ -266,10 +266,20 @@ namespace lsp
         // Menu implementation
         const w_class_t Menu::metadata      = { "Menu", &WidgetContainer::metadata };
 
-        const arrangement_t Menu::arrangements[] =
+        const tether_t Menu::tether_list_ltr[] =
         {
-            { A_RIGHT,  0.0f,   false },
-            { A_LEFT,   0.0f,   false }
+            { TF_RIGHT | TF_TOP | TF_VERTICAL | TF_VMAXIMIZE,       1.0f,  1.0f  },
+            { TF_RIGHT | TF_BOTTOM | TF_VERTICAL | TF_VMAXIMIZE,    1.0f,  -1.0f },
+            { TF_LEFT  | TF_TOP | TF_VERTICAL | TF_VMAXIMIZE,      -1.0f,  1.0f  },
+            { TF_LEFT  | TF_BOTTOM | TF_VERTICAL | TF_VMAXIMIZE,   -1.0f,  -1.0f },
+        };
+
+        const tether_t Menu::tether_list_rtl[] =
+        {
+            { TF_LEFT  | TF_TOP | TF_VERTICAL | TF_VMAXIMIZE,      -1.0f,  1.0f  },
+            { TF_LEFT  | TF_BOTTOM | TF_VERTICAL | TF_VMAXIMIZE,   -1.0f,  -1.0f },
+            { TF_RIGHT | TF_TOP | TF_VERTICAL | TF_VMAXIMIZE,       1.0f,  1.0f  },
+            { TF_RIGHT | TF_BOTTOM | TF_VERTICAL | TF_VMAXIMIZE,    1.0f,  -1.0f },
         };
 
         Menu::Menu(Display *dpy):
@@ -341,7 +351,7 @@ namespace lsp
                 sWindow.destroy();
                 return result;
             }
-            sWindow.set_arrangements(arrangements, 2);
+            sWindow.set_tether(tether_list_ltr, sizeof(tether_list_ltr)/sizeof(tether_t));
             sWindow.layout()->set(-1.0f, -1.0f, 1.0f, 1.0f);
             sWindow.auto_close()->set(false);
 
@@ -872,7 +882,6 @@ namespace lsp
             LSPString text;
 
             sFont.get_parameters(pDisplay, fscaling, &fp);
-
             float aa            = s->set_antialiasing(true);
 
             for (ssize_t i=0, n=vVisible.size(); i<n; ++i)
@@ -894,7 +903,7 @@ namespace lsp
                 {
                     color.copy(mi->text_color()->color());
                     color.scale_lch_luminance(bright);
-                    s->fill_rect(color, &pi->text);
+                    s->fill_rect(color, SURFMASK_NONE, 0.0f, &pi->text);
                     continue;
                 }
 
@@ -903,7 +912,7 @@ namespace lsp
                 {
                     color.copy(mi->bg_selected_color()->color());
                     color.scale_lch_luminance(bright);
-                    s->fill_rect(color, &pi->area);
+                    s->fill_rect(color, SURFMASK_NONE, 0.0f, &pi->area);
                 }
 
                 // Draw text
@@ -929,11 +938,10 @@ namespace lsp
                     float x = pi->ref.nLeft + pi->ref.nWidth * 0.25f;
                     float y = pi->ref.nTop  + pi->ref.nHeight * 0.25f;
                     s->fill_triangle(
-                            x, y,
-                            x + pi->ref.nWidth * 0.5f, y + pi->ref.nHeight * 0.25f,
-                            x, y + pi->ref.nHeight * 0.5f,
-                            color
-                        );
+                        color,
+                        x, y,
+                        x + pi->ref.nWidth * 0.5f, y + pi->ref.nHeight * 0.25f,
+                        x, y + pi->ref.nHeight * 0.5f);
                 }
 
                 // Need to draw check box/radio?
@@ -947,7 +955,7 @@ namespace lsp
                     {
                         color.copy(mi->check_border_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         r.nLeft            += bw;
                         r.nTop             += bw;
                         r.nWidth           -= bw * 2;
@@ -956,7 +964,7 @@ namespace lsp
 
                         color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
 
                         r.nLeft            += bw;
                         r.nTop             += bw;
@@ -968,7 +976,7 @@ namespace lsp
                         {
                             color.copy(mi->check_color()->color());
                             color.scale_lch_luminance(bright);
-                            s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                            s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         }
                     }
                     else
@@ -978,7 +986,7 @@ namespace lsp
                         else
                             color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_round_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                     }
                 }
                 else if (mi->type()->radio())
@@ -992,19 +1000,19 @@ namespace lsp
                     {
                         color.copy(mi->check_border_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_circle(xc, yc, br, color);
+                        s->fill_circle(color, xc, yc, br);
                         br                  = lsp_max(0.0f, br - bw);
 
                         color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_circle(xc, yc, br, color);
+                        s->fill_circle(color, xc, yc, br);
                         br                  = lsp_max(0, br - bw);
 
                         if (mi->checked()->get())
                         {
                             color.copy(mi->check_color()->color());
                             color.scale_lch_luminance(bright);
-                            s->fill_circle(xc, yc, br, color);
+                            s->fill_circle(color, xc, yc, br);
                         }
                     }
                     else
@@ -1014,7 +1022,7 @@ namespace lsp
                         else
                             color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
-                        s->fill_circle(xc, yc, br, color);
+                        s->fill_circle(color, xc, yc, br);
                     }
 
                 }
@@ -1027,14 +1035,14 @@ namespace lsp
                 color.copy((sUp.active())   ? sScrollSelectedColor.color() : sScrollColor.color());
                 color.scale_lch_luminance(bright);
                 sUp.get_rectangle(&xr);
-                s->fill_rect(color, &xr);
+                s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
             }
             if (sDown.visibility()->get())
             {
                 color.copy((sDown.active()) ? sScrollSelectedColor.color() : sScrollColor.color());
                 color.scale_lch_luminance(bright);
                 sDown.get_rectangle(&xr);
-                s->fill_rect(color, &xr);
+                s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
             }
 
             // Draw scroll button text
@@ -1051,11 +1059,10 @@ namespace lsp
                 float y = xr.nTop;
 
                 s->fill_triangle(
-                        x, y + xr.nHeight * 0.25f,
-                        x + xr.nHeight, y + xr.nHeight * 0.75f,
-                        x - xr.nHeight, y + xr.nHeight * 0.75f,
-                        color
-                    );
+                    color,
+                    x, y + xr.nHeight * 0.25f,
+                    x + xr.nHeight, y + xr.nHeight * 0.75f,
+                    x - xr.nHeight, y + xr.nHeight * 0.75f);
             }
             if (sDown.visibility()->get())
             {
@@ -1067,31 +1074,23 @@ namespace lsp
                 float y = xr.nTop;
 
                 s->fill_triangle(
-                        x, xr.nTop + xr.nHeight * 0.75f,
-                        x - xr.nHeight, y + xr.nHeight * 0.25f,
-                        x + xr.nHeight, y + xr.nHeight * 0.25f,
-                        color
-                    );
+                    color,
+                    x, xr.nTop + xr.nHeight * 0.75f,
+                    x - xr.nHeight, y + xr.nHeight * 0.25f,
+                    x + xr.nHeight, y + xr.nHeight * 0.25f);
             }
-
             // Draw border
             if (border > 0)
             {
                 s->set_antialiasing(true);
                 color.copy(sBorderColor);
                 color.scale_lch_luminance(bright);
-                s->wire_round_rect_inside(
+                s->wire_rect(
                     color, ws::CORNERS_ALL, border_r,
                     0, 0, sSize.nWidth, sSize.nHeight,
                     border
                 );
-//                s->fill_frame(
-//                    color,
-//                    0, 0, sSize.nWidth, sSize.nHeight,
-//                    border, border, sSize.nWidth - border * 2, sSize.nHeight - border * 2
-//                );
             }
-
             s->set_antialiasing(aa);
         }
 
@@ -1372,6 +1371,16 @@ namespace lsp
                 cmenu->select_first_item(false);
         }
 
+        bool Menu::check_rtl_direction()
+        {
+            ws::rectangle_t pr, cr;
+            if ((pParentMenu == NULL) || (pParentMenu->sWindow.get_screen_rectangle(&pr) != STATUS_OK))
+                return false;
+            if (sWindow.get_screen_rectangle(&cr) != STATUS_OK)
+                return false;
+            return cr.nLeft < pr.nLeft;
+        }
+
         void Menu::show_submenu(Menu *menu, Widget *w)
         {
             // Hide all nested menus for cmenu
@@ -1390,8 +1399,11 @@ namespace lsp
             lsp_trace("menu = %p, parent=%p", menu, menu->pParentMenu);
             lsp_trace("menu = %p, child=%p", this, pChildMenu);
 
-            // Show the nested menu
-            menu->set_arrangements(arrangements, 2);
+            // Show the nested menu depending on the position of parent
+            if (check_rtl_direction())
+                menu->set_tether(tether_list_rtl, sizeof(tether_list_rtl)/sizeof(tether_t));
+            else
+                menu->set_tether(tether_list_ltr, sizeof(tether_list_ltr)/sizeof(tether_t));
             menu->show(w);
         }
 
@@ -1620,24 +1632,24 @@ namespace lsp
             return STATUS_OK;
         }
 
-        bool Menu::set_arrangements(const lltl::darray<arrangement_t> *list)
+        bool Menu::set_tether(const lltl::darray<tether_t> *list)
         {
-            return sWindow.set_arrangements(list);
+            return sWindow.set_tether(list);
         }
 
-        bool Menu::set_arrangements(const arrangement_t *list, size_t count)
+        bool Menu::set_tether(const tether_t *list, size_t count)
         {
-            return sWindow.set_arrangements(list, count);
+            return sWindow.set_tether(list, count);
         }
 
-        bool Menu::add_arrangement(const arrangement_t *item)
+        bool Menu::add_tether(const tether_t *item)
         {
-            return sWindow.add_arrangement(item);
+            return sWindow.add_tether(item);
         }
 
-        bool Menu::add_arrangement(arrangement_pos_t pos, float align, bool stretch)
+        bool Menu::add_tether(size_t pos, float halign, float valign)
         {
-            return sWindow.add_arrangement(pos, align, stretch);
+            return sWindow.add_tether(pos, halign, valign);
         }
 
     } /* namespace tk */

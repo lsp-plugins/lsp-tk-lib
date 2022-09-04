@@ -32,13 +32,17 @@ namespace lsp
                 // Bind
                 sTextAdjust.bind("text.adjust", this);
                 sBgSelectedColor.bind("bg.selected.color", this);
+                sBgHoverColor.bind("bg.hover.color", this);
                 sTextColor.bind("text.color", this);
                 sTextSelectedColor.bind("text.selected.color", this);
+                sTextHoverColor.bind("text.hover.color", this);
                 // Configure
                 sTextAdjust.set(TA_NONE);
                 sBgSelectedColor.set("#00ccff");
+                sBgHoverColor.set("#00aaee");
                 sTextColor.set("#000000");
                 sTextSelectedColor.set("#ffffff");
+                sTextHoverColor.set("#eeeeee");
                 // Override
                 sPadding.set(2, 2, 0, 0);
                 sBgColor.set("#ffffff");
@@ -76,8 +80,10 @@ namespace lsp
             sTextAdjust.bind("text.adjust", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sBgSelectedColor.bind("bg.selected.color", &sStyle);
+            sBgHoverColor.bind("bg.hover.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sTextSelectedColor.bind("text.selected.color", &sStyle);
+            sTextHoverColor.bind("text.hover.color", &sStyle);
 
             return res;
         }
@@ -90,9 +96,13 @@ namespace lsp
                 query_resize();
             if (sBgSelectedColor.is(prop))
                 query_draw();
+            if (sBgHoverColor.is(prop))
+                query_draw();
             if (sTextColor.is(prop))
                 query_draw();
             if (sTextSelectedColor.is(prop))
+                query_draw();
+            if (sTextHoverColor.is(prop))
                 query_draw();
         }
     } /* namespace tk */

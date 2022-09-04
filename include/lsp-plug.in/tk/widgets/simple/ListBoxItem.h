@@ -33,8 +33,10 @@ namespace lsp
                 prop::String                sText;
                 prop::TextAdjust            sTextAdjust;
                 prop::Color                 sBgSelectedColor;
+                prop::Color                 sBgHoverColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sTextSelectedColor;
+                prop::Color                 sTextHoverColor;
             LSP_TK_STYLE_DEF_END
         }
         
@@ -51,8 +53,10 @@ namespace lsp
                 prop::String                sText;
                 prop::TextAdjust            sTextAdjust;
                 prop::Color                 sBgSelectedColor;
+                prop::Color                 sBgHoverColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sTextSelectedColor;
+                prop::Color                 sTextHoverColor;
 
             protected:
                 virtual void                property_changed(Property *prop);
@@ -65,8 +69,10 @@ namespace lsp
                 LSP_TK_PROPERTY(String,     text,                       &sText)
                 LSP_TK_PROPERTY(TextAdjust, text_adjust,                &sTextAdjust)
                 LSP_TK_PROPERTY(Color,      bg_selected_color,          &sBgSelectedColor)
+                LSP_TK_PROPERTY(Color,      bg_hover_color,             &sBgHoverColor)
                 LSP_TK_PROPERTY(Color,      text_color,                 &sTextColor)
                 LSP_TK_PROPERTY(Color,      text_selected_color,        &sTextSelectedColor)
+                LSP_TK_PROPERTY(Color,      text_hover_color,           &sTextHoverColor)
 
             public:
                 virtual status_t            init();

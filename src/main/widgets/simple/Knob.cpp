@@ -455,16 +455,16 @@ namespace lsp
             {
                 if (sCycling.get())
                 {
-                    s->fill_circle(c_x, c_y, xr, sdcol);
-                    s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
+                    s->fill_circle(sdcol, c_x, c_y, xr);
+                    s->fill_sector(scol, c_x, c_y, xr, v_angle2, v_angle1);
                 }
                 else
                 {
-                    s->fill_sector(c_x, c_y, xr, base, base + delta, sdcol);
+                    s->fill_sector(sdcol, c_x, c_y, xr, base, base + delta);
                     if (value < balance)
-                        s->fill_sector(c_x, c_y, xr, v_angle1, v_angle2, scol);
+                        s->fill_sector(scol, c_x, c_y, xr, v_angle1, v_angle2);
                     else
-                        s->fill_sector(c_x, c_y, xr, v_angle2, v_angle1, scol);
+                        s->fill_sector(scol, c_x, c_y, xr, v_angle2, v_angle1);
                 }
 
                 if (sScaleMarks.get())
@@ -481,7 +481,7 @@ namespace lsp
                         float scr   = (i & 1) ? r2 : r3;
                         float f_sin = sinf(angle), f_cos = cosf(angle);
 
-                        s->line(c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling, bg_color);
+                        s->line(bg_color, c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling);
                     }
                 }
 
@@ -495,18 +495,18 @@ namespace lsp
                     }
 
                     delta = btsz / (xr - scale * 0.5f);
-                    s->fill_sector(c_x, c_y, xr, v_angle2 - delta, v_angle2 + delta, scol);
+                    s->fill_sector(scol, c_x, c_y, xr, v_angle2 - delta, v_angle2 + delta);
                 }
 
                 // Draw hole and update radius
-                s->fill_circle(c_x, c_y, xr - scale, bg_color);
+                s->fill_circle(bg_color, c_x, c_y, xr - scale);
                 xr             -= (scale + gap);
             }
 
             // Draw hole
             if (hole > 0)
             {
-                s->fill_circle(c_x, c_y, xr, hcol);
+                s->fill_circle(hcol, c_x, c_y, xr);
                 xr -= hole;
             }
 
@@ -521,11 +521,12 @@ namespace lsp
                 tip.scale_lch_luminance(bright);
 
                 // Draw cap
-                s->fill_circle(c_x, c_y, xr, cap);
+                s->fill_circle(cap, c_x, c_y, xr);
 
                 // Draw tip
-                s->line(c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
-                            c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, tip);
+                s->line(tip,
+                    c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
+                    c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling);
             }
             else
             {
@@ -542,18 +543,19 @@ namespace lsp
                     sdcol.scale_hsl_lightness(bright);
 
                     // Draw cap
-                    ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, xr, c_x + xr, c_y - xr, xr * 4.0);
+                    ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, c_x + xr, c_y - xr, xr * 4.0);
                     gr->add_color(0.0f, scol);
                     gr->add_color(1.0f, sdcol);
-                    s->fill_circle(c_x, c_y, xr, gr);
+                    s->fill_circle(gr, c_x, c_y, xr);
                     delete gr;
 
                     // Draw tip
                     scol.copy(tip);
                     scol.blend(hcol, xb);
                     scol.scale_lch_luminance(bright);
-                    s->line(c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
-                            c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling, scol);
+                    s->line(scol,
+                        c_x + (xr * 0.25f) * f_cos, c_y + (xr * 0.25f) * f_sin,
+                        c_x + xr * f_cos, c_y + xr * f_sin, 3.0f * scaling);
                 }
             }
 

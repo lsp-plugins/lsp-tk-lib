@@ -28,6 +28,7 @@
 
 #include <lsp-plug.in/fmt/bookmarks.h>
 #include <lsp-plug.in/lltl/parray.h>
+#include <lsp-plug.in/runtime/system.h>
 
 namespace lsp
 {
@@ -95,11 +96,14 @@ namespace lsp
                 Button                      sWAction;       // Action button (save/load)
                 Button                      sWCancel;       // Cancel button
                 Grid                        sMainGrid;      // The main grid containing all widgets
-                ScrollArea                  sSBBookmarks;   // Scroll area for holding bookmark list
+                ScrollArea                  wSAAccess;      // Scroll area for holding access lists
+                Box                         wSABox;         // Scroll area box
                 Box                         wOptions;       // Additional options below the bookmark list
                 Separator                   wSeparator;     // Separator between options and bookmark list
-                Box                         sBookmarks;     // List of bookmarks
-                Menu                        sBMPopup;
+                Box                         wVolumes;       // List of volumes
+                Box                         wBookmarks;     // List of bookmarks
+                Menu                        wVolPopup;
+                Menu                        wBMPopup;
                 Button                      wBMAdd;
                 Box                         sActionBox;
                 Align                       sActionAlign;
@@ -109,12 +113,13 @@ namespace lsp
                 Button                      wGo;
                 Button                      wUp;
                 Box                         wNavBox;
+                Label                       sWWarning;
                 MessageBox                 *pWConfirm;
                 MessageBox                 *pWMessage;
-                Label                       sWWarning;
                 Label                      *pWSearch;
 
                 lltl::parray<Widget>        vWidgets;
+                lltl::parray<bm_entry_t>    vVolumes;
                 lltl::parray<bm_entry_t>    vBookmarks;
                 lltl::parray<f_entry_t>     vFiles;
 
@@ -200,23 +205,31 @@ namespace lsp
                 status_t                add_label(WidgetContainer *c, const char *key, float align = -1.0f, Label **label = NULL);
                 status_t                add_menu_item(Menu *m, const char *key, event_handler_t handler);
                 status_t                add_ext_check(WidgetContainer *c, const char *text);
-                status_t                init_bm_popup_menu();
+                status_t                init_bm_popup_menu(tk::Menu *menu, bool editable);
                 void                    sync_mode();
                 status_t                show_message(const char *title, const char *heading, const char *message, const io::Path *path);
 
+                void                    drop_bookmark_list(lltl::parray<bm_entry_t> *list);
                 void                    drop_bookmarks();
+                void                    drop_volumes();
+                void                    drop_();
                 status_t                read_lsp_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
                 static status_t         read_gtk2_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
                 static status_t         read_gtk3_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
                 static status_t         read_qt5_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
+                static status_t         read_lnk_bookmarks(lltl::parray<bookmarks::bookmark_t> &vbm);
                 status_t                save_bookmarks(lltl::parray<bookmarks::bookmark_t> *vbm);
                 status_t                sync_bookmarks();
+                status_t                refresh_volumes();
                 status_t                refresh_bookmarks();
+                void                    select_bookmark(bm_entry_t *bm);
                 status_t                select_current_bookmark();
                 status_t                remove_bookmark(bm_entry_t *entry);
                 bm_entry_t             *find_bookmark(Widget *sender);
                 status_t                add_new_bookmark();
-                status_t                init_bookmark_entry(bm_entry_t *ent, const io::Path *path);
+                status_t                init_bookmark_entry(bm_entry_t *ent, const LSPString *name, const io::Path *path, bool editable);
+                static ssize_t          compare_volume_info(const system::volume_info_t *a, const system::volume_info_t *b);
+
                 status_t                inject_style(tk::Widget *w, const char *name);
 
                 void                    destroy_file_entries(lltl::parray<f_entry_t> *list);

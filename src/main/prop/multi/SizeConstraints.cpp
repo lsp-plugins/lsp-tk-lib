@@ -485,6 +485,20 @@ namespace lsp
                 dst->nPreHeight = lsp_max(0, ceilf(dst->nPreHeight * scale));
         }
 
+        bool SizeConstraints::match(const ws::rectangle_t *r, const ws::size_limit_t *sr)
+        {
+            if ((sr->nMinWidth  >= 0) && (r->nWidth  < sr->nMinWidth))
+                return false;
+            if ((sr->nMinHeight >= 0) && (r->nHeight < sr->nMinHeight))
+                return false;
+            if ((sr->nMaxWidth >= 0) && (r->nWidth > lsp_max(sr->nMinWidth, sr->nMaxWidth)))
+                return false;
+            if ((sr->nMaxHeight >= 0) && (r->nHeight > lsp_max(sr->nMinHeight, sr->nMaxHeight)))
+                return false;
+
+            return true;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

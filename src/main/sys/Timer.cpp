@@ -20,7 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
-#include <time.h>
+#include <lsp-plug.in/runtime/system.h>
 
 namespace lsp
 {
@@ -138,15 +138,9 @@ namespace lsp
                 nFlags          |= TF_INFINITE;
             nRepeatInterval = interval;
 
-            // Submit first task
+            // Submit first task: compute the acutal time when the event should trigger
             if (delay > 0)
-            {
-                // Shift the timestamp by delta
-                struct timespec ts;
-                clock_gettime(CLOCK_REALTIME, &ts);
-                ws::timestamp_t delta = (ts.tv_sec * 1000L) + (ts.tv_nsec / 1000000L); // Get delta in milliseconds
-                delay      += delta;
-            }
+                delay      += system::get_time_millis();
 
             nTaskID     = pDisplay->submit_task(delay, execute, this);
             if (nTaskID < 0)

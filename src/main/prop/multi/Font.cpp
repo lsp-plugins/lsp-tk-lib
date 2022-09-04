@@ -298,6 +298,7 @@ namespace lsp
         {
             if (s == NULL)
                 return false;
+
             ws::Font f(&sValue);
             f.set_size(sValue.size() * lsp_max(0.0f, scaling));
             return s->get_font_parameters(f, fp);
@@ -306,63 +307,22 @@ namespace lsp
         bool Font::get_parameters(Display *dpy, float scaling, ws::font_parameters_t *fp) const
         {
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
-            ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            if (s == NULL)
+            if (xdpy == NULL)
                 return false;
 
-            s->begin();
-            bool res = get_parameters(s, scaling, fp);
-            s->end();
-
-            return res;
+            ws::Font f(&sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling));
+            return xdpy->get_font_parameters(f, fp);
         }
 
         bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text) const
         {
-            if (text == NULL)
-                return false;
-            ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
-            ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            if (s == NULL)
-                return false;
-
-            s->begin();
-            bool res = get_multitext_parameters(s, tp, scaling, text, 0, text->length());
-            s->end();
-
-            return res;
+            return (text != NULL) ? get_multitext_parameters(dpy, tp, scaling, text, 0, text->length()) : false;
         }
 
         bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const
         {
-            if (text == NULL)
-                return false;
-            ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
-            ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            if (s == NULL)
-                return false;
-
-            s->begin();
-            bool res = get_multitext_parameters(s, tp, scaling, text, first, text->length());
-            s->end();
-
-            return res;
-        }
-
-        bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const
-        {
-            if (text == NULL)
-                return false;
-            ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
-            ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            if (s == NULL)
-                return false;
-
-            s->begin();
-            bool res = get_multitext_parameters(s, tp, scaling, text, first, last);
-            s->end();
-
-            return res;
+            return (text != NULL) ? get_multitext_parameters(dpy, tp, scaling, text, first, text->length()) : false;
         }
 
         bool Font::get_multitext_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text) const
@@ -373,6 +333,75 @@ namespace lsp
         bool Font::get_multitext_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const
         {
             return (text != NULL) ? get_multitext_parameters(s, tp, scaling, text, first, text->length()) : false;
+        }
+
+        bool Font::get_multitext_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const
+        {
+            if (text == NULL)
+                return false;
+            ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
+            if (xdpy == NULL)
+                return false;
+
+            ws::Font f(&sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling));
+
+            ssize_t prev = 0, curr = 0, tail = 0;
+            ws::font_parameters_t fp;
+            ws::text_parameters_t xp, rp;
+
+            if (!xdpy->get_font_parameters(f, &fp))
+                return false;
+
+            rp.Width        = 0.0f;
+            rp.Height       = 0.0f;
+            rp.XAdvance     = 0.0f;
+            rp.YAdvance     = 0.0f;
+            rp.XBearing     = 0.0f;
+            rp.YBearing     = 0.0f;
+
+            while (curr < last)
+            {
+                curr    = text->index_of(prev, '\n');
+                if ((curr < 0) || (curr > last))
+                {
+                    curr        = last;
+                    tail        = last;
+                }
+                else
+                {
+                    tail        = curr;
+                    if ((tail > last) && (text->at(tail-1) == '\r'))
+                        --tail;
+                }
+
+                // Get text parameters
+                const char *str = text->get_utf8(prev, tail);
+                if (str == NULL)
+                    return false;
+
+                if (!xdpy->get_text_parameters(f, &xp, str))
+                    return false;
+
+                if (prev <= 0)
+                {
+                    rp           = xp;
+                    rp.Height    = lsp_max(xp.Height, fp.Height);
+                }
+                else
+                {
+                    rp.Width     = lsp_max(rp.Width, xp.Width);
+                    rp.XAdvance  = lsp_max(rp.XAdvance, xp.XAdvance);
+                    rp.Height   += fp.Height;
+                    rp.YAdvance += xp.YAdvance;
+                }
+
+                prev    = curr + 1;
+            }
+
+            // Store font parameters
+            *tp         = rp;
+            return true;
         }
 
         bool Font::get_multitext_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const
@@ -443,34 +472,12 @@ namespace lsp
 
         bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text) const
         {
-            if (text == NULL)
-                return false;
-            ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
-            ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            if (s == NULL)
-                return false;
-
-            s->begin();
-            bool res = get_text_parameters(s, tp, scaling, text, 0, text->length());
-            s->end();
-
-            return res;
+            return (text != NULL) ? get_text_parameters(dpy, tp, scaling, text, 0, text->length()) : false;
         }
 
         bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first) const
         {
-            if (text == NULL)
-                return false;
-            ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
-            ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            if (s == NULL)
-                return false;
-
-            s->begin();
-            bool res = get_text_parameters(s, tp, scaling, text, first, text->length());
-            s->end();
-
-            return res;
+            return (text != NULL) ? get_text_parameters(dpy, tp, scaling, text, first, text->length()) : false;
         }
 
         bool Font::get_text_parameters(Display *dpy, ws::text_parameters_t *tp, float scaling, const LSPString *text, ssize_t first, ssize_t last) const
@@ -478,15 +485,12 @@ namespace lsp
             if (text == NULL)
                 return false;
             ws::IDisplay *xdpy = (dpy != NULL) ? dpy->display() : NULL;
-            ws::ISurface *s = (xdpy != NULL) ? xdpy->estimation_surface() : NULL;
-            if (s == NULL)
+            if (xdpy == NULL)
                 return false;
 
-            s->begin();
-            bool res = get_text_parameters(s, tp, scaling, text, first, last);
-            s->end();
-
-            return res;
+            ws::Font f(sValue);
+            f.set_size(sValue.size() * lsp_max(0.0f, scaling)); // Update the font size
+            return xdpy->get_text_parameters(f, tp, text, first, last);
         }
 
         bool Font::get_text_parameters(ws::ISurface *s, ws::text_parameters_t *tp, float scaling, const LSPString *text) const

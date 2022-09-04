@@ -59,6 +59,9 @@ namespace lsp
                 Fraction & operator = (const Fraction &);
                 Fraction(const Fraction &);
 
+            private:
+                static const tether_t tether_list[];
+
             protected:
                 enum mstate_t
                 {

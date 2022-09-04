@@ -533,7 +533,7 @@ namespace lsp
                 wnd->discard_widget(this);
 
             // Update current parent
-            pParent = parent;
+            pParent                 = parent;
         }
 
         Widget *Widget::toplevel()
@@ -607,7 +607,7 @@ namespace lsp
 
             // Render to the main surface
             s->clip_begin(area);
-                s->draw(src, sSize.nLeft, sSize.nTop);
+                s->draw(src, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
             s->clip_end();
         }
 
@@ -621,7 +621,9 @@ namespace lsp
             // Check surface
             if (pSurface != NULL)
             {
-                if ((width != ssize_t(pSurface->width())) || (height != ssize_t(pSurface->height())))
+                if ((!pSurface->valid()) ||
+                    (width != ssize_t(pSurface->width())) ||
+                    (height != ssize_t(pSurface->height())))
                 {
                     pSurface->destroy();
                     delete pSurface;
@@ -746,7 +748,7 @@ namespace lsp
         bool Widget::kill_focus()
         {
             Window *wnd = widget_cast<Window>(toplevel());
-            return (wnd != NULL) ? wnd->kill_focus(this) : false;
+            return (wnd != NULL) ? wnd->do_kill_focus(this) : false;
         }
 
         ws::mouse_pointer_t Widget::current_pointer()

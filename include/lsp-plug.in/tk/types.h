@@ -52,14 +52,25 @@ namespace lsp
         };
 
         /**
-         * Arrangement position
+         * Tether flags
          */
-        enum arrangement_pos_t
+        enum tether_flags_t
         {
-            A_LEFT,             //!< A_LEFT arrangement at the left side of area
-            A_RIGHT,            //!< A_RIGHT arrangement at the right side of area
-            A_TOP,              //!< A_TOP arrangement at the top side of area
-            A_BOTTOM            //!< A_BOTTOM arrangement at the bottom side of area
+            // Horizontal arrangement tether
+            TF_TOP          = 0 << 0,   // Top line of rectangle used as tether
+            TF_BOTTOM       = 1 << 0,   // Bottom line of rectangle used as tether
+            // Vertical arrangement tether
+            TF_LEFT         = 0 << 1,   // Left line of rectangle used as tether
+            TF_RIGHT        = 1 << 1,   // Right line of rectangle used as tether
+            // Priority of tether
+            TF_HORIZONTAL   = 0 << 2,   // Priority of horizontal tether is higher than vertical
+            TF_VERTICAL     = 0 << 2,   // Priority of vertical tether is higher than horizontal
+            // Stretching
+            TF_HSTRETCH     = 1 << 3,   // Stretch horizontally
+            TF_VSTRETCH     = 1 << 4,   // Stretch vertically
+            // Maximizing
+            TF_HMAXIMIZE    = 1 << 5,   // Maximize horizontally
+            TF_VMAXIMIZE    = 1 << 6,   // Maximize vertically
         };
 
         enum scrolling_t
@@ -175,12 +186,12 @@ namespace lsp
             size_t              nBottom;        // Padding from bottom
         } padding_t;
 
-        typedef struct arrangement_t
+        typedef struct tether_t
         {
-            arrangement_pos_t   enPosition;     // Position relative to the area
-            float               fAlign;         // Alignment, for horizontal arrangement -1 is leftmost, +1 is rightmost
-            bool                bStretch;       // Stretch parameters
-        } arrangement_t;
+            size_t              nFlags;         // Tether flags, see tether_flags_t
+            float               fHAlign;        // Horizontal alignment over tether line
+            float               fVAlign;        // Vertical alignment over the tether line
+        } tether_t;
 
         /**
          * File dialog mode

@@ -147,10 +147,10 @@ namespace lsp
 
             bool aa = s->set_antialiasing(sSmooth.get());
             s->parametric_line(
-                    la, lb, lc,
-                    cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
-                    width, color
-                );
+                color,
+                la, lb, lc,
+                cv->canvas_left(), cv->canvas_right(), cv->canvas_bottom(), cv->canvas_top(),
+                width);
             s->set_antialiasing(aa);
         }
 

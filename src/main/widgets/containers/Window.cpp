@@ -106,7 +106,7 @@ namespace lsp
             do_destroy();
         }
 
-        status_t Window::init()
+        status_t Window::init_internal(bool create_handle)
         {
             status_t result;
 
@@ -120,14 +120,16 @@ namespace lsp
                 return STATUS_BAD_STATE;
 
             // Create and initialize window
-            pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
+            if (create_handle)
+            {
+                pWindow     = (pNativeHandle != NULL) ? dpy->create_window(pNativeHandle) : dpy->create_window();
+                if (pWindow == NULL)
+                    return STATUS_UNKNOWN_ERR;
 
-            if (pWindow == NULL)
-                return STATUS_UNKNOWN_ERR;
-
-            // Initialize
-            if ((result = pWindow->init()) != STATUS_SUCCESS)
-                return result;
+                // Initialize
+                if ((result = pWindow->init()) != STATUS_SUCCESS)
+                    return result;
+            }
 
             // Bind properties
             sTitle.bind(&sStyle, pDisplay->dictionary());
@@ -153,7 +155,8 @@ namespace lsp
                 return - id;
 
             // Set self event handler
-            pWindow->set_handler(this);
+            if (pWindow != NULL)
+                pWindow->set_handler(this);
 
             // Bind redraw handler
             sRedraw.bind(dpy);
@@ -165,6 +168,11 @@ namespace lsp
                 show_widget();
 
             return STATUS_OK;
+        }
+
+        status_t Window::init()
+        {
+            return init_internal(true);
         }
 
         status_t Window::sync_size()
@@ -292,20 +300,15 @@ namespace lsp
 
             size_t flags = nFlags;
 
-            ws::ISurface *bs = get_surface(s);
-            bs->begin();
+            s->begin();
             {
                 ws::rectangle_t xr;
                 xr.nLeft    = 0;
                 xr.nTop     = 0;
                 xr.nWidth   = sSize.nWidth;
                 xr.nHeight  = sSize.nHeight;
-                render(bs, &xr, flags);
+                render(s, &xr, flags);
             }
-            bs->end();
-
-            s->begin();
-                s->draw(bs, 0, 0);
             s->end();
             commit_redraw();
 
@@ -397,13 +400,14 @@ namespace lsp
                 pChild->get_padded_rectangle(&pr);
                 pChild->get_rectangle(&cr);
 
-                s->fill_frame(bg_color,
+                s->fill_frame(
+                    bg_color, SURFMASK_NONE, 0.0f,
                     0, 0, sSize.nWidth, sSize.nHeight,
                     pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
                 );
 
                 pChild->get_actual_bg_color(bg_color);
-                s->fill_frame(bg_color, &pr, &cr);
+                s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &pr, &cr);
 
                 float scaling   = sScaling.get();
                 float border    = sBorderSize.get() * scaling;
@@ -417,7 +421,7 @@ namespace lsp
                     lsp::Color bc(sBorderColor);
                     bc.scale_lch_luminance(sBrightness.get());
 
-                    s->wire_round_rect_inside(
+                    s->wire_rect(
                         bc, SURFMASK_ALL_CORNER, radius,
                         bw, bw, sSize.nWidth, sSize.nHeight,
                         border
@@ -461,18 +465,8 @@ namespace lsp
                 // Make formatted title of the window
                 LSPString text;
                 status_t res = sTitle.format(&text);
-                if (res != STATUS_OK)
-                    return;
-
-                // Perform ASCII formatting
-                char *ascii = text.clone_ascii();
-                const char *caption = text.get_utf8();
-                if (caption == NULL)
-                    caption = "";
-
-                pWindow->set_caption((ascii != NULL) ? ascii : "", caption);
-                if (ascii != NULL)
-                    ::free(ascii);
+                if (res == STATUS_OK)
+                    pWindow->set_caption(&text);
             }
             if (sRole.is(prop))
             {
@@ -732,7 +726,7 @@ namespace lsp
 
                         if (!(nFlags & RESIZE_PENDING))
                         {
-                            lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+//                            lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
 
                             r.nLeft     = e->nLeft;
                             r.nTop      = e->nTop;
@@ -751,12 +745,14 @@ namespace lsp
                 // Mouse handling
                 case ws::UIE_MOUSE_UP:
                 {
-//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
-//                            int(e->nCode), int(e->nState), int(hMouse.nState));
                     Widget *h       = acquire_mouse_handler(e);
+//                    int old_state   = hMouse.nState;
                     hMouse.nState  &= ~(1 << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
+
+//                    lsp_trace("MOUSE_UP this = %p, e->nCode = %d, e->nState=0x%x state = 0x%x -> 0x%x",
+//                        this, int(e->nCode), int(e->nState), int(old_state), int(hMouse.nState));
 
                     if (h == this)
                         result          = WidgetContainer::handle_event(e);
@@ -769,12 +765,14 @@ namespace lsp
 
                 case ws::UIE_MOUSE_DOWN:
                 {
-//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
-//                            int(e->nCode), int(e->nState), int(hMouse.nState));
                     Widget *h       = acquire_mouse_handler(e);
+//                    int old_state   = hMouse.nState;
                     hMouse.nState  |= (1 << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
+
+//                    lsp_trace("MOUSE_DOWN this = %p, e->nCode = %d, e->nState=0x%x state = 0x%x -> 0x%x",
+//                        this, int(e->nCode), int(e->nState), int(old_state), int(hMouse.nState));
 
                     // Take focus first
                     take_focus(h);
@@ -790,8 +788,8 @@ namespace lsp
 
                 case ws::UIE_MOUSE_MOVE:
                 {
-//                    lsp_trace("e->nCode = %d, e->nState=0x%x state = 0x%x",
-//                            int(e->nCode), int(e->nState), int(hMouse.nState));
+//                    lsp_trace("MOUSE_MOVE this = %p, e->nCode = %d, e->nState=0x%x state = 0x%x",
+//                        this, int(e->nCode), int(e->nState), int(hMouse.nState));
                     Widget *h       = acquire_mouse_handler(e);
                     hMouse.nState   = e->nState;
                     hMouse.nLeft    = e->nLeft;
@@ -900,7 +898,7 @@ namespace lsp
                         h->handle_event(&ev);
                     }
 
-                    kill_focus(pFocused);
+                    do_kill_focus(pFocused);
                     break;
                 }
 
@@ -1056,7 +1054,7 @@ namespace lsp
             return true;
         }
 
-        bool Window::kill_focus(Widget *w)
+        bool Window::do_kill_focus(Widget *w)
         {
             // Check that widget owns focus
             if (w != pFocused)
@@ -1134,7 +1132,7 @@ namespace lsp
                 return;
 
             // Kill focus on the widget
-            kill_focus(w);
+            do_kill_focus(w);
 
             // Send UIE_MOUSE_OUT and discard mouse handler
             Widget *old = hMouse.pWidget;
@@ -1221,14 +1219,7 @@ namespace lsp
         {
             if (pWindow == NULL)
                 return false;
-            return pWindow->set_focus(true) == STATUS_OK;
-        }
-
-        bool Window::kill_focus()
-        {
-            if (pWindow == NULL)
-                return false;
-            return pWindow->set_focus(false) == STATUS_OK;
+            return pWindow->take_focus() == STATUS_OK;
         }
 
         bool Window::has_parent() const

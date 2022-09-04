@@ -119,7 +119,7 @@ namespace lsp
             if ((pWidget == NULL) || (!pWidget->visibility()->get()))
             {
                 s->clip_begin(area);
-                s->fill_rect(bg_color, &sSize);
+                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
                 s->clip_end();
                 return;
             }
@@ -145,7 +145,7 @@ namespace lsp
                     s->clip_begin(area);
                     {
                         pWidget->get_actual_bg_color(bg_color);
-                        s->fill_frame(bg_color, &sSize, &cr);
+                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &cr);
                     }
                     s->clip_end();
                 }

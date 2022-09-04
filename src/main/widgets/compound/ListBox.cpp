@@ -95,6 +95,7 @@ namespace lsp
             nCurrIndex      = -1;
             nLastIndex      = -1;
             nKeyScroll      = SCR_NONE;
+            pHoverItem      = NULL;
 
             sArea.nLeft     = 0;
             sArea.nTop      = 0;
@@ -545,9 +546,9 @@ namespace lsp
                     if (force)
                     {
                         s->clip_begin(area);
-                        s->fill_rect(col, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
-                        s->fill_rect(col, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight + hsspacing);
-                        s->fill_rect(col, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight + hsspacing);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
                         s->clip_end();
                     }
                 }
@@ -557,8 +558,8 @@ namespace lsp
                     if (force)
                     {
                         s->clip_begin(area);
-                        s->fill_rect(col, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
-                        s->fill_rect(col, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
                         s->clip_end();
                     }
                 }
@@ -577,7 +578,7 @@ namespace lsp
                 if (force)
                 {
                     s->clip_begin(area);
-                    s->fill_rect(col, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight);
+                    s->fill_rect(col, SURFMASK_NONE, 0.0f, v.nLeft - vsspacing, v.nTop, vsspacing, v.nHeight);
                     s->clip_end();
                 }
             }
@@ -589,19 +590,19 @@ namespace lsp
                 {
                     // Draw the frame around
                     s->clip_begin(area);
-                        s->fill_frame(col, &sArea, &sList);
+                        s->fill_frame(col, SURFMASK_NONE, 0.0f, &sArea, &sList);
 
                         aa = s->set_antialiasing(true);
                             col.copy(sBorderColor);
                             xr = sArea;
-                            s->fill_round_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
+                            s->fill_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
 
                             col.copy(sListBgColor);
                             xr.nLeft       += border;
                             xr.nTop        += border;
                             xr.nWidth      -= border * 2;
                             xr.nHeight     -= border * 2;
-                            s->fill_round_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
+                            s->fill_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
 
                         s->set_antialiasing(aa);
                     s->clip_end();
@@ -638,21 +639,27 @@ namespace lsp
                         if (selected)
                         {
                             col.copy(li->bg_selected_color()->color());
-                            s->fill_rect(col, &it->r);
+                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
                             col.copy(li->text_selected_color()->color());
+                        }
+                        else if (it == pHoverItem)
+                        {
+                            col.copy(li->bg_hover_color()->color());
+                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
+                            col.copy(li->text_hover_color()->color());
                         }
                         else
                         {
                             li->get_actual_bg_color(col);
-                            s->fill_rect(col, &it->r);
+                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
                             col.copy(li->text_color()->color());
                         }
 
                         li->padding()->enter(&xr, &it->r, scaling);
                         sFont.draw(s, col,
-                                xr.nLeft,
-                                xr.nTop  + ((xr.nHeight - fp.Height) * 0.5f) + fp.Ascent,
-                                fscaling, &text);
+                            xr.nLeft,
+                            xr.nTop  + ((xr.nHeight - fp.Height) * 0.5f) + fp.Ascent,
+                            fscaling, &text);
                     }
                     s->clip_end();
                 }
@@ -759,7 +766,11 @@ namespace lsp
             if (_this == NULL)
                 return;
 
-            item->set_parent(_this);
+            // Change parent only if we are working with the main item list.
+            if (_this->vItems.is(prop))
+            {
+                item->set_parent(_this);
+            }
             _this->query_resize();
         }
 
@@ -773,11 +784,15 @@ namespace lsp
             if (_this == NULL)
                 return;
 
-            // Remove widget from selection list
+            // Special logic if the message was originated by the item list
             if (_this->vItems.is(prop))
+            {
+                // Remove widget from selection list
                 _this->vSelected.remove(item);
+                // Unlink widget
+                _this->unlink_widget(item);
+            }
 
-            _this->unlink_widget(item);
             _this->query_resize();
         }
 
@@ -817,11 +832,8 @@ namespace lsp
 
         status_t ListBox::on_mouse_move(const ws::event_t *e)
         {
-            if (nBMask != ws::MCF_LEFT)
-                return STATUS_OK;
-
             item_t *it  = find_item(e->nLeft, e->nTop);
-            if (it != NULL)
+            if ((it != NULL) && (nBMask == ws::MCF_LEFT))
             {
                 nCurrIndex      = it->index;
                 if (e->nState & ws::MCF_SHIFT)
@@ -829,7 +841,22 @@ namespace lsp
                 else
                     select_single(nCurrIndex, e->nState & ws::MCF_CONTROL);
             }
+            if (pHoverItem != it)
+            {
+                pHoverItem  = it;
+                query_draw();
+            }
 
+            return STATUS_OK;
+        }
+
+        status_t ListBox::on_mouse_out(const ws::event_t *e)
+        {
+            if (pHoverItem != NULL)
+            {
+                pHoverItem      = NULL;
+                query_draw();
+            }
             return STATUS_OK;
         }
 
