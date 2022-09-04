@@ -27,10 +27,6 @@ namespace
 {
     static const float default_row[] = { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
 
-    static const float src_row1[] =    { 2.0f, 0.1f, 0.2f, -0.1f, -0.2f };
-    static const float src_row2[] =    { 0.1f, 0.2f, 0.2f, 0.1f, 0.0f };
-    static const float src_row3[] =    { 0.25f, -0.25f, 0.5f, -0.5f, 1.0f };
-
     static const float dst_row1[] =    { 1.0f, 0.1f, 0.2f, 0.0f, 0.0f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
     static const float dst_row2[] =    { 0.1f, 0.2f, 0.2f, 0.1f, 0.0f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
     static const float dst_row3[] =    { 0.25f, 0.0f, 0.5f, 0.0f, 1.0f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
