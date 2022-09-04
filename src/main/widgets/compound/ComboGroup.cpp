@@ -489,7 +489,7 @@ namespace lsp
         ListBoxItem *ComboGroup::current_item()
         {
             ListBoxItem *it = sSelected.get();
-            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : NULL;
+            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? sLBox.items()->index_of(it) : -1;
             return (index >= 0) ? it : NULL;
         }
 
