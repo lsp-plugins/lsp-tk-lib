@@ -748,7 +748,7 @@ namespace lsp
         bool Widget::kill_focus()
         {
             Window *wnd = widget_cast<Window>(toplevel());
-            return (wnd != NULL) ? wnd->kill_focus(this) : false;
+            return (wnd != NULL) ? wnd->do_kill_focus(this) : false;
         }
 
         ws::mouse_pointer_t Widget::current_pointer()
