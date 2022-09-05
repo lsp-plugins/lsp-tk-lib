@@ -103,14 +103,14 @@ LIBFREETYPE_VERSION        := system
 LIBFREETYPE_NAME           := freetype2
 LIBFREETYPE_TYPE           := pkg
 
-LIBGL_VERSION              := system
-LIBGL_NAME                 := gl
-LIBGL_TYPE                 := pkg
-
 LIBGDI32_VERSION           := system
 LIBGDI32_NAME              := libgid32
 LIBGDI32_TYPE              := opt
 LIBGDI32_LDFLAGS           := -lgdi32
+
+LIBGL_VERSION              := system
+LIBGL_NAME                 := gl
+LIBGL_TYPE                 := pkg
 
 LIBICONV_VERSION           := system
 LIBICONV_NAME              := libiconv
