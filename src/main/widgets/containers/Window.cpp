@@ -300,15 +300,20 @@ namespace lsp
 
             size_t flags = nFlags;
 
-            s->begin();
+            ws::ISurface *bs = get_surface(s);
+            bs->begin();
             {
                 ws::rectangle_t xr;
                 xr.nLeft    = 0;
                 xr.nTop     = 0;
                 xr.nWidth   = sSize.nWidth;
                 xr.nHeight  = sSize.nHeight;
-                render(s, &xr, flags);
+                render(bs, &xr, flags);
             }
+            bs->end();
+
+            s->begin();
+                s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
             s->end();
             commit_redraw();
 
