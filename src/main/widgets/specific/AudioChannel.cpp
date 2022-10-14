@@ -33,32 +33,42 @@ namespace lsp
                 // Bind
                 sFadeIn.bind("fade_in.length", this);
                 sFadeOut.bind("fade_out.length", this);
+                sStretchBegin.bind("stretch.begin", this);
+                sStretchEnd.bind("stretch.end", this);
                 sWaveBorder.bind("wave.border", this);
                 sFadeInBorder.bind("fade_in.border", this);
                 sFadeOutBorder.bind("fade_out.border", this);
+                sStretchBorder.bind("stretch.border", this);
                 sLineWidth.bind("line.width", this);
                 sColor.bind("color", this);
                 sLineColor.bind("line.color", this);
                 sWaveBorderColor.bind("wave.border.color", this);
                 sFadeInColor.bind("fade_in.color", this);
                 sFadeOutColor.bind("fade_out.color", this);
+                sStretchColor.bind("stretch.color", this);
                 sFadeInBorderColor.bind("fade_in.border.color", this);
                 sFadeOutBorderColor.bind("fade_out.border.color", this);
+                sStretchBorderColor.bind("stretch.border.color", this);
                 sConstraints.bind("size.constraints", this);
                 // Configure
                 sFadeIn.set(0);
                 sFadeOut.set(0);
+                sStretchBegin.set(-1);
+                sStretchEnd.set(-1);
                 sWaveBorder.set(1);
                 sFadeInBorder.set(1);
                 sFadeOutBorder.set(1);
+                sStretchBorder.set(1);
                 sLineWidth.set(1);
                 sColor.set("#8800ff00");
                 sLineColor.set("#ffffff");
                 sWaveBorderColor.set("#00ff00");
                 sFadeInColor.set("#88ffff00");
                 sFadeOutColor.set("#88ffff00");
+                sStretchColor.set("#8800ff00");
                 sFadeInBorderColor.set("#ffff00");
                 sFadeOutBorderColor.set("#ffff00");
+                sStretchBorderColor.set("#00ff00");
                 sConstraints.set(128, 32, -1, -1);
                 // Override
                 sBgColor.set("#000000");
@@ -75,17 +85,22 @@ namespace lsp
             vSamples(&sProperties),
             sFadeIn(&sProperties),
             sFadeOut(&sProperties),
+            sStretchBegin(&sProperties),
+            sStretchEnd(&sProperties),
             sWaveBorder(&sProperties),
             sFadeInBorder(&sProperties),
             sFadeOutBorder(&sProperties),
+            sStretchBorder(&sProperties),
             sLineWidth(&sProperties),
             sColor(&sProperties),
             sLineColor(&sProperties),
             sWaveBorderColor(&sProperties),
             sFadeInColor(&sProperties),
             sFadeOutColor(&sProperties),
+            sStretchColor(&sProperties),
             sFadeInBorderColor(&sProperties),
             sFadeOutBorderColor(&sProperties),
+            sStretchBorderColor(&sProperties),
             sConstraints(&sProperties)
         {
             pClass          = &metadata;
@@ -105,9 +120,12 @@ namespace lsp
             // Bind properties
             sFadeIn.bind("fade_in.length", &sStyle);
             sFadeOut.bind("fade_out.length", &sStyle);
+            sStretchBegin.bind("stretch.begin", &sStyle);
+            sStretchEnd.bind("stretch.end", &sStyle);
             sWaveBorder.bind("wave.border", &sStyle);
             sFadeInBorder.bind("fade_in.border", &sStyle);
             sFadeOutBorder.bind("fade_out.border", &sStyle);
+            sStretchBorder.bind("stretch.border", &sStyle);
             sLineWidth.bind("line.width", &sStyle);
             sColor.bind("color", &sStyle);
             sLineColor.bind("line.color", &sStyle);
@@ -128,32 +146,15 @@ namespace lsp
             if (vSamples.is(prop))
                 query_draw();
 
-            if (sFadeIn.is(prop))
+            if (prop->one_of(sFadeIn, sFadeOut, sStretchBegin, sStretchEnd))
                 query_draw();
-            if (sFadeOut.is(prop))
+            if (prop->one_of(sWaveBorder, sFadeInBorder, sFadeOutBorder, sStretchBorder, sLineWidth))
                 query_draw();
-            if (sWaveBorder.is(prop))
+            if (prop->one_of(sColor, sLineColor, sWaveBorderColor,
+                sFadeInColor, sFadeOutColor, sStretchColor,
+                sFadeInBorderColor, sFadeOutBorderColor, sStretchBorderColor))
                 query_draw();
-            if (sFadeInBorder.is(prop))
-                query_draw();
-            if (sFadeOutBorder.is(prop))
-                query_draw();
-            if (sLineWidth.is(prop))
-                query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sLineColor.is(prop))
-                query_draw();
-            if (sWaveBorderColor.is(prop))
-                query_draw();
-            if (sFadeInColor.is(prop))
-                query_draw();
-            if (sFadeOutColor.is(prop))
-                query_draw();
-            if (sFadeInBorderColor.is(prop))
-                query_draw();
-            if (sFadeOutBorderColor.is(prop))
-                query_draw();
+
             if (sConstraints.is(prop))
                 query_resize();
         }

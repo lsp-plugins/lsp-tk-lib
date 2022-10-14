@@ -117,6 +117,19 @@ namespace lsp
                  * @return true if property matches
                  */
                 inline bool         is(const Property &prop) const { return &prop == this; }
+
+                /**
+                 * Check that property matches one of the
+                 * @param prop reference to property to check
+                 * @return true if property matches one of the passed properties in the list
+                 */
+                template <class... T>
+                inline bool         one_of(const Property &prop, T... args) const
+                {
+                    if (is(prop))
+                        return true;
+                    return one_of(&args);
+                }
         };
 
     }

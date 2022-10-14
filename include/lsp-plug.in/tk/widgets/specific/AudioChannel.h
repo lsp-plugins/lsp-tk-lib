@@ -38,9 +38,12 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(AudioChannel, Widget)
                 prop::Integer           sFadeIn;            // Number of samples for fade-in
                 prop::Integer           sFadeOut;           // Number of samples for fade-out
+                prop::Integer           sStretchBegin;      // Start of the stretch region
+                prop::Integer           sStretchEnd;        // End position of the stretch region
                 prop::Integer           sWaveBorder;        // Wave border
                 prop::Integer           sFadeInBorder;      // Fade in border
                 prop::Integer           sFadeOutBorder;     // Fade out border
+                prop::Integer           sStretchBorder;     // Stretch border
                 prop::Integer           sLineWidth;         // Line width
                 prop::Color             sColor;             // Color of the audio channel
                 prop::Color             sLineColor;         // Line color
@@ -49,6 +52,8 @@ namespace lsp
                 prop::Color             sFadeOutColor;      // Fade-out color
                 prop::Color             sFadeInBorderColor; // Color of fade-in
                 prop::Color             sFadeOutBorderColor;// Fade-out color
+                prop::Color             sStretchBorderColor;// Stretch border color
+                prop::Color             sStretchColor;      // Stretch fill color
                 prop::SizeConstraints   sConstraints;       // Size constraints
             LSP_TK_STYLE_DEF_END
         }
@@ -71,17 +76,22 @@ namespace lsp
 
                 prop::Integer           sFadeIn;            // Number of samples for fade-in
                 prop::Integer           sFadeOut;           // Number of samples for fade-out
+                prop::Integer           sStretchBegin;      // Start of the stretch region
+                prop::Integer           sStretchEnd;        // End position of the stretch region
                 prop::Integer           sWaveBorder;        // Wave border
                 prop::Integer           sFadeInBorder;      // Fade in border
                 prop::Integer           sFadeOutBorder;     // Fade out border
+                prop::Integer           sStretchBorder;     // Stretch border
                 prop::Integer           sLineWidth;         // Line width
                 prop::Color             sColor;             // Color of the audio channel
                 prop::Color             sLineColor;         // Line color
                 prop::Color             sWaveBorderColor;   // Color of the wave border
                 prop::Color             sFadeInColor;       // Color of fade-in
                 prop::Color             sFadeOutColor;      // Fade-out color
+                prop::Color             sStretchColor;      // Stretch fill color
                 prop::Color             sFadeInBorderColor; // Color of fade-in
                 prop::Color             sFadeOutBorderColor;// Fade-out color
+                prop::Color             sStretchBorderColor;// Stretch border color
                 prop::SizeConstraints   sConstraints;       // Size constraints
 
             protected:
@@ -101,17 +111,22 @@ namespace lsp
                 LSP_TK_PROPERTY(FloatArray,             samples,                &vSamples);
                 LSP_TK_PROPERTY(Integer,                fade_in,                &sFadeIn);
                 LSP_TK_PROPERTY(Integer,                fade_out,               &sFadeOut);
+                LSP_TK_PROPERTY(Integer,                stretch_begin,          &sStretchBegin);
+                LSP_TK_PROPERTY(Integer,                stretch_end,            &sStretchEnd);
                 LSP_TK_PROPERTY(Integer,                wave_border,            &sWaveBorder);
                 LSP_TK_PROPERTY(Integer,                fade_in_border,         &sFadeInBorder);
                 LSP_TK_PROPERTY(Integer,                fade_out_border,        &sFadeOutBorder);
+                LSP_TK_PROPERTY(Integer,                stretch_border,         &sStretchBorder);
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth);
                 LSP_TK_PROPERTY(Color,                  color,                  &sColor);
                 LSP_TK_PROPERTY(Color,                  wave_border_color,      &sWaveBorderColor);
                 LSP_TK_PROPERTY(Color,                  fade_in_color,          &sFadeInColor);
                 LSP_TK_PROPERTY(Color,                  fade_out_color,         &sFadeOutColor);
+                LSP_TK_PROPERTY(Color,                  stretch_color,          &sStretchColor)
                 LSP_TK_PROPERTY(Color,                  fade_in_border_color,   &sFadeInColor);
                 LSP_TK_PROPERTY(Color,                  fade_out_border_color,  &sFadeOutColor);
                 LSP_TK_PROPERTY(Color,                  line_color,             &sLineColor);
+                LSP_TK_PROPERTY(Color,                  stretch_border_color,   &sStretchBorderColor);
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints);
 
             public:
