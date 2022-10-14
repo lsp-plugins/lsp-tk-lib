@@ -76,7 +76,7 @@ namespace lsp
                 AudioChannel(const AudioChannel &);
                 friend class AudioSample;
 
-            private:
+            protected:
                 typedef struct range_t
                 {
                     prop::Integer  *begin;

@@ -73,6 +73,8 @@ namespace lsp
                 sWaveBorder.bind("wave.border", this);
                 sFadeInBorder.bind("fade_in.border", this);
                 sFadeOutBorder.bind("fade_out.border", this);
+                sStretchBorder.bind("stretch.border", this);
+                sLoopBorder.bind("loop.border", this);
                 sLineWidth.bind("line.width", this);
                 sLineColor.bind("line.color", this);
                 sConstraints.bind("size.constraints", this);
@@ -106,6 +108,8 @@ namespace lsp
                 sWaveBorder.set(1);
                 sFadeInBorder.set(1);
                 sFadeOutBorder.set(1);
+                sStretchBorder.set(1);
+                sLoopBorder.set(1);
                 sLineWidth.set(1);
                 sLineColor.set("#ffffff");
                 sConstraints.set_all(-1);
@@ -152,6 +156,8 @@ namespace lsp
             sWaveBorder(&sProperties),
             sFadeInBorder(&sProperties),
             sFadeOutBorder(&sProperties),
+            sStretchBorder(&sProperties),
+            sLoopBorder(&sProperties),
             sLineWidth(&sProperties),
             sLineColor(&sProperties),
             sConstraints(&sProperties),
@@ -251,6 +257,8 @@ namespace lsp
             sWaveBorder.bind("wave.border", &sStyle);
             sFadeInBorder.bind("fade_in.border", &sStyle);
             sFadeOutBorder.bind("fade_out.border", &sStyle);
+            sStretchBorder.bind("stretch.border", &sStyle);
+            sLoopBorder.bind("loop.border", &sStyle);
             sLineWidth.bind("line.width", &sStyle);
             sLineColor.bind("line.color", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
@@ -297,14 +305,12 @@ namespace lsp
 
             if (vChannels.is(prop))
                 query_resize();
+
             if (sWaveBorder.is(prop))
                 query_resize();
-            if (sFadeInBorder.is(prop))
+            if (prop->one_of(sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sLineWidth))
                 query_draw();
-            if (sFadeOutBorder.is(prop))
-                query_draw();
-            if (sLineWidth.is(prop))
-                query_draw();
+
             if (sLineColor.is(prop))
                 query_draw();
             if (sConstraints.is(prop))
@@ -457,6 +463,10 @@ namespace lsp
             float *y            = &x[n_decim];
             if (x == NULL)
                 return;
+            lsp_finally { lsp::free_aligned(data); };
+
+            bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             // Form the x and y values
             FloatArray *vsamp   = &c->vSamples;
@@ -484,12 +494,7 @@ namespace lsp
             fill.scale_lch_luminance(bright);
             wire.scale_lch_luminance(bright);
 
-            bool aa             = s->set_antialiasing(true);
             s->draw_poly(fill, wire, border, x, y, n_points);
-            s->set_antialiasing(aa);
-
-            // Free allocated data
-            lsp::free_aligned(data);
         }
 
         void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples)
@@ -504,6 +509,7 @@ namespace lsp
             float x[6], y[6];
 
             bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             // Draw fade in
             if (c->sFadeIn.get() > 0)
@@ -562,8 +568,43 @@ namespace lsp
 
                 s->draw_poly(fill, wire, border, x, y, 6);
             }
+        }
 
-            s->set_antialiasing(aa);
+        void AudioSample::draw_range(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, range_t *range, size_t samples)
+        {
+            // Check limits
+            if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
+                return;
+
+            // Check that the value is enabled
+            ssize_t begin   = range->begin->get();
+            ssize_t end     = range->end->get();
+            if ((begin < 0) && (end < 0))
+                return;
+            if (begin > end)
+                return;
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+            float border        = (range->border->get() > 0) ? lsp_max(1.0f, range->border->get() * scaling) : 0.0f;
+            float xb            = float(begin * r->nWidth) / float(samples);
+            float xe            = float(end * r->nWidth) / float(samples);
+
+            // Draw the range
+            lsp::Color fill(*range->color);
+            lsp::Color wire(*range->border_color);
+            fill.scale_lch_luminance(bright);
+            wire.scale_lch_luminance(bright);
+
+            bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
+
+            s->fill_rect(fill, SURFMASK_NONE, 0.0f, r->nLeft + xb, r->nTop, xe - xb, r->nHeight);
+            if (border > 0)
+            {
+                s->line(wire, xb, r->nTop, xb, r->nTop + r->nHeight, border);
+                s->line(wire, xe, r->nTop, xe, r->nTop + r->nHeight, border);
+            }
         }
 
         void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down)
@@ -586,8 +627,10 @@ namespace lsp
             float *y            = &x[n_decim];
             if (x == NULL)
                 return;
+            lsp_finally { lsp::free_aligned(data); };
 
             bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             // Form the x and y values for sample 1
             FloatArray *vsamp   = &c->vSamples;
@@ -615,10 +658,6 @@ namespace lsp
             fill.scale_lch_luminance(bright);
             wire.scale_lch_luminance(bright);
             s->draw_poly(fill, wire, border, x, y, n_points);
-
-            // Free allocated data
-            s->set_antialiasing(aa);
-            lsp::free_aligned(data);
         }
 
         void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down)
@@ -633,6 +672,7 @@ namespace lsp
             float x[4], y[4];
 
             bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             // Draw fade in
             if (c->sFadeIn.get() > 0)
@@ -683,8 +723,6 @@ namespace lsp
 
                 s->draw_poly(fill, wire, border, x, y, 4);
             }
-
-            s->set_antialiasing(aa);
         }
 
         void AudioSample::draw_main_text(ws::ISurface *s)
@@ -756,6 +794,7 @@ namespace lsp
             sLabelLayout[idx].apply(&xr, &gr, &sr);
 
             bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             // Draw label background
             lsp::Color color(sLabelBgColor);
@@ -776,8 +815,6 @@ namespace lsp
                 sLabelTextLayout[idx].halign(), sLabelTextLayout[idx].valign(), fscaling,
                 &text
             );
-
-            s->set_antialiasing(aa);
         }
 
         void AudioSample::draw(ws::ISurface *s)
@@ -817,7 +854,7 @@ namespace lsp
 
                 xr.nHeight          = sGraph.nHeight / items;
                 ssize_t place       = xr.nHeight * items;
-                ssize_t y           = (sGraph.nHeight - place) >> 1;
+                ssize_t y           = (sGraph.nHeight - place) / 2;
 
                 // Draw depending of the view type
                 if (sSGroups.get())
@@ -828,6 +865,33 @@ namespace lsp
                     {
                         AudioChannel *c     = vVisible.uget(i);
                         draw_channel2(&xr, s, c, samples, i & 1);
+                        xr.nTop            += xr.nHeight;
+                    }
+
+                    // Draw loop and stretch markers
+                    xr.nTop             = y;
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        AudioChannel *c     = vVisible.uget(i);
+
+                        // Define ranges
+                        range_t stretch = {
+                            &c->sStretchBegin,
+                            &c->sStretchEnd,
+                            &sStretchBorder,
+                            &c->sStretchColor,
+                            &c->sStretchBorderColor
+                        };
+                        range_t loop = {
+                            &c->sLoopBegin,
+                            &c->sLoopEnd,
+                            &sLoopBorder,
+                            &c->sLoopColor,
+                            &c->sLoopBorderColor
+                        };
+
+                        draw_range(&xr, s, c, &stretch, samples);
+                        draw_range(&xr, s, c, &loop, samples);
                         xr.nTop            += xr.nHeight;
                     }
 
@@ -860,6 +924,33 @@ namespace lsp
                     {
                         AudioChannel *c     = vVisible.uget(i);
                         draw_channel1(&xr, s, c, samples);
+                        xr.nTop            += xr.nHeight;
+                    }
+
+                    // Draw loop and stretch markers
+                    xr.nTop             = y;
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        AudioChannel *c     = vVisible.uget(i);
+
+                        // Define ranges
+                        range_t stretch = {
+                            &c->sStretchBegin,
+                            &c->sStretchEnd,
+                            &sStretchBorder,
+                            &c->sStretchColor,
+                            &c->sStretchBorderColor
+                        };
+                        range_t loop = {
+                            &c->sLoopBegin,
+                            &c->sLoopEnd,
+                            &sLoopBorder,
+                            &c->sLoopColor,
+                            &c->sLoopBorderColor
+                        };
+
+                        draw_range(&xr, s, c, &stretch, samples);
+                        draw_range(&xr, s, c, &loop, samples);
                         xr.nTop            += xr.nHeight;
                     }
 
@@ -919,7 +1010,9 @@ namespace lsp
                 // Draw widget background
                 s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
 
-                bool aa = s->set_antialiasing(true);
+                bool aa             = s->set_antialiasing(true);
+                lsp_finally { s->set_antialiasing(aa); };
+
                 s->fill_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
                 // Get surface of widget
@@ -972,8 +1065,6 @@ namespace lsp
                     drop_glass();
                     draw_border(s, bg_color, SURFMASK_ALL_CORNER, bw, xr, &sSize, flat);
                 }
-
-                s->set_antialiasing(aa);
             }
             s->clip_end();
         }

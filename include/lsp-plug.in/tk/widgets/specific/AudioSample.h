@@ -39,6 +39,8 @@ namespace lsp
                 prop::Integer           sWaveBorder;                // Wave border
                 prop::Integer           sFadeInBorder;              // Fade in border
                 prop::Integer           sFadeOutBorder;             // Fade out border
+                prop::Integer           sStretchBorder;             // Stretch border
+                prop::Integer           sLoopBorder;                // Loop border
                 prop::Integer           sLineWidth;                 // Line width
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
@@ -89,6 +91,15 @@ namespace lsp
                     XF_DOWN         = 1 << 2
                 };
 
+                typedef struct range_t
+                {
+                    prop::Integer  *begin;
+                    prop::Integer  *end;
+                    prop::Integer  *border;
+                    prop::Color    *color;
+                    prop::Color    *border_color;
+                } range_t;
+
             protected:
                 prop::WidgetList<AudioChannel>  vChannels;          // List of audio channels
                 lltl::parray<AudioChannel>      vVisible;           // List of visible audio channels
@@ -97,6 +108,8 @@ namespace lsp
                 prop::Integer           sWaveBorder;                // Wave border
                 prop::Integer           sFadeInBorder;              // Fade in border
                 prop::Integer           sFadeOutBorder;             // Fade out border
+                prop::Integer           sStretchBorder;             // Stretch border
+                prop::Integer           sLoopBorder;                // Loop border
                 prop::Integer           sLineWidth;                 // Line width
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
@@ -143,6 +156,7 @@ namespace lsp
                 virtual void            property_changed(Property *prop);
                 virtual void            hide_widget();
 
+                void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, range_t *range, size_t samples);
                 void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down);
@@ -172,6 +186,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                wave_border,            &sWaveBorder)
                 LSP_TK_PROPERTY(Integer,                fade_in_border,         &sFadeInBorder)
                 LSP_TK_PROPERTY(Integer,                fade_out_border,        &sFadeOutBorder)
+                LSP_TK_PROPERTY(Integer,                stretch_border,         &sStretchBorder)
+                LSP_TK_PROPERTY(Integer,                loop_border,            &sLoopBorder)
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth)
                 LSP_TK_PROPERTY(Color,                  line_color,             &sLineColor)
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints)
