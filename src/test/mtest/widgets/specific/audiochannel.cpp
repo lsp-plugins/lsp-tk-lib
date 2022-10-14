@@ -240,6 +240,8 @@ MTEST_BEGIN("tk.widgets.specific", audiochannel)
             MTEST_ASSERT(grid->add(ac) == STATUS_OK);
 
             init_values(ac);
+            ac->loop_begin()->set(16);
+            ac->loop_end()->set(192);
 
             // Create audio channel with fades
             MTEST_ASSERT(id.fmt_ascii("audiochannel-%d", int(vid++)));
@@ -256,6 +258,9 @@ MTEST_BEGIN("tk.widgets.specific", audiochannel)
             ac->fade_out()->set(128);
             ac->fade_out_color()->set_rgba32(0x88ff8800);
             ac->fade_out_border_color()->set_rgb24(0xff8800);
+
+            ac->stretch_begin()->set(32);
+            ac->stretch_end()->set(128);
         }
 
         // Show window

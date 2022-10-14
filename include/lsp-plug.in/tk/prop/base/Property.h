@@ -26,6 +26,8 @@
     #error "use <lsp-plug.in/tk/tk.h>"
 #endif
 
+#include <lsp-plug.in/common/variadic.h>
+
 namespace lsp
 {
     namespace tk
@@ -98,6 +100,8 @@ namespace lsp
                 static float        normalized(float value, float min, float max);
                 static bool         matches(float value, float min, float max);
 
+                constexpr inline bool one_of() const { return false; }
+
             public:
                 /**
                  * Override property for the style
@@ -124,11 +128,11 @@ namespace lsp
                  * @return true if property matches one of the passed properties in the list
                  */
                 template <class... T>
-                inline bool         one_of(const Property &prop, T... args) const
+                inline bool         one_of(const Property &prop, T && ... args) const
                 {
                     if (is(prop))
                         return true;
-                    return one_of(&args);
+                    return one_of(lsp::forward<T>(args)...);
                 }
         };
 

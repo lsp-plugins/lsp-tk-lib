@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.6 ===
-
+* Added stretch and loop markers to the AudioChannel widget.
 
 === 1.0.5 ===
 * Updated build scripts.
