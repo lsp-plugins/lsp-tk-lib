@@ -31,6 +31,8 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(AudioChannel, Widget)
                 // Bind
+                sHeadCut.bind("head_cut.length", this);
+                sTailCut.bind("tail_cut.length", this);
                 sFadeIn.bind("fade_in.length", this);
                 sFadeOut.bind("fade_out.length", this);
                 sStretchBegin.bind("stretch.begin", this);
@@ -46,6 +48,8 @@ namespace lsp
                 sColor.bind("color", this);
                 sLineColor.bind("line.color", this);
                 sWaveBorderColor.bind("wave.border.color", this);
+                sHeadCutColor.bind("head_cut.color", this);
+                sTailCutColor.bind("tail_cut.color", this);
                 sFadeInColor.bind("fade_in.color", this);
                 sFadeOutColor.bind("fade_out.color", this);
                 sStretchColor.bind("stretch.color", this);
@@ -56,6 +60,8 @@ namespace lsp
                 sLoopBorderColor.bind("loop.border.color", this);
                 sConstraints.bind("size.constraints", this);
                 // Configure
+                sHeadCut.set(0);
+                sTailCut.set(0);
                 sFadeIn.set(0);
                 sFadeOut.set(0);
                 sStretchBegin.set(-1);
@@ -71,6 +77,8 @@ namespace lsp
                 sColor.set("#8800ff00");
                 sLineColor.set("#ffffff");
                 sWaveBorderColor.set("#00ff00");
+                sHeadCutColor.set("#44cccccc");
+                sTailCutColor.set("#44cccccc");
                 sFadeInColor.set("#88ffff00");
                 sFadeOutColor.set("#88ffff00");
                 sStretchColor.set("#8800ff00");
@@ -93,6 +101,8 @@ namespace lsp
         AudioChannel::AudioChannel(Display *dpy):
             Widget(dpy),
             vSamples(&sProperties),
+            sHeadCut(&sProperties),
+            sTailCut(&sProperties),
             sFadeIn(&sProperties),
             sFadeOut(&sProperties),
             sStretchBegin(&sProperties),
@@ -108,6 +118,8 @@ namespace lsp
             sColor(&sProperties),
             sLineColor(&sProperties),
             sWaveBorderColor(&sProperties),
+            sHeadCutColor(&sProperties),
+            sTailCutColor(&sProperties),
             sFadeInColor(&sProperties),
             sFadeOutColor(&sProperties),
             sStretchColor(&sProperties),
@@ -133,6 +145,8 @@ namespace lsp
                 return res;
 
             // Bind properties
+            sHeadCut.bind("head_cut.length", &sStyle);
+            sTailCut.bind("tail_cut.length", &sStyle);
             sFadeIn.bind("fade_in.length", &sStyle);
             sFadeOut.bind("fade_out.length", &sStyle);
             sStretchBegin.bind("stretch.begin", &sStyle);
@@ -148,6 +162,8 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sLineColor.bind("line.color", &sStyle);
             sWaveBorderColor.bind("wave.border.color", &sStyle);
+            sHeadCutColor.bind("head_cut.color", &sStyle);
+            sTailCutColor.bind("tail_cut.color", &sStyle);
             sFadeInColor.bind("fade_in.color", &sStyle);
             sFadeOutColor.bind("fade_out.color", &sStyle);
             sStretchColor.bind("stretch.color", &sStyle);
@@ -167,12 +183,12 @@ namespace lsp
 
             if (vSamples.is(prop))
                 query_draw();
-            if (prop->one_of(sFadeIn, sFadeOut, sStretchBegin, sStretchEnd, sLoopBegin, sLoopEnd))
+            if (prop->one_of(sHeadCut, sTailCut, sFadeIn, sFadeOut, sStretchBegin, sStretchEnd, sLoopBegin, sLoopEnd))
                 query_draw();
             if (prop->one_of(sWaveBorder, sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sLineWidth))
                 query_draw();
             if (prop->one_of(sColor, sLineColor, sWaveBorderColor,
-                sFadeInColor, sFadeOutColor, sStretchColor, sLoopColor,
+                sHeadCutColor, sTailCutColor, sFadeInColor, sFadeOutColor, sStretchColor, sLoopColor,
                 sFadeInBorderColor, sFadeOutBorderColor, sStretchBorderColor, sLoopBorderColor))
                 query_draw();
             if (sConstraints.is(prop))
@@ -253,10 +269,12 @@ namespace lsp
             bool aa             = s->set_antialiasing(true);
             lsp_finally { s->set_antialiasing(aa); };
 
+            float fi_border     = (sFadeInBorder.get() > 0)  ? lsp_max(1.0f, sFadeInBorder.get()  * scaling) : 0.0f;
+            float fo_border     = (sFadeOutBorder.get() > 0) ? lsp_max(1.0f, sFadeOutBorder.get() * scaling) : 0.0f;
+
             // Draw fade in
-            if (sFadeIn.get() > 0)
+            if ((sFadeIn.get() > 0) || (sHeadCut.get() > 0))
             {
-                float border        = (sFadeInBorder.get() > 0) ? lsp_max(1.0f, sFadeInBorder.get() * scaling) : 0.0f;
                 float xx            = float(sFadeIn.get() * r->nWidth) / float(samples);
 
                 // Form the arrays
@@ -274,18 +292,30 @@ namespace lsp
                 y[4]                = y[3];
                 y[5]                = y[0];
 
+                // Apply head cut if set
+                if (sHeadCut.get() > 0)
+                {
+                    lsp::Color cut(sHeadCutColor);
+                    cut.scale_lch_luminance(bright);
+
+                    float dx            = float(sHeadCut.get() * r->nWidth) / float(samples);
+                    s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft, r->nTop, dx, r->nHeight);
+                    for (size_t i=0; i<6; ++i)
+                        x[i]               += dx;
+                }
+
+                // Draw fade
                 lsp::Color fill(sFadeInColor);
                 lsp::Color wire(sFadeInBorderColor);
                 fill.scale_lch_luminance(bright);
                 wire.scale_lch_luminance(bright);
 
-                s->draw_poly(fill, wire, border, x, y, 6);
+                s->draw_poly(fill, wire, fi_border, x, y, 6);
             }
 
             // Draw fade out
-            if (sFadeOut.get() > 0)
+            if ((sFadeOut.get() > 0) || (sTailCut.get() > 0))
             {
-                float border        = (sFadeOutBorder.get() > 0) ? lsp_max(1.0f, sFadeOutBorder.get() * scaling) : 0.0f;
                 float xx            = r->nLeft + r->nWidth - float(sFadeOut.get() * r->nWidth) / float(samples);
 
                 // Form the arrays
@@ -303,12 +333,25 @@ namespace lsp
                 y[4]                = y[3];
                 y[5]                = y[0];
 
+                // Apply tail cut if set
+                if (sTailCut.get() > 0)
+                {
+                    lsp::Color cut(sTailCutColor);
+                    cut.scale_lch_luminance(bright);
+
+                    float dx            = float(sTailCut.get() * r->nWidth) / float(samples);
+                    s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft + r->nWidth - dx, r->nTop, dx, r->nHeight);
+                    for (size_t i=0; i<6; ++i)
+                        x[i]               -= dx;
+                }
+
+                // Draw fade
                 lsp::Color fill(sFadeOutColor);
                 lsp::Color wire(sFadeOutBorderColor);
                 fill.scale_lch_luminance(bright);
                 wire.scale_lch_luminance(bright);
 
-                s->draw_poly(fill, wire, border, x, y, 6);
+                s->draw_poly(fill, wire, fo_border, x, y, 6);
             }
         }
 

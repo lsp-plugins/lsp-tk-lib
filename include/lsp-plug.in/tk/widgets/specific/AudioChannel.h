@@ -36,6 +36,8 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(AudioChannel, Widget)
+                prop::Integer           sHeadCut;           // Head cut
+                prop::Integer           sTailCut;           // Tail cut
                 prop::Integer           sFadeIn;            // Number of samples for fade-in
                 prop::Integer           sFadeOut;           // Number of samples for fade-out
                 prop::Integer           sStretchBegin;      // Start of the stretch region
@@ -51,6 +53,8 @@ namespace lsp
                 prop::Color             sColor;             // Color of the audio channel
                 prop::Color             sLineColor;         // Line color
                 prop::Color             sWaveBorderColor;   // Color of the wave border
+                prop::Color             sHeadCutColor;      // Color of head cut
+                prop::Color             sTailCutColor;      // Color of tail cut
                 prop::Color             sFadeInColor;       // Color of fade-in
                 prop::Color             sFadeOutColor;      // Fade-out color
                 prop::Color             sStretchColor;      // Stretch fill color
@@ -89,6 +93,8 @@ namespace lsp
             protected:
                 prop::FloatArray        vSamples;
 
+                prop::Integer           sHeadCut;           // Head cut
+                prop::Integer           sTailCut;           // Tail cut
                 prop::Integer           sFadeIn;            // Number of samples for fade-in
                 prop::Integer           sFadeOut;           // Number of samples for fade-out
                 prop::Integer           sStretchBegin;      // Start of the stretch region
@@ -104,6 +110,8 @@ namespace lsp
                 prop::Color             sColor;             // Color of the audio channel
                 prop::Color             sLineColor;         // Line color
                 prop::Color             sWaveBorderColor;   // Color of the wave border
+                prop::Color             sHeadCutColor;      // Color of head cut
+                prop::Color             sTailCutColor;      // Color of tail cut
                 prop::Color             sFadeInColor;       // Color of fade-in
                 prop::Color             sFadeOutColor;      // Fade-out color
                 prop::Color             sStretchColor;      // Stretch fill color
@@ -130,6 +138,8 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(FloatArray,             samples,                &vSamples);
+                LSP_TK_PROPERTY(Integer,                head_cut,               &sHeadCut);
+                LSP_TK_PROPERTY(Integer,                tail_cut,               &sTailCut);
                 LSP_TK_PROPERTY(Integer,                fade_in,                &sFadeIn);
                 LSP_TK_PROPERTY(Integer,                fade_out,               &sFadeOut);
                 LSP_TK_PROPERTY(Integer,                stretch_begin,          &sStretchBegin);
@@ -144,6 +154,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth);
                 LSP_TK_PROPERTY(Color,                  color,                  &sColor);
                 LSP_TK_PROPERTY(Color,                  wave_border_color,      &sWaveBorderColor);
+                LSP_TK_PROPERTY(Color,                  head_cut_color,         &sHeadCutColor);
+                LSP_TK_PROPERTY(Color,                  tail_cut_color,         &sTailCutColor);
                 LSP_TK_PROPERTY(Color,                  fade_in_color,          &sFadeInColor);
                 LSP_TK_PROPERTY(Color,                  fade_out_color,         &sFadeOutColor);
                 LSP_TK_PROPERTY(Color,                  stretch_color,          &sStretchColor)

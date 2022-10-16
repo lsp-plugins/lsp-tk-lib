@@ -222,14 +222,14 @@ MTEST_BEGIN("tk.widgets.specific", audiochannel)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(2);
+        grid->rows()->set(3);
         grid->columns()->set(1);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
         grid->vspacing()->set(2);
 
         {
-            // Create meter channels
+            // Create audio channels
             LSPString id;
 
             // Create audio channel
@@ -261,6 +261,19 @@ MTEST_BEGIN("tk.widgets.specific", audiochannel)
 
             ac->stretch_begin()->set(32);
             ac->stretch_end()->set(128);
+
+            // Create audio channel with head and tail cut
+            MTEST_ASSERT(id.fmt_ascii("audiochannel-%d", int(vid++)));
+            MTEST_ASSERT(ac = new tk::AudioChannel(dpy));
+            MTEST_ASSERT(init_widget(ac, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ac));
+            MTEST_ASSERT(grid->add(ac) == STATUS_OK);
+
+            init_values(ac);
+            ac->fade_in()->set(32);
+            ac->fade_out()->set(64);
+            ac->head_cut()->set(64);
+            ac->tail_cut()->set(32);
         }
 
         // Show window
