@@ -300,7 +300,7 @@ namespace lsp
 
                     float dx            = float(sHeadCut.get() * r->nWidth) / float(samples);
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft, r->nTop, dx, r->nHeight);
-                    for (size_t i=0; i<6; ++i)
+                    for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               += dx;
                 }
 
@@ -341,7 +341,7 @@ namespace lsp
 
                     float dx            = float(sTailCut.get() * r->nWidth) / float(samples);
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft + r->nWidth - dx, r->nTop, dx, r->nHeight);
-                    for (size_t i=0; i<6; ++i)
+                    for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               -= dx;
                 }
 

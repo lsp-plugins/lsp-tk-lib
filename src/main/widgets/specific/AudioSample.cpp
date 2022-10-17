@@ -511,10 +511,12 @@ namespace lsp
             bool aa             = s->set_antialiasing(true);
             lsp_finally { s->set_antialiasing(aa); };
 
+            float fi_border     = (sFadeInBorder.get() > 0)  ? lsp_max(1.0f, sFadeInBorder.get()  * scaling) : 0.0f;
+            float fo_border     = (sFadeOutBorder.get() > 0) ? lsp_max(1.0f, sFadeOutBorder.get() * scaling) : 0.0f;
+
             // Draw fade in
-            if (c->sFadeIn.get() > 0)
+            if ((c->sFadeIn.get() > 0) || (c->sHeadCut.get() > 0))
             {
-                float border        = (sFadeInBorder.get() > 0) ? lsp_max(1.0f, sFadeInBorder.get() * scaling) : 0.0f;
                 float xx            = float(c->sFadeIn.get() * r->nWidth) / float(samples);
 
                 // Form the arrays
@@ -532,18 +534,30 @@ namespace lsp
                 y[4]                = y[3];
                 y[5]                = y[0];
 
+                // Apply head cut if set
+                if (c->sHeadCut.get() > 0)
+                {
+                    lsp::Color cut(c->sHeadCutColor);
+                    cut.scale_lch_luminance(bright);
+
+                    float dx            = float(c->sHeadCut.get() * r->nWidth) / float(samples);
+                    s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft, r->nTop, dx, r->nHeight);
+                    for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
+                        x[i]               += dx;
+                }
+
+                // Draw fade
                 lsp::Color fill(c->sFadeInColor);
                 lsp::Color wire(c->sFadeInBorderColor);
                 fill.scale_lch_luminance(bright);
                 wire.scale_lch_luminance(bright);
 
-                s->draw_poly(fill, wire, border, x, y, 6);
+                s->draw_poly(fill, wire, fi_border, x, y, 6);
             }
 
             // Draw fade out
             if (c->sFadeOut.get() > 0)
             {
-                float border        = (sFadeOutBorder.get() > 0) ? lsp_max(1.0f, sFadeOutBorder.get() * scaling) : 0.0f;
                 float xx            = r->nLeft + r->nWidth - float(c->sFadeOut.get() * r->nWidth) / float(samples);
 
                 // Form the arrays
@@ -561,12 +575,25 @@ namespace lsp
                 y[4]                = y[3];
                 y[5]                = y[0];
 
+                // Apply tail cut if set
+                if (c->sTailCut.get() > 0)
+                {
+                    lsp::Color cut(c->sTailCutColor);
+                    cut.scale_lch_luminance(bright);
+
+                    float dx            = float(c->sTailCut.get() * r->nWidth) / float(samples);
+                    s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft + r->nWidth - dx, r->nTop, dx, r->nHeight);
+                    for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
+                        x[i]               -= dx;
+                }
+
+                // Draw fade
                 lsp::Color fill(c->sFadeOutColor);
                 lsp::Color wire(c->sFadeOutBorderColor);
                 fill.scale_lch_luminance(bright);
                 wire.scale_lch_luminance(bright);
 
-                s->draw_poly(fill, wire, border, x, y, 6);
+                s->draw_poly(fill, wire, fo_border, x, y, 6);
             }
         }
 
@@ -674,10 +701,12 @@ namespace lsp
             bool aa             = s->set_antialiasing(true);
             lsp_finally { s->set_antialiasing(aa); };
 
+            float fi_border     = (sFadeInBorder.get()  > 0) ? lsp_max(1.0f, sFadeInBorder.get()  * scaling) : 0.0f;
+            float fo_border     = (sFadeOutBorder.get() > 0) ? lsp_max(1.0f, sFadeOutBorder.get() * scaling) : 0.0f;
+
             // Draw fade in
-            if (c->sFadeIn.get() > 0)
+            if ((c->sFadeIn.get() > 0) || (c->sHeadCut.get() > 0))
             {
-                float border        = (sFadeInBorder.get() > 0) ? lsp_max(1.0f, sFadeInBorder.get() * scaling) : 0.0f;
                 float xx            = float(c->sFadeIn.get() * r->nWidth) / float(samples);
 
                 // Form the arrays
@@ -691,18 +720,30 @@ namespace lsp
                 y[2]                = y[1];
                 y[3]                = y[0];
 
+                // Apply head cut if set
+                if (c->sHeadCut.get() > 0)
+                {
+                    lsp::Color cut(c->sHeadCutColor);
+                    cut.scale_lch_luminance(bright);
+
+                    float dx            = float(c->sHeadCut.get() * r->nWidth) / float(samples);
+                    s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft, r->nTop, dx, r->nHeight);
+                    for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
+                        x[i]               += dx;
+                }
+
+                // Draw fade
                 lsp::Color fill(c->sFadeInColor);
                 lsp::Color wire(c->sFadeInBorderColor);
                 fill.scale_lch_luminance(bright);
                 wire.scale_lch_luminance(bright);
 
-                s->draw_poly(fill, wire, border, x, y, 4);
+                s->draw_poly(fill, wire, fi_border, x, y, 4);
             }
 
             // Draw fade out
             if (c->sFadeOut.get() > 0)
             {
-                float border        = (sFadeOutBorder.get() > 0) ? lsp_max(1.0f, sFadeOutBorder.get() * scaling) : 0.0f;
                 float xx            = r->nLeft + r->nWidth - float(c->sFadeOut.get() * r->nWidth) / float(samples);
 
                 // Form the arrays
@@ -716,12 +757,25 @@ namespace lsp
                 y[2]                = y[1];
                 y[3]                = y[0];
 
+                // Apply tail cut if set
+                if (c->sTailCut.get() > 0)
+                {
+                    lsp::Color cut(c->sTailCutColor);
+                    cut.scale_lch_luminance(bright);
+
+                    float dx            = float(c->sTailCut.get() * r->nWidth) / float(samples);
+                    s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft + r->nWidth - dx, r->nTop, dx, r->nHeight);
+                    for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
+                        x[i]               -= dx;
+                }
+
+                // Draw fade
                 lsp::Color fill(c->sFadeOutColor);
                 lsp::Color wire(c->sFadeOutBorderColor);
                 fill.scale_lch_luminance(bright);
                 wire.scale_lch_luminance(bright);
 
-                s->draw_poly(fill, wire, border, x, y, 4);
+                s->draw_poly(fill, wire, fo_border, x, y, 4);
             }
         }
 
