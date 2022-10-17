@@ -556,7 +556,7 @@ namespace lsp
             }
 
             // Draw fade out
-            if (c->sFadeOut.get() > 0)
+            if ((c->sFadeOut.get() > 0) || (c->sTailCut.get() > 0))
             {
                 float xx            = r->nLeft + r->nWidth - float(c->sFadeOut.get() * r->nWidth) / float(samples);
 
@@ -742,7 +742,7 @@ namespace lsp
             }
 
             // Draw fade out
-            if (c->sFadeOut.get() > 0)
+            if ((c->sFadeOut.get() > 0) || (c->sTailCut.get() > 0))
             {
                 float xx            = r->nLeft + r->nWidth - float(c->sFadeOut.get() * r->nWidth) / float(samples);
 
