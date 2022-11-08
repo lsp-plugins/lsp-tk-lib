@@ -170,6 +170,7 @@
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
 #include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
 #include <lsp-plug.in/tk/widgets/containers/MultiLabel.h>
+#include <lsp-plug.in/tk/widgets/containers/TabControl.h>
 
 // Compound widgets
 #include <lsp-plug.in/tk/widgets/compound/Menu.h>
