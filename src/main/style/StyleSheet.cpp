@@ -193,7 +193,9 @@ namespace lsp
                         break;
 
                     case xml::XT_START_ELEMENT:
-                        if (p->name()->equals_ascii("colors"))
+                    {
+                        const LSPString *name = p->name();
+                        if (name->equals_ascii("colors"))
                         {
                             if (flags & F_COLORS)
                             {
@@ -203,7 +205,7 @@ namespace lsp
                             res     = parse_colors(p);
                             flags  |= F_COLORS;
                         }
-                        else if (p->name()->equals_ascii("fonts"))
+                        else if (name->equals_ascii("fonts"))
                         {
                             if (flags & F_FONTS)
                             {
@@ -213,7 +215,7 @@ namespace lsp
                             res = parse_fonts(p);
                             flags  |= F_FONTS;
                         }
-                        else if (p->name()->equals_ascii("constants"))
+                        else if (name->equals_ascii("constants"))
                         {
                             if (flags & F_CONST)
                             {
@@ -223,11 +225,11 @@ namespace lsp
                             res = parse_constants(p);
                             flags  |= F_CONST;
                         }
-                        else if (p->name()->equals_ascii("style"))
+                        else if (name->equals_ascii("style"))
                             res = parse_style(p, false);
-                        else if (p->name()->equals_ascii("root"))
+                        else if (name->equals_ascii("root"))
                             res = parse_style(p, true);
-                        else if (p->name()->equals_ascii("meta"))
+                        else if (name->equals_ascii("meta"))
                         {
                             if (flags & F_META)
                             {
@@ -239,10 +241,11 @@ namespace lsp
                         }
                         else
                         {
-                            sError.fmt_utf8("Unsupported element: '%s'", p->name()->get_utf8());
+                            sError.fmt_utf8("Unsupported element: '%s'", name->get_utf8());
                             return STATUS_CORRUPTED;
                         }
                         break;
+                    }
 
                     case xml::XT_END_ELEMENT:
                         if (!p->name()->equals_ascii("schema"))
@@ -395,13 +398,16 @@ namespace lsp
 
                         // Create color object
                         lsp::Color *c = new lsp::Color();
+                        LSPString color_name;
+                        if (!color_name.set(p->name()))
+                            return STATUS_NO_MEM;
                         if (c == NULL)
                             return STATUS_NO_MEM;
 
                         // Try to parse color
-                        if ((res = parse_color(p, c)) == STATUS_OK)
+                        if ((res = parse_color(p, &color_name, c)) == STATUS_OK)
                         {
-                            if (!vColors.put(p->name(), c, NULL))
+                            if (!vColors.put(&color_name, c, NULL))
                                 res = STATUS_NO_MEM;
                         }
 
@@ -449,6 +455,9 @@ namespace lsp
                         }
 
                         // Create color object
+                        LSPString const_name;
+                        if (!const_name.set(p->name()))
+                            return STATUS_NO_MEM;
                         LSPString *value = new LSPString();
                         if (value == NULL)
                             return STATUS_NO_MEM;
@@ -456,7 +465,7 @@ namespace lsp
                         // Try to parse color
                         if ((res = parse_constant(p, value)) == STATUS_OK)
                         {
-                            if (!vConstants.put(p->name(), value, NULL))
+                            if (!vConstants.put(&const_name, value, NULL))
                                 res = STATUS_NO_MEM;
                         }
 
@@ -504,6 +513,9 @@ namespace lsp
                         }
 
                         // Create font object
+                        LSPString font_name;
+                        if (!font_name.set(p->name()))
+                            return STATUS_NO_MEM;
                         font_t *f = new font_t();
                         if (f == NULL)
                             return STATUS_NO_MEM;
@@ -517,7 +529,7 @@ namespace lsp
                         // Try to parse font
                         if ((res = parse_font(p, f)) == STATUS_OK)
                         {
-                            if (!vFonts.put(p->name(), f, NULL))
+                            if (!vFonts.put(&font_name, f, NULL))
                                 res = STATUS_NO_MEM;
                         }
 
@@ -641,7 +653,7 @@ namespace lsp
             }
         }
 
-        status_t StyleSheet::parse_color(xml::PullParser *p, lsp::Color *color)
+        status_t StyleSheet::parse_color(xml::PullParser *p, const LSPString *color_name, lsp::Color *color)
         {
             status_t item, res = STATUS_OK;
             bool value = false;
@@ -658,6 +670,7 @@ namespace lsp
                         break;
 
                     case xml::XT_ATTRIBUTE:
+                    {
                         // Value already has been set?
                         if (value)
                         {
@@ -667,29 +680,38 @@ namespace lsp
                         value   = true;
 
                         // Parse value
-                        if (p->name()->equals_ascii("value"))
-                            res = color->parse3(p->value());
-                        else if (p->name()->equals_ascii("avalue"))
-                            res = color->parse4(p->value());
-                        else if (p->name()->equals_ascii("rgb"))
-                            res = color->parse_rgb(p->value());
-                        else if (p->name()->equals_ascii("rgba"))
-                            res = color->parse_rgba(p->value());
-                        else if (p->name()->equals_ascii("hsl"))
-                            res = color->parse_hsl(p->value());
-                        else if (p->name()->equals_ascii("hsla"))
-                            res = color->parse_hsla(p->value());
+                        const LSPString *name  = p->name();
+                        const LSPString *value = p->value();
+                        if (name->equals_ascii("value"))
+                            res = color->parse3(value);
+                        else if (name->equals_ascii("avalue"))
+                            res = color->parse4(value);
+                        else if (name->equals_ascii("rgb"))
+                            res = color->parse_rgb(value);
+                        else if (name->equals_ascii("rgba"))
+                            res = color->parse_rgba(value);
+                        else if (name->equals_ascii("hsl"))
+                            res = color->parse_hsl(value);
+                        else if (name->equals_ascii("hsla"))
+                            res = color->parse_hsla(value);
                         else
                         {
-                            sError.fmt_utf8("Unknown property '%s' for color", p->name()->get_utf8());
+                            sError.fmt_utf8("Unknown property '%s' for color", name->get_utf8());
+                            return STATUS_CORRUPTED;
+                        }
+                        if (res != STATUS_OK)
+                        {
+                            sError.fmt_utf8("Could not assign value %s='%s' to color '%s'",
+                                name->get_utf8(), value->get_utf8(), color_name->get_utf8());
                             return STATUS_CORRUPTED;
                         }
                         break;
+                    }
 
                     case xml::XT_END_ELEMENT:
                         if (!value)
                         {
-                            sError.fmt_utf8("Not specified value for color '%s'", p->name()->get_utf8());
+                            sError.fmt_utf8("Not specified value for color '%s'", color_name->get_utf8());
                             return STATUS_BAD_FORMAT;
                         }
                         return STATUS_OK;

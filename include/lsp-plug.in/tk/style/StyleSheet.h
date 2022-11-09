@@ -97,7 +97,7 @@ namespace lsp
 
                 status_t            parse_metadata(xml::PullParser *p);
                 status_t            parse_style(xml::PullParser *p, bool root);
-                status_t            parse_color(xml::PullParser *p, lsp::Color *color);
+                status_t            parse_color(xml::PullParser *p, const LSPString *color_name, lsp::Color *color);
                 status_t            parse_constant(xml::PullParser *p, LSPString *value);
                 status_t            parse_font(xml::PullParser *p, font_t *font);
                 status_t            parse_property(xml::PullParser *p, style_t *style, const LSPString *name);
