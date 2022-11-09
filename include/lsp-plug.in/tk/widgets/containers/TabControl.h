@@ -41,11 +41,15 @@ namespace lsp
                 prop::Color                 sBorderColor;
                 prop::Color                 sActiveTabColor;
                 prop::Color                 sInactiveTabColor;
+                prop::Color                 sActiveTabBorderColor;
+                prop::Color                 sInactiveTabBorderColor;
                 prop::Color                 sActiveTabTextColor;
                 prop::Color                 sInactiveTabTextColor;
                 prop::Padding               sActiveTabTextPadding;
                 prop::Padding               sInactiveTabTextPadding;
                 prop::Integer               sBorderSize;
+                prop::Integer               sActiveTabBorderSize;
+                prop::Integer               sInactiveTabBorderSize;
                 prop::Integer               sBorderRadius;
                 prop::Integer               sActiveTabRadius;
                 prop::Integer               sInactiveTabRadius;
@@ -80,10 +84,10 @@ namespace lsp
                 } alloc_t;
 
             protected:
-                lltl::darray<ws::rectangle_t>   vTabs;      // List of allocated tab rectangles
+                lltl::darray<ws::rectangle_t>   vTabs;      // List of allocated tab headings
                 ws::rectangle_t             sArea;
                 size_t                      nMBState;       // Mouse button state
-                bool                        bInside;
+                tk::Tab                    *pEventTab;
 
                 prop::Font                  sActiveTabFont;
                 prop::Font                  sInactiveTabFont;
@@ -92,11 +96,15 @@ namespace lsp
                 prop::Color                 sBorderColor;
                 prop::Color                 sActiveTabColor;
                 prop::Color                 sInactiveTabColor;
+                prop::Color                 sActiveTabBorderColor;
+                prop::Color                 sInactiveTabBorderColor;
                 prop::Color                 sActiveTabTextColor;
                 prop::Color                 sInactiveTabTextColor;
                 prop::Padding               sActiveTabTextPadding;
                 prop::Padding               sInactiveTabTextPadding;
                 prop::Integer               sBorderSize;
+                prop::Integer               sActiveTabBorderSize;
+                prop::Integer               sInactiveTabBorderSize;
                 prop::Integer               sBorderRadius;
                 prop::Integer               sActiveTabRadius;
                 prop::Integer               sInactiveTabRadius;
@@ -105,25 +113,27 @@ namespace lsp
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
 
-                prop::WidgetList<Widget>    vWidgets;
-                prop::WidgetPtr<Widget>     sSelected;
+                prop::WidgetList<Tab>       vWidgets;
+                prop::WidgetPtr<Tab>        sSelected;
                 prop::CollectionListener    sIListener;
 
             protected:
                 void                        allocate(alloc_t *alloc);
-                void                        do_destroy();
                 Widget                     *current_widget();
-                ListBoxItem                *current_item();
-                bool                        scroll_item(ssize_t direction, size_t count);
-
-                static void                 on_add_widget(void *obj, Property *prop, void *w);
-                static void                 on_remove_widget(void *obj, Property *prop, void *w);
+                bool                        scroll_item(ssize_t increment);
+                tk::Tab                    *find_tab(ssize_t x, ssize_t y);
 
             protected:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
-                virtual void                property_changed(Property *prop);
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                realize(const ws::rectangle_t *r);
+                static void                 on_add_widget(void *obj, Property *prop, void *w);
+                static void                 on_remove_widget(void *obj, Property *prop, void *w);
+                static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
+
+            protected:
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
+                virtual void                property_changed(Property *prop) override;
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit TabControl(Display *dpy);
@@ -139,9 +149,13 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                      border_color,               &sBorderColor)
                 LSP_TK_PROPERTY(Color,                      active_tab_color,           &sActiveTabColor)
                 LSP_TK_PROPERTY(Color,                      inactive_tab_color,         &sInactiveTabColor)
+                LSP_TK_PROPERTY(Color,                      active_tab_border_color,    &sActiveTabBorderColor)
+                LSP_TK_PROPERTY(Color,                      inactive_tab_border_color,  &sInactiveTabBorderColor)
                 LSP_TK_PROPERTY(Padding,                    active_tab_text_padding,    &sActiveTabTextPadding)
                 LSP_TK_PROPERTY(Padding,                    inactive_tab_text_padding,  &sInactiveTabTextPadding)
                 LSP_TK_PROPERTY(Integer,                    border_size,                &sBorderSize)
+                LSP_TK_PROPERTY(Integer,                    active_tab_border_size,     &sActiveTabBorderSize)
+                LSP_TK_PROPERTY(Integer,                    inactive_tab_border_size,   &sInactiveTabBorderSize)
                 LSP_TK_PROPERTY(Integer,                    border_radius,              &sBorderRadius)
                 LSP_TK_PROPERTY(Integer,                    active_tab_radius,          &sActiveTabRadius)
                 LSP_TK_PROPERTY(Integer,                    inactive_tab_radius,        &sInactiveTabRadius)
@@ -149,37 +163,32 @@ namespace lsp
                 LSP_TK_PROPERTY(Layout,                     layout,                     &sLayout)
                 LSP_TK_PROPERTY(Layout,                     heading,                    &sHeading)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sSizeConstraints)
-                LSP_TK_PROPERTY(WidgetPtr<Widget>,          selected,                   &sSelected)
-                LSP_TK_PROPERTY(WidgetList<Widget>,         widgets,                    &vWidgets)
+                LSP_TK_PROPERTY(WidgetPtr<Tab>,             selected,                   &sSelected)
+                LSP_TK_PROPERTY(WidgetList<Tab>,            widgets,                    &vWidgets)
 
             public:
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
-                virtual status_t            add(Widget *child);
+                virtual status_t            add(Widget *child) override;
 
-                virtual status_t            remove(Widget *child);
+                virtual status_t            remove(Widget *child) override;
 
-                virtual status_t            remove_all();
+                virtual status_t            remove_all() override;
 
-                virtual status_t            add_item(ListBoxItem *child);
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
 
-                virtual status_t            remove_item(ListBoxItem *child);
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
 
-                virtual status_t            remove_all_items();
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
 
+                virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
+
+                virtual status_t            on_key_down(const ws::event_t *e) override;
+
+            public:
                 virtual status_t            on_change();
 
                 virtual status_t            on_submit();
-
-                virtual status_t            on_mouse_down(const ws::event_t *e);
-
-                virtual status_t            on_mouse_up(const ws::event_t *e);
-
-                virtual status_t            on_mouse_move(const ws::event_t *e);
-
-                virtual status_t            on_mouse_scroll(const ws::event_t *e);
-
-                virtual status_t            on_key_down(const ws::event_t *e);
         };
 
     } /* namespace tk */
