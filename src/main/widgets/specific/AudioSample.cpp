@@ -94,6 +94,10 @@ namespace lsp
                 sColor.bind("color", this);
                 sBorderColor.bind("border.color", this);
                 sGlassColor.bind("glass.color", this);
+                sStretchColor.bind("stretch.color", this);
+                sLoopColor.bind("loop.color", this);
+                sStretchBorderColor.bind("stretch.border.color", this);
+                sLoopBorderColor.bind("loop.border.color", this);
                 sIPadding.bind("ipadding", this);
 
                 for (size_t i=0; i<LABELS; ++i)
@@ -132,6 +136,10 @@ namespace lsp
                 sColor.set("#000000");
                 sBorderColor.set("#000000");
                 sGlassColor.set("#ffffff");
+                sStretchColor.set("#8800ff00");
+                sLoopColor.set("#8800ffff");
+                sStretchBorderColor.set("#00ff00");
+                sLoopBorderColor.set("#00ffff");
                 sIPadding.set(1);
 
                 for (size_t i=0; i<LABELS; ++i)
@@ -146,7 +154,7 @@ namespace lsp
                 sLabelFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(AudioSample, "AudioSample", "root");
-        }
+        } /* namespace style */
 
         const w_class_t AudioSample::metadata           = { "AudioSample", &WidgetContainer::metadata };
 
@@ -178,6 +186,10 @@ namespace lsp
             sColor(&sProperties),
             sBorderColor(&sProperties),
             sGlassColor(&sProperties),
+            sStretchColor(&sProperties),
+            sLoopColor(&sProperties),
+            sStretchBorderColor(&sProperties),
+            sLoopBorderColor(&sProperties),
             sIPadding(&sProperties),
             sPopup(&sProperties)
         {
@@ -277,6 +289,10 @@ namespace lsp
             sBorderFlat.bind("border.flat", &sStyle);
             sGlass.bind("glass", &sStyle);
             sColor.bind("color", &sStyle);
+            sStretchColor.bind("stretch.color", &sStyle);
+            sLoopColor.bind("loop.color", &sStyle);
+            sStretchBorderColor.bind("stretch.border.color", &sStyle);
+            sLoopBorderColor.bind("loop.border.color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
             sGlassColor.bind("glass.color", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
@@ -933,15 +949,15 @@ namespace lsp
                             &c->sStretchBegin,
                             &c->sStretchEnd,
                             &sStretchBorder,
-                            &c->sStretchColor,
-                            &c->sStretchBorderColor
+                            &sStretchColor,
+                            &sStretchBorderColor
                         };
                         range_t loop = {
                             &c->sLoopBegin,
                             &c->sLoopEnd,
                             &sLoopBorder,
-                            &c->sLoopColor,
-                            &c->sLoopBorderColor
+                            &sLoopColor,
+                            &sLoopBorderColor
                         };
 
                         draw_range(&xr, s, c, &stretch, samples);
@@ -992,15 +1008,15 @@ namespace lsp
                             &c->sStretchBegin,
                             &c->sStretchEnd,
                             &sStretchBorder,
-                            &c->sStretchColor,
-                            &c->sStretchBorderColor
+                            &sStretchColor,
+                            &sStretchBorderColor
                         };
                         range_t loop = {
                             &c->sLoopBegin,
                             &c->sLoopEnd,
                             &sLoopBorder,
-                            &c->sLoopColor,
-                            &c->sLoopBorderColor
+                            &sLoopColor,
+                            &sLoopBorderColor
                         };
 
                         draw_range(&xr, s, c, &stretch, samples);
@@ -1323,7 +1339,7 @@ namespace lsp
             AudioSample *_this = widget_ptrcast<AudioSample>(ptr);
             return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

@@ -68,6 +68,10 @@ namespace lsp
                 prop::Color             sColor;                     // Graph color
                 prop::Color             sBorderColor;               // Color of the border
                 prop::Color             sGlassColor;                // Color of the glass
+                prop::Color             sStretchColor;              // Stretch fill color
+                prop::Color             sLoopColor;                 // Loop fill color
+                prop::Color             sStretchBorderColor;        // Stretch border color
+                prop::Color             sLoopBorderColor;           // Loop border color
                 prop::Padding           sIPadding;                  // Internal padding
             LSP_TK_STYLE_DEF_END
         }
@@ -137,6 +141,10 @@ namespace lsp
                 prop::Color             sColor;                     // Graph color
                 prop::Color             sBorderColor;               // Color of the border
                 prop::Color             sGlassColor;                // Color of the glass
+                prop::Color             sStretchColor;              // Stretch fill color
+                prop::Color             sLoopColor;                 // Loop fill color
+                prop::Color             sStretchBorderColor;        // Stretch border color
+                prop::Color             sLoopBorderColor;           // Loop border color
                 prop::Padding           sIPadding;                  // Internal padding
                 prop::WidgetPtr<Menu>   sPopup;                     // Popup Menu
 
@@ -215,6 +223,10 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                  color,                  &sColor)
                 LSP_TK_PROPERTY(Color,                  border_color,           &sBorderColor);
                 LSP_TK_PROPERTY(Color,                  glass_color,            &sGlassColor);
+                LSP_TK_PROPERTY(Color,                  stretch_color,          &sStretchColor)
+                LSP_TK_PROPERTY(Color,                  loop_color,             &sLoopColor)
+                LSP_TK_PROPERTY(Color,                  stretch_border_color,   &sStretchBorderColor);
+                LSP_TK_PROPERTY(Color,                  loop_border_color,      &sLoopBorderColor);
                 LSP_TK_PROPERTY(Padding,                ipadding,               &sIPadding);
 
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,        popup,                  &sPopup);
@@ -242,8 +254,8 @@ namespace lsp
 
                 virtual status_t            on_submit();
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 
