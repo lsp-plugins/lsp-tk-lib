@@ -34,27 +34,11 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(TabControl, WidgetContainer)
-                prop::Font                  sActiveTabFont;
-                prop::Font                  sInactiveTabFont;
-                prop::TextAdjust            sActiveTabTextAdjust;
-                prop::TextAdjust            sInactiveTabTextAdjust;
                 prop::Color                 sBorderColor;
-                prop::Color                 sActiveTabColor;
-                prop::Color                 sInactiveTabColor;
-                prop::Color                 sActiveTabBorderColor;
-                prop::Color                 sInactiveTabBorderColor;
-                prop::Color                 sActiveTabTextColor;
-                prop::Color                 sInactiveTabTextColor;
-                prop::Padding               sActiveTabTextPadding;
-                prop::Padding               sInactiveTabTextPadding;
                 prop::Integer               sBorderSize;
-                prop::Integer               sActiveTabBorderSize;
-                prop::Integer               sInactiveTabBorderSize;
                 prop::Integer               sBorderRadius;
-                prop::Integer               sActiveTabRadius;
-                prop::Integer               sInactiveTabRadius;
+                prop::Integer               sTabSpacing;
                 prop::Embedding             sEmbedding;
-                prop::Layout                sLayout;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
             LSP_TK_STYLE_DEF_END
@@ -75,41 +59,24 @@ namespace lsp
                 static const w_class_t      metadata;
 
             protected:
-                typedef struct alloc_t
+                typedef struct tab_t
                 {
-                    ws::rectangle_t         text;
-                    ws::rectangle_t         rtext;
-                    padding_t               pad;
-                    padding_t               xpad;
-                } alloc_t;
+                    ws::rectangle_t         bounds;         // Bounding box area
+                    ws::rectangle_t         text;           // Text area
+                    tk::Tab                *widget;
+                } tab_t;
 
             protected:
-                lltl::darray<ws::rectangle_t>   vTabs;      // List of allocated tab headings
+                lltl::darray<tab_t>         vVisible;       // List of visible tab headings
                 ws::rectangle_t             sArea;
                 size_t                      nMBState;       // Mouse button state
                 tk::Tab                    *pEventTab;
 
-                prop::Font                  sActiveTabFont;
-                prop::Font                  sInactiveTabFont;
-                prop::TextAdjust            sActiveTabTextAdjust;
-                prop::TextAdjust            sInactiveTabTextAdjust;
                 prop::Color                 sBorderColor;
-                prop::Color                 sActiveTabColor;
-                prop::Color                 sInactiveTabColor;
-                prop::Color                 sActiveTabBorderColor;
-                prop::Color                 sInactiveTabBorderColor;
-                prop::Color                 sActiveTabTextColor;
-                prop::Color                 sInactiveTabTextColor;
-                prop::Padding               sActiveTabTextPadding;
-                prop::Padding               sInactiveTabTextPadding;
                 prop::Integer               sBorderSize;
-                prop::Integer               sActiveTabBorderSize;
-                prop::Integer               sInactiveTabBorderSize;
                 prop::Integer               sBorderRadius;
-                prop::Integer               sActiveTabRadius;
-                prop::Integer               sInactiveTabRadius;
+                prop::Integer               sTabSpacing;
                 prop::Embedding             sEmbedding;
-                prop::Layout                sLayout;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
 
@@ -118,7 +85,7 @@ namespace lsp
                 prop::CollectionListener    sIListener;
 
             protected:
-                void                        allocate(alloc_t *alloc);
+                void                        allocate_tabs(ws::rectangle_t *area, lltl::darray<tab_t> *tabs);
                 Widget                     *current_widget();
                 bool                        scroll_item(ssize_t increment);
                 tk::Tab                    *find_tab(ssize_t x, ssize_t y);
@@ -142,25 +109,11 @@ namespace lsp
                 virtual status_t            init();
 
             public:
-                LSP_TK_PROPERTY(Font,                       active_tab_font,            &sActiveTabFont)
-                LSP_TK_PROPERTY(Font,                       inactive_tab_font,          &sInactiveTabFont)
-                LSP_TK_PROPERTY(TextAdjust,                 active_tab_text_ajdust,     &sActiveTabTextAdjust)
-                LSP_TK_PROPERTY(TextAdjust,                 inactive_tab_text_ajdust,   &sInactiveTabTextAdjust)
                 LSP_TK_PROPERTY(Color,                      border_color,               &sBorderColor)
-                LSP_TK_PROPERTY(Color,                      active_tab_color,           &sActiveTabColor)
-                LSP_TK_PROPERTY(Color,                      inactive_tab_color,         &sInactiveTabColor)
-                LSP_TK_PROPERTY(Color,                      active_tab_border_color,    &sActiveTabBorderColor)
-                LSP_TK_PROPERTY(Color,                      inactive_tab_border_color,  &sInactiveTabBorderColor)
-                LSP_TK_PROPERTY(Padding,                    active_tab_text_padding,    &sActiveTabTextPadding)
-                LSP_TK_PROPERTY(Padding,                    inactive_tab_text_padding,  &sInactiveTabTextPadding)
                 LSP_TK_PROPERTY(Integer,                    border_size,                &sBorderSize)
-                LSP_TK_PROPERTY(Integer,                    active_tab_border_size,     &sActiveTabBorderSize)
-                LSP_TK_PROPERTY(Integer,                    inactive_tab_border_size,   &sInactiveTabBorderSize)
                 LSP_TK_PROPERTY(Integer,                    border_radius,              &sBorderRadius)
-                LSP_TK_PROPERTY(Integer,                    active_tab_radius,          &sActiveTabRadius)
-                LSP_TK_PROPERTY(Integer,                    inactive_tab_radius,        &sInactiveTabRadius)
+                LSP_TK_PROPERTY(Integer,                    tab_spacing,                &sTabSpacing)
                 LSP_TK_PROPERTY(Embedding,                  embedding,                  &sEmbedding)
-                LSP_TK_PROPERTY(Layout,                     layout,                     &sLayout)
                 LSP_TK_PROPERTY(Layout,                     heading,                    &sHeading)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sSizeConstraints)
                 LSP_TK_PROPERTY(WidgetPtr<Tab>,             selected,                   &sSelected)

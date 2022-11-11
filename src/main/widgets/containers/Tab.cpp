@@ -32,6 +32,8 @@ namespace lsp
                 // Bind
                 sLayout.bind("layout", this);
                 sTextAdjust.bind("text.adjust", this);
+                sTextLayout.bind("text.layout", this);
+                sTextPadding.bind("text.padding", this);
                 sFont.bind("font", this);
                 sColor.bind("color", this);
                 sSelectedColor.bind("selected.color", this);
@@ -39,10 +41,14 @@ namespace lsp
                 sTextColor.bind("text.color", this);
                 sTextSelectedColor.bind("text.selected.color", this);
                 sTextHoverColor.bind("text.hover.color", this);
+                sBorderSize.bind("border.size", this);
+                sBorderRadius.bind("border.radius", this);
 
                 // Configure
                 sLayout.set(0.0f, 1.0f);
                 sTextAdjust.set(TA_NONE);
+                sTextLayout.set(-1.0f, 0.0f);
+                sTextPadding.set_all(2);
                 sFont.set_size(12.0f);
                 sColor.set("#cccccc");
                 sSelectedColor.set("#ffffff");
@@ -50,6 +56,8 @@ namespace lsp
                 sTextColor.set("#888888");
                 sTextSelectedColor.set("#000000");
                 sTextHoverColor.set("#eeeeee");
+                sBorderSize.set(1);
+                sBorderRadius.set(4);
             LSP_TK_STYLE_IMPL_END
 
             LSP_TK_BUILTIN_STYLE(Tab, "Tab", "root");
@@ -64,13 +72,17 @@ namespace lsp
             sLayout(&sProperties),
             sText(&sProperties),
             sTextAdjust(&sProperties),
+            sTextLayout(&sProperties),
+            sTextPadding(&sProperties),
             sFont(&sProperties),
             sColor(&sProperties),
             sSelectedColor(&sProperties),
             sHoverColor(&sProperties),
             sTextColor(&sProperties),
             sTextSelectedColor(&sProperties),
-            sTextHoverColor(&sProperties)
+            sTextHoverColor(&sProperties),
+            sBorderSize(&sProperties),
+            sBorderRadius(&sProperties)
         {
             pWidget     = NULL;
 
@@ -138,8 +150,6 @@ namespace lsp
 
         void Tab::size_request(ws::size_limit_t *r)
         {
-            float scaling   = lsp_max(0.0f, sScaling.get());
-
             if ((pWidget == NULL) || (!pWidget->is_visible_child_of(this)))
             {
                 r->nMinWidth    = -1;

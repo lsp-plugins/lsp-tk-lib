@@ -19,7 +19,9 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/tk/tk.h>
+
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -30,52 +32,20 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(TabControl, WidgetContainer)
                 // Bind
-                sActiveTabFont.bind("font", this);
-                sInactiveTabFont.bind("font.inactive", this);
-                sActiveTabTextAdjust.bind("text.adjust", this);
-                sInactiveTabTextAdjust.bind("text.adjust.inactive", this);
                 sBorderColor.bind("border.color", this);
-                sActiveTabColor.bind("tab.color", this);
-                sInactiveTabColor.bind("tab.color.inactive", this);
-                sActiveTabBorderColor.bind("tab.border.color", this);
-                sInactiveTabBorderColor.bind("tab.border.color.inactive", this);
-                sActiveTabTextColor.bind("tab.text.color", this);
-                sInactiveTabTextColor.bind("tab.text.color.inactive", this);
-                sActiveTabTextPadding.bind("tab.text.padding", this);
-                sInactiveTabTextColor.bind("tab.text.padding.inactive", this);
                 sBorderSize.bind("border.size", this);
-                sActiveTabBorderSize.bind("tab.border.size", this);
-                sInactiveTabBorderSize.bind("tab.border.size.inactive", this);
                 sBorderRadius.bind("border.radius", this);
-                sActiveTabRadius.bind("tab.radius", this);
-                sInactiveTabRadius.bind("tab.radius.inactive", this);
+                sTabSpacing.bind("tab.spacing", this);
                 sEmbedding.bind("embed", this);
-                sLayout.bind("layout", this);
                 sHeading.bind("heading", this);
                 sSizeConstraints.bind("size.constraints", this);
 
                 // Configure
-                sActiveTabFont.set_size(12.0f);
-                sInactiveTabFont.set_size(12.0f);
-                sActiveTabTextAdjust.set(TA_NONE);
-                sInactiveTabTextAdjust.set(TA_NONE);
                 sBorderColor.set("#888888");
-                sActiveTabColor.set("#888888");
-                sInactiveTabColor.set("#ffffff");
-                sActiveTabBorderColor.set("#888888");
-                sInactiveTabBorderColor.set("#000000");
-                sActiveTabTextColor.set("#ffffff");
-                sInactiveTabTextColor.set("#000000");
-                sActiveTabTextPadding.set_all(0);
-                sInactiveTabTextPadding.set_all(0);
                 sBorderSize.set(2);
-                sActiveTabBorderSize.set(1);
-                sInactiveTabBorderSize.set(1);
                 sBorderRadius.set(10);
-                sActiveTabRadius.set(6);
-                sInactiveTabRadius.set(6);
+                sTabSpacing.set(1);
                 sEmbedding.set(false);
-                sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 sHeading.set(-1.0f, -1.0f, 0.0f, 0.0f);
                 sSizeConstraints.set_all(-1);
             LSP_TK_STYLE_IMPL_END
@@ -89,27 +59,11 @@ namespace lsp
 
         TabControl::TabControl(Display *dpy):
             WidgetContainer(dpy),
-            sActiveTabFont(&sProperties),
-            sInactiveTabFont(&sProperties),
-            sActiveTabTextAdjust(&sProperties),
-            sInactiveTabTextAdjust(&sProperties),
             sBorderColor(&sProperties),
-            sActiveTabColor(&sProperties),
-            sInactiveTabColor(&sProperties),
-            sActiveTabBorderColor(&sProperties),
-            sInactiveTabBorderColor(&sProperties),
-            sActiveTabTextColor(&sProperties),
-            sInactiveTabTextColor(&sProperties),
-            sActiveTabTextPadding(&sProperties),
-            sInactiveTabTextPadding(&sProperties),
             sBorderSize(&sProperties),
-            sActiveTabBorderSize(&sProperties),
-            sInactiveTabBorderSize(&sProperties),
             sBorderRadius(&sProperties),
-            sActiveTabRadius(&sProperties),
-            sInactiveTabRadius(&sProperties),
+            sTabSpacing(&sProperties),
             sEmbedding(&sProperties),
-            sLayout(&sProperties),
             sHeading(&sProperties),
             sSizeConstraints(&sProperties),
             vWidgets(&sProperties, &sIListener),
@@ -141,27 +95,11 @@ namespace lsp
             sIListener.bind_all(this, on_add_widget, on_remove_widget);
 
             // Configure Window
-            sActiveTabFont.bind("font", &sStyle);
-            sInactiveTabFont.bind("font.inactive", &sStyle);
-            sActiveTabTextAdjust.bind("text.adjust", &sStyle);
-            sInactiveTabTextAdjust.bind("text.adjust.inactive", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
-            sActiveTabColor.bind("tab.color", &sStyle);
-            sInactiveTabColor.bind("tab.color.inactive", &sStyle);
-            sActiveTabBorderColor.bind("tab.border.color", &sStyle);
-            sInactiveTabBorderColor.bind("tab.border.color.inactive", &sStyle);
-            sActiveTabTextColor.bind("tab.text.color", &sStyle);
-            sInactiveTabTextColor.bind("tab.text.color.inactive", &sStyle);
-            sActiveTabTextPadding.bind("tab.text.padding", &sStyle);
-            sInactiveTabTextColor.bind("tab.text.padding.inactive", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
-            sActiveTabBorderSize.bind("tab.border.size", &sStyle);
-            sInactiveTabBorderSize.bind("tab.border.size.inactive", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
-            sActiveTabRadius.bind("tab.radius", &sStyle);
-            sInactiveTabRadius.bind("tab.radius.inactive", &sStyle);
+            sTabSpacing.bind("tab.spacing", &sStyle);
             sEmbedding.bind("embed", &sStyle);
-            sLayout.bind("layout", &sStyle);
             sHeading.bind("heading", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
 
@@ -179,19 +117,11 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (prop->one_of(sActiveTabFont, sInactiveTabFont,
-                sActiveTabTextAdjust, sInactiveTabTextAdjust))
-                query_resize();
-            if (prop->one_of(sBorderColor, sActiveTabColor, sInactiveTabColor,
-                sActiveTabBorderColor, sInactiveTabBorderColor,
-                sActiveTabTextColor, sInactiveTabTextColor))
+            if (sBorderColor.is(prop))
                 query_draw();
-            if (prop->one_of(sActiveTabTextPadding, sInactiveTabTextPadding))
+            if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing))
                 query_resize();
-            if (prop->one_of(sBorderSize, sActiveTabBorderSize, sInactiveTabBorderSize,
-                sBorderRadius, sActiveTabRadius, sInactiveTabRadius))
-                query_resize();
-            if (prop->one_of(sEmbedding, sLayout, sHeading, sSizeConstraints))
+            if (prop->one_of(sEmbedding, sHeading, sSizeConstraints))
                 query_resize();
             if (vWidgets.is(prop))
                 query_resize();
@@ -199,9 +129,70 @@ namespace lsp
                 query_resize();
         }
 
-        void TabControl::allocate(alloc_t *alloc)
+        void TabControl::allocate_tabs(ws::rectangle_t *area, lltl::darray<tab_t> *tabs)
         {
-            // TODO
+            float scaling           = lsp_max(0.0f, sScaling.get());
+            float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
+            size_t tab_spacing      = lsp_max(0.0f, sTabSpacing.get() * scaling);
+            bool top_align          = sHeading.valign() <= 0.0f;
+
+            area->nLeft             = 0;
+            area->nTop              = 0;
+            area->nWidth            = 0;
+            area->nHeight           = 0;
+
+            LSPString caption;
+
+            size_t x                = 0;
+            ssize_t max_h           = 0;
+
+            // Step 1: allocate tabs
+            for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+            {
+                tk::Tab *w = vWidgets.get(i);
+                if ((w == NULL) || (!w->is_visible_child_of(this)))
+                    continue;
+
+                // Create new record
+                tab_t *tab              = tabs->append();
+                if (tab == NULL)
+                    return;
+
+                // Obtain font properties and padding
+                padding_t padding;
+                ws::text_parameters_t tp;
+                size_t border_rgap      = lsp_max(0.0f, w->border_radius()->get() * scaling * M_SQRT1_2);
+                w->text()->format(&caption);
+                w->font()->get_multitext_parameters(pDisplay, &tp, fscaling, &caption);
+                w->text_padding()->compute(&padding, scaling);
+
+                // Write parameters
+                tab->widget             = w;
+                tab->bounds.nLeft       = x;
+                tab->bounds.nTop        = 0;
+                tab->text.nWidth        = tp.Width;
+                tab->text.nHeight       = tp.Height;
+                tab->bounds.nWidth      = 2 * border_rgap + tab->text.nWidth + padding.nLeft + padding.nRight;
+                tab->bounds.nHeight     = border_rgap + tab->text.nHeight + padding.nTop + padding.nBottom;
+                tab->text.nLeft         = tab->bounds.nLeft + border_rgap + padding.nLeft;
+                tab->text.nTop          = tab->bounds.nTop + padding.nTop + ((top_align) ? border_rgap : 0);
+
+                // Update coordinates of the next tab
+                max_h                   = lsp_max(max_h, tab->bounds.nHeight);
+                x                      += tab->bounds.nWidth + tab_spacing;
+            }
+
+            area->nHeight           = max_h;
+
+            // Step 2: make tabs of the same height
+            for (size_t i=0, n=tabs->size(); i<n; ++i)
+            {
+                tab_t *tab              = tabs->uget(i);
+                ssize_t dy              = max_h - tab->bounds.nHeight;
+                tab->bounds.nHeight    += dy;
+                tab->text.nHeight      += dy;
+                area->nWidth            = tab->bounds.nLeft + tab->bounds.nWidth;
+            }
         }
 
         void TabControl::size_request(ws::size_limit_t *r)
@@ -269,25 +260,6 @@ namespace lsp
             if (!Position::rinside(&sArea, x, y, border_radius))
                 return NULL;
 
-            size_t mask                 = 0;
-            ssize_t active_tab_radius   = lsp_max(0.0f, sActiveTabRadius.get() * scaling);
-            ssize_t inactive_tab_radius = lsp_max(0.0f, sInactiveTabRadius.get() * scaling);
-            if ((active_tab_radius > 0) || (inactive_tab_radius > 0))
-            {
-                if (sHeading.halign() <= 0)
-                    mask                =  (sHeading.valign() <= 0) ? SURFMASK_RB_CORNER : SURFMASK_RT_CORNER;
-                else
-                    mask                =  (sHeading.valign() <= 0) ? SURFMASK_LB_CORNER : SURFMASK_LT_CORNER;
-            }
-
-            for (size_t i=0, n=vTabs.size(); i<n; ++i)
-            {
-                ws::rectangle_t *r  = vTabs.uget(i);
-                tk::Tab *w          = vWidgets.get(i);
-                if ((w == NULL) || (!w->visibility()->get()))
-                    continue;
-                // TODO
-            }
             return NULL;
         }
 

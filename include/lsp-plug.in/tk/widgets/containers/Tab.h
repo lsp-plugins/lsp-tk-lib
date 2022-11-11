@@ -37,6 +37,8 @@ namespace lsp
                 prop::Layout                sLayout;            // Widget layout inside of the tab
                 prop::String                sText;              // Heading tab text
                 prop::TextAdjust            sTextAdjust;        // Heading tab text adjustment
+                prop::TextLayout            sTextLayout;        // Heading tab text layout
+                prop::Padding               sTextPadding;       // Heading tab text padding
                 prop::Font                  sFont;              // Heading tab font
                 prop::Color                 sColor;             // Heading tab color
                 prop::Color                 sSelectedColor;     // Heading tab selected color
@@ -44,6 +46,8 @@ namespace lsp
                 prop::Color                 sTextColor;         // Heading tab text color
                 prop::Color                 sTextSelectedColor; // Heading tab text selected color
                 prop::Color                 sTextHoverColor;    // Heading tab text hover color
+                prop::Integer               sBorderSize;        // Border size of the heading tab
+                prop::Integer               sBorderRadius;      // Border radius of the heading tab
             LSP_TK_STYLE_DEF_END
         } /* namespace style */
 
@@ -62,6 +66,8 @@ namespace lsp
                 prop::Layout                sLayout;            // Widget layout inside of the tab
                 prop::String                sText;              // Heading tab text
                 prop::TextAdjust            sTextAdjust;        // Heading tab text adjustment
+                prop::TextLayout            sTextLayout;        // Heading tab text layout
+                prop::Padding               sTextPadding;       // Heading tab text padding
                 prop::Font                  sFont;              // Heading tab font
                 prop::Color                 sColor;             // Heading tab color
                 prop::Color                 sSelectedColor;     // Heading tab selected color
@@ -69,6 +75,8 @@ namespace lsp
                 prop::Color                 sTextColor;         // Heading tab text color
                 prop::Color                 sTextSelectedColor; // Heading tab text selected color
                 prop::Color                 sTextHoverColor;    // Heading tab text hover color
+                prop::Integer               sBorderSize;        // Border size of the heading tab
+                prop::Integer               sBorderRadius;      // Border radius of the heading tab
 
             protected:
                 void                    do_destroy();
@@ -90,6 +98,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Layout,             layout,                 &sLayout);
                 LSP_TK_PROPERTY(String,             text,                   &sText);
                 LSP_TK_PROPERTY(TextAdjust,         text_adjust,            &sTextAdjust);
+                LSP_TK_PROPERTY(TextLayout,         text_layout,            &sTextLayout);
+                LSP_TK_PROPERTY(Padding,            text_padding,           &sTextPadding);
                 LSP_TK_PROPERTY(Font,               font,                   &sFont);
                 LSP_TK_PROPERTY(Color,              color,                  &sColor);
                 LSP_TK_PROPERTY(Color,              selected_color,         &sSelectedColor);
@@ -97,6 +107,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              text_color,             &sTextColor);
                 LSP_TK_PROPERTY(Color,              text_selected_coloer,   &sTextSelectedColor);
                 LSP_TK_PROPERTY(Color,              text_hover_color,       &sTextHoverColor);
+                LSP_TK_PROPERTY(Integer,            border_size,            &sBorderSize);
+                LSP_TK_PROPERTY(Integer,            border_radius,          &sBorderRadius);
 
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
