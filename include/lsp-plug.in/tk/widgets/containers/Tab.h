@@ -82,7 +82,6 @@ namespace lsp
                 void                    do_destroy();
 
             protected:
-                virtual Widget         *find_widget(ssize_t x, ssize_t y) override;
                 virtual void            property_changed(Property *prop) override;
                 virtual void            size_request(ws::size_limit_t *r) override;
                 virtual void            realize(const ws::rectangle_t *r) override;
@@ -111,6 +110,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_radius,          &sBorderRadius);
 
             public:
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
+
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
                 virtual status_t            add(Widget *widget) override;

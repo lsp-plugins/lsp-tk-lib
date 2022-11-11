@@ -38,6 +38,7 @@ namespace lsp
                 prop::Integer               sBorderSize;
                 prop::Integer               sBorderRadius;
                 prop::Integer               sTabSpacing;
+                prop::Integer               sHeadingSpacing;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
@@ -76,6 +77,7 @@ namespace lsp
                 prop::Integer               sBorderSize;
                 prop::Integer               sBorderRadius;
                 prop::Integer               sTabSpacing;
+                prop::Integer               sHeadingSpacing;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
@@ -86,7 +88,7 @@ namespace lsp
 
             protected:
                 void                        allocate_tabs(ws::rectangle_t *area, lltl::darray<tab_t> *tabs);
-                Widget                     *current_widget();
+                tk::Tab                    *current_tab();
                 bool                        scroll_item(ssize_t increment);
                 tk::Tab                    *find_tab(ssize_t x, ssize_t y);
 
@@ -97,7 +99,6 @@ namespace lsp
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
                 virtual void                property_changed(Property *prop) override;
                 virtual void                size_request(ws::size_limit_t *r) override;
                 virtual void                realize(const ws::rectangle_t *r) override;
@@ -113,6 +114,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                    border_size,                &sBorderSize)
                 LSP_TK_PROPERTY(Integer,                    border_radius,              &sBorderRadius)
                 LSP_TK_PROPERTY(Integer,                    tab_spacing,                &sTabSpacing)
+                LSP_TK_PROPERTY(Integer,                    heading_spacing,            &sHeadingSpacing)
                 LSP_TK_PROPERTY(Embedding,                  embedding,                  &sEmbedding)
                 LSP_TK_PROPERTY(Layout,                     heading,                    &sHeading)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sSizeConstraints)
@@ -120,6 +122,8 @@ namespace lsp
                 LSP_TK_PROPERTY(WidgetList<Tab>,            widgets,                    &vWidgets)
 
             public:
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
+
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
                 virtual status_t            add(Widget *child) override;

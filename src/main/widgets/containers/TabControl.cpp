@@ -36,6 +36,7 @@ namespace lsp
                 sBorderSize.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sTabSpacing.bind("tab.spacing", this);
+                sHeadingSpacing.bind("heading.spacing", this);
                 sEmbedding.bind("embed", this);
                 sHeading.bind("heading", this);
                 sSizeConstraints.bind("size.constraints", this);
@@ -46,6 +47,7 @@ namespace lsp
                 sBorderRadius.set(10);
                 sTabSpacing.set(1);
                 sEmbedding.set(false);
+                sHeadingSpacing.set(0);
                 sHeading.set(-1.0f, -1.0f, 0.0f, 0.0f);
                 sSizeConstraints.set_all(-1);
             LSP_TK_STYLE_IMPL_END
@@ -63,6 +65,7 @@ namespace lsp
             sBorderSize(&sProperties),
             sBorderRadius(&sProperties),
             sTabSpacing(&sProperties),
+            sHeadingSpacing(&sProperties),
             sEmbedding(&sProperties),
             sHeading(&sProperties),
             sSizeConstraints(&sProperties),
@@ -99,6 +102,7 @@ namespace lsp
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sTabSpacing.bind("tab.spacing", &sStyle);
+            sHeadingSpacing.bind("heading.spacing", &sStyle);
             sEmbedding.bind("embed", &sStyle);
             sHeading.bind("heading", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -161,6 +165,7 @@ namespace lsp
                 // Obtain font properties and padding
                 padding_t padding;
                 ws::text_parameters_t tp;
+                size_t tab_border       = (w->border_size()->get() > 0) ? lsp_max(1.0f, w->border_size()->get() * scaling) : 0;
                 size_t border_rgap      = lsp_max(0.0f, w->border_radius()->get() * scaling * M_SQRT1_2);
                 w->text()->format(&caption);
                 w->font()->get_multitext_parameters(pDisplay, &tp, fscaling, &caption);
@@ -172,10 +177,10 @@ namespace lsp
                 tab->bounds.nTop        = 0;
                 tab->text.nWidth        = tp.Width;
                 tab->text.nHeight       = tp.Height;
-                tab->bounds.nWidth      = 2 * border_rgap + tab->text.nWidth + padding.nLeft + padding.nRight;
-                tab->bounds.nHeight     = border_rgap + tab->text.nHeight + padding.nTop + padding.nBottom;
-                tab->text.nLeft         = tab->bounds.nLeft + border_rgap + padding.nLeft;
-                tab->text.nTop          = tab->bounds.nTop + padding.nTop + ((top_align) ? border_rgap : 0);
+                tab->bounds.nWidth      = 2 * border_rgap + tab->text.nWidth + padding.nLeft + padding.nRight + tab_border * 2;
+                tab->bounds.nHeight     = border_rgap + tab->text.nHeight + padding.nTop + padding.nBottom + tab_border * 2;
+                tab->text.nLeft         = tab->bounds.nLeft + border_rgap + tab_border + padding.nLeft;
+                tab->text.nTop          = tab->bounds.nTop + padding.nTop + tab_border + ((top_align) ? border_rgap : 0);
 
                 // Update coordinates of the next tab
                 max_h                   = lsp_max(max_h, tab->bounds.nHeight);
@@ -191,13 +196,60 @@ namespace lsp
                 ssize_t dy              = max_h - tab->bounds.nHeight;
                 tab->bounds.nHeight    += dy;
                 tab->text.nHeight      += dy;
+                if (!top_align)
+                    tab->text.nTop         -= dy;
                 area->nWidth            = tab->bounds.nLeft + tab->bounds.nWidth;
             }
         }
 
         void TabControl::size_request(ws::size_limit_t *r)
         {
-            // TODO
+            ws::rectangle_t tab_area, w_area;
+            lltl::darray<tab_t> tabs;
+
+            // Allocate tab header
+            allocate_tabs(&tab_area, &tabs);
+
+            // Compute padding
+            float scaling           = lsp_max(0.0f, sScaling.get());
+            ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
+            ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
+            ssize_t hd_spacing      = (sHeadingSpacing.get() > 0) ? lsp_max(1.0f, sHeadingSpacing.get() * scaling) : 0;
+
+            tab_area.nWidth        += radius;
+            tab_area.nHeight       += hd_spacing;
+
+            padding_t padding;
+            padding.nLeft           = (sEmbedding.left())   ? border : xborder;
+            padding.nRight          = (sEmbedding.right())  ? border : xborder;
+            padding.nTop            = (sEmbedding.top())    ? border : xborder;
+            padding.nBottom         = (sEmbedding.bottom()) ? border : xborder;
+
+            w_area.nWidth           = radius * 2;
+            w_area.nHeight          = radius * 2;
+
+            // Estimate the size of the area for the widget
+            tk::Tab *w  = current_tab();
+            if (w != NULL)
+            {
+                w->get_padded_size_limits(r);
+                if (r->nMinWidth > 0)
+                    w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
+                if (r->nMinHeight > 0)
+                    w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
+            }
+
+            // Write the actual estimated values
+            r->nMinWidth            = lsp_max(tab_area.nWidth, w_area.nWidth);
+            r->nMinHeight           = tab_area.nHeight + w_area.nHeight;
+            r->nMaxWidth            = -1;
+            r->nMaxHeight           = -1;
+            r->nPreWidth            = -1;
+            r->nPreHeight           = -1;
+
+            // Apply size constraints
+            sSizeConstraints.apply(r, scaling);
         }
 
         void TabControl::realize(const ws::rectangle_t *r)
@@ -243,12 +295,21 @@ namespace lsp
             return STATUS_OK;
         }
 
-        Widget *TabControl::current_widget()
+        tk::Tab *TabControl::current_tab()
         {
-            Widget *it      = sSelected.get();
-            if (it == NULL)
-                return  vWidgets.get(0);
-            return (vWidgets.contains(it)) ? it : NULL;
+            tk::Tab *it     = sSelected.get();
+            if ((it != NULL) && (vWidgets.contains(it)) && (it->is_visible_child_of(this)))
+                return it;
+
+            // Find first visible tab
+            for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+            {
+                it = vWidgets.get(i);
+                if ((it != NULL) && (it->is_visible_child_of(this)))
+                    return it;
+            }
+
+            return NULL;
         }
 
         tk::Tab *TabControl::find_tab(ssize_t x, ssize_t y)
@@ -280,13 +341,8 @@ namespace lsp
 
         Widget *TabControl::find_widget(ssize_t x, ssize_t y)
         {
-            Widget *widget  = current_widget();
-            if (widget == NULL)
-                return NULL;
-            if ((widget->is_visible_child_of(this)) && (widget->inside(x, y)))
-                return widget;
-
-            return NULL;
+            tk::Tab *tab    = current_tab();
+            return (tab != NULL) ? tab->find_widget(x, y) : NULL;
         }
 
         status_t TabControl::on_mouse_up(const ws::event_t *e)
