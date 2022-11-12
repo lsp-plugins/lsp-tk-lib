@@ -38,6 +38,9 @@ namespace lsp
                 sColor.bind("color", this);
                 sSelectedColor.bind("selected.color", this);
                 sHoverColor.bind("hover.color", this);
+                sBorderColor.bind("border.color", this);
+                sBorderSelectedColor.bind("border.selected.color", this);
+                sBorderHoverColor.bind("border.hover.color", this);
                 sTextColor.bind("text.color", this);
                 sTextSelectedColor.bind("text.selected.color", this);
                 sTextHoverColor.bind("text.hover.color", this);
@@ -78,6 +81,9 @@ namespace lsp
             sColor(&sProperties),
             sSelectedColor(&sProperties),
             sHoverColor(&sProperties),
+            sBorderColor(&sProperties),
+            sBorderSelectedColor(&sProperties),
+            sBorderHoverColor(&sProperties),
             sTextColor(&sProperties),
             sTextSelectedColor(&sProperties),
             sTextHoverColor(&sProperties),
@@ -124,6 +130,9 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sSelectedColor.bind("selected.color", &sStyle);
             sHoverColor.bind("hover.color", &sStyle);
+            sBorderColor.bind("border.color", &sStyle);
+            sBorderSelectedColor.bind("border.selected.color", &sStyle);
+            sBorderHoverColor.bind("border.hover.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sTextSelectedColor.bind("text.selected.color", &sStyle);
             sTextHoverColor.bind("text.hover.color", &sStyle);
@@ -144,8 +153,14 @@ namespace lsp
             if (sFont.is(prop))
                 query_resize();
             if (prop->one_of(sColor, sSelectedColor, sHoverColor,
+                sBorderColor, sBorderSelectedColor, sBorderHoverColor,
                 sTextColor, sTextSelectedColor, sTextHoverColor))
+            {
                 query_draw();
+                tk::TabControl *tc = tk::widget_cast<tk::TabControl>(pParent);
+                if (tc != NULL)
+                    tc->query_draw(REDRAW_CHILD | REDRAW_SURFACE);
+            }
         }
 
         void Tab::size_request(ws::size_limit_t *r)

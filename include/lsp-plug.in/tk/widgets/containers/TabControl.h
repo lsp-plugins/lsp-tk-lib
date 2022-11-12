@@ -67,11 +67,20 @@ namespace lsp
                     tk::Tab                *widget;
                 } tab_t;
 
+                enum tab_mode_t
+                {
+                    TM_NORMAL,
+                    TM_SELECTED,
+                    TM_HOVER
+                };
+
             protected:
                 lltl::darray<tab_t>         vVisible;       // List of visible tab headings
-                ws::rectangle_t             sArea;
+                ws::rectangle_t             sArea;          // Internal area for drawing the widget
+                ws::rectangle_t             sBounds;        // External area for drawing widget
+                ws::rectangle_t             sTabArea;       // Location of tab area
                 size_t                      nMBState;       // Mouse button state
-                tk::Tab                    *pEventTab;
+                tk::Tab                    *pEventTab;      // Current event tab
 
                 prop::Color                 sBorderColor;
                 prop::Integer               sBorderSize;
@@ -91,12 +100,14 @@ namespace lsp
                 tk::Tab                    *current_tab();
                 bool                        scroll_item(ssize_t increment);
                 tk::Tab                    *find_tab(ssize_t x, ssize_t y);
+                void                        draw_tab(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area);
 
             protected:
                 static void                 on_add_widget(void *obj, Property *prop, void *w);
                 static void                 on_remove_widget(void *obj, Property *prop, void *w);
                 static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
+                static const lsp::Color    *select_color(tab_mode_t mode, const tk::Color *normal, const tk::Color * selected, const tk::Color *hover);
 
             protected:
                 virtual void                property_changed(Property *prop) override;

@@ -77,6 +77,11 @@ namespace lsp
             sArea.nWidth        = 0;
             sArea.nHeight       = 0;
 
+            sBounds.nLeft       = 0;
+            sBounds.nTop        = 0;
+            sBounds.nWidth      = 0;
+            sBounds.nHeight     = 0;
+
             nMBState            = 0;
             pEventTab           = NULL;
 
@@ -166,8 +171,10 @@ namespace lsp
                 padding_t padding;
                 ws::text_parameters_t tp;
                 size_t tab_border       = (w->border_size()->get() > 0) ? lsp_max(1.0f, w->border_size()->get() * scaling) : 0;
-                size_t border_rgap      = lsp_max(0.0f, w->border_radius()->get() * scaling * M_SQRT1_2);
+                size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
+                size_t border_rgap      = lsp_max(0.0f, tab_radius * M_SQRT1_2);
                 w->text()->format(&caption);
+                w->text_adjust()->apply(&caption);
                 w->font()->get_multitext_parameters(pDisplay, &tp, fscaling, &caption);
                 w->text_padding()->compute(&padding, scaling);
 
@@ -254,11 +261,304 @@ namespace lsp
 
         void TabControl::realize(const ws::rectangle_t *r)
         {
-            // TODO
+            WidgetContainer::realize(r);
+
+            // Compute text and widget area
+            lltl::darray<tab_t> tabs;
+            allocate_tabs(&sTabArea, &tabs);
+
+            // Compute parameters
+            float scaling           = lsp_max(0.0f, sScaling.get());
+            ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
+            ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
+            ssize_t hd_spacing      = (sHeadingSpacing.get() > 0) ? lsp_max(1.0f, sHeadingSpacing.get() * scaling) : 0;
+            bool top_align          = sHeading.valign() <= 0.0f;
+
+            // Apply horizontal offset to tabs
+            sBounds                 = sSize;
+            sBounds.nHeight        -= sTabArea.nHeight + hd_spacing;
+            if (top_align)
+                sBounds.nTop           += sSize.nHeight - sBounds.nHeight;
+
+            sTabArea.nLeft          = sSize.nLeft + lsp_limit(sHeading.halign() + 1.0f, 0.0f, 1.0f) * (sSize.nWidth - sTabArea.nWidth) * 0.5f;
+            sTabArea.nTop           = sSize.nTop  + ((top_align) ? 0 : sBounds.nTop + sBounds.nHeight + hd_spacing);
+            for (size_t i=0, n=tabs.size(); i<n; ++i)
+            {
+                tab_t *tab              = tabs.uget(i);
+                if (tab != NULL)
+                {
+                    tab->bounds.nLeft  += sTabArea.nLeft;
+                    tab->bounds.nTop   += sTabArea.nTop;
+                    tab->text.nLeft    += sTabArea.nLeft;
+                    tab->text.nTop     += sTabArea.nTop;
+                }
+            }
+
+            // Compute padding
+            padding_t padding;
+            padding.nLeft           = (sEmbedding.left())   ? border : xborder;
+            padding.nRight          = (sEmbedding.right())  ? border : xborder;
+            padding.nTop            = (sEmbedding.top())    ? border : xborder;
+            padding.nBottom         = (sEmbedding.bottom()) ? border : xborder;
+
+            // Realize child widget
+            tk::Tab *w  = current_tab();
+            Padding::enter(&sArea, &sBounds, &padding);
+
+            if ((w != NULL) && (w->is_visible_child_of(this)))
+                w->realize_widget(&sArea);
+
+            // Commit allocation parameters
+            vVisible.swap(&tabs);
         }
 
         void TabControl::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
+            if (nFlags & REDRAW_SURFACE)
+                force = true;
+
+            // Compute parameters
+            ws::rectangle_t xr;
+            lsp::Color color;
+
+            float scaling           = lsp_max(0.0f, sScaling.get());
+            ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
+            ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
+            ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
+            float bright            = lsp_max(0.0f, sBrightness.get());
+            bool top_align          = sHeading.valign() <= 0.0f;
+            bool bg                 = false;
+            tk::Tab *ct             = current_tab();
+
+            // Set anti-aliasing
+            bool aa                 = s->set_antialiasing(false);
+            lsp_finally { s->set_antialiasing(aa); };
+
+            // Draw background if child is invisible or not present
+            if ((ct != NULL) && (ct->is_visible_child_of(this)))
+            {
+                ct->get_rectangle(&xr);
+
+                // Draw the nested widget
+                if ((force) || (ct->redraw_pending()))
+                {
+                    if (Size::intersection(&xr, &sArea))
+                        ct->render(s, &xr, force);
+                    ct->commit_redraw();
+                }
+
+                if (force)
+                {
+                    // Render the child background
+                    if (Size::overlap(area, &sSize))
+                    {
+                        s->clip_begin(area);
+                        lsp_finally { s->clip_end(); };
+
+                        ct->get_actual_bg_color(color);
+                        s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                    }
+                }
+            }
+            else
+            {
+                s->clip_begin(area);
+                lsp_finally { s->clip_end(); };
+
+                get_child_bg_color(color);
+                s->fill_rect(color, SURFMASK_NONE, 0.0f, &sSize);
+                bg   = true;
+            }
+
+            // Render frame
+            if (!force)
+                return;
+
+            ssize_t ir, xg;
+
+            // Compute the rounding mask
+            size_t surfmask = SURFMASK_ALL_CORNER;
+            if (sTabArea.nLeft < (sSize.nLeft + xborder))
+                surfmask &= (top_align) ? ~SURFMASK_LT_CORNER : ~SURFMASK_LB_CORNER;
+            if ((sTabArea.nLeft + sTabArea.nWidth) > (sSize.nLeft + sSize.nWidth - xborder))
+                surfmask &= (top_align) ? ~SURFMASK_RT_CORNER : ~SURFMASK_RB_CORNER;
+
+            // Draw the frame
+            if (Size::overlap(area, &sBounds))
+            {
+                s->clip_begin(area);
+                lsp_finally { s->clip_end(); };
+
+                if (!bg)
+                {
+                    get_actual_bg_color(color);
+
+                    xr          = sSize;
+                    xg          = border * 2;
+                    xr.nLeft   += border;
+                    xr.nTop    += border;
+                    xr.nWidth  -= xg;
+                    xr.nHeight -= xg;
+
+                    ir          = lsp_max(0, radius - border);
+                    s->fill_frame(color, surfmask, ir, &sSize, &xr);
+                }
+
+                // Draw frame
+                color.copy(sBorderColor);
+                color.scale_lch_luminance(bright);
+
+                s->set_antialiasing(true);
+                s->wire_rect(color, surfmask, radius, &sSize, border);
+            }
+
+            // Draw tabs
+            if (Size::overlap(area, &sTabArea))
+            {
+                for (size_t i=0, n=vVisible.size(); i<n; ++i)
+                {
+                    tab_t *tab              = vVisible.uget(i);
+                    tk::Tab *w              = tab->widget;
+                    tab_mode_t mode         = (w == ct) ? TM_SELECTED :
+                                              (w == pEventTab) ? TM_HOVER :
+                                              TM_NORMAL;
+
+                    draw_tab(s, tab, mode, area);
+                }
+            }
+        }
+
+        void TabControl::draw_tab(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area)
+        {
+            // Compute parameters
+            tk::Tab *w              = tab->widget;
+            lsp::Color color;
+            ws::rectangle_t clip, r;
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+
+            float bright            = lsp_max(0.0f, sBrightness.get());
+            float scaling           = lsp_max(0.0f, sScaling.get());
+            float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
+            size_t tab_border       = (w->border_size()->get() > 0)   ? lsp_max(1.0f, w->border_size()->get() * scaling) : 0;
+            size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
+            bool top_align          = sHeading.valign() <= 0.0f;
+
+            s->set_antialiasing(true);
+            size_t mask             = (top_align) ? SURFMASK_T_CORNER : SURFMASK_B_CORNER;
+
+            // Draw tab header
+            if (Size::intersection(&clip, &tab->bounds, area))
+            {
+                s->clip_begin(&clip);
+                lsp_finally { s->clip_end(); };
+
+                // Draw the tab background
+                color.copy(select_color(mode, w->color(), w->selected_color(), w->hover_color()));
+                color.scale_lch_luminance(bright);
+                s->fill_rect(color, mask, tab_radius, &tab->bounds);
+
+                // Draw the tab border
+                color.copy(select_color(mode, w->border_color(), w->border_selected_color(), w->border_hover_color()));
+                color.scale_lch_luminance(bright);
+                s->wire_rect(color, mask, tab_radius, &tab->bounds, tab_border);
+            }
+
+            // Draw tab text
+            if (Size::intersection(&clip, &tab->text, area))
+            {
+                s->clip_begin(&clip);
+                lsp_finally { s->clip_end(); };
+
+                // Form the text string
+                LSPString text;
+                w->text()->format(&text);
+                w->text_adjust()->apply(&text);
+
+                // Estimate text sizes
+                w->font()->get_parameters(s, fscaling, &fp);
+                w->font()->get_multitext_parameters(s, &tp, fscaling, &text);
+
+                // Estimate drawing area
+                tp.Height       = lsp_max(tp.Height, fp.Height);
+                if (tp.Width <= tab->text.nWidth)
+                {
+                    r.nLeft         = tab->text.nLeft;
+                    r.nWidth        = tab->text.nWidth;
+                }
+                else
+                {
+                    r.nLeft         = tab->text.nLeft - 0.5f * (tp.Width - tab->text.nWidth);
+                    r.nWidth        = ceil(tp.Width);
+                }
+
+                if (tp.Height <= tab->text.nHeight)
+                {
+                    r.nTop          = tab->text.nTop;
+                    r.nHeight       = tab->text.nHeight;
+                }
+                else
+                {
+                    r.nTop          = tab->text.nTop - 0.5f * (tp.Height - tab->text.nHeight);
+                    r.nHeight       = ceil(tp.Height);
+                }
+
+                // Initialize palette
+                color.copy(select_color(mode, w->text_color(), w->text_selected_coloer(), w->text_hover_color()));
+                color.scale_lch_luminance(sBrightness.get());
+
+                // Draw background
+                float halign    = lsp_limit(w->text_layout()->halign() + 1.0f, 0.0f, 2.0f);
+                float valign    = lsp_limit(w->text_layout()->valign() + 1.0f, 0.0f, 2.0f);
+                float dy        = (r.nHeight - tp.Height) * 0.5f;
+                ssize_t y       = r.nTop + dy * valign - fp.Descent;
+
+                // Estimate text size
+                ssize_t last = 0, curr = 0, tail = 0, len = text.length();
+
+                s->clip_begin(&tab->text);
+                lsp_finally { s->clip_end(); };
+
+                while (curr < len)
+                {
+                    // Get next line indexes
+                    curr    = text.index_of(last, '\n');
+                    if (curr < 0)
+                    {
+                        curr        = len;
+                        tail        = len;
+                    }
+                    else
+                    {
+                        tail        = curr;
+                        if ((tail > last) && (text.at(tail-1) == '\r'))
+                            --tail;
+                    }
+
+                    // Calculate text location
+                    w->font()->get_text_parameters(s, &tp, fscaling, &text, last, tail);
+                    float dx    = (r.nWidth - tp.Width) * 0.5f;
+                    ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
+                    y          += fp.Height;
+
+                    w->font()->draw(s, color, x, y, fscaling, &text, last, tail);
+                    last    = curr + 1;
+                }
+            }
+        }
+
+        const lsp::Color *TabControl::select_color(tab_mode_t mode, const tk::Color *normal, const tk::Color * selected, const tk::Color *hover)
+        {
+            switch (mode)
+            {
+                case TM_SELECTED:   return selected->color();
+                case TM_HOVER:      return hover->color();
+                case TM_NORMAL:
+                default:
+                    break;
+            }
+            return normal->color();
         }
 
         status_t TabControl::add(Widget *child)

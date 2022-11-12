@@ -34,20 +34,23 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(Tab, WidgetContainer)
-                prop::Layout                sLayout;            // Widget layout inside of the tab
-                prop::String                sText;              // Heading tab text
-                prop::TextAdjust            sTextAdjust;        // Heading tab text adjustment
-                prop::TextLayout            sTextLayout;        // Heading tab text layout
-                prop::Padding               sTextPadding;       // Heading tab text padding
-                prop::Font                  sFont;              // Heading tab font
-                prop::Color                 sColor;             // Heading tab color
-                prop::Color                 sSelectedColor;     // Heading tab selected color
-                prop::Color                 sHoverColor;        // Heading tab hover color
-                prop::Color                 sTextColor;         // Heading tab text color
-                prop::Color                 sTextSelectedColor; // Heading tab text selected color
-                prop::Color                 sTextHoverColor;    // Heading tab text hover color
-                prop::Integer               sBorderSize;        // Border size of the heading tab
-                prop::Integer               sBorderRadius;      // Border radius of the heading tab
+                prop::Layout                sLayout;                // Widget layout inside of the tab
+                prop::String                sText;                  // Heading tab text
+                prop::TextAdjust            sTextAdjust;            // Heading tab text adjustment
+                prop::TextLayout            sTextLayout;            // Heading tab text layout
+                prop::Padding               sTextPadding;           // Heading tab text padding
+                prop::Font                  sFont;                  // Heading tab font
+                prop::Color                 sColor;                 // Heading tab color
+                prop::Color                 sSelectedColor;         // Heading tab selected color
+                prop::Color                 sHoverColor;            // Heading tab hover color
+                prop::Color                 sBorderColor;           // Heading tab border color
+                prop::Color                 sBorderSelectedColor;   // Heading tab selected border color
+                prop::Color                 sBorderHoverColor;      // Heading tab hover border color
+                prop::Color                 sTextColor;             // Heading tab text color
+                prop::Color                 sTextSelectedColor;     // Heading tab text selected color
+                prop::Color                 sTextHoverColor;        // Heading tab text hover color
+                prop::Integer               sBorderSize;            // Border size of the heading tab
+                prop::Integer               sBorderRadius;          // Border radius of the heading tab
             LSP_TK_STYLE_DEF_END
         } /* namespace style */
 
@@ -63,20 +66,23 @@ namespace lsp
             protected:
                 Widget                     *pWidget;
 
-                prop::Layout                sLayout;            // Widget layout inside of the tab
-                prop::String                sText;              // Heading tab text
-                prop::TextAdjust            sTextAdjust;        // Heading tab text adjustment
-                prop::TextLayout            sTextLayout;        // Heading tab text layout
-                prop::Padding               sTextPadding;       // Heading tab text padding
-                prop::Font                  sFont;              // Heading tab font
-                prop::Color                 sColor;             // Heading tab color
-                prop::Color                 sSelectedColor;     // Heading tab selected color
-                prop::Color                 sHoverColor;        // Heading tab hover color
-                prop::Color                 sTextColor;         // Heading tab text color
-                prop::Color                 sTextSelectedColor; // Heading tab text selected color
-                prop::Color                 sTextHoverColor;    // Heading tab text hover color
-                prop::Integer               sBorderSize;        // Border size of the heading tab
-                prop::Integer               sBorderRadius;      // Border radius of the heading tab
+                prop::Layout                sLayout;                // Widget layout inside of the tab
+                prop::String                sText;                  // Heading tab text
+                prop::TextAdjust            sTextAdjust;            // Heading tab text adjustment
+                prop::TextLayout            sTextLayout;            // Heading tab text layout
+                prop::Padding               sTextPadding;           // Heading tab text padding
+                prop::Font                  sFont;                  // Heading tab font
+                prop::Color                 sColor;                 // Heading tab color
+                prop::Color                 sSelectedColor;         // Heading tab selected color
+                prop::Color                 sHoverColor;            // Heading tab hover color
+                prop::Color                 sBorderColor;           // Heading tab border color
+                prop::Color                 sBorderSelectedColor;   // Heading tab selected border color
+                prop::Color                 sBorderHoverColor;      // Heading tab hover border color
+                prop::Color                 sTextColor;             // Heading tab text color
+                prop::Color                 sTextSelectedColor;     // Heading tab text selected color
+                prop::Color                 sTextHoverColor;        // Heading tab text hover color
+                prop::Integer               sBorderSize;            // Border size of the heading tab
+                prop::Integer               sBorderRadius;          // Border radius of the heading tab
 
             protected:
                 void                    do_destroy();
@@ -103,6 +109,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              color,                  &sColor);
                 LSP_TK_PROPERTY(Color,              selected_color,         &sSelectedColor);
                 LSP_TK_PROPERTY(Color,              hover_color,            &sHoverColor);
+                LSP_TK_PROPERTY(Color,              border_color,           &sBorderColor);
+                LSP_TK_PROPERTY(Color,              border_selected_color,  &sBorderSelectedColor);
+                LSP_TK_PROPERTY(Color,              border_hover_color,     &sBorderHoverColor);
                 LSP_TK_PROPERTY(Color,              text_color,             &sTextColor);
                 LSP_TK_PROPERTY(Color,              text_selected_coloer,   &sTextSelectedColor);
                 LSP_TK_PROPERTY(Color,              text_hover_color,       &sTextHoverColor);
