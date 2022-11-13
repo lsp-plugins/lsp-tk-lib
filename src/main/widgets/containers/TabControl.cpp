@@ -281,8 +281,8 @@ namespace lsp
             if (top_align)
                 sBounds.nTop           += sSize.nHeight - sBounds.nHeight;
 
-            sTabArea.nLeft          = sSize.nLeft + lsp_limit(sHeading.halign() + 1.0f, 0.0f, 1.0f) * (sSize.nWidth - sTabArea.nWidth) * 0.5f;
-            sTabArea.nTop           = sSize.nTop  + ((top_align) ? 0 : sBounds.nTop + sBounds.nHeight + hd_spacing);
+            sTabArea.nLeft          = sSize.nLeft + lsp_limit(sHeading.halign() + 1.0f, 0.0f, 2.0f) * (sSize.nWidth - sTabArea.nWidth) * 0.5f;
+            sTabArea.nTop           = sSize.nTop  + ((top_align) ? 0 : sBounds.nHeight + hd_spacing);
             for (size_t i=0, n=tabs.size(); i<n; ++i)
             {
                 tab_t *tab              = tabs.uget(i);
@@ -394,7 +394,7 @@ namespace lsp
                 {
                     get_actual_bg_color(color);
 
-                    xr          = sSize;
+                    xr          = sBounds;
                     xg          = border * 2;
                     xr.nLeft   += border;
                     xr.nTop    += border;
@@ -402,7 +402,7 @@ namespace lsp
                     xr.nHeight -= xg;
 
                     ir          = lsp_max(0, radius - border);
-                    s->fill_frame(color, surfmask, ir, &sSize, &xr);
+                    s->fill_frame(color, surfmask, ir, &sBounds, &xr);
                 }
 
                 // Draw frame
@@ -410,7 +410,7 @@ namespace lsp
                 color.scale_lch_luminance(bright);
 
                 s->set_antialiasing(true);
-                s->wire_rect(color, surfmask, radius, &sSize, border);
+                s->wire_rect(color, surfmask, radius, &sBounds, border);
             }
 
             // Draw tabs
@@ -606,7 +606,10 @@ namespace lsp
             {
                 it = vWidgets.get(i);
                 if ((it != NULL) && (it->is_visible_child_of(this)))
+                {
+                    sSelected.set(it);
                     return it;
+                }
             }
 
             return NULL;
@@ -614,26 +617,68 @@ namespace lsp
 
         tk::Tab *TabControl::find_tab(ssize_t x, ssize_t y)
         {
+            // First simple test to match cursor the specific area
+            if (!Position::inside(&sTabArea, x, y))
+                return NULL;
+
+            // Now check that we fit the tab
             float scaling           = lsp_max(0.0f, sScaling.get());
+            bool top_align          = sHeading.valign() <= 0.0f;
+            size_t mask             = (top_align) ? SURFMASK_T_CORNER : SURFMASK_B_CORNER;
 
             // Check that mouse pointer is inside of the tab control
-            ssize_t border_radius   = lsp_max(0.0f, sBorderRadius.get() * scaling);
-            if (!Position::rinside(&sArea, x, y, border_radius))
-                return NULL;
+            for (size_t i=0, n=vVisible.size(); i<n; ++i)
+            {
+                tab_t *tab              = vVisible.uget(i);
+                tk::Tab *w              = tab->widget;
+                size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
+
+                if (Position::rminside(&sArea, x, y, mask, tab_radius))
+                    return w;
+            }
 
             return NULL;
         }
 
         bool TabControl::scroll_item(ssize_t increment)
         {
-            // TODO
+            tk::Tab *sel    = current_tab();
+            ssize_t count   = vWidgets.size();
+            if (increment == 0)
+                return false;
+            increment      %= count;
+
+            // Do the loop until we find another one tab to select
+            for (ssize_t i=0; i<count; )
+            {
+                i  += increment;
+                if (i < 0)
+                    i += count;
+                else if (i >= count)
+                    i -= count;
+
+                tk::Tab *it     = vWidgets.get(i);
+                if ((it != NULL) && (it->is_visible_child_of(this)))
+                {
+                    if (sel == it)
+                        return false;
+
+                    sSelected.set(it);
+                    return true;
+                }
+            }
+
             return false;
         }
 
         status_t TabControl::on_mouse_down(const ws::event_t *e)
         {
             if (nMBState == 0)
+            {
                 pEventTab   = find_tab(e->nLeft, e->nTop);
+                if (pEventTab != NULL)
+                    query_resize();
+            }
             nMBState       |= 1 << e->nCode;
 
             return STATUS_OK;
@@ -662,13 +707,26 @@ namespace lsp
             }
 
             if (nMBState == 0)
-                pEventTab       = NULL;
+            {
+                if (pEventTab != NULL)
+                    query_resize();
+            }
 
             return STATUS_OK;
         }
 
         status_t TabControl::on_mouse_move(const ws::event_t *e)
         {
+            if (nMBState != 0)
+                return STATUS_OK;
+
+            tk::Tab *tab = find_tab(e->nLeft, e->nTop);
+            if (pEventTab != tab)
+            {
+                pEventTab   = tab;
+                query_resize();
+            }
+
             return STATUS_OK;
         }
 

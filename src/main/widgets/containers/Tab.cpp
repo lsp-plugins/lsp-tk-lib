@@ -56,6 +56,9 @@ namespace lsp
                 sColor.set("#cccccc");
                 sSelectedColor.set("#ffffff");
                 sHoverColor.set("#00ccff");
+                sBorderColor.set("#888888");
+                sBorderSelectedColor.set("#000000");
+                sBorderHoverColor.set("#eeeeee");
                 sTextColor.set("#888888");
                 sTextSelectedColor.set("#000000");
                 sTextHoverColor.set("#eeeeee");
@@ -126,6 +129,8 @@ namespace lsp
             sLayout.bind("layout", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sTextAdjust.bind("text.adjust", &sStyle);
+            sTextLayout.bind("text.layout", &sStyle);
+            sTextPadding.bind("text.padding", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("color", &sStyle);
             sSelectedColor.bind("selected.color", &sStyle);
@@ -136,6 +141,8 @@ namespace lsp
             sTextColor.bind("text.color", &sStyle);
             sTextSelectedColor.bind("text.selected.color", &sStyle);
             sTextHoverColor.bind("text.hover.color", &sStyle);
+            sBorderSize.bind("border.size", &sStyle);
+            sBorderRadius.bind("border.radius", &sStyle);
 
             return STATUS_OK;
         }
@@ -146,11 +153,7 @@ namespace lsp
 
             if (sLayout.is(prop))
                 query_resize();
-            if (sText.is(prop))
-                query_resize();
-            if (sTextAdjust.is(prop))
-                query_resize();
-            if (sFont.is(prop))
+            if (prop->one_of(sText, sTextAdjust, sTextLayout, sTextPadding, sFont))
                 query_resize();
             if (prop->one_of(sColor, sSelectedColor, sHoverColor,
                 sBorderColor, sBorderSelectedColor, sBorderHoverColor,
@@ -161,6 +164,8 @@ namespace lsp
                 if (tc != NULL)
                     tc->query_draw(REDRAW_CHILD | REDRAW_SURFACE);
             }
+            if (prop->one_of(sBorderSize, sBorderRadius))
+                query_resize();
         }
 
         void Tab::size_request(ws::size_limit_t *r)
