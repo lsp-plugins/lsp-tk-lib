@@ -4,6 +4,7 @@
 
 === 1.0.6 ===
 * Added stretch and loop markers to the AudioChannel and AudioSample widgets.
+* Added tk::Tab and tk::TabControl widgets.
 
 === 1.0.5 ===
 * Updated build scripts.

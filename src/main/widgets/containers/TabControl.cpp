@@ -40,6 +40,7 @@ namespace lsp
                 sEmbedding.bind("embed", this);
                 sHeading.bind("heading", this);
                 sSizeConstraints.bind("size.constraints", this);
+                sTabJoint.bind("tab.joint", this);
 
                 // Configure
                 sBorderColor.set("#888888");
@@ -47,9 +48,10 @@ namespace lsp
                 sBorderRadius.set(10);
                 sTabSpacing.set(1);
                 sEmbedding.set(false);
-                sHeadingSpacing.set(0);
+                sHeadingSpacing.set(-1);
                 sHeading.set(-1.0f, -1.0f, 0.0f, 0.0f);
                 sSizeConstraints.set_all(-1);
+                sTabJoint.set(true);
             LSP_TK_STYLE_IMPL_END
 
             LSP_TK_BUILTIN_STYLE(TabControl, "TabControl", "root");
@@ -69,6 +71,7 @@ namespace lsp
             sEmbedding(&sProperties),
             sHeading(&sProperties),
             sSizeConstraints(&sProperties),
+            sTabJoint(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -82,6 +85,7 @@ namespace lsp
             sBounds.nWidth      = 0;
             sBounds.nHeight     = 0;
 
+            nTabShift           = 0;
             nMBState            = 0;
             pEventTab           = NULL;
 
@@ -111,6 +115,7 @@ namespace lsp
             sEmbedding.bind("embed", &sStyle);
             sHeading.bind("heading", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
+            sTabJoint.bind("tab.joint", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -136,9 +141,11 @@ namespace lsp
                 query_resize();
             if (sSelected.is(prop))
                 query_resize();
+            if (sTabJoint.is(prop))
+                query_draw();
         }
 
-        void TabControl::allocate_tabs(ws::rectangle_t *area, lltl::darray<tab_t> *tabs)
+        void TabControl::allocate_tabs(size_t *max_tab_border, ws::rectangle_t *area, lltl::darray<tab_t> *tabs)
         {
             float scaling           = lsp_max(0.0f, sScaling.get());
             float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
@@ -154,6 +161,7 @@ namespace lsp
 
             size_t x                = 0;
             ssize_t max_h           = 0;
+            size_t max_b            = 0;
 
             // Step 1: allocate tabs
             for (size_t i=0, n=vWidgets.size(); i<n; ++i)
@@ -188,9 +196,11 @@ namespace lsp
                 tab->bounds.nHeight     = border_rgap + tab->text.nHeight + padding.nTop + padding.nBottom + tab_border * 2;
                 tab->text.nLeft         = tab->bounds.nLeft + border_rgap + tab_border + padding.nLeft;
                 tab->text.nTop          = tab->bounds.nTop + padding.nTop + tab_border + ((top_align) ? border_rgap : 0);
+                tab->border             = tab_border;
 
                 // Update coordinates of the next tab
                 max_h                   = lsp_max(max_h, tab->bounds.nHeight);
+                max_b                   = lsp_max(max_b, tab->border);
                 x                      += tab->bounds.nWidth + tab_spacing;
             }
 
@@ -207,22 +217,25 @@ namespace lsp
                     tab->text.nTop         -= dy;
                 area->nWidth            = tab->bounds.nLeft + tab->bounds.nWidth;
             }
+
+            *max_tab_border         = max_b;
         }
 
         void TabControl::size_request(ws::size_limit_t *r)
         {
             ws::rectangle_t tab_area, w_area;
+            size_t max_tab_border;
             lltl::darray<tab_t> tabs;
 
             // Allocate tab header
-            allocate_tabs(&tab_area, &tabs);
+            allocate_tabs(&max_tab_border, &tab_area, &tabs);
 
             // Compute padding
             float scaling           = lsp_max(0.0f, sScaling.get());
             ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
-            ssize_t hd_spacing      = (sHeadingSpacing.get() > 0) ? lsp_max(1.0f, sHeadingSpacing.get() * scaling) : 0;
+            ssize_t hd_spacing      = lsp_max(sHeadingSpacing.get(), -ssize_t(max_tab_border)) * scaling;
 
             tab_area.nWidth        += radius;
             tab_area.nHeight       += hd_spacing;
@@ -265,24 +278,25 @@ namespace lsp
 
             // Compute text and widget area
             lltl::darray<tab_t> tabs;
-            allocate_tabs(&sTabArea, &tabs);
+            size_t max_tab_border;
+            allocate_tabs(&max_tab_border, &sTabArea, &tabs);
 
             // Compute parameters
             float scaling           = lsp_max(0.0f, sScaling.get());
             ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
-            ssize_t hd_spacing      = (sHeadingSpacing.get() > 0) ? lsp_max(1.0f, sHeadingSpacing.get() * scaling) : 0;
+            nTabShift               = lsp_max(sHeadingSpacing.get(), -ssize_t(max_tab_border)) * scaling;
             bool top_align          = sHeading.valign() <= 0.0f;
 
             // Apply horizontal offset to tabs
             sBounds                 = sSize;
-            sBounds.nHeight        -= sTabArea.nHeight + hd_spacing;
+            sBounds.nHeight         = sBounds.nHeight - (sTabArea.nHeight + nTabShift);
             if (top_align)
-                sBounds.nTop           += sSize.nHeight - sBounds.nHeight;
+                sBounds.nTop            = sBounds.nTop + (sSize.nHeight - sBounds.nHeight);
 
             sTabArea.nLeft          = sSize.nLeft + lsp_limit(sHeading.halign() + 1.0f, 0.0f, 2.0f) * (sSize.nWidth - sTabArea.nWidth) * 0.5f;
-            sTabArea.nTop           = sSize.nTop  + ((top_align) ? 0 : sBounds.nHeight + hd_spacing);
+            sTabArea.nTop           = sSize.nTop  + ((top_align) ? 0 : sBounds.nHeight + nTabShift);
             for (size_t i=0, n=tabs.size(); i<n; ++i)
             {
                 tab_t *tab              = tabs.uget(i);
@@ -441,7 +455,7 @@ namespace lsp
             float bright            = lsp_max(0.0f, sBrightness.get());
             float scaling           = lsp_max(0.0f, sScaling.get());
             float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
-            size_t tab_border       = (w->border_size()->get() > 0)   ? lsp_max(1.0f, w->border_size()->get() * scaling) : 0;
+            ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
             bool top_align          = sHeading.valign() <= 0.0f;
 
@@ -449,20 +463,51 @@ namespace lsp
             size_t mask             = (top_align) ? SURFMASK_T_CORNER : SURFMASK_B_CORNER;
 
             // Draw tab header
-            if (Size::intersection(&clip, &tab->bounds, area))
+            r                   = tab->bounds;
+            if (nTabShift < 0)
+            {
+                r.nHeight          += nTabShift;
+                if (!top_align)
+                    r.nTop             -= nTabShift;
+            }
+
+            if (Size::intersection(&clip, &r, area))
             {
                 s->clip_begin(&clip);
                 lsp_finally { s->clip_end(); };
 
-                // Draw the tab background
+                if (r.nHeight > 0)
+                {
+                    // Draw the tab background
+                    color.copy(select_color(mode, w->color(), w->selected_color(), w->hover_color()));
+                    color.scale_lch_luminance(bright);
+                    s->fill_rect(color, mask, tab_radius, &tab->bounds);
+
+                    // Draw the tab border
+                    color.copy(select_color(mode, w->border_color(), w->border_selected_color(), w->border_hover_color()));
+                    color.scale_lch_luminance(bright);
+                    s->wire_rect(color, mask, tab_radius, &tab->bounds, tab->border);
+                }
+            }
+
+            // For selected tab: join it with the body
+            if ((mode == TM_SELECTED) && (nTabShift < 0) &&
+                (sTabJoint.get()) && (Size::overlap(area, &sBounds)))
+            {
+                s->clip_begin(area);
+                lsp_finally { s->clip_end(); };
+
+                // Erase the border
                 color.copy(select_color(mode, w->color(), w->selected_color(), w->hover_color()));
                 color.scale_lch_luminance(bright);
-                s->fill_rect(color, mask, tab_radius, &tab->bounds);
-
-                // Draw the tab border
-                color.copy(select_color(mode, w->border_color(), w->border_selected_color(), w->border_hover_color()));
-                color.scale_lch_luminance(bright);
-                s->wire_rect(color, mask, tab_radius, &tab->bounds, tab_border);
+                if (top_align)
+                    s->fill_rect(color, SURFMASK_NO_CORNER, 0,
+                        tab->bounds.nLeft + tab->border, sBounds.nTop,
+                        tab->bounds.nWidth - tab->border * 2, border);
+                else
+                    s->fill_rect(color, SURFMASK_NO_CORNER, 0,
+                        tab->bounds.nLeft + tab->border, sBounds.nTop + sBounds.nHeight - border,
+                        tab->bounds.nWidth - tab->border * 2, border);
             }
 
             // Draw tab text
@@ -633,7 +678,7 @@ namespace lsp
                 tk::Tab *w              = tab->widget;
                 size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
 
-                if (Position::rminside(&sArea, x, y, mask, tab_radius))
+                if (Position::rminside(&tab->bounds, x, y, mask, tab_radius))
                     return w;
             }
 
@@ -649,7 +694,7 @@ namespace lsp
             increment      %= count;
 
             // Do the loop until we find another one tab to select
-            for (ssize_t i=0; i<count; )
+            for (ssize_t i=vWidgets.index_of(sel); i<count; )
             {
                 i  += increment;
                 if (i < 0)
@@ -727,6 +772,19 @@ namespace lsp
                 query_resize();
             }
 
+            return STATUS_OK;
+        }
+
+        status_t TabControl::on_mouse_out(const ws::event_t *e)
+        {
+            if (nMBState != 0)
+                return STATUS_OK;
+
+            if (pEventTab != NULL)
+            {
+                pEventTab   = NULL;
+                query_resize();
+            }
             return STATUS_OK;
         }
 

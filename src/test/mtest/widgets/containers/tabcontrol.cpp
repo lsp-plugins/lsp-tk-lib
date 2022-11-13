@@ -265,6 +265,8 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
 
             tc->heading()->set_halign(-1);
             tc->heading()->set_valign(-1);
+            tc->heading_spacing()->set(-1);
+            tc->tab_spacing()->set(0);
 
             // Tab Control 2
             MTEST_ASSERT(id.fmt_ascii("tabcontrol-%d", int(gid++)));
@@ -277,6 +279,8 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
 
             tc->heading()->set_halign(0);
             tc->heading()->set_valign(-1);
+            tc->heading_spacing()->set(0);
+            tc->tab_spacing()->set(1);
 
             // Tab Control 3
             MTEST_ASSERT(id.fmt_ascii("tabcontrol-%d", int(gid++)));
@@ -289,6 +293,8 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
 
             tc->heading()->set_halign(1);
             tc->heading()->set_valign(-1);
+            tc->heading_spacing()->set(1);
+            tc->tab_spacing()->set(2);
 
             // Row 2
             // Tab Control 4
@@ -302,6 +308,8 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
 
             tc->heading()->set_halign(-1);
             tc->heading()->set_valign(1);
+            tc->heading_spacing()->set(-1);
+            tc->tab_spacing()->set(0);
 
             // Tab Control 5
             MTEST_ASSERT(id.fmt_ascii("tabcontrol-%d", int(gid++)));
@@ -314,6 +322,8 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
 
             tc->heading()->set_halign(0);
             tc->heading()->set_valign(1);
+            tc->heading_spacing()->set(0);
+            tc->tab_spacing()->set(1);
 
             // Tab Control 6
             MTEST_ASSERT(id.fmt_ascii("tabcontrol-%d", int(gid++)));
@@ -326,6 +336,8 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
 
             tc->heading()->set_halign(1);
             tc->heading()->set_valign(1);
+            tc->heading_spacing()->set(1);
+            tc->tab_spacing()->set(2);
         }
 
         // Show window

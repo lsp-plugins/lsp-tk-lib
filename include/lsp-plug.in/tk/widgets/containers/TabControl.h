@@ -42,6 +42,7 @@ namespace lsp
                 prop::Embedding             sEmbedding;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
+                prop::Boolean               sTabJoint;
             LSP_TK_STYLE_DEF_END
         } /* namespae style */
 
@@ -65,6 +66,7 @@ namespace lsp
                     ws::rectangle_t         bounds;         // Bounding box area
                     ws::rectangle_t         text;           // Text area
                     tk::Tab                *widget;
+                    size_t                  border;         // Border size
                 } tab_t;
 
                 enum tab_mode_t
@@ -79,6 +81,7 @@ namespace lsp
                 ws::rectangle_t             sArea;          // Internal area for drawing the widget
                 ws::rectangle_t             sBounds;        // External area for drawing widget
                 ws::rectangle_t             sTabArea;       // Location of tab area
+                ssize_t                     nTabShift;      // Tab shift
                 size_t                      nMBState;       // Mouse button state
                 tk::Tab                    *pEventTab;      // Current event tab
 
@@ -90,13 +93,14 @@ namespace lsp
                 prop::Embedding             sEmbedding;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
+                prop::Boolean               sTabJoint;
 
                 prop::WidgetList<Tab>       vWidgets;
                 prop::WidgetPtr<Tab>        sSelected;
                 prop::CollectionListener    sIListener;
 
             protected:
-                void                        allocate_tabs(ws::rectangle_t *area, lltl::darray<tab_t> *tabs);
+                void                        allocate_tabs(size_t *max_tab_border, ws::rectangle_t *area, lltl::darray<tab_t> *tabs);
                 tk::Tab                    *current_tab();
                 bool                        scroll_item(ssize_t increment);
                 tk::Tab                    *find_tab(ssize_t x, ssize_t y);
@@ -129,6 +133,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Embedding,                  embedding,                  &sEmbedding)
                 LSP_TK_PROPERTY(Layout,                     heading,                    &sHeading)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sSizeConstraints)
+                LSP_TK_PROPERTY(Boolean,                    tab_joint,                  &sTabJoint)
                 LSP_TK_PROPERTY(WidgetPtr<Tab>,             selected,                   &sSelected)
                 LSP_TK_PROPERTY(WidgetList<Tab>,            widgets,                    &vWidgets)
 
@@ -150,6 +155,8 @@ namespace lsp
                 virtual status_t            on_mouse_move(const ws::event_t *e) override;
 
                 virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
+
+                virtual status_t            on_mouse_out(const ws::event_t *e) override;
 
                 virtual status_t            on_key_down(const ws::event_t *e) override;
 
