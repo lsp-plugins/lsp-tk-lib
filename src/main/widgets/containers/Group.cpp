@@ -344,6 +344,7 @@ namespace lsp
             bool bg         = false;
 
             bool aa         = s->set_antialiasing(false);
+            lsp_finally { s->set_antialiasing(aa); };
 
             // Draw background if child is invisible or not present
             if ((pWidget != NULL) && (pWidget->visibility()->get()))
@@ -384,79 +385,76 @@ namespace lsp
             }
 
             // Render frame
-            if (force)
+            if (!force)
+                return;
+
+            ssize_t ir, xg;
+
+            s->clip_begin(area);
+            lsp_finally { s->clip_end(); };
+
+            if (Size::overlap(area, &sSize))
             {
-                ssize_t ir, xg;
-
-                s->clip_begin(area);
-
-                if (Size::overlap(area, &sSize))
+                if (!bg)
                 {
-                    if (!bg)
-                    {
-                        get_actual_bg_color(color);
+                    get_actual_bg_color(color);
 
-                        xr          = sSize;
-                        xg          = border * 2;
-                        xr.nLeft   += border;
-                        xr.nTop    += border;
-                        xr.nWidth  -= xg;
-                        xr.nHeight -= xg;
+                    xr          = sSize;
+                    xg          = border * 2;
+                    xr.nLeft   += border;
+                    xr.nTop    += border;
+                    xr.nWidth  -= xg;
+                    xr.nHeight -= xg;
 
-                        ssize_t ir  = lsp_max(0, radius - border);
-                        s->fill_frame(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &sSize, &xr);
-                    }
-
-                    // Draw frame
-                    color.copy(sColor);
-                    color.scale_lch_luminance(bright);
-
-                    s->set_antialiasing(true);
-                    s->wire_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
+                    ir          = lsp_max(0, radius - border);
+                    s->fill_frame(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, ir, &sSize, &xr);
                 }
 
-                // Draw text
-                if ((sShowText.get()) && (Size::overlap(area, &sLabel)))
-                {
-                    ir          = lsp_max(0.0f, sTextRadius.get() * scaling);
+                // Draw frame
+                color.copy(sColor);
+                color.scale_lch_luminance(bright);
 
-                    size_t mask = 0;
-                    if (sHeading.align() > -1.0f)
-                        mask       |= SURFMASK_LB_CORNER;
-                    if (sHeading.align() < 1.0f)
-                        mask       |= SURFMASK_RB_CORNER;
-
-                    // Draw text background
-                    color.copy(sColor);
-                    color.scale_lch_luminance(bright);
-
-                    s->set_antialiasing(true);
-                    s->fill_rect(color, mask, ir, &sLabel);
-
-                    // Draw text
-                    LSPString text;
-                    ws::text_parameters_t tp;
-                    ws::font_parameters_t fp;
-                    color.copy(sTextColor);
-                    color.scale_lch_luminance(bright);
-
-                    sText.format(&text);
-                    sTextAdjust.apply(&text);
-
-                    sFont.get_parameters(s, fscaling, &fp);
-                    sFont.get_text_parameters(s, &tp, fscaling, &text);
-                    ws::rectangle_t tloc;
-                    sTextPadding.enter(&tloc, &sLabel, scaling);
-                    tloc.nLeft -= tp.XBearing;
-                    tloc.nTop  += fp.Ascent;
-
-                    sFont.draw(s, color, tloc.nLeft, tloc.nTop, fscaling, &text);
-                }
-
-                s->clip_end();
+                s->set_antialiasing(true);
+                s->wire_rect(color, SURFMASK_ALL_CORNER ^ SURFMASK_LT_CORNER, radius, &sSize, border);
             }
 
-            s->set_antialiasing(aa);
+            // Draw text
+            if ((sShowText.get()) && (Size::overlap(area, &sLabel)))
+            {
+                ir          = lsp_max(0.0f, sTextRadius.get() * scaling);
+
+                size_t mask = 0;
+                if (sHeading.align() > -1.0f)
+                    mask       |= SURFMASK_LB_CORNER;
+                if (sHeading.align() < 1.0f)
+                    mask       |= SURFMASK_RB_CORNER;
+
+                // Draw text background
+                color.copy(sColor);
+                color.scale_lch_luminance(bright);
+
+                s->set_antialiasing(true);
+                s->fill_rect(color, mask, ir, &sLabel);
+
+                // Draw text
+                LSPString text;
+                ws::text_parameters_t tp;
+                ws::font_parameters_t fp;
+                color.copy(sTextColor);
+                color.scale_lch_luminance(bright);
+
+                sText.format(&text);
+                sTextAdjust.apply(&text);
+
+                sFont.get_parameters(s, fscaling, &fp);
+                sFont.get_text_parameters(s, &tp, fscaling, &text);
+                ws::rectangle_t tloc;
+                sTextPadding.enter(&tloc, &sLabel, scaling);
+                tloc.nLeft -= tp.XBearing;
+                tloc.nTop  += fp.Ascent;
+
+                sFont.draw(s, color, tloc.nLeft, tloc.nTop, fscaling, &text);
+            }
         }
 
     } /* namespace tk */

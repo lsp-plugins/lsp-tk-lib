@@ -837,6 +837,9 @@ namespace lsp
                     make_key_pressed(e->nCode);
                     hKeys.pWidget       = h;
 
+                    lsp_trace("update: keys.pWidget = %p, pFocused = %p, nkeys=%d",
+                        hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
+
                     // Handle key press event
                     if (h == this)
                         result          = WidgetContainer::handle_event(e);
@@ -855,8 +858,8 @@ namespace lsp
                     if (make_key_released(e->nCode) <= 0)
                         hKeys.pWidget       = NULL;
 
-                    lsp_trace("key up  : keys.pWidget = %p, pFocused = %p, nkeys=%d",
-                            hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
+                    lsp_trace("key up  : keys.pWidget = %p, pFocused = %p, nkeys=%d, handler=%p",
+                        hKeys.pWidget, pFocused, int(hKeys.vKeys.size()), h);
 
                     // Handle key press event
                     if (h == this)
