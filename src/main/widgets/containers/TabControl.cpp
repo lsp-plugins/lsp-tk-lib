@@ -170,7 +170,7 @@ namespace lsp
                 query_resize();
             if (sSelected.is(prop))
                 query_resize();
-            if (sTabJoint.is(prop))
+            if (prop->one_of(sTabJoint, sHeadingFill, sHeadingGapFill))
                 query_draw();
         }
 
