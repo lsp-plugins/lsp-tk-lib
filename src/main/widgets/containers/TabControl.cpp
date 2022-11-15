@@ -33,6 +33,8 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(TabControl, WidgetContainer)
                 // Bind
                 sBorderColor.bind("border.color", this);
+                sHeadingColor.bind("heading.color", this);
+                sHeadingGapColor.bind("heading.gap.color", this);
                 sBorderSize.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sTabSpacing.bind("tab.spacing", this);
@@ -41,9 +43,13 @@ namespace lsp
                 sHeading.bind("heading", this);
                 sSizeConstraints.bind("size.constraints", this);
                 sTabJoint.bind("tab.joint", this);
+                sHeadingFill.bind("heading.fill", this);
+                sHeadingGapFill.bind("heading.gap.fill", this);
 
                 // Configure
                 sBorderColor.set("#888888");
+                sHeadingColor.set("#cccccc");
+                sHeadingGapColor.set("#cccccc");
                 sBorderSize.set(2);
                 sBorderRadius.set(10);
                 sTabSpacing.set(1);
@@ -52,6 +58,8 @@ namespace lsp
                 sHeading.set(-1.0f, -1.0f, 0.0f, 0.0f);
                 sSizeConstraints.set_all(-1);
                 sTabJoint.set(true);
+                sHeadingFill.set(true);
+                sHeadingGapFill.set(true);
             LSP_TK_STYLE_IMPL_END
 
             LSP_TK_BUILTIN_STYLE(TabControl, "TabControl", "root");
@@ -64,6 +72,8 @@ namespace lsp
         TabControl::TabControl(Display *dpy):
             WidgetContainer(dpy),
             sBorderColor(&sProperties),
+            sHeadingColor(&sProperties),
+            sHeadingGapColor(&sProperties),
             sBorderSize(&sProperties),
             sBorderRadius(&sProperties),
             sTabSpacing(&sProperties),
@@ -72,6 +82,8 @@ namespace lsp
             sHeading(&sProperties),
             sSizeConstraints(&sProperties),
             sTabJoint(&sProperties),
+            sHeadingFill(&sProperties),
+            sHeadingGapFill(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -84,6 +96,19 @@ namespace lsp
             sBounds.nTop        = 0;
             sBounds.nWidth      = 0;
             sBounds.nHeight     = 0;
+
+            for (size_t i=0; i<2; ++i)
+            {
+                sHead[i].nLeft      = 0;
+                sHead[i].nTop       = 0;
+                sHead[i].nWidth     = 0;
+                sHead[i].nHeight    = 0;
+            }
+
+            sHeadGap.nLeft      = 0;
+            sHeadGap.nTop       = 0;
+            sHeadGap.nWidth     = 0;
+            sHeadGap.nHeight    = 0;
 
             nTabShift           = 0;
             nMBState            = 0;
@@ -108,6 +133,8 @@ namespace lsp
 
             // Configure Window
             sBorderColor.bind("border.color", &sStyle);
+            sHeadingColor.bind("heading.color", &sStyle);
+            sHeadingGapColor.bind("heading.gap.color", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sTabSpacing.bind("tab.spacing", &sStyle);
@@ -116,6 +143,8 @@ namespace lsp
             sHeading.bind("heading", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
             sTabJoint.bind("tab.joint", &sStyle);
+            sHeadingFill.bind("heading.fill", &sStyle);
+            sHeadingGapFill.bind("heading.gap.fill", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -131,7 +160,7 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (sBorderColor.is(prop))
+            if (prop->one_of(sBorderColor, sHeadingColor, sHeadingGapColor))
                 query_draw();
             if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing))
                 query_resize();
@@ -286,6 +315,7 @@ namespace lsp
             ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
+            size_t tab_spacing      = lsp_max(0.0f, sTabSpacing.get() * scaling);
             nTabShift               = lsp_max(sHeadingSpacing.get(), -ssize_t(max_tab_border)) * scaling;
             bool top_align          = sHeading.valign() <= 0.0f;
 
@@ -308,6 +338,22 @@ namespace lsp
                     tab->text.nTop     += sTabArea.nTop;
                 }
             }
+
+            // Compute heading
+            sHead[0].nLeft          = sSize.nLeft;
+            sHead[0].nTop           = sTabArea.nTop;
+            sHead[0].nHeight        = sTabArea.nHeight;
+            sHead[0].nWidth         = sTabArea.nLeft - sSize.nLeft - tab_spacing;
+
+            sHead[1].nLeft          = sTabArea.nLeft + sTabArea.nWidth + tab_spacing;
+            sHead[1].nTop           = sTabArea.nTop;
+            sHead[1].nHeight        = sTabArea.nHeight;
+            sHead[1].nWidth         = sSize.nLeft + sSize.nWidth - sHead[1].nLeft;
+
+            sHeadGap.nLeft          = sSize.nLeft;
+            sHeadGap.nTop           = (top_align) ? sTabArea.nTop + sTabArea.nHeight : sBounds.nTop + sBounds.nHeight;
+            sHeadGap.nWidth         = sSize.nWidth;
+            sHeadGap.nHeight        = lsp_max(0, nTabShift);
 
             // Compute padding
             padding_t padding;
@@ -440,6 +486,32 @@ namespace lsp
 
                     draw_tab(s, tab, mode, area);
                 }
+            }
+
+            // Draw head gap
+            if ((sHeadingGapFill.get()) && (Size::overlap(area, &sHeadGap)))
+            {
+                s->clip_begin(area);
+                lsp_finally { s->clip_end(); };
+
+                color.copy(sHeadingGapColor);
+                color.scale_lch_luminance(bright);
+                s->set_antialiasing(false);
+                s->fill_rect(color, SURFMASK_NO_CORNER, radius, &sHeadGap);
+            }
+
+            // Draw head gap
+            if (sHeadingFill.get())
+            {
+                s->clip_begin(area);
+                lsp_finally { s->clip_end(); };
+
+                color.copy(sHeadingColor);
+                color.scale_lch_luminance(bright);
+                s->set_antialiasing(false);
+                for (size_t i=0; i<2; ++i)
+                    if (sHead[i].nWidth > 0)
+                        s->fill_rect(color, SURFMASK_NO_CORNER, radius, &sHead[i]);
             }
         }
 
