@@ -40,7 +40,7 @@ namespace lsp
                 sBorderRadius.bind("border.radius", this);
                 sTabSpacing.bind("tab.spacing", this);
                 sHeadingSpacing.bind("heading.spacing", this);
-                sHeadingGap.bind("heading.spacing", this);
+                sHeadingGap.bind("heading.gap", this);
                 sEmbedding.bind("embed", this);
                 sHeading.bind("heading", this);
                 sSizeConstraints.bind("size.constraints", this);
