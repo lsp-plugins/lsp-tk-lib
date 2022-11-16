@@ -295,10 +295,12 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
             tc->heading()->set_valign(-1);
             tc->heading_spacing()->set(1);
             tc->tab_spacing()->set(2);
+            tc->heading_gap()->set(2);
             tc->heading_color()->set("#008800");
-            tc->heading_gap_color()->set("#0088ff");
+            tc->heading_spacing_color()->set("#0088ff");
+            tc->heading_gap_color()->set("#ffff00");
             tc->heading_fill()->set(true);
-            tc->heading_gap_fill()->set(true);
+            tc->heading_spacing_fill()->set(true);
 
             // Row 2
             // Tab Control 4
@@ -341,11 +343,13 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
             tc->heading()->set_halign(1);
             tc->heading()->set_valign(1);
             tc->heading_spacing()->set(2);
+            tc->heading_gap()->set(2);
             tc->tab_spacing()->set(2);
             tc->heading_color()->set("#ffff00");
-            tc->heading_gap_color()->set("#ff0000");
+            tc->heading_spacing_color()->set("#ff0000");
+            tc->heading_gap_color()->set("#0088ff");
             tc->heading_fill()->set(true);
-            tc->heading_gap_fill()->set(true);
+            tc->heading_spacing_fill()->set(true);
         }
 
         // Show window

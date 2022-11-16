@@ -34,32 +34,36 @@ namespace lsp
                 // Bind
                 sBorderColor.bind("border.color", this);
                 sHeadingColor.bind("heading.color", this);
+                sHeadingSpacingColor.bind("heading.spacing.color", this);
                 sHeadingGapColor.bind("heading.gap.color", this);
                 sBorderSize.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sTabSpacing.bind("tab.spacing", this);
                 sHeadingSpacing.bind("heading.spacing", this);
+                sHeadingGap.bind("heading.spacing", this);
                 sEmbedding.bind("embed", this);
                 sHeading.bind("heading", this);
                 sSizeConstraints.bind("size.constraints", this);
                 sTabJoint.bind("tab.joint", this);
                 sHeadingFill.bind("heading.fill", this);
-                sHeadingGapFill.bind("heading.gap.fill", this);
+                sHeadingSpacingFill.bind("heading.spacing.fill", this);
 
                 // Configure
                 sBorderColor.set("#888888");
                 sHeadingColor.set("#cccccc");
+                sHeadingSpacingColor.set("#cccccc");
                 sHeadingGapColor.set("#cccccc");
                 sBorderSize.set(2);
                 sBorderRadius.set(10);
                 sTabSpacing.set(1);
                 sEmbedding.set(false);
                 sHeadingSpacing.set(-1);
+                sHeadingGap.set(-1);
                 sHeading.set(-1.0f, -1.0f, 0.0f, 0.0f);
                 sSizeConstraints.set_all(-1);
                 sTabJoint.set(true);
                 sHeadingFill.set(true);
-                sHeadingGapFill.set(true);
+                sHeadingSpacingFill.set(true);
             LSP_TK_STYLE_IMPL_END
 
             LSP_TK_BUILTIN_STYLE(TabControl, "TabControl", "root");
@@ -73,6 +77,7 @@ namespace lsp
             WidgetContainer(dpy),
             sBorderColor(&sProperties),
             sHeadingColor(&sProperties),
+            sHeadingSpacingColor(&sProperties),
             sHeadingGapColor(&sProperties),
             sBorderSize(&sProperties),
             sBorderRadius(&sProperties),
@@ -83,7 +88,7 @@ namespace lsp
             sSizeConstraints(&sProperties),
             sTabJoint(&sProperties),
             sHeadingFill(&sProperties),
-            sHeadingGapFill(&sProperties),
+            sHeadingSpacingFill(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -104,6 +109,11 @@ namespace lsp
                 sHead[i].nWidth     = 0;
                 sHead[i].nHeight    = 0;
             }
+
+            sHeadSpacing.nLeft  = 0;
+            sHeadSpacing.nTop   = 0;
+            sHeadSpacing.nWidth = 0;
+            sHeadSpacing.nHeight= 0;
 
             sHeadGap.nLeft      = 0;
             sHeadGap.nTop       = 0;
@@ -134,17 +144,19 @@ namespace lsp
             // Configure Window
             sBorderColor.bind("border.color", &sStyle);
             sHeadingColor.bind("heading.color", &sStyle);
+            sHeadingSpacingColor.bind("heading.spacing.color", &sStyle);
             sHeadingGapColor.bind("heading.gap.color", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sTabSpacing.bind("tab.spacing", &sStyle);
             sHeadingSpacing.bind("heading.spacing", &sStyle);
+            sHeadingGap.bind("heading.gap", &sStyle);
             sEmbedding.bind("embed", &sStyle);
             sHeading.bind("heading", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
             sTabJoint.bind("tab.joint", &sStyle);
             sHeadingFill.bind("heading.fill", &sStyle);
-            sHeadingGapFill.bind("heading.gap.fill", &sStyle);
+            sHeadingSpacingFill.bind("heading.spacing.fill", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -160,18 +172,18 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (prop->one_of(sBorderColor, sHeadingColor, sHeadingGapColor))
+            if (prop->one_of(sBorderColor, sHeadingColor, sHeadingSpacingColor, sHeadingGapColor))
                 query_draw();
-            if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing))
+            if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing, sHeadingSpacing, sHeadingGap))
                 query_resize();
             if (prop->one_of(sEmbedding, sHeading, sSizeConstraints))
                 query_resize();
+            if (prop->one_of(sTabJoint, sHeadingFill, sHeadingSpacingFill))
+                query_draw();
             if (vWidgets.is(prop))
                 query_resize();
             if (sSelected.is(prop))
                 query_resize();
-            if (prop->one_of(sTabJoint, sHeadingFill, sHeadingGapFill))
-                query_draw();
         }
 
         void TabControl::allocate_tabs(size_t *max_tab_border, ws::rectangle_t *area, lltl::darray<tab_t> *tabs)
@@ -265,6 +277,7 @@ namespace lsp
             ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
             ssize_t hd_spacing      = lsp_max(sHeadingSpacing.get(), -ssize_t(max_tab_border)) * scaling;
+            ssize_t hd_gap          = (sHeadingGap.get() > 0) ? lsp_max(1.0f, sHeadingGap.get() * scaling) : 0;
 
             tab_area.nWidth        += radius;
             tab_area.nHeight       += hd_spacing;
@@ -291,7 +304,7 @@ namespace lsp
 
             // Write the actual estimated values
             r->nMinWidth            = lsp_max(tab_area.nWidth, w_area.nWidth);
-            r->nMinHeight           = tab_area.nHeight + w_area.nHeight;
+            r->nMinHeight           = tab_area.nHeight + w_area.nHeight + hd_gap;
             r->nMaxWidth            = -1;
             r->nMaxHeight           = -1;
             r->nPreWidth            = -1;
@@ -316,17 +329,51 @@ namespace lsp
             ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
             size_t tab_spacing      = lsp_max(0.0f, sTabSpacing.get() * scaling);
+            ssize_t hd_gap          = (sHeadingGap.get() > 0) ? lsp_max(1.0f, sHeadingGap.get() * scaling) : 0;
             nTabShift               = lsp_max(sHeadingSpacing.get(), -ssize_t(max_tab_border)) * scaling;
+            ssize_t heading_shift   = lsp_min(nTabShift, 0);
             bool top_align          = sHeading.valign() <= 0.0f;
 
             // Apply horizontal offset to tabs
-            sBounds                 = sSize;
-            sBounds.nHeight         = sBounds.nHeight - (sTabArea.nHeight + nTabShift);
-            if (top_align)
-                sBounds.nTop            = sBounds.nTop + (sSize.nHeight - sBounds.nHeight);
-
+            sBounds.nLeft           = sSize.nLeft;
+            sBounds.nWidth          = sSize.nWidth;
+            sHeadSpacing.nLeft      = sSize.nLeft;
+            sHeadSpacing.nWidth     = sSize.nWidth;
+            sHeadSpacing.nHeight    = lsp_max(0, nTabShift);
+            sHeadGap.nLeft          = sSize.nLeft;
+            sHeadGap.nWidth         = sSize.nWidth;
+            sHeadGap.nHeight        = hd_gap;
             sTabArea.nLeft          = sSize.nLeft + lsp_limit(sHeading.halign() + 1.0f, 0.0f, 2.0f) * (sSize.nWidth - sTabArea.nWidth) * 0.5f;
-            sTabArea.nTop           = sSize.nTop  + ((top_align) ? 0 : sBounds.nHeight + nTabShift);
+
+            if (top_align)
+            {
+                sTabArea.nTop           = sSize.nTop;
+                sHeadSpacing.nTop       = sTabArea.nTop + sTabArea.nHeight + heading_shift;
+                sHeadGap.nTop           = sHeadSpacing.nTop + sHeadSpacing.nHeight;
+                sBounds.nTop            = sHeadGap.nTop + sHeadGap.nHeight;
+                sBounds.nHeight         = sSize.nTop + sSize.nHeight - sBounds.nTop;
+            }
+            else
+            {
+                sTabArea.nTop           = sSize.nTop + sSize.nHeight - sTabArea.nHeight;
+                sHeadSpacing.nTop       = sTabArea.nTop - sHeadSpacing.nHeight - heading_shift;
+                sHeadGap.nTop           = sHeadSpacing.nTop - sHeadGap.nHeight;
+                sBounds.nTop            = sSize.nTop;
+                sBounds.nHeight         = sHeadGap.nTop - sBounds.nTop;
+            }
+
+            // Compute heading
+            sHead[0].nLeft          = sSize.nLeft;
+            sHead[0].nTop           = sTabArea.nTop;
+            sHead[0].nHeight        = sTabArea.nHeight + heading_shift;
+            sHead[0].nWidth         = sTabArea.nLeft - sSize.nLeft - tab_spacing;
+
+            sHead[1].nLeft          = sTabArea.nLeft + sTabArea.nWidth + tab_spacing;
+            sHead[1].nTop           = sTabArea.nTop;
+            sHead[1].nHeight        = sTabArea.nHeight + heading_shift;
+            sHead[1].nWidth         = sSize.nLeft + sSize.nWidth - sHead[1].nLeft;
+
+            // Update tab elements
             for (size_t i=0, n=tabs.size(); i<n; ++i)
             {
                 tab_t *tab              = tabs.uget(i);
@@ -338,22 +385,6 @@ namespace lsp
                     tab->text.nTop     += sTabArea.nTop;
                 }
             }
-
-            // Compute heading
-            sHead[0].nLeft          = sSize.nLeft;
-            sHead[0].nTop           = sTabArea.nTop;
-            sHead[0].nHeight        = sTabArea.nHeight;
-            sHead[0].nWidth         = sTabArea.nLeft - sSize.nLeft - tab_spacing;
-
-            sHead[1].nLeft          = sTabArea.nLeft + sTabArea.nWidth + tab_spacing;
-            sHead[1].nTop           = sTabArea.nTop;
-            sHead[1].nHeight        = sTabArea.nHeight;
-            sHead[1].nWidth         = sSize.nLeft + sSize.nWidth - sHead[1].nLeft;
-
-            sHeadGap.nLeft          = sSize.nLeft;
-            sHeadGap.nTop           = (top_align) ? sTabArea.nTop + sTabArea.nHeight : sBounds.nTop + sBounds.nHeight;
-            sHeadGap.nWidth         = sSize.nWidth;
-            sHeadGap.nHeight        = lsp_max(0, nTabShift);
 
             // Compute padding
             padding_t padding;
@@ -488,8 +519,20 @@ namespace lsp
                 }
             }
 
+            // Draw head spacing
+            if ((sHeadingSpacingFill.get()) && (Size::overlap(area, &sHeadSpacing)))
+            {
+                s->clip_begin(area);
+                lsp_finally { s->clip_end(); };
+
+                color.copy(sHeadingSpacingColor);
+                color.scale_lch_luminance(bright);
+                s->set_antialiasing(false);
+                s->fill_rect(color, SURFMASK_NO_CORNER, radius, &sHeadSpacing);
+            }
+
             // Draw head gap
-            if ((sHeadingGapFill.get()) && (Size::overlap(area, &sHeadGap)))
+            if ((sHeadGap.nHeight > 0) && (Size::overlap(area, &sHeadGap)))
             {
                 s->clip_begin(area);
                 lsp_finally { s->clip_end(); };
@@ -500,7 +543,7 @@ namespace lsp
                 s->fill_rect(color, SURFMASK_NO_CORNER, radius, &sHeadGap);
             }
 
-            // Draw head gap
+            // Fill space near tabs
             if (sHeadingFill.get())
             {
                 s->clip_begin(area);

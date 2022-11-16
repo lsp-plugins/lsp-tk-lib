@@ -36,17 +36,19 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(TabControl, WidgetContainer)
                 prop::Color                 sBorderColor;
                 prop::Color                 sHeadingColor;
+                prop::Color                 sHeadingSpacingColor;
                 prop::Color                 sHeadingGapColor;
                 prop::Integer               sBorderSize;
                 prop::Integer               sBorderRadius;
                 prop::Integer               sTabSpacing;
                 prop::Integer               sHeadingSpacing;
+                prop::Integer               sHeadingGap;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
                 prop::Boolean               sTabJoint;
                 prop::Boolean               sHeadingFill;
-                prop::Boolean               sHeadingGapFill;
+                prop::Boolean               sHeadingSpacingFill;
             LSP_TK_STYLE_DEF_END
         } /* namespae style */
 
@@ -86,6 +88,7 @@ namespace lsp
                 ws::rectangle_t             sBounds;        // External area for drawing widget
                 ws::rectangle_t             sTabArea;       // Location of tab area
                 ws::rectangle_t             sHead[2];       // Heading rectangles
+                ws::rectangle_t             sHeadSpacing;   // Heading spacing
                 ws::rectangle_t             sHeadGap;       // Heading gap
                 ssize_t                     nTabShift;      // Tab shift
                 size_t                      nMBState;       // Mouse button state
@@ -93,17 +96,19 @@ namespace lsp
 
                 prop::Color                 sBorderColor;
                 prop::Color                 sHeadingColor;
+                prop::Color                 sHeadingSpacingColor;
                 prop::Color                 sHeadingGapColor;
                 prop::Integer               sBorderSize;
                 prop::Integer               sBorderRadius;
                 prop::Integer               sTabSpacing;
                 prop::Integer               sHeadingSpacing;
+                prop::Integer               sHeadingGap;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
                 prop::Boolean               sTabJoint;
                 prop::Boolean               sHeadingFill;
-                prop::Boolean               sHeadingGapFill;
+                prop::Boolean               sHeadingSpacingFill;
 
                 prop::WidgetList<Tab>       vWidgets;
                 prop::WidgetPtr<Tab>        sSelected;
@@ -137,17 +142,19 @@ namespace lsp
             public:
                 LSP_TK_PROPERTY(Color,                      border_color,               &sBorderColor)
                 LSP_TK_PROPERTY(Color,                      heading_color,              &sHeadingColor)
+                LSP_TK_PROPERTY(Color,                      heading_spacing_color,      &sHeadingSpacingColor)
                 LSP_TK_PROPERTY(Color,                      heading_gap_color,          &sHeadingGapColor)
                 LSP_TK_PROPERTY(Integer,                    border_size,                &sBorderSize)
                 LSP_TK_PROPERTY(Integer,                    border_radius,              &sBorderRadius)
                 LSP_TK_PROPERTY(Integer,                    tab_spacing,                &sTabSpacing)
                 LSP_TK_PROPERTY(Integer,                    heading_spacing,            &sHeadingSpacing)
+                LSP_TK_PROPERTY(Integer,                    heading_gap,                &sHeadingGap)
                 LSP_TK_PROPERTY(Embedding,                  embedding,                  &sEmbedding)
                 LSP_TK_PROPERTY(Layout,                     heading,                    &sHeading)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sSizeConstraints)
                 LSP_TK_PROPERTY(Boolean,                    tab_joint,                  &sTabJoint)
                 LSP_TK_PROPERTY(Boolean,                    heading_fill,               &sHeadingFill)
-                LSP_TK_PROPERTY(Boolean,                    heading_gap_fill,           &sHeadingGapFill)
+                LSP_TK_PROPERTY(Boolean,                    heading_spacing_fill,       &sHeadingSpacingFill)
                 LSP_TK_PROPERTY(WidgetPtr<Tab>,             selected,                   &sSelected)
                 LSP_TK_PROPERTY(WidgetList<Tab>,            widgets,                    &vWidgets)
 
