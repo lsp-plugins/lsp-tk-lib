@@ -441,18 +441,56 @@ namespace lsp
         status_t Graph::add(Widget *child)
         {
             GraphItem *item     = widget_cast<GraphItem>(child);
-            return (item != NULL) ? vItems.add(item) : STATUS_BAD_TYPE;
+            if (item == NULL)
+                return STATUS_BAD_TYPE;
+
+            status_t res = vItems.add(item);
+            if (res == STATUS_OK)
+            {
+                GraphOrigin *go     = widget_cast<GraphOrigin>(child);
+                if (go != NULL)
+                    vOrigins.add(go);
+                GraphAxis *ga       = widget_cast<GraphAxis>(child);
+                if (ga != NULL)
+                {
+                    vAxis.add(ga);
+                    if (ga->basis()->get())
+                        vBasis.add(ga);
+                }
+            }
+            return res;
         }
 
         status_t Graph::remove(Widget *child)
         {
             GraphItem *item     = widget_cast<GraphItem>(child);
-            return (item != NULL) ? vItems.premove(item) : STATUS_BAD_TYPE;
+            if (item == NULL)
+                return STATUS_BAD_TYPE;
+
+            status_t res        = vItems.premove(item);
+            if (res == STATUS_OK)
+            {
+                GraphOrigin *go     = widget_cast<GraphOrigin>(child);
+                if (go != NULL)
+                    vOrigins.premove(go);
+                GraphAxis *ga       = widget_cast<GraphAxis>(child);
+                if (ga != NULL)
+                {
+                    vAxis.premove(ga);
+                    if (ga->basis()->get())
+                        vBasis.premove(ga);
+                }
+            }
+
+            return res;
         }
 
         status_t Graph::remove_all()
         {
             vItems.clear();
+            vOrigins.clear();
+            vAxis.clear();
+            vBasis.clear();
             return STATUS_OK;
         }
 
@@ -460,5 +498,51 @@ namespace lsp
         {
             *r      = sICanvas;
         }
-    }
-}
+
+        status_t Graph::xy_to_axis(size_t index, float *out, ssize_t x, ssize_t y)
+        {
+            // Find the axis
+            tk::GraphAxis *ax = axis(index);
+            if (ax == NULL)
+                return STATUS_NOT_FOUND;
+
+            // Perform computation stuff
+            if (out != NULL)
+            {
+                x      -= canvas_aleft();
+                y      -= canvas_atop();
+                *out    = ax->project(x, y);
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t Graph::axis_to_xy(size_t index, ssize_t *x, ssize_t *y, float value)
+        {
+            // Find the axis and the origin
+            tk::GraphAxis *ax = axis(index);
+            if (ax == NULL)
+                return STATUS_NOT_FOUND;
+            tk::GraphOrigin *o = origin(ax->origin()->get());
+            if (o == NULL)
+                return STATUS_NOT_FOUND;
+
+            // Perform computation stuff
+            float xx = 0, yy = 0;
+            if (!origin(o, &xx, &yy))
+                return STATUS_NOT_FOUND;
+
+            // Translate the point coordinates
+            if (!ax->apply(&xx, &yy, &value, 1))
+                return STATUS_NOT_FOUND;
+
+            // Return success
+            if (x != NULL)
+                *x  = xx;
+            if (y != NULL)
+                *y  = yy;
+
+            return STATUS_OK;
+        }
+    } /* namespace tk */
+} /* namespace lsp */

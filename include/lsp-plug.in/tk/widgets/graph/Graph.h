@@ -160,6 +160,26 @@ namespace lsp
                 inline ssize_t              canvas_aright() const       { return sCanvas.nLeft + sICanvas.nLeft + sICanvas.nWidth;  }
                 inline ssize_t              canvas_abottom() const      { return sCanvas.nTop + sICanvas.nTop + sICanvas.nHeight;   }
 
+
+                /**
+                 * Project window coordinates X and Y on the specified axis and return the corresponding value
+                 * @param index axis index to perform projection
+                 * @param out pointer to store coodrinate of point on the axis
+                 * @param in input value to process
+                 * @return status of operation
+                 */
+                status_t                    xy_to_axis(size_t index, float *out, ssize_t x, ssize_t y);
+
+                /**
+                 * Get the point on axis and return it's window coordinate X
+                 * @param index axist to perform transformation
+                 * @param x pointer to store output window X coordinate
+                 * @param y pointer to store output window Y coordinate
+                 * @param in input value to process
+                 * @return status of operation
+                 */
+                status_t                    axis_to_xy(size_t index, ssize_t *x, ssize_t *y, float value);
+
             public:
                 virtual status_t            add(Widget *child);
 
