@@ -867,8 +867,11 @@ namespace lsp
                 if ((e->nCode == ws::MCB_LEFT) && (pEventTab != NULL))
                 {
                     tk::Tab *found = find_tab(e->nLeft, e->nTop);
-                    if (found == pEventTab)
+                    if ((found == pEventTab) && (sSelected.get() != found))
+                    {
                         sSelected.set(found);
+                        sSlots.execute(SLOT_SUBMIT, this, NULL);
+                    }
                 }
             }
 
