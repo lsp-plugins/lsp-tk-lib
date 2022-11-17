@@ -41,6 +41,7 @@ namespace lsp
                 sTabSpacing.bind("tab.spacing", this);
                 sHeadingSpacing.bind("heading.spacing", this);
                 sHeadingGap.bind("heading.gap", this);
+                sHeadingGapBrightness.bind("heading.gap.brightness", this);
                 sEmbedding.bind("embed", this);
                 sHeading.bind("heading", this);
                 sSizeConstraints.bind("size.constraints", this);
@@ -59,6 +60,7 @@ namespace lsp
                 sEmbedding.set(false);
                 sHeadingSpacing.set(-1);
                 sHeadingGap.set(-1);
+                sHeadingGapBrightness.set(1.0f);
                 sHeading.set(-1.0f, -1.0f, 0.0f, 0.0f);
                 sSizeConstraints.set_all(-1);
                 sTabJoint.set(true);
@@ -83,6 +85,8 @@ namespace lsp
             sBorderRadius(&sProperties),
             sTabSpacing(&sProperties),
             sHeadingSpacing(&sProperties),
+            sHeadingGap(&sProperties),
+            sHeadingGapBrightness(&sProperties),
             sEmbedding(&sProperties),
             sHeading(&sProperties),
             sSizeConstraints(&sProperties),
@@ -151,6 +155,7 @@ namespace lsp
             sTabSpacing.bind("tab.spacing", &sStyle);
             sHeadingSpacing.bind("heading.spacing", &sStyle);
             sHeadingGap.bind("heading.gap", &sStyle);
+            sHeadingGapBrightness.bind("heading.gap.brightness", &sStyle);
             sEmbedding.bind("embed", &sStyle);
             sHeading.bind("heading", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -172,7 +177,7 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (prop->one_of(sBorderColor, sHeadingColor, sHeadingSpacingColor, sHeadingGapColor))
+            if (prop->one_of(sBorderColor, sHeadingColor, sHeadingSpacingColor, sHeadingGapColor, sHeadingGapBrightness))
                 query_draw();
             if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing, sHeadingSpacing, sHeadingGap))
                 query_resize();
@@ -534,11 +539,12 @@ namespace lsp
             // Draw head gap
             if ((sHeadGap.nHeight > 0) && (Size::overlap(area, &sHeadGap)))
             {
+                float bright2 = sHeadingGapBrightness.get();
+                color.copy(sHeadingGapColor);
+                color.scale_lch_luminance(bright * bright2);
+
                 s->clip_begin(area);
                 lsp_finally { s->clip_end(); };
-
-                color.copy(sHeadingGapColor);
-                color.scale_lch_luminance(bright);
                 s->set_antialiasing(false);
                 s->fill_rect(color, SURFMASK_NO_CORNER, radius, &sHeadGap);
             }

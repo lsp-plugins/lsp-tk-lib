@@ -348,6 +348,7 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
             tc->heading_color()->set("#ffff00");
             tc->heading_spacing_color()->set("#ff0000");
             tc->heading_gap_color()->set("#0088ff");
+            tc->heading_gap_brightness()->set(1.5f);
             tc->heading_fill()->set(true);
             tc->heading_spacing_fill()->set(true);
         }

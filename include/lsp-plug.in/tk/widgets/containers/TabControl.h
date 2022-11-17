@@ -43,6 +43,7 @@ namespace lsp
                 prop::Integer               sTabSpacing;
                 prop::Integer               sHeadingSpacing;
                 prop::Integer               sHeadingGap;
+                prop::Float                 sHeadingGapBrightness;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
@@ -103,6 +104,7 @@ namespace lsp
                 prop::Integer               sTabSpacing;
                 prop::Integer               sHeadingSpacing;
                 prop::Integer               sHeadingGap;
+                prop::Float                 sHeadingGapBrightness;
                 prop::Embedding             sEmbedding;
                 prop::Layout                sHeading;
                 prop::SizeConstraints       sSizeConstraints;
@@ -149,6 +151,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                    tab_spacing,                &sTabSpacing)
                 LSP_TK_PROPERTY(Integer,                    heading_spacing,            &sHeadingSpacing)
                 LSP_TK_PROPERTY(Integer,                    heading_gap,                &sHeadingGap)
+                LSP_TK_PROPERTY(Float,                      heading_gap_brightness,     &sHeadingGapBrightness)
                 LSP_TK_PROPERTY(Embedding,                  embedding,                  &sEmbedding)
                 LSP_TK_PROPERTY(Layout,                     heading,                    &sHeading)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sSizeConstraints)
