@@ -6,6 +6,7 @@
 * Added stretch and loop markers to the AudioChannel and AudioSample widgets.
 * Added tk::Tab and tk::TabControl widgets.
 * Additional functions to work with coordinates provided in the tk::Graph: xy_to_axis, axis_to_xy.
+* Updated build scripts.
 
 === 1.0.5 ===
 * Updated build scripts.
