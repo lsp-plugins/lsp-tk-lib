@@ -44,11 +44,13 @@ namespace lsp
                 prop::Integer           sStretchEnd;        // End position of the stretch region
                 prop::Integer           sLoopBegin;         // Start of the loop region
                 prop::Integer           sLoopEnd;           // End position of the loop region
+                prop::Integer           sPlayPosition;      // Current playback position
                 prop::Integer           sWaveBorder;        // Wave border
                 prop::Integer           sFadeInBorder;      // Fade in border
                 prop::Integer           sFadeOutBorder;     // Fade out border
                 prop::Integer           sStretchBorder;     // Stretch border
                 prop::Integer           sLoopBorder;        // Loop border
+                prop::Integer           sPlayBorder;        // Playback position border
                 prop::Integer           sLineWidth;         // Line width
                 prop::Color             sColor;             // Color of the audio channel
                 prop::Color             sLineColor;         // Line color
@@ -59,6 +61,7 @@ namespace lsp
                 prop::Color             sFadeOutColor;      // Fade-out color
                 prop::Color             sStretchColor;      // Stretch fill color
                 prop::Color             sLoopColor;         // Loop fill color
+                prop::Color             sPlayColor;         // Playback position color
                 prop::Color             sFadeInBorderColor; // Color of fade-in
                 prop::Color             sFadeOutBorderColor;// Fade-out color
                 prop::Color             sStretchBorderColor;// Stretch border color
@@ -101,11 +104,13 @@ namespace lsp
                 prop::Integer           sStretchEnd;        // End position of the stretch region
                 prop::Integer           sLoopBegin;         // Start of the loop region
                 prop::Integer           sLoopEnd;           // End position of the loop region
+                prop::Integer           sPlayPosition;      // Current playback position
                 prop::Integer           sWaveBorder;        // Wave border
                 prop::Integer           sFadeInBorder;      // Fade in border
                 prop::Integer           sFadeOutBorder;     // Fade out border
                 prop::Integer           sStretchBorder;     // Stretch border
                 prop::Integer           sLoopBorder;        // Loop border
+                prop::Integer           sPlayBorder;        // Playback position border
                 prop::Integer           sLineWidth;         // Line width
                 prop::Color             sColor;             // Color of the audio channel
                 prop::Color             sLineColor;         // Line color
@@ -116,6 +121,7 @@ namespace lsp
                 prop::Color             sFadeOutColor;      // Fade-out color
                 prop::Color             sStretchColor;      // Stretch fill color
                 prop::Color             sLoopColor;         // Loop fill color
+                prop::Color             sPlayColor;         // Playback position color
                 prop::Color             sFadeInBorderColor; // Color of fade-in
                 prop::Color             sFadeOutBorderColor;// Fade-out color
                 prop::Color             sStretchBorderColor;// Stretch border color
@@ -129,6 +135,7 @@ namespace lsp
                 void                    draw_samples(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
                 void                    draw_fades(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
                 void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, range_t *range, size_t samples, float scaling, float bright);
+                void                    draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
 
             public:
                 explicit AudioChannel(Display *dpy);
@@ -146,11 +153,13 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                stretch_end,            &sStretchEnd);
                 LSP_TK_PROPERTY(Integer,                loop_begin,             &sLoopBegin);
                 LSP_TK_PROPERTY(Integer,                loop_end,               &sLoopEnd);
+                LSP_TK_PROPERTY(Integer,                loop_border,            &sLoopBorder);
+                LSP_TK_PROPERTY(Integer,                play_position,          &sPlayPosition);
+                LSP_TK_PROPERTY(Integer,                play_border,            &sPlayBorder);
                 LSP_TK_PROPERTY(Integer,                wave_border,            &sWaveBorder);
                 LSP_TK_PROPERTY(Integer,                fade_in_border,         &sFadeInBorder);
                 LSP_TK_PROPERTY(Integer,                fade_out_border,        &sFadeOutBorder);
                 LSP_TK_PROPERTY(Integer,                stretch_border,         &sStretchBorder);
-                LSP_TK_PROPERTY(Integer,                loop_border,            &sLoopBorder);
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth);
                 LSP_TK_PROPERTY(Color,                  color,                  &sColor);
                 LSP_TK_PROPERTY(Color,                  wave_border_color,      &sWaveBorderColor);
@@ -160,6 +169,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                  fade_out_color,         &sFadeOutColor);
                 LSP_TK_PROPERTY(Color,                  stretch_color,          &sStretchColor)
                 LSP_TK_PROPERTY(Color,                  loop_color,             &sLoopColor)
+                LSP_TK_PROPERTY(Color,                  play_color,             &sPlayColor)
                 LSP_TK_PROPERTY(Color,                  fade_in_border_color,   &sFadeInBorderColor);
                 LSP_TK_PROPERTY(Color,                  fade_out_border_color,  &sFadeOutBorderColor);
                 LSP_TK_PROPERTY(Color,                  stretch_border_color,   &sStretchBorderColor);

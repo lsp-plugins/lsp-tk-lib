@@ -39,11 +39,13 @@ namespace lsp
                 sStretchEnd.bind("stretch.end", this);
                 sLoopBegin.bind("loop.begin", this);
                 sLoopEnd.bind("loop.end", this);
+                sPlayPosition.bind("play.position", this);
                 sWaveBorder.bind("wave.border", this);
                 sFadeInBorder.bind("fade_in.border", this);
                 sFadeOutBorder.bind("fade_out.border", this);
                 sStretchBorder.bind("stretch.border", this);
                 sLoopBorder.bind("loop.border", this);
+                sPlayBorder.bind("play.border", this);
                 sLineWidth.bind("line.width", this);
                 sColor.bind("color", this);
                 sLineColor.bind("line.color", this);
@@ -54,6 +56,7 @@ namespace lsp
                 sFadeOutColor.bind("fade_out.color", this);
                 sStretchColor.bind("stretch.color", this);
                 sLoopColor.bind("loop.color", this);
+                sPlayColor.bind("play.color", this);
                 sFadeInBorderColor.bind("fade_in.border.color", this);
                 sFadeOutBorderColor.bind("fade_out.border.color", this);
                 sStretchBorderColor.bind("stretch.border.color", this);
@@ -68,11 +71,13 @@ namespace lsp
                 sStretchEnd.set(-1);
                 sLoopBegin.set(-1);
                 sLoopEnd.set(-1);
+                sPlayPosition.set(-1);
                 sWaveBorder.set(1);
                 sFadeInBorder.set(1);
                 sFadeOutBorder.set(1);
                 sStretchBorder.set(1);
                 sLoopBorder.set(1);
+                sPlayBorder.set(2);
                 sLineWidth.set(1);
                 sColor.set("#8800ff00");
                 sLineColor.set("#ffffff");
@@ -83,6 +88,7 @@ namespace lsp
                 sFadeOutColor.set("#88ffff00");
                 sStretchColor.set("#8800ff00");
                 sLoopColor.set("#8800ffff");
+                sPlayColor.set("#ffffff");
                 sFadeInBorderColor.set("#ffff00");
                 sFadeOutBorderColor.set("#ffff00");
                 sStretchBorderColor.set("#00ff00");
@@ -109,11 +115,13 @@ namespace lsp
             sStretchEnd(&sProperties),
             sLoopBegin(&sProperties),
             sLoopEnd(&sProperties),
+            sPlayPosition(&sProperties),
             sWaveBorder(&sProperties),
             sFadeInBorder(&sProperties),
             sFadeOutBorder(&sProperties),
             sStretchBorder(&sProperties),
             sLoopBorder(&sProperties),
+            sPlayBorder(&sProperties),
             sLineWidth(&sProperties),
             sColor(&sProperties),
             sLineColor(&sProperties),
@@ -124,6 +132,7 @@ namespace lsp
             sFadeOutColor(&sProperties),
             sStretchColor(&sProperties),
             sLoopColor(&sProperties),
+            sPlayColor(&sProperties),
             sFadeInBorderColor(&sProperties),
             sFadeOutBorderColor(&sProperties),
             sStretchBorderColor(&sProperties),
@@ -153,11 +162,13 @@ namespace lsp
             sStretchEnd.bind("stretch.end", &sStyle);
             sLoopBegin.bind("loop.begin", &sStyle);
             sLoopEnd.bind("loop.end", &sStyle);
+            sPlayPosition.bind("play.position", &sStyle);
             sWaveBorder.bind("wave.border", &sStyle);
             sFadeInBorder.bind("fade_in.border", &sStyle);
             sFadeOutBorder.bind("fade_out.border", &sStyle);
             sStretchBorder.bind("stretch.border", &sStyle);
             sLoopBorder.bind("loop.border", &sStyle);
+            sPlayBorder.bind("play.border", &sStyle);
             sLineWidth.bind("line.width", &sStyle);
             sColor.bind("color", &sStyle);
             sLineColor.bind("line.color", &sStyle);
@@ -168,6 +179,7 @@ namespace lsp
             sFadeOutColor.bind("fade_out.color", &sStyle);
             sStretchColor.bind("stretch.color", &sStyle);
             sLoopColor.bind("loop.color", &sStyle);
+            sPlayColor.bind("play.color", &sStyle);
             sFadeInBorderColor.bind("fade_in.border.color", &sStyle);
             sFadeOutBorderColor.bind("fade_out.border.color", &sStyle);
             sStretchBorderColor.bind("stretch.border.color", &sStyle);
@@ -183,12 +195,12 @@ namespace lsp
 
             if (vSamples.is(prop))
                 query_draw();
-            if (prop->one_of(sHeadCut, sTailCut, sFadeIn, sFadeOut, sStretchBegin, sStretchEnd, sLoopBegin, sLoopEnd))
+            if (prop->one_of(sHeadCut, sTailCut, sFadeIn, sFadeOut, sStretchBegin, sStretchEnd, sLoopBegin, sLoopEnd, sPlayPosition))
                 query_draw();
-            if (prop->one_of(sWaveBorder, sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sLineWidth))
+            if (prop->one_of(sWaveBorder, sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sPlayBorder, sLineWidth))
                 query_draw();
             if (prop->one_of(sColor, sLineColor, sWaveBorderColor,
-                sHeadCutColor, sTailCutColor, sFadeInColor, sFadeOutColor, sStretchColor, sLoopColor,
+                sHeadCutColor, sTailCutColor, sFadeInColor, sFadeOutColor, sStretchColor, sLoopColor, sPlayColor,
                 sFadeInBorderColor, sFadeOutBorderColor, sStretchBorderColor, sLoopBorderColor))
                 query_draw();
             if (sConstraints.is(prop))
@@ -390,6 +402,28 @@ namespace lsp
             }
         }
 
+        void AudioChannel::draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright)
+        {
+            // Check limits
+            if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
+                return;
+            ssize_t position = sPlayPosition.get();
+            ssize_t pborder  = sPlayBorder.get();
+            if ((position < 0) || (pborder < 0))
+                return;
+
+            float x = (position * r->nWidth) / samples;
+            float border   = lsp_max(1.0f, pborder * scaling);
+
+            lsp::Color wire(sPlayColor);
+            wire.scale_lch_luminance(bright);
+
+            bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
+
+            s->line(wire, x, r->nTop, x, r->nTop + r->nHeight, border);
+        }
+
         void AudioChannel::draw(ws::ISurface *s)
         {
             float bright        = sBrightness.get();
@@ -431,6 +465,7 @@ namespace lsp
                 draw_range(&r, s, &stretch, samples, scaling, bright);
                 draw_range(&r, s, &loop, samples, scaling, bright);
                 draw_fades(&r, s, samples, scaling, bright);
+                draw_play_position(&r, s, samples, scaling, bright);
 
                 // Draw line
                 if (line_w > 0)
