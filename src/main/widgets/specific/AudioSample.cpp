@@ -916,6 +916,13 @@ namespace lsp
             );
         }
 
+        void AudioSample::query_draw(size_t flags)
+        {
+            if (flags & REDRAW_CHILD)
+                flags |= REDRAW_SURFACE;
+            WidgetContainer::query_draw(flags);
+        }
+
         void AudioSample::draw(ws::ISurface *s)
         {
             // Main parameters
@@ -1101,6 +1108,13 @@ namespace lsp
                 if (!sLabelVisibility[i].get())
                     continue;
                 draw_label(s, i);
+            }
+
+            // Commit redraw for children
+            for (size_t i=0; i<items; ++i)
+            {
+                AudioChannel *c     = vVisible.uget(i);
+                c->commit_redraw();
             }
         }
 

@@ -163,10 +163,10 @@ namespace lsp
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
             public:
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            realize(const ws::rectangle_t *r);
-                virtual void            property_changed(Property *prop);
-                virtual void            hide_widget();
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
+                virtual void            property_changed(Property *prop) override;
+                virtual void            hide_widget() override;
 
                 void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, range_t *range, size_t samples);
                 void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
@@ -190,8 +190,8 @@ namespace lsp
                 explicit AudioSample(Display *dpy);
                 virtual ~AudioSample();
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(WidgetList<AudioChannel>,   channels,           &vChannels)
@@ -239,21 +239,23 @@ namespace lsp
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,        popup,                  &sPopup);
 
             public:
-                virtual void                draw(ws::ISurface *s);
+                virtual void                query_draw(size_t flags = REDRAW_SURFACE) override;
 
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                draw(ws::ISurface *s) override;
 
-                virtual status_t            add(Widget *widget);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
-                virtual status_t            remove(Widget *child);
+                virtual status_t            add(Widget *widget) override;
 
-                virtual status_t            remove_all();
+                virtual status_t            remove(Widget *child) override;
 
-                virtual status_t            on_mouse_down(const ws::event_t *e);
+                virtual status_t            remove_all() override;
 
-                virtual status_t            on_mouse_up(const ws::event_t *e);
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
 
-                virtual status_t            on_mouse_move(const ws::event_t *e);
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
+
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
 
                 virtual status_t            on_before_popup(Menu *menu);
 
