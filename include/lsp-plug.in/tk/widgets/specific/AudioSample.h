@@ -41,6 +41,7 @@ namespace lsp
                 prop::Integer           sFadeOutBorder;             // Fade out border
                 prop::Integer           sStretchBorder;             // Stretch border
                 prop::Integer           sLoopBorder;                // Loop border
+                prop::Integer           sPlayBorder;                // Play position border
                 prop::Integer           sLineWidth;                 // Line width
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
@@ -70,6 +71,7 @@ namespace lsp
                 prop::Color             sGlassColor;                // Color of the glass
                 prop::Color             sStretchColor;              // Stretch fill color
                 prop::Color             sLoopColor;                 // Loop fill color
+                prop::Color             sPlayColor;                 // Play marker color
                 prop::Color             sStretchBorderColor;        // Stretch border color
                 prop::Color             sLoopBorderColor;           // Loop border color
                 prop::Padding           sIPadding;                  // Internal padding
@@ -114,6 +116,7 @@ namespace lsp
                 prop::Integer           sFadeOutBorder;             // Fade out border
                 prop::Integer           sStretchBorder;             // Stretch border
                 prop::Integer           sLoopBorder;                // Loop border
+                prop::Integer           sPlayBorder;                // Play position border
                 prop::Integer           sLineWidth;                 // Line width
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
@@ -143,6 +146,7 @@ namespace lsp
                 prop::Color             sGlassColor;                // Color of the glass
                 prop::Color             sStretchColor;              // Stretch fill color
                 prop::Color             sLoopColor;                 // Loop fill color
+                prop::Color             sPlayColor;                 // Playback position color
                 prop::Color             sStretchBorderColor;        // Stretch border color
                 prop::Color             sLoopBorderColor;           // Loop border color
                 prop::Padding           sIPadding;                  // Internal padding
@@ -169,6 +173,7 @@ namespace lsp
                 void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down);
                 void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, size_t samples, bool down);
+                void                    draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_main_text(ws::ISurface *s);
                 void                    draw_label(ws::ISurface *s, size_t idx);
 
@@ -196,6 +201,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                fade_out_border,        &sFadeOutBorder)
                 LSP_TK_PROPERTY(Integer,                stretch_border,         &sStretchBorder)
                 LSP_TK_PROPERTY(Integer,                loop_border,            &sLoopBorder)
+                LSP_TK_PROPERTY(Integer,                play_border,            &sPlayBorder)
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth)
                 LSP_TK_PROPERTY(Color,                  line_color,             &sLineColor)
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints)
@@ -225,6 +231,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                  glass_color,            &sGlassColor);
                 LSP_TK_PROPERTY(Color,                  stretch_color,          &sStretchColor)
                 LSP_TK_PROPERTY(Color,                  loop_color,             &sLoopColor)
+                LSP_TK_PROPERTY(Color,                  play_color,             &sPlayColor)
                 LSP_TK_PROPERTY(Color,                  stretch_border_color,   &sStretchBorderColor);
                 LSP_TK_PROPERTY(Color,                  loop_border_color,      &sLoopBorderColor);
                 LSP_TK_PROPERTY(Padding,                ipadding,               &sIPadding);

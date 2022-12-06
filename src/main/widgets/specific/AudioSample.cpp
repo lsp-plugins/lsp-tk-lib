@@ -75,6 +75,7 @@ namespace lsp
                 sFadeOutBorder.bind("fade_out.border", this);
                 sStretchBorder.bind("stretch.border", this);
                 sLoopBorder.bind("loop.border", this);
+                sPlayBorder.bind("play.border", this);
                 sLineWidth.bind("line.width", this);
                 sLineColor.bind("line.color", this);
                 sConstraints.bind("size.constraints", this);
@@ -96,6 +97,7 @@ namespace lsp
                 sGlassColor.bind("glass.color", this);
                 sStretchColor.bind("stretch.color", this);
                 sLoopColor.bind("loop.color", this);
+                sPlayColor.bind("play.color", this);
                 sStretchBorderColor.bind("stretch.border.color", this);
                 sLoopBorderColor.bind("loop.border.color", this);
                 sIPadding.bind("ipadding", this);
@@ -114,6 +116,7 @@ namespace lsp
                 sFadeOutBorder.set(1);
                 sStretchBorder.set(1);
                 sLoopBorder.set(1);
+                sPlayBorder.set(2);
                 sLineWidth.set(1);
                 sLineColor.set("#ffffff");
                 sConstraints.set_all(-1);
@@ -138,6 +141,7 @@ namespace lsp
                 sGlassColor.set("#ffffff");
                 sStretchColor.set("#8800ff00");
                 sLoopColor.set("#8800ffff");
+                sPlayColor.set("#ffffff");
                 sStretchBorderColor.set("#00ff00");
                 sLoopBorderColor.set("#00ffff");
                 sIPadding.set(1);
@@ -166,6 +170,7 @@ namespace lsp
             sFadeOutBorder(&sProperties),
             sStretchBorder(&sProperties),
             sLoopBorder(&sProperties),
+            sPlayBorder(&sProperties),
             sLineWidth(&sProperties),
             sLineColor(&sProperties),
             sConstraints(&sProperties),
@@ -188,6 +193,7 @@ namespace lsp
             sGlassColor(&sProperties),
             sStretchColor(&sProperties),
             sLoopColor(&sProperties),
+            sPlayColor(&sProperties),
             sStretchBorderColor(&sProperties),
             sLoopBorderColor(&sProperties),
             sIPadding(&sProperties),
@@ -271,6 +277,7 @@ namespace lsp
             sFadeOutBorder.bind("fade_out.border", &sStyle);
             sStretchBorder.bind("stretch.border", &sStyle);
             sLoopBorder.bind("loop.border", &sStyle);
+            sPlayBorder.bind("play.border", &sStyle);
             sLineWidth.bind("line.width", &sStyle);
             sLineColor.bind("line.color", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
@@ -291,6 +298,7 @@ namespace lsp
             sColor.bind("color", &sStyle);
             sStretchColor.bind("stretch.color", &sStyle);
             sLoopColor.bind("loop.color", &sStyle);
+            sPlayColor.bind("play.color", &sStyle);
             sStretchBorderColor.bind("stretch.border.color", &sStyle);
             sLoopBorderColor.bind("loop.border.color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
@@ -324,7 +332,7 @@ namespace lsp
 
             if (sWaveBorder.is(prop))
                 query_resize();
-            if (prop->one_of(sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sLineWidth))
+            if (prop->one_of(sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sPlayBorder, sLineWidth))
                 query_draw();
 
             if (sLineColor.is(prop))
@@ -355,14 +363,11 @@ namespace lsp
                 query_resize();
             if (sBorderFlat.is(prop))
                 query_draw();
-            if (sGlass.is(prop))
+
+            if (prop->one_of(sColor, sBorderColor, sGlassColor, sStretchColor, sLoopColor, sPlayColor,
+                sStretchBorderColor, sLoopBorderColor))
                 query_draw();
-            if (sColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sGlassColor.is(prop))
-                query_draw();
+
             if (sIPadding.is(prop))
                 query_resize();
 
@@ -630,8 +635,8 @@ namespace lsp
             float scaling       = lsp_max(0.0f, sScaling.get());
             float bright        = sBrightness.get();
             float border        = (range->border->get() > 0) ? lsp_max(1.0f, range->border->get() * scaling) : 0.0f;
-            float xb            = float(begin * r->nWidth) / float(samples);
-            float xe            = float(end * r->nWidth) / float(samples);
+            float xb            = r->nLeft + float(begin * r->nWidth) / float(samples);
+            float xe            = r->nLeft + float(end * r->nWidth) / float(samples);
 
             // Draw the range
             lsp::Color fill(*range->color);
@@ -648,6 +653,30 @@ namespace lsp
                 s->line(wire, xb, r->nTop, xb, r->nTop + r->nHeight, border);
                 s->line(wire, xe, r->nTop, xe, r->nTop + r->nHeight, border);
             }
+        }
+
+        void AudioSample::draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples)
+        {
+            // Check limits
+            if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
+                return;
+            ssize_t position = c->play_position()->get();
+            ssize_t pborder  = sPlayBorder.get();
+            if ((position < 0) || (pborder < 0))
+                return;
+
+            float scaling       = lsp_max(0.0f, sScaling.get());
+            float bright        = sBrightness.get();
+            float x             = r->nLeft + (position * r->nWidth) / samples;
+            float border        = lsp_max(1.0f, pborder * scaling);
+
+            lsp::Color wire(sPlayColor);
+            wire.scale_lch_luminance(bright);
+
+            bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
+
+            s->line(wire, x, r->nTop, x, r->nTop + r->nHeight, border);
         }
 
         void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down)
@@ -985,6 +1014,15 @@ namespace lsp
                         xr.nTop            += xr.nHeight * 2;
                     }
                     s->set_antialiasing(aa);
+
+                    // Draw playback position
+                    xr.nTop             = y;
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        AudioChannel *c     = vVisible.uget(i);
+                        draw_play_position(&xr, s, c, samples);
+                        xr.nTop            += xr.nHeight;
+                    }
                 }
                 else
                 {
@@ -1045,6 +1083,15 @@ namespace lsp
                         xr.nTop            += xr.nHeight;
                     }
                     s->set_antialiasing(aa);
+
+                    // Draw playback position
+                    xr.nTop             = y;
+                    for (size_t i=0; i<items; ++i)
+                    {
+                        AudioChannel *c     = vVisible.uget(i);
+                        draw_play_position(&xr, s, c, samples);
+                        xr.nTop            += xr.nHeight;
+                    }
                 }
             }
 

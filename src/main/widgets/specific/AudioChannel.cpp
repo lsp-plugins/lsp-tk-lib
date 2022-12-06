@@ -382,8 +382,8 @@ namespace lsp
                 return;
 
             float border        = (range->border->get() > 0) ? lsp_max(1.0f, range->border->get() * scaling) : 0.0f;
-            float xb            = float(begin * r->nWidth) / float(samples);
-            float xe            = float(end * r->nWidth) / float(samples);
+            float xb            = r->nLeft + float(begin * r->nWidth) / float(samples);
+            float xe            = r->nLeft + float(end * r->nWidth) / float(samples);
 
             // Draw the range
             lsp::Color fill(*range->color);
@@ -407,13 +407,13 @@ namespace lsp
             // Check limits
             if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
                 return;
-            ssize_t position = sPlayPosition.get();
-            ssize_t pborder  = sPlayBorder.get();
+            ssize_t position    = sPlayPosition.get();
+            ssize_t pborder     = sPlayBorder.get();
             if ((position < 0) || (pborder < 0))
                 return;
 
-            float x = (position * r->nWidth) / samples;
-            float border   = lsp_max(1.0f, pborder * scaling);
+            float x             = r->nLeft + (position * r->nWidth) / samples;
+            float border        = lsp_max(1.0f, pborder * scaling);
 
             lsp::Color wire(sPlayColor);
             wire.scale_lch_luminance(bright);
@@ -465,7 +465,6 @@ namespace lsp
                 draw_range(&r, s, &stretch, samples, scaling, bright);
                 draw_range(&r, s, &loop, samples, scaling, bright);
                 draw_fades(&r, s, samples, scaling, bright);
-                draw_play_position(&r, s, samples, scaling, bright);
 
                 // Draw line
                 if (line_w > 0)
@@ -478,6 +477,9 @@ namespace lsp
                     s->line(line, r.nLeft, sy, r.nLeft + r.nWidth, sy, line_w);
                     s->set_antialiasing(aa);
                 }
+
+                // Draw play position
+                draw_play_position(&r, s, samples, scaling, bright);
             }
             s->clip_end();
         }

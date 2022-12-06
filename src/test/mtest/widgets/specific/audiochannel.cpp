@@ -262,6 +262,8 @@ MTEST_BEGIN("tk.widgets.specific", audiochannel)
             ac->stretch_begin()->set(32);
             ac->stretch_end()->set(128);
 
+            ac->play_position()->set(200);
+
             // Create audio channel with head and tail cut
             MTEST_ASSERT(id.fmt_ascii("audiochannel-%d", int(vid++)));
             MTEST_ASSERT(ac = new tk::AudioChannel(dpy));

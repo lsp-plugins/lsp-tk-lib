@@ -210,6 +210,7 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
             ac->stretch_end()->set(ac->fade_in()->get() + 32);
             ac->loop_begin()->set(ac->samples()->size() - ac->fade_out()->get() - 32);
             ac->loop_end()->set(ac->samples()->size() - ac->fade_out()->get());
+            ac->play_position()->set(ac->samples()->size() * 0.85f);
         }
 
         for (size_t i=0; i<5; ++i)
@@ -249,6 +250,7 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
             ac->fade_out()->set(ac->samples()->size() * 0.25f * i * hue);
             ac->head_cut()->set(ac->samples()->size() * 0.25f * i * hue);
             ac->tail_cut()->set(ac->samples()->size() * 0.25f * i * hue);
+            ac->play_position()->set(ac->samples()->size() * 0.85f);
         }
 
         for (size_t i=0; i<5; ++i)
