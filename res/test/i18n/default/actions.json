@@ -7,7 +7,9 @@
 	"to_bookmarks": "+Bookmarks",
 	"dlg": {
 		"open": "Open dialog",
-		"save": "Save dialog"
+		"open_preview": "Open dialog with preview",
+		"save": "Save dialog",
+		"save_preview": "Save dialog with preview"
 	},
 	"open": "Open",
 	"save": "Save",

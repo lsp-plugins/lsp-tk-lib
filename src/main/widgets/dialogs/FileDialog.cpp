@@ -132,6 +132,19 @@ namespace lsp
             LSP_TK_BUILTIN_STYLE(FileDialog__ActionAlign, "FileDialog::ActionAlign", "Align");
 
             //-----------------------------------------------------------------
+            // FileDialog::PreviewAlign style
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__PreviewAlign, Align)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__PreviewAlign, Align)
+                // Override
+                sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
+                // Commit
+                sLayout.override();
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__PreviewAlign, "FileDialog::PreviewAlign", "Align");
+
+            //-----------------------------------------------------------------
             // FileDialog::Bookmark style
             LSP_TK_STYLE_DEF_BEGIN(FileDialog__Bookmark, Hyperlink)
             LSP_TK_STYLE_DEF_END
@@ -170,10 +183,12 @@ namespace lsp
 
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Warning, Label)
                 // Override
+                sAllocation.set_fill(true, false);
                 sTextLayout.set(1.0f, 0.5f);
                 sColor.set("#ff0000");
                 sAllocation.set_hexpand(true);
                 // Commit
+                sAllocation.override();
                 sTextLayout.override();
                 sColor.override();
                 sAllocation.override();
@@ -268,8 +283,10 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__WarningBox, Box)
                 // Override
                 sSpacing.set(8);
+                sOrientation.set_vertical();
                 // Commit
                 sSpacing.override();
+                sOrientation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__WarningBox, "FileDialog::WarningBox", "Box");
 
@@ -393,13 +410,14 @@ namespace lsp
             wBMAdd(dpy),
             sActionBox(dpy),
             sActionAlign(dpy),
-            sWarnBox(dpy),
             sAppendExt(dpy),
             wAutoExt(dpy),
             wGo(dpy),
             wUp(dpy),
             wNavBox(dpy),
-            sWWarning(dpy),
+            wPreviewHeading(dpy),
+            wPreview(dpy),
+            wWWarning(dpy),
 
             sMode(&sProperties),
             sCustomAction(&sProperties),
@@ -410,7 +428,8 @@ namespace lsp
             sSelected(&sProperties),
             sUseConfirm(&sProperties),
             sConfirmMsg(&sProperties),
-            sOptions(&sProperties)
+            sOptions(&sProperties),
+            sPreview(&sProperties)
         {
             pWConfirm       = NULL;
             pWSearch        = NULL;
@@ -461,7 +480,6 @@ namespace lsp
             sWCancel.destroy();
             sActionBox.destroy();
             sActionAlign.destroy();
-            sWarnBox.destroy();
             wSAAccess.destroy();
             wSABox.destroy();
             wOptions.destroy();
@@ -472,12 +490,14 @@ namespace lsp
             wBMPopup.destroy();
             wBMAdd.destroy();
             sMainGrid.destroy();
-            sWWarning.destroy();
+            wWWarning.destroy();
             sAppendExt.destroy();
             wAutoExt.destroy();
             wGo.destroy();
             wUp.destroy();
             wNavBox.destroy();
+            wPreviewHeading.destroy();
+            wPreview.destroy();
 
             pWSearch = NULL;
 
@@ -572,9 +592,18 @@ namespace lsp
             LSP_STATUS_ASSERT(inject_style(&sWCancel, "FileDialog::ActionButton"));
             LSP_STATUS_ASSERT(sWCancel.text()->set("actions.cancel"));
 
-            LSP_STATUS_ASSERT(sWWarning.init());
-            LSP_STATUS_ASSERT(sWWarning.style()->inject_parent(pWarning));
-            sWWarning.visibility()->set(false);
+            LSP_STATUS_ASSERT(wPreviewHeading.init());
+            LSP_STATUS_ASSERT(inject_style(&wPreviewHeading, "FileDialog::Label"));
+            wPreviewHeading.text()->set("labels.file.preview");
+            wPreviewHeading.visibility()->set(false);
+
+            LSP_STATUS_ASSERT(wPreview.init());
+            LSP_STATUS_ASSERT(inject_style(&wPreview, "FileDialog::PreviewAlign"));
+            wPreview.visibility()->set(false);
+
+            LSP_STATUS_ASSERT(wWWarning.init());
+            LSP_STATUS_ASSERT(wWWarning.style()->inject_parent(pWarning));
+            wWWarning.visibility()->set(false);
 
             LSP_STATUS_ASSERT(wGo.init());
             LSP_STATUS_ASSERT(inject_style(&wGo, "FileDialog::NavButton"));
@@ -594,8 +623,8 @@ namespace lsp
 
             LSP_STATUS_ASSERT(sMainGrid.init());
             LSP_STATUS_ASSERT(inject_style(&sMainGrid, "FileDialog::MainGrid"));
-            sMainGrid.rows()->set(7);
-            sMainGrid.columns()->set(2);
+            sMainGrid.rows()->set(8);
+            sMainGrid.columns()->set(3);
             sMainGrid.orientation()->set_horizontal();
 
             LSP_STATUS_ASSERT(sActionBox.init());
@@ -604,10 +633,6 @@ namespace lsp
 
             LSP_STATUS_ASSERT(sActionAlign.init());
             LSP_STATUS_ASSERT(inject_style(&sActionAlign, "FileDialog::ActionAlign"));
-
-            LSP_STATUS_ASSERT(sWarnBox.init());
-            LSP_STATUS_ASSERT(inject_style(&sWarnBox, "FileDialog::WarningBox"));
-            sWarnBox.orientation()->set_horizontal();
 
             LSP_STATUS_ASSERT(wSAAccess.init());
             LSP_STATUS_ASSERT(inject_style(&wSAAccess, "FileDialog::BookmarkArea"));
@@ -657,42 +682,78 @@ namespace lsp
             LSP_STATUS_ASSERT(sActionBox.add(&sWAction));
             LSP_STATUS_ASSERT(sActionBox.add(&sWCancel));
             LSP_STATUS_ASSERT(sActionAlign.add(&sActionBox));
-            // Warning box
-            LSP_STATUS_ASSERT(add_label(&sWarnBox, "labels.file_list", -1.0f, &l));
-            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::Label"));
-            LSP_STATUS_ASSERT(sWarnBox.add(&sWWarning));
+
+            /* File dialog main layout:
+             *
+             * +--------------------+--------------------+--------------------+
+             * |       wNavBox      |                  sWPath                 |
+             * +--------------------+--------------------+--------------------+
+             * |                    |                  wWWarning              |
+             * +-                  -+--------------------+--------------------+
+             * |                    |      file_list     |  wPreviewHeading   |
+             * +-                  -+--------------------+--------------------+
+             * |                    |                    |                    |
+             * |                    |                    |                    |
+             * |      wOptions      |                    |                    |
+             * |                    |                    |                    |
+             * |                    |      sWFiles       |                    |
+             * |                    |                    |                    |
+             * |                    |                    |                    |
+             * |                    |                    |     wPreview       |
+             * |                    |                    |                    |
+             * |                    |                    |                    |
+             * +--------------------+--------------------+--------------------+
+             * |         NULL       |           automatic_extension           |
+             * +--------------------+--------------------+--------------------+
+             * |     file_name      |                sWSearch                 |
+             * +--------------------+--------------------+--------------------+
+             * |       filter       |                sWFilter                 |
+             * +--------------------+--------------------+--------------------+
+             * |         NULL       |               sActionAlign              |
+             * +--------------------+--------------------+--------------------+
+             */
 
             // Initialize grid
             // Row 1
             LSP_STATUS_ASSERT(sMainGrid.add(&wNavBox));
-            LSP_STATUS_ASSERT(sMainGrid.add(&sWPath));
+            LSP_STATUS_ASSERT(sMainGrid.add(&sWPath, 1, 2));
             // Row 2
-            LSP_STATUS_ASSERT(sMainGrid.add(&wOptions, 2, 1)); // 2 rows
-            LSP_STATUS_ASSERT(sMainGrid.add(&sWarnBox));
+            LSP_STATUS_ASSERT(sMainGrid.add(&wOptions, 3, 1)); // 3 rows
+            LSP_STATUS_ASSERT(sMainGrid.add(&wWWarning, 1, 2)); // 2 columns
             // Row 3
+            LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.file_list", -1.0f, &l));
+            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::Label"));
+            LSP_STATUS_ASSERT(sMainGrid.add(&wPreviewHeading));
+            // Row 4
             LSP_STATUS_ASSERT(sMainGrid.add(&sWFiles));
+            LSP_STATUS_ASSERT(sMainGrid.add(&wPreview, 1, 1));
             // Row 4
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
-            LSP_STATUS_ASSERT(add_ext_check(&sMainGrid, "labels.automatic_extension"));
+            LSP_STATUS_ASSERT(add_ext_check(&sMainGrid, "labels.automatic_extension", 1, 2));
             // Row 5
             LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.file_name", 1.0f, &pWSearch));
             LSP_STATUS_ASSERT(inject_style(pWSearch, "FileDialog::Label"));
-            LSP_STATUS_ASSERT(sMainGrid.add(&sWSearch));
+            LSP_STATUS_ASSERT(sMainGrid.add(&sWSearch, 1, 2));
             // Row 6
             LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.filter", 1.0f, &l));
             LSP_STATUS_ASSERT(inject_style(l, "FileDialog::Label"));
-            LSP_STATUS_ASSERT(sMainGrid.add(&sWFilter));
+            LSP_STATUS_ASSERT(sMainGrid.add(&sWFilter, 1, 2));
             // Row 7
             LSP_STATUS_ASSERT(sMainGrid.add(NULL));
-            LSP_STATUS_ASSERT(sMainGrid.add(&sActionAlign)); // Action button box
+            LSP_STATUS_ASSERT(sMainGrid.add(&sActionAlign, 1, 2)); // Action button box
 
             // Add the whole structure
             LSP_STATUS_ASSERT(this->add(&sMainGrid));
 
             // Add slots
             handler_id_t id = 0;
+
+            // Self-defined events
             if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
             if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
+            if (id >= 0) id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+
+            // Event handlers
             if (id >= 0) id = sWAction.slots()->bind(SLOT_SUBMIT, slot_on_btn_action, self());
             if (id >= 0) id = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_btn_cancel, self());
             if (id >= 0) id = sWSearch.slots()->bind(SLOT_CHANGE, slot_on_search, self());
@@ -724,6 +785,7 @@ namespace lsp
             sUseConfirm.bind("confirm", &sStyle);
             sConfirmMsg.bind(&sStyle, pDisplay->dictionary());
             sOptions.bind(NULL);
+            sPreview.bind(NULL);
 
             // Bind foreign properties
             sBMTextColor.bind("text.color", pBMNormal);
@@ -830,6 +892,15 @@ namespace lsp
                     wOptions.add(opts);
                 }
             }
+            if (sPreview.is(prop))
+            {
+                tk::Widget *w = sPreview.get();
+                wPreview.remove_all();
+                if (w != NULL)
+                    wPreview.add(w);
+                wPreview.visibility()->set(w != NULL);
+                wPreviewHeading.visibility()->set(w != NULL);
+            }
         }
 
         status_t FileDialog::add_label(WidgetContainer *c, const char *key, float align, Label **label)
@@ -889,7 +960,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t FileDialog::add_ext_check(WidgetContainer *c, const char *text)
+        status_t FileDialog::add_ext_check(Grid *c, const char *text, size_t rows, size_t cols)
         {
             LSP_STATUS_ASSERT(sAppendExt.init());
             LSP_STATUS_ASSERT(wAutoExt.init());
@@ -930,7 +1001,7 @@ namespace lsp
             if (result == STATUS_OK)
                 result = box->add(lbl);
             if (result == STATUS_OK)
-                result = c->add(&sAppendExt);
+                result = c->add(&sAppendExt, rows, cols);
 
             if (result != STATUS_OK)
             {
@@ -955,6 +1026,12 @@ namespace lsp
         {
             FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
             return (dlg != NULL) ? dlg->on_cancel() : STATUS_BAD_STATE;
+        }
+
+        status_t FileDialog::slot_on_change(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            return (dlg != NULL) ? dlg->on_change() : STATUS_BAD_STATE;
         }
 
         status_t FileDialog::slot_on_btn_action(Widget *sender, void *ptr, void *data)
@@ -1287,18 +1364,31 @@ namespace lsp
 
         status_t FileDialog::on_dlg_list_change(void *data)
         {
-            if (!sMode.save_file())
-                return STATUS_OK;
-
+            // Analyze what to do
             f_entry_t *ent = selected_entry();
             if (ent == NULL)
+            {
+                LSP_STATUS_ASSERT(sSelected.set_raw(""));
+                sSlots.execute(SLOT_CHANGE, this, NULL);
                 return STATUS_OK;
+            }
 
-            // Analyze what to do
-            if ((ent->nFlags & F_DOTDOT) || (ent->nFlags & F_ISDIR))
-                return STATUS_OK;
+            // Update the search field in the 'save file' mode
+            if (sMode.save_file())
+            {
+                if (!(ent->nFlags & (F_DOTDOT | F_ISDIR)))
+                    LSP_STATUS_ASSERT(sWSearch.text()->set_raw(&ent->sName));
+            }
 
-            return sWSearch.text()->set_raw(&ent->sName);
+            // Update the selected file variable
+            LSPString spath;
+            io::Path path;
+            LSP_STATUS_ASSERT(sWPath.text()->format(&spath));
+            LSP_STATUS_ASSERT(path.set(&spath, &ent->sName));
+            LSP_STATUS_ASSERT(sSelected.set_raw(path.as_string()));
+            sSlots.execute(SLOT_CHANGE, this, NULL);
+
+            return STATUS_OK;
         }
 
         status_t FileDialog::on_dlg_search(void *data)
@@ -1307,7 +1397,12 @@ namespace lsp
                 return STATUS_OK;
 
             sWFiles.selected()->clear();
-            return apply_filters();
+            status_t res = apply_filters();
+
+            LSP_STATUS_ASSERT(sSelected.set_raw(""));
+            sSlots.execute(SLOT_CHANGE, this, NULL);
+
+            return res;
         }
 
         status_t FileDialog::on_dlg_action(void *data, bool list)
@@ -1487,11 +1582,17 @@ namespace lsp
         {
             io::Path path;
             LSPString spath;
+
             LSP_STATUS_ASSERT(sWPath.text()->format(&spath));
             LSP_STATUS_ASSERT(path.set(&spath));
             LSP_STATUS_ASSERT(path.canonicalize());
+            LSP_STATUS_ASSERT(sPath.set_raw(path.as_string()));
 
-            return sPath.set_raw(path.as_string());
+            // Clear the file selection
+            LSP_STATUS_ASSERT(sSelected.set_raw(""));
+            sSlots.execute(SLOT_CHANGE, this, NULL);
+
+            return STATUS_OK;
         }
 
         status_t FileDialog::on_dlg_up(void *data)
@@ -1503,8 +1604,13 @@ namespace lsp
             LSP_STATUS_ASSERT(path.set(&spath));
             LSP_STATUS_ASSERT(path.remove_last());
             LSP_STATUS_ASSERT(path.canonicalize());
+            LSP_STATUS_ASSERT(sPath.set_raw(path.as_string()));
 
-            return sPath.set_raw(path.as_string());
+            // Clear the file selection
+            LSP_STATUS_ASSERT(sSelected.set_raw(""));
+            sSlots.execute(SLOT_CHANGE, this, NULL);
+
+            return STATUS_OK;
         }
 
         status_t FileDialog::on_path_key_up(ws::event_t *e)
@@ -1815,6 +1921,10 @@ namespace lsp
                 pSelBookmark->sHlink.style()->remove_parent(pBMNormal);
                 pSelBookmark->sHlink.style()->inject_parent(pBMSel);
             }
+
+            // Clear the file selection
+            sSelected.set_raw("");
+            sSlots.execute(SLOT_CHANGE, this, NULL);
         }
 
         status_t FileDialog::select_current_bookmark()
@@ -2010,6 +2120,11 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t FileDialog::on_change()
+        {
+            return STATUS_OK;
+        }
+
         status_t FileDialog::refresh_current_path()
         {
             lltl::parray<f_entry_t> scanned;
@@ -2044,7 +2159,7 @@ namespace lsp
             xres = dir.open(&xpath);
             if (xres == STATUS_OK)
             {
-                sWWarning.hide();
+                wWWarning.hide();
 
                 // Read directory
                 io::fattr_t fattr;
@@ -2119,8 +2234,8 @@ namespace lsp
                 str.set_native("Access error: ");
                 path.set_native(text);
                 str.append(&path);
-                sWWarning.text()->set_raw(&str);
-                sWWarning.show();
+                wWWarning.text()->set_raw(&str);
+                wWWarning.show();
             }
 
             // Now we have the complete list of files, need to reorder them
