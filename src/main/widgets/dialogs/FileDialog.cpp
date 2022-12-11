@@ -594,7 +594,7 @@ namespace lsp
 
             LSP_STATUS_ASSERT(wPreviewHeading.init());
             LSP_STATUS_ASSERT(inject_style(&wPreviewHeading, "FileDialog::Label"));
-            wPreviewHeading.text()->set("labels.file.preview");
+            wPreviewHeading.text()->set("labels.file_preview");
             wPreviewHeading.visibility()->set(false);
 
             LSP_STATUS_ASSERT(wPreview.init());

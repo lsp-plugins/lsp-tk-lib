@@ -1,9 +1,7 @@
 {
 	"automatic_extension": "Automatic extension",
 	"bookmark_list": "Bookmarks",
-	"file": {
-		"preview": "File preview"
-	},
+	"file_preview": "File preview",
 	"file_list": "File list",
 	"file_name": "File name",
 	"filter": "Filter",
