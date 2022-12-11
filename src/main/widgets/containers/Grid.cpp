@@ -580,9 +580,23 @@ namespace lsp
                 cell_t *w = a->vTable.uget(off);
                 if (w == NULL)
                     continue;
-                // Row is visible if we have at least one visible widget
+
+                // Is there a visible widget in a row?
                 if ((w->pWidget != NULL) && (w->pWidget->visibility()->get()))
-                    return false;
+                {
+                    // If this widget is present in the previous row or in the next row
+                    // at the same column, then we can safely omit current row
+                    bool shared = false;
+                    if ((row > 0) && (a->vTable.uget(off - a->nCols) == w))
+                        shared      = true;
+                    else if ((row < (a->nRows - 1)) && (a->vTable.uget(off + a->nCols) == w))
+                        shared      = true;
+
+                    // We should consider current row not being empty if widget is not shared
+                    // across neighbouring rows.
+                    if (!shared)
+                        return false;
+                }
             }
 
             return true;
@@ -596,9 +610,24 @@ namespace lsp
                 cell_t *w = a->vTable.uget(off);
                 if (w == NULL)
                     continue;
-                // Column is visible if we have at least one visible widget
+
+                // Is therer a visible widget in a column?
                 if ((w->pWidget != NULL) && (w->pWidget->visibility()->get()))
-                    return false;
+                {
+                    bool shared = false;
+
+                    // If this widget is present in the previous column or in the next column
+                    // at the same row, then we can safely omit current column
+                    if ((col > 0) && (a->vTable.uget(off - 1) == w))
+                        shared      = true;
+                    else if ((col < (a->nCols - 1)) && (a->vTable.uget(off + 1) == w))
+                        shared      = true;
+
+                    // We should consider current column not being empty if widget is not shared
+                    // across neighbouring columns.
+                    if (!shared)
+                        return false;
+                }
             }
 
             return true;
