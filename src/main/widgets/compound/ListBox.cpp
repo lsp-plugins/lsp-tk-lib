@@ -451,6 +451,20 @@ namespace lsp
             realize_children();
 
             // Update scrolling
+//            item_t *curr    = find_by_index(nCurrIndex);
+//            ssize_t start   = vVisible.index_of(curr);
+//            if (start >= 0)
+//            {
+//                if (scroll_to_item(start))
+//                    realize_children();
+//            }
+
+            // Call parent for realize
+            WidgetContainer::realize(r);
+        }
+
+        void ListBox::scroll_to_current()
+        {
             item_t *curr    = find_by_index(nCurrIndex);
             ssize_t start   = vVisible.index_of(curr);
             if (start >= 0)
@@ -458,9 +472,6 @@ namespace lsp
                 if (scroll_to_item(start))
                     realize_children();
             }
-
-            // Call parent for realize
-            WidgetContainer::realize(r);
         }
 
         void ListBox::realize_children()
@@ -642,7 +653,7 @@ namespace lsp
                             s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
                             col.copy(li->text_selected_color()->color());
                         }
-                        else if (it == pHoverItem)
+                        else if (it->item == pHoverItem)
                         {
                             col.copy(li->bg_hover_color()->color());
                             s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
@@ -723,6 +734,11 @@ namespace lsp
 
             if ((&_this->sHBar != sender) && (&_this->sVBar != sender))
                 return STATUS_OK;
+
+            if (&_this->sHBar == sender)
+                _this->sHScroll.commit_value(_this->sHBar.value()->get());
+            else if (&_this->sVBar == sender)
+                _this->sVScroll.commit_value(_this->sVBar.value()->get());
 
             _this->realize_children();
             _this->query_draw();
@@ -841,9 +857,11 @@ namespace lsp
                 else
                     select_single(nCurrIndex, e->nState & ws::MCF_CONTROL);
             }
-            if (pHoverItem != it)
+
+            ListBoxItem *hover_item = (it != NULL) ? it->item : NULL;
+            if (pHoverItem != hover_item)
             {
-                pHoverItem  = it;
+                pHoverItem  = hover_item;
                 query_draw();
             }
 

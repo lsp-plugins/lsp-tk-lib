@@ -9,6 +9,7 @@
 * Improved widget tk::Grid space allocation algorithm that eliminates rows/columns which contain
   widgets that share space across other rows/columns. 
 * Added support of cusom file preview embedding into tk::FileDialog widget.
+* Fixed problems with scrolling of the tk::ListBox.
 * Updated build scripts.
 
 === 1.0.5 ===
