@@ -10,6 +10,7 @@
   widgets that share space across other rows/columns. 
 * Added support of cusom file preview embedding into tk::FileDialog widget.
 * Fixed problems with scrolling of the tk::ListBox.
+* Fixed operations on undefined values in tk::CheckBox and tk::RadioButton.
 * Updated build scripts.
 
 === 1.0.5 ===
