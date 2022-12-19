@@ -184,6 +184,7 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Warning, Label)
                 // Override
                 sAllocation.set_fill(true, false);
+                sAllocation.set_vreduce(true);
                 sTextLayout.set(1.0f, 0.5f);
                 sColor.set("#ff0000");
                 sAllocation.set_hexpand(true);
@@ -207,6 +208,20 @@ namespace lsp
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__Label, "FileDialog::Label", "Label");
+
+            //-----------------------------------------------------------------
+            // FileDialog::FileListLabel
+            LSP_TK_STYLE_DEF_BEGIN(FileDialog__FileListLabel, Label)
+            LSP_TK_STYLE_DEF_END
+
+            LSP_TK_STYLE_IMPL_BEGIN(FileDialog__FileListLabel, Label)
+                // Override
+                sAllocation.set_hfill(true);
+                sAllocation.set_vreduce(true);
+                // Commit
+                sAllocation.override();
+            LSP_TK_STYLE_IMPL_END
+            LSP_TK_BUILTIN_STYLE(FileDialog__FileListLabel, "FileDialog::FileListLabel", "Label");
 
             //-----------------------------------------------------------------
             // FileDialog::ExtCheck
@@ -723,7 +738,7 @@ namespace lsp
             LSP_STATUS_ASSERT(sMainGrid.add(&wWWarning, 1, 2)); // 2 columns
             // Row 3
             LSP_STATUS_ASSERT(add_label(&sMainGrid, "labels.file_list", -1.0f, &l));
-            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::Label"));
+            LSP_STATUS_ASSERT(inject_style(l, "FileDialog::FileListLabel"));
             LSP_STATUS_ASSERT(sMainGrid.add(&wPreviewHeading));
             // Row 4
             LSP_STATUS_ASSERT(sMainGrid.add(&sWFiles));
