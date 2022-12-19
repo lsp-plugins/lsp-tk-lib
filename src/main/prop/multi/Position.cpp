@@ -143,6 +143,11 @@ namespace lsp
 
         bool Position::rinside(const ws::rectangle_t *r, ssize_t x, ssize_t y, ssize_t radius)
         {
+            return rminside(r, x, y, SURFMASK_ALL_CORNER, radius);
+        }
+
+        bool Position::rminside(const ws::rectangle_t *r, ssize_t x, ssize_t y, size_t mask, ssize_t radius)
+        {
             if (!inside(r, x, y))
                 return false;
 
@@ -154,11 +159,15 @@ namespace lsp
             {
                 if (y < radius)
                 {
+                    if (!(mask & SURFMASK_LT_CORNER))
+                        return true;
                     float dx = radius - x, dy = radius - y;
                     return (dx*dx + dy*dy) <= radius * radius;
                 }
                 else if (y > (r->nHeight - radius))
                 {
+                    if (!(mask & SURFMASK_LB_CORNER))
+                        return true;
                     float dx = radius - x, dy = y - r->nHeight + radius;
                     return (dx*dx + dy*dy) <= radius * radius;
                 }
@@ -167,11 +176,15 @@ namespace lsp
             {
                 if (y < radius)
                 {
+                    if (!(mask & SURFMASK_RT_CORNER))
+                        return true;
                     float dx = x - r->nWidth + radius, dy = radius - y;
                     return (dx*dx + dy*dy) <= radius * radius;
                 }
                 else if (y > (r->nHeight - radius))
                 {
+                    if (!(mask & SURFMASK_RB_CORNER))
+                        return true;
                     float dx = x - r->nWidth + radius, dy = y - r->nHeight + radius;
                     return (dx*dx + dy*dy) <= radius * radius;
                 }

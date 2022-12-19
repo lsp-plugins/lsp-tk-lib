@@ -39,6 +39,9 @@ namespace lsp
                 prop::Integer           sWaveBorder;                // Wave border
                 prop::Integer           sFadeInBorder;              // Fade in border
                 prop::Integer           sFadeOutBorder;             // Fade out border
+                prop::Integer           sStretchBorder;             // Stretch border
+                prop::Integer           sLoopBorder;                // Loop border
+                prop::Integer           sPlayBorder;                // Play position border
                 prop::Integer           sLineWidth;                 // Line width
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
@@ -66,6 +69,11 @@ namespace lsp
                 prop::Color             sColor;                     // Graph color
                 prop::Color             sBorderColor;               // Color of the border
                 prop::Color             sGlassColor;                // Color of the glass
+                prop::Color             sStretchColor;              // Stretch fill color
+                prop::Color             sLoopColor;                 // Loop fill color
+                prop::Color             sPlayColor;                 // Play marker color
+                prop::Color             sStretchBorderColor;        // Stretch border color
+                prop::Color             sLoopBorderColor;           // Loop border color
                 prop::Padding           sIPadding;                  // Internal padding
             LSP_TK_STYLE_DEF_END
         }
@@ -89,6 +97,15 @@ namespace lsp
                     XF_DOWN         = 1 << 2
                 };
 
+                typedef struct range_t
+                {
+                    prop::Integer  *begin;
+                    prop::Integer  *end;
+                    prop::Integer  *border;
+                    prop::Color    *color;
+                    prop::Color    *border_color;
+                } range_t;
+
             protected:
                 prop::WidgetList<AudioChannel>  vChannels;          // List of audio channels
                 lltl::parray<AudioChannel>      vVisible;           // List of visible audio channels
@@ -97,6 +114,9 @@ namespace lsp
                 prop::Integer           sWaveBorder;                // Wave border
                 prop::Integer           sFadeInBorder;              // Fade in border
                 prop::Integer           sFadeOutBorder;             // Fade out border
+                prop::Integer           sStretchBorder;             // Stretch border
+                prop::Integer           sLoopBorder;                // Loop border
+                prop::Integer           sPlayBorder;                // Play position border
                 prop::Integer           sLineWidth;                 // Line width
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
@@ -124,6 +144,11 @@ namespace lsp
                 prop::Color             sColor;                     // Graph color
                 prop::Color             sBorderColor;               // Color of the border
                 prop::Color             sGlassColor;                // Color of the glass
+                prop::Color             sStretchColor;              // Stretch fill color
+                prop::Color             sLoopColor;                 // Loop fill color
+                prop::Color             sPlayColor;                 // Playback position color
+                prop::Color             sStretchBorderColor;        // Stretch border color
+                prop::Color             sLoopBorderColor;           // Loop border color
                 prop::Padding           sIPadding;                  // Internal padding
                 prop::WidgetPtr<Menu>   sPopup;                     // Popup Menu
 
@@ -138,15 +163,17 @@ namespace lsp
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
             public:
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            realize(const ws::rectangle_t *r);
-                virtual void            property_changed(Property *prop);
-                virtual void            hide_widget();
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
+                virtual void            property_changed(Property *prop) override;
+                virtual void            hide_widget() override;
 
+                void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, range_t *range, size_t samples);
                 void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down);
                 void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, size_t samples, bool down);
+                void                    draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_main_text(ws::ISurface *s);
                 void                    draw_label(ws::ISurface *s, size_t idx);
 
@@ -163,8 +190,8 @@ namespace lsp
                 explicit AudioSample(Display *dpy);
                 virtual ~AudioSample();
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(WidgetList<AudioChannel>,   channels,           &vChannels)
@@ -172,6 +199,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                wave_border,            &sWaveBorder)
                 LSP_TK_PROPERTY(Integer,                fade_in_border,         &sFadeInBorder)
                 LSP_TK_PROPERTY(Integer,                fade_out_border,        &sFadeOutBorder)
+                LSP_TK_PROPERTY(Integer,                stretch_border,         &sStretchBorder)
+                LSP_TK_PROPERTY(Integer,                loop_border,            &sLoopBorder)
+                LSP_TK_PROPERTY(Integer,                play_border,            &sPlayBorder)
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth)
                 LSP_TK_PROPERTY(Color,                  line_color,             &sLineColor)
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints)
@@ -199,26 +229,33 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                  color,                  &sColor)
                 LSP_TK_PROPERTY(Color,                  border_color,           &sBorderColor);
                 LSP_TK_PROPERTY(Color,                  glass_color,            &sGlassColor);
+                LSP_TK_PROPERTY(Color,                  stretch_color,          &sStretchColor)
+                LSP_TK_PROPERTY(Color,                  loop_color,             &sLoopColor)
+                LSP_TK_PROPERTY(Color,                  play_color,             &sPlayColor)
+                LSP_TK_PROPERTY(Color,                  stretch_border_color,   &sStretchBorderColor);
+                LSP_TK_PROPERTY(Color,                  loop_border_color,      &sLoopBorderColor);
                 LSP_TK_PROPERTY(Padding,                ipadding,               &sIPadding);
 
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,        popup,                  &sPopup);
 
             public:
-                virtual void                draw(ws::ISurface *s);
+                virtual void                query_draw(size_t flags = REDRAW_SURFACE) override;
 
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                draw(ws::ISurface *s) override;
 
-                virtual status_t            add(Widget *widget);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
-                virtual status_t            remove(Widget *child);
+                virtual status_t            add(Widget *widget) override;
 
-                virtual status_t            remove_all();
+                virtual status_t            remove(Widget *child) override;
 
-                virtual status_t            on_mouse_down(const ws::event_t *e);
+                virtual status_t            remove_all() override;
 
-                virtual status_t            on_mouse_up(const ws::event_t *e);
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
 
-                virtual status_t            on_mouse_move(const ws::event_t *e);
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
+
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
 
                 virtual status_t            on_before_popup(Menu *menu);
 
@@ -226,8 +263,8 @@ namespace lsp
 
                 virtual status_t            on_submit();
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

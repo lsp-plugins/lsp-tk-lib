@@ -149,7 +149,6 @@ namespace lsp
 
             protected:
                 void                        allocate(alloc_t *alloc);
-                void                        do_destroy();
                 Widget                     *current_widget();
                 ListBoxItem                *current_item();
                 bool                        scroll_item(ssize_t direction, size_t count);

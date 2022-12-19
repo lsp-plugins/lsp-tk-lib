@@ -182,7 +182,7 @@ namespace lsp
                  * @return status of operation
                  */
                 status_t set(const LSPString *key, const expr::Parameters *params);
-                inline status_t set(const LSPString *key)   { return set(key, (expr::Parameters *)NULL); };
+                inline status_t set(const LSPString *key)   { return set(key, static_cast<expr::Parameters *>(NULL)); };
 
                 /**
                  * Set localized value
@@ -191,7 +191,7 @@ namespace lsp
                  * @return status of operation
                  */
                 status_t set(const char *key, const expr::Parameters *params);
-                inline status_t set(const char *key)        { return set(key, (expr::Parameters *)NULL); };
+                inline status_t set(const char *key)        { return set(key, static_cast<expr::Parameters *>(NULL)); };
 
                 /**
                  * Make a copy of data from the source local string to this local string

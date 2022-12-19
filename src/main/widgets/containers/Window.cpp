@@ -300,15 +300,20 @@ namespace lsp
 
             size_t flags = nFlags;
 
-            s->begin();
+            ws::ISurface *bs = get_surface(s);
+            bs->begin();
             {
                 ws::rectangle_t xr;
                 xr.nLeft    = 0;
                 xr.nTop     = 0;
                 xr.nWidth   = sSize.nWidth;
                 xr.nHeight  = sSize.nHeight;
-                render(s, &xr, flags);
+                render(bs, &xr, flags);
             }
+            bs->end();
+
+            s->begin();
+                s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
             s->end();
             commit_redraw();
 
@@ -832,6 +837,9 @@ namespace lsp
                     make_key_pressed(e->nCode);
                     hKeys.pWidget       = h;
 
+                    lsp_trace("update: keys.pWidget = %p, pFocused = %p, nkeys=%d",
+                        hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
+
                     // Handle key press event
                     if (h == this)
                         result          = WidgetContainer::handle_event(e);
@@ -850,8 +858,8 @@ namespace lsp
                     if (make_key_released(e->nCode) <= 0)
                         hKeys.pWidget       = NULL;
 
-                    lsp_trace("key up  : keys.pWidget = %p, pFocused = %p, nkeys=%d",
-                            hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
+                    lsp_trace("key up  : keys.pWidget = %p, pFocused = %p, nkeys=%d, handler=%p",
+                        hKeys.pWidget, pFocused, int(hKeys.vKeys.size()), h);
 
                     // Handle key press event
                     if (h == this)

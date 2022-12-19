@@ -86,8 +86,11 @@ namespace lsp
                 static bool     inside(const ws::rectangle_t *rect, ssize_t left, ssize_t top);
                 inline bool     inside(const ws::rectangle_t *rect) { return inside(rect, nLeft, nTop);             }
 
+                static bool     rminside(const ws::rectangle_t *rect, ssize_t left, ssize_t top, size_t mask, ssize_t radius);
+                inline bool     rminside(const ws::rectangle_t *rect, size_t mask, ssize_t radius) { return rminside(rect, nLeft, nTop, mask, radius);   }
+
                 static bool     rinside(const ws::rectangle_t *rect, ssize_t left, ssize_t top, ssize_t radius);
-                inline bool     rinside(const ws::rectangle_t *rect, ssize_t radius) { return rinside(rect, nLeft, nTop, radius);   }
+                inline bool     rinside(const ws::rectangle_t *rect, ssize_t radius) { return rminside(rect, nLeft, nTop, SURFMASK_ALL_CORNER, radius);   }
         };
 
         namespace prop

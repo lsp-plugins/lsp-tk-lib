@@ -172,6 +172,7 @@ namespace lsp
 
             unlink_widget(pWidget);
             pWidget  = NULL;
+            query_resize();
 
             return STATUS_OK;
         }
@@ -180,13 +181,12 @@ namespace lsp
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
 
-            if ((pWidget == NULL) || (!pWidget->visibility()->get()))
+            if ((pWidget == NULL) || (!pWidget->is_visible_child_of(this)))
             {
                 r->nMinWidth    = -1;
                 r->nMinHeight   = -1;
                 r->nMaxWidth    = -1;
                 r->nMaxHeight   = -1;
-
             }
             else
             {
@@ -206,7 +206,7 @@ namespace lsp
 //            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             WidgetContainer::realize(r);
 
-            if ((pWidget == NULL) || (!pWidget->visibility()->get()))
+            if ((pWidget == NULL) || (!pWidget->is_visible_child_of(this)))
                 return;
 
             // Realize child widget

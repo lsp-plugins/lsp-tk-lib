@@ -206,6 +206,51 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
 
             ac->fade_in()->set(ac->samples()->size() * 0.5f * (i + 1) * hue);
             ac->fade_out()->set(ac->samples()->size() * 0.5f * (i + 1) * hue);
+            ac->stretch_begin()->set(ac->fade_in()->get());
+            ac->stretch_end()->set(ac->fade_in()->get() + 32);
+            ac->loop_begin()->set(ac->samples()->size() - ac->fade_out()->get() - 32);
+            ac->loop_end()->set(ac->samples()->size() - ac->fade_out()->get());
+            ac->play_position()->set(ac->samples()->size() * 0.85f);
+        }
+
+        for (size_t i=0; i<5; ++i)
+        {
+            MTEST_ASSERT(id.fmt_ascii("label%d", int(i)));
+
+            as->label_visibility(i)->set(true);
+            as->label_layout(i)->set_align(layout_x[i], layout_y[i]);
+            as->label(i)->set(&id);
+        }
+    }
+
+    void add_samples_with_fades(tk::AudioSample *as, lltl::parray<tk::Widget> &widgets, lltl::parray<handler_t> &vh, size_t &vid, size_t count)
+    {
+        LSPString id;
+        tk::AudioChannel *ac = NULL;
+
+        static const float layout_x[] = { -1.0f, 1.0f, 0.0f, -1.0f, 1.0f };
+        static const float layout_y[] = { -1.0f, -1.0f, 0.0f, 1.0f, 1.0f };
+
+        float hue = 1.0f / count;
+        for (size_t i=0; i<count; ++i)
+        {
+            MTEST_ASSERT(id.fmt_ascii("audiochannel-%d", int(vid++)));
+            MTEST_ASSERT(ac = new tk::AudioChannel(as->display()));
+            MTEST_ASSERT(init_widget(ac, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ac));
+            MTEST_ASSERT(as->add(ac) == STATUS_OK);
+
+            init_values(ac);
+            ac->color()->set_rgba32(0x88ff0000);
+            ac->color()->hue(hue * i);
+            ac->wave_border_color()->set_rgb24(0xff0000);
+            ac->wave_border_color()->hue(hue * i);
+
+            ac->fade_in()->set(ac->samples()->size() * 0.25f * i * hue);
+            ac->fade_out()->set(ac->samples()->size() * 0.25f * i * hue);
+            ac->head_cut()->set(ac->samples()->size() * 0.25f * i * hue);
+            ac->tail_cut()->set(ac->samples()->size() * 0.25f * i * hue);
+            ac->play_position()->set(ac->samples()->size() * 0.85f);
         }
 
         for (size_t i=0; i<5; ++i)
@@ -260,7 +305,7 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
         grid->rows()->set(2);
-        grid->columns()->set(2);
+        grid->columns()->set(3);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
         grid->vspacing()->set(2);
@@ -277,6 +322,18 @@ MTEST_BEGIN("tk.widgets.specific", audiosample)
             MTEST_ASSERT(grid->add(as, 2, 1) == STATUS_OK);
 
             add_samples(as, widgets, vh, vid, 7);
+            as->active()->set(true);
+            as->main_visibility()->set(false);
+            as->main_text()->set_raw("Click or drag to load");
+
+            // Create audio sample with non-grouping items and
+            MTEST_ASSERT(id.fmt_ascii("audiosample-%d", int(vid++)));
+            MTEST_ASSERT(as = new tk::AudioSample(dpy));
+            MTEST_ASSERT(init_widget(as, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(as));
+            MTEST_ASSERT(grid->add(as, 2, 1) == STATUS_OK);
+
+            add_samples_with_fades(as, widgets, vh, vid, 7);
             as->active()->set(true);
             as->main_visibility()->set(false);
             as->main_text()->set_raw("Click or drag to load");

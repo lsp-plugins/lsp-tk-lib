@@ -31,6 +31,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         char           *label;
         tk::FileDialog *dlg;
         tk::Widget     *optional;
+        tk::Widget     *preview;
     } handler_t;
 
     static status_t slot_close(tk::Widget *sender, void *ptr, void *data)
@@ -145,6 +146,19 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         return STATUS_OK;
     }
 
+    static status_t slot_dialog_change(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        tk::FileDialog *dlg = tk::widget_cast<tk::FileDialog>(sender);
+
+        LSPString fname;
+        dlg->selected_file()->format(&fname);
+
+        h->test->printf("DIALOG FILE SELECTED: %s -> %s\n", h->label, fname.get_native());
+
+        return STATUS_OK;
+    }
+
     static void init_dialog(tk::FileDialog *dlg, handler_t *h)
     {
         dlg->init();
@@ -183,6 +197,8 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         dlg->confirm_message()->set("messages.file.confirm_open");
         dlg->title()->set_raw("Load from file dialog");
         dlg->options()->set(h->optional);
+        dlg->preview()->set(h->preview);
+        dlg->slots()->bind(tk::SLOT_CHANGE, slot_dialog_change, h);
         dlg->show(sender);
 
         return STATUS_OK;
@@ -199,12 +215,15 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         dlg->confirm_message()->set("messages.file.confirm_save");
         dlg->mode()->set_save_file();
         dlg->title()->set_raw("Save to file dialog");
+        dlg->options()->set(h->optional);
+        dlg->preview()->set(h->preview);
+        dlg->slots()->bind(tk::SLOT_CHANGE, slot_dialog_change, h);
         dlg->show(sender);
 
         return STATUS_OK;
     }
 
-    status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label, tk::Widget *opt = NULL)
+    status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label, tk::Widget *opt = NULL, tk::Widget *prev = NULL)
     {
         status_t res = w->init();
         if (res != STATUS_OK)
@@ -217,6 +236,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         h->label    = ::strdup(label);
         h->dlg      = NULL;
         h->optional = opt;
+        h->preview  = prev;
 
         tk::handler_id_t hid;
         hid = w->slots()->bind(tk::SLOT_MOUSE_IN, slot_mouse_in, h);
@@ -303,7 +323,7 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(2);
+        grid->rows()->set(4);
         grid->columns()->set(1);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -337,10 +357,17 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
             MTEST_ASSERT(box->add(ckbox) == STATUS_OK);
             MTEST_ASSERT(box->add(lbl) == STATUS_OK);
 
+            // Create file preview
+            tk::Box *preview    = new tk::Box(dpy);
+
+            MTEST_ASSERT(preview->init() == STATUS_OK);
+
+            MTEST_ASSERT(widgets.add(preview));
+
             // Create open dialog button
             MTEST_ASSERT(id.fmt_ascii("button-%d", wid++));
             MTEST_ASSERT(btn = new tk::Button(dpy));
-            MTEST_ASSERT(init_widget(btn, vh, id.get_ascii(), box) == STATUS_OK);
+            MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
             MTEST_ASSERT(widgets.push(btn));
             MTEST_ASSERT(grid->add(btn) == STATUS_OK);
 
@@ -359,6 +386,30 @@ MTEST_BEGIN("tk.widgets.dialogs", filedialog)
             btn->color()->set_rgb24(next_color(col));
             btn->constraints()->set_fixed(64, 32);
             btn->text()->set("actions.dlg.save");
+            btn->slots()->bind(tk::SLOT_SUBMIT, slot_dialog_save, vh.last());
+
+            // Create open dialog button
+            MTEST_ASSERT(id.fmt_ascii("button-%d", wid++));
+            MTEST_ASSERT(btn = new tk::Button(dpy));
+            MTEST_ASSERT(init_widget(btn, vh, id.get_ascii(), box, preview) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(btn));
+            MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+
+            btn->color()->set_rgb24(next_color(col));
+            btn->constraints()->set_fixed(64, 32);
+            btn->text()->set("actions.dlg.open_preview");
+            btn->slots()->bind(tk::SLOT_SUBMIT, slot_dialog_open, vh.last());
+
+            // Create save dialog button
+            MTEST_ASSERT(id.fmt_ascii("button-%d", wid++));
+            MTEST_ASSERT(btn = new tk::Button(dpy));
+            MTEST_ASSERT(init_widget(btn, vh, id.get_ascii(), box, preview) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(btn));
+            MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+
+            btn->color()->set_rgb24(next_color(col));
+            btn->constraints()->set_fixed(64, 32);
+            btn->text()->set("actions.dlg.save_preview");
             btn->slots()->bind(tk::SLOT_SUBMIT, slot_dialog_save, vh.last());
         }
 

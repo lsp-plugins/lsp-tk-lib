@@ -234,7 +234,7 @@ namespace lsp
             // Get graph
             Graph *cv = graph();
             if (cv == NULL)
-                return false;
+                return sMin.get();
 
             // Get the center of coordinates
             float cx    = 0.0f, cy = 0.0f;
@@ -251,7 +251,7 @@ namespace lsp
                 // Now prepare the image of the line
                 float la, lb, lc;
                 if (!locate_line2d(fdx, fdy, cx, cy, la, lb, lc))
-                    return false;
+                    return sMin.get();
 
                 float x1, y1, x2, y2;
                 if (!clip_line2d_eq(
@@ -260,7 +260,7 @@ namespace lsp
                         2.0f,
                         x1, y1, x2, y2)
                     )
-                    return false;
+                    return sMin.get();
 
                 float d1    = distance2d(cx, cy, x1, y1);
                 float d2    = distance2d(cx, cy, x2, y2);
@@ -335,7 +335,7 @@ namespace lsp
             nx              = x + shift * dy;
             ny              = y - shift * dx;
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

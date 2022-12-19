@@ -107,13 +107,14 @@ namespace lsp
                 Button                      wBMAdd;
                 Box                         sActionBox;
                 Align                       sActionAlign;
-                Box                         sWarnBox;
                 Align                       sAppendExt;
                 CheckBox                    wAutoExt;
                 Button                      wGo;
                 Button                      wUp;
                 Box                         wNavBox;
-                Label                       sWWarning;
+                Label                       wPreviewHeading;
+                Align                       wPreview;
+                Label                       wWWarning;
                 MessageBox                 *pWConfirm;
                 MessageBox                 *pWMessage;
                 Label                      *pWSearch;
@@ -137,6 +138,7 @@ namespace lsp
                 prop::String                sConfirmMsg;
 
                 prop::WidgetPtr<Widget>     sOptions;
+                prop::WidgetPtr<Widget>     sPreview;
 
                 // External properties
                 prop::Color                 sBMTextColor;
@@ -155,6 +157,7 @@ namespace lsp
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_cancel(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
 
                 static status_t         slot_on_btn_action(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_btn_cancel(Widget *sender, void *ptr, void *data);
@@ -204,7 +207,7 @@ namespace lsp
             protected:
                 status_t                add_label(WidgetContainer *c, const char *key, float align = -1.0f, Label **label = NULL);
                 status_t                add_menu_item(Menu *m, const char *key, event_handler_t handler);
-                status_t                add_ext_check(WidgetContainer *c, const char *text);
+                status_t                add_ext_check(Grid *c, const char *text, size_t rows = 1, size_t cols = 1);
                 status_t                init_bm_popup_menu(tk::Menu *menu, bool editable);
                 void                    sync_mode();
                 status_t                show_message(const char *title, const char *heading, const char *message, const io::Path *path);
@@ -262,7 +265,9 @@ namespace lsp
                 LSP_TK_PROPERTY(String,                     selected_file,                  &sSelected);
                 LSP_TK_PROPERTY(Boolean,                    use_confirm,                    &sUseConfirm);
                 LSP_TK_PROPERTY(String,                     confirm_message,                &sConfirmMsg);
+                LSP_TK_PROPERTY(String,                     preview_heading,                wPreviewHeading.text());
                 LSP_TK_PROPERTY(WidgetPtr<Widget>,          options,                        &sOptions);
+                LSP_TK_PROPERTY(WidgetPtr<Widget>,          preview,                        &sPreview);
 
                 LSP_TK_PROPERTY(Color,                      warn_color,                     &sWarnColor);
                 LSP_TK_PROPERTY(Color,                      auto_ext_color,                 &sExtColor);
@@ -280,6 +285,8 @@ namespace lsp
                 virtual status_t        on_submit();
 
                 virtual status_t        on_cancel();
+
+                virtual status_t        on_change();
         };
     }
 }

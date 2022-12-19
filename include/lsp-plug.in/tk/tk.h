@@ -142,6 +142,7 @@
 #include <lsp-plug.in/tk/widgets/cast.h>
 
 // Simple widgets
+#include <lsp-plug.in/tk/widgets/simple/Bevel.h>
 #include <lsp-plug.in/tk/widgets/simple/Button.h>
 #include <lsp-plug.in/tk/widgets/simple/CheckBox.h>
 #include <lsp-plug.in/tk/widgets/simple/Edit.h>
@@ -159,7 +160,6 @@
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/Switch.h>
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
-#include <lsp-plug.in/tk/widgets/simple/Bevel.h>
 
 // Container widgets
 #include <lsp-plug.in/tk/widgets/containers/Window.h>
@@ -170,6 +170,8 @@
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
 #include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
 #include <lsp-plug.in/tk/widgets/containers/MultiLabel.h>
+#include <lsp-plug.in/tk/widgets/containers/Tab.h>
+#include <lsp-plug.in/tk/widgets/containers/TabControl.h>
 
 // Compound widgets
 #include <lsp-plug.in/tk/widgets/compound/Menu.h>
