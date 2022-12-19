@@ -137,9 +137,9 @@ namespace lsp
 
             public:
                 explicit TabControl(Display *dpy);
-                virtual ~TabControl();
+                virtual ~TabControl() override;
 
-                virtual status_t            init();
+                virtual status_t            init() override;
 
             public:
                 LSP_TK_PROPERTY(Color,                      border_color,               &sBorderColor)
