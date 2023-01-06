@@ -555,8 +555,8 @@ namespace lsp
         void Window::show_widget()
         {
             // Remember last actor and reset
-            Window *wnd = pActor;
-            pActor      = NULL;
+            ws::IWindow *wnd    = pActor;
+            pActor              = NULL;
 
             // Update window parameters
             if (pWindow != NULL)
@@ -593,7 +593,7 @@ namespace lsp
                     rw.nWidth       = 0;
                     rw.nHeight      = 0;
 
-                    wnd->get_screen_rectangle(&r);
+                    wnd->get_absolute_geometry(&r);
                     pWindow->get_geometry(&rw);
 
                     ssize_t left    = r.nLeft + ((r.nWidth - rw.nWidth) / 2);
@@ -607,7 +607,7 @@ namespace lsp
             }
 
             // Show over the actor window
-            pWindow->show(wnd->pWindow);
+            pWindow->show(pActor);
         }
 
         void Window::show()
@@ -616,13 +616,24 @@ namespace lsp
             return WidgetContainer::show();
         }
 
-        void Window::show(Widget *actor)
+        void Window::show(tk::Widget *actor)
         {
             // Already visible?
             if (sVisibility.get())
                 return;
 
-            pActor = (actor != NULL) ? widget_cast<Window>(actor->toplevel()) : NULL;
+            tk::Window *w_actor = (actor != NULL) ? widget_cast<tk::Window>(actor->toplevel()) : NULL;
+            pActor = (w_actor != NULL) ? w_actor->pWindow : NULL;
+            return WidgetContainer::show();
+        }
+
+        void Window::show(ws::IWindow *actor)
+        {
+            // Already visible?
+            if (sVisibility.get())
+                return;
+
+            pActor = actor;
             return WidgetContainer::show();
         }
 
