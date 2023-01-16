@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.7 ===
-
+* Added possibility to enable/disable Knob's scale actions.
 
 === 1.0.6 ===
 * Added stretch and loop markers to the AudioChannel and AudioSample widgets.
