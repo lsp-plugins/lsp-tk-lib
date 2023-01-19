@@ -173,7 +173,7 @@ namespace lsp
 
         const prop::enum_t *Property::find_enum(const LSPString *s, const prop::enum_t *xenum)
         {
-            for (size_t i=0; (xenum != NULL) && (xenum->name != NULL); ++i, ++xenum)
+            for (; (xenum != NULL) && (xenum->name != NULL); ++xenum)
             {
                 if (s->equals_ascii_nocase(xenum->name))
                     return xenum;
@@ -183,7 +183,7 @@ namespace lsp
 
         const prop::enum_t *Property::find_enum(const char *s, const prop::enum_t *xenum)
         {
-            for (size_t i=0; (xenum != NULL) && (xenum->name != NULL); ++i, ++xenum)
+            for (; (xenum != NULL) && (xenum->name != NULL); ++xenum)
             {
                 if (!strcasecmp(xenum->name, s))
                     return xenum;
