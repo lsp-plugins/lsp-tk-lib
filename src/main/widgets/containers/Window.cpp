@@ -607,7 +607,7 @@ namespace lsp
             }
 
             // Show over the actor window
-            pWindow->show(pActor);
+            pWindow->show(wnd);
         }
 
         void Window::show()
