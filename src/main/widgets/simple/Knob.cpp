@@ -47,6 +47,7 @@ namespace lsp
                 sScaleMarks.bind("scale.marks", this);
                 sBalanceColorCustom.bind("balance.color.custom", this);
                 sFlat.bind("flat", this);
+                sScaleActive.bind("scale.active", this);
                 sHoleSize.bind("hole.size", this);
                 sGapSize.bind("gap.size", this);
                 sScaleBrightness.bind("scale.brightness", this);
@@ -68,6 +69,7 @@ namespace lsp
                 sScaleMarks.set(true);
                 sBalanceColorCustom.set(false);
                 sFlat.set(false);
+                sScaleActive.set(true);
                 sHoleSize.set(1);
                 sGapSize.set(1);
                 sScaleBrightness.set(0.75f);
@@ -96,6 +98,7 @@ namespace lsp
             sScaleMarks(&sProperties),
             sBalanceColorCustom(&sProperties),
             sFlat(&sProperties),
+            sScaleActive(&sProperties),
             sHoleSize(&sProperties),
             sGapSize(&sProperties),
             sScaleBrightness(&sProperties),
@@ -134,6 +137,7 @@ namespace lsp
             sScaleMarks.bind("scale.marks", &sStyle);
             sBalanceColorCustom.bind("balance.color.custom", &sStyle);
             sFlat.bind("flat", &sStyle);
+            sScaleActive.bind("scale.active", &sStyle);
             sHoleSize.bind("hole.size", &sStyle);
             sGapSize.bind("gap.size", &sStyle);
             sScaleBrightness.bind("scale.brightness", &sStyle);
@@ -281,7 +285,7 @@ namespace lsp
             if (delta > ssize_t(xr*xr))
                 return S_NONE;
 
-            if (scale > 0)
+            if ((scale > 0) && (sScaleActive.get()))
             {
                 xr             -= scale;
                 if (delta >= ssize_t(xr*xr))

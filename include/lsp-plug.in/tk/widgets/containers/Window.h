@@ -90,7 +90,7 @@ namespace lsp
                 mouse_handler_t         hMouse;             // Mouse handler
                 key_handler_t           hKeys;              // Key handler
 
-                Window                 *pActor;
+                ws::IWindow            *pActor;
                 Timer                   sRedraw;
 
                 prop::String            sTitle;
@@ -222,7 +222,8 @@ namespace lsp
                  * @param actor actor
                  * @return status of operation
                  */
-                virtual void            show(Widget *actor);
+                virtual void            show(tk::Widget *actor);
+                virtual void            show(ws::IWindow *actor);
 
                 virtual status_t        add(Widget *widget);
 

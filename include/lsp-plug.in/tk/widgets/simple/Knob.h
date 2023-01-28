@@ -49,6 +49,7 @@ namespace lsp
                 prop::Boolean       sScaleMarks;
                 prop::Boolean       sBalanceColorCustom;
                 prop::Boolean       sFlat;
+                prop::Boolean       sScaleActive;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
@@ -95,6 +96,7 @@ namespace lsp
                 prop::Boolean       sScaleMarks;
                 prop::Boolean       sBalanceColorCustom;
                 prop::Boolean       sFlat;
+                prop::Boolean       sScaleActive;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
@@ -135,6 +137,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            scale_marks,                &sScaleMarks)
                 LSP_TK_PROPERTY(Boolean,            balance_color_custom,       &sBalanceColorCustom)
                 LSP_TK_PROPERTY(Boolean,            flat,                       &sFlat)
+                LSP_TK_PROPERTY(Boolean,            scale_active,               &sScaleActive)
                 LSP_TK_PROPERTY(Integer,            hole_size,                  &sHoleSize)
                 LSP_TK_PROPERTY(Integer,            gap_size,                   &sGapSize)
                 LSP_TK_PROPERTY(Float,              scale_brightness,           &sScaleBrightness)
