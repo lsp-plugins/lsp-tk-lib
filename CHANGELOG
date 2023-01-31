@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.8 ===
+* Fixed invalid tk::TF_VERTICAL tether flag value.
 * Updated dependencies file.
 
 === 1.0.7 ===
