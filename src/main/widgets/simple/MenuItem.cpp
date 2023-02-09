@@ -34,6 +34,7 @@ namespace lsp
                 sTextAdjust.bind("text.adjust", this);
                 sType.bind("type", this);
                 sChecked.bind("checked", this);
+                sDrawUnchecked.bind("unchecked.draw", this);
                 sBgSelectedColor.bind("bg.selected.color", this);
                 sTextColor.bind("text.color", this);
                 sTextSelectedColor.bind("text.selected.color", this);
@@ -45,6 +46,7 @@ namespace lsp
                 sTextAdjust.set(TA_NONE);
                 sType.set(MI_NORMAL);
                 sChecked.set(false);
+                sDrawUnchecked.set(true);
                 sBgSelectedColor.set("#000088");
                 sTextColor.set("#000000");
                 sTextSelectedColor.set("#ffffff");
@@ -69,6 +71,7 @@ namespace lsp
             sTextAdjust(&sProperties),
             sType(&sProperties),
             sChecked(&sProperties),
+            sDrawUnchecked(&sProperties),
             sBgSelectedColor(&sProperties),
             sTextColor(&sProperties),
             sTextSelectedColor(&sProperties),
@@ -107,6 +110,7 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sType.bind("type", &sStyle);
             sChecked.bind("checked", &sStyle);
+            sDrawUnchecked.bind("unchecked.draw", &sStyle);
             sBgSelectedColor.bind("bg.selected.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sTextSelectedColor.bind("text.selected.color", &sStyle);
@@ -125,13 +129,9 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (sTextAdjust.is(prop))
+            if (prop->one_of(sTextAdjust, sText, sType))
                 query_resize();
-            if (sText.is(prop))
-                query_resize();
-            if (sType.is(prop))
-                query_resize();
-            if (sChecked.is(prop))
+            if (prop->one_of(sChecked, sDrawUnchecked))
                 query_draw();
         }
 
