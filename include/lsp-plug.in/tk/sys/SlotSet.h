@@ -83,6 +83,13 @@ namespace lsp
                  */
                 void                destroy();
 
+                /**
+                 * Check that the slot set contains the specific slot
+                 * @param id slot identifier
+                 * @return true if the slot set contains the specific slot
+                 */
+                bool                contains(slot_t id) const;
+
                 /** Bind slot handler to slot
                  *
                  * @param id slot identifier

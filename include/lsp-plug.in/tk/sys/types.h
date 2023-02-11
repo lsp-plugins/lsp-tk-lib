@@ -52,6 +52,8 @@ namespace lsp
             SLOT_MOUSE_OUT,         //!< SLOT_MOUSE_OUT Triggered when mouse left widget's area
             SLOT_SHOW,              //!< SLOT_SHOW Triggered when widget becomes visible
             SLOT_HIDE,              //!< SLOT_HIDE Triggered when widget becomes invisible
+            SLOT_BEGIN_EDIT,        //!< SLOG_BEGIN_EDIT Triggered when the possible durable editing has started (for example, mouse click + drag)
+            SLOT_END_EDIT,          //!< SLOG_END_EDIT Triggered when the possible durable editing has finished (for example, mouse click + drag)
             SLOT_SUBMIT,            //!< SLOT_SUBMIT Triggered when value(s) stored by the widget is submitted (but can be not changed)
             SLOT_CANCEL,            //!< SLOT_CANCEL Triggered when the 'Cancel' action has been performed (for example, in dialogs)
             SLOT_CHANGE,            //!< SLOT_CHANGE Triggered only when value(s) stored by the widget is(are) changed
@@ -82,7 +84,8 @@ namespace lsp
          * @return status of operation
          */
         typedef status_t (* event_handler_t)(Widget *sender, void *ptr, void *data);
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_SLOTS_TYPES_H_ */

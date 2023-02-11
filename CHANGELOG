@@ -5,6 +5,8 @@
 === 1.0.8 ===
 * Fixed invalid tk::TF_VERTICAL tether flag value.
 * Added possibility to hide check/radio box for unchecked tk::MenuItem objects.
+* Added SLOT_BEGIN_EDIT and SLOT_END_EDIT slot events.
+* Fixed improper value calculation in cycling knob when clicking on the knob's scale.  
 * Updated dependencies file.
 
 === 1.0.7 ===

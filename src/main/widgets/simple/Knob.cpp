@@ -145,6 +145,8 @@ namespace lsp
             sBalanceTipColorCustom.bind("balance.tip.color.custom", &sStyle);
 
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEGIN_EDIT, slot_begin_edit, self());
+            if (id >= 0) id = sSlots.add(SLOT_END_EDIT, slot_end_edit, self());
             if (id < 0)
                 return -id;
 
@@ -155,43 +157,14 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (sColor.is(prop))
+            if (prop->one_of(sColor, sScaleColor, sBalanceColor, sHoleColor, sTipColor, sBalanceTipColor))
                 query_draw();
-            if (sScaleColor.is(prop))
-                query_draw();
-            if (sBalanceColor.is(prop))
-                query_draw();
-            if (sHoleColor.is(prop))
-                query_draw();
-            if (sTipColor.is(prop))
-                query_draw();
-            if (sBalanceTipColor.is(prop))
-                query_draw();;
-            if (sSizeRange.is(prop))
+
+            if (prop->one_of(sSizeRange, sScale, sHoleSize, sGapSize))
                 query_resize();
-            if (sScale.is(prop))
-                query_resize();
-            if (sValue.is(prop))
-                query_draw();
-            if (sBalance.is(prop))
-                query_draw();
-            if (sCycling.is(prop))
-                query_draw();
-            if (sScaleMarks.is(prop))
-                query_draw();
-            if (sBalanceColorCustom.is(prop))
-                query_draw();
-            if (sFlat.is(prop))
-                query_draw();
-            if (sHoleSize.is(prop))
-                query_resize();
-            if (sGapSize.is(prop))
-                query_resize();
-            if (sScaleBrightness.is(prop))
-                query_draw();
-            if (sBalanceTipSize.is(prop))
-                query_draw();
-            if (sBalanceTipColorCustom.is(prop))
+
+            if (prop->one_of(sValue, sBalance, sCycling, sScaleMarks, sBalanceColorCustom, sFlat, sScaleBrightness,
+                sBalanceTipSize, sBalanceTipColorCustom))
                 query_draw();
         }
 
@@ -199,6 +172,18 @@ namespace lsp
         {
             Knob *_this = widget_ptrcast<Knob>(ptr);
             return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Knob::slot_begin_edit(Widget *sender, void *ptr, void *data)
+        {
+            Knob *_this = widget_ptrcast<Knob>(ptr);
+            return (_this != NULL) ? _this->on_begin_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Knob::slot_end_edit(Widget *sender, void *ptr, void *data)
+        {
+            Knob *_this = widget_ptrcast<Knob>(ptr);
+            return (_this != NULL) ? _this->on_end_edit() : STATUS_BAD_ARGUMENTS;
         }
 
         void Knob::update_value(float delta)
@@ -236,7 +221,9 @@ namespace lsp
                 else
                     angle          -= M_PI * 0.5f;
 
-                sValue.set_normalized(1.0f - angle / (M_PI * 2.0f), true);
+                float balance   = 1.0f - sValue.get_normalized(sBalance.get());
+                float value     = 1.0f + balance - angle / (M_PI * 2.0f);
+                sValue.set_normalized(value, true);
             }
             else
             {
@@ -323,7 +310,11 @@ namespace lsp
         {
 //            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
             if ((nButtons == 0) && ((e->nCode == ws::MCB_LEFT) || (e->nCode == ws::MCB_RIGHT)))
+            {
                 nState  = check_mouse_over(e->nLeft, e->nTop);
+                if (nState != S_NONE)
+                    sSlots.execute(SLOT_BEGIN_EDIT, this);
+            }
 
             nButtons   |= (1 << e->nCode);
             nLastY      = e->nTop;
@@ -340,6 +331,8 @@ namespace lsp
             {
                 if ((nState == S_CLICK) && (e->nCode == ws::MCB_LEFT))
                     on_click(e->nLeft, e->nTop);
+                if (nState != S_NONE)
+                    sSlots.execute(SLOT_END_EDIT, this);
                 nState      = S_NONE;
             }
 
@@ -567,6 +560,16 @@ namespace lsp
         }
 
         status_t Knob::on_change()
+        {
+            return STATUS_OK;
+        }
+
+        status_t Knob::on_begin_edit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t Knob::on_end_edit()
         {
             return STATUS_OK;
         }
