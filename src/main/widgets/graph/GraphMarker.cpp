@@ -154,6 +154,8 @@ namespace lsp
             // Add handler
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEGIN_EDIT, slot_begin_edit, self());
+            if (id >= 0) id = sSlots.add(SLOT_END_EDIT, slot_end_edit, self());
             if (id < 0)
                 return -id;
 
@@ -443,6 +445,8 @@ namespace lsp
 
                 if (e->nCode == ws::MCB_RIGHT)
                     nXFlags    |= F_FINE_TUNE;
+
+                sSlots.execute(SLOT_BEGIN_EDIT, this);
             }
 
             apply_motion(e->nLeft, e->nTop, e->nState);
@@ -459,7 +463,10 @@ namespace lsp
 
             nMBState       &= ~(1 << e->nCode);
             if (nMBState == 0)
+            {
                 nXFlags    &= ~(F_FINE_TUNE | F_EDITING);
+                sSlots.execute(SLOT_END_EDIT, this);
+            }
 
             return STATUS_OK;
         }
@@ -498,8 +505,8 @@ namespace lsp
             }
 
             // Update the difference relative to the sensitivity
-            lsp_trace("xy=(%d, %d), mxy=(%d, %d)",
-                    int(x), int(y), int(nMouseX), int(nMouseY));
+//            lsp_trace("xy=(%d, %d), mxy=(%d, %d)",
+//                    int(x), int(y), int(nMouseX), int(nMouseY));
 
             float step = (nXFlags & F_FINE_TUNE) ?
                 sStep.get(flags & ws::MCF_CONTROL, !(flags & ws::MCF_SHIFT)) :
@@ -509,7 +516,7 @@ namespace lsp
             float rx = nMouseX - cv->canvas_aleft() + step * dx;
             float ry = nMouseY - cv->canvas_atop() + step * dy;
 
-            lsp_trace("rxy=(%f, %f)", rx, ry);
+//            lsp_trace("rxy=(%f, %f)", rx, ry);
 
             // Modify the value according to X coordinate
             float old       = sValue.get();
@@ -535,12 +542,34 @@ namespace lsp
             return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
+        status_t GraphMarker::slot_begin_edit(Widget *sender, void *ptr, void *data)
+        {
+            GraphMarker *_this = widget_ptrcast<GraphMarker>(ptr);
+            return (_this != NULL) ? _this->on_begin_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t GraphMarker::slot_end_edit(Widget *sender, void *ptr, void *data)
+        {
+            GraphMarker *_this = widget_ptrcast<GraphMarker>(ptr);
+            return (_this != NULL) ? _this->on_end_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
         status_t GraphMarker::on_change()
         {
-            lsp_trace("value = %f", sValue.get());
             return STATUS_OK;
         }
-    }
-}
+
+        status_t GraphMarker::on_begin_edit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t GraphMarker::on_end_edit()
+        {
+            return STATUS_OK;
+        }
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 

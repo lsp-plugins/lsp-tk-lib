@@ -105,7 +105,9 @@ namespace lsp
             protected:
                 void                        apply_motion(ssize_t x, ssize_t y, size_t flags);
 
+                static status_t             slot_begin_edit(Widget *sender, void *ptr, void *data);
                 static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t             slot_end_edit(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual void                property_changed(Property *prop);
@@ -153,10 +155,14 @@ namespace lsp
 
                 virtual status_t            on_mouse_move(const ws::event_t *e);
 
-                virtual status_t            on_change();
-        };
-    }
-}
+                virtual status_t            on_begin_edit();
 
+                virtual status_t            on_change();
+
+                virtual status_t            on_end_edit();
+        };
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_GRAPH_GRAPHMARKER_H_ */

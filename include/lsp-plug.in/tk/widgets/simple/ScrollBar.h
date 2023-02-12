@@ -154,6 +154,8 @@ namespace lsp
 
             protected:
                 static status_t                 slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_begin_edit(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_end_edit(Widget *sender, void *ptr, void *data);
                 static status_t                 timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:
@@ -202,7 +204,11 @@ namespace lsp
             public:
                 virtual ws::mouse_pointer_t     current_pointer();
 
+                virtual status_t                on_begin_edit();
+
                 virtual status_t                on_change();
+
+                virtual status_t                on_end_edit();
 
                 virtual status_t                on_mouse_down(const ws::event_t *e);
 
