@@ -250,8 +250,7 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
-
-    }
-}
+    } /* tk */
+} /* lsp */
 
 
