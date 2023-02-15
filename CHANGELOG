@@ -10,6 +10,7 @@
 * Added support of SLOT_BEGIN_EDIT and SLOT_END_EDIT by tk::Knob, tk::Fader,
   tk::ScrollBar, tk::GraphDot and tk::GraphMarker widgets.
 * Added support of named widget groups.
+* Added tk::Widget::has_parent method.
 * Updated dependencies file.
 
 === 1.0.7 ===
