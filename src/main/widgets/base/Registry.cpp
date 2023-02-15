@@ -295,6 +295,17 @@ namespace lsp
             return (uid != NULL) ? contains(uid->get_utf8()) : false;
         }
 
+        bool Registry::contains(const char *uid, const tk::Widget *w) const
+        {
+            lltl::parray<Widget> *list = sGroups.get(uid);
+            return (list != NULL) ? list->contains(w) : false;
+        }
+
+        bool Registry::contains(const LSPString *uid, const tk::Widget *w) const
+        {
+            return (uid != NULL) ? contains(uid->get_utf8(), w) : false;
+        }
+
         status_t Registry::query_group(const char *uid, lltl::parray<tk::Widget> *dst)
         {
             lltl::parray<Widget> *list = sGroups.get(uid);

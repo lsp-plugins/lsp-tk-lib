@@ -242,6 +242,22 @@ namespace lsp
                  * @return true if there is mapping for specified identifier
                  */
                 bool                        contains(const LSPString *uid) const;
+
+                /**
+                 * Check that registry has widget mapped to the group
+                 * @param uid unique identifier of group
+                 * @param w widget to check
+                 * @return true if there is mapping of specified widget to the specified group
+                 */
+                bool                        contains(const char *uid, const tk::Widget *w) const;
+
+                /**
+                 * Check that registry has widget mapped to the group
+                 * @param uid unique identifier of group
+                 * @param w widget to check
+                 * @return true if there is mapping of specified widget to the specified group
+                 */
+                bool                        contains(const LSPString *uid, const tk::Widget *w) const;
         };
     } /* tk */
 } /* lsp */
