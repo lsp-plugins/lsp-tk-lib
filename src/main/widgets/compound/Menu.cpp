@@ -594,15 +594,12 @@ namespace lsp
                 pi->check.nWidth    = 0;
                 pi->check.nHeight   = 0;
 
-                if ((xsep) && (st->ckbox))
+                if ((mt == MI_CHECK) || (mt == MI_RADIO))
                 {
-                    if ((mt == MI_CHECK) || (mt == MI_RADIO))
-                    {
-                        pi->check.nWidth    = st->check_w;
-                        pi->check.nHeight   = st->check_h;
-                        pi->area.nWidth    += pi->check.nWidth + spacing;
-                        pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->check.nHeight);
-                    }
+                    pi->check.nWidth    = st->check_w;
+                    pi->check.nHeight   = st->check_h;
+                    pi->area.nWidth    += pi->check.nWidth + spacing;
+                    pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->check.nHeight);
                 }
 
                 // Estimate size of shortcut
@@ -790,16 +787,13 @@ namespace lsp
                 }
 
                 // Do we have a check box/radio ?
-                if (st.ckbox)
+                if (check)
                 {
-                    if (check)
-                    {
-                        pi->check.nLeft     = xr.nLeft;
-                        pi->check.nTop      = xr.nTop + ((xr.nHeight - pi->check.nHeight) >> 1);
+                    pi->check.nLeft     = xr.nLeft;
+                    pi->check.nTop      = xr.nTop + ((xr.nHeight - pi->check.nHeight) >> 1);
 
-                        xr.nLeft           += st.check_w + spacing;
-                        xr.nWidth          -= st.check_w + spacing;
-                    }
+                    xr.nLeft           += st.check_w + spacing;
+                    xr.nWidth          -= st.check_w + spacing;
                 }
 
                 // Do we have a link ?
