@@ -952,6 +952,7 @@ namespace lsp
                     {
                         ssize_t br          = lsp_max(0, sCheckBorderRadius.get() * scaling);
                         ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
+                        ssize_t bgap        = lsp_max(0, sCheckBorderGap.get() * scaling);
 
                         r                   = pi->check;
                         if (bw > 0)
@@ -969,11 +970,11 @@ namespace lsp
                             color.scale_lch_luminance(bright);
                             s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
 
-                            r.nLeft            += bw;
-                            r.nTop             += bw;
-                            r.nWidth           -= bw * 2;
-                            r.nHeight          -= bw * 2;
-                            br                  = lsp_max(0, br - bw);
+                            r.nLeft            += bgap;
+                            r.nTop             += bgap;
+                            r.nWidth           -= bgap * 2;
+                            r.nHeight          -= bgap * 2;
+                            br                  = lsp_max(0, br - bgap);
 
                             if (mi->checked()->get())
                             {
@@ -998,6 +999,7 @@ namespace lsp
                         float xc            = pi->check.nLeft + br;
                         float yc            = pi->check.nTop  + br;
                         ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
+                        ssize_t bgap        = lsp_max(0, sCheckBorderGap.get() * scaling);
 
                         if (bw > 0)
                         {
@@ -1009,7 +1011,7 @@ namespace lsp
                             color.copy(mi->check_bg_color()->color());
                             color.scale_lch_luminance(bright);
                             s->fill_circle(color, xc, yc, br);
-                            br                  = lsp_max(0, br - bw);
+                            br                  = lsp_max(0, br - bgap);
 
                             if (mi->checked()->get())
                             {
