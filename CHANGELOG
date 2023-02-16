@@ -11,6 +11,7 @@
   tk::ScrollBar, tk::GraphDot and tk::GraphMarker widgets.
 * Added support of named widget groups.
 * Added tk::Widget::has_parent method.
+* Changed checkbox/radio button space allocation algorithm for Menu and MenuItem.
 * Updated dependencies file.
 
 === 1.0.7 ===

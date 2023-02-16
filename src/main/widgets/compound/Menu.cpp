@@ -426,35 +426,13 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (sFont.is(prop))
+            if (prop->one_of(sFont, sScrolling, sBorderSize, sBorderRadius))
                 query_resize();
-            if (sScrolling.is(prop))
-                query_resize();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sBorderColor.is(prop))
+
+            if (prop->one_of(sBorderColor, sScrollColor, sScrollTextColor, sScrollSelectedColor, sScrollTextSelectedColor, sBorderColor))
                 query_draw();
-            if (sScrollColor.is(prop))
-                query_draw();
-            if (sScrollTextColor.is(prop))
-                query_draw();
-            if (sScrollSelectedColor.is(prop))
-                query_draw();
-            if (sScrollTextSelectedColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sCheckSize.is(prop))
-                query_resize();
-            if (sCheckBorder.is(prop))
-                query_resize();
-            if (sCheckBorderGap.is(prop))
-                query_resize();
-            if (sCheckBorderRadius.is(prop))
-                query_resize();
-            if (sSpacing.is(prop))
+
+            if (prop->one_of(sCheckSize, sCheckBorder, sCheckBorderGap, sCheckBorderRadius, sSpacing))
                 query_resize();
         }
 
@@ -504,9 +482,9 @@ namespace lsp
 
             // Size of check box/radio
             ssize_t cb_br       = lsp_max(0, sCheckBorderRadius.get() * scaling) * 3;
-            st->check_w         = (sCheckBorder.get() > 0) ? lsp_min(1.0f, sCheckBorder.get() * scaling) : 0;
+            st->check_w         = (sCheckBorder.get() > 0) ? lsp_min(1.0f, 2.0f * sCheckBorder.get() * scaling) : 0;
             if (st->check_w > 0)
-                st->check_w        += (sCheckBorderGap.get() > 0) ? lsp_min(1.0f, sCheckBorderGap.get() * scaling) : 0;
+                st->check_w        += (sCheckBorderGap.get() > 0) ? lsp_min(1.0f, 2.0f * sCheckBorderGap.get() * scaling) : 0;
             st->check_w        += lsp_max(2.0f, sCheckSize.get() * scaling);
             st->check_w         = lsp_max(st->check_w, cb_br);
             st->check_h         = st->check_w;
@@ -529,7 +507,7 @@ namespace lsp
                 menu_item_type_t mt = mi->type()->get();
                 if ((mt == MI_CHECK) || (mt == MI_RADIO))
                     st->ckbox           = true;
-                else if (mt != MI_SEPARATOR)
+                if (mt != MI_SEPARATOR)
                 {
                     if (mi->shortcut()->valid())
                     {
@@ -550,6 +528,8 @@ namespace lsp
             }
 
             // Second pass: estimate parameters for each item
+            size_t min_pad_left = (st->ckbox) ? st->check_w + spacing : 0;
+
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Keep only visible items
@@ -562,13 +542,16 @@ namespace lsp
                 if (pi == NULL)
                     return;
 
-                // Compute padding
-                pi->item            = mi;
-                mi->padding()->compute(&pi->pad, scaling);
-
                 // Estimate type of item
                 menu_item_type_t mt = mi->type()->get();
                 bool xsep           = (mt != MI_SEPARATOR);
+
+                // Compute padding
+                pi->item            = mi;
+                mi->padding()->compute(&pi->pad, scaling);
+                pi->pad.nLeft       = lsp_max(pi->pad.nLeft, min_pad_left);
+                if ((mt == MI_CHECK) || (mt == MI_RADIO))
+                    pi->pad.nLeft      -= min_pad_left;
 
                 // Reduce padding
                 if (xsep)
@@ -608,17 +591,18 @@ namespace lsp
                 // Check box/radio
                 pi->check.nLeft     = 0;
                 pi->check.nTop      = 0;
+                pi->check.nWidth    = 0;
+                pi->check.nHeight   = 0;
+
                 if ((xsep) && (st->ckbox))
                 {
-                    pi->check.nWidth    = st->check_w;
-                    pi->check.nHeight   = st->check_h;
-                    pi->area.nWidth    += pi->check.nWidth + spacing;
-                    pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->check.nHeight);
-                }
-                else
-                {
-                    pi->check.nWidth    = 0;
-                    pi->check.nHeight   = 0;
+                    if ((mt == MI_CHECK) || (mt == MI_RADIO))
+                    {
+                        pi->check.nWidth    = st->check_w;
+                        pi->check.nHeight   = st->check_h;
+                        pi->area.nWidth    += pi->check.nWidth + spacing;
+                        pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->check.nHeight);
+                    }
                 }
 
                 // Estimate size of shortcut
@@ -812,10 +796,10 @@ namespace lsp
                     {
                         pi->check.nLeft     = xr.nLeft;
                         pi->check.nTop      = xr.nTop + ((xr.nHeight - pi->check.nHeight) >> 1);
-                    }
 
-                    xr.nLeft           += st.check_w + spacing;
-                    xr.nWidth          -= st.check_w + spacing;
+                        xr.nLeft           += st.check_w + spacing;
+                        xr.nWidth          -= st.check_w + spacing;
+                    }
                 }
 
                 // Do we have a link ?
