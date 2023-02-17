@@ -45,6 +45,8 @@ namespace lsp
                 prop::Color             sScrollSelectedColor;
                 prop::Color             sScrollTextColor;
                 prop::Color             sScrollTextSelectedColor;
+                prop::Boolean           sCheckDrawUnchecked;
+                prop::Boolean           sRadioDrawUnchecked;
                 prop::Integer           sCheckSize;
                 prop::Integer           sCheckBorder;
                 prop::Integer           sCheckBorderGap;
@@ -180,6 +182,8 @@ namespace lsp
                 prop::Color             sScrollSelectedColor;
                 prop::Color             sScrollTextColor;
                 prop::Color             sScrollTextSelectedColor;
+                prop::Boolean           sCheckDrawUnchecked;
+                prop::Boolean           sRadioDrawUnchecked;
                 prop::Integer           sCheckSize;
                 prop::Integer           sCheckBorder;
                 prop::Integer           sCheckBorderGap;
@@ -248,6 +252,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              scroll_selected_color,      &sScrollSelectedColor)
                 LSP_TK_PROPERTY(Color,              scroll_text_color,          &sScrollTextColor)
                 LSP_TK_PROPERTY(Color,              scroll_text_selected_color, &sScrollTextSelectedColor)
+                LSP_TK_PROPERTY(Boolean,            check_draw_unchecked,       &sCheckDrawUnchecked)
+                LSP_TK_PROPERTY(Boolean,            radio_draw_unchecked,       &sRadioDrawUnchecked)
                 LSP_TK_PROPERTY(Integer,            check_size,                 &sCheckSize)
                 LSP_TK_PROPERTY(Integer,            check_border,               &sCheckBorder)
                 LSP_TK_PROPERTY(Integer,            check_border_gap,           &sCheckBorderGap)

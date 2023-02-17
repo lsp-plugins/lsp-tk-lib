@@ -41,6 +41,8 @@ namespace lsp
                 sScrollTextColor.bind("scroll.text.color", this);
                 sScrollSelectedColor.bind("scroll.selected.color", this);
                 sScrollTextSelectedColor.bind("scroll.text.selected.color", this);
+                sCheckDrawUnchecked.bind("check.unchecked.draw", this);
+                sRadioDrawUnchecked.bind("radio.unchecked.draw", this);
                 sCheckSize.bind("check.size", this);
                 sCheckBorder.bind("check.border", this);
                 sCheckBorderGap.bind("check.border.gap", this);
@@ -58,6 +60,8 @@ namespace lsp
                 sScrollTextColor.set("#000000");
                 sScrollSelectedColor.set("#000088");
                 sScrollTextSelectedColor.set("#ffffff");
+                sCheckDrawUnchecked.set(true);
+                sRadioDrawUnchecked.set(true);
                 sCheckSize.set(12);
                 sCheckBorder.set(1);
                 sCheckBorderGap.set(1);
@@ -296,6 +300,8 @@ namespace lsp
             sScrollSelectedColor(&sProperties),
             sScrollTextColor(&sProperties),
             sScrollTextSelectedColor(&sProperties),
+            sCheckDrawUnchecked(&sProperties),
+            sRadioDrawUnchecked(&sProperties),
             sCheckSize(&sProperties),
             sCheckBorder(&sProperties),
             sCheckBorderGap(&sProperties),
@@ -382,6 +388,8 @@ namespace lsp
             sScrollTextColor.bind("scroll.text.color", &sStyle);
             sScrollSelectedColor.bind("scroll.selected.color", &sStyle);
             sScrollTextSelectedColor.bind("scroll.text.selected.color", &sStyle);
+            sCheckDrawUnchecked.bind("check.unchecked.draw", &sStyle);
+            sRadioDrawUnchecked.bind("radio.unchecked.draw", &sStyle);
             sCheckSize.bind("check.size", &sStyle);
             sCheckBorder.bind("check.border", &sStyle);
             sCheckBorderGap.bind("check.border.gap", &sStyle);
@@ -432,7 +440,7 @@ namespace lsp
             if (prop->one_of(sBorderColor, sScrollColor, sScrollTextColor, sScrollSelectedColor, sScrollTextSelectedColor, sBorderColor))
                 query_draw();
 
-            if (prop->one_of(sCheckSize, sCheckBorder, sCheckBorderGap, sCheckBorderRadius, sSpacing))
+            if (prop->one_of(sCheckDrawUnchecked, sRadioDrawUnchecked, sCheckSize, sCheckBorder, sCheckBorderGap, sCheckBorderRadius, sSpacing))
                 query_resize();
         }
 
@@ -923,92 +931,88 @@ namespace lsp
                 }
 
                 // Need to draw check box/radio?
-                bool draw_check     = (mi->checked()->get()) || (mi->draw_unchecked()->get());
-                if (draw_check)
+                if ((mi->type()->check()) && ((mi->checked()->get()) || (sCheckDrawUnchecked.get())))
                 {
-                    if (mi->type()->check())
+                    ssize_t br          = lsp_max(0, sCheckBorderRadius.get() * scaling);
+                    ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
+                    ssize_t bgap        = lsp_max(0, sCheckBorderGap.get() * scaling);
+
+                    r                   = pi->check;
+                    if (bw > 0)
                     {
-                        ssize_t br          = lsp_max(0, sCheckBorderRadius.get() * scaling);
-                        ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
-                        ssize_t bgap        = lsp_max(0, sCheckBorderGap.get() * scaling);
+                        color.copy(mi->check_border_color()->color());
+                        color.scale_lch_luminance(bright);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                        r.nLeft            += bw;
+                        r.nTop             += bw;
+                        r.nWidth           -= bw * 2;
+                        r.nHeight          -= bw * 2;
+                        br                  = lsp_max(0, br - bw);
 
-                        r                   = pi->check;
-                        if (bw > 0)
+                        color.copy(mi->check_bg_color()->color());
+                        color.scale_lch_luminance(bright);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
+
+                        r.nLeft            += bgap;
+                        r.nTop             += bgap;
+                        r.nWidth           -= bgap * 2;
+                        r.nHeight          -= bgap * 2;
+                        br                  = lsp_max(0, br - bgap);
+
+                        if (mi->checked()->get())
                         {
-                            color.copy(mi->check_border_color()->color());
-                            color.scale_lch_luminance(bright);
-                            s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
-                            r.nLeft            += bw;
-                            r.nTop             += bw;
-                            r.nWidth           -= bw * 2;
-                            r.nHeight          -= bw * 2;
-                            br                  = lsp_max(0, br - bw);
-
-                            color.copy(mi->check_bg_color()->color());
-                            color.scale_lch_luminance(bright);
-                            s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
-
-                            r.nLeft            += bgap;
-                            r.nTop             += bgap;
-                            r.nWidth           -= bgap * 2;
-                            r.nHeight          -= bgap * 2;
-                            br                  = lsp_max(0, br - bgap);
-
-                            if (mi->checked()->get())
-                            {
-                                color.copy(mi->check_color()->color());
-                                color.scale_lch_luminance(bright);
-                                s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
-                            }
-                        }
-                        else
-                        {
-                            if (mi->checked()->get())
-                                color.copy(mi->check_color()->color());
-                            else
-                                color.copy(mi->check_bg_color()->color());
+                            color.copy(mi->check_color()->color());
                             color.scale_lch_luminance(bright);
                             s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         }
                     }
-                    else if (mi->type()->radio())
+                    else
                     {
-                        float br            = pi->check.nWidth * 0.5f;
-                        float xc            = pi->check.nLeft + br;
-                        float yc            = pi->check.nTop  + br;
-                        ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
-                        ssize_t bgap        = lsp_max(0, sCheckBorderGap.get() * scaling);
-
-                        if (bw > 0)
-                        {
-                            color.copy(mi->check_border_color()->color());
-                            color.scale_lch_luminance(bright);
-                            s->fill_circle(color, xc, yc, br);
-                            br                  = lsp_max(0.0f, br - bw);
-
-                            color.copy(mi->check_bg_color()->color());
-                            color.scale_lch_luminance(bright);
-                            s->fill_circle(color, xc, yc, br);
-                            br                  = lsp_max(0, br - bgap);
-
-                            if (mi->checked()->get())
-                            {
-                                color.copy(mi->check_color()->color());
-                                color.scale_lch_luminance(bright);
-                                s->fill_circle(color, xc, yc, br);
-                            }
-                        }
+                        if (mi->checked()->get())
+                            color.copy(mi->check_color()->color());
                         else
+                            color.copy(mi->check_bg_color()->color());
+                        color.scale_lch_luminance(bright);
+                        s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
+                    }
+                }
+                else if ((mi->type()->radio()) && ((mi->checked()->get()) || (sRadioDrawUnchecked.get())))
+                {
+                    float br            = pi->check.nWidth * 0.5f;
+                    float xc            = pi->check.nLeft + br;
+                    float yc            = pi->check.nTop  + br;
+                    ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
+                    ssize_t bgap        = lsp_max(0, sCheckBorderGap.get() * scaling);
+
+                    if (bw > 0)
+                    {
+                        color.copy(mi->check_border_color()->color());
+                        color.scale_lch_luminance(bright);
+                        s->fill_circle(color, xc, yc, br);
+                        br                  = lsp_max(0.0f, br - bw);
+
+                        color.copy(mi->check_bg_color()->color());
+                        color.scale_lch_luminance(bright);
+                        s->fill_circle(color, xc, yc, br);
+                        br                  = lsp_max(0, br - bgap);
+
+                        if (mi->checked()->get())
                         {
-                            if (mi->checked()->get())
-                                color.copy(mi->check_color()->color());
-                            else
-                                color.copy(mi->check_bg_color()->color());
+                            color.copy(mi->check_color()->color());
                             color.scale_lch_luminance(bright);
                             s->fill_circle(color, xc, yc, br);
                         }
                     }
-                } /* draw_check */
+                    else
+                    {
+                        if (mi->checked()->get())
+                            color.copy(mi->check_color()->color());
+                        else
+                            color.copy(mi->check_bg_color()->color());
+                        color.scale_lch_luminance(bright);
+                        s->fill_circle(color, xc, yc, br);
+                    }
+                }
             } /* for */
 
             // Draw scroll button background

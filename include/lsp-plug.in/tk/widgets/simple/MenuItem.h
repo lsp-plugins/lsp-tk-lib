@@ -40,7 +40,6 @@ namespace lsp
                 prop::TextAdjust            sTextAdjust;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
-                prop::Boolean               sDrawUnchecked;
                 prop::Color                 sBgSelectedColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sTextSelectedColor;
@@ -70,7 +69,6 @@ namespace lsp
                 prop::TextAdjust            sTextAdjust;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
-                prop::Boolean               sDrawUnchecked;
                 prop::Color                 sBgSelectedColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sTextSelectedColor;
@@ -99,7 +97,6 @@ namespace lsp
                 LSP_TK_PROPERTY(TextAdjust,                 text_adjust,                &sTextAdjust)
                 LSP_TK_PROPERTY(MenuItemType,               type,                       &sType)
                 LSP_TK_PROPERTY(Boolean,                    checked,                    &sChecked)
-                LSP_TK_PROPERTY(Boolean,                    draw_unchecked,             &sDrawUnchecked)
                 LSP_TK_PROPERTY(Color,                      bg_selected_color,          &sBgSelectedColor)
                 LSP_TK_PROPERTY(Color,                      text_color,                 &sTextColor)
                 LSP_TK_PROPERTY(Color,                      text_selected_color,        &sTextSelectedColor)
