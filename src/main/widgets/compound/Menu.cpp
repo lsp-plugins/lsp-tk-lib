@@ -457,9 +457,9 @@ namespace lsp
             // Compute minimum and maximum size
             r->nMinWidth    = st.full_w + border_w * 2;
             r->nMinHeight   = st.item_h + border_w * 2;
-            r->nMaxWidth    = r->nMinWidth;
+            r->nMaxWidth    = -1;
             r->nMaxHeight   = st.full_h + border_w * 2;
-            r->nPreWidth    = -1;
+            r->nPreWidth    = r->nMinWidth;
             r->nPreHeight   = -1;
 
             // Apply internal padding
@@ -536,7 +536,8 @@ namespace lsp
             }
 
             // Second pass: estimate parameters for each item
-            size_t min_pad_left = (st->ckbox) ? st->check_w + spacing : 0;
+            ssize_t min_pad_l   = (st->ckbox)   ? st->check_w + spacing : 0;
+            ssize_t min_pad_r   = (st->submenu) ? st->link_w  + spacing : 0;
 
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
@@ -557,9 +558,6 @@ namespace lsp
                 // Compute padding
                 pi->item            = mi;
                 mi->padding()->compute(&pi->pad, scaling);
-                pi->pad.nLeft       = lsp_max(pi->pad.nLeft, min_pad_left);
-                if ((mt == MI_CHECK) || (mt == MI_RADIO))
-                    pi->pad.nLeft      -= min_pad_left;
 
                 // Reduce padding
                 if (xsep)
@@ -606,47 +604,42 @@ namespace lsp
                 {
                     pi->check.nWidth    = st->check_w;
                     pi->check.nHeight   = st->check_h;
-                    pi->area.nWidth    += pi->check.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->check.nHeight);
                 }
+                if ((xsep) && (st->ckbox))
+                    pi->pad.nLeft       = lsp_max(ssize_t(pi->pad.nLeft), min_pad_l);
 
                 // Estimate size of shortcut
                 pi->scut.nLeft      = 0;
                 pi->scut.nTop       = 0;
+                pi->scut.nWidth     = 0;
+                pi->scut.nHeight    = 0;
+
                 if ((xsep) && (st->shortcut))
                 {
                     mi->shortcut()->format(&shortcut);
                     sFont.get_text_parameters(pDisplay, &tp, fscaling, &shortcut);
 
-                    st->shortcut        = true;
                     pi->scut.nWidth     = st->scut_w;
                     pi->scut.nHeight    = lsp_max(fp.Height, tp.Height);
 
                     pi->area.nWidth    += pi->scut.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->scut.nHeight);
                 }
-                else
-                {
-                    pi->scut.nWidth     = 0;
-                    pi->scut.nHeight    = 0;
-                }
 
                 // Estimate submenu reference size
                 pi->ref.nLeft       = 0;
                 pi->ref.nTop        = 0;
+                pi->ref.nWidth      = 0;
+                pi->ref.nHeight     = 0;
+
                 if ((xsep) && (st->submenu))
                 {
-                    st->submenu         = true;
                     pi->ref.nHeight     = fp.Height;
                     pi->ref.nWidth      = lsp_max(2.0f, M_SQRT1_2 * fp.Height);
 
-                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), st->link_w + spacing);
+                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), min_pad_r);
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->ref.nHeight);
-                }
-                else
-                {
-                    pi->ref.nWidth      = 0;
-                    pi->ref.nHeight     = 0;
                 }
 
                 // Apply padding
@@ -795,25 +788,17 @@ namespace lsp
                 }
 
                 // Do we have a check box/radio ?
-                if (check)
+                if ((st.ckbox) && (check))
                 {
-                    pi->check.nLeft     = xr.nLeft;
+                    pi->check.nLeft     = xr.nLeft - (st.check_w + spacing);
                     pi->check.nTop      = xr.nTop + ((xr.nHeight - pi->check.nHeight) >> 1);
-
-                    xr.nLeft           += st.check_w + spacing;
-                    xr.nWidth          -= st.check_w + spacing;
                 }
 
                 // Do we have a link ?
-                if (st.submenu)
+                if ((st.submenu) && (mi->menu()->is_set()))
                 {
-                    if (mi->menu()->is_set())
-                    {
-                        pi->ref.nLeft       = xr.nLeft + xr.nWidth + pi->pad.nRight - st.link_w;
-                        pi->ref.nTop        = xr.nTop + ((xr.nHeight - pi->ref.nHeight) >> 1);
-                    }
-
-                    xr.nWidth          -= st.link_w + spacing;
+                    pi->ref.nLeft       = xr.nLeft + xr.nWidth + pi->pad.nRight - st.link_w;
+                    pi->ref.nTop        = xr.nTop + ((xr.nHeight - pi->ref.nHeight) >> 1);
                 }
 
                 // Do we have a shortcut?
@@ -824,7 +809,6 @@ namespace lsp
                         pi->scut.nLeft      = xr.nLeft + xr.nWidth - st.scut_w;
                         pi->scut.nTop       = xr.nTop + ((xr.nHeight - pi->scut.nHeight) >> 1);
                     }
-
                     xr.nWidth          -= st.scut_w + spacing;
                 }
 
@@ -1214,7 +1198,7 @@ namespace lsp
             sWindow.show();
 
             // Take focus if there is no parent menu
-            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
+//            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
             if (pParentMenu == NULL)
             {
                 sWindow.grab_events(ws::GRAB_MENU);
@@ -1227,7 +1211,7 @@ namespace lsp
             nSelected = -1;
 
             // Hide all nested menus and disconnect from parent
-            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
+//            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
             hide_nested_menus(this);
             if (pParentMenu != NULL)
             {
@@ -1331,8 +1315,8 @@ namespace lsp
                 pm->pChildMenu  = NULL;
 
                 // Hide menu and move forward
-                lsp_trace("menu = %p, parent = %p", cm, cm->pParentMenu);
-                lsp_trace("menu = %p, child  = %p", pm, pm->pChildMenu);
+//                lsp_trace("menu = %p, parent = %p", cm, cm->pParentMenu);
+//                lsp_trace("menu = %p, child  = %p", pm, pm->pChildMenu);
 //                lsp_trace("this=%p is hiding nested menu %p", this, cm);
                 cm->hide();
                 pm  = cm;
@@ -1383,8 +1367,8 @@ namespace lsp
             menu->pParentMenu   = this;
             pChildMenu          = menu;
 
-            lsp_trace("menu = %p, parent=%p", menu, menu->pParentMenu);
-            lsp_trace("menu = %p, child=%p", this, pChildMenu);
+//            lsp_trace("menu = %p, parent=%p", menu, menu->pParentMenu);
+//            lsp_trace("menu = %p, child=%p", this, pChildMenu);
 
             // Show the nested menu depending on the position of parent
             if (check_rtl_direction())
