@@ -714,41 +714,41 @@ UTEST_BEGIN("tk.style", style)
 
         // Step 2: change values
         printf("  changing values...\n");
-        UTEST_ASSERT(root.begin(&l1) == STATUS_OK)
+        UTEST_ASSERT(root.begin(&l1) == STATUS_OK);
             // bool value
-            UTEST_ASSERT(root.begin() == STATUS_OK)
+            UTEST_ASSERT(root.begin() == STATUS_OK);
                 UTEST_ASSERT(root.set_bool(atom("b.value"), false) == STATUS_OK);
 
                 UTEST_ASSERT(l1.get(atom("b.value")) == 0);
                 UTEST_ASSERT(l2.get(atom("b.value")) == 1);
                 UTEST_ASSERT(l3.get(atom("b.value")) == 1);
-            UTEST_ASSERT(root.end() == STATUS_OK)
+            UTEST_ASSERT(root.end() == STATUS_OK);
 
             UTEST_ASSERT(l1.get(atom("b.value")) == 0);
             UTEST_ASSERT(l2.get(atom("b.value")) == 1);
             UTEST_ASSERT(l3.get(atom("b.value")) == 1);
 
             // int value
-            UTEST_ASSERT(root.begin(&l2) == STATUS_OK)
+            UTEST_ASSERT(root.begin(&l2) == STATUS_OK);
                 UTEST_ASSERT(root.set_int(atom("i.value"), 123456) == STATUS_OK);
 
                 UTEST_ASSERT(l1.get(atom("i.value")) == 0);
                 UTEST_ASSERT(l2.get(atom("i.value")) == 1);
                 UTEST_ASSERT(l3.get(atom("i.value")) == 1);
-            UTEST_ASSERT(root.end() == STATUS_OK)
+            UTEST_ASSERT(root.end() == STATUS_OK);
 
             UTEST_ASSERT(l1.get(atom("i.value")) == 0);
             UTEST_ASSERT(l2.get(atom("i.value")) == 1);
             UTEST_ASSERT(l3.get(atom("i.value")) == 1);
 
             // float value
-            UTEST_ASSERT(root.begin(&l3) == STATUS_OK)
+            UTEST_ASSERT(root.begin(&l3) == STATUS_OK);
                 UTEST_ASSERT(root.set_float(atom("f.value"), 123.456f) == STATUS_OK);
 
                 UTEST_ASSERT(l1.get(atom("f.value")) == 0);
                 UTEST_ASSERT(l2.get(atom("f.value")) == 1);
                 UTEST_ASSERT(l3.get(atom("f.value")) == 1);
-            UTEST_ASSERT(root.end() == STATUS_OK)
+            UTEST_ASSERT(root.end() == STATUS_OK);
 
             UTEST_ASSERT(l1.get(atom("f.value")) == 0);
             UTEST_ASSERT(l2.get(atom("f.value")) == 1);
@@ -760,7 +760,7 @@ UTEST_BEGIN("tk.style", style)
             UTEST_ASSERT(l2.get(atom("s.value")) == 1);
             UTEST_ASSERT(l3.get(atom("s.value")) == 1);
 
-        UTEST_ASSERT(root.end() == STATUS_OK)
+        UTEST_ASSERT(root.end() == STATUS_OK);
 
         // Validate state
         UTEST_ASSERT(l1.get(atom("b.value")) == 0);
