@@ -13,6 +13,7 @@
 * Added tk::Widget::has_parent method.
 * Changed checkbox/radio button space allocation algorithm for Menu and MenuItem.
 * Updated dependencies file.
+* Added test build for Windows using MSYS2.
 
 === 1.0.7 ===
 * Added possibility to enable/disable Knob's scale actions.
