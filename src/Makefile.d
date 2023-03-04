@@ -24,6 +24,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/RackEars.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -222,6 +223,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/LedMeter.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -420,6 +422,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/LedMeterChannel.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -618,6 +621,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/Fraction.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -816,6 +820,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/FileButton.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -1014,6 +1019,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/AudioSample.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -1216,6 +1222,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/specific/AudioChannel.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -1416,6 +1423,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Void.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -1615,6 +1623,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Switch.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -1814,6 +1823,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Separator.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -2012,6 +2022,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ScrollBar.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -2211,6 +2222,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/RadioButton.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -2409,6 +2421,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ProgressBar.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -2607,6 +2620,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/MenuItem.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -2806,6 +2820,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/ListBoxItem.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -3003,6 +3018,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Led.o: main/widgets/simple/Led.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -3201,6 +3217,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Label.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -3400,6 +3417,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Knob.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -3599,6 +3617,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Indicator.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -3797,6 +3816,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Hyperlink.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -3997,6 +4017,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Fader.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -4195,6 +4216,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Edit.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -4394,6 +4416,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/CheckBox.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -4592,6 +4615,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Button.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -4790,6 +4814,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/simple/Bevel.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -4990,6 +5015,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphText.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -5188,6 +5214,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphOrigin.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -5386,6 +5413,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphMesh.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -5591,6 +5619,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphMesh.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -5630,6 +5659,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphMarker.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -5830,6 +5860,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphItem.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -6028,6 +6059,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphFrameBuffer.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -6233,6 +6265,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphFrameBuffer.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -6272,6 +6305,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphDot.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -6471,6 +6505,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/Graph.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -6671,6 +6706,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphAxis.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -6875,6 +6911,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/graph/GraphAxis.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -6914,6 +6951,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/dialogs/MessageBox.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -7112,6 +7150,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/dialogs/FileDialog.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -7314,6 +7353,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Window.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -7513,6 +7553,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Tab.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -7712,6 +7753,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/TabControl.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -7909,6 +7951,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/ScrollArea.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -8108,6 +8151,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/PopupWindow.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -8308,6 +8352,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/MultiLabel.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -8506,6 +8551,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Group.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -8705,6 +8751,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Grid.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -8904,6 +8951,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Box.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -9103,6 +9151,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/containers/Align.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -9302,6 +9351,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/Menu.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -9501,6 +9551,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ListBox.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -9699,6 +9750,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ComboGroup.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -9898,6 +9950,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ComboBox.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -10096,6 +10149,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/base/Widget.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -10295,6 +10349,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/base/WidgetContainer.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -10493,6 +10548,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/base/Registry.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -10690,6 +10746,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/3d/Area3D.o: main/widgets/3d/Area3D.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -10895,6 +10952,7 @@ $(LSP_TK_LIB_BIN)/main/widgets/3d/Area3D.o: main/widgets/3d/Area3D.cpp \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -10933,6 +10991,7 @@ $(LSP_TK_LIB_BIN)/main/util/URLSink.o: main/util/URLSink.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -11132,6 +11191,7 @@ $(LSP_TK_LIB_BIN)/main/util/TextDataSource.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -11329,6 +11389,7 @@ $(LSP_TK_LIB_BIN)/main/util/TextDataSink.o: main/util/TextDataSink.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -11526,6 +11587,7 @@ $(LSP_TK_LIB_BIN)/main/util/TextCursor.o: main/util/TextCursor.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -11723,6 +11785,7 @@ $(LSP_TK_LIB_BIN)/main/util/KeyboardHandler.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -11920,6 +11983,7 @@ $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -12123,6 +12187,7 @@ $(LSP_TK_LIB_BIN)/main/tk.o: main/tk.cpp \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -12160,6 +12225,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Timer.o: main/sys/Timer.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -12356,6 +12422,7 @@ $(LSP_TK_LIB_BIN)/main/sys/SlotSet.o: main/sys/SlotSet.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -12552,6 +12619,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Slot.o: main/sys/Slot.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -12748,6 +12816,7 @@ $(LSP_TK_LIB_BIN)/main/sys/settings.o: main/sys/settings.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -12944,6 +13013,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Display.o: main/sys/Display.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -13144,6 +13214,7 @@ $(LSP_TK_LIB_BIN)/main/sys/Atoms.o: main/sys/Atoms.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -13340,6 +13411,7 @@ $(LSP_TK_LIB_BIN)/main/style/StyleSheet.o: main/style/StyleSheet.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -13538,6 +13610,7 @@ $(LSP_TK_LIB_BIN)/main/style/Style.o: main/style/Style.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -13735,6 +13808,7 @@ $(LSP_TK_LIB_BIN)/main/style/Schema.o: main/style/Schema.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -13934,6 +14008,7 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleListener.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -14131,6 +14206,7 @@ $(LSP_TK_LIB_BIN)/main/style/IStyleFactory.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -14328,6 +14404,7 @@ $(LSP_TK_LIB_BIN)/main/style/BuiltinStyle.o: main/style/BuiltinStyle.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -14525,6 +14602,7 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphMeshData.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -14728,6 +14806,7 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphMeshData.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -14768,6 +14847,7 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphFrameData.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -14942,7 +15022,8 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphFrameData.o: \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/alloc.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/stdlib.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/bits.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/bits.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/bits/reverse.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/arch/x86/bits/int_log2.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/dsp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/version.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/types.h \
@@ -14975,6 +15056,7 @@ $(LSP_TK_LIB_BIN)/main/prop/specific/GraphFrameData.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -15012,6 +15094,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/String.o: main/prop/simple/String.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -15210,6 +15293,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/PathPattern.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -15407,6 +15491,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Integer.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -15603,6 +15688,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Float.o: main/prop/simple/Float.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -15800,6 +15886,7 @@ $(LSP_TK_LIB_BIN)/main/prop/simple/Boolean.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -15997,6 +16084,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Vector2D.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -16195,6 +16283,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextSelection.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -16392,6 +16481,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextLayout.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -16589,6 +16679,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/TextFitness.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -16786,6 +16877,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/StepFloat.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -16983,6 +17075,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/SizeRange.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -17179,6 +17272,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Size.o: main/prop/multi/Size.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -17376,6 +17470,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/SizeConstraints.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -17573,6 +17668,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Shortcut.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -17770,6 +17866,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Rectangle.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -17967,6 +18064,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/RangeFloat.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -18164,6 +18262,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Position.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -18360,6 +18459,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Padding.o: main/prop/multi/Padding.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -18557,6 +18657,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Layout.o: main/prop/multi/Layout.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -18754,6 +18855,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Font.o: main/prop/multi/Font.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -18951,6 +19053,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/FileMask.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -19148,6 +19251,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Embedding.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -19345,6 +19449,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/ColorRange.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -19542,6 +19647,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Color.o: main/prop/multi/Color.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -19740,6 +19846,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Arrangement.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -19938,6 +20045,7 @@ $(LSP_TK_LIB_BIN)/main/prop/multi/Alignment.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -20135,6 +20243,7 @@ $(LSP_TK_LIB_BIN)/main/prop/Listener.o: main/prop/Listener.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -20332,6 +20441,7 @@ $(LSP_TK_LIB_BIN)/main/prop/flags/WindowActions.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -20529,6 +20639,7 @@ $(LSP_TK_LIB_BIN)/main/prop/flags/Allocation.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -20726,6 +20837,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/WindowPolicy.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -20923,6 +21035,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/TextAdjust.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -21120,6 +21233,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Scrolling.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -21316,6 +21430,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Pointer.o: main/prop/enum/Pointer.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -21513,6 +21628,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/Orientation.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -21710,6 +21826,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/MenuItemType.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -21907,6 +22024,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/GraphFrameFunction.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -22104,6 +22222,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/FileDialogMode.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -22300,6 +22419,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/DrawMode.o: main/prop/enum/DrawMode.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -22497,6 +22617,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/ButtonMode.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -22694,6 +22815,7 @@ $(LSP_TK_LIB_BIN)/main/prop/enum/BorderStyle.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -22891,6 +23013,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetSet.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -23088,6 +23211,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/WidgetList.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -23285,6 +23409,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/StringList.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -23482,6 +23607,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/FloatArray.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -23685,6 +23811,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/FloatArray.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -23723,6 +23850,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/FileFilters.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -23920,6 +24048,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/ColorRanges.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -24118,6 +24247,7 @@ $(LSP_TK_LIB_BIN)/main/prop/collection/CollectionListener.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -24315,6 +24445,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/SimpleProperty.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -24511,6 +24642,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Ptr.o: main/prop/base/Ptr.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -24708,6 +24840,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Property.o: main/prop/base/Property.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -24906,6 +25039,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/MultiProperty.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -25102,6 +25236,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Flags.o: main/prop/base/Flags.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -25298,6 +25433,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/Enum.o: main/prop/base/Enum.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -25494,6 +25630,7 @@ $(LSP_TK_LIB_BIN)/main/prop/base/BitEnum.o: main/prop/base/BitEnum.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -25676,6 +25813,7 @@ $(LSP_TK_LIB_BIN)/main/helpers/mime.o: main/helpers/mime.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInStream.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IInSequence.h \
@@ -25687,7 +25825,9 @@ $(LSP_TK_LIB_BIN)/main/helpers/mime.o: main/helpers/mime.cpp \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/CharsetDecoder.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutSequence.h \
  $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InStringSequence.h \
- $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InMemoryStream.h
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/InMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/OutMemoryStream.h \
+ $(LSP_RUNTIME_LIB_INC)/lsp-plug.in/io/IOutStream.h
 $(LSP_TK_LIB_BIN)/main/helpers/graphics.o: main/helpers/graphics.cpp \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
@@ -25715,6 +25855,7 @@ $(LSP_TK_LIB_BIN)/main/helpers/graphics.o: main/helpers/graphics.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -25911,6 +26052,7 @@ $(LSP_TK_LIB_BIN)/main/helpers/draw.o: main/helpers/draw.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -26108,6 +26250,7 @@ $(LSP_TK_LIB_BIN)/main/helpers/arrange.o: main/helpers/arrange.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -26314,6 +26457,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/stylesheet.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -26511,6 +26655,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/style.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -26717,6 +26862,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/style/nesting.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -26932,6 +27078,7 @@ $(LSP_TK_LIB_BIN)/test/utest/tk/prop/specific/graphframedata.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -27137,6 +27284,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/rackears.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -27343,6 +27491,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/ledmeter.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -27549,6 +27698,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/ledmeterchannel.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -27755,6 +27905,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/fraction.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -27961,6 +28112,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/filebutton.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -28167,6 +28319,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/audiosample.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -28373,6 +28526,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/specific/audiochannel.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -28579,6 +28733,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/switch.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -28785,6 +28940,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/separator.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -28991,6 +29147,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/scrollbar.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -29197,6 +29354,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/radiobutton.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -29403,6 +29561,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/progressbar.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -29609,6 +29768,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/led.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -29815,6 +29975,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/label.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -30021,6 +30182,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/knob.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -30227,6 +30389,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/indicator.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -30433,6 +30596,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/hyperlink.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -30639,6 +30803,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/fader.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -30845,6 +31010,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/edit.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -31051,6 +31217,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/checkbox.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -31257,6 +31424,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/button.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -31463,6 +31631,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/simple/bevel.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -31669,6 +31838,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/graph/graph.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -31872,6 +32042,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/graph/graph.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -31919,6 +32090,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/dialogs/messagebox.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -32125,6 +32297,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/dialogs/filedialog.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -32332,6 +32505,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/tabcontrol.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -32538,6 +32712,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/scrollarea.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -32744,6 +32919,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/popup.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -32950,6 +33126,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/multilabel.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -33156,6 +33333,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/inheritance.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -33362,6 +33540,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/group.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -33568,6 +33747,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid4.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -33774,6 +33954,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid3.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -33980,6 +34161,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid2.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -34186,6 +34368,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/grid1.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -34392,6 +34575,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/box.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -34597,6 +34781,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/containers/align.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -34803,6 +34988,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/menu.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -35009,6 +35195,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/listbox.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -35215,6 +35402,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combogroup.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -35421,6 +35609,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/compound/combobox.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -35627,6 +35816,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/3d/area3d.o: \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -35830,6 +36020,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/widgets/3d/area3d.o: \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_kx.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/fmop_vv.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/log.h \
+ $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/lramp.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/minmax.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/normalize.h \
  $(LSP_DSP_LIB_INC)/lsp-plug.in/dsp/common/pmath/op_kx.h \
@@ -35882,6 +36073,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/sys/display.o: test/mtest/sys/display.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -36086,6 +36278,7 @@ $(LSP_TK_LIB_BIN)/test/mtest/example.o: test/mtest/example.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
@@ -36293,6 +36486,7 @@ $(LSP_TK_LIB_BIN)/test/init/init.o: test/init/init.cpp \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/types.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/version.h \
  $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/spec.h \
+ $(LSP_LLTL_LIB_INC)/lsp-plug.in/lltl/new.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSink.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IDataSource.h \
  $(LSP_WS_LIB_INC)/lsp-plug.in/ws/IEventHandler.h \
