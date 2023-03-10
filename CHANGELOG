@@ -14,6 +14,7 @@
 * Changed checkbox/radio button space allocation algorithm for Menu and MenuItem.
 * Updated dependencies file.
 * Added test build for Windows using MSYS2.
+* Added missing tk::Grid::remove_all() method implementation.
 * Updated build scripts.
 
 === 1.0.7 ===

@@ -144,10 +144,10 @@ namespace lsp
 
             public:
                 explicit Grid(Display *dpy);
-                virtual ~Grid();
+                virtual ~Grid() override;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             //---------------------------------------------------------------------------------
             // Properties
@@ -200,15 +200,30 @@ namespace lsp
                  * @param s surface to render
                  * @param force force flag
                  */
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
                 /** Add widget to the grid
                  *
                  * @param widget widget to add
                  * @return status of operation
                  */
-                virtual status_t            add(Widget *widget);
+                virtual status_t            add(Widget *widget) override;
 
+                /** Remove widget from grid
+                 *
+                 * @param widget widget to remove
+                 * @return status of operation
+                 */
+                virtual status_t            remove(Widget *widget) override;
+
+
+                /** Remove all widgets from grid
+                 *
+                 * @return status of operation
+                 */
+                virtual status_t            remove_all() override;
+
+            public:
                 /** Add widget to the grid
                  *
                  * @param widget widget to add
@@ -236,13 +251,6 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t            attach(size_t left, size_t top, Widget *widget, size_t rows, size_t cols);
-
-                /** Remove widget from grid
-                 *
-                 * @param widget widget to remove
-                 * @return status of operation
-                 */
-                virtual status_t            remove(Widget *widget);
         };
     } /* namespace tk */
 } /* namespace lsp */
