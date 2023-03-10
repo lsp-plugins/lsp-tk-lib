@@ -19,8 +19,10 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <lsp-plug.in/tk/tk.h>
+
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -937,7 +939,7 @@ namespace lsp
 
             while (first <= last)
             {
-                middle          = (first + last) >> 1;
+                middle          = (first + last) / 2;
                 it              = vVisible.uget(middle);
 
                 if (y < it->r.nTop)
@@ -951,7 +953,8 @@ namespace lsp
                 }
             }
 
-            it  = vVisible.uget(first);
+            lsp_trace("first = %d", int(first));
+            it  = vVisible.uget(lsp_limit(first, 0, ssize_t(vVisible.size() - 1)));
             return (Position::inside(&it->r, x, y)) ? it : NULL;
         }
 
