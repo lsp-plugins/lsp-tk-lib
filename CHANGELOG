@@ -2,6 +2,22 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.8 ===
+* Fixed invalid tk::TF_VERTICAL tether flag value.
+* Added possibility to hide check/radio box for unchecked tk::MenuItem objects.
+* Added SLOT_BEGIN_EDIT and SLOT_END_EDIT slot events.
+* Fixed improper value calculation in cycling knob when clicking on the knob's scale.
+* Added support of SLOT_BEGIN_EDIT and SLOT_END_EDIT by tk::Knob, tk::Fader,
+  tk::ScrollBar, tk::GraphDot and tk::GraphMarker widgets.
+* Added support of named widget groups.
+* Added tk::Widget::has_parent method.
+* Changed checkbox/radio button space allocation algorithm for Menu and MenuItem.
+* Updated dependencies file.
+* Added test build for Windows using MSYS2.
+* Added missing tk::Grid::remove_all() method implementation.
+* Updated build scripts.
+* Updated module versions in dependencies.
+
 === 1.0.7 ===
 * Added possibility to enable/disable Knob's scale actions.
 

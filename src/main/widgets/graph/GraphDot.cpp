@@ -210,6 +210,8 @@ namespace lsp
             // Add handler
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEGIN_EDIT, slot_begin_edit, self());
+            if (id >= 0) id = sSlots.add(SLOT_END_EDIT, slot_end_edit, self());
             if (id < 0)
                 return -id;
 
@@ -338,13 +340,30 @@ namespace lsp
             return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
+        status_t GraphDot::slot_begin_edit(Widget *sender, void *ptr, void *data)
+        {
+            GraphDot *_this = widget_ptrcast<GraphDot>(ptr);
+            return (_this != NULL) ? _this->on_begin_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t GraphDot::slot_end_edit(Widget *sender, void *ptr, void *data)
+        {
+            GraphDot *_this = widget_ptrcast<GraphDot>(ptr);
+            return (_this != NULL) ? _this->on_end_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
         status_t GraphDot::on_change()
         {
-//            lsp_trace("hvalue=%f, vvalue=%f, zvalue=%f",
-//                    sHValue.sValue.get(),
-//                    sVValue.sValue.get(),
-//                    sZValue.sValue.get()
-//                );
+            return STATUS_OK;
+        }
+
+        status_t GraphDot::on_begin_edit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t GraphDot::on_end_edit()
+        {
             return STATUS_OK;
         }
 
@@ -518,6 +537,8 @@ namespace lsp
 
                 if (e->nCode == ws::MCB_RIGHT)
                     nXFlags    |= F_FINE_TUNE;
+
+                sSlots.execute(SLOT_BEGIN_EDIT, this);
             }
 
             apply_motion(e->nLeft, e->nTop, e->nState);
@@ -534,7 +555,10 @@ namespace lsp
 
             nMBState       &= ~(1 << e->nCode);
             if (nMBState == 0)
+            {
                 nXFlags    &= ~(F_FINE_TUNE | F_EDITING);
+                sSlots.execute(SLOT_END_EDIT, this);
+            }
 
             return STATUS_OK;
         }
@@ -564,7 +588,8 @@ namespace lsp
 
             return STATUS_OK;
         }
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 

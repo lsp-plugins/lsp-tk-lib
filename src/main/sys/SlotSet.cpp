@@ -143,6 +143,11 @@ namespace lsp
             return hid;
         }
 
+        bool SlotSet::contains(slot_t id) const
+        {
+            return const_cast<SlotSet *>(this)->slot(id) != NULL;
+        }
+
         handler_id_t SlotSet::bind(slot_t id, event_handler_t handler, void *arg, bool enabled)
         {
             Slot *s         = slot(id);

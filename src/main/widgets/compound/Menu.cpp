@@ -41,6 +41,8 @@ namespace lsp
                 sScrollTextColor.bind("scroll.text.color", this);
                 sScrollSelectedColor.bind("scroll.selected.color", this);
                 sScrollTextSelectedColor.bind("scroll.text.selected.color", this);
+                sCheckDrawUnchecked.bind("check.unchecked.draw", this);
+                sRadioDrawUnchecked.bind("radio.unchecked.draw", this);
                 sCheckSize.bind("check.size", this);
                 sCheckBorder.bind("check.border", this);
                 sCheckBorderGap.bind("check.border.gap", this);
@@ -58,6 +60,8 @@ namespace lsp
                 sScrollTextColor.set("#000000");
                 sScrollSelectedColor.set("#000088");
                 sScrollTextSelectedColor.set("#ffffff");
+                sCheckDrawUnchecked.set(true);
+                sRadioDrawUnchecked.set(true);
                 sCheckSize.set(12);
                 sCheckBorder.set(1);
                 sCheckBorderGap.set(1);
@@ -296,6 +300,8 @@ namespace lsp
             sScrollSelectedColor(&sProperties),
             sScrollTextColor(&sProperties),
             sScrollTextSelectedColor(&sProperties),
+            sCheckDrawUnchecked(&sProperties),
+            sRadioDrawUnchecked(&sProperties),
             sCheckSize(&sProperties),
             sCheckBorder(&sProperties),
             sCheckBorderGap(&sProperties),
@@ -382,6 +388,8 @@ namespace lsp
             sScrollTextColor.bind("scroll.text.color", &sStyle);
             sScrollSelectedColor.bind("scroll.selected.color", &sStyle);
             sScrollTextSelectedColor.bind("scroll.text.selected.color", &sStyle);
+            sCheckDrawUnchecked.bind("check.unchecked.draw", &sStyle);
+            sRadioDrawUnchecked.bind("radio.unchecked.draw", &sStyle);
             sCheckSize.bind("check.size", &sStyle);
             sCheckBorder.bind("check.border", &sStyle);
             sCheckBorderGap.bind("check.border.gap", &sStyle);
@@ -426,35 +434,13 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (sFont.is(prop))
+            if (prop->one_of(sFont, sScrolling, sBorderSize, sBorderRadius))
                 query_resize();
-            if (sScrolling.is(prop))
-                query_resize();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sBorderColor.is(prop))
+
+            if (prop->one_of(sBorderColor, sScrollColor, sScrollTextColor, sScrollSelectedColor, sScrollTextSelectedColor, sBorderColor))
                 query_draw();
-            if (sScrollColor.is(prop))
-                query_draw();
-            if (sScrollTextColor.is(prop))
-                query_draw();
-            if (sScrollSelectedColor.is(prop))
-                query_draw();
-            if (sScrollTextSelectedColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sCheckSize.is(prop))
-                query_resize();
-            if (sCheckBorder.is(prop))
-                query_resize();
-            if (sCheckBorderGap.is(prop))
-                query_resize();
-            if (sCheckBorderRadius.is(prop))
-                query_resize();
-            if (sSpacing.is(prop))
+
+            if (prop->one_of(sCheckDrawUnchecked, sRadioDrawUnchecked, sCheckSize, sCheckBorder, sCheckBorderGap, sCheckBorderRadius, sSpacing))
                 query_resize();
         }
 
@@ -471,9 +457,9 @@ namespace lsp
             // Compute minimum and maximum size
             r->nMinWidth    = st.full_w + border_w * 2;
             r->nMinHeight   = st.item_h + border_w * 2;
-            r->nMaxWidth    = r->nMinWidth;
+            r->nMaxWidth    = -1;
             r->nMaxHeight   = st.full_h + border_w * 2;
-            r->nPreWidth    = -1;
+            r->nPreWidth    = r->nMinWidth;
             r->nPreHeight   = -1;
 
             // Apply internal padding
@@ -504,9 +490,9 @@ namespace lsp
 
             // Size of check box/radio
             ssize_t cb_br       = lsp_max(0, sCheckBorderRadius.get() * scaling) * 3;
-            st->check_w         = (sCheckBorder.get() > 0) ? lsp_min(1.0f, sCheckBorder.get() * scaling) : 0;
+            st->check_w         = (sCheckBorder.get() > 0) ? lsp_min(1.0f, 2.0f * sCheckBorder.get() * scaling) : 0;
             if (st->check_w > 0)
-                st->check_w        += (sCheckBorderGap.get() > 0) ? lsp_min(1.0f, sCheckBorderGap.get() * scaling) : 0;
+                st->check_w        += (sCheckBorderGap.get() > 0) ? lsp_min(1.0f, 2.0f * sCheckBorderGap.get() * scaling) : 0;
             st->check_w        += lsp_max(2.0f, sCheckSize.get() * scaling);
             st->check_w         = lsp_max(st->check_w, cb_br);
             st->check_h         = st->check_w;
@@ -529,7 +515,7 @@ namespace lsp
                 menu_item_type_t mt = mi->type()->get();
                 if ((mt == MI_CHECK) || (mt == MI_RADIO))
                     st->ckbox           = true;
-                else if (mt != MI_SEPARATOR)
+                if (mt != MI_SEPARATOR)
                 {
                     if (mi->shortcut()->valid())
                     {
@@ -550,6 +536,9 @@ namespace lsp
             }
 
             // Second pass: estimate parameters for each item
+            ssize_t min_pad_l   = (st->ckbox)   ? st->check_w + spacing : 0;
+            ssize_t min_pad_r   = (st->submenu) ? st->link_w  + spacing : 0;
+
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Keep only visible items
@@ -562,13 +551,13 @@ namespace lsp
                 if (pi == NULL)
                     return;
 
-                // Compute padding
-                pi->item            = mi;
-                mi->padding()->compute(&pi->pad, scaling);
-
                 // Estimate type of item
                 menu_item_type_t mt = mi->type()->get();
                 bool xsep           = (mt != MI_SEPARATOR);
+
+                // Compute padding
+                pi->item            = mi;
+                mi->padding()->compute(&pi->pad, scaling);
 
                 // Reduce padding
                 if (xsep)
@@ -608,56 +597,49 @@ namespace lsp
                 // Check box/radio
                 pi->check.nLeft     = 0;
                 pi->check.nTop      = 0;
-                if ((xsep) && (st->ckbox))
+                pi->check.nWidth    = 0;
+                pi->check.nHeight   = 0;
+
+                if ((mt == MI_CHECK) || (mt == MI_RADIO))
                 {
                     pi->check.nWidth    = st->check_w;
                     pi->check.nHeight   = st->check_h;
-                    pi->area.nWidth    += pi->check.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->check.nHeight);
                 }
-                else
-                {
-                    pi->check.nWidth    = 0;
-                    pi->check.nHeight   = 0;
-                }
+                if ((xsep) && (st->ckbox))
+                    pi->pad.nLeft       = lsp_max(ssize_t(pi->pad.nLeft), min_pad_l);
 
                 // Estimate size of shortcut
                 pi->scut.nLeft      = 0;
                 pi->scut.nTop       = 0;
+                pi->scut.nWidth     = 0;
+                pi->scut.nHeight    = 0;
+
                 if ((xsep) && (st->shortcut))
                 {
                     mi->shortcut()->format(&shortcut);
                     sFont.get_text_parameters(pDisplay, &tp, fscaling, &shortcut);
 
-                    st->shortcut        = true;
                     pi->scut.nWidth     = st->scut_w;
                     pi->scut.nHeight    = lsp_max(fp.Height, tp.Height);
 
                     pi->area.nWidth    += pi->scut.nWidth + spacing;
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->scut.nHeight);
                 }
-                else
-                {
-                    pi->scut.nWidth     = 0;
-                    pi->scut.nHeight    = 0;
-                }
 
                 // Estimate submenu reference size
                 pi->ref.nLeft       = 0;
                 pi->ref.nTop        = 0;
+                pi->ref.nWidth      = 0;
+                pi->ref.nHeight     = 0;
+
                 if ((xsep) && (st->submenu))
                 {
-                    st->submenu         = true;
                     pi->ref.nHeight     = fp.Height;
                     pi->ref.nWidth      = lsp_max(2.0f, M_SQRT1_2 * fp.Height);
 
-                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), st->link_w + spacing);
+                    pi->pad.nRight      = lsp_max(ssize_t(pi->pad.nRight), min_pad_r);
                     pi->area.nHeight    = lsp_max(pi->area.nHeight, pi->ref.nHeight);
-                }
-                else
-                {
-                    pi->ref.nWidth      = 0;
-                    pi->ref.nHeight     = 0;
                 }
 
                 // Apply padding
@@ -806,28 +788,17 @@ namespace lsp
                 }
 
                 // Do we have a check box/radio ?
-                if (st.ckbox)
+                if ((st.ckbox) && (check))
                 {
-                    if (check)
-                    {
-                        pi->check.nLeft     = xr.nLeft;
-                        pi->check.nTop      = xr.nTop + ((xr.nHeight - pi->check.nHeight) >> 1);
-                    }
-
-                    xr.nLeft           += st.check_w + spacing;
-                    xr.nWidth          -= st.check_w + spacing;
+                    pi->check.nLeft     = xr.nLeft - (st.check_w + spacing);
+                    pi->check.nTop      = xr.nTop + ((xr.nHeight - pi->check.nHeight) >> 1);
                 }
 
                 // Do we have a link ?
-                if (st.submenu)
+                if ((st.submenu) && (mi->menu()->is_set()))
                 {
-                    if (mi->menu()->is_set())
-                    {
-                        pi->ref.nLeft       = xr.nLeft + xr.nWidth + pi->pad.nRight - st.link_w;
-                        pi->ref.nTop        = xr.nTop + ((xr.nHeight - pi->ref.nHeight) >> 1);
-                    }
-
-                    xr.nWidth          -= st.link_w + spacing;
+                    pi->ref.nLeft       = xr.nLeft + xr.nWidth + pi->pad.nRight - st.link_w;
+                    pi->ref.nTop        = xr.nTop + ((xr.nHeight - pi->ref.nHeight) >> 1);
                 }
 
                 // Do we have a shortcut?
@@ -838,7 +809,6 @@ namespace lsp
                         pi->scut.nLeft      = xr.nLeft + xr.nWidth - st.scut_w;
                         pi->scut.nTop       = xr.nTop + ((xr.nHeight - pi->scut.nHeight) >> 1);
                     }
-
                     xr.nWidth          -= st.scut_w + spacing;
                 }
 
@@ -945,10 +915,11 @@ namespace lsp
                 }
 
                 // Need to draw check box/radio?
-                if (mi->type()->check())
+                if ((mi->type()->check()) && ((mi->checked()->get()) || (sCheckDrawUnchecked.get())))
                 {
                     ssize_t br          = lsp_max(0, sCheckBorderRadius.get() * scaling);
                     ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
+                    ssize_t bgap        = lsp_max(0, sCheckBorderGap.get() * scaling);
 
                     r                   = pi->check;
                     if (bw > 0)
@@ -966,11 +937,11 @@ namespace lsp
                         color.scale_lch_luminance(bright);
                         s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
 
-                        r.nLeft            += bw;
-                        r.nTop             += bw;
-                        r.nWidth           -= bw * 2;
-                        r.nHeight          -= bw * 2;
-                        br                  = lsp_max(0, br - bw);
+                        r.nLeft            += bgap;
+                        r.nTop             += bgap;
+                        r.nWidth           -= bgap * 2;
+                        r.nHeight          -= bgap * 2;
+                        br                  = lsp_max(0, br - bgap);
 
                         if (mi->checked()->get())
                         {
@@ -989,12 +960,13 @@ namespace lsp
                         s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                     }
                 }
-                else if (mi->type()->radio())
+                else if ((mi->type()->radio()) && ((mi->checked()->get()) || (sRadioDrawUnchecked.get())))
                 {
                     float br            = pi->check.nWidth * 0.5f;
                     float xc            = pi->check.nLeft + br;
                     float yc            = pi->check.nTop  + br;
                     ssize_t bw          = (sCheckBorder.get() > 0) ? lsp_max(1, sCheckBorder.get() * scaling) : 0;
+                    ssize_t bgap        = lsp_max(0, sCheckBorderGap.get() * scaling);
 
                     if (bw > 0)
                     {
@@ -1006,7 +978,7 @@ namespace lsp
                         color.copy(mi->check_bg_color()->color());
                         color.scale_lch_luminance(bright);
                         s->fill_circle(color, xc, yc, br);
-                        br                  = lsp_max(0, br - bw);
+                        br                  = lsp_max(0, br - bgap);
 
                         if (mi->checked()->get())
                         {
@@ -1024,9 +996,8 @@ namespace lsp
                         color.scale_lch_luminance(bright);
                         s->fill_circle(color, xc, yc, br);
                     }
-
                 }
-            }
+            } /* for */
 
             // Draw scroll button background
             s->set_antialiasing(false);
@@ -1227,7 +1198,7 @@ namespace lsp
             sWindow.show();
 
             // Take focus if there is no parent menu
-            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
+//            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
             if (pParentMenu == NULL)
             {
                 sWindow.grab_events(ws::GRAB_MENU);
@@ -1240,7 +1211,7 @@ namespace lsp
             nSelected = -1;
 
             // Hide all nested menus and disconnect from parent
-            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
+//            lsp_trace("menu=%p, parent=%p", this, pParentMenu);
             hide_nested_menus(this);
             if (pParentMenu != NULL)
             {
@@ -1344,8 +1315,8 @@ namespace lsp
                 pm->pChildMenu  = NULL;
 
                 // Hide menu and move forward
-                lsp_trace("menu = %p, parent = %p", cm, cm->pParentMenu);
-                lsp_trace("menu = %p, child  = %p", pm, pm->pChildMenu);
+//                lsp_trace("menu = %p, parent = %p", cm, cm->pParentMenu);
+//                lsp_trace("menu = %p, child  = %p", pm, pm->pChildMenu);
 //                lsp_trace("this=%p is hiding nested menu %p", this, cm);
                 cm->hide();
                 pm  = cm;
@@ -1396,8 +1367,8 @@ namespace lsp
             menu->pParentMenu   = this;
             pChildMenu          = menu;
 
-            lsp_trace("menu = %p, parent=%p", menu, menu->pParentMenu);
-            lsp_trace("menu = %p, child=%p", this, pChildMenu);
+//            lsp_trace("menu = %p, parent=%p", menu, menu->pParentMenu);
+//            lsp_trace("menu = %p, child=%p", this, pChildMenu);
 
             // Show the nested menu depending on the position of parent
             if (check_rtl_direction())

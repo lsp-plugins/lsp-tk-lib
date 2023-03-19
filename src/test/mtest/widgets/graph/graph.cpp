@@ -212,10 +212,10 @@ MTEST_BEGIN("tk.widgets.graph", graph)
         return STATUS_OK;
     }
 
-    static status_t slot_dot_change(tk::Widget *sender, void *ptr, void *data)
+    static status_t slot_change(tk::Widget *sender, void *ptr, void *data)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
-        h->test->printf("DOT changed: %s\n", h->label);
+        h->test->printf("CHANGE: %s\n", h->label);
 
         tk::GraphDot *gd = tk::widget_cast<tk::GraphDot>(sender);
         if (gd != NULL)
@@ -224,6 +224,22 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             gd->border_size()->set(size);
             gd->hover_border_size()->set(size);
         }
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_begin_edit(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("BEGIN_EDIT: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_end_edit(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("END_EDIT: %s\n", h->label);
 
         return STATUS_OK;
     }
@@ -249,11 +265,14 @@ MTEST_BEGIN("tk.widgets.graph", graph)
 //        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
 //        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
 //        if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
-
-        tk::GraphDot *gd = tk::widget_cast<tk::GraphDot>(w);
-        if (gd != NULL)
+        if (w->slots()->contains(tk::SLOT_CHANGE))
         {
-            if (hid >= 0) hid = gd->slots()->bind(tk::SLOT_CHANGE, slot_dot_change, h);
+            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_CHANGE, slot_change, h);
+        }
+        if (w->slots()->contains(tk::SLOT_BEGIN_EDIT))
+        {
+            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_BEGIN_EDIT, slot_begin_edit, h);
+            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_END_EDIT, slot_end_edit, h);
         }
 
         if (hid < 0)

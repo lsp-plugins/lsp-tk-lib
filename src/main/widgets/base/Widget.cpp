@@ -545,6 +545,15 @@ namespace lsp
             return p;
         }
 
+        bool Widget::has_parent(const tk::Widget *w) const
+        {
+            for (const Widget *p = this; p->pParent != NULL; p = p->pParent)
+                if (p->pParent == w)
+                    return true;
+
+            return false;
+        }
+
         void Widget::query_draw(size_t flags)
         {
             if (!sVisibility.get())

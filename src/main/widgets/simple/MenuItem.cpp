@@ -125,13 +125,9 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (sTextAdjust.is(prop))
+            if (prop->one_of(sTextAdjust, sText, sType))
                 query_resize();
-            if (sText.is(prop))
-                query_resize();
-            if (sType.is(prop))
-                query_resize();
-            if (sChecked.is(prop))
+            if (prop->one_of(sChecked))
                 query_draw();
         }
 

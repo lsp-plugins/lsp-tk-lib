@@ -46,8 +46,9 @@ namespace lsp
                 Registry(const Registry &);
 
             protected:
-                lltl::pphash<char, tk::Widget>      sMapping;       // Widget mapping by UID
-                lltl::parray<tk::Widget>            vWidgets;       // List of widgets
+                lltl::pphash<char, tk::Widget>      sMapping;           // Widget mapping by UID
+                lltl::pphash<char, lltl::parray<tk::Widget>> sGroups;   // Widget groups
+                lltl::parray<tk::Widget>            vWidgets;           // List of widgets
 
             protected:
                 bool                        remove_item(lltl::parray<tk::Widget> *slist, tk::Widget *w);
@@ -102,6 +103,22 @@ namespace lsp
                 status_t                    map(const LSPString *uid, tk::Widget *w);
 
                 /**
+                 * Map widget to group
+                 * @param uid unique group identifier
+                 * @param w widget to map
+                 * @return status of operation
+                 */
+                status_t                    map_group(const char *uid, tk::Widget *w);
+
+                /**
+                 * Map widget to group
+                 * @param uid unique group identifier
+                 * @param w widget to map
+                 * @return status of operation
+                 */
+                status_t                    map_group(const LSPString *uid, tk::Widget *w);
+
+                /**
                  * Unmap widget by it's identifier
                  * @param uid unique widget identifier
                  * @return status of operation
@@ -131,6 +148,29 @@ namespace lsp
                 ssize_t                     unmap(const tk::Widget * const *w, size_t n);
 
                 /**
+                 * Map widget to group
+                 * @param uid unique group identifier
+                 * @param w widget to map
+                 * @return status of operation
+                 */
+                status_t                    unmap_group(const char *uid, tk::Widget *w);
+
+                /**
+                 * Map widget to group
+                 * @param uid unique group identifier
+                 * @param w widget to map
+                 * @return status of operation
+                 */
+                status_t                    unmap_group(const LSPString *uid, tk::Widget *w);
+
+                /**
+                 * Unmap widget from all previously mapped groups
+                 * @param w widget to unmap
+                 * @return status of operation
+                 */
+                status_t                    unmap_all_groups(tk::Widget *w);
+
+                /**
                  * Find widget by it's uinque identifier and return the pointer to the instance
                  * @param uid unique identifier of widget
                  * @return the resolved widget or NULL
@@ -143,6 +183,22 @@ namespace lsp
                  * @return the resolved widget or NULL
                  */
                 tk::Widget                 *find(const LSPString *uid);
+
+                /**
+                 * Query all widgets that match the group name and add to passed list
+                 * @param uid unique widget identifier
+                 * @param dst destination list to store the widgets
+                 * @return status of operation
+                 */
+                status_t                    query_group(const char *uid, lltl::parray<tk::Widget> *dst);
+
+                /**
+                 * Query all widgets that match the group name and add to passed list
+                 * @param uid unique widget identifier
+                 * @param dst destination list to store the widgets
+                 * @return status of operation
+                 */
+                status_t                    query_group(const LSPString *uid, lltl::parray<tk::Widget> *dst);
 
                 /**
                  * Get widget of specific type by it's unique identifier
@@ -186,8 +242,24 @@ namespace lsp
                  * @return true if there is mapping for specified identifier
                  */
                 bool                        contains(const LSPString *uid) const;
+
+                /**
+                 * Check that registry has widget mapped to the group
+                 * @param uid unique identifier of group
+                 * @param w widget to check
+                 * @return true if there is mapping of specified widget to the specified group
+                 */
+                bool                        contains(const char *uid, const tk::Widget *w) const;
+
+                /**
+                 * Check that registry has widget mapped to the group
+                 * @param uid unique identifier of group
+                 * @param w widget to check
+                 * @return true if there is mapping of specified widget to the specified group
+                 */
+                bool                        contains(const LSPString *uid, const tk::Widget *w) const;
         };
-    }
-}
+    } /* tk */
+} /* lsp */
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_BASE_REGISTRY_H_ */

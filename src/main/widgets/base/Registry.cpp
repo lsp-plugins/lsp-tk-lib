@@ -37,6 +37,22 @@ namespace lsp
 
         void Registry::destroy()
         {
+            // Destroy all widget groups
+            lltl::parray<lltl::parray<Widget>> v;
+            sGroups.values(&v);
+            sGroups.flush();
+
+            for (size_t i=0, n=v.size(); i<n; ++i)
+            {
+                lltl::parray<Widget> *vv = v.uget(i);
+                if (vv != NULL)
+                {
+                    vv->flush();
+                    delete vv;
+                }
+            }
+
+            // Clear widget mapping
             sMapping.flush();
 
             // Destroy all widgets in reverse order
@@ -112,6 +128,32 @@ namespace lsp
             return (uid != NULL) ? map(uid->get_utf8(), w) : STATUS_BAD_ARGUMENTS;
         }
 
+        status_t Registry::map_group(const char *uid, tk::Widget *w)
+        {
+            lltl::parray<Widget> *list = sGroups.get(uid);
+            if (list == NULL)
+            {
+                list = new lltl::parray<Widget>();
+                if (list == NULL)
+                    return STATUS_NO_MEM;
+                if (!sGroups.create(uid, list))
+                {
+                    delete list;
+                    return STATUS_NO_MEM;
+                }
+            }
+
+            if (list->contains(w))
+                return STATUS_DUPLICATED;
+
+            return (list->add(w)) ? STATUS_OK : STATUS_NO_MEM;
+        }
+
+        status_t Registry::map_group(const LSPString *uid, tk::Widget *w)
+        {
+            return (uid != NULL) ? map_group(uid->get_utf8(), w) : STATUS_BAD_ARGUMENTS;
+        }
+
         status_t Registry::unmap(const char *uid)
         {
             if (uid == NULL)
@@ -172,6 +214,39 @@ namespace lsp
             return unmapped;
         }
 
+        status_t Registry::unmap_group(const char *uid, tk::Widget *w)
+        {
+            lltl::parray<Widget> *list = sGroups.get(uid);
+            if (list == NULL)
+                return STATUS_NOT_FOUND;
+
+            return (list->premove(w)) ? STATUS_OK : STATUS_NOT_FOUND;
+        }
+
+        status_t Registry::unmap_group(const LSPString *uid, tk::Widget *w)
+        {
+            return (uid != NULL) ? unmap(uid->get_utf8()) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Registry::unmap_all_groups(tk::Widget *w)
+        {
+            lltl::parray<lltl::parray<Widget>> v;
+            sGroups.values(&v);
+            size_t removed = 0;
+
+            for (size_t i=0, n=sGroups.size(); i<n; ++i)
+            {
+                lltl::parray<Widget> *vv = v.uget(i);
+                if (vv == NULL)
+                    continue;
+
+                if (vv->premove(w))
+                    ++removed;
+            }
+
+            return (removed > 0) ? STATUS_OK : STATUS_NOT_FOUND;
+        }
+
         bool Registry::remove_item(lltl::parray<tk::Widget> *slist, tk::Widget *w)
         {
             // Use binary search
@@ -219,6 +294,32 @@ namespace lsp
         {
             return (uid != NULL) ? contains(uid->get_utf8()) : false;
         }
-    }
-}
+
+        bool Registry::contains(const char *uid, const tk::Widget *w) const
+        {
+            lltl::parray<Widget> *list = sGroups.get(uid);
+            return (list != NULL) ? list->contains(w) : false;
+        }
+
+        bool Registry::contains(const LSPString *uid, const tk::Widget *w) const
+        {
+            return (uid != NULL) ? contains(uid->get_utf8(), w) : false;
+        }
+
+        status_t Registry::query_group(const char *uid, lltl::parray<tk::Widget> *dst)
+        {
+            lltl::parray<Widget> *list = sGroups.get(uid);
+            if (list == NULL)
+                return STATUS_NOT_FOUND;
+
+            return (dst->add(list)) ? STATUS_OK : STATUS_NO_MEM;
+        }
+
+        status_t Registry::query_group(const LSPString *uid, lltl::parray<tk::Widget> *dst)
+        {
+            return (uid != NULL) ? query_group(uid->get_utf8(), dst) : STATUS_BAD_ARGUMENTS;
+        }
+
+    } /* tk */
+} /* lsp */
 

@@ -703,10 +703,7 @@ namespace lsp
             // Update state according to mouse position and mouse button state
             size_t state        = nState;
             nState              = lsp_setflag(nState, S_HOVER, m_over);
-            if ((nBMask == (1 << ws::MCB_LEFT)) && (m_over))
-                nState     |= S_PRESSED;
-            else
-                nState     &= ~S_PRESSED;
+            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (1 << ws::MCB_LEFT)) && (m_over));
 
             // Special case for trigger button
             if ((nState & S_TRIGGER) && (state != nState))
@@ -757,10 +754,7 @@ namespace lsp
             {
                 // Update state according to mouse position and mouse button state
                 size_t state        = nState;
-                if ((nBMask == (1 << ws::MCB_LEFT)) && (m_over))
-                    nState     |= S_PRESSED;
-                else
-                    nState     &= ~S_PRESSED;
+                nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (1 << ws::MCB_LEFT)) && (m_over));
 
                 if (state != nState)
                 {
@@ -818,11 +812,7 @@ namespace lsp
                 }
             }
 
-            if ((nBMask == (1 << ws::MCB_LEFT)) && (m_over))
-                nState     |= S_PRESSED;
-            else
-                nState     &= ~S_PRESSED;
-
+            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (1 << ws::MCB_LEFT)) && (m_over));
             if ((mask == size_t(1 << e->nCode)) && (nChanges > 0))
             {
                 sSlots.execute(SLOT_SUBMIT, this);
@@ -849,10 +839,7 @@ namespace lsp
             // Update state according to mouse position and mouse button state
             bool m_over         = Position::inside(&sButton, e->nLeft, e->nTop);
             nState              = lsp_setflag(nState, S_HOVER, m_over);
-            if ((nBMask == (1 << ws::MCB_LEFT)) && (m_over))
-                nState     |= S_PRESSED;
-            else
-                nState     &= ~S_PRESSED;
+            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (1 << ws::MCB_LEFT)) && (m_over));
 
             // Special case for trigger button
             if ((nState & S_TRIGGER) && (state != nState))

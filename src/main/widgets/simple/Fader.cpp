@@ -163,6 +163,8 @@ namespace lsp
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEGIN_EDIT, slot_begin_edit, self());
+            if (id >= 0) id = sSlots.add(SLOT_END_EDIT, slot_end_edit, self());
             if (id < 0)
                 return -id;
 
@@ -329,7 +331,29 @@ namespace lsp
             return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
+        status_t Fader::slot_begin_edit(Widget *sender, void *ptr, void *data)
+        {
+            Fader *_this = widget_ptrcast<Fader>(ptr);
+            return (_this != NULL) ? _this->on_begin_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Fader::slot_end_edit(Widget *sender, void *ptr, void *data)
+        {
+            Fader *_this = widget_ptrcast<Fader>(ptr);
+            return (_this != NULL) ? _this->on_end_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
         status_t Fader::on_change()
+        {
+            return STATUS_OK;
+        }
+
+        status_t Fader::on_begin_edit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t Fader::on_end_edit()
         {
             return STATUS_OK;
         }
@@ -363,6 +387,8 @@ namespace lsp
                     nLastV      = (sAngle.get() & 1) ? e->nTop : e->nLeft;
                     fLastValue  = sValue.get();
                     fCurrValue  = fLastValue;
+
+                    sSlots.execute(SLOT_BEGIN_EDIT, this);
                 }
             }
 
@@ -409,6 +435,9 @@ namespace lsp
 
             // Update value
             update_value(value);
+
+            if (nButtons == 0)
+                sSlots.execute(SLOT_END_EDIT, this);
 
             return STATUS_OK;
         }

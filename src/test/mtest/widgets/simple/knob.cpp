@@ -118,6 +118,22 @@ MTEST_BEGIN("tk.widgets.simple", knob)
         return STATUS_OK;
     }
 
+    static status_t slot_begin_edit(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("BEGIN_EDIT: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
+    static status_t slot_end_edit(tk::Widget *sender, void *ptr, void *data)
+    {
+        handler_t *h = static_cast<handler_t *>(ptr);
+        h->test->printf("END_EDIT: %s\n", h->label);
+
+        return STATUS_OK;
+    }
+
     status_t init_widget(tk::Widget *w, lltl::parray<handler_t> &vh, const char *label)
     {
         status_t res = w->init();
@@ -139,6 +155,11 @@ MTEST_BEGIN("tk.widgets.simple", knob)
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_DBL_CLICK, slot_mouse_dbl_click, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_TRI_CLICK, slot_mouse_tri_click, h);
         if (hid >= 0) hid = w->slots()->bind(tk::SLOT_MOUSE_OUT, slot_mouse_out, h);
+        if (w->slots()->contains(tk::SLOT_BEGIN_EDIT))
+        {
+            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_BEGIN_EDIT, slot_begin_edit, h);
+            if (hid >= 0) hid = w->slots()->bind(tk::SLOT_END_EDIT, slot_end_edit, h);
+        }
 
         if (hid < 0)
             res = -hid;

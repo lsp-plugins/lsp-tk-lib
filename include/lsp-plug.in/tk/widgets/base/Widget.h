@@ -575,6 +575,12 @@ namespace lsp
                  */
                 Widget                 *toplevel();
 
+                /** Check that widget has the specified widget as parent in the widget hierarchy
+                 *
+                 * @return most top-level widget
+                 */
+                bool                    has_parent(const tk::Widget *w) const;
+
             //---------------------------------------------------------------------------------
             // Event handling
             public:

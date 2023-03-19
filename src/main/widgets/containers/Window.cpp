@@ -897,25 +897,25 @@ namespace lsp
                 // Focus events
                 case ws::UIE_FOCUS_OUT:
                 {
-                    Widget *h = hMouse.pWidget;
-                    if (h != NULL)
-                    {
-                        // Create UIE_MOUSE_OUT event
-                        ws::event_t ev;
-                        ws::init_event(&ev);
-                        ev.nType        = ws::UIE_MOUSE_OUT;
-                        ev.nLeft        = hMouse.nLeft;
-                        ev.nTop         = hMouse.nLeft;
-
-                        // Reset state of mouse handler
-                        hMouse.nState   = 0;
-                        hMouse.nLeft    = 0;
-                        hMouse.nTop     = 0;
-                        hMouse.pWidget  = NULL;
-
-                        // Send event to the handler
-                        h->handle_event(&ev);
-                    }
+//                    Widget *h = hMouse.pWidget;
+//                    if (h != NULL)
+//                    {
+//                        // Create UIE_MOUSE_OUT event
+//                        ws::event_t ev;
+//                        ws::init_event(&ev);
+//                        ev.nType        = ws::UIE_MOUSE_OUT;
+//                        ev.nLeft        = hMouse.nLeft;
+//                        ev.nTop         = hMouse.nLeft;
+//
+//                        // Reset state of mouse handler
+//                        hMouse.nState   = 0;
+//                        hMouse.nLeft    = 0;
+//                        hMouse.nTop     = 0;
+//                        hMouse.pWidget  = NULL;
+//
+//                        // Send event to the handler
+//                        h->handle_event(&ev);
+//                    }
 
                     do_kill_focus(pFocused);
                     break;

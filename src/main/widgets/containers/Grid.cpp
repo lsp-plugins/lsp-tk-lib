@@ -381,6 +381,21 @@ namespace lsp
             return STATUS_NOT_FOUND;
         }
 
+        status_t Grid::remove_all()
+        {
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            {
+                widget_t *cell    = vItems.uget(i);
+                if (cell != NULL)
+                    unlink_widget(cell->pWidget);
+            }
+
+            free_cells(&sAlloc);
+            vItems.flush();
+
+            return STATUS_OK;
+        }
+
         void Grid::realize(const ws::rectangle_t *r)
         {
             free_cells(&sAlloc);

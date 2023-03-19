@@ -109,7 +109,9 @@ namespace lsp
                 void                            on_click(ssize_t x, ssize_t y);
 
             protected:
+                static status_t                 slot_begin_edit(Widget *sender, void *ptr, void *data);
                 static status_t                 slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_end_edit(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual void                    size_request(ws::size_limit_t *r);
@@ -153,7 +155,11 @@ namespace lsp
 
                 virtual status_t                on_mouse_scroll(const ws::event_t *e);
 
+                virtual status_t                on_begin_edit();
+
                 virtual status_t                on_change();
+
+                virtual status_t                on_end_edit();
 
                 virtual void                    draw(ws::ISurface *s);
         };

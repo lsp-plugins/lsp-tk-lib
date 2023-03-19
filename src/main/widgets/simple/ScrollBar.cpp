@@ -198,6 +198,8 @@ namespace lsp
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEGIN_EDIT, slot_begin_edit, self());
+            if (id >= 0) id = sSlots.add(SLOT_END_EDIT, slot_end_edit, self());
             if (id < 0)
                 return -id;
 
@@ -399,6 +401,18 @@ namespace lsp
             return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
+        status_t ScrollBar::slot_begin_edit(Widget *sender, void *ptr, void *data)
+        {
+            ScrollBar *_this = widget_ptrcast<ScrollBar>(ptr);
+            return (_this != NULL) ? _this->on_begin_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ScrollBar::slot_end_edit(Widget *sender, void *ptr, void *data)
+        {
+            ScrollBar *_this = widget_ptrcast<ScrollBar>(ptr);
+            return (_this != NULL) ? _this->on_end_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
         ws::mouse_pointer_t ScrollBar::current_pointer()
         {
             return enMousePointer;
@@ -427,6 +441,16 @@ namespace lsp
         }
 
         status_t ScrollBar::on_change()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ScrollBar::on_begin_edit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ScrollBar::on_end_edit()
         {
             return STATUS_OK;
         }
@@ -482,6 +506,8 @@ namespace lsp
                 fLastValue      = sValue.get();
                 fCurrValue      = fLastValue;
                 nLastV          = (sOrientation.vertical()) ? e->nTop : e->nLeft;
+
+                sSlots.execute(SLOT_BEGIN_EDIT, this);
             }
             else
             {
@@ -676,6 +702,10 @@ namespace lsp
                 sSlots.execute(SLOT_CHANGE, this);
             }
             query_draw();
+
+            // Notify about end of edit
+            if (nButtons == 0)
+                sSlots.execute(SLOT_END_EDIT, this);
 
             return STATUS_OK;
         }

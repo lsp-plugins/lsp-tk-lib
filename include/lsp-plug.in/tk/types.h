@@ -64,7 +64,7 @@ namespace lsp
             TF_RIGHT        = 1 << 1,   // Right line of rectangle used as tether
             // Priority of tether
             TF_HORIZONTAL   = 0 << 2,   // Priority of horizontal tether is higher than vertical
-            TF_VERTICAL     = 0 << 2,   // Priority of vertical tether is higher than horizontal
+            TF_VERTICAL     = 1 << 2,   // Priority of vertical tether is higher than horizontal
             // Stretching
             TF_HSTRETCH     = 1 << 3,   // Stretch horizontally
             TF_VSTRETCH     = 1 << 4,   // Stretch vertically
