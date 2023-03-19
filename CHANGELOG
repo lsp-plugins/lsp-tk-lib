@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.9 ===
+
+
 === 1.0.8 ===
 * Fixed invalid tk::TF_VERTICAL tether flag value.
 * Added possibility to hide check/radio box for unchecked tk::MenuItem objects.
