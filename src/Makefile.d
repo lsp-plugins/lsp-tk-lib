@@ -9527,11 +9527,13 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/Menu.o: \
  $(LSP_TK_LIB_INC)/private/tk/style/BuiltinStyle.h
 $(LSP_TK_LIB_BIN)/main/widgets/compound/ListBox.o: \
  main/widgets/compound/ListBox.cpp \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/debug.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/finally.h \
+ $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/tk.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/types.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/version.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/finally.h \
  $(LSP_COMMON_LIB_INC)/lsp-plug.in/common/status.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/types.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/sys/types.h \
@@ -9631,7 +9633,6 @@ $(LSP_TK_LIB_BIN)/main/widgets/compound/ListBox.o: \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextLayout.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/TextSelection.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/multi/Vector2D.h \
- $(LSP_COMMON_LIB_INC)/lsp-plug.in/stdlib/math.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/ColorRanges.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/FileFilters.h \
  $(LSP_TK_LIB_INC)/lsp-plug.in/tk/prop/collection/FloatArray.h \
