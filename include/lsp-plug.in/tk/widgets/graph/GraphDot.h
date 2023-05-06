@@ -34,25 +34,27 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(GraphDot, GraphItem)
-                prop::Integer               sOrigin;            // Index of origin widget
-                prop::Integer               sHAxis;             // Horizontal axis
-                prop::Integer               sVAxis;             // Vertical axis
-                prop::Integer               sSize;              // Size of the dot
-                prop::Integer               sHoverSize;         // Size of the dot (when hover)
-                prop::Integer               sBorderSize;        // Border size
-                prop::Integer               sHoverBorderSize;   // Border size (when hover)
-                prop::Integer               sGap;               // Gap size
-                prop::Integer               sHoverGap;          // Gap size (when hover)
-                prop::Color                 sColor;             // Color of the dot
-                prop::Color                 sHoverColor;        // Color of the dot (when hover)
-                prop::Color                 sBorderColor;       // Color of the border
-                prop::Color                 sHoverBorderColor;  // Color of the border (when hover)
-                prop::Color                 sGapColor;          // Gap color
-                prop::Color                 sHoverGapColor;     // Hover gap color
+                prop::Integer               sOrigin;                // Index of origin widget
+                prop::Integer               sHAxis;                 // Horizontal axis
+                prop::Integer               sVAxis;                 // Vertical axis
+                prop::Integer               sSize;                  // Size of the dot
+                prop::Integer               sHoverSize;             // Size of the dot (when hover)
+                prop::Integer               sBorderSize;            // Border size
+                prop::Integer               sHoverBorderSize;       // Border size (when hover)
+                prop::Integer               sGap;                   // Gap size
+                prop::Integer               sHoverGap;              // Gap size (when hover)
+                prop::Boolean               sInvertMouseVScroll;    // Invert mouse vertical scroll
 
-                prop::Boolean               sEditable[3];       // Editable flag
-                prop::RangeFloat            sValue[3];          // Value
-                prop::StepFloat             sStep[3];           // Step
+                prop::Color                 sColor;                 // Color of the dot
+                prop::Color                 sHoverColor;            // Color of the dot (when hover)
+                prop::Color                 sBorderColor;           // Color of the border
+                prop::Color                 sHoverBorderColor;      // Color of the border (when hover)
+                prop::Color                 sGapColor;              // Gap color
+                prop::Color                 sHoverGapColor;         // Hover gap color
+
+                prop::Boolean               sEditable[3];           // Editable flag
+                prop::RangeFloat            sValue[3];              // Value
+                prop::StepFloat             sStep[3];               // Step
             LSP_TK_STYLE_DEF_END
         }
 
@@ -87,33 +89,34 @@ namespace lsp
                 GraphDot(const GraphDot &);
 
             protected:
-                param_t                     sHValue;            // Horizontal value
-                param_t                     sVValue;            // Vertical value
-                param_t                     sZValue;            // The value associated with scrolling
+                param_t                     sHValue;                // Horizontal value
+                param_t                     sVValue;                // Vertical value
+                param_t                     sZValue;                // The value associated with scrolling
 
-                prop::Integer               sOrigin;            // Index of origin widget
-                prop::Integer               sHAxis;             // Horizontal axis
-                prop::Integer               sVAxis;             // Vertical axis
-                prop::Integer               sSize;              // Size of the dot
-                prop::Integer               sHoverSize;         // Size of the dot (when hover)
-                prop::Integer               sBorderSize;        // Border size
-                prop::Integer               sHoverBorderSize;   // Border size (when hover)
-                prop::Integer               sGap;               // Gap size
-                prop::Integer               sHoverGap;          // Gap size (when hover)
+                prop::Integer               sOrigin;                // Index of origin widget
+                prop::Integer               sHAxis;                 // Horizontal axis
+                prop::Integer               sVAxis;                 // Vertical axis
+                prop::Integer               sSize;                  // Size of the dot
+                prop::Integer               sHoverSize;             // Size of the dot (when hover)
+                prop::Integer               sBorderSize;            // Border size
+                prop::Integer               sHoverBorderSize;       // Border size (when hover)
+                prop::Integer               sGap;                   // Gap size
+                prop::Integer               sHoverGap;              // Gap size (when hover)
+                prop::Boolean               sInvertMouseVScroll;    // Invert mouse vertical scroll
 
-                prop::Color                 sColor;             // Color of the dot
-                prop::Color                 sHoverColor;        // Color of the dot (when hover)
-                prop::Color                 sBorderColor;       // Color of the border
-                prop::Color                 sHoverBorderColor;  // Color of the border (when hover)
-                prop::Color                 sGapColor;          // Gap color
-                prop::Color                 sHoverGapColor;     // Hover gap color
+                prop::Color                 sColor;                 // Color of the dot
+                prop::Color                 sHoverColor;            // Color of the dot (when hover)
+                prop::Color                 sBorderColor;           // Color of the border
+                prop::Color                 sHoverBorderColor;      // Color of the border (when hover)
+                prop::Color                 sGapColor;              // Gap color
+                prop::Color                 sHoverGapColor;         // Hover gap color
 
-                size_t                      nXFlags;            // Extra flags
-                size_t                      nMBState;           // Mouse button state
-                ssize_t                     nMouseX;            // Mouse initial X position
-                ssize_t                     nMouseY;            // Mouse initial Y position
-                float                       fLastX;             // Last X value
-                float                       fLastY;             // Last Y value
+                size_t                      nXFlags;                // Extra flags
+                size_t                      nMBState;               // Mouse button state
+                ssize_t                     nMouseX;                // Mouse initial X position
+                ssize_t                     nMouseY;                // Mouse initial Y position
+                float                       fLastX;                 // Last X value
+                float                       fLastY;                 // Last Y value
 
             protected:
                 void                        apply_motion(ssize_t x, ssize_t y, size_t flags);
@@ -132,32 +135,33 @@ namespace lsp
                 virtual status_t            init();
 
             public:
-                LSP_TK_PROPERTY(RangeFloat,         hvalue,             &sHValue.sValue)
-                LSP_TK_PROPERTY(Boolean,            heditable,          &sHValue.sEditable)
-                LSP_TK_PROPERTY(StepFloat,          hstep,              &sHValue.sStep)
-                LSP_TK_PROPERTY(RangeFloat,         vvalue,             &sVValue.sValue)
-                LSP_TK_PROPERTY(Boolean,            veditable,          &sVValue.sEditable)
-                LSP_TK_PROPERTY(StepFloat,          vstep,              &sVValue.sStep)
-                LSP_TK_PROPERTY(RangeFloat,         zvalue,             &sZValue.sValue)
-                LSP_TK_PROPERTY(Boolean,            zeditable,          &sZValue.sEditable)
-                LSP_TK_PROPERTY(StepFloat,          zstep,              &sZValue.sStep)
+                LSP_TK_PROPERTY(RangeFloat,         hvalue,                 &sHValue.sValue)
+                LSP_TK_PROPERTY(Boolean,            heditable,              &sHValue.sEditable)
+                LSP_TK_PROPERTY(StepFloat,          hstep,                  &sHValue.sStep)
+                LSP_TK_PROPERTY(RangeFloat,         vvalue,                 &sVValue.sValue)
+                LSP_TK_PROPERTY(Boolean,            veditable,              &sVValue.sEditable)
+                LSP_TK_PROPERTY(StepFloat,          vstep,                  &sVValue.sStep)
+                LSP_TK_PROPERTY(RangeFloat,         zvalue,                 &sZValue.sValue)
+                LSP_TK_PROPERTY(Boolean,            zeditable,              &sZValue.sEditable)
+                LSP_TK_PROPERTY(StepFloat,          zstep,                  &sZValue.sStep)
 
-                LSP_TK_PROPERTY(Integer,            origin,             &sOrigin)
-                LSP_TK_PROPERTY(Integer,            haxis,              &sHAxis)
-                LSP_TK_PROPERTY(Integer,            vaxis,              &sVAxis)
-                LSP_TK_PROPERTY(Integer,            size,               &sSize)
-                LSP_TK_PROPERTY(Integer,            hover_size,         &sHoverSize)
-                LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
-                LSP_TK_PROPERTY(Integer,            hover_border_size,  &sHoverBorderSize)
-                LSP_TK_PROPERTY(Integer,            gap,                &sGap)
-                LSP_TK_PROPERTY(Integer,            hover_gap,          &sHoverGap)
+                LSP_TK_PROPERTY(Integer,            origin,                 &sOrigin)
+                LSP_TK_PROPERTY(Integer,            haxis,                  &sHAxis)
+                LSP_TK_PROPERTY(Integer,            vaxis,                  &sVAxis)
+                LSP_TK_PROPERTY(Integer,            size,                   &sSize)
+                LSP_TK_PROPERTY(Integer,            hover_size,             &sHoverSize)
+                LSP_TK_PROPERTY(Integer,            border_size,            &sBorderSize)
+                LSP_TK_PROPERTY(Integer,            hover_border_size,      &sHoverBorderSize)
+                LSP_TK_PROPERTY(Integer,            gap,                    &sGap)
+                LSP_TK_PROPERTY(Integer,            hover_gap,              &sHoverGap)
+                LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,   &sInvertMouseVScroll)
 
-                LSP_TK_PROPERTY(Color,              color,              &sColor)
-                LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)
-                LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
-                LSP_TK_PROPERTY(Color,              hover_border_color, &sHoverBorderColor)
-                LSP_TK_PROPERTY(Color,              gap_color,          &sGapColor)
-                LSP_TK_PROPERTY(Color,              hover_gap_color,    &sHoverGapColor)
+                LSP_TK_PROPERTY(Color,              color,                  &sColor)
+                LSP_TK_PROPERTY(Color,              hover_color,            &sHoverColor)
+                LSP_TK_PROPERTY(Color,              border_color,           &sBorderColor)
+                LSP_TK_PROPERTY(Color,              hover_border_color,     &sHoverBorderColor)
+                LSP_TK_PROPERTY(Color,              gap_color,              &sGapColor)
+                LSP_TK_PROPERTY(Color,              hover_gap_color,        &sHoverGapColor)
 
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);

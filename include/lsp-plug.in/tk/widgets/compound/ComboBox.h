@@ -54,6 +54,7 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;
                 prop::TextLayout            sTextLayout;
                 prop::String                sEmptyText;
+                prop::Boolean               sInvertMouseVScroll;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -140,6 +141,7 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;
                 prop::TextLayout            sTextLayout;
                 prop::String                sEmptyText;
+                prop::Boolean               sInvertMouseVScroll;
                 prop::WidgetPtr<ListBoxItem> sSelected;
 
                 ws::rectangle_t             sTArea;         // Text area
@@ -186,6 +188,7 @@ namespace lsp
                 LSP_TK_PROPERTY(TextAdjust,                 text_adjust,            &sTextAdjust)
                 LSP_TK_PROPERTY(TextLayout,                 text_layout,            &sTextLayout)
                 LSP_TK_PROPERTY(String,                     empty_text,             &sEmptyText)
+                LSP_TK_PROPERTY(Boolean,                    invert_mouse_vscroll,   &sInvertMouseVScroll);
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,               &sSelected)
 
                 LSP_TK_PROPERTY(Font,                       list_font,              sLBox.font())
@@ -214,8 +217,8 @@ namespace lsp
 
                 virtual status_t            on_submit();
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_COMPOUND_COMBOBOX_H_ */

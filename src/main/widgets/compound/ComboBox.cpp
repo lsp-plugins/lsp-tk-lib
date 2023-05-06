@@ -48,6 +48,7 @@ namespace lsp
                 sTextAdjust.bind("text.adjust", this);
                 sConstraints.bind("size.constraints", this);
                 sTextLayout.bind("text.layout", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
                 // Configure
                 sBorderSize.set(1);
                 sBorderGap.set(1);
@@ -66,6 +67,7 @@ namespace lsp
                 sTextAdjust.set(TA_NONE);
                 sConstraints.set(-1, -1, -1, 0);
                 sTextLayout.set(-1.0f, 0.0f);
+                sInvertMouseVScroll.set(false);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ComboBox, "ComboBox", "root");
 
@@ -166,6 +168,7 @@ namespace lsp
             sConstraints(&sProperties),
             sTextLayout(&sProperties),
             sEmptyText(&sProperties),
+            sInvertMouseVScroll(&sProperties),
             sSelected(&sProperties)
         {
             sTArea.nLeft    = 0;
@@ -245,6 +248,7 @@ namespace lsp
             sConstraints.bind("size.constraints", &sStyle);
             sTextLayout.bind("text.layout", &sStyle);
             sEmptyText.bind(&sStyle, pDisplay->dictionary());
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
 
             // Bind slots
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -714,14 +718,16 @@ namespace lsp
 
         status_t ComboBox::on_mouse_scroll(const ws::event_t *e)
         {
+            ssize_t step = (sInvertMouseVScroll.get()) ? 1 : -1;
+
             if (e->nCode == ws::MCD_UP)
             {
-                if (scroll_item(-1, 1))
+                if (scroll_item(step, 1))
                     sSlots.execute(SLOT_SUBMIT, this, NULL);
             }
             else if (e->nCode == ws::MCD_DOWN)
             {
-                if (scroll_item(1, 1))
+                if (scroll_item(-step, 1))
                     sSlots.execute(SLOT_SUBMIT, this, NULL);
             }
 

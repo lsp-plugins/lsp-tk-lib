@@ -46,6 +46,9 @@ namespace lsp
                 prop::Integer           sBorderSize;
                 prop::Integer           sBorderGap;
                 prop::Integer           sSliderBorderSize;
+                prop::Boolean           sInvertMouseHScroll;
+                prop::Boolean           sInvertMouseVScroll;
+
                 prop::Color             sButtonColor;
                 prop::Color             sButtonActiveColor;
                 prop::Color             sIncColor;
@@ -126,6 +129,8 @@ namespace lsp
                 prop::Integer           sBorderSize;
                 prop::Integer           sBorderGap;
                 prop::Integer           sSliderBorderSize;
+                prop::Boolean           sInvertMouseHScroll;
+                prop::Boolean           sInvertMouseVScroll;
 
                 prop::Color             sButtonColor;
                 prop::Color             sButtonActiveColor;
@@ -186,6 +191,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_size,            &sBorderSize)
                 LSP_TK_PROPERTY(Integer,            border_gap_size,        &sBorderGap)
                 LSP_TK_PROPERTY(Integer,            slider_border_size,     &sSliderBorderSize)
+
+                LSP_TK_PROPERTY(Boolean,            invert_mouse_hscroll,   &sInvertMouseHScroll)
+                LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,   &sInvertMouseVScroll)
 
                 LSP_TK_PROPERTY(Color,              button_color,           &sButtonColor)
                 LSP_TK_PROPERTY(Color,              button_active_color,    &sButtonActiveColor)

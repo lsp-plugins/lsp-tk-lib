@@ -82,7 +82,8 @@ namespace lsp
             sBgColor(&sProperties),
             sVisibility(&sProperties),
             sPointer(&sProperties),
-            sTag(&sProperties)
+            sTag(&sProperties),
+            sDrawMode(&sProperties)
         {
             nFlags                  = REDRAW_SURFACE | SIZE_INVALID | RESIZE_PENDING;
             pClass                  = &metadata;
@@ -217,22 +218,13 @@ namespace lsp
 
         void Widget::property_changed(Property *prop)
         {
-            if (sScaling.is(prop))
-                query_resize();
-            if (sFontScaling.is(prop))
+            if (prop->one_of(sScaling, sFontScaling, sPadding, sAllocation))
                 query_resize();
             if (sBrightness.is(prop))
                 query_draw();
-            if (sBgBrightness.is(prop))
+            if (prop->one_of(sBgBrightness, sBgColor, sBgInherit))
                 query_draw(REDRAW_CHILD | REDRAW_SURFACE);
-            if (sPadding.is(prop))
-                query_resize();
-            if (sBgColor.is(prop))
-                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
-            if (sBgInherit.is(prop))
-                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
-            if (sAllocation.is(prop))
-                query_resize();
+
             if (sVisibility.is(prop))
             {
                 if (sVisibility.get())

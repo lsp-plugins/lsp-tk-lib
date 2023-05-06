@@ -61,6 +61,8 @@ namespace lsp
                 sHoverBorderSize.bind("hover.border.size", this);
                 sGap.bind("gap", this);
                 sHoverGap.bind("hover.gap", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
+
                 sColor.bind("color", this);
                 sHoverColor.bind("hover.color", this);
                 sBorderColor.bind("border.color", this);
@@ -85,6 +87,8 @@ namespace lsp
                 sHoverBorderSize.set(12);
                 sGap.set(1);
                 sHoverGap.set(1);
+                sInvertMouseVScroll.set(false);
+
                 sColor.set("#cccccc");
                 sHoverColor.set("#ffffff");
                 sBorderColor.set("#cccccc");
@@ -157,6 +161,7 @@ namespace lsp
             sHoverBorderSize(&sProperties),
             sGap(&sProperties),
             sHoverGap(&sProperties),
+            sInvertMouseVScroll(&sProperties),
             sColor(&sProperties),
             sHoverColor(&sProperties),
             sBorderColor(&sProperties),
@@ -200,6 +205,8 @@ namespace lsp
             sHoverBorderSize.bind("hover.border.size", &sStyle);
             sGap.bind("gap", &sStyle);
             sHoverGap.bind("hover.gap", &sStyle);
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
+
             sColor.bind("color", &sStyle);
             sHoverColor.bind("hover.color", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
@@ -225,31 +232,11 @@ namespace lsp
             sVValue.property_changed(prop);
             sZValue.property_changed(prop);
 
-            if (sOrigin.is(prop))
+            if (prop->one_of(sOrigin, sHAxis, sVAxis, sSize, sHoverSize))
                 query_draw();
-            if (sHAxis.is(prop))
+            if (prop->one_of(sBorderSize, sHoverBorderSize, sGap, sHoverGap))
                 query_draw();
-            if (sVAxis.is(prop))
-                query_draw();
-            if (sSize.is(prop))
-                query_draw();
-            if (sHoverSize.is(prop))
-                query_draw();
-            if (sBorderSize.is(prop))
-                query_draw();
-            if (sHoverBorderSize.is(prop))
-                query_draw();
-            if (sGap.is(prop))
-                query_draw();
-            if (sHoverGap.is(prop))
-                query_draw();
-            if (sColor.is(prop))
-                query_draw();
-            if (sHoverColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sHoverBorderColor.is(prop))
+            if (prop->one_of(sColor, sHoverColor, sBorderColor, sHoverBorderColor))
                 query_draw();
         }
 
@@ -579,8 +566,19 @@ namespace lsp
                 return STATUS_OK;
 
             float step      = sZValue.sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
-            float delta     = (e->nCode == ws::MCD_DOWN) ? -step : step;
+            if (sInvertMouseVScroll.get())
+                step            = -step;
 
+            // Compute the delta value
+            float delta     = 0.0f;
+            if (e->nCode == ws::MCD_UP)
+                delta   = step;
+            else if (e->nCode == ws::MCD_DOWN)
+                delta   = -step;
+            else
+                return STATUS_OK;
+
+            // Commit the value
             float old       = sZValue.sValue.get();
             sZValue.sValue.add(delta);
             if (old != sZValue.sValue.get())

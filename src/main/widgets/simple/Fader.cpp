@@ -53,6 +53,7 @@ namespace lsp
                 sBalance.bind("balance", this);
                 sScaleBrightness.bind("scale.brightness", this);
                 sBalanceColorCustom.bind("balance.color.custom", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
                 // Configure
                 sBtnColor.set("#cccccc");
                 sBtnBorderColor.set("#cccccc");
@@ -76,6 +77,7 @@ namespace lsp
                 sBalance.set(0.0f);
                 sScaleBrightness.set(0.75f);
                 sBalanceColorCustom.set(false);
+                sInvertMouseVScroll.set(false);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Fader, "Fader", "root");
         }
@@ -105,7 +107,8 @@ namespace lsp
             sBtnPointer(&sProperties),
             sBalance(&sProperties),
             sScaleBrightness(&sProperties),
-            sBalanceColorCustom(&sProperties)
+            sBalanceColorCustom(&sProperties),
+            sInvertMouseVScroll(&sProperties)
         {
             nLastV          = 0;
             nButtons        = 0;
@@ -160,6 +163,7 @@ namespace lsp
             sBalance.bind("balance", &sStyle);
             sScaleBrightness.bind("scale.brightness", &sStyle);
             sBalanceColorCustom.bind("balance.color.custom", &sStyle);
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -500,10 +504,19 @@ namespace lsp
             float step = (e->nState & ws::MCF_SHIFT)   ? sStep.step_decel() :
                          (e->nState & ws::MCF_CONTROL) ? sStep.step_accel() :
                          sStep.step();
-
             if (((angle & 3) == 0) || ((angle & 3) == 3))
-                step            = - step;
-            float delta     = (e->nCode == ws::MCD_UP) ? step : -step;
+                step            = -step;
+            if (sInvertMouseVScroll.get())
+                step            = -step;
+
+            // Update value
+            float delta = 0.0;
+            if (e->nCode == ws::MCD_UP)
+                delta   = step;
+            else if (e->nCode == ws::MCD_DOWN)
+                delta   = -step;
+            else
+                return STATUS_OK;
 
             update_value(sValue.get() + delta);
 

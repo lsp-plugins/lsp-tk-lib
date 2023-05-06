@@ -44,6 +44,9 @@ namespace lsp
                 sBorderSize.bind("border.size", this);
                 sBorderGap.bind("border.gap", this);
                 sSliderBorderSize.bind("slider.border.size", this);
+                sInvertMouseHScroll.bind("mouse.hscroll.invert", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
+
                 sButtonColor.bind("button.color", this);
                 sButtonActiveColor.bind("button.active.color", this);
                 sIncColor.bind("inc.color", this);
@@ -70,6 +73,9 @@ namespace lsp
                 sBorderSize.set(1);
                 sBorderGap.set(1);
                 sSliderBorderSize.set(1);
+                sInvertMouseHScroll.set(false);
+                sInvertMouseVScroll.set(false);
+
                 sButtonColor.set("#cccccc");
                 sButtonActiveColor.set("#ffffff");
                 sIncColor.set("#888888");
@@ -103,6 +109,8 @@ namespace lsp
             sBorderSize(&sProperties),
             sBorderGap(&sProperties),
             sSliderBorderSize(&sProperties),
+            sInvertMouseHScroll(&sProperties),
+            sInvertMouseVScroll(&sProperties),
             sButtonColor(&sProperties),
             sButtonActiveColor(&sProperties),
             sIncColor(&sProperties),
@@ -182,6 +190,9 @@ namespace lsp
             sBorderSize.bind("border.size", &sStyle);
             sBorderGap.bind("border.gap", &sStyle);
             sSliderBorderSize.bind("slider.border.size", &sStyle);
+            sInvertMouseHScroll.bind("mouse.hscroll.invert", &sStyle);
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
+
             sButtonColor.bind("button.color", &sStyle);
             sButtonActiveColor.bind("button.active.color", &sStyle);
             sIncColor.bind("inc.color", &sStyle);
@@ -817,9 +828,28 @@ namespace lsp
             if (nXFlags & F_ALL_ACTIVITY_MASK)
                 return STATUS_OK;
 
+            // Estimate the step
             float step      = sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
-            float delta     = (e->nCode == ws::MCD_UP) ? -step : step;
+            float delta     = 0.0f;
+            switch (e->nCode)
+            {
+                case ws::MCD_UP:
+                case ws::MCD_DOWN:
+                    if (sInvertMouseVScroll.get())
+                        step    = -step;
+                    delta     = (e->nCode == ws::MCD_UP) ? -step : step;
+                    break;
+                case ws::MCD_LEFT:
+                case ws::MCD_RIGHT:
+                    if (sInvertMouseHScroll.get())
+                        step    = -step;
+                    delta     = (e->nCode == ws::MCD_LEFT) ? -step : step;
+                    break;
+                default:
+                    return STATUS_OK;
+            }
 
+            // Apply changes
             float old       = sValue.get();
             sValue.add(delta);
             if (old != sValue.get())
