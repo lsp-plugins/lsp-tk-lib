@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.10 ===
-
+* Removed Makefile.d. Dependencies are now automatically generated at the build stage.
 
 === 1.0.9 ===
 * Updated module versions in dependencies.
