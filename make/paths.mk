@@ -31,9 +31,18 @@ CONFIG                     := $(BASEDIR)/.config.mk
 # Installation prefix
 ifndef PREFIX
   ifeq ($(PLATFORM),Windows)
-    PREFIX                   := $(ProgramFiles)
+    PREFIX                     := $(BASEDIR)/INSTALL
   else
-    PREFIX                   := /usr/local
+    PREFIX                     := /usr/local
+  endif
+endif
+
+# Path to configuration
+ifndef ETCDIR
+  ifeq ($(PLATFORM),Windows)
+    ETCDIR                     := $(BASEDIR)/etc
+  else
+    ETCDIR                     := /etc
   endif
 endif
 
