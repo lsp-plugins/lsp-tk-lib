@@ -30,7 +30,7 @@ endif
 # Path to configuration
 ifndef ETCDIR
   ifeq ($(PLATFORM),Windows)
-    ETCDIR                     := $(BASEDIR)/etc
+    ETCDIR                     := $(PREFIX)/etc
   else
     ETCDIR                     := /etc
   endif
