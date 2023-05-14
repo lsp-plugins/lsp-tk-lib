@@ -18,16 +18,6 @@
 # along with lsp-tk-lib.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-LIBDIR                     := $(PREFIX)/lib
-BINDIR                     := $(PREFIX)/bin
-SHAREDDIR                  := $(PREFIX)/share
-INCDIR                     := $(PREFIX)/include
-BUILDDIR                   := $(BASEDIR)/.build
-TARGET_BUILDDIR            := $(BUILDDIR)/target
-HOST_BUILDDIR              := $(BUILDDIR)/host
-MODULES                    := $(BASEDIR)/modules
-CONFIG                     := $(BASEDIR)/.config.mk
-
 # Installation prefix
 ifndef PREFIX
   ifeq ($(PLATFORM),Windows)
@@ -45,6 +35,16 @@ ifndef ETCDIR
     ETCDIR                     := /etc
   endif
 endif
+
+LIBDIR                     := $(PREFIX)/lib
+BINDIR                     := $(PREFIX)/bin
+SHAREDDIR                  := $(PREFIX)/share
+INCDIR                     := $(PREFIX)/include
+BUILDDIR                   := $(BASEDIR)/.build
+TARGET_BUILDDIR            := $(BUILDDIR)/target
+HOST_BUILDDIR              := $(BUILDDIR)/host
+MODULES                    := $(BASEDIR)/modules
+CONFIG                     := $(BASEDIR)/.config.mk
 
 # Library prefix
 ifndef LIBDIR
