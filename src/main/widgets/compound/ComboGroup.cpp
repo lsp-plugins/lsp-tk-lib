@@ -48,6 +48,7 @@ namespace lsp
                 sLayout.bind("layout", this);
                 sSizeConstraints.bind("size.constraints", this);
                 sHeading.bind("heading", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
                 // Configure
                 sFont.set_size(12.0f);
                 sTextAdjust.set(TA_NONE);
@@ -65,6 +66,7 @@ namespace lsp
                 sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
                 sSizeConstraints.set_all(-1);
                 sHeading.set(-1.0f, 0.0f);
+                sInvertMouseVScroll.set(false);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ComboGroup, "ComboGroup", "root");
 
@@ -161,6 +163,7 @@ namespace lsp
             sLayout(&sProperties),
             sSizeConstraints(&sProperties),
             sHeading(&sProperties),
+            sInvertMouseVScroll(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -787,16 +790,18 @@ namespace lsp
 
         status_t ComboGroup::on_mouse_scroll(const ws::event_t *e)
         {
+            ssize_t step = (sInvertMouseVScroll.get()) ? 1 : -1;
+
             if (Position::inside(&sLabel, e->nLeft, e->nTop))
             {
                 if (e->nCode == ws::MCD_UP)
                 {
-                    if (scroll_item(-1, 1))
+                    if (scroll_item(step, 1))
                         sSlots.execute(SLOT_SUBMIT, this, NULL);
                 }
                 else if (e->nCode == ws::MCD_DOWN)
                 {
-                    if (scroll_item(1, 1))
+                    if (scroll_item(-step, 1))
                         sSlots.execute(SLOT_SUBMIT, this, NULL);
                 }
             }

@@ -19,8 +19,9 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/dsp/dsp.h>
+#include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/ws/ws.h>
 
 namespace lsp
 {
@@ -30,6 +31,7 @@ namespace lsp
         {
             // Initialize DSP library used by some components
             dsp::init();
+            ws::init();
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */

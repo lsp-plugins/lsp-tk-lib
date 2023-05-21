@@ -53,6 +53,7 @@ namespace lsp
                 sScaleBrightness.bind("scale.brightness", this);
                 sBalanceTipSize.bind("balance.tip.size", this);
                 sBalanceTipColorCustom.bind("balance.tip.color.custom", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
                 // Configure
                 sColor.set("#cccccc");
                 sScaleColor.set("#00cc00");
@@ -75,6 +76,7 @@ namespace lsp
                 sScaleBrightness.set(0.75f);
                 sBalanceTipSize.set(0);
                 sBalanceTipColorCustom.set(false);
+                sInvertMouseVScroll.set(false);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Knob, "Knob", "root");
         }
@@ -103,7 +105,8 @@ namespace lsp
             sGapSize(&sProperties),
             sScaleBrightness(&sProperties),
             sBalanceTipSize(&sProperties),
-            sBalanceTipColorCustom(&sProperties)
+            sBalanceTipColorCustom(&sProperties),
+            sInvertMouseVScroll(&sProperties)
         {
             nLastY      = -1;
             nState      = 0;
@@ -143,6 +146,7 @@ namespace lsp
             sScaleBrightness.bind("scale.brightness", &sStyle);
             sBalanceTipSize.bind("balance.tip.size", &sStyle);
             sBalanceTipColorCustom.bind("balance.tip.color.custom", &sStyle);
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
 
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id >= 0) id = sSlots.add(SLOT_BEGIN_EDIT, slot_begin_edit, self());
@@ -371,6 +375,8 @@ namespace lsp
         {
 //            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
             float step = sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
+            if (sInvertMouseVScroll.get())
+                step            = -step;
 
             // Update value
             float delta = 0.0;

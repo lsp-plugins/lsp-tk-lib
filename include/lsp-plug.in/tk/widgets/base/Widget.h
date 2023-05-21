@@ -36,18 +36,18 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(Widget, Style)
-                prop::Allocation    sAllocation;        // Widget allocation
-                prop::Float         sScaling;           // UI scaling factor
-                prop::Float         sFontScaling;       // UI font scaling factor
-                prop::Float         sBrightness;        // Brightness
-                prop::Float         sBgBrightness;      // Brightness for background
-                prop::Padding       sPadding;           // Widget padding
-                prop::Color         sBgColor;           // Color of the background of the widget
-                prop::Boolean       sBgInherit;         // Inhert background color from parent container
-                prop::Boolean       sVisibility;        // Visibility
-                prop::Pointer       sPointer;           // Mouse pointer
-                prop::Integer       sTag;               // Some tag associated with widget
-                prop::DrawMode      sDrawMode;          // Drawing mode
+                prop::Allocation    sAllocation;            // Widget allocation
+                prop::Float         sScaling;               // UI scaling factor
+                prop::Float         sFontScaling;           // UI font scaling factor
+                prop::Float         sBrightness;            // Brightness
+                prop::Float         sBgBrightness;          // Brightness for background
+                prop::Padding       sPadding;               // Widget padding
+                prop::Color         sBgColor;               // Color of the background of the widget
+                prop::Boolean       sBgInherit;             // Inhert background color from parent container
+                prop::Boolean       sVisibility;            // Visibility
+                prop::Pointer       sPointer;               // Mouse pointer
+                prop::Integer       sTag;                   // Some tag associated with widget
+                prop::DrawMode      sDrawMode;              // Drawing mode
             LSP_TK_STYLE_DEF_END
         }
 
@@ -87,32 +87,32 @@ namespace lsp
                 };
 
             protected:
-                size_t              nFlags;             // Flags
-                const w_class_t    *pClass;             // Widget class descriptor
-                Display            *pDisplay;           // Pointer to display
-                Widget             *pParent;            // Parent widget
-                ws::ISurface       *pSurface;           // Drawing surface
+                size_t              nFlags;                 // Flags
+                const w_class_t    *pClass;                 // Widget class descriptor
+                Display            *pDisplay;               // Pointer to display
+                Widget             *pParent;                // Parent widget
+                ws::ISurface       *pSurface;               // Drawing surface
 
-                ws::size_limit_t    sLimit;             // Cached pre-computed size limit
-                ws::rectangle_t     sSize;              // Real allocated geometry of widget
+                ws::size_limit_t    sLimit;                 // Cached pre-computed size limit
+                ws::rectangle_t     sSize;                  // Real allocated geometry of widget
 
-                SlotSet             sSlots;             // Slots
-                Style               sStyle;             // Style
-                PropListener        sProperties;        // Properties listener
+                SlotSet             sSlots;                 // Slots
+                Style               sStyle;                 // Style
+                PropListener        sProperties;            // Properties listener
 
-                prop::Allocation    sAllocation;        // Widget allocation
-                prop::Float         sScaling;           // UI scaling factor
-                prop::Float         sFontScaling;       // UI font scaling factor
-                prop::Float         sBrightness;        // Brightness
-                prop::Float         sBgBrightness;      // Brightness for background
-                prop::Padding       sPadding;           // Widget padding
-                prop::Color         sBgColor;           // Color of the background of the widget
-                prop::Boolean       sBgInherit;         // Inhert background color from parent container
-                prop::Boolean       sBgApplyBrightness; // Apply brightness settings to the background
-                prop::Boolean       sVisibility;        // Visibility
-                prop::Pointer       sPointer;           // Mouse pointer
-                prop::Integer       sTag;               // Some tag associated with widget
-                prop::DrawMode      sDrawMode;          // Drawing mode of widget
+                prop::Allocation    sAllocation;            // Widget allocation
+                prop::Float         sScaling;               // UI scaling factor
+                prop::Float         sFontScaling;           // UI font scaling factor
+                prop::Float         sBrightness;            // Brightness
+                prop::Float         sBgBrightness;          // Brightness for background
+                prop::Padding       sPadding;               // Widget padding
+                prop::Color         sBgColor;               // Color of the background of the widget
+                prop::Boolean       sBgInherit;             // Inhert background color from parent container
+                prop::Boolean       sBgApplyBrightness;     // Apply brightness settings to the background
+                prop::Boolean       sVisibility;            // Visibility
+                prop::Pointer       sPointer;               // Mouse pointer
+                prop::Integer       sTag;                   // Some tag associated with widget
+                prop::DrawMode      sDrawMode;              // Drawing mode of widget
 
             //---------------------------------------------------------------------------------
             // Slot handlers

@@ -51,6 +51,8 @@ namespace lsp
                 prop::Float                         sFontScaling;
                 prop::Font                          sFont;
                 prop::DrawMode                      sDrawMode;
+                prop::Boolean                       sInvertMouseHScroll;
+                prop::Boolean                       sInvertMouseVScroll;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -97,6 +99,8 @@ namespace lsp
                 prop::Float                         sFontScaling;
                 prop::Font                          sFont;
                 prop::DrawMode                      sDrawMode;
+                prop::Boolean                       sInvertMouseHScroll;
+                prop::Boolean                       sInvertMouseVScroll;
 
             protected:
                 status_t            create_builtin_style(IStyleFactory *init);
@@ -177,10 +181,12 @@ namespace lsp
                 status_t            apply(const StyleSheet *sheet, resource::ILoader *loader = NULL);
 
             public:
-                LSP_TK_PROPERTY(Float,          scaling,            &sScaling)
-                LSP_TK_PROPERTY(Float,          font_scaling,       &sFontScaling)
-                LSP_TK_PROPERTY(Font,           font,               &sFont)
-                LSP_TK_PROPERTY(DrawMode,       draw_mode,          &sDrawMode)
+                LSP_TK_PROPERTY(Float,          scaling,                &sScaling)
+                LSP_TK_PROPERTY(Float,          font_scaling,           &sFontScaling)
+                LSP_TK_PROPERTY(Font,           font,                   &sFont)
+                LSP_TK_PROPERTY(DrawMode,       draw_mode,              &sDrawMode)
+                LSP_TK_PROPERTY(Boolean,        invert_mouse_hscroll,   &sInvertMouseHScroll)
+                LSP_TK_PROPERTY(Boolean,        invert_mouse_vscroll,   &sInvertMouseVScroll)
 
             public:
                 /**

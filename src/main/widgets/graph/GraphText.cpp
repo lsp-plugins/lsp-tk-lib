@@ -109,25 +109,7 @@ namespace lsp
         {
             GraphItem::property_changed(prop);
 
-            if (sText.is(prop))
-                query_draw();
-            if (sFont.is(prop))
-                query_draw();
-            if (sColor.is(prop))
-                query_draw();
-            if (sLayout.is(prop))
-                query_draw();
-            if (sTextAdjust.is(prop))
-                query_resize();
-            if (sHValue.is(prop))
-                query_draw();
-            if (sVValue.is(prop))
-                query_draw();
-            if (sHAxis.is(prop))
-                query_draw();
-            if (sVAxis.is(prop))
-                query_draw();
-            if (sOrigin.is(prop))
+            if (prop->one_of(sText, sFont, sColor, sLayout, sTextAdjust, sHValue, sVValue, sHAxis, sVAxis, sOrigin))
                 query_draw();
         }
 
@@ -185,17 +167,18 @@ namespace lsp
             r.nLeft         = x;
             r.nTop          = y;
             r.nWidth        = tp.Width;
-            r.nHeight       = tp.Height;
+            r.nHeight       = lsp_max(tp.Height, fp.Height);
             sPadding.add(&r, scaling);
 
-            float lhalign   = (sLayout.halign() - 1.0f) * 0.5f;
-            float lvalign   = (1.0f + sLayout.valign()) * 0.5f;
-            r.nLeft        += lhalign * r.nWidth;
-            r.nTop         -= lvalign * r.nHeight;
+            r.nLeft        += (sLayout.halign() - 1.0f) * r.nWidth * 0.5f;
+            r.nTop         -= (sLayout.valign() + 1.0f) * r.nHeight * 0.5f;
 
 //            lsp::Color tmp;
 //            tmp.set_rgb24(0x880000);
-//            s->fill_rect(tmp, &r);
+//            s->fill_rect(tmp, SURFMASK_NONE, 0.0f, &r);
+//            tmp.set_rgb24(0xffff00);
+//            s->line(tmp, x-3, y-3, x+3, y+3, 1.0f);
+//            s->line(tmp, x-3, y+3, x+3, y-3, 1.0f);
 
             // Center point
             sPadding.enter(&r, scaling);
@@ -233,7 +216,7 @@ namespace lsp
                 last    = curr + 1;
             }
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

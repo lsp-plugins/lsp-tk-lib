@@ -36,12 +36,16 @@ namespace lsp
                 sFontScaling.bind("font.scaling", this);
                 sFont.bind("font", this);
                 sDrawMode.bind("draw.mode", this);
+                sInvertMouseHScroll.bind("mouse.hscroll.invert", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
                 // Configure
                 sFont.set_antialiasing(ws::FA_DEFAULT);
                 sFont.set_size(12.0f);
                 sFontScaling.set(1.0f);
                 sScaling.set(1.0f);
                 sDrawMode.set(DM_CLASSIC);
+                sInvertMouseHScroll.set(false);
+                sInvertMouseVScroll.set(false);
             LSP_TK_STYLE_IMPL_END
 
             static StyleFactory<Root> RootFactory(NULL, NULL);
@@ -62,6 +66,8 @@ namespace lsp
             sFontScaling.unbind();
             sFont.unbind();
             sDrawMode.unbind();
+            sInvertMouseHScroll.unbind();
+            sInvertMouseVScroll.unbind();
 
             // Destroy named styles
             vBuiltin.flush();
@@ -680,6 +686,8 @@ namespace lsp
             sFontScaling.bind("font.scaling", root);
             sFont.bind("font", root);
             sDrawMode.bind("draw.mode", root);
+            sInvertMouseHScroll.bind("mouse.hscroll.invert", root);
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", root);
         }
 
         status_t Schema::parse_property_value(property_value_t *v, const LSPString *text, property_type_t pt)

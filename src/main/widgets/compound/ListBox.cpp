@@ -892,14 +892,14 @@ namespace lsp
                     {
                         if (!sHBar.visibility()->get())
                             break;
-                        xe.nState &= ~ws::MCF_SHIFT; // Shift may be modifier, reset this flag
-                        sHBar.handle_event(e);
+                        xe.nState  &= ~ws::MCF_SHIFT; // Shift may be modifier, reset this flag
+                        sHBar.handle_event(&xe);
                     }
                     else
                     {
                         if (!sVBar.visibility()->get())
                             break;
-                        sVBar.handle_event(e);
+                        sVBar.handle_event(&xe);
                     }
                     break;
 
@@ -910,13 +910,13 @@ namespace lsp
                         if (!sVBar.visibility()->get())
                             break;
                         xe.nState &= ~ws::MCF_SHIFT; // Shift may be modifier, reset this flag
-                        sVBar.handle_event(e);
+                        sVBar.handle_event(&xe);
                     }
                     else
                     {
                         if (!sHBar.visibility()->get())
                             break;
-                        sHBar.handle_event(e);
+                        sHBar.handle_event(&xe);
                     }
                     break;
 
