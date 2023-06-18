@@ -33,8 +33,8 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(GraphLineSegment, GraphItem)
                 // Bind
                 sOrigin.bind("origin", this);
-                sAbscissa.bind("abscissa", this);
-                sOrdinate.bind("ordinate", this);
+                sHAxis.bind("haxis", this);
+                sVAxis.bind("vaxis", this);
                 sValue.bind("value", this);
                 sStep.bind("step", this);
                 sBegin.bind("begin", this);
@@ -54,8 +54,8 @@ namespace lsp
                 sHRBorderColor.bind("hover.border.right.color", this);
                 // Configure
                 sOrigin.set(0);
-                sAbscissa.set(0);
-                sOrdinate.set(1);
+                sHAxis.set(0);
+                sVAxis.set(1);
                 sValue.set_all(0.0f, -1.0f, 1.0f);
                 sStep.set(1.0f, 10.0f, 0.1f);
                 sBegin.set(0.0f, 0.0f);
@@ -78,16 +78,18 @@ namespace lsp
                 // Commit
                 sSmooth.override();
             LSP_TK_STYLE_IMPL_END
+
             LSP_TK_BUILTIN_STYLE(GraphLineSegment, "GraphLineSegment", "root");
-        }
+
+        } /* namespace style */
 
         const w_class_t GraphLineSegment::metadata             = { "GraphLineSegment", &GraphItem::metadata };
 
         GraphLineSegment::GraphLineSegment(Display *dpy):
             GraphItem(dpy),
             sOrigin(&sProperties),
-            sAbscissa(&sProperties),
-            sOrdinate(&sProperties),
+            sHAxis(&sProperties),
+            sVAxis(&sProperties),
             sValue(&sProperties),
             sStep(&sProperties),
             sBegin(&sProperties),
@@ -131,8 +133,8 @@ namespace lsp
 
             // Init style
             sOrigin.bind("origin", &sStyle);
-            sAbscissa.bind("basis", &sStyle);
-            sOrdinate.bind("parallel", &sStyle);
+            sHAxis.bind("haxis", &sStyle);
+            sVAxis.bind("vaxis", &sStyle);
             sValue.bind("value", &sStyle);
             sStep.bind("step", &sStyle);
             sBegin.bind("begin", &sStyle);
@@ -166,7 +168,7 @@ namespace lsp
         {
             GraphItem::property_changed(prop);
 
-            if (prop->one_of(sOrigin, sAbscissa, sOrdinate, sValue, sBegin, sEnd))
+            if (prop->one_of(sOrigin, sHAxis, sVAxis, sValue, sBegin, sEnd))
                 query_draw();
             if (sStep.is(prop))
                 {/* nothing */}
@@ -208,10 +210,10 @@ namespace lsp
             color.scale_lch_luminance(brightness);
 
             // Get axes
-            GraphAxis *abscissa = cv->axis(sAbscissa.get());
+            GraphAxis *abscissa = cv->axis(sHAxis.get());
             if (abscissa == NULL)
                 return;
-            GraphAxis *ordinate = cv->axis(sOrdinate.get());
+            GraphAxis *ordinate = cv->axis(sVAxis.get());
             if (ordinate == NULL)
                 return;
 
@@ -345,10 +347,10 @@ namespace lsp
                 return false;
 
             // Get axes
-            GraphAxis *abscissa = cv->axis(sAbscissa.get());
+            GraphAxis *abscissa = cv->axis(sHAxis.get());
             if (abscissa == NULL)
                 return false;
-            GraphAxis *ordinate = cv->axis(sOrdinate.get());
+            GraphAxis *ordinate = cv->axis(sVAxis.get());
             if (ordinate == NULL)
                 return false;
 

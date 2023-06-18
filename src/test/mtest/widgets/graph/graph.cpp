@@ -649,8 +649,8 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 MTEST_ASSERT(widgets.push(gls));
                 MTEST_ASSERT(gr->add(gls) == STATUS_OK);
 
-                gls->abscissa()->set(0);
-                gls->ordinate()->set(1);
+                gls->haxis()->set(0);
+                gls->vaxis()->set(1);
                 gls->begin()->set(segment_x[0], segment_y[0]);
                 gls->end()->set(segment_x[1], segment_y[1]);
                 gls->editable()->set(true);

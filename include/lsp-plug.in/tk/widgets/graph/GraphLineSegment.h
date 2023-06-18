@@ -35,8 +35,8 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(GraphLineSegment, GraphItem)
                 prop::Integer               sOrigin;        // Origin
-                prop::Integer               sAbscissa;      // Index of abscissa axis
-                prop::Integer               sOrdinate;      // Index of ordinate axis
+                prop::Integer               sHAxis;         // Horizontal axis
+                prop::Integer               sVAxis;         // Vertical axis
                 prop::RangeFloat            sValue;         // Actual value
                 prop::StepFloat             sStep;          // Stepping value
                 prop::Point2D               sBegin;         // Begin point
@@ -76,8 +76,8 @@ namespace lsp
 
             protected:
                 prop::Integer               sOrigin;        // Origin
-                prop::Integer               sAbscissa;      // Index of abscissa axis
-                prop::Integer               sOrdinate;      // Index of ordinate axis
+                prop::Integer               sHAxis;         // Horizontal axis
+                prop::Integer               sVAxis;         // Vertical axis
                 prop::RangeFloat            sValue;         // Actual value
                 prop::StepFloat             sStep;          // Stepping value
                 prop::Point2D               sBegin;         // Begin point
@@ -120,8 +120,8 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(Integer,            origin,                 &sOrigin);
-                LSP_TK_PROPERTY(Integer,            abscissa,               &sAbscissa);
-                LSP_TK_PROPERTY(Integer,            ordinate,               &sOrdinate);
+                LSP_TK_PROPERTY(Integer,            haxis,                  &sHAxis);
+                LSP_TK_PROPERTY(Integer,            vaxis,                  &sVAxis);
                 LSP_TK_PROPERTY(RangeFloat,         value,                  &sValue);
                 LSP_TK_PROPERTY(StepFloat,          step,                   &sStep);
                 LSP_TK_PROPERTY(Point2D,            begin,                  &sBegin);
