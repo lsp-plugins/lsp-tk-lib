@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.12 ===
+* Implemented graph line segment widget.
 * Updated build scripts.
 
 === 1.0.11 ===
