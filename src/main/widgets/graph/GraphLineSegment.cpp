@@ -371,16 +371,11 @@ namespace lsp
                 float(my - cv->canvas_atop())
             };
 
-            lsp_trace("mp x=%f, y=%f", mp.x, mp.y);
-
             // Check whether the mouse pointer is inside of the line segment
             // We can operate only on the non-zero length of the line segment
             vec2f_t dir;
             if (!normalized_vec2f(dir, x[0], y[0], x[1], y[1]))
-            {
-                lsp_trace("failed normalized_vec2f");
                 return false;
-            }
 
             // Compute the half-width with scaling applied, minimum 3 pixels width, otherwise we won't catch up the widget
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -399,17 +394,11 @@ namespace lsp
 
             // If we're inside of at least of one of triangles, then all is OK
             if (tk::inside(p[0], p[1], p[2], mp))
-            {
-                lsp_trace("inside1 OK");
                 return true;
-            }
 
             p[3]            = shift2f(p1, perp, -hw);
             if (tk::inside(p[0], p[2], p[3], mp))
-            {
-                lsp_trace("inside2 OK");
                 return true;
-            }
 
             return false;
         }
