@@ -54,6 +54,7 @@ The full list of provided widgets:
   * GraphAxis - axis on a graph widget.
   * GraphDot - dot on a graph widget.
   * GraphFrameBuffer - frame buffer for drawing on the graph widget.
+  * GraphLineSegment - grap line segment defined by two points.
   * GraphMarker - marker on the graph widget.
   * GraphMesh - widget for drawing meshes on the graph widget.
   * GraphOrigin - widget for defining origins within the graph widget.

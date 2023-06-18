@@ -28,6 +28,27 @@ namespace lsp
 {
     namespace tk
     {
+        static const char *prop_editable[] =
+        {
+            "hvalue.editable",
+            "vvalue.editable",
+            "zvalue.editable"
+        };
+
+        static const char *prop_value[] =
+        {
+            "hvalue.value",
+            "vvalue.value",
+            "zvalue.value"
+        };
+
+        static const char *prop_step[] =
+        {
+            "hvalue.step",
+            "vvalue.step",
+            "zvalue.step"
+        };
+
         namespace style
         {
             LSP_TK_STYLE_IMPL_BEGIN(GraphLineSegment, GraphItem)
@@ -35,44 +56,58 @@ namespace lsp
                 sOrigin.bind("origin", this);
                 sHAxis.bind("haxis", this);
                 sVAxis.bind("vaxis", this);
-                sValue.bind("value", this);
-                sStep.bind("step", this);
                 sBegin.bind("begin", this);
                 sEnd.bind("end", this);
                 sWidth.bind("width", this);
                 sHWidth.bind("hover.width", this);
-                sEditable.bind("editable", this);
                 sLBorder.bind("border.left.size", this);
                 sRBorder.bind("border.right.size", this);
                 sHLBorder.bind("hover.border.left.size", this);
                 sHRBorder.bind("hover.border.right.size", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
+
                 sColor.bind("color", this);
                 sHColor.bind("hover.color", this);
                 sLBorderColor.bind("border.left.color", this);
                 sRBorderColor.bind("border.right.color", this);
                 sHLBorderColor.bind("hover.border.left.color", this);
                 sHRBorderColor.bind("hover.border.right.color", this);
+
+                for (size_t i=0; i<3; ++i)
+                {
+                    sEditable[i].bind(prop_editable[i], this);
+                    sValue[i].bind(prop_value[i], this);
+                    sStep[i].bind(prop_step[i], this);
+                }
+
                 // Configure
                 sOrigin.set(0);
                 sHAxis.set(0);
                 sVAxis.set(1);
-                sValue.set_all(0.0f, -1.0f, 1.0f);
-                sStep.set(1.0f, 10.0f, 0.1f);
                 sBegin.set(0.0f, 0.0f);
                 sEnd.set(1.0f, 0.0f);
                 sWidth.set(1);
                 sHWidth.set(3);
-                sEditable.set(false);
                 sLBorder.set(0);
                 sRBorder.set(0);
                 sHLBorder.set(0);
                 sHRBorder.set(0);
+                sInvertMouseVScroll.set(false);
+
                 sColor.set("#ffffff");
                 sHColor.set("#ffffff");
                 sLBorderColor.set("#ffffff");
                 sRBorderColor.set("#ffffff");
                 sHLBorderColor.set("#ffffff");
                 sHRBorderColor.set("#ffffff");
+
+                for (size_t i=0; i<3; ++i)
+                {
+                    sEditable[i].set(false);
+                    sValue[i].set_all(0.0f, -1.0f, 1.0f);
+                    sStep[i].set(1.0f, 10.0f, 0.1f);
+                }
+
                 // Override
                 sSmooth.set(false);
                 // Commit
@@ -85,22 +120,62 @@ namespace lsp
 
         const w_class_t GraphLineSegment::metadata             = { "GraphLineSegment", &GraphItem::metadata };
 
+        GraphLineSegment::param_t::param_t(GraphLineSegment *segment, prop::Listener *lst):
+            sEditable(lst),
+            sValue(lst),
+            sStep(lst)
+        {
+            pSegment    = segment;
+        }
+
+        void GraphLineSegment::param_t::property_changed(Property *prop)
+        {
+            if (sEditable.is(prop))
+            {
+                bool editable =
+                    (pSegment->sHValue.sEditable.get()) ||
+                    (pSegment->sVValue.sEditable.get()) ||
+                    (pSegment->sZValue.sEditable.get());
+
+                pSegment->nXFlags = lsp_setflag(pSegment->nXFlags, F_EDITABLE, editable);
+                pSegment->query_draw();
+            }
+            if (sValue.is(prop))
+                pSegment->query_draw();
+            if (sStep.is(prop))
+                { /* Nothing */ }
+        }
+
+        void GraphLineSegment::param_t::init(const char *prefix)
+        {
+            Style *style  = pSegment->style();
+
+            LSPString id;
+            id.fmt_ascii("%s.editable", prefix);
+            sEditable.bind(&id, style);
+            id.fmt_ascii("%s.value", prefix);
+            sValue.bind(&id, style);
+            id.fmt_ascii("%s.step", prefix);
+            sStep.bind(&id, style);
+        }
+
+
         GraphLineSegment::GraphLineSegment(Display *dpy):
             GraphItem(dpy),
+            sHValue(this, &sProperties),
+            sVValue(this, &sProperties),
+            sZValue(this, &sProperties),
             sOrigin(&sProperties),
             sHAxis(&sProperties),
             sVAxis(&sProperties),
-            sValue(&sProperties),
-            sStep(&sProperties),
             sBegin(&sProperties),
-            sEnd(&sProperties),
             sWidth(&sProperties),
             sHWidth(&sProperties),
-            sEditable(&sProperties),
             sLBorder(&sProperties),
             sRBorder(&sProperties),
             sHLBorder(&sProperties),
             sHRBorder(&sProperties),
+            sInvertMouseVScroll(&sProperties),
             sColor(&sProperties),
             sHColor(&sProperties),
             sLBorderColor(&sProperties),
@@ -112,7 +187,8 @@ namespace lsp
             nMBState            = 0;
             nMouseX             = 0;
             nMouseY             = 0;
-            fLastValue          = 0.0f;
+            fLastX              = 0.0f;
+            fLastY              = 0.0f;
 
             pClass              = &metadata;
         }
@@ -128,24 +204,24 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            // Disable automatic limitation of value
-            sValue.set_auto_limit(false);
+            // Init values
+            sHValue.init("hvalue");
+            sVValue.init("vvalue");
+            sZValue.init("zvalue");
 
             // Init style
             sOrigin.bind("origin", &sStyle);
             sHAxis.bind("haxis", &sStyle);
             sVAxis.bind("vaxis", &sStyle);
-            sValue.bind("value", &sStyle);
-            sStep.bind("step", &sStyle);
             sBegin.bind("begin", &sStyle);
-            sEnd.bind("end", &sStyle);
             sWidth.bind("width", &sStyle);
             sHWidth.bind("hover.width", &sStyle);
-            sEditable.bind("editable", &sStyle);
             sLBorder.bind("border.left.size", &sStyle);
             sRBorder.bind("border.right.size", &sStyle);
             sHLBorder.bind("hover.border.left.size", &sStyle);
             sHRBorder.bind("hover.border.right.size", &sStyle);
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
+
             sColor.bind("color", &sStyle);
             sHColor.bind("hover.color", &sStyle);
             sLBorderColor.bind("border.left.color", &sStyle);
@@ -167,14 +243,13 @@ namespace lsp
         void GraphLineSegment::property_changed(Property *prop)
         {
             GraphItem::property_changed(prop);
+            sHValue.property_changed(prop);
+            sVValue.property_changed(prop);
+            sZValue.property_changed(prop);
 
-            if (prop->one_of(sOrigin, sHAxis, sVAxis, sValue, sBegin, sEnd))
+            if (prop->one_of(sOrigin, sHAxis, sVAxis, sBegin))
                 query_draw();
-            if (sStep.is(prop))
-                {/* nothing */}
             if (prop->one_of(sWidth, sHWidth, sLBorder, sRBorder, sHLBorder, sHRBorder))
-                query_draw();
-            if (sEditable.is(prop))
                 query_draw();
             if (prop->one_of(sColor, sHColor, sLBorderColor, sRBorderColor, sHLBorderColor, sHRBorderColor))
                 query_draw();
@@ -220,8 +295,8 @@ namespace lsp
             // Compute point coordinates
             float x[2]  = { 0.0f, 0.0f };
             float y[2]  = { 0.0f, 0.0f };
-            float dx[2] = { sBegin.x(), sEnd.x() };
-            float dy[2] = { sBegin.y(), sEnd.y() };
+            float dx[2] = { sBegin.x(), sHValue.sValue.get() };
+            float dy[2] = { sBegin.y(), sVValue.sValue.get() };
             cv->origin(sOrigin.get(), &x[0], &y[0]);
             x[1]    = x[0];
             y[1]    = y[0];
@@ -338,7 +413,7 @@ namespace lsp
 
         bool GraphLineSegment::inside(ssize_t mx, ssize_t my)
         {
-            if (!sEditable.get())
+            if (!(nXFlags & F_EDITABLE))
                 return false;
 
             // Get graph
@@ -357,8 +432,8 @@ namespace lsp
             // Compute point coordinates
             float x[2]  = { 0.0f, 0.0f };
             float y[2]  = { 0.0f, 0.0f };
-            float dx[2] = { sBegin.x(), sEnd.x() };
-            float dy[2] = { sBegin.y(), sEnd.y() };
+            float dx[2] = { sBegin.x(), sHValue.sValue.get() };
+            float dy[2] = { sBegin.y(), sVValue.sValue.get() };
             cv->origin(sOrigin.get(), &x[0], &y[0]);
             x[1]    = x[0];
             y[1]    = y[0];
@@ -407,7 +482,7 @@ namespace lsp
 
         status_t GraphLineSegment::on_mouse_in(const ws::event_t *e)
         {
-            if (!sEditable.get())
+            if (!(nXFlags & F_EDITABLE))
                 return STATUS_OK;
 
             nXFlags |= F_HIGHLIGHT;
@@ -418,7 +493,7 @@ namespace lsp
 
         status_t GraphLineSegment::on_mouse_out(const ws::event_t *e)
         {
-            if (!sEditable.get())
+            if (!(nXFlags & F_EDITABLE))
                 return STATUS_OK;
 
             nXFlags &= ~F_HIGHLIGHT;
@@ -436,7 +511,8 @@ namespace lsp
             {
                 nMouseX     = e->nLeft;
                 nMouseY     = e->nTop;
-                fLastValue  = sValue.get();
+                fLastX      = sHValue.sValue.get();
+                fLastY      = sVValue.sValue.get();
                 nXFlags    |= F_EDITING;
 
                 if (e->nCode == ws::MCB_RIGHT)
@@ -482,54 +558,107 @@ namespace lsp
             if (cv == NULL)
                 return;
 
-            // Ignore canvas coordinates
-
             // Get axises
-//            GraphAxis *basis    = cv->axis(sBasis.get());
-//            if (basis == NULL)
-//                return;
-//            GraphAxis *parallel = cv->axis(sParallel.get());
-//            if (parallel == NULL)
-//                return;
-//
-//            // Check that mouse button state matches
-//            size_t bflag    = (nXFlags & F_FINE_TUNE) ? ws::MCF_RIGHT : ws::MCF_LEFT;
-//            if (nMBState != bflag)
-//            {
-//                x       = nMouseX;
-//                y       = nMouseY;
-//            }
-//
-//            // Update the difference relative to the sensitivity
-////            lsp_trace("xy=(%d, %d), mxy=(%d, %d)",
-////                    int(x), int(y), int(nMouseX), int(nMouseY));
-//
-//            float step = (nXFlags & F_FINE_TUNE) ?
-//                sStep.get(flags & ws::MCF_CONTROL, !(flags & ws::MCF_SHIFT)) :
-//                sStep.get(flags & ws::MCF_CONTROL, flags & ws::MCF_SHIFT);
-//
-//            float dx = x - nMouseX, dy = y - nMouseY;
-//            float rx = nMouseX - cv->canvas_aleft() + step * dx;
-//            float ry = nMouseY - cv->canvas_atop() + step * dy;
-//
-////            lsp_trace("rxy=(%f, %f)", rx, ry);
-//
-//            // Modify the value according to X coordinate
-//            float old       = sValue.get();
-//            float nvalue    = fLastValue;
-//            if ((nMouseX == x) && (nMouseY == y))
-//                nvalue          = fLastValue;
-//            else if (basis != NULL)
-//                nvalue          = basis->project(rx, ry);
-//            nvalue          = sValue.limit(nvalue);
-//
-//            // Query widget for redraw
-//            if (nvalue != old)
-//            {
-//                sValue.set(nvalue);
-//                sSlots.execute(SLOT_CHANGE, this);
-//            }
-//            query_draw();
+            GraphAxis *xaxis    = cv->axis(sHAxis.get());
+            GraphAxis *yaxis    = cv->axis(sVAxis.get());
+
+            // Check that mouse button state matches
+            size_t bflag    = (nXFlags & F_FINE_TUNE) ? ws::MCF_RIGHT : ws::MCF_LEFT;
+            if (nMBState != bflag)
+            {
+                x       = nMouseX;
+                y       = nMouseY;
+            }
+
+            // Update the difference relative to the sensitivity
+//            lsp_trace("xy=(%d, %d), mxy=(%d, %d)",
+//                    int(x), int(y), int(nMouseX), int(nMouseY));
+
+            float dx = x - nMouseX, dy = y - nMouseY;
+            bool modified = false;
+
+            // Update HValue
+            if (sHValue.sEditable.get())
+            {
+                float step = (nXFlags & F_FINE_TUNE) ?
+                    sHValue.sStep.get(flags & ws::MCF_CONTROL, !(flags & ws::MCF_SHIFT)) :
+                    sHValue.sStep.get(flags & ws::MCF_CONTROL, flags & ws::MCF_SHIFT);
+
+                float rx = nMouseX - cv->canvas_aleft() + step * dx;
+                float ry = nMouseY - cv->canvas_atop()  + step * dy;
+
+                float old       = sHValue.sValue.get();
+                float nvalue    = fLastX;
+                if ((nMouseX == x) && (nMouseY == y))
+                    nvalue          = fLastX;
+                else if (xaxis != NULL)
+                    nvalue          = xaxis->project(rx, ry);
+                nvalue          = sHValue.sValue.limit(nvalue);
+
+                if (nvalue != old)
+                {
+                    sHValue.sValue.set(nvalue);
+                    modified        = true;
+                }
+            }
+
+            // Update VValue
+            if (sVValue.sEditable.get())
+            {
+                float step = (nXFlags & F_FINE_TUNE) ?
+                    sVValue.sStep.get(flags & ws::MCF_CONTROL, !(flags & ws::MCF_SHIFT)) :
+                    sVValue.sStep.get(flags & ws::MCF_CONTROL, flags & ws::MCF_SHIFT);
+
+                float rx = nMouseX - cv->canvas_aleft() + step * dx;
+                float ry = nMouseY - cv->canvas_atop()  + step * dy;
+
+                float old       = sVValue.sValue.get();
+                float nvalue    = fLastY;
+                if ((nMouseX == x) && (nMouseY == y))
+                    nvalue          = fLastY;
+                else if (yaxis != NULL)
+                    nvalue          = yaxis->project(rx, ry);
+                nvalue          = sVValue.sValue.limit(nvalue);
+
+                if (nvalue != old)
+                {
+                    sVValue.sValue.set(nvalue);
+                    modified        = true;
+                }
+            }
+
+            // Notify
+            if (modified)
+                sSlots.execute(SLOT_CHANGE, this);
+        }
+
+        status_t GraphLineSegment::on_mouse_scroll(const ws::event_t *e)
+        {
+            if (!(nXFlags & F_EDITABLE))
+                return STATUS_OK;
+            if (!sZValue.sEditable.get())
+                return STATUS_OK;
+
+            float step      = sZValue.sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
+            if (sInvertMouseVScroll.get())
+                step            = -step;
+
+            // Compute the delta value
+            float delta     = 0.0f;
+            if (e->nCode == ws::MCD_UP)
+                delta   = step;
+            else if (e->nCode == ws::MCD_DOWN)
+                delta   = -step;
+            else
+                return STATUS_OK;
+
+            // Commit the value
+            float old       = sZValue.sValue.get();
+            sZValue.sValue.add(delta);
+            if (old != sZValue.sValue.get())
+                sSlots.execute(SLOT_CHANGE, this);
+
+            return STATUS_OK;
         }
 
         status_t GraphLineSegment::slot_on_change(Widget *sender, void *ptr, void *data)

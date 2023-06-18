@@ -649,11 +649,20 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 MTEST_ASSERT(widgets.push(gls));
                 MTEST_ASSERT(gr->add(gls) == STATUS_OK);
 
-                gls->haxis()->set(0);
-                gls->vaxis()->set(1);
                 gls->begin()->set(segment_x[0], segment_y[0]);
-                gls->end()->set(segment_x[1], segment_y[1]);
-                gls->editable()->set(true);
+
+                gls->hvalue()->set_min(10.0f);
+                gls->hvalue()->set_max(24000.0f);
+                gls->hvalue()->set(segment_x[1]);
+                gls->heditable()->set(true);
+                gls->haxis()->set(0);
+
+                gls->vvalue()->set_min(0.0f);
+                gls->vvalue()->set_max(120.0f);
+                gls->vvalue()->set(segment_y[1]);
+                gls->veditable()->set(true);
+                gls->vaxis()->set(1);
+
                 gls->smooth()->set(true);
                 gls->pointer()->set(ws::MP_VSIZE);
 
