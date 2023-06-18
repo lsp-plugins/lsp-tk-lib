@@ -38,7 +38,6 @@ namespace lsp
                 prop::Integer               sHAxis;                 // Horizontal axis
                 prop::Integer               sVAxis;                 // Vertical axis
                 prop::Point2D               sBegin;                 // Begin point
-                prop::Point2D               sEnd;                   // End point
                 prop::Integer               sWidth;                 // Thickness
                 prop::Integer               sHWidth;                // Hover width
                 prop::Integer               sLBorder;               // Highlighting border

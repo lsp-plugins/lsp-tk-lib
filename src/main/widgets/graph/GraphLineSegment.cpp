@@ -57,7 +57,6 @@ namespace lsp
                 sHAxis.bind("haxis", this);
                 sVAxis.bind("vaxis", this);
                 sBegin.bind("begin", this);
-                sEnd.bind("end", this);
                 sWidth.bind("width", this);
                 sHWidth.bind("hover.width", this);
                 sLBorder.bind("border.left.size", this);
@@ -85,7 +84,6 @@ namespace lsp
                 sHAxis.set(0);
                 sVAxis.set(1);
                 sBegin.set(0.0f, 0.0f);
-                sEnd.set(1.0f, 0.0f);
                 sWidth.set(1);
                 sHWidth.set(3);
                 sLBorder.set(0);
@@ -350,8 +348,8 @@ namespace lsp
                         if (g != NULL)
                         {
                             lsp_finally { delete g; };
-                            g->add_color(0.0f, bcol_l);
-                            g->add_color(1.0f, bcol_l, 1.0f);
+                            g->add_color(0.0f, bcol_r);
+                            g->add_color(1.0f, bcol_r, 1.0f);
 
                             dot2f_t p3      = shift2f(x[1], y[1], perp, (rborder + hw));
                             dot2f_t p4      = shift2f(x[1], y[1], perp, hw);
