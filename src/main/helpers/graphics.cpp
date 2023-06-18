@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 26 авг. 2020 г.
@@ -337,8 +337,211 @@ namespace lsp
         {
             return (x >= lc) && (x <= rc) && (y >= bc) && (y <= tc);
         }
-    }
-}
+
+        vec2f_t normalize(const vec2f_t &v)
+        {
+            const float len = v.dx * v.dx + v.dy * v.dy;
+            if (len <= 1e-8f)
+                return v;
+            const float norm  = 1.0f / sqrtf(len);
+
+            return vec2f_t {
+                v.dx * norm,
+                v.dy * norm
+            };
+        }
+
+        bool normalize(vec2f_t &v, const vec2f_t &sv)
+        {
+            const float len = sv.dx * sv.dx + sv.dy * sv.dy;
+            if (len <= 1e-8f)
+            {
+                v = sv;
+                return false;
+            }
+
+            const float norm  = 1.0f / sqrtf(len);
+            v = vec2f_t {
+                sv.dx * norm,
+                sv.dy * norm
+            };
+
+            return true;
+        }
+
+        vec2f_t vec2f(float x1, float y1, float x2, float y2)
+        {
+            return vec2f_t {
+                x2 - x1,
+                y2 - y1
+            };
+        }
+
+        vec2f_t vec2f(const dot2f_t &begin, const dot2f_t &end)
+        {
+            return vec2f_t {
+                end.x - begin.x,
+                end.y - begin.y
+            };
+        }
+
+        vec2f_t normalized_vec2f(float x1, float y1, float x2, float y2)
+        {
+            return normalize(vec2f(x1, y1, x2, y2));
+        }
+
+        vec2f_t normalized_vec2f(const dot2f_t &begin, const dot2f_t &end)
+        {
+            return normalize(vec2f(begin, end));
+        }
+
+        bool normalized_vec2f(vec2f_t &v, float x1, float y1, float x2, float y2)
+        {
+            return normalize(v, vec2f(x1, y1, x2, y2));
+        }
+
+        bool normalized_vec2f(vec2f_t &v, const dot2f_t &begin, const dot2f_t &end)
+        {
+            return normalize(v, vec2f(begin, end));
+        }
+
+        vec2f_t perp2f(const vec2f_t &v)
+        {
+            return vec2f_t { -v.dy, v.dx };
+        }
+
+        vec2f_t perp2f(float x1, float y1, float x2, float y2)
+        {
+            return vec2f_t {
+                y1 - y2,
+                x2 - x1
+            };
+        }
+
+        vec2f_t perp2f(const dot2f_t &begin, const dot2f_t &end)
+        {
+            return vec2f_t {
+                begin.y - end.y,
+                end.x - begin.x
+            };
+        }
+
+        vec2f_t normalized_perp2f(float x1, float y1, float x2, float y2)
+        {
+            return normalize(perp2f(x1, y1, x2, y2));
+        }
+
+        vec2f_t normalized_perp2f(const dot2f_t &begin, const dot2f_t &end)
+        {
+            return normalize(perp2f(begin, end));
+        }
+
+        bool normalized_perp2f(vec2f_t &v, float x1, float y1, float x2, float y2)
+        {
+            return normalize(v, perp2f(x1, y1, x2, y2));
+        }
+
+        bool normalized_perp2f(vec2f_t &v, const dot2f_t &begin, const dot2f_t &end)
+        {
+            return normalize(v, perp2f(begin, end));
+        }
+
+        bool inside(const triangle2f_t &t, float x, float y)
+        {
+            return inside(t, dot2f_t{ x, y });
+        }
+
+        bool inside(const triangle2f_t &t, const dot2f_t &p)
+        {
+            float f = cross_factor(
+                vec2f(t.v[0], p),
+                vec2f(p, t.v[1]));
+            if (f < 0.0f)
+                return false;
+
+            f = cross_factor(
+                vec2f(t.v[1], p),
+                vec2f(p, t.v[2]));
+            if (f < 0.0f)
+                return false;
+
+            f = cross_factor(
+                vec2f(t.v[2], p),
+                vec2f(p, t.v[0]));
+            if (f < 0.0f)
+                return false;
+
+            return true;
+        }
+
+        bool inside(const dot2f_t &a, const dot2f_t &b, const dot2f_t &c, float x, float y)
+        {
+            return inside(a, b, c, dot2f_t{ x, y });
+        }
+
+        bool inside(const dot2f_t &a, const dot2f_t &b, const dot2f_t &c, const dot2f_t &p)
+        {
+            float f = cross_factor(
+                vec2f(a, p),
+                vec2f(p, b));
+            if (f < 0.0f)
+                return false;
+
+            f = cross_factor(
+                vec2f(b, p),
+                vec2f(p, c));
+            if (f < 0.0f)
+                return false;
+
+            f = cross_factor(
+                vec2f(c, p),
+                vec2f(p, a));
+            if (f < 0.0f)
+                return false;
+
+            return true;
+        }
+
+        float cross_factor(const triangle2f_t &t)
+        {
+            return cross_factor(
+                vec2f(t.v[0], t.v[1]),
+                vec2f(t.v[1], t.v[2])
+            );
+        }
+
+        float cross_factor(const vec2f_t &v1, const vec2f_t &v2)
+        {
+            return v1.dx * v2.dy - v1.dy * v2.dx;
+        }
+
+        triangle2f_t reorder_triangle2f(const triangle2f_t &t)
+        {
+            if (cross_factor(t) < 0.0f)
+                return triangle2f_t {
+                    { t.v[0], t.v[2], t.v[1] }
+                };
+            return t;
+        }
+
+        dot2f_t shift2f(const dot2f_t &p, const vec2f_t &v, float k)
+        {
+            return dot2f_t {
+                p.x + v.dx * k,
+                p.y + v.dy * k
+            };
+        }
+
+        dot2f_t shift2f(float x, float y, const vec2f_t &v, float k)
+        {
+            return dot2f_t {
+                x + v.dx * k,
+                y + v.dy * k
+            };
+        }
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

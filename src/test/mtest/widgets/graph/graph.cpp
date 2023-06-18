@@ -638,23 +638,41 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             }
 
             // Addd Line segment
-            tk::GraphLineSegment *gls;
-            static const float segment_x[] = { 100, 800 };
-            static const float segment_y[] = { 96, 96 };
+            {
+                tk::GraphLineSegment *gls;
+                static const float segment_x[] = { 100, 800 };
+                static const float segment_y[] = { 96, 96 };
 
-            MTEST_ASSERT(gls = new tk::GraphLineSegment(dpy));
-            MTEST_ASSERT(id.fmt_ascii("line_segment_%d", wid++));
-            MTEST_ASSERT(init_widget(gls, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(gls));
-            MTEST_ASSERT(gr->add(gls) == STATUS_OK);
+                MTEST_ASSERT(gls = new tk::GraphLineSegment(dpy));
+                MTEST_ASSERT(id.fmt_ascii("line_segment_%d", wid++));
+                MTEST_ASSERT(init_widget(gls, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(gls));
+                MTEST_ASSERT(gr->add(gls) == STATUS_OK);
 
-            gls->color()->set_rgb24(0xffff00);
-            gls->hover_color()->set_rgb24(0xff00ff);
-            gls->abscissa()->set(0);
-            gls->ordinate()->set(1);
-            gls->begin()->set(segment_x[0], segment_y[0]);
-            gls->end()->set(segment_x[1], segment_y[1]);
-            gls->width()->set(5);
+                gls->abscissa()->set(0);
+                gls->ordinate()->set(1);
+                gls->begin()->set(segment_x[0], segment_y[0]);
+                gls->end()->set(segment_x[1], segment_y[1]);
+                gls->editable()->set(true);
+                gls->smooth()->set(true);
+                gls->pointer()->set(ws::MP_VSIZE);
+
+                gls->width()->set(3);
+                gls->hover_width()->set(4);
+
+                gls->left_border()->set(20);
+                gls->right_border()->set(20);
+                gls->hover_left_border()->set(32);
+                gls->hover_right_border()->set(32);
+
+                gls->color()->set_rgb24(0xffff00);
+                gls->hover_color()->set_rgb24(0xff00ff);
+
+                gls->border_left_color()->set_rgba32(0x000088cc);
+                gls->border_right_color()->set_rgba32(0x0000cc88);
+                gls->hover_border_left_color()->set_rgba32(0x0000ccff);
+                gls->hover_border_right_color()->set_rgba32(0x0000ffcc);
+            }
 
             // Create axes
             tk::GraphAxis *ga;
