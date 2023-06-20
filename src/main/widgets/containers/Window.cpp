@@ -301,20 +301,23 @@ namespace lsp
             size_t flags = nFlags;
 
             ws::ISurface *bs = get_surface(s);
-            bs->begin();
+            if (bs != NULL)
             {
-                ws::rectangle_t xr;
-                xr.nLeft    = 0;
-                xr.nTop     = 0;
-                xr.nWidth   = sSize.nWidth;
-                xr.nHeight  = sSize.nHeight;
-                render(bs, &xr, flags);
-            }
-            bs->end();
+                bs->begin();
+                {
+                    ws::rectangle_t xr;
+                    xr.nLeft    = 0;
+                    xr.nTop     = 0;
+                    xr.nWidth   = sSize.nWidth;
+                    xr.nHeight  = sSize.nHeight;
+                    render(bs, &xr, flags);
+                }
+                bs->end();
 
-            s->begin();
-                s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
-            s->end();
+                s->begin();
+                    s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+                s->end();
+            }
             commit_redraw();
 
             // And also update pointer
