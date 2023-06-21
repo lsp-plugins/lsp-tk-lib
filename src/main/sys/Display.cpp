@@ -109,6 +109,7 @@ namespace lsp
             if (_this == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
+            _this->slots()->execute(tk::SLOT_IDLE, NULL, _this);
             _this->garbage_collect();
 
             return STATUS_OK;
@@ -153,6 +154,9 @@ namespace lsp
             // Create display
             ws::IDisplay *dpy = ws::create_display(argc, argv);
             if (dpy == NULL)
+                return STATUS_NO_MEM;
+
+            if (!sSlots.add(tk::SLOT_IDLE))
                 return STATUS_NO_MEM;
 
             status_t res = init(dpy, argc, argv);
