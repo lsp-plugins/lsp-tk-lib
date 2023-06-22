@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 июн. 2017 г.
@@ -350,9 +350,22 @@ namespace lsp
                  * @return status of operation
                  */
                 status_t work_area_geometry(ws::rectangle_t *r);
-        };
-    }
 
+                /**
+                 * Get the typical idle interval for the display
+                 * @return the typical idle interval (default 50 ms or 20 FPS)
+                 */
+                size_t idle_interval();
+
+                /**
+                 * Set the typical idle interval for the display
+                 * @param interval idle interval in millisecionds
+                 * @return previous value of the idle interval
+                 */
+                size_t set_idle_interval(size_t interval);
+        };
+
+    } /* namespace tk */
 } /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_DISPLAY_H_ */

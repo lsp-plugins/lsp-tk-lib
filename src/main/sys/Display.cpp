@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 июн. 2017 г.
@@ -458,6 +458,16 @@ namespace lsp
         {
             return pDisplay->work_area_geometry(r);
         }
-    }
 
+        size_t Display::idle_interval()
+        {
+            return pDisplay->idle_interval();
+        }
+
+        size_t Display::set_idle_interval(size_t interval)
+        {
+            return pDisplay->set_idle_interval(interval);
+        }
+
+    } /* namespace tk */
 } /* namespace lsp */
