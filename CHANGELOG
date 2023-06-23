@@ -3,6 +3,8 @@
 *******************************************************************************
 
 === 1.0.12 ===
+* Optimized window move operation (does not require realize if window size did
+  not change).
 * Implemented graph line segment widget.
 * Updated build scripts.
 
