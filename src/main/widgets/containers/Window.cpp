@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2017 г.
@@ -300,6 +300,10 @@ namespace lsp
 
             size_t flags = nFlags;
 
+        #ifdef LSP_TRACE
+            system::time_millis_t time = system::get_time_millis();
+        #endif /* LSP_TRACE */
+
             s->begin();
             {
                 ws::ISurface *bs = get_surface(s);
@@ -321,6 +325,11 @@ namespace lsp
             }
             s->end();
             commit_redraw();
+
+        #ifdef LSP_TRACE
+            time = system::get_time_millis() - time;
+            lsp_trace("Render time: %ld ms", long(time));
+        #endif /* LSP_TRACE */
 
             // And also update pointer
             update_pointer();
@@ -503,7 +512,8 @@ namespace lsp
                 pWindow->set_window_actions(sActions.actions());
             if (sPosition.is(prop))
                 pWindow->move(sPosition.left(), sPosition.top());
-            if (sSizeConstraints.is(prop) || sScaling.is(prop) || sActions.is(prop) || sFontScaling.is(prop) || sWindowSize.is(prop))
+
+            if (prop->one_of(sSizeConstraints, sScaling, sActions, sFontScaling, sWindowSize))
             {
 //                float scaling = lsp_max(0.0f, sScaling.get());
 //
@@ -741,23 +751,35 @@ namespace lsp
                     break;
 
                 case ws::UIE_RESIZE:
-                    if (bMapped)
+                    if (!bMapped)
+                        break;
+
+                    if (!(nFlags & RESIZE_PENDING))
                     {
-                        ws::rectangle_t r;
+                        lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
 
-                        if (!(nFlags & RESIZE_PENDING))
+                        // Update the position of the window
+                        if ((sSize.nLeft != e->nLeft) || (sSize.nTop != e->nTop))
+                            sPosition.commit_value(e->nLeft, e->nTop);
+
+                        // Update size of the window
+                        if ((sSize.nWidth != e->nWidth) || (sSize.nHeight != e->nHeight))
                         {
-//                            lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+                            // Realize the widget only if size has changed
+                            sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
 
-                            r.nLeft     = e->nLeft;
-                            r.nTop      = e->nTop;
-                            r.nWidth    = e->nWidth;
-                            r.nHeight   = e->nHeight;
-
-                            sPosition.commit_value(r.nLeft, r.nTop);
-                            sWindowSize.commit_value(r.nWidth, r.nHeight, sScaling.get());
-
+                            ws::rectangle_t r = {
+                                e->nLeft,
+                                e->nTop,
+                                e->nWidth,
+                                e->nHeight
+                            };
                             realize_widget(&r);
+                        }
+                        else
+                        {
+                            sSize.nLeft     = e->nLeft;
+                            sSize.nTop      = e->nTop;
                         }
                     }
                     break;
