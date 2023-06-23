@@ -300,9 +300,9 @@ namespace lsp
 
             size_t flags = nFlags;
 
-        #ifdef LSP_TRACE
-            system::time_millis_t time = system::get_time_millis();
-        #endif /* LSP_TRACE */
+//        #ifdef LSP_TRACE
+//            system::time_millis_t time = system::get_time_millis();
+//        #endif /* LSP_TRACE */
 
             s->begin();
             {
@@ -326,10 +326,10 @@ namespace lsp
             s->end();
             commit_redraw();
 
-        #ifdef LSP_TRACE
-            time = system::get_time_millis() - time;
-            lsp_trace("Render time: %ld ms", long(time));
-        #endif /* LSP_TRACE */
+//        #ifdef LSP_TRACE
+//            time = system::get_time_millis() - time;
+//            lsp_trace("Render time: %ld ms", long(time));
+//        #endif /* LSP_TRACE */
 
             // And also update pointer
             update_pointer();
