@@ -40,16 +40,20 @@ namespace lsp
                 prop::Color         sHoleColor;
                 prop::Color         sTipColor;
                 prop::Color         sBalanceTipColor;
+                prop::Color         sMeterColor;
                 prop::SizeRange     sSizeRange;
                 prop::Float         sScale;
                 prop::RangeFloat    sValue;
                 prop::StepFloat     sStep;
                 prop::Float         sBalance;
+                prop::Float         sMeterMin;
+                prop::Float         sMeterMax;
                 prop::Boolean       sCycling;
                 prop::Boolean       sScaleMarks;
                 prop::Boolean       sBalanceColorCustom;
                 prop::Boolean       sFlat;
                 prop::Boolean       sScaleActive;
+                prop::Boolean       sMeterActive;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
@@ -87,17 +91,21 @@ namespace lsp
                 prop::Color         sHoleColor;
                 prop::Color         sTipColor;
                 prop::Color         sBalanceTipColor;
+                prop::Color         sMeterColor;
                 prop::SizeRange     sSizeRange;
                 prop::Float         sScale;
 
                 prop::RangeFloat    sValue;
                 prop::StepFloat     sStep;
                 prop::Float         sBalance;
+                prop::Float         sMeterMin;
+                prop::Float         sMeterMax;
                 prop::Boolean       sCycling;
                 prop::Boolean       sScaleMarks;
                 prop::Boolean       sBalanceColorCustom;
                 prop::Boolean       sFlat;
                 prop::Boolean       sScaleActive;
+                prop::Boolean       sMeterActive;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
@@ -116,14 +124,14 @@ namespace lsp
                 static status_t                 slot_end_edit(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void                    size_request(ws::size_limit_t *r);
-                virtual void                    property_changed(Property *prop);
+                virtual void                    size_request(ws::size_limit_t *r) override;
+                virtual void                    property_changed(Property *prop) override;
 
             public:
                 explicit Knob(Display *dpy);
-                virtual ~Knob();
+                virtual ~Knob() override;
 
-                virtual status_t                init();
+                virtual status_t                init() override;
 
             public:
                 LSP_TK_PROPERTY(Color,              color,                      &sColor)
@@ -132,16 +140,20 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              hole_color,                 &sHoleColor)
                 LSP_TK_PROPERTY(Color,              tip_color,                  &sTipColor)
                 LSP_TK_PROPERTY(Color,              balance_tip_color,          &sBalanceTipColor)
+                LSP_TK_PROPERTY(Color,              meter_color,                &sMeterColor)
                 LSP_TK_PROPERTY(SizeRange,          size,                       &sSizeRange)
                 LSP_TK_PROPERTY(Float,              scale,                      &sScale)
                 LSP_TK_PROPERTY(RangeFloat,         value,                      &sValue)
                 LSP_TK_PROPERTY(StepFloat,          step,                       &sStep)
                 LSP_TK_PROPERTY(Float,              balance,                    &sBalance)
+                LSP_TK_PROPERTY(Float,              meter_min,                  &sMeterMin)
+                LSP_TK_PROPERTY(Float,              meter_max,                  &sMeterMax)
                 LSP_TK_PROPERTY(Boolean,            cycling,                    &sCycling)
                 LSP_TK_PROPERTY(Boolean,            scale_marks,                &sScaleMarks)
                 LSP_TK_PROPERTY(Boolean,            balance_color_custom,       &sBalanceColorCustom)
                 LSP_TK_PROPERTY(Boolean,            flat,                       &sFlat)
                 LSP_TK_PROPERTY(Boolean,            scale_active,               &sScaleActive)
+                LSP_TK_PROPERTY(Boolean,            meter_active,               &sMeterActive)
                 LSP_TK_PROPERTY(Integer,            hole_size,                  &sHoleSize)
                 LSP_TK_PROPERTY(Integer,            gap_size,                   &sGapSize)
                 LSP_TK_PROPERTY(Float,              scale_brightness,           &sScaleBrightness)
@@ -150,21 +162,15 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,       &sInvertMouseVScroll)
 
             public:
-                virtual status_t                on_mouse_down(const ws::event_t *e);
-
-                virtual status_t                on_mouse_up(const ws::event_t *e);
-
-                virtual status_t                on_mouse_move(const ws::event_t *e);
-
-                virtual status_t                on_mouse_scroll(const ws::event_t *e);
+                virtual status_t                on_mouse_down(const ws::event_t *e) override;
+                virtual status_t                on_mouse_up(const ws::event_t *e) override;
+                virtual status_t                on_mouse_move(const ws::event_t *e) override;
+                virtual status_t                on_mouse_scroll(const ws::event_t *e) override;
+                virtual void                    draw(ws::ISurface *s) override;
 
                 virtual status_t                on_begin_edit();
-
                 virtual status_t                on_change();
-
                 virtual status_t                on_end_edit();
-
-                virtual void                    draw(ws::ISurface *s);
         };
     
     } /* namespace tk */

@@ -38,16 +38,20 @@ namespace lsp
                 sHoleColor.bind("hole.color", this);
                 sTipColor.bind("tip.color", this);
                 sBalanceTipColor.bind("balance.tip.color", this);
+                sMeterColor.bind("meter.color", this);
                 sSizeRange.bind("size.range", this);
                 sScale.bind("scale.size", this);
                 sValue.bind("value", this);
                 sStep.bind("step", this);
                 sBalance.bind("value.balance", this);
+                sMeterMin.bind("meter.min", this);
+                sMeterMax.bind("meter.max", this);
                 sCycling.bind("value.cycling", this);
                 sScaleMarks.bind("scale.marks", this);
                 sBalanceColorCustom.bind("balance.color.custom", this);
                 sFlat.bind("flat", this);
                 sScaleActive.bind("scale.active", this);
+                sMeterActive.bind("meter.active", this);
                 sHoleSize.bind("hole.size", this);
                 sGapSize.bind("gap.size", this);
                 sScaleBrightness.bind("scale.brightness", this);
@@ -59,6 +63,7 @@ namespace lsp
                 sScaleColor.set("#00cc00");
                 sBalanceColor.set("#0000cc");
                 sHoleColor.set("#000000");
+                sMeterColor.set("#88ff0000");
                 sTipColor.set("#000000");
                 sBalanceTipColor.set("#0000ff");
                 sSizeRange.set(8, -1);
@@ -66,11 +71,14 @@ namespace lsp
                 sValue.set_all(0.5f, 0.0f, 1.0f);
                 sStep.set(0.01f);
                 sBalance.set(0.5f);
+                sMeterMin.set(0.0f);
+                sMeterMax.set(0.0f);
                 sCycling.set(false);
                 sScaleMarks.set(true);
                 sBalanceColorCustom.set(false);
                 sFlat.set(false);
                 sScaleActive.set(true);
+                sMeterActive.set(false);
                 sHoleSize.set(1);
                 sGapSize.set(1);
                 sScaleBrightness.set(0.75f);
@@ -91,16 +99,20 @@ namespace lsp
             sHoleColor(&sProperties),
             sTipColor(&sProperties),
             sBalanceTipColor(&sProperties),
+            sMeterColor(&sProperties),
             sSizeRange(&sProperties),
             sScale(&sProperties),
             sValue(&sProperties),
             sStep(&sProperties),
             sBalance(&sProperties),
+            sMeterMin(&sProperties),
+            sMeterMax(&sProperties),
             sCycling(&sProperties),
             sScaleMarks(&sProperties),
             sBalanceColorCustom(&sProperties),
             sFlat(&sProperties),
             sScaleActive(&sProperties),
+            sMeterActive(&sProperties),
             sHoleSize(&sProperties),
             sGapSize(&sProperties),
             sScaleBrightness(&sProperties),
@@ -131,16 +143,20 @@ namespace lsp
             sHoleColor.bind("hole.color", &sStyle);
             sTipColor.bind("tip.color", &sStyle);
             sBalanceTipColor.bind("balance.tip.color", &sStyle);
+            sMeterColor.bind("meter.color", &sStyle);
             sSizeRange.bind("size.range", &sStyle);
             sScale.bind("scale.size", &sStyle);
             sValue.bind("value", &sStyle);
             sStep.bind("step", &sStyle);
             sBalance.bind("value.balance", &sStyle);
+            sMeterMin.bind("meter.min", &sStyle);
+            sMeterMax.bind("meter.max", &sStyle);
             sCycling.bind("value.cycling", &sStyle);
             sScaleMarks.bind("scale.marks", &sStyle);
             sBalanceColorCustom.bind("balance.color.custom", &sStyle);
             sFlat.bind("flat", &sStyle);
             sScaleActive.bind("scale.active", &sStyle);
+            sMeterActive.bind("meter.active", &sStyle);
             sHoleSize.bind("hole.size", &sStyle);
             sGapSize.bind("gap.size", &sStyle);
             sScaleBrightness.bind("scale.brightness", &sStyle);
@@ -161,14 +177,17 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (prop->one_of(sColor, sScaleColor, sBalanceColor, sHoleColor, sTipColor, sBalanceTipColor))
+            if (prop->one_of(sColor, sScaleColor, sBalanceColor, sHoleColor, sTipColor, sBalanceTipColor, sMeterColor))
                 query_draw();
 
             if (prop->one_of(sSizeRange, sScale, sHoleSize, sGapSize))
                 query_resize();
 
-            if (prop->one_of(sValue, sBalance, sCycling, sScaleMarks, sBalanceColorCustom, sFlat, sScaleBrightness,
+            if (prop->one_of(sValue, sBalance, sMeterMin, sMeterMax, sCycling, sScaleMarks, sBalanceColorCustom, sFlat, sScaleBrightness,
                 sBalanceTipSize, sBalanceTipColorCustom))
+                query_draw();
+
+            if (prop->one_of(sScaleActive, sMeterActive))
                 query_draw();
         }
 
@@ -398,6 +417,8 @@ namespace lsp
             float bright        = sBrightness.get();
             float value         = sValue.get_normalized();
             float balance       = sValue.get_normalized(sBalance.get());
+            float meter_min     = sValue.get_normalized(sMeterMin.get());
+            float meter_max     = sValue.get_normalized(sMeterMax.get());
 
             // Calculate knob parameters
             ssize_t c_x         = (sSize.nWidth >> 1);
@@ -409,7 +430,7 @@ namespace lsp
             size_t scale        = lsp_max(0, sScale.get() * scaling);
 
             // Prepare the color palette
-            lsp::Color scol, sdcol;
+            lsp::Color scol, sdcol, mcol;
             if (sBalanceColorCustom.get())
             {
                 scol.copy(sBalanceColor);
@@ -421,6 +442,7 @@ namespace lsp
                 sdcol.copy(sScaleColor);
                 sdcol.scale_hsl_lightness(sScaleBrightness.get());
             }
+            mcol.copy(sMeterColor);
 
             lsp::Color hcol(sHoleColor);
             lsp::Color bg_color;
@@ -435,7 +457,7 @@ namespace lsp
             bool aa = s->set_antialiasing(true);
 
             size_t nsectors;
-            float delta, base, v_angle1, v_angle2;
+            float delta, base, v_angle1, v_angle2, m_angle1, m_angle2;
             if (sCycling.get())
             {
                 nsectors      = 24;
@@ -443,6 +465,8 @@ namespace lsp
                 base          = 1.5f * M_PI + balance * delta;
                 v_angle2      = base;
                 v_angle1      = base + value * delta;
+                m_angle1      = base + meter_min * delta;
+                m_angle2      = base + meter_max * delta;
             }
             else
             {
@@ -451,6 +475,8 @@ namespace lsp
                 base          = 2.0f * M_PI / 3.0f;
                 v_angle1      = base + value * delta;
                 v_angle2      = base + balance * delta;
+                m_angle1      = base + meter_min * delta;
+                m_angle2      = base + meter_max * delta;
             }
 
             // Draw scale
@@ -469,6 +495,8 @@ namespace lsp
                     else
                         s->fill_sector(scol, c_x, c_y, xr, v_angle2, v_angle1);
                 }
+                if (sMeterActive.get())
+                    s->fill_sector(mcol, c_x, c_y, xr, m_angle1, m_angle2);
 
                 if (sScaleMarks.get())
                 {

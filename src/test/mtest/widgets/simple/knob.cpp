@@ -177,6 +177,18 @@ MTEST_BEGIN("tk.widgets.simple", knob)
         }
     }
 
+    static status_t timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
+    {
+        lltl::parray<tk::Knob> *timer_knobs = static_cast<lltl::parray<tk::Knob> *>(arg);
+
+        for (lltl::iterator<tk::Knob> it = timer_knobs->values(); it; ++it)
+        {
+            it->meter_max()->set(0.5f + 0.5f * sinf((time % 1000) * M_PI * 0.002));
+        }
+
+        return STATUS_OK;
+    }
+
     MTEST_MAIN
     {
         lltl::parray<handler_t> vh;
@@ -187,10 +199,15 @@ MTEST_BEGIN("tk.widgets.simple", knob)
         MTEST_ASSERT(dpy->init(0, NULL) == STATUS_OK);
 
         lltl::parray<tk::Widget> widgets;
+        lltl::parray<tk::Knob> timer_knobs;
         tk::Widget *w = NULL;
         tk::Window *wnd = new tk::Window(dpy);
         tk::Grid *grid = NULL;
         tk::Knob *kn = NULL;
+
+        tk::Timer tmr;
+        tmr.set_handler(timer_handler, &timer_knobs);
+        tmr.bind(dpy);
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
@@ -215,7 +232,7 @@ MTEST_BEGIN("tk.widgets.simple", knob)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(5);
+        grid->rows()->set(6);
         grid->columns()->set(4);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -311,12 +328,48 @@ MTEST_BEGIN("tk.widgets.simple", knob)
                 kn->hole_size()->set(0);
                 kn->gap_size()->set(0);
             }
+
+            // Create knob
+            for (size_t x=0; x<4; ++x)
+            {
+                MTEST_ASSERT(id.fmt_ascii("knob-%d-5", x));
+                MTEST_ASSERT(kn = new tk::Knob(dpy));
+                MTEST_ASSERT(init_widget(kn, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(kn));
+                MTEST_ASSERT(grid->add(kn) == STATUS_OK);
+
+                kn->balance()->set(x * 0.25f);
+                kn->size()->set((x+3) * 8);
+                kn->scale_color()->set_rgb24(0x2d7990);
+                kn->balance_color()->set_rgb24(0x91d870);
+                kn->bg_color()->set_rgb24(0x24272e);
+                kn->cycling()->set(x & 1);
+                kn->scale_marks()->set(false);
+                kn->scale()->set(4.0f);
+                kn->balance_color_custom()->set(true);
+                kn->color()->set_rgb24(0x24272e);
+                kn->tip_color()->set_rgb24(0xa8aed3);
+                kn->flat()->set(true);
+                kn->hole_size()->set(0);
+                kn->gap_size()->set(0);
+
+                kn->meter_active()->set(true);
+                kn->meter_max()->set(0.8);
+                kn->meter_min()->set(x * 0.25);
+                kn->meter_color()->alpha(0.75);
+
+                MTEST_ASSERT(timer_knobs.add(kn));
+            }
+
+            // Launch animation
+            tmr.launch(0, 40);
         }
 
         // Show window
         wnd->visibility()->set(true);
 
         MTEST_ASSERT(dpy->main() == STATUS_OK);
+        tmr.cancel();
 
         while ((w = widgets.pop()) != NULL)
         {

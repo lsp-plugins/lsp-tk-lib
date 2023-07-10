@@ -6,6 +6,7 @@
 * Optimized window move operation (does not require realize if window size did
   not change).
 * Implemented graph line segment widget.
+* Added meter feature to knob.
 * Updated build scripts.
 
 === 1.0.11 ===
