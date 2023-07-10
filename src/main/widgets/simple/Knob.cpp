@@ -458,6 +458,7 @@ namespace lsp
 
             size_t nsectors;
             float delta, base, v_angle1, v_angle2, m_angle1, m_angle2;
+
             if (sCycling.get())
             {
                 nsectors      = 24;
@@ -495,6 +496,28 @@ namespace lsp
                     else
                         s->fill_sector(scol, c_x, c_y, xr, v_angle2, v_angle1);
                 }
+
+                size_t btsz     = (sBalanceTipSize.get() > 0) ? lsp_min(1.0f, sBalanceTipSize.get() * scaling) : 0.0f;
+                if (btsz > 0)
+                {
+                    if (sBalanceTipColorCustom.get())
+                    {
+                        scol.copy(sBalanceTipColor);
+                        scol.scale_lch_luminance(bright);
+                    }
+
+                    float tdelta = btsz / (xr - scale * 0.5f);
+
+                    if (sCycling.get())
+                        s->fill_sector(scol, c_x, c_y, xr, v_angle2 - tdelta, v_angle2 + tdelta);
+                    else if (v_angle2 <= (base + tdelta))
+                        s->fill_sector(scol, c_x, c_y, xr, v_angle2, v_angle2 + 2.0f * tdelta);
+                    else if (v_angle2 >= (base + delta - tdelta))
+                        s->fill_sector(scol, c_x, c_y, xr, v_angle2 - 2.0f * tdelta, v_angle2);
+                    else
+                        s->fill_sector(scol, c_x, c_y, xr, v_angle2 - tdelta, v_angle2 + tdelta);
+                }
+
                 if (sMeterActive.get())
                     s->fill_sector(mcol, c_x, c_y, xr, m_angle1, m_angle2);
 
@@ -514,19 +537,6 @@ namespace lsp
 
                         s->line(bg_color, c_x + r1 * f_cos, c_y + r1 * f_sin, c_x + scr * f_cos, c_y + scr * f_sin, scaling);
                     }
-                }
-
-                size_t btsz     = (sBalanceTipSize.get() > 0) ? lsp_min(1.0f, sBalanceTipSize.get() * scaling) : 0.0f;
-                if (btsz > 0)
-                {
-                    if (sBalanceTipColorCustom.get())
-                    {
-                        scol.copy(sBalanceTipColor);
-                        scol.scale_lch_luminance(bright);
-                    }
-
-                    delta = btsz / (xr - scale * 0.5f);
-                    s->fill_sector(scol, c_x, c_y, xr, v_angle2 - delta, v_angle2 + delta);
                 }
 
                 // Draw hole and update radius
