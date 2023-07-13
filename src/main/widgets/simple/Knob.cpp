@@ -52,6 +52,7 @@ namespace lsp
                 sFlat.bind("flat", this);
                 sScaleActive.bind("scale.active", this);
                 sMeterActive.bind("meter.active", this);
+                sEditable.bind("editable", this);
                 sHoleSize.bind("hole.size", this);
                 sGapSize.bind("gap.size", this);
                 sScaleBrightness.bind("scale.brightness", this);
@@ -79,6 +80,7 @@ namespace lsp
                 sFlat.set(false);
                 sScaleActive.set(true);
                 sMeterActive.set(false);
+                sEditable.set(true);
                 sHoleSize.set(1);
                 sGapSize.set(1);
                 sScaleBrightness.set(0.75f);
@@ -113,6 +115,7 @@ namespace lsp
             sFlat(&sProperties),
             sScaleActive(&sProperties),
             sMeterActive(&sProperties),
+            sEditable(&sProperties),
             sHoleSize(&sProperties),
             sGapSize(&sProperties),
             sScaleBrightness(&sProperties),
@@ -157,6 +160,7 @@ namespace lsp
             sFlat.bind("flat", &sStyle);
             sScaleActive.bind("scale.active", &sStyle);
             sMeterActive.bind("meter.active", &sStyle);
+            sEditable.bind("editable", &sStyle);
             sHoleSize.bind("hole.size", &sStyle);
             sGapSize.bind("gap.size", &sStyle);
             sScaleBrightness.bind("scale.brightness", &sStyle);
@@ -332,11 +336,17 @@ namespace lsp
         status_t Knob::on_mouse_down(const ws::event_t *e)
         {
 //            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
-            if ((nButtons == 0) && ((e->nCode == ws::MCB_LEFT) || (e->nCode == ws::MCB_RIGHT)))
+            if (nButtons == 0)
             {
-                nState  = check_mouse_over(e->nLeft, e->nTop);
-                if (nState != S_NONE)
-                    sSlots.execute(SLOT_BEGIN_EDIT, this);
+                if (!sEditable.get())
+                    return STATUS_OK;
+
+                if ((e->nCode == ws::MCB_LEFT) || (e->nCode == ws::MCB_RIGHT))
+                {
+                    nState  = check_mouse_over(e->nLeft, e->nTop);
+                    if (nState != S_NONE)
+                        sSlots.execute(SLOT_BEGIN_EDIT, this);
+                }
             }
 
             nButtons   |= (1 << e->nCode);
@@ -393,6 +403,9 @@ namespace lsp
         status_t Knob::on_mouse_scroll(const ws::event_t *e)
         {
 //            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
+            if (!sEditable.get())
+                return STATUS_OK;
+
             float step = sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
             if (sInvertMouseVScroll.get())
                 step            = -step;

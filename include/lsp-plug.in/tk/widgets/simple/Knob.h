@@ -54,6 +54,7 @@ namespace lsp
                 prop::Boolean       sFlat;
                 prop::Boolean       sScaleActive;
                 prop::Boolean       sMeterActive;
+                prop::Boolean       sEditable;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
@@ -106,6 +107,7 @@ namespace lsp
                 prop::Boolean       sFlat;
                 prop::Boolean       sScaleActive;
                 prop::Boolean       sMeterActive;
+                prop::Boolean       sEditable;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
@@ -154,6 +156,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            flat,                       &sFlat)
                 LSP_TK_PROPERTY(Boolean,            scale_active,               &sScaleActive)
                 LSP_TK_PROPERTY(Boolean,            meter_active,               &sMeterActive)
+                LSP_TK_PROPERTY(Boolean,            editable,                   &sEditable)
                 LSP_TK_PROPERTY(Integer,            hole_size,                  &sHoleSize)
                 LSP_TK_PROPERTY(Integer,            gap_size,                   &sGapSize)
                 LSP_TK_PROPERTY(Float,              scale_brightness,           &sScaleBrightness)

@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.12 ===
+* Added 'Editable' property to tk::Knob widget.
 * Optimized window move operation (does not require realize if window size did
   not change).
 * Implemented graph line segment widget.
