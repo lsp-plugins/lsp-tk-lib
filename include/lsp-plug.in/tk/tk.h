@@ -88,6 +88,7 @@
 #include <lsp-plug.in/tk/prop/multi/Layout.h>
 #include <lsp-plug.in/tk/prop/multi/Arrangement.h>
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
+#include <lsp-plug.in/tk/prop/multi/Point2D.h>
 #include <lsp-plug.in/tk/prop/multi/Position.h>
 #include <lsp-plug.in/tk/prop/multi/RangeFloat.h>
 #include <lsp-plug.in/tk/prop/multi/Rectangle.h>
@@ -197,6 +198,7 @@
 #include <lsp-plug.in/tk/widgets/graph/GraphAxis.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphDot.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphFrameBuffer.h>
+#include <lsp-plug.in/tk/widgets/graph/GraphLineSegment.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphMarker.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphMesh.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphOrigin.h>

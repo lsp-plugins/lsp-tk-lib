@@ -644,7 +644,11 @@ namespace lsp
 
                 pSurface        = s->create(width, height);
                 if (pSurface == NULL)
+                {
+                    lsp_warn("Failed to create surface obj=%p, width=%d, height=%d",
+                        pSurface, int(width), int(height));
                     return NULL;
+                }
                 nFlags         |= REDRAW_SURFACE;
             }
 

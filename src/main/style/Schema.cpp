@@ -71,15 +71,13 @@ namespace lsp
 
             // Destroy named styles
             vBuiltin.flush();
-            lltl::parray<Style> vs;
-            vStyles.values(&vs);
-            vStyles.flush();
-            for (size_t i=0, n=vs.size(); i<n; ++i)
+            for (lltl::iterator<Style> it = vStyles.values(); it; ++it)
             {
-                Style *s = vs.uget(i);
+                Style *s = *it;
                 if (s != NULL)
                     delete s;
             }
+            vStyles.flush();
 
             // Destroy root style
             if (pRoot != NULL)

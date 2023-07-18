@@ -538,6 +538,7 @@ namespace lsp
                  * be passed without padding applied to the widget
                  *
                  * @param r real area allocated to the widget
+                 * @param redraw query for redraw
                  */
                 void                    realize_widget(const ws::rectangle_t *r);
 

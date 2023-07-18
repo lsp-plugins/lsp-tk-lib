@@ -374,40 +374,109 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             tk::GraphMarker *gm;
 
             // Vertical markers
-            static const marker_t vmarkers[] =
             {
-                { 20.0f, 0x888800 },
-                { 30.0f, 0x888800 },
-                { 40.0f, 0x888800 },
-                { 50.0f, 0x888800 },
-                { 60.0f, 0x888800 },
-                { 70.0f, 0x888800 },
-                { 80.0f, 0x888800 },
-                { 90.0f, 0x888800 },
-                { 100.0f, 0x888888 },
-                { 200.0f, 0x888800 },
-                { 300.0f, 0x888800 },
-                { 400.0f, 0x888800 },
-                { 500.0f, 0x888800 },
-                { 600.0f, 0x888800 },
-                { 700.0f, 0x888800 },
-                { 800.0f, 0x888800 },
-                { 900.0f, 0x888800 },
-                { 1000.0f, 0x888888 },
-                { 2000.0f, 0x888800 },
-                { 3000.0f, 0x888800 },
-                { 4000.0f, 0x888800 },
-                { 5000.0f, 0x888800 },
-                { 6000.0f, 0x888800 },
-                { 7000.0f, 0x888800 },
-                { 8000.0f, 0x888800 },
-                { 9000.0f, 0x888800 },
-                { 10000.0f, 0x888888 },
-                { 20000.0f, 0x888800 },
-                { 24000.0f, 0xcccccc }
-            };
+                static const marker_t vmarkers[] =
+                {
+                    { 20.0f, 0x888800 },
+                    { 30.0f, 0x888800 },
+                    { 40.0f, 0x888800 },
+                    { 50.0f, 0x888800 },
+                    { 60.0f, 0x888800 },
+                    { 70.0f, 0x888800 },
+                    { 80.0f, 0x888800 },
+                    { 90.0f, 0x888800 },
+                    { 100.0f, 0x888888 },
+                    { 200.0f, 0x888800 },
+                    { 300.0f, 0x888800 },
+                    { 400.0f, 0x888800 },
+                    { 500.0f, 0x888800 },
+                    { 600.0f, 0x888800 },
+                    { 700.0f, 0x888800 },
+                    { 800.0f, 0x888800 },
+                    { 900.0f, 0x888800 },
+                    { 1000.0f, 0x888888 },
+                    { 2000.0f, 0x888800 },
+                    { 3000.0f, 0x888800 },
+                    { 4000.0f, 0x888800 },
+                    { 5000.0f, 0x888800 },
+                    { 6000.0f, 0x888800 },
+                    { 7000.0f, 0x888800 },
+                    { 8000.0f, 0x888800 },
+                    { 9000.0f, 0x888800 },
+                    { 10000.0f, 0x888888 },
+                    { 20000.0f, 0x888800 },
+                    { 24000.0f, 0xcccccc }
+                };
 
-            for (size_t i=0; i<sizeof(vmarkers)/sizeof(marker_t); ++i)
+                for (size_t i=0; i<sizeof(vmarkers)/sizeof(marker_t); ++i)
+                {
+                    MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
+                    MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
+                    MTEST_ASSERT(init_widget(gm, vh, id.get_ascii()) == STATUS_OK);
+                    MTEST_ASSERT(widgets.push(gm));
+                    MTEST_ASSERT(gr->add(gm) == STATUS_OK);
+
+                    gm->origin()->set(0);
+                    gm->basis()->set(0);
+                    gm->parallel()->set(1);
+
+                    const marker_t *m = &vmarkers[i];
+                    gm->color()->set_rgb24(m->color);
+                    gm->value()->set(m->value);
+                }
+            }
+
+            // Horizontal markers
+            {
+                static const marker_t hmarkers[] =
+                {
+                    { 12,    0x888800 },
+                    { 24,    0x888888 },
+                    { 36,    0x888800 },
+                    { 48,    0x888888 },
+                    { 60,    0x888800 },
+                    { 72,    0x888888 },
+                    { 84,    0x888800 },
+                    { 96,    0xcccccc },
+                    { 108,   0x888800 },
+                    { 120,   0xcccccc }
+                };
+
+                for (size_t i=0; i<sizeof(hmarkers)/sizeof(marker_t); ++i)
+                {
+                    MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
+                    MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
+                    MTEST_ASSERT(init_widget(gm, vh, id.get_ascii()) == STATUS_OK);
+                    MTEST_ASSERT(widgets.push(gm));
+                    MTEST_ASSERT(gr->add(gm) == STATUS_OK);
+
+                    gm->origin()->set(0);
+                    gm->basis()->set(1);
+                    gm->parallel()->set(0);
+
+                    const marker_t *m = &hmarkers[i];
+                    gm->color()->set_rgb24(m->color);
+                    gm->value()->set(m->value);
+                }
+            }
+
+            // Add frame buffer
+            {
+                MTEST_ASSERT(fb = new tk::GraphFrameBuffer(dpy));
+                MTEST_ASSERT(id.fmt_ascii("framebuffer_%d", wid++));
+                MTEST_ASSERT(init_widget(fb, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(fb));
+                MTEST_ASSERT(gr->add(fb) == STATUS_OK);
+
+                fb->data()->set_size(FRM_BUFFER_SIZE * 0.625, FRM_BUFFER_SIZE);
+                fb->hpos()->set(-1);
+                fb->vpos()->set(1);
+                fb->hscale()->set(1);
+                fb->vscale()->set(1);
+                fb->transparency()->set(0.5f);
+            }
+
+            // Create Editable vertical marker
             {
                 MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
                 MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
@@ -418,28 +487,24 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 gm->origin()->set(0);
                 gm->basis()->set(0);
                 gm->parallel()->set(1);
-
-                const marker_t *m = &vmarkers[i];
-                gm->color()->set_rgb24(m->color);
-                gm->value()->set(m->value);
+                gm->value()->set_all(1000, 10, 24000);
+                gm->pointer()->set(ws::MP_HSIZE);
+                gm->editable()->set(true);
+                gm->left_border()->set(20);
+                gm->right_border()->set(20);
+                gm->hover_left_border()->set(32);
+                gm->hover_right_border()->set(32);
+                gm->color()->set_rgb24(0x00cc00);
+                gm->width()->set(2);
+                gm->hover_width()->set(3);
+                gm->hover_color()->set_rgb24(0x00ff00);
+                gm->border_left_color()->set_rgba32(0x44cc8800);
+                gm->border_right_color()->set_rgba32(0x4488cc00);
+                gm->hover_border_left_color()->set_rgba32(0x44ffcc00);
+                gm->hover_border_right_color()->set_rgba32(0x44ccff00);
             }
 
-            // Horizontal markers
-            static const marker_t hmarkers[] =
-            {
-                { 12,    0x888800 },
-                { 24,    0x888888 },
-                { 36,    0x888800 },
-                { 48,    0x888888 },
-                { 60,    0x888800 },
-                { 72,    0x888888 },
-                { 84,    0x888800 },
-                { 96,    0xcccccc },
-                { 108,   0x888800 },
-                { 120,   0xcccccc }
-            };
-
-            for (size_t i=0; i<sizeof(hmarkers)/sizeof(marker_t); ++i)
+            // Create Editable horizontal marker
             {
                 MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
                 MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
@@ -450,177 +515,173 @@ MTEST_BEGIN("tk.widgets.graph", graph)
                 gm->origin()->set(0);
                 gm->basis()->set(1);
                 gm->parallel()->set(0);
-
-                const marker_t *m = &hmarkers[i];
-                gm->color()->set_rgb24(m->color);
-                gm->value()->set(m->value);
+                gm->value()->set_all(60, 0, 120);
+                gm->pointer()->set(ws::MP_VSIZE);
+                gm->editable()->set(true);
+                gm->left_border()->set(20);
+                gm->right_border()->set(20);
+                gm->hover_left_border()->set(32);
+                gm->hover_right_border()->set(32);
+                gm->color()->set_rgb24(0x0000cc);
+                gm->width()->set(2);
+                gm->hover_width()->set(3);
+                gm->hover_color()->set_rgb24(0x0000ff);
+                gm->border_left_color()->set_rgba32(0x440088cc);
+                gm->border_right_color()->set_rgba32(0x4400cc88);
+                gm->hover_border_left_color()->set_rgba32(0x4400ccff);
+                gm->hover_border_right_color()->set_rgba32(0x4400ffcc);
             }
 
-            // Add frame buffer
-            MTEST_ASSERT(fb = new tk::GraphFrameBuffer(dpy));
-            MTEST_ASSERT(id.fmt_ascii("framebuffer_%d", wid++));
-            MTEST_ASSERT(init_widget(fb, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(fb));
-            MTEST_ASSERT(gr->add(fb) == STATUS_OK);
-
-            fb->data()->set_size(FRM_BUFFER_SIZE * 0.625, FRM_BUFFER_SIZE);
-            fb->hpos()->set(-1);
-            fb->vpos()->set(1);
-            fb->hscale()->set(1);
-            fb->vscale()->set(1);
-            fb->transparency()->set(0.5f);
-
-            // Create Editable vertical marker
-            MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
-            MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
-            MTEST_ASSERT(init_widget(gm, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(gm));
-            MTEST_ASSERT(gr->add(gm) == STATUS_OK);
-
-            gm->origin()->set(0);
-            gm->basis()->set(0);
-            gm->parallel()->set(1);
-            gm->value()->set_all(1000, 10, 24000);
-            gm->pointer()->set(ws::MP_HSIZE);
-            gm->editable()->set(true);
-            gm->left_border()->set(20);
-            gm->right_border()->set(20);
-            gm->hover_left_border()->set(32);
-            gm->hover_right_border()->set(32);
-            gm->color()->set_rgb24(0x00cc00);
-            gm->width()->set(2);
-            gm->hover_width()->set(3);
-            gm->hover_color()->set_rgb24(0x00ff00);
-            gm->border_left_color()->set_rgba32(0x44cc8800);
-            gm->border_right_color()->set_rgba32(0x4488cc00);
-            gm->hover_border_left_color()->set_rgba32(0x44ffcc00);
-            gm->hover_border_right_color()->set_rgba32(0x44ccff00);
-
-            // Create Editable horizontal marker
-            MTEST_ASSERT(gm = new tk::GraphMarker(dpy));
-            MTEST_ASSERT(id.fmt_ascii("marker_%d", wid++));
-            MTEST_ASSERT(init_widget(gm, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(gm));
-            MTEST_ASSERT(gr->add(gm) == STATUS_OK);
-
-            gm->origin()->set(0);
-            gm->basis()->set(1);
-            gm->parallel()->set(0);
-            gm->value()->set_all(60, 0, 120);
-            gm->pointer()->set(ws::MP_VSIZE);
-            gm->editable()->set(true);
-            gm->left_border()->set(20);
-            gm->right_border()->set(20);
-            gm->hover_left_border()->set(32);
-            gm->hover_right_border()->set(32);
-            gm->color()->set_rgb24(0x0000cc);
-            gm->width()->set(2);
-            gm->hover_width()->set(3);
-            gm->hover_color()->set_rgb24(0x0000ff);
-            gm->border_left_color()->set_rgba32(0x440088cc);
-            gm->border_right_color()->set_rgba32(0x4400cc88);
-            gm->hover_border_left_color()->set_rgba32(0x4400ccff);
-            gm->hover_border_right_color()->set_rgba32(0x4400ffcc);
-
             // Create text
-            tk::GraphText *gt;
-
-            static const text_t texts[] =
             {
-                { 10.0f, 0.0f, "Hz", 1.0f, 1.0f },
-                { 100.0f, 0.0f, "100", 1.0f, 1.0f },
-                { 1000.0f, 0.0f, "1K", 1.0f, 1.0f },
-                { 10000.0f, 0.0f, "10K", 1.0f, 1.0f },
-                { 10.0f, 120.0f, "dB", 1.0f, -1.0f },
-                { 10.0f, 12.0f, "-84", 1.0f, 1.0f },
-                { 10.0f, 24.0f, "-72", 1.0f, 1.0f },
-                { 10.0f, 36.0f, "-60", 1.0f, 1.0f },
-                { 10.0f, 48.0f, "-48", 1.0f, 1.0f },
-                { 10.0f, 60.0f, "-36", 1.0f, 1.0f },
-                { 10.0f, 72.0f, "-24", 1.0f, 1.0f },
-                { 10.0f, 84.0f, "-12", 1.0f, 1.0f },
-                { 10.0f, 96.0f, "0", 1.0f, 1.0f },
-            };
+                tk::GraphText *gt;
 
-            for (size_t i=0; i<sizeof(texts)/sizeof(text_t); ++i)
-            {
-                MTEST_ASSERT(gt = new tk::GraphText(dpy));
-                MTEST_ASSERT(id.fmt_ascii("text_%d", wid++));
-                MTEST_ASSERT(init_widget(gt, vh, id.get_ascii()) == STATUS_OK);
-                MTEST_ASSERT(widgets.push(gt));
-                MTEST_ASSERT(gr->add(gt) == STATUS_OK);
+                static const text_t texts[] =
+                {
+                    { 10.0f, 0.0f, "Hz", 1.0f, 1.0f },
+                    { 100.0f, 0.0f, "100", 1.0f, 1.0f },
+                    { 1000.0f, 0.0f, "1K", 1.0f, 1.0f },
+                    { 10000.0f, 0.0f, "10K", 1.0f, 1.0f },
+                    { 10.0f, 120.0f, "dB", 1.0f, -1.0f },
+                    { 10.0f, 12.0f, "-84", 1.0f, 1.0f },
+                    { 10.0f, 24.0f, "-72", 1.0f, 1.0f },
+                    { 10.0f, 36.0f, "-60", 1.0f, 1.0f },
+                    { 10.0f, 48.0f, "-48", 1.0f, 1.0f },
+                    { 10.0f, 60.0f, "-36", 1.0f, 1.0f },
+                    { 10.0f, 72.0f, "-24", 1.0f, 1.0f },
+                    { 10.0f, 84.0f, "-12", 1.0f, 1.0f },
+                    { 10.0f, 96.0f, "0", 1.0f, 1.0f },
+                };
 
-                gt->origin()->set(0);
-                gt->haxis()->set(0);
-                gt->vaxis()->set(1);
+                for (size_t i=0; i<sizeof(texts)/sizeof(text_t); ++i)
+                {
+                    MTEST_ASSERT(gt = new tk::GraphText(dpy));
+                    MTEST_ASSERT(id.fmt_ascii("text_%d", wid++));
+                    MTEST_ASSERT(init_widget(gt, vh, id.get_ascii()) == STATUS_OK);
+                    MTEST_ASSERT(widgets.push(gt));
+                    MTEST_ASSERT(gr->add(gt) == STATUS_OK);
 
-                const text_t *t = &texts[i];
-                gt->hvalue()->set(t->x);
-                gt->vvalue()->set(t->y);
-                gt->color()->set_rgb24(0xcccccc);
-                gt->text()->set_raw(t->text);
-                gt->layout()->set_align(t->halign, t->valign);
+                    gt->origin()->set(0);
+                    gt->haxis()->set(0);
+                    gt->vaxis()->set(1);
+
+                    const text_t *t = &texts[i];
+                    gt->hvalue()->set(t->x);
+                    gt->vvalue()->set(t->y);
+                    gt->color()->set_rgb24(0xcccccc);
+                    gt->text()->set_raw(t->text);
+                    gt->layout()->set_align(t->halign, t->valign);
+                }
             }
 
             // Add dot
-            tk::GraphDot *gd;
+            {
+                tk::GraphDot *gd;
 
-            MTEST_ASSERT(gd = new tk::GraphDot(dpy));
-            MTEST_ASSERT(id.fmt_ascii("dot_%d", wid++));
-            MTEST_ASSERT(init_widget(gd, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(gd));
-            MTEST_ASSERT(gr->add(gd) == STATUS_OK);
+                MTEST_ASSERT(gd = new tk::GraphDot(dpy));
+                MTEST_ASSERT(id.fmt_ascii("dot_%d", wid++));
+                MTEST_ASSERT(init_widget(gd, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(gd));
+                MTEST_ASSERT(gr->add(gd) == STATUS_OK);
 
-            gd->origin()->set(0);
-            gd->pointer()->set(ws::MP_DRAG);
+                gd->origin()->set(0);
+                gd->pointer()->set(ws::MP_DRAG);
 
-            gd->hvalue()->set_min(10.0f);
-            gd->hvalue()->set_max(24000.0f);
-            gd->hvalue()->set(100.0f);
-            gd->heditable()->set(true);
-            gd->haxis()->set(0);
+                gd->hvalue()->set_min(10.0f);
+                gd->hvalue()->set_max(24000.0f);
+                gd->hvalue()->set(100.0f);
+                gd->heditable()->set(true);
+                gd->haxis()->set(0);
 
-            gd->vvalue()->set_min(0.0f);
-            gd->vvalue()->set_max(120.0f);
-            gd->vvalue()->set(60.0f);
-            gd->veditable()->set(true);
-            gd->vaxis()->set(1);
+                gd->vvalue()->set_min(0.0f);
+                gd->vvalue()->set_max(120.0f);
+                gd->vvalue()->set(60.0f);
+                gd->veditable()->set(true);
+                gd->vaxis()->set(1);
 
-            gd->zvalue()->set_min(-100.0f);
-            gd->zvalue()->set_max(100.0f);
-            gd->zvalue()->set(0.0f);
-            gd->zstep()->set(10.0f);
-            gd->zeditable()->set(true);
+                gd->zvalue()->set_min(-100.0f);
+                gd->zvalue()->set_max(100.0f);
+                gd->zvalue()->set(0.0f);
+                gd->zstep()->set(10.0f);
+                gd->zeditable()->set(true);
 
-            gd->color()->set_rgb24(0x00ccff);
-            gd->hover_color()->set_rgb24(0xffcc00);
-            gd->border_color()->set_rgb24(0x00cc00);
-            gd->hover_border_color()->set_rgb24(0xccff00);
-            gd->border_size()->set(12);
-            gd->smooth()->set(true);
+                gd->color()->set_rgb24(0x00ccff);
+                gd->hover_color()->set_rgb24(0xffcc00);
+                gd->border_color()->set_rgb24(0x00cc00);
+                gd->hover_border_color()->set_rgb24(0xccff00);
+                gd->border_size()->set(12);
+                gd->smooth()->set(true);
+            }
 
             // Add mesh
-            tk::GraphMesh *gms;
+            {
+                tk::GraphMesh *gms;
 
-            static const float graph_x[] = { 100, 200, 2000, 1000, 100 };
-            static const float graph_y[] = { 30, 90, 90, 30, 30 };
+                static const float graph_x[] = { 100, 200, 2000, 1000, 100 };
+                static const float graph_y[] = { 30, 90, 90, 30, 30 };
 
-            MTEST_ASSERT(gms = new tk::GraphMesh(dpy));
-            MTEST_ASSERT(id.fmt_ascii("mesh_%d", wid++));
-            MTEST_ASSERT(init_widget(gms, vh, id.get_ascii()) == STATUS_OK);
-            MTEST_ASSERT(widgets.push(gms));
-            MTEST_ASSERT(gr->add(gms) == STATUS_OK);
+                MTEST_ASSERT(gms = new tk::GraphMesh(dpy));
+                MTEST_ASSERT(id.fmt_ascii("mesh_%d", wid++));
+                MTEST_ASSERT(init_widget(gms, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(gms));
+                MTEST_ASSERT(gr->add(gms) == STATUS_OK);
 
-            gms->color()->set_rgb24(0x00ccff);
-            gms->fill_color()->set_rgba32(0x88ffcc00);
-            gms->fill()->set(true);
-            gms->origin()->set(0);
-            gms->haxis()->set(0);
-            gms->vaxis()->set(1);
-            gms->data()->set_x(graph_x, sizeof(graph_x)/sizeof(float));
-            gms->data()->set_y(graph_y, sizeof(graph_y)/sizeof(float));
-            gms->smooth()->set(true);
+                gms->color()->set_rgb24(0x00ccff);
+                gms->fill_color()->set_rgba32(0x88ffcc00);
+                gms->fill()->set(true);
+                gms->origin()->set(0);
+                gms->haxis()->set(0);
+                gms->vaxis()->set(1);
+                gms->data()->set_x(graph_x, sizeof(graph_x)/sizeof(float));
+                gms->data()->set_y(graph_y, sizeof(graph_y)/sizeof(float));
+                gms->smooth()->set(true);
+            }
 
+            // Addd Line segment
+            {
+                tk::GraphLineSegment *gls;
+                static const float segment_x[] = { 100, 800 };
+                static const float segment_y[] = { 96, 96 };
+
+                MTEST_ASSERT(gls = new tk::GraphLineSegment(dpy));
+                MTEST_ASSERT(id.fmt_ascii("line_segment_%d", wid++));
+                MTEST_ASSERT(init_widget(gls, vh, id.get_ascii()) == STATUS_OK);
+                MTEST_ASSERT(widgets.push(gls));
+                MTEST_ASSERT(gr->add(gls) == STATUS_OK);
+
+                gls->begin()->set(segment_x[0], segment_y[0]);
+
+                gls->hvalue()->set_min(10.0f);
+                gls->hvalue()->set_max(24000.0f);
+                gls->hvalue()->set(segment_x[1]);
+                gls->heditable()->set(true);
+                gls->haxis()->set(0);
+
+                gls->vvalue()->set_min(0.0f);
+                gls->vvalue()->set_max(120.0f);
+                gls->vvalue()->set(segment_y[1]);
+                gls->veditable()->set(true);
+                gls->vaxis()->set(1);
+
+                gls->smooth()->set(true);
+                gls->pointer()->set(ws::MP_VSIZE);
+
+                gls->width()->set(3);
+                gls->hover_width()->set(4);
+
+                gls->left_border()->set(20);
+                gls->right_border()->set(20);
+                gls->hover_left_border()->set(32);
+                gls->hover_right_border()->set(32);
+
+                gls->color()->set_rgb24(0xffff00);
+                gls->hover_color()->set_rgb24(0xff00ff);
+
+                gls->border_left_color()->set_rgba32(0x000088cc);
+                gls->border_right_color()->set_rgba32(0x0000cc88);
+                gls->hover_border_left_color()->set_rgba32(0x0000ccff);
+                gls->hover_border_right_color()->set_rgba32(0x0000ffcc);
+            }
 
             // Create axes
             tk::GraphAxis *ga;

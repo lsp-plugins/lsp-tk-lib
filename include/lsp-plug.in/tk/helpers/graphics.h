@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 26 авг. 2020 г.
@@ -28,6 +28,23 @@ namespace lsp
 {
     namespace tk
     {
+        typedef struct dot2f_t
+        {
+            float x;
+            float y;
+        } dot2f_t;
+
+        typedef struct vec2f_t
+        {
+            float dx;
+            float dy;
+        } vec2f_t;
+
+        typedef struct triangle2f_t
+        {
+            dot2f_t     v[3];
+        } triangle2f_t;
+
         bool line2d_equation
         (
             float x1, float y1,
@@ -105,8 +122,44 @@ namespace lsp
             float x, float y,                               // Coordinates of point
             float lc, float rc, float tc, float bc          // Corners: left, right, top, bottom
         );
-    }
-}
+
+        vec2f_t normalize(const vec2f_t &v);
+        bool    normalize(vec2f_t &v, const vec2f_t &sv);
+
+        vec2f_t vec2f(float x1, float y1, float x2, float y2);
+        vec2f_t vec2f(const dot2f_t &begin, const dot2f_t &end);
+        vec2f_t perp2f(const vec2f_t &v);
+        vec2f_t perp2f(float x1, float y1, float x2, float y2);
+        vec2f_t perp2f(const dot2f_t &begin, const dot2f_t &end);
+
+        vec2f_t normalized_vec2f(float x1, float y1, float x2, float y2);
+        vec2f_t normalized_vec2f(const dot2f_t &begin, const dot2f_t &end);
+        bool    normalized_vec2f(vec2f_t &v, float x1, float y1, float x2, float y2);
+        bool    normalized_vec2f(vec2f_t &v, const dot2f_t &begin, const dot2f_t &end);
+
+        vec2f_t normalized_perp2f(float x1, float y1, float x2, float y2);
+        vec2f_t normalized_perp2f(const dot2f_t &begin, const dot2f_t &end);
+        bool    normalized_perp2f(vec2f_t &v, float x1, float y1, float x2, float y2);
+        bool    normalized_perp2f(vec2f_t &v, const dot2f_t &begin, const dot2f_t &end);
+
+        vec2f_t normalized_perp2f(float x1, float y1, float x2, float y2);
+        vec2f_t normalized_perp2f(const dot2f_t &begin, const dot2f_t &end);
+
+        bool    inside(const triangle2f_t &t, float x, float y);
+        bool    inside(const triangle2f_t &t, const dot2f_t &p);
+        bool    inside(const dot2f_t &a, const dot2f_t &b, const dot2f_t &c, float x, float y);
+        bool    inside(const dot2f_t &a, const dot2f_t &b, const dot2f_t &c, const dot2f_t &p);
+
+
+        float   cross_factor(const triangle2f_t &t);
+        float   cross_factor(const vec2f_t &v1, const vec2f_t &v2);
+        triangle2f_t reorder_triangle2f(const triangle2f_t &t);
+
+        dot2f_t shift2f(const dot2f_t &p, const vec2f_t &v, float k);
+        dot2f_t shift2f(float x, float y, const vec2f_t &v, float k);
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_HELPERS_GRAPHICS_H_ */

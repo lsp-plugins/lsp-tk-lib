@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 25 авг. 2020 г.
@@ -33,7 +33,7 @@ namespace lsp
     namespace tk
     {
         /**
-         * Floating-point property interface
+         * Two-dimensional Floating-point Vector property interface
          */
         class Vector2D: public MultiProperty
         {
@@ -122,9 +122,6 @@ namespace lsp
 
                 public:
                     explicit Vector2D(prop::Listener *listener = NULL): tk::Vector2D(listener) {};
-
-                protected:
-                    status_t            init(Style *style, float dx, float dy, float rho, float phi);
 
                 public:
                     /**
