@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 сент. 2020 г.
@@ -107,14 +107,14 @@ namespace lsp
 
             public:
                 explicit LedMeterChannel(Display *dpy);
-                virtual ~LedMeterChannel();
+                virtual ~LedMeterChannel() override;
 
-                virtual status_t            init();
+                virtual status_t            init() override;
 
             protected:
-                virtual void                property_changed(Property *prop);
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                realize(const ws::rectangle_t *r);
+                virtual void                property_changed(Property *prop) override;
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
 
             public:
                 LSP_TK_PROPERTY(RangeFloat,         value,              &sValue)
@@ -142,9 +142,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            angle,              &sAngle)
 
             public:
-                virtual void                draw(ws::ISurface *s);
+                virtual void                draw(ws::ISurface *s) override;
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_METERCHANNEL_H_ */

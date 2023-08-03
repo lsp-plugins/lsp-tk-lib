@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 22 сент. 2020 г.
@@ -173,11 +173,16 @@ namespace lsp
         void LedMeterChannel::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
+            if (sActive.get())
+            {
+                if (sValue.is(prop))
+                    query_draw();
+                if (sPeak.is(prop) && (sPeakVisible.get()))
+                    query_draw();
+                if (sPeakVisible.is(prop))
+                    query_draw();
+            }
 
-            if (sValue.is(prop))
-                query_draw();
-            if (sPeak.is(prop) && (sPeakVisible.get()))
-                query_draw();
             if (sBalance.is(prop) && (sBalanceVisible.get()))
                 query_draw();
             if (sColor.is(prop))
@@ -196,8 +201,6 @@ namespace lsp
                 query_draw();
             if (sEstText.is(prop) && (sTextVisible.get()))
                 query_resize();
-            if (sPeakVisible.is(prop))
-                query_draw();
             if (sBalanceVisible.is(prop))
                 query_draw();
             if (sTextVisible.is(prop))
@@ -440,8 +443,8 @@ namespace lsp
             float dy            = ((angle & 1)) ? ((angle & 2) ? seg_size : -seg_size) : 0.0f;
 
             bool has_balance    = sBalanceVisible.get();
-            bool has_peak       = sPeakVisible.get();
             bool active         = sActive.get();
+            bool has_peak       = (active) && (sPeakVisible.get());
             bool reversive      = sReversive.get();
             float balance       = sBalance.get();
             float peak          = sPeak.get();
@@ -451,8 +454,11 @@ namespace lsp
             float vmin          = first - 0.5f * step;
 
             float aa            = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             s->clip_begin(&sAMeter);
+            {
+                lsp_finally { s->clip_end(); };
                 for (ssize_t i=0; i<segments; ++i)
                 {
                     float vmax          = first + step * (i + 0.5f);
@@ -516,9 +522,7 @@ namespace lsp
                     fx                 += dx;
                     fy                 += dy;
                 }
-            s->clip_end();
-
-            s->set_antialiasing(aa);
+            }
         }
 
         const lsp::Color *LedMeterChannel::get_color(float value, const ColorRanges *ranges, const Color *dfl)
@@ -576,6 +580,6 @@ namespace lsp
             if (sTextVisible.get())
                 draw_label(s, &sFont, fscaling, bright);
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 

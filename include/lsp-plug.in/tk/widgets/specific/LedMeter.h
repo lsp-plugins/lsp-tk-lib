@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 25 сент. 2020 г.
@@ -79,16 +79,16 @@ namespace lsp
 
             public:
                 explicit LedMeter(Display *dpy);
-                virtual ~LedMeter();
+                virtual ~LedMeter() override;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             protected:
-                virtual void                property_changed(Property *prop);
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                realize(const ws::rectangle_t *r);
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
+                virtual void                property_changed(Property *prop) override;
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
 
                 void                        get_visible_items(lltl::parray<LedMeterChannel> *dst);
 
@@ -96,7 +96,7 @@ namespace lsp
                 static void                 on_remove_item(void *obj, Property *prop, void *w);
 
             public:
-                virtual void                query_draw(size_t flags = REDRAW_SURFACE);
+                virtual void                query_draw(size_t flags = REDRAW_SURFACE) override;
 
             public:
                 LSP_TK_PROPERTY(WidgetList<LedMeterChannel>,    items,              &vItems)
@@ -111,16 +111,13 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                        min_channel_width,  &sMinChannelWidth)
 
             public:
-                virtual void                draw(ws::ISurface *s);
-
-                virtual status_t            add(Widget *widget);
-
-                virtual status_t            remove(Widget *child);
-
-                virtual status_t            remove_all();
+                virtual void                draw(ws::ISurface *s) override;
+                virtual status_t            add(Widget *widget) override;
+                virtual status_t            remove(Widget *child) override;
+                virtual status_t            remove_all() override;
 
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_LEDMETER_H_ */
