@@ -4,6 +4,7 @@
 
 === 1.0.13 ===
 * Several fixes and optimizations related to tk::LedMeterChannel and tk::LedMeter.
+* Fixed bug in tk::TabControl widget destruction.
 * Updated build scripts.
 
 === 1.0.12 ===

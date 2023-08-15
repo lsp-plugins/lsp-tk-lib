@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2022 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2022 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 нояб. 2022 г.
@@ -134,6 +134,7 @@ namespace lsp
         TabControl::~TabControl()
         {
             nFlags     |= FINALIZED;
+            do_destroy();
         }
 
         status_t TabControl::init()
@@ -171,6 +172,27 @@ namespace lsp
                 return -id;
 
             return STATUS_OK;
+        }
+
+        void TabControl::destroy()
+        {
+            nFlags     |= FINALIZED;
+            do_destroy();
+            WidgetContainer::destroy();
+        }
+
+        void TabControl::do_destroy()
+        {
+            for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+            {
+                // Get widget
+                Widget *w = vWidgets.get(i);
+                if (w != NULL)
+                    unlink_widget(w);
+            }
+
+            // Cleanup collections
+            vWidgets.flush();
         }
 
         void TabControl::property_changed(Property *prop)
