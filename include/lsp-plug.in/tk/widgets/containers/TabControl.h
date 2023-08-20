@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2022 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2022 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 нояб. 2022 г.
@@ -122,6 +122,7 @@ namespace lsp
                 bool                        scroll_item(ssize_t increment);
                 tk::Tab                    *find_tab(ssize_t x, ssize_t y);
                 void                        draw_tab(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area);
+                void                        do_destroy();
 
             protected:
                 static void                 on_add_widget(void *obj, Property *prop, void *w);
@@ -140,6 +141,7 @@ namespace lsp
                 virtual ~TabControl() override;
 
                 virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(Color,                      border_color,               &sBorderColor)
