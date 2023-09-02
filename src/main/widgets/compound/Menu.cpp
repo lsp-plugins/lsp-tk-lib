@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 18 сент. 2017 г.
@@ -1161,6 +1161,20 @@ namespace lsp
             w->get_screen_rectangle(&r);
             sWindow.trigger_widget()->set(w);
             sWindow.trigger_area()->set(r.nLeft, r.nTop, 0, 0);
+            Widget::show();
+        }
+
+        void Menu::showmp(Widget *w)
+        {
+            size_t screen;
+            ssize_t x, y;
+
+            if (pDisplay->get_pointer_location(&screen, &x, &y) != STATUS_OK)
+                return;
+
+            sWindow.trigger_screen()->set(screen);
+            sWindow.trigger_widget()->set(w);
+            sWindow.trigger_area()->set(x, y, 0, 0);
             Widget::show();
         }
 

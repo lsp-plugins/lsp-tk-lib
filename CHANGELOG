@@ -3,7 +3,8 @@
 *******************************************************************************
 
 === 1.0.14 ===
-
+* Added tk::Menu::showmp method to show menu at current mouse cursor's position
+  as a window transient for specified widget.
 
 === 1.0.13 ===
 * Several fixes and optimizations related to tk::LedMeterChannel and tk::LedMeter.

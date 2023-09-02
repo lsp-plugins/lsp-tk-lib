@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 18 сент. 2017 г.
@@ -124,14 +124,13 @@ namespace lsp
                         explicit Window(Display *dpy, Menu *menu);
 
                     protected:
-                        virtual Widget     *sync_mouse_handler(const ws::event_t *e, bool lookup);
-                        virtual Widget     *acquire_mouse_handler(const ws::event_t *e);
-                        virtual Widget     *release_mouse_handler(const ws::event_t *e, bool lookup);
+                        virtual Widget     *sync_mouse_handler(const ws::event_t *e, bool lookup) override;
+                        virtual Widget     *acquire_mouse_handler(const ws::event_t *e) override;
+                        virtual Widget     *release_mouse_handler(const ws::event_t *e, bool lookup) override;
 
                     public:
-                        virtual status_t    handle_event(const ws::event_t *e);
-
-                        virtual bool        take_focus();
+                        virtual status_t    handle_event(const ws::event_t *e) override;
+                        virtual bool        take_focus() override;
                 };
 
                 class MenuScroll: public Widget
@@ -148,9 +147,9 @@ namespace lsp
                         explicit MenuScroll(Display *dpy, Menu *menu, ssize_t dir);
 
                     public:
-                        virtual status_t        on_mouse_in(const ws::event_t *e);
-                        virtual status_t        on_mouse_out(const ws::event_t *e);
-                        virtual status_t        on_focus_out(const ws::event_t *e);
+                        virtual status_t        on_mouse_in(const ws::event_t *e) override;
+                        virtual status_t        on_mouse_out(const ws::event_t *e) override;
+                        virtual status_t        on_focus_out(const ws::event_t *e) override;
 
                         bool                    active() const;
                 };
@@ -211,36 +210,26 @@ namespace lsp
                 bool                        check_rtl_direction();
 
             protected:
-                virtual void                property_changed(Property *prop);
-
-                virtual void                size_request(ws::size_limit_t *r);
-
-                virtual void                realize(const ws::rectangle_t *r);
-
-                virtual void                show_widget();
-
-                virtual void                hide_widget();
+                virtual void                property_changed(Property *prop) override;
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
+                virtual void                show_widget() override;
+                virtual void                hide_widget() override;
 
                 virtual void                select_menu_item(MenuItem *item, bool popup);
-
                 virtual void                select_menu_item(ssize_t index, bool popup);
-
                 virtual void                select_first_item(bool popup);
-
                 virtual void                submit_menu_item(MenuItem *item, bool focus);
-
                 virtual void                sync_scroll(MenuItem *item);
-
                 virtual status_t            handle_key_scroll(ssize_t dir);
-
                 virtual status_t            handle_mouse_scroll(ssize_t dir);
 
             public:
                 explicit Menu(Display *dpy);
-                virtual ~Menu();
+                virtual ~Menu() override;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(Font,               font,                       &sFont)
@@ -272,28 +261,25 @@ namespace lsp
                 bool                        add_tether(size_t pos, float halign=1.0f, float valign=1.0f);
 
             public:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
+                virtual status_t            add(Widget *child) override;
+                virtual status_t            remove(Widget *child) override;
+                virtual void                show() override;
 
-                virtual status_t            add(Widget *child);
+                virtual void                draw(ws::ISurface *s) override;
+                virtual status_t            on_key_down(const ws::event_t *e) override;
+                virtual status_t            on_key_up(const ws::event_t *e) override;
 
+            public:
                 virtual status_t            insert(Widget *child, size_t index);
-
-                virtual status_t            remove(Widget *child);
-
                 virtual Widget             *get(size_t index);
 
-                virtual void                show();
                 virtual void                show(Widget *w);
                 virtual void                showxy(Widget *w);
+                virtual void                showmp(Widget *w);
                 virtual void                show(Widget *w, ssize_t x, ssize_t y);
                 virtual void                show(Widget *w, ssize_t x, ssize_t y, ssize_t xw, ssize_t xh);
                 virtual void                show(Widget *w, const ws::rectangle_t *r);
-
-                virtual void                draw(ws::ISurface *s);
-
-                virtual status_t            on_key_down(const ws::event_t *e);
-
-                virtual status_t            on_key_up(const ws::event_t *e);
         };
     } /* namespace tk */
 } /* namespace lsp */
