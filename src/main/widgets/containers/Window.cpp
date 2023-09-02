@@ -328,7 +328,7 @@ namespace lsp
 
 //        #ifdef LSP_TRACE
 //            time = system::get_time_millis() - time;
-//            lsp_trace("Render time: %ld ms", long(time));
+//            lsp_trace("Window %p render time: %ld ms", this, long(time));
 //        #endif /* LSP_TRACE */
 
             // And also update pointer
