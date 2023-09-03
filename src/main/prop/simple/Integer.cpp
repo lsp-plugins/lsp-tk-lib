@@ -26,8 +26,7 @@ namespace lsp
     namespace tk
     {
         Integer::Integer(prop::Listener *listener):
-            SimpleProperty(listener),
-            sListener(this)
+            SimpleProperty(listener)
         {
             nAtom       = -1;
             nValue      = 0.0f;
@@ -35,7 +34,7 @@ namespace lsp
 
         Integer::~Integer()
         {
-            unbind(&sListener);
+            SimpleProperty::unbind(&sListener);
         }
 
         void Integer::commit(atom_t property)

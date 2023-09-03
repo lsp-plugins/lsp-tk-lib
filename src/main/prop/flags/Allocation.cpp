@@ -35,6 +35,12 @@ namespace lsp
             ".vreduce",
             NULL
         };
+
+        Allocation::Allocation(prop::Listener *listener): Flags(FLAGS, vAtoms, listener)
+        {
+            for (size_t i=0; i<F_TOTAL; ++i)
+                vAtoms[i]   = 0;
+        }
     
         void Allocation::set_fill(bool hor, bool vert)
         {

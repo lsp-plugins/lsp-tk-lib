@@ -33,10 +33,6 @@ namespace lsp
         
         class Flags: public Property
         {
-            private:
-                Flags & operator = (const Flags &);
-                Flags(const Flags &);
-
             protected:
                 size_t                  nFlags;         // Bit field of flags
                 const char * const     *pFlags;         // Flag description
@@ -61,7 +57,12 @@ namespace lsp
 
             protected:
                 explicit Flags(const char * const *flags, atom_t *atoms, prop::Listener *listener = NULL);
-                virtual ~Flags();
+                Flags(const Flags &) = delete;
+                Flags(Flags &&) = delete;
+                virtual ~Flags() override;
+
+                Flags & operator = (const Flags &) = delete;
+                Flags & operator = (Flags &&) = delete;
         };
     
     } /* namespace tk */

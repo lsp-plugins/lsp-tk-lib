@@ -40,10 +40,6 @@ namespace lsp
          */
         class String: public SimpleProperty
         {
-            private:
-                String & operator = (const String &);
-                String(const String &);
-
             protected:
                 enum flags_t
                 {
@@ -94,7 +90,12 @@ namespace lsp
 
             protected:
                 explicit String(prop::Listener *listener = NULL);
+                String(const String &) = delete;
+                String(String &&) = delete;
                 virtual ~String();
+
+                String & operator = (const String &) = delete;
+                String & operator = (String &&) = delete;
 
             public:
                 /**
@@ -273,7 +274,7 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
-        }
+        } /* namespace prop */
     
     } /* namespace tk */
 } /* namespace lsp */

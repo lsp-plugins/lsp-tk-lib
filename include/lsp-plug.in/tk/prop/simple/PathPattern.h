@@ -37,16 +37,17 @@ namespace lsp
          */
         class PathPattern: public Property
         {
-            private:
-                PathPattern & operator = (const PathPattern &);
-                PathPattern(const PathPattern &);
-
             protected:
                 io::PathPattern                 sPattern;
 
             protected:
                 explicit PathPattern(prop::Listener *listener = NULL);
+                PathPattern(const PathPattern &) = delete;
+                PathPattern(PathPattern &&) = delete;
                 virtual ~PathPattern();
+
+                PathPattern & operator = (const PathPattern &) = delete;
+                PathPattern & operator = (PathPattern &&);
 
             public:
                 const io::PathPattern          *pattern() const     { return &sPattern;             }
@@ -85,8 +86,8 @@ namespace lsp
                 public:
                     explicit PathPattern(prop::Listener *listener = NULL): tk::PathPattern(listener) {};
             };
-        }
-    }
-}
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_PROP_SIMPLE_PATHPATTERN_H_ */

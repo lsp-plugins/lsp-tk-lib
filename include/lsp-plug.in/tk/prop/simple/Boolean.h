@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 мая 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class Boolean: public SimpleProperty
         {
-            private:
-                Boolean & operator = (const Boolean &);
-                Boolean(const Boolean &);
-
             protected:
                 bool                bValue;
 
@@ -48,7 +44,12 @@ namespace lsp
 
             protected:
                 explicit Boolean(prop::Listener *listener = NULL);
+                Boolean(const Boolean &) = delete;
+                Boolean(Boolean &&) = delete;
                 virtual ~Boolean();
+
+                Boolean & operator = (const Boolean &) = delete;
+                Boolean & operator = (Boolean &&) = delete;
 
             public:
                 /**
@@ -127,7 +128,7 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
-        }
+        } /* namespace prop */
 
     } /* namespace tk */
 } /* namespace lsp */

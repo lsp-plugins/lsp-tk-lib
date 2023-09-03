@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2020 г.
@@ -57,10 +57,6 @@ namespace lsp
             public:
                 static const w_class_t metadata;
 
-            private:
-                FileDialog & operator = (const FileDialog &);
-                FileDialog(const FileDialog &);
-
             protected:
                 enum
                 {
@@ -85,7 +81,10 @@ namespace lsp
                     io::Path                sPath;
                     bookmarks::bookmark_t   sBookmark;
 
-                    inline bm_entry_t(Display *dpy): sHlink(dpy) {}
+                    inline bm_entry_t(Display *dpy): sHlink(dpy)
+                    {
+                        sBookmark.origin        = 0;
+                    }
                 } bm_entry_t;
 
             protected:
@@ -246,14 +245,19 @@ namespace lsp
                 status_t                apply_filters();
 
             protected:
-                virtual void            property_changed(Property *prop);
+                virtual void            property_changed(Property *prop) override;
 
             public:
                 explicit FileDialog(Display *dpy);
-                virtual ~FileDialog();
+                FileDialog(const FileDialog &) = delete;
+                FileDialog(FileDialog &&) = delete;
+                virtual ~FileDialog() override;
 
-                virtual status_t                init();
-                virtual void                    destroy();
+                FileDialog & operator = (const FileDialog &) = delete;
+                FileDialog & operator = (FileDialog &&) = delete;
+
+                virtual status_t                init() override;
+                virtual void                    destroy() override;
 
             public:
                 LSP_TK_PROPERTY(FileDialogMode,             mode,                           &sMode);
@@ -278,18 +282,16 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                      bookmark_selected_text_color,   &sBMSelTextColor);
 
             public:
-                virtual status_t        on_show();
+                virtual status_t        on_show() override;
+                virtual status_t        on_close(const ws::event_t *e) override;
 
-                virtual status_t        on_close(const ws::event_t *e);
-
+            public:
                 virtual status_t        on_submit();
-
                 virtual status_t        on_cancel();
-
                 virtual status_t        on_change();
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

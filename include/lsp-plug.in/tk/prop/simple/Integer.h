@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 мая 2020 г.
@@ -31,17 +31,12 @@ namespace lsp
     namespace tk
     {
         /**
-         * Integering property interface
+         * Integer property interface
          */
         class Integer: public SimpleProperty
         {
-            private:
-                Integer & operator = (const Integer &);
-                Integer(const Integer &);
-
             protected:
                 ssize_t             nValue;
-                Listener            sListener;
 
             protected:
                 virtual void        commit(atom_t property);
@@ -49,7 +44,12 @@ namespace lsp
 
             protected:
                 explicit Integer(prop::Listener *listener = NULL);
+                Integer(const Integer &) = delete;
+                Integer(Integer &&) = delete;
                 virtual ~Integer();
+
+                Integer & operator = (const Integer &) = delete;
+                Integer & operator = (Integer &&) = delete;
 
             public:
                 /**
@@ -107,7 +107,7 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
-        }
+        } /* namespace prop */
     
     } /* namespace tk */
 } /* namespace lsp */
