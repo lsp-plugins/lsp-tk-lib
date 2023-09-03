@@ -39,9 +39,6 @@ namespace lsp
                 atom_t                 *vAtoms;         // List of associated atoms
 
             protected:
-                virtual void    push();
-                virtual void    commit(atom_t property);
-
                 status_t        unbind();
                 status_t        bind(atom_t id, Style *style);
                 status_t        bind(const char *id, Style *style);
@@ -54,6 +51,10 @@ namespace lsp
                 bool            set(size_t ordinal, bool on = true);
                 bool            unset(size_t ordinal);
                 bool            toggle(size_t ordinal);
+
+            protected:
+                virtual void    push() override;
+                virtual void    commit(atom_t property) override;
 
             protected:
                 explicit Flags(const char * const *flags, atom_t *atoms, prop::Listener *listener = NULL);
