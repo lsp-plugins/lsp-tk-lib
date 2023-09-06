@@ -182,13 +182,13 @@ namespace lsp
                 explicit ListBox(Display *dpy);
                 ListBox(const ListBox &) = delete;
                 ListBox(ListBox &&) = delete;
-                virtual ~ListBox();
+                virtual ~ListBox() override;
 
                 ListBox & operator = (const ListBox &) = delete;
                 ListBox & operator = (ListBox &&) = delete;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sSizeConstraints)
