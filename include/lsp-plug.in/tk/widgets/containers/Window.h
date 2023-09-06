@@ -53,10 +53,6 @@ namespace lsp
 
         class Window: public WidgetContainer
         {
-            private:
-                Window & operator = (const Window &);
-                Window(const Window &);
-
             protected:
                 friend class Display;
                 friend class Widget;
@@ -131,12 +127,12 @@ namespace lsp
                 status_t            init_internal(bool create_handle);
 
             protected:
-                virtual Widget     *find_widget(ssize_t x, ssize_t y);
-                virtual void        property_changed(Property *prop);
-                virtual void        hide_widget();
-                virtual void        show_widget();
-                virtual void        size_request(ws::size_limit_t *r);
-                virtual void        realize(const ws::rectangle_t *r);
+                virtual Widget     *find_widget(ssize_t x, ssize_t y) override;
+                virtual void        property_changed(Property *prop) override;
+                virtual void        hide_widget() override;
+                virtual void        show_widget() override;
+                virtual void        size_request(ws::size_limit_t *r) override;
+                virtual void        realize(const ws::rectangle_t *r) override;
 
                 /**
                  * Discard widget: notify window that widget has been removed from the widget tree
@@ -148,11 +144,16 @@ namespace lsp
             // Construction and destruction
             public:
                 explicit Window(Display *dpy, void *handle = NULL, ssize_t screen = -1);
+                Window(const Window &) = delete;
+                Window(Window &&) = delete;
                 virtual ~Window();
 
-                virtual status_t                init();
+                Window & operator = (const Window &) = delete;
+                Window & operator = (Window &&) = delete;
 
-                virtual void                    destroy();
+                virtual status_t                init() override;
+
+                virtual void                    destroy() override;
 
             //---------------------------------------------------------------------------------
             // Properties
@@ -176,10 +177,10 @@ namespace lsp
 
                 inline ssize_t                  screen()                    { return (pWindow != NULL) ? pWindow->screen() : -1; };
 
-                virtual status_t                get_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr);
-                virtual status_t                get_screen_rectangle(ws::rectangle_t *r);
-                virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr);
-                virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r);
+                virtual status_t                get_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr) override;
+                virtual status_t                get_screen_rectangle(ws::rectangle_t *r) override;
+                virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr) override;
+                virtual status_t                get_padded_screen_rectangle(ws::rectangle_t *r) override;
 
                 /**
                  * Resize the underlying window to the specified geometry
@@ -208,14 +209,14 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
-                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
                 virtual status_t        override_pointer(bool override = true);
 
                 /** Show window
                  *
                  */
-                virtual void            show();
+                virtual void            show() override;
 
                 /** Show window over window of actor
                  *
@@ -225,15 +226,13 @@ namespace lsp
                 virtual void            show(tk::Widget *actor);
                 virtual void            show(ws::IWindow *actor);
 
-                virtual status_t        add(Widget *widget);
+                virtual status_t        add(Widget *widget) override;
+                virtual status_t        remove(Widget *widget) override;
+                virtual status_t        remove_all() override;
 
-                virtual status_t        remove(Widget *widget);
+                virtual status_t        handle_event(const ws::event_t *e) override;
 
-                virtual status_t        remove_all();
-
-                virtual status_t        handle_event(const ws::event_t *e);
-
-                virtual bool            take_focus();
+                virtual bool            take_focus() override;
 
                 virtual bool            has_parent() const;
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2022 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2022 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 нояб. 2022 г.
@@ -59,10 +59,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                Tab & operator = (const Tab &);
-                Tab(const Tab &);
-
             protected:
                 Widget                     *pWidget;
 
@@ -94,7 +90,12 @@ namespace lsp
 
             public:
                 explicit Tab(Display *dpy);
-                virtual ~Tab();
+                Tab(const Tab &) = delete;
+                Tab(Tab &&) = delete;
+                virtual ~Tab() override;
+
+                Tab & operator = (const Tab &) = delete;
+                Tab & operator = (Tab &&) = delete;
 
                 virtual status_t            init() override;
                 virtual void                destroy() override;
@@ -124,7 +125,6 @@ namespace lsp
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
                 virtual status_t            add(Widget *widget) override;
-
                 virtual status_t            remove(Widget *widget) override;
         };
 

@@ -852,7 +852,8 @@ namespace lsp
             LSPString text;
 
             sFont.get_parameters(pDisplay, fscaling, &fp);
-            float aa            = s->set_antialiasing(true);
+            bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             for (ssize_t i=0, n=vVisible.size(); i<n; ++i)
             {
@@ -1062,16 +1063,12 @@ namespace lsp
                     border
                 );
             }
-            s->set_antialiasing(aa);
         }
 
         status_t Menu::add(Widget *child)
         {
-            if (child == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
             MenuItem *item = widget_cast<MenuItem>(child);
-            if (child == NULL)
+            if (item == NULL)
                 return STATUS_BAD_TYPE;
 
             if (!vItems.add(item))
@@ -1085,11 +1082,11 @@ namespace lsp
 
         status_t Menu::insert(Widget *child, size_t index)
         {
-            if ((child == NULL) || (index > vItems.size()))
+            if (index > vItems.size())
                 return STATUS_BAD_ARGUMENTS;
 
             MenuItem *item = widget_cast<MenuItem>(child);
-            if (child == NULL)
+            if (item == NULL)
                 return STATUS_BAD_TYPE;
 
             if (!vItems.insert(index, item))

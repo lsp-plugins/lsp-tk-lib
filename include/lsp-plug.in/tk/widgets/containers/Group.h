@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 26 июн. 2020 г.
@@ -60,10 +60,6 @@ namespace lsp
          */
         class Group: public Align
         {
-            private:
-                Group & operator = (const Group &);
-                Group(const Group &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -101,18 +97,23 @@ namespace lsp
                 void                    allocate(alloc_t *alloc);
 
             protected:
-                virtual void            property_changed(Property *prop);
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            realize(const ws::rectangle_t *r);
+                virtual void            property_changed(Property *prop) override;
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
 
-                virtual void            get_child_bg_color(lsp::Color *color) const;
-                virtual void            get_child_bg_color(lsp::Color &color) const;
+                virtual void            get_child_bg_color(lsp::Color *color) const override;
+                virtual void            get_child_bg_color(lsp::Color &color) const override;
 
             public:
                 explicit Group(Display *dpy);
-                virtual ~Group();
+                Group(const Group &) = delete;
+                Group(Group &&) = delete;
+                virtual ~Group() override;
 
-                virtual status_t        init();
+                Group & operator = (const Group &) = delete;
+                Group & operator = (Group &&) = delete;
+
+                virtual status_t        init() override;
 
             public:
                 LSP_TK_PROPERTY(Font,       font,           &sFont)
@@ -133,7 +134,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Float,      ibg_brightness, &sIBGBrightness)
 
             public:
-                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
         };
     } /* namespace tk */
 } /* namespace lsp */

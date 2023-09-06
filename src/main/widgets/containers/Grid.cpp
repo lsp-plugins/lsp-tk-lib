@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -1024,15 +1024,10 @@ namespace lsp
                 w->pWidget->get_padded_size_limits(&sr);
 
                 if ((w->nRows > 1) && (sr.nMinHeight > 0))
-                {
-                    if (sr.nMinHeight > 0)
-                        distribute_size(&a->vRows, w->nTop,  w->nRows, sr.nMinHeight);
-                }
+                    distribute_size(&a->vRows, w->nTop,  w->nRows, sr.nMinHeight);
+
                 if ((w->nCols > 1) && (sr.nMinWidth > 0))
-                {
-                    if (sr.nMinWidth > 0)
-                        distribute_size(&a->vCols, w->nLeft, w->nCols, sr.nMinWidth);
-                }
+                    distribute_size(&a->vCols, w->nLeft, w->nCols, sr.nMinWidth);
             }
 
             return STATUS_OK;

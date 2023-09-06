@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 авг. 2020 г.
@@ -773,7 +773,8 @@ namespace lsp
         {
             return STATUS_OK;
         }
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 

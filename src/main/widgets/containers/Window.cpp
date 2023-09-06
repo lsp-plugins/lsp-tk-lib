@@ -790,7 +790,7 @@ namespace lsp
                 {
                     Widget *h       = acquire_mouse_handler(e);
 //                    int old_state   = hMouse.nState;
-                    hMouse.nState  &= ~(1 << e->nCode);
+                    hMouse.nState  &= ~(size_t(1) << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
 
@@ -810,7 +810,7 @@ namespace lsp
                 {
                     Widget *h       = acquire_mouse_handler(e);
 //                    int old_state   = hMouse.nState;
-                    hMouse.nState  |= (1 << e->nCode);
+                    hMouse.nState  |= (size_t(1) << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
 

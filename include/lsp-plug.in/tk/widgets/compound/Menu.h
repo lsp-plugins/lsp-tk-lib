@@ -59,10 +59,6 @@ namespace lsp
 
         class Menu: public WidgetContainer
         {
-            private:
-                Menu & operator = (const Menu &);
-                Menu(const Menu &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -226,7 +222,13 @@ namespace lsp
 
             public:
                 explicit Menu(Display *dpy);
+                Menu(const Menu &) = delete;
+                Menu(Menu &&) = delete;
                 virtual ~Menu() override;
+
+                Menu & operator = (const Menu &) = delete;
+                Menu & operator = (Menu &&) = delete;
+
 
                 virtual status_t            init() override;
                 virtual void                destroy() override;

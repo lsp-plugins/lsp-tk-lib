@@ -106,6 +106,11 @@ namespace lsp
             sBounds.nWidth      = 0;
             sBounds.nHeight     = 0;
 
+            sTabArea.nLeft      = 0;
+            sTabArea.nTop       = 0;
+            sTabArea.nWidth     = 0;
+            sTabArea.nHeight    = 0;
+
             for (size_t i=0; i<2; ++i)
             {
                 sHead[i].nLeft      = 0;

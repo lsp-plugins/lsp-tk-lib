@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -48,10 +48,6 @@ namespace lsp
          */
         class Grid: public WidgetContainer
         {
-            private:
-                Grid & operator = (const Grid &);
-                Grid(const Grid &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -144,7 +140,12 @@ namespace lsp
 
             public:
                 explicit Grid(Display *dpy);
+                Grid(const Grid &) = delete;
+                Grid(Grid &&) = delete;
                 virtual ~Grid() override;
+
+                Grid & operator = (const Grid &) = delete;
+                Grid & operator = (Grid &&) = delete;
 
                 virtual status_t            init() override;
                 virtual void                destroy() override;

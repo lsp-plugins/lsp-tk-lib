@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -173,16 +173,16 @@ namespace lsp
             sHBar.accel_step()->set(1.0f, 8.0f, 0.5f);
             sHBar.set_parent(this);
             sHBar.slots()->bind(SLOT_CHANGE, slot_on_scroll_change, self());
-            sHBar.slots()->bind(SLOT_KEY_DOWN, slot_on_scroll_key_down, self());
-            sHBar.slots()->bind(SLOT_KEY_UP, slot_on_scroll_key_up, self());
+            sHBar.slots()->bind(SLOT_KEY_DOWN, slot_on_scroll_key_event, self());
+            sHBar.slots()->bind(SLOT_KEY_UP, slot_on_scroll_key_event, self());
 
             sVBar.orientation()->set(O_VERTICAL);
             sVBar.step()->set(1.0f, 8.0f, 0.5f);
             sVBar.accel_step()->set(1.0f, 8.0f, 0.5f);
             sVBar.set_parent(this);
             sVBar.slots()->bind(SLOT_CHANGE, slot_on_scroll_change, self());
-            sVBar.slots()->bind(SLOT_KEY_DOWN, slot_on_scroll_key_down, self());
-            sVBar.slots()->bind(SLOT_KEY_UP, slot_on_scroll_key_up, self());
+            sVBar.slots()->bind(SLOT_KEY_DOWN, slot_on_scroll_key_event, self());
+            sVBar.slots()->bind(SLOT_KEY_UP, slot_on_scroll_key_event, self());
 
             // Init style
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -571,7 +571,6 @@ namespace lsp
                     if (force)
                     {
                         s->clip_begin(area);
-                        s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft + h.nWidth, v.nTop + v.nHeight, v.nWidth, h.nHeight);
                         s->fill_rect(col, SURFMASK_NONE, 0.0f, h.nLeft, h.nTop - hsspacing, h.nWidth, hsspacing);
                         s->clip_end();
                     }
@@ -748,14 +747,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t ListBox::slot_on_scroll_key_down(Widget *sender, void *ptr, void *data)
-        {
-            ListBox *_this = widget_ptrcast<ListBox>(ptr);
-            const ws::event_t *e = static_cast<ws::event_t *>(data);
-            return (_this != NULL) ? _this->handle_event(e) : STATUS_OK;
-        }
-
-        status_t ListBox::slot_on_scroll_key_up(Widget *sender, void *ptr, void *data)
+        status_t ListBox::slot_on_scroll_key_event(Widget *sender, void *ptr, void *data)
         {
             ListBox *_this = widget_ptrcast<ListBox>(ptr);
             const ws::event_t *e = static_cast<ws::event_t *>(data);
@@ -825,7 +817,7 @@ namespace lsp
                     nXFlags         = lsp_setflag(nXFlags, F_SEL_ACTIVE, Position::inside(&sList, e->nLeft, e->nTop));
                 }
             }
-            nBMask         |= 1 << e->nCode;
+            nBMask         |= size_t(1) << e->nCode;
             nXFlags         = lsp_setflag(nXFlags, F_SUBMIT, nBMask == ws::MCF_LEFT);
 
             ws::event_t xe  = *e;
@@ -836,7 +828,7 @@ namespace lsp
 
         status_t ListBox::on_mouse_up(const ws::event_t *e)
         {
-            nBMask     &= ~(1 << e->nCode);
+            nBMask     &= ~(size_t(1) << e->nCode);
             if (nBMask == 0)
             {
                 if ((nXFlags & (F_SUBMIT | F_CHANGED)) == (F_SUBMIT | F_CHANGED))
