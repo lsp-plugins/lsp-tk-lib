@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 сент. 2020 г.
@@ -32,10 +32,6 @@ namespace lsp
     {
         class GraphFrameData: public MultiProperty
         {
-            private:
-                GraphFrameData & operator = (const GraphFrameData &);
-                GraphFrameData(const GraphFrameData &);
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -60,7 +56,7 @@ namespace lsp
                         inline Listener(GraphFrameData *data)       { pValue = data; };
 
                     public:
-                        virtual void    notify(atom_t property);
+                        virtual void    notify(atom_t property) override;
                 };
 
             protected:
@@ -87,7 +83,12 @@ namespace lsp
 
             public:
                 explicit GraphFrameData(prop::Listener *listener);
+                GraphFrameData(const GraphFrameData &) = delete;
+                GraphFrameData(GraphFrameData &&) = delete;
                 virtual ~GraphFrameData();
+
+                GraphFrameData & operator = (const GraphFrameData &) = delete;
+                GraphFrameData & operator = (GraphFrameData &&) = delete;
 
             public:
                 size_t          rows() const                { return nRows;                     }
@@ -138,10 +139,9 @@ namespace lsp
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
 
             };
-        };
-    }
-}
-
+        } /* namespace prop */
+    } /*namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_SPECIFIC_GRAPHFRAMEDATA_H_ */

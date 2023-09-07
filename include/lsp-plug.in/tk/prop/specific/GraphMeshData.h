@@ -32,10 +32,6 @@ namespace lsp
     {
         class GraphMeshData: public MultiProperty
         {
-            private:
-                GraphMeshData &operator = (const GraphMeshData &);
-                GraphMeshData(const GraphMeshData &);
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -56,7 +52,7 @@ namespace lsp
                         inline Listener(GraphMeshData *color)   { pValue = color; };
 
                     public:
-                        virtual void    notify(atom_t property);
+                        virtual void    notify(atom_t property) override;
                 };
 
             protected:
@@ -77,7 +73,12 @@ namespace lsp
 
             public:
                 explicit GraphMeshData(prop::Listener *listener);
-                virtual ~GraphMeshData();
+                GraphMeshData(const GraphMeshData &) = delete;
+                GraphMeshData(GraphMeshData &&) = delete;
+                virtual ~GraphMeshData() override;
+
+                GraphMeshData &operator = (const GraphMeshData &) = delete;
+                GraphMeshData &operator = (GraphMeshData &&) = delete;
 
             public:
                 inline size_t       size() const                { return nSize;                                 }
@@ -110,20 +111,21 @@ namespace lsp
         {
             class GraphMeshData: public tk::GraphMeshData
             {
-                private:
-                    GraphMeshData &operator = (const GraphMeshData &);
-                    GraphMeshData(const GraphMeshData &);
-
                 public:
                     explicit inline GraphMeshData(prop::Listener *listener = NULL): tk::GraphMeshData(listener) {}
+                    GraphMeshData(const GraphMeshData &) = delete;
+                    GraphMeshData(GraphMeshData &&) = delete;
+
+                    GraphMeshData &operator = (const GraphMeshData &) = delete;
+                    GraphMeshData &operator = (GraphMeshData &&) = delete;
 
                 public:
                     inline status_t     bind(atom_t property, Style *style)             { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const char *property, Style *style)        { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
             };
-        };
-    }
-}
+        } /* namespace prop */
+    } /*namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_PROP_SPECIFIC_GRAPHMESHDATA_H_ */

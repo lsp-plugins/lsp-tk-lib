@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 сент. 2020 г.
@@ -194,11 +194,11 @@ namespace lsp
 
         float ColorRange::set_max(float v)
         {
-            float old = fMin;
+            float old = fMax;
             if (v == old)
                 return old;
 
-            fMin                = v;
+            fMax                = v;
             sync();
             return old;
         }
@@ -541,6 +541,6 @@ namespace lsp
             sync();
             src->sync();
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 

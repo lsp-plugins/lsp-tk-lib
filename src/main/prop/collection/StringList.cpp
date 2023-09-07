@@ -266,7 +266,7 @@ namespace lsp
                 return STATUS_NOT_FOUND;
 
             StringItem *si2 = vItems.get(i2);
-            if (si1 == NULL)
+            if (si2 == NULL)
                 return STATUS_NOT_FOUND;
 
             // Prevent from multiple sync()
@@ -279,7 +279,7 @@ namespace lsp
 
             return STATUS_OK;
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

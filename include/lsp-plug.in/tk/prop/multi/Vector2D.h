@@ -37,10 +37,6 @@ namespace lsp
          */
         class Vector2D: public MultiProperty
         {
-            private:
-                Vector2D & operator = (const Vector2D &);
-                Vector2D(const Vector2D &);
-
             protected:
                 enum property_t
                 {
@@ -66,8 +62,8 @@ namespace lsp
                 float               fPhi;               // Angle
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 static void         calc_cart  (float *dx, float *dy, float rho, float phi);
                 static void         calc_polar (float *rho, float *phi, float dx, float dy);
@@ -75,7 +71,12 @@ namespace lsp
 
             protected:
                 explicit Vector2D(prop::Listener *listener = NULL);
-                virtual ~Vector2D();
+                Vector2D(const Vector2D &) = delete;
+                Vector2D(Vector2D &&) = delete;
+                virtual ~Vector2D() override;
+
+                Vector2D & operator = (const Vector2D &) = delete;
+                Vector2D & operator = (Vector2D &&) = delete;
 
             public:
                 inline float        dx() const                  { return fDX;                   }
@@ -136,7 +137,7 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Vector2D::unbind(vAtoms, DESC, &sListener); };
             };
-        }
+        } /* namespace prop */
 
     } /* namespace tk */
 } /* namespace lsp */

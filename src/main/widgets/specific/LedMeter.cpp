@@ -331,6 +331,8 @@ namespace lsp
                     led_size           -= (border + xtext.nWidth);
                 }
             }
+            else
+                tp.Height           = 0;
 
             // Compute overall areas
             ssize_t segments    = led_size / seg_size;

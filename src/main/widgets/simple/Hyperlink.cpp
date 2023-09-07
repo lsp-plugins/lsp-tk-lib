@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2017 г.
@@ -383,7 +383,7 @@ namespace lsp
             if (nState & F_MOUSE_IGN)
                 return STATUS_OK;
             size_t flags = nState;
-            if ((nState & F_MOUSE_DOWN) && (nMFlags == (1 << ws::MCB_LEFT)))
+            if ((nState & F_MOUSE_DOWN) && (nMFlags == (size_t(1) << ws::MCB_LEFT)))
                 nState |= F_MOUSE_IN;
             else if (nMFlags == 0)
                 nState |= F_MOUSE_IN;
@@ -401,7 +401,7 @@ namespace lsp
             if (nState & F_MOUSE_IGN)
                 return STATUS_OK;
             size_t flags = nState;
-            if ((nState & F_MOUSE_DOWN) && (nMFlags == (1 << ws::MCB_LEFT)))
+            if ((nState & F_MOUSE_DOWN) && (nMFlags == (size_t(1) << ws::MCB_LEFT)))
                 nState |= F_MOUSE_IN;
             else
                 nState &= ~F_MOUSE_IN;
@@ -415,7 +415,7 @@ namespace lsp
             if (nState & F_MOUSE_IGN)
                 return STATUS_OK;
             size_t flags = nState;
-            if ((nState & F_MOUSE_DOWN) && (nMFlags == (1 << ws::MCB_LEFT)) && (inside(e->nLeft, e->nTop)))
+            if ((nState & F_MOUSE_DOWN) && (nMFlags == (size_t(1) << ws::MCB_LEFT)) && (inside(e->nLeft, e->nTop)))
                 nState |= F_MOUSE_IN;
             else if (nMFlags == 0)
                 nState |= F_MOUSE_IN;
@@ -438,9 +438,9 @@ namespace lsp
                     nState |= F_MOUSE_IGN;
             }
 
-            nMFlags |= 1 << e->nCode;
+            nMFlags |= size_t(1) << e->nCode;
 
-            if ((nState & F_MOUSE_DOWN) && (nMFlags == (1 << ws::MCB_LEFT)) && (inside(e->nLeft, e->nTop)))
+            if ((nState & F_MOUSE_DOWN) && (nMFlags == (size_t(1) << ws::MCB_LEFT)) && (inside(e->nLeft, e->nTop)))
                 nState |= F_MOUSE_IN;
             else if (nMFlags == 0)
                 nState |= F_MOUSE_IN;
@@ -455,11 +455,11 @@ namespace lsp
         status_t Hyperlink::on_mouse_up(const ws::event_t *e)
         {
             size_t flags = nMFlags;
-            nMFlags &= ~ (1 << e->nCode);
+            nMFlags &= ~ (size_t(1) << e->nCode);
             if (nMFlags == 0)
                 nState      = 0;
 
-            if ((nState & F_MOUSE_DOWN) && (nMFlags == (1 << ws::MCB_LEFT)) && (inside(e->nLeft, e->nTop)))
+            if ((nState & F_MOUSE_DOWN) && (nMFlags == (size_t(1) << ws::MCB_LEFT)) && (inside(e->nLeft, e->nTop)))
                 nState |= F_MOUSE_IN;
             else if (nMFlags == 0)
                 nState |= F_MOUSE_IN;
@@ -472,9 +472,9 @@ namespace lsp
             // Trigger submit action
             if (inside(e->nLeft, e->nTop))
             {
-                if ((flags == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+                if ((flags == (size_t(1) << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
                     sSlots.execute(SLOT_SUBMIT, this);
-                else if ((flags == (1 << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT) && (sPopup.is_set()))
+                else if ((flags == (size_t(1) << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT) && (sPopup.is_set()))
                 {
                     Menu *popup = sPopup.get();
                     sSlots.execute(SLOT_BEFORE_POPUP, popup, self());

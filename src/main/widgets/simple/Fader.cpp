@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 нояб. 2017 г.
@@ -396,14 +396,14 @@ namespace lsp
                 }
             }
 
-            nButtons       |= (1 << e->nCode);
+            nButtons       |= (size_t(1) << e->nCode);
             if (nXFlags & F_IGNORE)
                 return STATUS_OK;
 
             size_t key      = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
 
             // Update value
-            float value     = (nButtons == size_t(1 << key)) ? fCurrValue : fLastValue;
+            float value     = (nButtons == size_t(size_t(1) << key)) ? fCurrValue : fLastValue;
             update_value(value);
 
             return STATUS_OK;
@@ -411,7 +411,7 @@ namespace lsp
 
         status_t Fader::on_mouse_up(const ws::event_t *e)
         {
-            nButtons       &= ~(1 << e->nCode);
+            nButtons       &= ~(size_t(1) << e->nCode);
             if (nXFlags & F_IGNORE)
             {
                 if (nButtons == 0)
@@ -432,7 +432,7 @@ namespace lsp
                 nXFlags     = 0;
                 value       = (e->nCode == key) ? fCurrValue : fLastValue;
             }
-            else if (nButtons == size_t(1 << key)) // Currently pressed initially selected button
+            else if (nButtons == (size_t(1) << key)) // Currently pressed initially selected button
                 value       = fCurrValue;
             else
                 value       = fLastValue;
@@ -452,7 +452,7 @@ namespace lsp
                 return STATUS_OK;
 
             size_t key = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
-            if (nButtons != size_t(1 << key))
+            if (nButtons != (size_t(1) << key))
             {
                 if ((nButtons == 0) && (Position::inside(&sButton, e->nLeft, e->nTop)))
                     nXFlags    |= F_MOVER;
@@ -578,11 +578,7 @@ namespace lsp
                     sborder.lightness(l);
                     sborder.scale_lch_luminance(bright);
 
-                    if (angle & 1) // vertical
-                        g = s->radial_gradient(0, sSize.nHeight, scaling, sSize.nHeight, delta);
-                    else // horizontal
-                        g = s->radial_gradient(0, sSize.nHeight, scaling, sSize.nHeight, delta);
-
+                    g = s->radial_gradient(0, sSize.nHeight, scaling, sSize.nHeight, delta);
                     g->add_color(0.0, sborder);
                     g->add_color(1.0, 0.5 * sborder.red(), 0.5 *  sborder.green(), 0.5 * sborder.blue());
                     s->fill_rect(g, SURFMASK_ALL_CORNER, sradius, &h);
@@ -620,25 +616,14 @@ namespace lsp
 
                 switch (angle & 3)
                 {
-                    case 0: // +
+                    case 0: case 2:
                         boff            = sHole.nLeft - sSize.nLeft + sHole.nWidth * balance;
                         bval            = sHole.nLeft - sSize.nLeft + sHole.nWidth * value;
                         c.nLeft         = lsp_min(boff, bval);
                         c.nWidth        = lsp_max(boff, bval) - c.nLeft;
                         break;
-                    case 1:
-                        boff            = sHole.nTop - sSize.nTop + sHole.nHeight * (1.0f - balance);
-                        bval            = sHole.nTop - sSize.nTop + sHole.nHeight * (1.0f - value);
-                        c.nTop          = lsp_min(boff, bval);
-                        c.nHeight       = lsp_max(boff, bval) - c.nTop;
-                        break;
-                    case 2:
-                        boff            = sHole.nLeft - sSize.nLeft + sHole.nWidth * balance;
-                        bval            = sHole.nLeft - sSize.nLeft + sHole.nWidth * value;
-                        c.nLeft         = lsp_min(boff, bval);
-                        c.nWidth        = lsp_max(boff, bval) - c.nLeft;
-                        break;
-                    default:  // +
+                    case 1: case 3:
+                    default:
                         boff            = sHole.nTop - sSize.nTop + sHole.nHeight * (1.0f - balance);
                         bval            = sHole.nTop - sSize.nTop + sHole.nHeight * (1.0f - value);
                         c.nTop          = lsp_min(boff, bval);

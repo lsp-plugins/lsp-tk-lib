@@ -436,7 +436,7 @@ namespace lsp
                 }
             }
 
-            nBMask |= 1 << e->nCode;
+            nBMask |= size_t(1) << e->nCode;
 
             return handle_mouse_move(e);
         }
@@ -444,9 +444,9 @@ namespace lsp
         status_t RackEars::on_mouse_up(const ws::event_t *e)
         {
             size_t mask = nBMask;
-            nBMask &= ~(1 << e->nCode);
+            nBMask &= ~(size_t(1) << e->nCode);
 
-            if (mask != (1U << e->nCode))
+            if (mask != (size_t(1) << e->nCode))
                 return handle_mouse_move(e);
 
             // Last button released, process the vent

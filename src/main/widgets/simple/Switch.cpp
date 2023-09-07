@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 июл. 2017 г.
@@ -454,10 +454,10 @@ namespace lsp
 
         status_t Switch::on_mouse_down(const ws::event_t *e)
         {
-            nBMask         |= (1 << e->nCode);
+            nBMask         |= (size_t(1) << e->nCode);
 
             bool mover      = check_mouse_over(e->nLeft, e->nTop);
-            bool pressed    = (nBMask == (1 << ws::MCB_LEFT)) && (mover);
+            bool pressed    = (nBMask == (size_t(1) << ws::MCB_LEFT)) && (mover);
             bool is_pressed = nState & S_PRESSED;
 
             if (pressed != is_pressed)
@@ -476,8 +476,8 @@ namespace lsp
         status_t Switch::on_mouse_up(const ws::event_t *e)
         {
             bool mover      = check_mouse_over(e->nLeft, e->nTop);
-            nBMask         &= ~(1 << e->nCode);
-            bool pressed    = ((e->nCode == ws::MCB_LEFT) && (nBMask == 0)) || ((e->nCode != ws::MCB_LEFT) && (nBMask == (1 << ws::MCB_LEFT)));
+            nBMask         &= ~(size_t(1) << e->nCode);
+            bool pressed    = ((e->nCode == ws::MCB_LEFT) && (nBMask == 0)) || ((e->nCode != ws::MCB_LEFT) && (nBMask == (size_t(1) << ws::MCB_LEFT)));
             if (pressed)
                 pressed     = mover;
             if (nBMask == 0)
@@ -509,7 +509,7 @@ namespace lsp
         status_t Switch::on_mouse_move(const ws::event_t *e)
         {
             bool mover      = check_mouse_over(e->nLeft, e->nTop);
-            bool pressed    = (nBMask == (1 << ws::MCB_LEFT)) && (mover);
+            bool pressed    = (nBMask == (size_t(1) << ws::MCB_LEFT)) && (mover);
             bool is_pressed = nState & S_PRESSED;
 
             if (pressed != is_pressed)
@@ -539,5 +539,5 @@ namespace lsp
             nState = (down) ? nState | S_TOGGLED : nState & ~S_TOGGLED;
             query_draw();
         }
-    } /* namespace ctl */
+    } /* namespace tk */
 } /* namespace lsp */

@@ -398,11 +398,15 @@ namespace lsp
 
                         // Create color object
                         lsp::Color *c = new lsp::Color();
-                        LSPString color_name;
-                        if (!color_name.set(p->name()))
-                            return STATUS_NO_MEM;
                         if (c == NULL)
                             return STATUS_NO_MEM;
+
+                        LSPString color_name;
+                        if (!color_name.set(p->name()))
+                        {
+                            delete c;
+                            return STATUS_NO_MEM;
+                        }
 
                         // Try to parse color
                         if ((res = parse_color(p, &color_name, c)) == STATUS_OK)
@@ -572,7 +576,10 @@ namespace lsp
             while (true)
             {
                 if ((item = p->read_next()) < 0)
+                {
+                    delete style;
                     return -item;
+                }
 
                 switch (item)
                 {
@@ -596,14 +603,20 @@ namespace lsp
                         if (p->name()->equals_ascii("class"))
                         {
                             if ((root) || (bClass))
+                            {
                                 res     = STATUS_BAD_FORMAT;
+                                break;
+                            }
                             bClass  = true;
                             res     = parse_style_class(&sClass, p->value());
                         }
                         else if (p->name()->equals_ascii("parents"))
                         {
                             if ((root) || (bParents))
+                            {
                                 res     = STATUS_BAD_FORMAT;
+                                break;
+                            }
                             bParents = true;
                             res     = parse_style_parents(style, p->value());
                         }
@@ -782,7 +795,7 @@ namespace lsp
 
         status_t StyleSheet::parse_font(xml::PullParser *p, font_t *font)
         {
-            status_t item, res = STATUS_OK;
+            status_t item;
             enum {
                 LC_FLAG_SRC     = 1 << 0,
                 LC_FLAG_ALIAS   = 1 << 1
@@ -845,9 +858,6 @@ namespace lsp
                         sError.set_ascii("parse_font: Unsupported XML element");
                         return STATUS_CORRUPTED;
                 }
-
-                if (res != STATUS_OK)
-                    return res;
             }
         }
 
@@ -1387,19 +1397,12 @@ namespace lsp
                 {
                     // Obtain the parent style
                     LSPString *name = s->parents.uget(i++);
-                    style_t *ps = name->equals_ascii("root") ? pRoot : vStyles.get(name);
+                    style_t *ps = ((name == NULL) || (name->equals_ascii("root"))) ? pRoot : vStyles.get(name);
 
 //                    lsp_trace("  testing: %p (%s), i=%d, n=%d", ps, (ps != NULL) ? ps->name.get_utf8() : "???", int(i), int(n));
-                    if (ps == NULL)
+                    if ((ps == NULL) || (p->visited.contains(ps)))
                     {
                         sError.fmt_utf8("Unexisting style found in tree: '%s'", (name != NULL) ? name->get_utf8() : "root");
-                        delete p;
-                        drop_paths(&stack);
-                        return STATUS_BAD_HIERARCHY;
-                    }
-                    else if (p->visited.contains(ps))
-                    {
-                        sError.fmt_utf8("Found inheritance loop at style '%s'", (name != NULL) ? name->get_utf8() : "root");
                         delete p;
                         drop_paths(&stack);
                         return STATUS_BAD_HIERARCHY;

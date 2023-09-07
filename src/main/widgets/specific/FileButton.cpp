@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 сент. 2020 г.
@@ -337,8 +337,9 @@ namespace lsp
             b.nLeft            -= sSize.nLeft;
             b.nTop             -= sSize.nTop;
 
-            float aa        = s->set_antialiasing(true);
             bool gradient   = sGradient.get();
+            bool aa         = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             if (gradient)
             {
@@ -444,9 +445,6 @@ namespace lsp
                 sFont.draw(s, text, x, y, fscaling, &stext, last, tail);
                 last    = curr + 1;
             }
-
-            // Restore antialiasing
-            s->set_antialiasing(aa);
         }
 
         status_t FileButton::on_mouse_down(const ws::event_t *e)
@@ -462,7 +460,7 @@ namespace lsp
                 }
             }
 
-            nBMask |= 1 << e->nCode;
+            nBMask |= size_t(1) << e->nCode;
 
             return handle_mouse_move(e);
         }
@@ -470,9 +468,9 @@ namespace lsp
         status_t FileButton::on_mouse_up(const ws::event_t *e)
         {
             size_t mask = nBMask;
-            nBMask &= ~(1 << e->nCode);
+            nBMask &= ~(size_t(1) << e->nCode);
 
-            if (mask != (1U << e->nCode))
+            if (mask != (size_t(1) << e->nCode))
                 return handle_mouse_move(e);
 
             // Last button released

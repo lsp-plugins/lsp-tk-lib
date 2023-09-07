@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 29 авг. 2017 г.
@@ -482,8 +482,9 @@ namespace lsp
             float lightness = sBrightness.get();
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
-            float aa        = s->set_antialiasing(true);
             size_t cursize  = lsp_max(1.0f, scaling);
+            bool aa         = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             // Draw border
             if (border > 0)
@@ -649,7 +650,6 @@ namespace lsp
             }
 
             s->clip_end();
-            s->set_antialiasing(aa);
         }
 
         status_t Edit::on_change()
@@ -666,7 +666,7 @@ namespace lsp
         status_t Edit::on_mouse_down(const ws::event_t *e)
         {
             size_t state = nMBState;
-            nMBState    |= (1 << e->nCode);
+            nMBState    |= (size_t(1) << e->nCode);
             if (state == 0)
                 take_focus();
 
@@ -683,7 +683,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        ssize_t Edit::mouse_to_cursor_pos(ssize_t x, ssize_t y, bool range)
+        ssize_t Edit::mouse_to_cursor_pos(ssize_t x, ssize_t /* y */, bool range)
         {
             x                  -= sTextArea.nLeft;
             if ((range) && ((x < 0) || (x >= sTextArea.nWidth)))
@@ -792,7 +792,7 @@ namespace lsp
         status_t Edit::on_mouse_up(const ws::event_t *e)
         {
             lsp_trace("mouse up");
-            if ((nMBState == (1 << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT))
+            if ((nMBState == (size_t(1) << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT))
             {
                 Menu *popup = sPopup.get();
                 if (popup != NULL)
@@ -802,13 +802,13 @@ namespace lsp
                     sSlots.execute(SLOT_POPUP, popup, self());
                 }
             }
-            else if ((nMBState == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+            else if ((nMBState == (size_t(1) << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
             {
                 update_clipboard(ws::CBUF_PRIMARY);
                 if (sSelection.length() <= 0)
                     sSelection.clear();
             }
-            else if ((nMBState == (1 << ws::MCB_MIDDLE)) && (e->nCode == ws::MCB_MIDDLE))
+            else if ((nMBState == (size_t(1) << ws::MCB_MIDDLE)) && (e->nCode == ws::MCB_MIDDLE))
             {
                 ssize_t first = mouse_to_cursor_pos(e->nLeft, e->nTop);
                 sSelection.set(first);
@@ -816,13 +816,13 @@ namespace lsp
                 request_clipboard(ws::CBUF_PRIMARY);
             }
 
-            nMBState    &= ~(1 << e->nCode);
+            nMBState    &= ~(size_t(1) << e->nCode);
             return STATUS_OK;
         }
 
         status_t Edit::on_mouse_move(const ws::event_t *e)
         {
-            if (nMBState == (1 << ws::MCB_LEFT))
+            if (nMBState == (size_t(1) << ws::MCB_LEFT))
             {
                 if (e->nLeft < sSize.nLeft)
                     run_scroll(-1);

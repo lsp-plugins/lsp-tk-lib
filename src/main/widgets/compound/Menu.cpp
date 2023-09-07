@@ -745,9 +745,9 @@ namespace lsp
             sUp.visibility()->set(scroll > 0);
             sUp.realize_widget(&xr);
 
-            xr.nWidth           = rr.nWidth;
+            // xr.nWidth           = rr.nWidth;
             xr.nHeight          = lsp_max(4, st.item_h >> 1) + border_w;
-            xr.nLeft            = rr.nLeft;
+            // xr.nLeft            = rr.nLeft;
             xr.nTop             = rr.nTop + rr.nHeight - xr.nHeight + border_w;
             sDown.visibility()->set(scroll < st.max_scroll);
             sDown.realize_widget(&xr);

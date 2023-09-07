@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2020 г.
@@ -765,7 +765,7 @@ namespace lsp
             handler_id_t id = 0;
 
             // Self-defined events
-            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
             if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
             if (id >= 0) id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
 
@@ -1220,32 +1220,40 @@ namespace lsp
         status_t FileDialog::slot_on_bm_menu_open(Widget *sender, void *ptr, void *data)
         {
             FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+            if (_this == NULL)
+                return STATUS_OK;
             bm_entry_t *bm = _this->pPopupBookmark;
-            return ((_this != NULL) && (bm != NULL)) ? _this->on_bm_submit(&bm->sHlink) : STATUS_OK;
+            return (bm != NULL) ? _this->on_bm_submit(&bm->sHlink) : STATUS_OK;
         }
 
         status_t FileDialog::slot_on_bm_menu_follow(Widget *sender, void *ptr, void *data)
         {
             FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+            if (_this == NULL)
+                return STATUS_OK;
             bm_entry_t *bm = _this->pPopupBookmark;
 
-            return ((_this != NULL) && (bm != NULL)) ? bm->sHlink.follow_url() : STATUS_OK;
+            return (bm != NULL) ? bm->sHlink.follow_url() : STATUS_OK;
         }
 
         status_t FileDialog::slot_on_bm_menu_copy(Widget *sender, void *ptr, void *data)
         {
             FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+            if (_this == NULL)
+                return STATUS_OK;
             bm_entry_t *bm = _this->pPopupBookmark;
 
-            return ((_this != NULL) && (bm != NULL)) ? bm->sHlink.copy_url(ws::CBUF_CLIPBOARD) : STATUS_OK;
+            return (bm != NULL) ? bm->sHlink.copy_url(ws::CBUF_CLIPBOARD) : STATUS_OK;
         }
 
         status_t FileDialog::slot_on_bm_menu_delete(Widget *sender, void *ptr, void *data)
         {
             FileDialog *_this = widget_ptrcast<FileDialog>(ptr);
+            if (_this == NULL)
+                return STATUS_OK;
             bm_entry_t *bm = _this->pPopupBookmark;
 
-            return ((_this != NULL) && (bm != NULL)) ? _this->remove_bookmark(bm) : STATUS_OK;
+            return (bm != NULL) ? _this->remove_bookmark(bm) : STATUS_OK;
         }
 
         status_t FileDialog::slot_on_bm_menu_up(Widget *sender, void *ptr, void *data)
@@ -2331,13 +2339,15 @@ namespace lsp
                 ListBoxItem *item = new ListBoxItem(pDisplay);
                 if (item == NULL)
                     return STATUS_NO_MEM;
+
                 res = item->init();
                 if (res == STATUS_OK)
                     res = item->text()->set(fm->title());
                 if (res == STATUS_OK)
+                {
                     item->tag()->set(i);
-                if (res == STATUS_OK)
                     res = sWFilter.items()->madd(item); // Add in managed mode
+                }
                 if (res != STATUS_OK)
                 {
                     item->destroy();
@@ -2359,6 +2369,7 @@ namespace lsp
             LSPString tmp, xfname, *psrc = NULL;
             io::PathPattern *psmask = NULL, smask;
             FileMask *fmask = NULL;
+            status_t res;
 
             // Initialize masks
             if (sMode.get() == FDM_OPEN_FILE) // Additional filtering is available only when opening file
@@ -2442,10 +2453,19 @@ namespace lsp
                 ListBoxItem *item = new ListBoxItem(pDisplay);
                 if (item == NULL)
                     return STATUS_NO_MEM;
-                LSP_STATUS_ASSERT(item->init());
+
+                if ((res = item->init()) != STATUS_OK)
+                {
+                    delete item;
+                    return res;
+                }
                 item->text()->set_raw(psrc);
                 item->tag()->set(i);
-                LSP_STATUS_ASSERT(lst->madd(item));
+                if ((res = lst->madd(item)) != STATUS_OK)
+                {
+                    delete item;
+                    return res;
+                }
 
                 // Check if is equal
                 if ((!(ent->nFlags & (F_ISDIR | F_DOTDOT))) && (xfname.length() > 0))
@@ -2500,7 +2520,7 @@ namespace lsp
             pWMessage->show(this);
             return STATUS_OK;
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

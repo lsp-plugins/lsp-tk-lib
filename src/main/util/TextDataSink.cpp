@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 июн. 2020 г.
@@ -62,7 +62,7 @@ namespace lsp
             for (const char *const *p = mimes; (*p != NULL) && (found < 0); ++p, ++self_idx)
             {
                 ssize_t src_idx = 0;
-                for (const char *const *v = mime_types; (*v != NULL) && (found < 0); ++v, ++src_idx)
+                for (const char *const *v = mime_types; (*v != NULL); ++v, ++src_idx)
                 {
                     if (!::strcasecmp(*p, *v))
                     {
@@ -160,7 +160,7 @@ namespace lsp
         {
             return STATUS_OK;
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

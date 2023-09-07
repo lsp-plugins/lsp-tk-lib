@@ -156,7 +156,7 @@ namespace lsp
                 r->nMaxWidth        = r->nMinWidth;
 
             r->nMinHeight       = r->nMinWidth;
-            r->nMinHeight       = r->nMinWidth;
+            r->nMaxHeight       = r->nMaxWidth;
         }
 
     } /* namespace tk */

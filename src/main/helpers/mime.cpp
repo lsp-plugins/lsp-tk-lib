@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 27 авг. 2019 г.
@@ -162,8 +162,7 @@ namespace lsp
         status_t fetch_text_x_moz_url_item(LSPString *dst, const char *protocol, io::IInSequence *is)
         {
             LSPString line;
-            size_t index = 0;
-            while (true)
+            for (size_t index=0; ; ++index)
             {
                 status_t res = is->read_line(&line, true);
                 if (res == STATUS_EOF)
@@ -294,7 +293,7 @@ namespace lsp
             line.swap(dst);
             return STATUS_OK;
         }
-    }
-}
+    } /* namespace lsp */
+} /* namespace tk */
 
 
