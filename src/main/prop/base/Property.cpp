@@ -344,7 +344,6 @@ namespace lsp
         size_t Property::parse_unique_enums(lltl::darray<ssize_t> *dst, const LSPString *s, const prop::enum_t *xenum)
         {
             // Parse values
-            size_t n = 0;
             bool semicolon = false;
             io::InStringSequence is(s);
             expr::Tokenizer tok(&is);
@@ -368,12 +367,14 @@ namespace lsp
                     return 0;
 
                 // Add unique value
-                for (size_t i=0; i<n; ++i)
+                for (size_t i=0, n=dst->size(); i<n; ++i)
+                {
                     if (*(dst->uget(i)) == xe->value)
                     {
                         xe = NULL;
                         break;
                     }
+                }
                 if (xe)
                 {
                     if (!dst->add(&xe->value))

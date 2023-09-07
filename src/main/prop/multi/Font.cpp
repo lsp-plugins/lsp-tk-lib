@@ -61,6 +61,9 @@ namespace lsp
             MultiProperty(vAtoms, P_COUNT, listener)
         {
             nOverride       = 0;
+            sFP.Ascent      = 0.0f;
+            sFP.Descent     = 0.0f;
+            sFP.Height      = 0.0f;
         }
 
         Font::~Font()
