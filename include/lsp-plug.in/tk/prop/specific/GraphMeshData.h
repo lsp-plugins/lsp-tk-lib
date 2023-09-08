@@ -68,7 +68,7 @@ namespace lsp
             protected:
                 void            copy_data(float *dst, const float *src, size_t n);
                 void            sync();
-                void            commit(atom_t property);
+                void            commit(atom_t property) override;
                 bool            resize_buffer(size_t size, bool strobe);
 
             public:
