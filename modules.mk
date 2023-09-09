@@ -67,13 +67,13 @@ LSP_R3D_WGL_LIB_TYPE       := src
 LSP_R3D_WGL_LIB_URL_RO     := https://github.com/lsp-plugins/$(LSP_R3D_WGL_LIB_NAME).git
 LSP_R3D_WGL_LIB_URL_RW     := git@github.com:lsp-plugins/$(LSP_R3D_WGL_LIB_NAME).git
 
-LSP_WS_LIB_VERSION         := 1.0.14
+LSP_WS_LIB_VERSION         := 1.0.15
 LSP_WS_LIB_NAME            := lsp-ws-lib
 LSP_WS_LIB_TYPE            := src
 LSP_WS_LIB_URL_RO          := https://github.com/lsp-plugins/$(LSP_WS_LIB_NAME).git
 LSP_WS_LIB_URL_RW          := git@github.com:lsp-plugins/$(LSP_WS_LIB_NAME).git
 
-LSP_DSP_LIB_VERSION        := 1.0.15
+LSP_DSP_LIB_VERSION        := 1.0.16
 LSP_DSP_LIB_NAME           := lsp-dsp-lib
 LSP_DSP_LIB_TYPE           := src
 LSP_DSP_LIB_URL_RO         := https://github.com/lsp-plugins/$(LSP_DSP_LIB_NAME).git
