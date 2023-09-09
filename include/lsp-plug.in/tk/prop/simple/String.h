@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 мар. 2020 г.
@@ -40,10 +40,6 @@ namespace lsp
          */
         class String: public SimpleProperty
         {
-            private:
-                String & operator = (const String &);
-                String(const String &);
-
             protected:
                 enum flags_t
                 {
@@ -94,7 +90,12 @@ namespace lsp
 
             protected:
                 explicit String(prop::Listener *listener = NULL);
+                String(const String &) = delete;
+                String(String &&) = delete;
                 virtual ~String();
+
+                String & operator = (const String &) = delete;
+                String & operator = (String &&) = delete;
 
             public:
                 /**
@@ -240,11 +241,15 @@ namespace lsp
             class String: public tk::String
             {
                 private:
-                    String & operator = (const String &);
-                    String(const String &);
+
 
                 public:
                     explicit String(prop::Listener *listener = NULL): tk::String(listener) {};
+                    String(const String &)= delete;
+                    String(String &&)= delete;
+
+                    String & operator = (const String &) = delete;
+                    String & operator = (String &&) = delete;
 
                 public:
                     using tk::String::format;
@@ -273,7 +278,7 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
-        }
+        } /* namespace prop */
     
     } /* namespace tk */
 } /* namespace lsp */

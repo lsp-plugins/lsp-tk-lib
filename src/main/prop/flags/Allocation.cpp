@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 мая 2020 г.
@@ -35,6 +35,13 @@ namespace lsp
             ".vreduce",
             NULL
         };
+
+        Allocation::Allocation(prop::Listener *listener):
+            Flags(FLAGS, vAtoms, listener)
+        {
+            for (size_t i=0; i<F_TOTAL; ++i)
+                vAtoms[i]   = -1;
+        }
     
         void Allocation::set_fill(bool hor, bool vert)
         {

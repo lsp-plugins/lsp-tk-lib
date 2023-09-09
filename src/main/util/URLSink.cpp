@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2020 г.
@@ -139,13 +139,11 @@ namespace lsp
                 switch (nCtype)
                 {
                     case TEXT_URI_LIST:
+                    case APPLICATION_X_KDE4_URILIST:
                         res = fetch_text_uri_list_item(&data, sProtocol, raw_data, raw_size, "UTF-8");
                         break;
                     case TEXT_X_MOZ_URL:
                         res = fetch_text_uri_list_item(&data, sProtocol, raw_data, raw_size, __IF_LEBE("UTF-16LE", "UTF-16BE"));
-                        break;
-                    case APPLICATION_X_KDE4_URILIST:
-                        res = fetch_text_uri_list_item(&data, sProtocol, raw_data, raw_size, "UTF-8");
                         break;
                     case TEXT_PLAIN:
                         if (data.set_native(reinterpret_cast<const char *>(raw_data), raw_size))

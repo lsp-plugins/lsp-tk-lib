@@ -50,10 +50,6 @@ namespace lsp
          */
         class Box: public WidgetContainer
         {
-            private:
-                Box & operator = (const Box &);
-                Box(const Box &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -104,16 +100,21 @@ namespace lsp
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                property_changed(Property *prop);
-                virtual void                realize(const ws::rectangle_t *r);
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                property_changed(Property *prop) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit Box(Display *dpy);
+                Box(const Box &) = delete;
+                Box(Box &&) = delete;
                 virtual ~Box();
 
-                virtual status_t            init();
-                virtual void                destroy();
+                Box & operator = (const Box &) = delete;
+                Box & operator = (Box &&) = delete;
+
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             //---------------------------------------------------------------------------------
             // Properties
@@ -168,25 +169,19 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
 
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
-                virtual status_t            add(Widget *widget);
+                virtual status_t            add(Widget *widget) override;
+                virtual status_t            remove(Widget *child) override;
+                virtual status_t            remove_all() override;
 
-                virtual status_t            remove(Widget *child);
-
-                virtual status_t            remove_all();
-
-                virtual status_t            on_mouse_in(const ws::event_t *e);
-
-                virtual status_t            on_mouse_out(const ws::event_t *e);
-
-                virtual status_t            on_mouse_move(const ws::event_t *e);
-
-                virtual status_t            on_mouse_down(const ws::event_t *e);
-
-                virtual status_t            on_mouse_up(const ws::event_t *e);
+                virtual status_t            on_mouse_in(const ws::event_t *e) override;
+                virtual status_t            on_mouse_out(const ws::event_t *e) override;
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
 
                 virtual status_t            on_submit();
 

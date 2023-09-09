@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 14 авг. 2020 г.
@@ -62,10 +62,6 @@ namespace lsp
          */
         class ComboGroup: public WidgetContainer
         {
-            private:
-                ComboGroup & operator = (const ComboGroup &);
-                ComboGroup(const ComboGroup &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -92,9 +88,8 @@ namespace lsp
                     public:
                         explicit Window(Display *dpy, ComboGroup *cbox);
 
-                        virtual status_t        on_hide();
-
-                        virtual status_t        on_show();
+                        virtual status_t        on_hide() override;
+                        virtual status_t        on_show() override;
                 };
 
                 class List: public ListBox
@@ -109,10 +104,10 @@ namespace lsp
                         explicit List(Display *dpy, ComboGroup *cbox);
 
                     protected:
-                        virtual void        property_changed(Property *prop);
+                        virtual void        property_changed(Property *prop) override;
 
                     public:
-                        virtual status_t    on_submit();
+                        virtual status_t    on_submit() override;
                 };
 
             protected:
@@ -161,16 +156,21 @@ namespace lsp
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
-                virtual void                property_changed(Property *prop);
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                realize(const ws::rectangle_t *r);
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
+                virtual void                property_changed(Property *prop) override;
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit ComboGroup(Display *dpy);
-                virtual ~ComboGroup();
+                ComboGroup(const ComboGroup &) = delete;
+                ComboGroup(ComboGroup &&) = delete;
+                virtual ~ComboGroup() override;
 
-                virtual status_t            init();
+                ComboGroup & operator = (const ComboGroup &) = delete;
+                ComboGroup & operator = (ComboGroup &&) = delete;
+
+                virtual status_t            init() override;
 
             public:
                 LSP_TK_PROPERTY(Font,                       font,                   &sFont)
@@ -200,33 +200,25 @@ namespace lsp
                 LSP_TK_PROPERTY(WidgetList<Widget>,         widgets,                &vWidgets)
 
             public:
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
+                virtual status_t            add(Widget *child) override;
+                virtual status_t            remove(Widget *child) override;
+                virtual status_t            remove_all() override;
 
-                virtual status_t            add(Widget *child);
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
+                virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
+                virtual status_t            on_key_down(const ws::event_t *e) override;
 
-                virtual status_t            remove(Widget *child);
-
-                virtual status_t            remove_all();
-
+            public:
                 virtual status_t            add_item(ListBoxItem *child);
-
                 virtual status_t            remove_item(ListBoxItem *child);
-
                 virtual status_t            remove_all_items();
 
                 virtual status_t            on_change();
-
                 virtual status_t            on_submit();
 
-                virtual status_t            on_mouse_down(const ws::event_t *e);
-
-                virtual status_t            on_mouse_up(const ws::event_t *e);
-
-                virtual status_t            on_mouse_move(const ws::event_t *e);
-
-                virtual status_t            on_mouse_scroll(const ws::event_t *e);
-
-                virtual status_t            on_key_down(const ws::event_t *e);
         };
 
     } /* namespace tk */

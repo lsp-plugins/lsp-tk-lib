@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -317,8 +317,7 @@ namespace lsp
             }
 
             // Add slots
-            handler_id_t id = 0;
-            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }
@@ -667,7 +666,7 @@ namespace lsp
 
             float scaling       = lsp_max(0.0f, sScaling.get());
             float bright        = sBrightness.get();
-            float x             = r->nLeft + (position * r->nWidth) / samples;
+            float x             = float(r->nLeft + (position * r->nWidth) / samples);
             float border        = lsp_max(1.0f, pborder * scaling);
 
             lsp::Color wire(sPlayColor);
@@ -1282,7 +1281,7 @@ namespace lsp
                 }
             }
 
-            nBMask         |= 1 << e->nCode;
+            nBMask         |= size_t(1) << e->nCode;
 
             return handle_mouse_move(e);
         }
@@ -1290,9 +1289,9 @@ namespace lsp
         status_t AudioSample::on_mouse_up(const ws::event_t *e)
         {
             size_t mask = nBMask;
-            nBMask &= ~(1 << e->nCode);
+            nBMask &= ~(size_t(1) << e->nCode);
 
-            if (mask != (1U << e->nCode))
+            if (mask != (size_t(1) << e->nCode))
                 return handle_mouse_move(e);
 
             // Last button released, process the vent

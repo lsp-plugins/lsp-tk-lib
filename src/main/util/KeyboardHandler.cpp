@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 11 сент. 2017 г.
@@ -31,6 +31,10 @@ namespace lsp
             nPause      = 1000;
             nRepeat     = 250;
             nRepeatSize = 0;
+
+            ws::init_event(&sLast);
+            for (size_t i=0; i<RPT_BUF_SIZE; ++i)
+                vRepeat[i]      = 0;
         }
 
         KeyboardHandler::~KeyboardHandler()

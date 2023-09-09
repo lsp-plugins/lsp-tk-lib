@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 июл. 2017 г.
@@ -46,10 +46,6 @@ namespace lsp
          */
         class Align: public WidgetContainer
         {
-            private:
-                Align & operator = (const Align &);
-                Align(const Align &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -62,28 +58,31 @@ namespace lsp
                 void                    do_destroy();
 
             protected:
-                virtual Widget         *find_widget(ssize_t x, ssize_t y);
-                virtual void            property_changed(Property *prop);
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            realize(const ws::rectangle_t *r);
+                virtual Widget         *find_widget(ssize_t x, ssize_t y) override;
+                virtual void            property_changed(Property *prop) override;
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit Align(Display *dpy);
-                virtual ~Align();
+                Align(const Align &) = delete;
+                Align(Align &&) = delete;
+                virtual ~Align() override;
 
-                virtual status_t        init();
-                virtual void            destroy();
+                Align & operator = (const Align &) = delete;
+                Align & operator = (Align &&) = delete;
+
+                virtual status_t        init() override;
+                virtual void            destroy() override;
 
             public:
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
 
             public:
-                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
-
-                virtual status_t        add(Widget *widget);
-
-                virtual status_t        remove(Widget *widget);
+                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
+                virtual status_t        add(Widget *widget) override;
+                virtual status_t        remove(Widget *widget) override;
         };
     
     } /* namespace tk */

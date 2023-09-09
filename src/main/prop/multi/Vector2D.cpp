@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 25 авг. 2020 г.
@@ -167,9 +167,7 @@ namespace lsp
                 brace = expr::TT_RCBRACE;
             else if (t == expr::TT_LQBRACE) // Polar form, degrees
                 brace = expr::TT_RQBRACE;
-            else if ((t == expr::TT_IVALUE) || (t == expr::TT_FVALUE)) // Number, consider to be decart form
-                brace = -1;
-            else
+            else if ((t != expr::TT_IVALUE) && (t != expr::TT_FVALUE)) // Number, consider to be decart form
                 return false;
 
             // Get next token if required
@@ -188,7 +186,7 @@ namespace lsp
             t = tok.get_token(expr::TF_GET);
 
             // Semicolon/comma required?
-            if (brace)
+            if (brace >= 0)
             {
                 if ((t != expr::TT_COMMA) && (t != expr::TT_SEMICOLON))
                     return false;

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -412,7 +412,7 @@ namespace lsp
             if ((position < 0) || (pborder < 0))
                 return;
 
-            float x             = r->nLeft + (position * r->nWidth) / samples;
+            float x             = float(r->nLeft + (position * r->nWidth) / samples);
             float border        = lsp_max(1.0f, pborder * scaling);
 
             lsp::Color wire(sPlayColor);
@@ -483,7 +483,7 @@ namespace lsp
             }
             s->clip_end();
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

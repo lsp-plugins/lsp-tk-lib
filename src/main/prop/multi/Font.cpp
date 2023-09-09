@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 27 мая 2020 г.
@@ -61,6 +61,9 @@ namespace lsp
             MultiProperty(vAtoms, P_COUNT, listener)
         {
             nOverride       = 0;
+            sFP.Ascent      = 0.0f;
+            sFP.Descent     = 0.0f;
+            sFP.Height      = 0.0f;
         }
 
         Font::~Font()
@@ -346,7 +349,7 @@ namespace lsp
             ws::Font f(&sValue);
             f.set_size(sValue.size() * lsp_max(0.0f, scaling));
 
-            ssize_t prev = 0, curr = 0, tail = 0;
+            ssize_t prev = 0, curr = first, tail = 0;
             ws::font_parameters_t fp;
             ws::text_parameters_t xp, rp;
 
@@ -412,7 +415,7 @@ namespace lsp
             ws::Font f(&sValue);
             f.set_size(sValue.size() * lsp_max(0.0f, scaling));
 
-            ssize_t prev = 0, curr = 0, tail = 0;
+            ssize_t prev = 0, curr = first, tail = 0;
             ws::font_parameters_t fp;
             ws::text_parameters_t xp, rp;
 
@@ -570,7 +573,7 @@ namespace lsp
             f.set_size(sValue.size() * lsp_max(0.0f, scaling)); // Update the font size
             s->out_text(f, c, x, y, text, first, last);
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

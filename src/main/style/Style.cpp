@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 окт. 2019 г.
@@ -1055,7 +1055,8 @@ namespace lsp
             const property_t *prop = get_property_recursive(id);
             if (prop == NULL)
             {
-                *dst = 0;
+                if (dst != NULL)
+                    *dst = 0;
                 return STATUS_OK;
             }
             else if (prop->type != PT_INT)
@@ -1082,7 +1083,8 @@ namespace lsp
             const property_t *prop = get_property_recursive(id);
             if (prop == NULL)
             {
-                *dst = 0.0f;
+                if (dst != NULL)
+                    *dst = 0.0f;
                 return STATUS_OK;
             }
             else if (prop->type != PT_FLOAT)
@@ -1109,7 +1111,8 @@ namespace lsp
             const property_t *prop = get_property_recursive(id);
             if (prop == NULL)
             {
-                *dst = false;
+                if (dst != NULL)
+                    *dst = false;
                 return STATUS_OK;
             }
             else if (prop->type != PT_BOOL)

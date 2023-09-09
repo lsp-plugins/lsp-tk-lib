@@ -453,7 +453,7 @@ namespace lsp
             float first         = sValue.min();
             float vmin          = first - 0.5f * step;
 
-            float aa            = s->set_antialiasing(true);
+            bool aa             = s->set_antialiasing(true);
             lsp_finally { s->set_antialiasing(aa); };
 
             s->clip_begin(&sAMeter);
@@ -482,7 +482,7 @@ namespace lsp
                                 ((vmax > balance) && (vmin <= value))
                                 : ((vmax > value) && (vmin <= balance));
 
-                            if ((has_balance) && (vmin <= balance) && (balance < vmax))
+                            if ((vmin <= balance) && (balance < vmax))
                                 matched     = !reversive;
                             else if ((!matched) && (has_peak))
                                 matched     = (peak >= vmin) && (peak < vmax);

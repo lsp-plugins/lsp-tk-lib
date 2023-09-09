@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 июл. 2020 г.
@@ -49,10 +49,6 @@ namespace lsp
          */
         class ScrollArea: public WidgetContainer
         {
-            private:
-                ScrollArea & operator = (const ScrollArea &);
-                ScrollArea(const ScrollArea &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -90,16 +86,21 @@ namespace lsp
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void            property_changed(Property *prop);
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            realize(const ws::rectangle_t *r);
+                virtual void            property_changed(Property *prop) override;
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit                ScrollArea(Display *dpy);
-                virtual                 ~ScrollArea();
+                ScrollArea(const ScrollArea &) = delete;
+                ScrollArea(ScrollArea &&) = delete;
+                virtual                 ~ScrollArea() override;
 
-                virtual status_t        init();
-                virtual void            destroy();
+                ScrollArea & operator = (const ScrollArea &) = delete;
+                ScrollArea & operator = (ScrollArea &&) = delete;
+
+                virtual status_t        init() override;
+                virtual void            destroy() override;
 
             public:
                 inline void             get_area(ws::rectangle_t *area) { *area = sArea;            }
@@ -118,15 +119,14 @@ namespace lsp
                 LSP_TK_PROPERTY(StepFloat,          vaccel_step,         sVBar.accel_step())
 
             public:
-                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
-                virtual status_t        add(Widget *widget);
+                virtual status_t        add(Widget *widget) override;
+                virtual status_t        remove(Widget *widget) override;
 
-                virtual status_t        remove(Widget *widget);
+                virtual Widget         *find_widget(ssize_t x, ssize_t y) override;
 
-                virtual Widget         *find_widget(ssize_t x, ssize_t y);
-
-                virtual status_t        on_mouse_scroll(const ws::event_t *e);
+                virtual status_t        on_mouse_scroll(const ws::event_t *e) override;
         };
     } /* namespace tk */
 } /* namespace lsp */

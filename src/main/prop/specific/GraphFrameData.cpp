@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 сент. 2020 г.
@@ -82,7 +82,6 @@ namespace lsp
             fDfl        = 0.0f;
             pPtr        = NULL;
         }
-
 
         void GraphFrameData::commit(atom_t property)
         {
@@ -381,7 +380,7 @@ namespace lsp
         {
             nChanges    = 0;
         }
-    }
-}
+    } /*namespace tk */
+} /* namespace lsp */
 
 

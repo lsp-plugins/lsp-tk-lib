@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2020 г.
@@ -46,10 +46,6 @@ namespace lsp
          */
         class PopupWindow: public Window
         {
-            private:
-                PopupWindow & operator = (const PopupWindow &);
-                PopupWindow(const PopupWindow &);
-
             public:
                 static const w_class_t          metadata;
 
@@ -63,19 +59,26 @@ namespace lsp
                 bool                            bInitialized;       // Initalization flag
 
             protected:
-                virtual void                    hide_widget();
-                virtual void                    show_widget();
+                virtual void                    hide_widget() override;
+                virtual void                    show_widget() override;
+                virtual status_t                sync_size() override;
+                virtual void                    size_request(ws::size_limit_t *r) override;
+
                 virtual status_t                post_init();
-                virtual status_t                sync_size();
-                virtual void                    size_request(ws::size_limit_t *r);
+
                 bool                            init_window();
                 void                            arrange_window_geometry();
 
             public:
                 explicit PopupWindow(Display *dpy);
-                virtual ~PopupWindow();
+                PopupWindow(const PopupWindow &) = delete;
+                PopupWindow(PopupWindow &&) = delete;
+                virtual ~PopupWindow() override;
 
-                virtual status_t                init();
+                PopupWindow & operator = (const PopupWindow &) = delete;
+                PopupWindow & operator = (PopupWindow &&) = delete;
+
+                virtual status_t                init() override;
 
             public:
                 LSP_TK_PROPERTY(Rectangle,          trigger_area,               &sTrgArea)
@@ -90,10 +93,11 @@ namespace lsp
                 bool                            add_tether(size_t flags, float halign=1.0f, float valign=1.0f);
 
             public:
-                virtual status_t                handle_event(const ws::event_t *e);
+                virtual status_t                handle_event(const ws::event_t *e) override;
         };
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

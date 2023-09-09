@@ -503,7 +503,7 @@ namespace lsp
         status_t GraphLineSegment::on_mouse_down(const ws::event_t *e)
         {
             size_t state = nMBState;
-            nMBState    |= 1 << e->nCode;
+            nMBState    |= size_t(1) << e->nCode;
 
             if (state == 0)
             {
@@ -531,7 +531,7 @@ namespace lsp
 
             apply_motion(e->nLeft, e->nTop, e->nState);
 
-            nMBState       &= ~(1 << e->nCode);
+            nMBState       &= ~(size_t(1) << e->nCode);
             if (nMBState == 0)
             {
                 nXFlags    &= ~(F_FINE_TUNE | F_EDITING);

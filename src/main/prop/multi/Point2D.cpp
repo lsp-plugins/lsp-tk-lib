@@ -92,9 +92,7 @@ namespace lsp
                 brace = expr::TT_RCBRACE;
             else if (t == expr::TT_LBRACE) // Decart form, second option
                 brace = expr::TT_RBRACE;
-            else if ((t == expr::TT_IVALUE) || (t == expr::TT_FVALUE)) // Number, consider to be decart form
-                brace = -1;
-            else
+            else if ((t != expr::TT_IVALUE) && (t != expr::TT_FVALUE)) // Number, consider to be decart form
                 return false;
 
             // Get next token if required
@@ -113,7 +111,7 @@ namespace lsp
             t = tok.get_token(expr::TF_GET);
 
             // Semicolon/comma required?
-            if (brace)
+            if (brace >= 0)
             {
                 if ((t != expr::TT_COMMA) && (t != expr::TT_SEMICOLON))
                     return false;

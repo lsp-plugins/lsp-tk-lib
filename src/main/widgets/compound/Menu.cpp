@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 18 сент. 2017 г.
@@ -745,9 +745,9 @@ namespace lsp
             sUp.visibility()->set(scroll > 0);
             sUp.realize_widget(&xr);
 
-            xr.nWidth           = rr.nWidth;
+            // xr.nWidth           = rr.nWidth;
             xr.nHeight          = lsp_max(4, st.item_h >> 1) + border_w;
-            xr.nLeft            = rr.nLeft;
+            // xr.nLeft            = rr.nLeft;
             xr.nTop             = rr.nTop + rr.nHeight - xr.nHeight + border_w;
             sDown.visibility()->set(scroll < st.max_scroll);
             sDown.realize_widget(&xr);
@@ -852,7 +852,8 @@ namespace lsp
             LSPString text;
 
             sFont.get_parameters(pDisplay, fscaling, &fp);
-            float aa            = s->set_antialiasing(true);
+            bool aa             = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             for (ssize_t i=0, n=vVisible.size(); i<n; ++i)
             {
@@ -1062,16 +1063,12 @@ namespace lsp
                     border
                 );
             }
-            s->set_antialiasing(aa);
         }
 
         status_t Menu::add(Widget *child)
         {
-            if (child == NULL)
-                return STATUS_BAD_ARGUMENTS;
-
             MenuItem *item = widget_cast<MenuItem>(child);
-            if (child == NULL)
+            if (item == NULL)
                 return STATUS_BAD_TYPE;
 
             if (!vItems.add(item))
@@ -1085,11 +1082,11 @@ namespace lsp
 
         status_t Menu::insert(Widget *child, size_t index)
         {
-            if ((child == NULL) || (index > vItems.size()))
+            if (index > vItems.size())
                 return STATUS_BAD_ARGUMENTS;
 
             MenuItem *item = widget_cast<MenuItem>(child);
-            if (child == NULL)
+            if (item == NULL)
                 return STATUS_BAD_TYPE;
 
             if (!vItems.insert(index, item))
@@ -1161,6 +1158,20 @@ namespace lsp
             w->get_screen_rectangle(&r);
             sWindow.trigger_widget()->set(w);
             sWindow.trigger_area()->set(r.nLeft, r.nTop, 0, 0);
+            Widget::show();
+        }
+
+        void Menu::showmp(Widget *w)
+        {
+            size_t screen;
+            ssize_t x, y;
+
+            if (pDisplay->get_pointer_location(&screen, &x, &y) != STATUS_OK)
+                return;
+
+            sWindow.trigger_screen()->set(screen);
+            sWindow.trigger_widget()->set(w);
+            sWindow.trigger_area()->set(x, y, 0, 0);
             Widget::show();
         }
 

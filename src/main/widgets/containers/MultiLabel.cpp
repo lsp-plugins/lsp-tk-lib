@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2021 г.
@@ -403,7 +403,7 @@ namespace lsp
                     nState |= F_MOUSE_IGN;
             }
 
-            nMFlags |= 1 << e->nCode;
+            nMFlags |= size_t(1) << e->nCode;
             nState = lsp_setflag(nState, F_MOUSE_IN, inside(e->nLeft, e->nTop));
 
             if (flags != nState)
@@ -414,7 +414,7 @@ namespace lsp
         status_t MultiLabel::on_mouse_up(const ws::event_t *e)
         {
             size_t flags = nMFlags;
-            nMFlags &= ~ (1 << e->nCode);
+            nMFlags &= ~ (size_t(1) << e->nCode);
             if (nMFlags == 0)
                 nState      = 0;
 
@@ -426,9 +426,9 @@ namespace lsp
             // Trigger submit action
             if (xinside)
             {
-                if ((flags == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+                if ((flags == (size_t(1) << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
                     sSlots.execute(SLOT_SUBMIT, this);
-                else if ((flags == (1 << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT) && (sPopup.is_set()))
+                else if ((flags == (size_t(1) << ws::MCB_RIGHT)) && (e->nCode == ws::MCB_RIGHT) && (sPopup.is_set()))
                 {
                     Menu *popup = sPopup.get();
                     sSlots.execute(SLOT_BEFORE_POPUP, popup, self());
@@ -515,7 +515,9 @@ namespace lsp
             Menu *_menu = widget_ptrcast<Menu>(sender);
             return (_this != NULL) ? _this->on_popup(_menu) : STATUS_BAD_ARGUMENTS;
         }
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
+
 
 

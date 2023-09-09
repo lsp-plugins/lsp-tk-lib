@@ -82,12 +82,12 @@ namespace lsp
 
             protected:
                 void                push_masked(size_t mask);
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit Font(prop::Listener *listener = NULL);
-                virtual ~Font();
+                virtual ~Font() override;
 
             public:
                 inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); }
@@ -123,7 +123,7 @@ namespace lsp
                 void                        set(const ws::Font *f);
 
             public:
-                virtual void                override();
+                virtual void                override() override;
 
                 bool get_parameters(ws::ISurface *s, float scaling, ws::font_parameters_t *fp) const;
                 bool get_parameters(Display *dpy, float scaling, ws::font_parameters_t *fp) const;

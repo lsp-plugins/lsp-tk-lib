@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 июл. 2017 г.
@@ -349,7 +349,7 @@ namespace lsp
                 }
             }
 
-            nButtons   |= (1 << e->nCode);
+            nButtons   |= (size_t(1) << e->nCode);
             nLastY      = e->nTop;
 
             return STATUS_OK;
@@ -358,7 +358,7 @@ namespace lsp
         status_t Knob::on_mouse_up(const ws::event_t *e)
         {
 //            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
-            nButtons &= ~(1 << e->nCode);
+            nButtons &= ~(size_t(1) << e->nCode);
             nLastY = e->nTop;
             if (nButtons == 0)
             {

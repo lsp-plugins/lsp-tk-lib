@@ -2,6 +2,13 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.14 ===
+* Improved code base by using PVS Studio static code analyzer.
+* Fixed several issues reported by PVS Studio static analyzer.
+* Added tk::Menu::showmp method to show menu at current mouse cursor's position
+  as a window transient for specified widget.
+* Updated module versions in dependencies.
+
 === 1.0.13 ===
 * Several fixes and optimizations related to tk::LedMeterChannel and tk::LedMeter.
 * Fixed bug in tk::TabControl widget destruction.

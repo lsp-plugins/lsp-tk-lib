@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 окт. 2019 г.
@@ -43,9 +43,6 @@ namespace lsp
         class Style
         {
             private:
-                Style & operator = (const Style &);
-                Style(const Style &);
-
                 friend class IStyleFactory;
                 friend class Schema;
                 friend class Property;
@@ -123,7 +120,12 @@ namespace lsp
 
             public:
                 explicit Style(Schema *schema, const char *name, const char *parents);
+                Style(const Style &) = delete;
+                Style(Style &&) = delete;
                 virtual ~Style();
+
+                Style & operator = (const Style &) = delete;
+                Style & operator = (Style &&) = delete;
 
                 virtual status_t    init();
                 void                destroy();

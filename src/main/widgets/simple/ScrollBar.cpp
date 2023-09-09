@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 авг. 2017 г.
@@ -475,7 +475,7 @@ namespace lsp
             if (nButtons == 0)
             {
                 // Update state of buttons
-                nButtons   |= (1 << e->nCode);
+                nButtons   |= (size_t(1) << e->nCode);
 
                 // Check that we first hit inside the bar
                 size_t flags = check_mouse_over(e->nLeft, e->nTop);
@@ -522,7 +522,7 @@ namespace lsp
             }
             else
             {
-                nButtons   |= (1 << e->nCode);
+                nButtons   |= (size_t(1) << e->nCode);
                 if (nXFlags & F_OUTSIDE)
                     return STATUS_OK;
 
@@ -641,7 +641,7 @@ namespace lsp
         status_t ScrollBar::on_mouse_up(const ws::event_t *e)
         {
 //            lsp_trace("nButtons = %d, code = %d", int(nButtons), int(e->nCode));
-            nButtons   &= ~(1 << e->nCode);
+            nButtons   &= ~(size_t(1) << e->nCode);
             nKeys       = e->nState;
             if (nXFlags & F_OUTSIDE)
             {
@@ -662,7 +662,7 @@ namespace lsp
                     nXFlags  &= ~(F_ALL_ACTIVITY_MASK | F_PRECISION);
                     value   = (e->nCode == key) ? fCurrValue : fLastValue;
                 }
-                else if (nButtons == size_t(1 << key)) // Currently pressed initially selected button
+                else if (nButtons == (size_t(1) << key)) // Currently pressed initially selected button
                 {
                     nXFlags  = (nXFlags & (~F_ACTIVITY_MASK)) | ((nXFlags >> F_ACTIVITY_BITS) & F_ACTIVITY_MASK); // Restore activity state
                     value   = fCurrValue;
@@ -735,7 +735,7 @@ namespace lsp
             if (nXFlags & F_TRG_SLIDER_ACTIVE)
             {
                 size_t key = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
-                if (nButtons != size_t(1 << key))
+                if (nButtons != (size_t(1) << key))
                     return STATUS_OK;
 
                 // Different behaviour for slider

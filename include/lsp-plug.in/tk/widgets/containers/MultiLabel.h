@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2021 г.
@@ -47,10 +47,6 @@ namespace lsp
          */
         class MultiLabel: public WidgetContainer
         {
-            private:
-                MultiLabel & operator = (const MultiLabel &);
-                MultiLabel(const MultiLabel &);
-
             public:
                 static const w_class_t      metadata;
 
@@ -78,9 +74,9 @@ namespace lsp
                 void                    do_destroy();
 
             protected:
-                virtual void            property_changed(Property *prop);
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            realize(const ws::rectangle_t *r);
+                virtual void            property_changed(Property *prop) override;
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -93,10 +89,15 @@ namespace lsp
 
             public:
                 explicit MultiLabel(Display *dpy);
-                virtual ~MultiLabel();
+                MultiLabel(const MultiLabel &) = delete;
+                MultiLabel(MultiLabel &&) = delete;
+                virtual ~MultiLabel() override;
 
-                virtual status_t        init();
-                virtual void            destroy();
+                MultiLabel & operator = (const MultiLabel &) = delete;
+                MultiLabel & operator = (MultiLabel &&) = delete;
+
+                virtual status_t        init() override;
+                virtual void            destroy() override;
 
             public:
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
@@ -106,24 +107,19 @@ namespace lsp
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,              &sPopup)
 
             public:
-                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
-                virtual status_t        add(Widget *widget);
+                virtual status_t        add(Widget *widget) override;
+                virtual status_t        remove(Widget *widget) override;
 
-                virtual status_t        remove(Widget *widget);
+                virtual status_t        on_mouse_in(const ws::event_t *e) override;
+                virtual status_t        on_mouse_out(const ws::event_t *e) override;
+                virtual status_t        on_mouse_move(const ws::event_t *e) override;
+                virtual status_t        on_mouse_down(const ws::event_t *e) override;
+                virtual status_t        on_mouse_up(const ws::event_t *e) override;
 
-                virtual status_t        on_mouse_in(const ws::event_t *e);
-
-                virtual status_t        on_mouse_out(const ws::event_t *e);
-
-                virtual status_t        on_mouse_move(const ws::event_t *e);
-
-                virtual status_t        on_mouse_down(const ws::event_t *e);
-
-                virtual status_t        on_mouse_up(const ws::event_t *e);
-
+            public:
                 virtual status_t        on_before_popup(Menu *menu);
-
                 virtual status_t        on_popup(Menu *menu);
 
                 virtual status_t        on_submit();

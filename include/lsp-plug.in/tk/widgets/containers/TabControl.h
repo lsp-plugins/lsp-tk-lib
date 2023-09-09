@@ -60,10 +60,6 @@ namespace lsp
          */
         class TabControl: public WidgetContainer
         {
-            private:
-                TabControl & operator = (const TabControl &);
-                TabControl(const TabControl &);
-
             public:
                 static const w_class_t      metadata;
 
@@ -138,7 +134,12 @@ namespace lsp
 
             public:
                 explicit TabControl(Display *dpy);
+                TabControl(const TabControl &) = delete;
+                TabControl(TabControl &&) = delete;
                 virtual ~TabControl() override;
+
+                TabControl & operator = (const TabControl &) = delete;
+                TabControl & operator = (TabControl &&) = delete;
 
                 virtual status_t            init() override;
                 virtual void                destroy() override;
@@ -169,26 +170,18 @@ namespace lsp
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
                 virtual status_t            add(Widget *child) override;
-
                 virtual status_t            remove(Widget *child) override;
-
                 virtual status_t            remove_all() override;
 
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;
-
                 virtual status_t            on_mouse_up(const ws::event_t *e) override;
-
                 virtual status_t            on_mouse_move(const ws::event_t *e) override;
-
                 virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
-
                 virtual status_t            on_mouse_out(const ws::event_t *e) override;
-
                 virtual status_t            on_key_down(const ws::event_t *e) override;
 
             public:
                 virtual status_t            on_change();
-
                 virtual status_t            on_submit();
         };
 

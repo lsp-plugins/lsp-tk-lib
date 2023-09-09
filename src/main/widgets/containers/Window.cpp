@@ -328,7 +328,7 @@ namespace lsp
 
 //        #ifdef LSP_TRACE
 //            time = system::get_time_millis() - time;
-//            lsp_trace("Render time: %ld ms", long(time));
+//            lsp_trace("Window %p render time: %ld ms", this, long(time));
 //        #endif /* LSP_TRACE */
 
             // And also update pointer
@@ -790,7 +790,7 @@ namespace lsp
                 {
                     Widget *h       = acquire_mouse_handler(e);
 //                    int old_state   = hMouse.nState;
-                    hMouse.nState  &= ~(1 << e->nCode);
+                    hMouse.nState  &= ~(size_t(1) << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
 
@@ -810,7 +810,7 @@ namespace lsp
                 {
                     Widget *h       = acquire_mouse_handler(e);
 //                    int old_state   = hMouse.nState;
-                    hMouse.nState  |= (1 << e->nCode);
+                    hMouse.nState  |= (size_t(1) << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
 

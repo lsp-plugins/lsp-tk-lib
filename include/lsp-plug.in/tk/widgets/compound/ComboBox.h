@@ -60,10 +60,6 @@ namespace lsp
 
         class ComboBox: public WidgetContainer
         {
-            private:
-                ComboBox & operator = (const ComboBox &);
-                ComboBox(const ComboBox &);
-
             public:
                 static const w_class_t      metadata;
 
@@ -94,9 +90,8 @@ namespace lsp
                     public:
                         explicit Window(Display *dpy, ComboBox *cbox);
 
-                        virtual status_t        on_hide();
-
-                        virtual status_t        on_show();
+                        virtual status_t        on_hide() override;
+                        virtual status_t        on_show() override;
                 };
 
                 class List: public ListBox
@@ -111,12 +106,11 @@ namespace lsp
                         explicit List(Display *dpy, ComboBox *cbox);
 
                     protected:
-                        virtual void        property_changed(Property *prop);
+                        virtual void        property_changed(Property *prop) override;
 
                     public:
-                        virtual status_t    on_submit();
-
-                        virtual status_t    on_change();
+                        virtual status_t    on_submit() override;
+                        virtual status_t    on_change() override;
                 };
 
             protected:
@@ -158,16 +152,21 @@ namespace lsp
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void            property_changed(Property *prop);
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            realize(const ws::rectangle_t *r);
+                virtual void            property_changed(Property *prop) override;
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit ComboBox(Display *dpy);
-                virtual ~ComboBox();
+                ComboBox(const ComboBox &) = delete;
+                ComboBox(ComboBox &&) = delete;
+                virtual ~ComboBox() override;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                ComboBox & operator = (const ComboBox &) = delete;
+                ComboBox & operator = (ComboBox &&) = delete;
+
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(Integer,                    border_size,            &sBorderSize)
@@ -195,26 +194,19 @@ namespace lsp
                 LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,                  sLBox.items())
 
             public:
-                virtual status_t            add(Widget *child);
+                virtual status_t            add(Widget *child) override;
+                virtual status_t            remove(Widget *child) override;
+                virtual status_t            remove_all() override;
+                virtual void                draw(ws::ISurface *s) override;
 
-                virtual status_t            remove(Widget *child);
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
+                virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
+                virtual status_t            on_key_down(const ws::event_t *e) override;
 
-                virtual status_t            remove_all();
-
-                virtual void                draw(ws::ISurface *s);
-
-                virtual status_t            on_mouse_down(const ws::event_t *e);
-
-                virtual status_t            on_mouse_up(const ws::event_t *e);
-
-                virtual status_t            on_mouse_move(const ws::event_t *e);
-
-                virtual status_t            on_mouse_scroll(const ws::event_t *e);
-
-                virtual status_t            on_key_down(const ws::event_t *e);
-
+            public:
                 virtual status_t            on_change();
-
                 virtual status_t            on_submit();
         };
     } /* namespace tk */

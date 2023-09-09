@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 мая 2020 г.
@@ -35,15 +35,16 @@ namespace lsp
 
         class WindowActions: public BitEnum
         {
-            private:
-                WindowActions & operator = (const WindowActions &);
-                WindowActions(const WindowActions &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit WindowActions(prop::Listener *listener = NULL): BitEnum(ENUM, listener) {};
+                WindowActions(const WindowActions &) = delete;
+                WindowActions(WindowActions &&) = delete;
+
+                WindowActions & operator = (const WindowActions &) = delete;
+                WindowActions & operator = (WindowActions &&) = delete;
 
             public:
                 inline bool     allowed(ws::window_action_t wa) const   { return nValue & wa;                   }
@@ -128,9 +129,9 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::WindowActions::unbind(); };
             };
-        }
-    }
-}
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

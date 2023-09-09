@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 11 сент. 2017 г.
@@ -32,9 +32,6 @@ namespace lsp
     {
         class KeyboardHandler: public ws::IEventHandler
         {
-            private:
-                KeyboardHandler & operator = (const KeyboardHandler &);
-
             protected:
                 enum constants_t
                 {
@@ -57,7 +54,12 @@ namespace lsp
 
             public:
                 explicit KeyboardHandler();
-                virtual ~KeyboardHandler();
+                KeyboardHandler(const KeyboardHandler &) = delete;
+                KeyboardHandler(KeyboardHandler &&) = delete;
+                virtual ~KeyboardHandler() override;
+
+                KeyboardHandler & operator = (KeyboardHandler &&) = delete;
+                KeyboardHandler & operator = (const KeyboardHandler &) = delete;
 
                 status_t                    init(Display *dpy);
 
@@ -74,7 +76,7 @@ namespace lsp
 
             public:
                 // Event handling callbacks
-                virtual status_t            handle_event(const ws::event_t *e);
+                virtual status_t            handle_event(const ws::event_t *e) override;
 
                 // Event handling callbacks
                 virtual status_t            on_key_down(const ws::event_t *e);

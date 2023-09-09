@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -718,7 +718,7 @@ namespace lsp
                 return;
 
             // Allocate space for child widgets
-            if ((res == STATUS_OK) && (visible.size() > 0))
+            if (visible.size() > 0)
             {
                 res = (sHomogeneous.get()) ?
                     allocate_homogeneous(&xr, visible) :
@@ -874,7 +874,7 @@ namespace lsp
                     nState |= F_MOUSE_IGN;
             }
 
-            nMFlags |= 1 << e->nCode;
+            nMFlags |= size_t(1) << e->nCode;
             nState = lsp_setflag(nState, F_MOUSE_IN, inside(e->nLeft, e->nTop));
 
             if (flags != nState)
@@ -888,7 +888,7 @@ namespace lsp
                 return STATUS_OK;
 
             size_t flags = nMFlags;
-            nMFlags &= ~ (1 << e->nCode);
+            nMFlags &= ~ (size_t(1) << e->nCode);
             if (nMFlags == 0)
                 nState      = 0;
 
@@ -900,7 +900,7 @@ namespace lsp
             // Trigger submit action
             if (xinside)
             {
-                if ((flags == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+                if ((flags == (size_t(1) << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
                     sSlots.execute(SLOT_SUBMIT, this);
             }
 

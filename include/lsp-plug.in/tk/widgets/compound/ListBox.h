@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -56,10 +56,6 @@ namespace lsp
 
         class ListBox: public WidgetContainer
         {
-            private:
-                ListBox & operator = (const ListBox &);
-                ListBox(const ListBox &);
-
             public:
                 static const w_class_t      metadata;
 
@@ -171,24 +167,28 @@ namespace lsp
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
-                static status_t         slot_on_scroll_key_down(Widget *sender, void *ptr, void *data);
-                static status_t         slot_on_scroll_key_up(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_scroll_key_event(Widget *sender, void *ptr, void *data);
 
                 static void             on_add_item(void *obj, Property *prop, void *w);
                 static void             on_remove_item(void *obj, Property *prop, void *w);
                 static status_t         key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:
-                virtual void            property_changed(Property *prop);
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            realize(const ws::rectangle_t *r);
+                virtual void            property_changed(Property *prop) override;
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit ListBox(Display *dpy);
-                virtual ~ListBox();
+                ListBox(const ListBox &) = delete;
+                ListBox(ListBox &&) = delete;
+                virtual ~ListBox() override;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                ListBox & operator = (const ListBox &) = delete;
+                ListBox & operator = (ListBox &&) = delete;
+
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sSizeConstraints)
@@ -218,29 +218,26 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            vscroll_spacing,            &sVScrollSpacing)
 
             public:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
+                virtual status_t            add(Widget *child) override;
+                virtual status_t            remove(Widget *child) override;
+                virtual status_t            remove_all() override;
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
-                virtual status_t            add(Widget *child);
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
+                virtual status_t            on_mouse_out(const ws::event_t *e) override;
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
+                virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
 
-                virtual status_t            remove(Widget *child);
+                virtual status_t            on_key_down(const ws::event_t *e) override;
+                virtual status_t            on_key_up(const ws::event_t *e) override;
 
-                virtual status_t            remove_all();
-
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
-
-                virtual void                scroll_to_current();
-
-                virtual status_t            on_mouse_down(const ws::event_t *e);
-                virtual status_t            on_mouse_up(const ws::event_t *e);
-                virtual status_t            on_mouse_out(const ws::event_t *e);
-                virtual status_t            on_mouse_move(const ws::event_t *e);
-                virtual status_t            on_mouse_scroll(const ws::event_t *e);
-
-                virtual status_t            on_key_down(const ws::event_t *e);
-                virtual status_t            on_key_up(const ws::event_t *e);
-
+            public:
                 virtual status_t            on_change();
                 virtual status_t            on_submit();
+
+                virtual void                scroll_to_current();
         };
     } /* namespace tk */
 } /* namespace lsp */

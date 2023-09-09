@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 мая 2020 г.
@@ -39,10 +39,6 @@ namespace lsp
          */
         class Allocation: public Flags
         {
-            private:
-                Allocation & operator = (const Allocation &);
-                Allocation(const Allocation &);
-
             protected:
                 static const char * const FLAGS[];
 
@@ -62,7 +58,12 @@ namespace lsp
                 atom_t      vAtoms[F_TOTAL];
 
             protected:
-                inline Allocation(prop::Listener *listener = NULL): Flags(FLAGS, vAtoms, listener) {}
+                Allocation(prop::Listener *listener = NULL);
+                Allocation(const Allocation &) = delete;
+                Allocation(Allocation &&) = delete;
+
+                Allocation & operator = (const Allocation &) = delete;
+                Allocation & operator = (Allocation &&) = delete;
 
             public:
                 inline  bool    hfill() const                   { return Flags::get(F_HFILL);           }
@@ -119,7 +120,7 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Allocation::unbind(); };
             };
-        }
+        } /* namespace prop */
     
     } /* namespace tk */
 } /* namespace lsp */

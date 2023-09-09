@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 нояб. 2020 г.
@@ -281,7 +281,7 @@ namespace lsp
                     nState     |= XF_OUT;
             }
 
-            nBMask     |= (1 << e->nCode);
+            nBMask     |= (size_t(1) << e->nCode);
 
             return on_mouse_move(e);
         }
@@ -291,7 +291,7 @@ namespace lsp
             on_mouse_move(e);
 
             size_t state    = nState;
-            nBMask         &= ~(1 << e->nCode);
+            nBMask         &= ~(size_t(1) << e->nCode);
             if (nBMask == 0)
             {
                 bool checked = state & XF_CHECKED;
@@ -369,7 +369,7 @@ namespace lsp
         {
             return STATUS_OK;
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

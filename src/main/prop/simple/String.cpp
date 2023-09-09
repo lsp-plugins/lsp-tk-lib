@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 мар. 2020 г.
@@ -359,7 +359,7 @@ namespace lsp
             }
 
             // Check that value has been cached
-            const char *xlang;
+            const char *xlang = NULL;
             if (pStyle != NULL)
                 pStyle->get_string(nAtom, &xlang);
 
@@ -514,7 +514,7 @@ namespace lsp
                 sync();
                 return true;
             }
-        }
+        } /* namespace prop */
 
     } /* namespace tk */
 } /* namespace lsp */

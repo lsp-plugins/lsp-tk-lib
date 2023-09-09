@@ -33,19 +33,12 @@ namespace lsp
         
         class Flags: public Property
         {
-            private:
-                Flags & operator = (const Flags &);
-                Flags(const Flags &);
-
             protected:
                 size_t                  nFlags;         // Bit field of flags
                 const char * const     *pFlags;         // Flag description
                 atom_t                 *vAtoms;         // List of associated atoms
 
             protected:
-                virtual void    push();
-                virtual void    commit(atom_t property);
-
                 status_t        unbind();
                 status_t        bind(atom_t id, Style *style);
                 status_t        bind(const char *id, Style *style);
@@ -60,8 +53,17 @@ namespace lsp
                 bool            toggle(size_t ordinal);
 
             protected:
+                virtual void    push() override;
+                virtual void    commit(atom_t property) override;
+
+            protected:
                 explicit Flags(const char * const *flags, atom_t *atoms, prop::Listener *listener = NULL);
-                virtual ~Flags();
+                Flags(const Flags &) = delete;
+                Flags(Flags &&) = delete;
+                virtual ~Flags() override;
+
+                Flags & operator = (const Flags &) = delete;
+                Flags & operator = (Flags &&) = delete;
         };
     
     } /* namespace tk */

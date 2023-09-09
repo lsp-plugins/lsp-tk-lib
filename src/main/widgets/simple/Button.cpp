@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 июн. 2017 г.
@@ -684,7 +684,7 @@ namespace lsp
 
             bool m_over         = Position::inside(&sButton, e->nLeft, e->nTop);
             size_t mask         = nBMask;
-            nBMask             |= (1 << e->nCode);
+            nBMask             |= (size_t(1) << e->nCode);
 
             if (!mask)
             {
@@ -703,7 +703,7 @@ namespace lsp
             // Update state according to mouse position and mouse button state
             size_t state        = nState;
             nState              = lsp_setflag(nState, S_HOVER, m_over);
-            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (1 << ws::MCB_LEFT)) && (m_over));
+            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (size_t(1) << ws::MCB_LEFT)) && (m_over));
 
             // Special case for trigger button
             if ((nState & S_TRIGGER) && (state != nState))
@@ -737,7 +737,7 @@ namespace lsp
                 return STATUS_OK;
 
             size_t mask     = nBMask;
-            nBMask         &= ~(1 << e->nCode);
+            nBMask         &= ~(size_t(1) << e->nCode);
 
             // Mouse button was initially pressed out of the button area, ignore this case
             if ((nBMask == 0) && (nState & S_OUT))
@@ -754,7 +754,7 @@ namespace lsp
             {
                 // Update state according to mouse position and mouse button state
                 size_t state        = nState;
-                nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (1 << ws::MCB_LEFT)) && (m_over));
+                nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (size_t(1) << ws::MCB_LEFT)) && (m_over));
 
                 if (state != nState)
                 {
@@ -776,7 +776,7 @@ namespace lsp
             }
             else if (nState & S_TOGGLE)
             {
-                if ((mask == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT) && (m_over))
+                if ((mask == (size_t(1) << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT) && (m_over))
                     nState ^= S_TOGGLED;
 
                 if (state != nState)
@@ -800,7 +800,7 @@ namespace lsp
             else
             {
                 // Released left mouse button over the button widget?
-                if ((mask == (1 << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+                if ((mask == (size_t(1) << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
                 {
                     nState &= ~(S_PRESSED | S_TOGGLED | S_DOWN);
                     sDown.commit_value(nState & S_DOWN);
@@ -812,8 +812,8 @@ namespace lsp
                 }
             }
 
-            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (1 << ws::MCB_LEFT)) && (m_over));
-            if ((mask == size_t(1 << e->nCode)) && (nChanges > 0))
+            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (size_t(1) << ws::MCB_LEFT)) && (m_over));
+            if ((mask == (size_t(1) << e->nCode)) && (nChanges > 0))
             {
                 sSlots.execute(SLOT_SUBMIT, this);
                 nChanges = 0;
@@ -839,7 +839,7 @@ namespace lsp
             // Update state according to mouse position and mouse button state
             bool m_over         = Position::inside(&sButton, e->nLeft, e->nTop);
             nState              = lsp_setflag(nState, S_HOVER, m_over);
-            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (1 << ws::MCB_LEFT)) && (m_over));
+            nState              = lsp_setflag(nState, S_PRESSED, (nBMask == (size_t(1) << ws::MCB_LEFT)) && (m_over));
 
             // Special case for trigger button
             if ((nState & S_TRIGGER) && (state != nState))
