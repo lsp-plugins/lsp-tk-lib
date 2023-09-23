@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -35,6 +35,7 @@ namespace lsp
                 sDirection.bind("direction", this);
                 sMin.bind("min", this);
                 sMax.bind("max", this);
+                sZero.bind("zero", this);
                 sLogScale.bind("log", this);
                 sBasis.bind("basis", this);
                 sWidth.bind("width", this);
@@ -46,6 +47,7 @@ namespace lsp
                 sDirection.set_cart(1.0f, 0.0f);
                 sMin.set(-1.0f);
                 sMax.set(1.0f);
+                sZero.set(0.0f);
                 sLogScale.set(false);
                 sBasis.set(true);
                 sWidth.set(1);
@@ -63,6 +65,7 @@ namespace lsp
             sDirection(&sProperties),
             sMin(&sProperties),
             sMax(&sProperties),
+            sZero(&sProperties),
             sLogScale(&sProperties),
             sBasis(&sProperties),
             sWidth(&sProperties),
@@ -88,6 +91,7 @@ namespace lsp
             sDirection.bind("direction", &sStyle);
             sMin.bind("min", &sStyle);
             sMax.bind("max", &sStyle);
+            sZero.bind("zero", &sStyle);
             sLogScale.bind("log", &sStyle);
             sBasis.bind("basis", &sStyle);
             sWidth.bind("width", &sStyle);
@@ -104,21 +108,13 @@ namespace lsp
         {
             GraphItem::property_changed(prop);
 
-            if (sDirection.is(prop))
+            if (prop->one_of(sMin, sMax, sZero))
                 query_draw();
-            if (sMin.is(prop))
+            if (prop->one_of(sBasis, sOrigin, sDirection))
                 query_draw();
-            if (sMax.is(prop))
+            if (prop->one_of(sWidth, sLength))
                 query_draw();
             if (sLogScale.is(prop))
-                query_draw();
-            if (sBasis.is(prop))
-                query_draw();
-            if (sWidth.is(prop))
-                query_draw();
-            if (sLength.is(prop))
-                query_draw();
-            if (sOrigin.is(prop))
                 query_draw();
             if (sColor.is(prop))
                 query_draw();
@@ -191,12 +187,12 @@ namespace lsp
 //            if (d > 1.0f)
 //                d          -= 0.5f; // Fix rounding errors
 
-            // Normalize value according to minimum and maximum visible values of the axis
-            float a_min = fabsf(sMin.get()), a_max = fabsf(sMax.get());
-
             // Now we can surely apply deltas
             if (sLogScale.get())
             {
+                float a_min = fabsf(sMin.get());
+                float a_max = fabsf(sMax.get());
+
                 if (a_min <= 0.0f)
                     a_min   = 1e-10f;
                 if (a_max <= 0.0f)
@@ -212,14 +208,18 @@ namespace lsp
             }
             else
             {
+                float zero  = - sZero.get();
+                float a_min = fabsf(sMin.get() + zero);
+                float a_max = fabsf(sMax.get() + zero);
+
                 float norm = (a_min > a_max) ? a_min : a_max;
                 if (norm == 0.0f)
                     return false;
                 norm    = d / norm;
 
                 // Apply delta-vector
-                dsp::fmadd_k3(x, dv, norm * fdx, count);
-                dsp::fmadd_k3(y, dv, norm * fdy, count);
+                dsp::axis_apply_lin1(x, dv, zero, norm * fdx, count);
+                dsp::axis_apply_lin1(y, dv, zero, norm * fdy, count);
             }
 
             // Saturate values
@@ -269,12 +269,11 @@ namespace lsp
             if (d > 1.0f)
                 d          -= 0.5f; // Fix rounding errors
 
-            // Normalize value according to minimum and maximum visible values of the axis
-            float a_min = fabsf(sMin.get()), a_max = fabsf(sMax.get());
-
             // Now we can surely apply deltas
             if (sLogScale.get())
             {
+                float a_min = fabsf(sMin.get()), a_max = fabsf(sMax.get());
+
                 if (a_min <= 0.0f)
                     a_min   = 1e-10f;
                 if (a_max <= 0.0f)
@@ -287,11 +286,15 @@ namespace lsp
             }
             else
             {
+                float zero  = - sZero.get();
+                float a_min = fabsf(sMin.get() + zero);
+                float a_max = fabsf(sMax.get() + zero);
+
                 float norm = (a_min > a_max) ? a_min : a_max;
                 if (norm == 0.0f)
                     return sMin.get();
 
-                return (pv*norm/d) + ((a_min > a_max) ? a_max : a_min);
+                return (pv*norm/d) - zero + ((a_min > a_max) ? a_max : a_min);
             }
 
             return sMin.get();
