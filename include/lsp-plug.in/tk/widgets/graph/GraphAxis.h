@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -37,6 +37,7 @@ namespace lsp
                 prop::Vector2D              sDirection;     // Direction
                 prop::Float                 sMin;           // Minimum value
                 prop::Float                 sMax;           // Maximum value
+                prop::Float                 sZero;          // Value associated with zero
                 prop::Boolean               sLogScale;      // Logarithmic flag
                 prop::Boolean               sBasis;         // Basis flag
                 prop::Integer               sWidth;         // Thickness
@@ -51,14 +52,11 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                GraphAxis & operator = (const GraphAxis &);
-                GraphAxis(const GraphAxis &);
-
             protected:
                 prop::Vector2D              sDirection;     // Direction
                 prop::Float                 sMin;           // Minimum value
                 prop::Float                 sMax;           // Maximum value
+                prop::Float                 sZero;          // Value associated with zero
                 prop::Boolean               sLogScale;      // Logarithmic flag
                 prop::Boolean               sBasis;         // Basis flag
                 prop::Integer               sWidth;         // Thickness
@@ -71,7 +69,12 @@ namespace lsp
 
             public:
                 explicit GraphAxis(Display *dpy);
+                GraphAxis(const GraphAxis &) = delete;
+                GraphAxis(GraphAxis &&) = delete;
                 virtual ~GraphAxis();
+
+                GraphAxis & operator = (const GraphAxis &) = delete;
+                GraphAxis & operator = (GraphAxis &&) = delete;
 
                 virtual status_t            init();
 
@@ -79,6 +82,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Vector2D,           direction,              &sDirection);
                 LSP_TK_PROPERTY(Float,              min,                    &sMin);
                 LSP_TK_PROPERTY(Float,              max,                    &sMax);
+                LSP_TK_PROPERTY(Float,              zero,                   &sZero);
                 LSP_TK_PROPERTY(Boolean,            log_scale,              &sLogScale);
                 LSP_TK_PROPERTY(Boolean,            basis,                  &sBasis);
                 LSP_TK_PROPERTY(Integer,            width,                  &sWidth);
@@ -97,8 +101,8 @@ namespace lsp
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_GRAPH_GRAPHAXIS_H_ */
