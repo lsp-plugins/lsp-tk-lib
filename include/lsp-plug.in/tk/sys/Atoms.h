@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 13 мая 2020 г.
@@ -26,7 +26,7 @@
     #error "use <lsp-plug.in/tk/tk.h>"
 #endif
 
-#include <lsp-plug.in/lltl/parray.h>
+#include <lsp-plug.in/lltl/darray.h>
 
 namespace lsp
 {
@@ -37,16 +37,28 @@ namespace lsp
          */
         class Atoms
         {
-            private:
-                Atoms & operator = (const Atoms &);
-                Atoms(const Atoms &);
+            protected:
+                typedef struct atom_id_t
+                {
+                    atom_t  id;
+                    char    name[];
+                } atom_id_t;
+
+                lltl::parray<atom_id_t> vAtoms;
+                lltl::parray<atom_id_t> vAtomList;
 
             protected:
-                lltl::parray<char>      vAtoms;
+                ssize_t                 index_of(const char *name);
+                atom_id_t              *make_atom(const char *name);
 
             public:
                 explicit Atoms();
+                Atoms(const Atoms &) = delete;
+                Atoms(Atoms &&) = delete;
                 virtual ~Atoms();
+
+                Atoms & operator = (const Atoms &) = delete;
+                Atoms & operator = (Atoms &&) = delete;
 
             public:
 
@@ -69,7 +81,7 @@ namespace lsp
                  * @param name atom name or NULL
                  * @return atom identifier
                  */
-                inline const char   *atom_name(atom_t id) const     { return (id >= 0) ? vAtoms.get(id) : NULL ;    }
+                const char         *atom_name(atom_t id) const;
         };
     
     } /* namespace tk */
