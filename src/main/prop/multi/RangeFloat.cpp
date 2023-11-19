@@ -3,7 +3,7 @@
  *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 23 мая 2020 г.
+ * Created on: 23 мая 2023 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/locale.h>
 #include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
@@ -105,6 +106,7 @@ namespace lsp
                 pStyle->set_float(vAtoms[P_MAX], fMax);
 
             // Compound properties
+            SET_LOCALE_SCOPED(LC_NUMERIC, "C");
             s.fmt_ascii("%.10f %.10f %.10f", fValue, fMin, fMax);
             if (vAtoms[P_VALUE] >= 0)
                 pStyle->set_string(vAtoms[P_VALUE], &s);

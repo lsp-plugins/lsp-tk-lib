@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 15 мая 2020 г.
@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/locale.h>
 #include <lsp-plug.in/common/debug.h>
 
 namespace lsp
@@ -66,6 +67,7 @@ namespace lsp
             LSPString s;
             if (vAtoms[P_VALUE] >= 0)
             {
+                SET_LOCALE_SCOPED(LC_NUMERIC, "C");
                 if (s.fmt_ascii("%.4f %.4f %.4f %.4f", hAlign, vAlign, hScale, vScale))
                     pStyle->set_string(vAtoms[P_VALUE], &s);
             }

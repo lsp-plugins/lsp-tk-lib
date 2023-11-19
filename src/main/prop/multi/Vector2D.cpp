@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/io/InStringSequence.h>
 #include <lsp-plug.in/expr/Tokenizer.h>
+#include <lsp-plug.in/stdlib/locale.h>
 #include <lsp-plug.in/stdlib/math.h>
 
 namespace lsp
@@ -113,6 +114,7 @@ namespace lsp
                 pStyle->set_float(vAtoms[P_DPHI], fPhi * (180.0f / M_PI));
 
             // Compound properties
+            SET_LOCALE_SCOPED(LC_NUMERIC, "C");
             s.fmt_ascii("{%.10f, %.10f}", fDX, fDY);
             if (vAtoms[P_VALUE] >= 0)
                 pStyle->set_string(vAtoms[P_VALUE], &s);

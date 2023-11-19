@@ -22,6 +22,7 @@
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/io/InStringSequence.h>
 #include <lsp-plug.in/expr/Tokenizer.h>
+#include <lsp-plug.in/stdlib/locale.h>
 
 namespace lsp
 {
@@ -120,6 +121,7 @@ namespace lsp
                 else
                     c.format_rgba(buf, sizeof(buf)/sizeof(char));
 
+                SET_LOCALE_SCOPED(LC_NUMERIC, "C");
                 s.fmt_ascii("%.10f %.10f %s", fMin, fMax, buf);
                 pStyle->set_string(vAtoms[P_VALUE], &s);
             }

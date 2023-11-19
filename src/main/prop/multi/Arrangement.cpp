@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/stdlib/locale.h>
 #include <lsp-plug.in/common/debug.h>
 
 namespace lsp
@@ -58,6 +59,7 @@ namespace lsp
             LSPString s;
             if (vAtoms[P_VALUE] >= 0)
             {
+                SET_LOCALE_SCOPED(LC_NUMERIC, "C");
                 if (s.fmt_ascii("%.4f %.4f", hAlign, vAlign))
                     pStyle->set_string(vAtoms[P_VALUE], &s);
             }
