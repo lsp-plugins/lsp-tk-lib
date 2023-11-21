@@ -6,6 +6,7 @@
 * Optimized work with atoms.
 * Many code updates that could cause potential problems related to using another
   decimal point for floating-point number formatting.
+* Updated build scripts.
 
 === 1.0.18 ===
 * Updated module versions in dependencies.
