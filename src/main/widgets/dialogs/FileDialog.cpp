@@ -774,7 +774,7 @@ namespace lsp
             if (id >= 0) id = sWCancel.slots()->bind(SLOT_SUBMIT, slot_on_btn_cancel, self());
             if (id >= 0) id = sWSearch.slots()->bind(SLOT_CHANGE, slot_on_search, self());
             if (id >= 0) id = sWSearch.slots()->bind(SLOT_KEY_DOWN, slot_on_search_key_down, self());
-            if (id >= 0) id = sWFilter.slots()->bind(SLOT_SUBMIT, slot_on_search, self());
+            if (id >= 0) id = sWFilter.slots()->bind(SLOT_SUBMIT, slot_on_filter_submit, self());
             if (id >= 0) id = sWFilter.slots()->bind(SLOT_KEY_DOWN, slot_on_filter_key_down, self());
             if (id >= 0) id = sWFiles.slots()->bind(SLOT_MOUSE_DBL_CLICK, slot_on_list_dbl_click, self());
             if (id >= 0) id = sWFiles.slots()->bind(SLOT_CHANGE, slot_on_list_change, self());
@@ -1143,6 +1143,19 @@ namespace lsp
                     break;
             }
             return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_filter_submit(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *dlg = widget_ptrcast<FileDialog>(ptr);
+            if (dlg == NULL)
+                return STATUS_OK;
+
+            const Widget *w = dlg->sWFilter.selected()->get();
+            const size_t index  = dlg->sWFilter.items()->index_of(w);
+            dlg->sSelFilter.commit_value(index);
+
+            return dlg->on_dlg_search(data);
         }
 
         status_t FileDialog::slot_on_search_key_down(Widget *sender, void *ptr, void *data)
