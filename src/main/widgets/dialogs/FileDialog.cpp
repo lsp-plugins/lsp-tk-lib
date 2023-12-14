@@ -895,7 +895,10 @@ namespace lsp
             if (sSelFilter.is(prop))
             {
                 if (sVisibility.get())
+                {
+                    sync_filters();
                     refresh_current_path();
+                }
             }
             if (sOptions.is(prop))
             {
