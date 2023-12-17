@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -54,10 +54,6 @@ namespace lsp
                 static const w_class_t    metadata;
 
             private:
-                GraphText & operator = (const GraphText &);
-                GraphText(const GraphText &);
-
-            private:
                 prop::String            sText;
                 prop::Font              sFont;
                 prop::Color             sColor;
@@ -71,13 +67,18 @@ namespace lsp
                 prop::Integer           sOrigin;
 
             protected:
-                virtual void                property_changed(Property *prop);
+                virtual void                property_changed(Property *prop) override;
 
             public:
                 explicit GraphText(Display *dpy);
-                virtual ~GraphText();
+                GraphText(const GraphText &) = delete;
+                GraphText(GraphText &&) = delete;
+                virtual ~GraphText() override;
 
-                virtual status_t            init();
+                GraphText & operator = (const GraphText &) = delete;
+                GraphText & operator = (GraphText &&) = delete;
+
+                virtual status_t            init() override;
 
             public:
                 LSP_TK_PROPERTY(String,             text,               &sText)
@@ -93,10 +94,12 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            origin,             &sOrigin)
 
             public:
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
+
+                virtual bool                bound_box(ws::ISurface *s, ws::rectangle_t *r) override;
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_GRAPH_GRAPHTEXT_H_ */

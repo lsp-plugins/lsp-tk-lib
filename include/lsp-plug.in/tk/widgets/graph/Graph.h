@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -58,9 +58,14 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                Graph & operator    = (const Graph &);
-                Graph(const Graph &);
+            protected:
+                typedef struct w_alloc_t
+                {
+                    ws::rectangle_t     sRect;
+                    ssize_t             nGroup;
+                    ssize_t             nPriority;
+                    GraphItem          *pWidget;
+                } w_alloc_t;
 
             protected:
                 prop::WidgetList<GraphItem>     vItems;         // Overall list of graph items
@@ -89,23 +94,31 @@ namespace lsp
                 static void                 on_add_item(void *obj, Property *prop, void *w);
                 static void                 on_remove_item(void *obj, Property *prop, void *w);
 
+                static ssize_t              check_collision(const w_alloc_t *a, const w_alloc_t *b);
+                static ssize_t              compare_walloc(const w_alloc_t *a, const w_alloc_t *b);
+
             protected:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y);
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                property_changed(Property *prop);
-                virtual void                realize(const ws::rectangle_t *r);
-                virtual void                hide_widget();
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                property_changed(Property *prop) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
+                virtual void                hide_widget() override;
 
                 void                        sync_lists();
                 void                        drop_glass();
 
             public:
                 explicit Graph(Display *dpy);
+                Graph(const Graph &) = delete;
+                Graph(Graph &&) = delete;
                 virtual ~Graph();
 
+                Graph & operator = (const Graph &) = delete;
+                Graph & operator = (Graph &&) = delete;
+
             public:
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(WidgetList<GraphItem>,      items,              &vItems);
@@ -181,19 +194,19 @@ namespace lsp
                 status_t                    axis_to_xy(size_t index, ssize_t *x, ssize_t *y, float value);
 
             public:
-                virtual status_t            add(Widget *child);
+                virtual status_t            add(Widget *child) override;
 
-                virtual status_t            remove(Widget *child);
+                virtual status_t            remove(Widget *child) override;
 
-                virtual status_t            remove_all();
+                virtual status_t            remove_all() override;
 
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
-                virtual void                draw(ws::ISurface *s);
+                virtual void                draw(ws::ISurface *s) override;
         };
 
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_GRAPH_GRAPH_H_ */

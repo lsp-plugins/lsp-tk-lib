@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -31,7 +31,11 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(GraphItem, Widget)
                 // Bind
                 sSmooth.bind("smooth", this);
+                sPriorityGroup.bind("proirity_group", this);
+                sPriority.bind("proirity", this);
                 // Configure
+                sPriorityGroup.set(-1);
+                sPriority.set(0);
                 sSmooth.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(GraphItem, "GraphItem", "root");
@@ -41,7 +45,9 @@ namespace lsp
 
         GraphItem::GraphItem(Display *dpy):
             Widget(dpy),
-            sSmooth(&sProperties)
+            sSmooth(&sProperties),
+            sPriorityGroup(&sProperties),
+            sPriority(&sProperties)
         {
         }
 
@@ -58,12 +64,8 @@ namespace lsp
 
             // Init style
             sSmooth.bind("smooth", &sStyle);
-
-//            Style *sclass = style_class();
-//            if (sclass != NULL)
-//            {
-//                sSmooth.init(sclass, true);
-//            }
+            sPriorityGroup.bind("proirity_group", &sStyle);
+            sPriority.bind("proirity", &sStyle);
 
             return STATUS_OK;
         }
@@ -78,7 +80,7 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (sSmooth.is(prop))
+            if (prop->one_of(sSmooth, sPriorityGroup, sPriority))
                 query_draw();
         }
 
@@ -106,8 +108,14 @@ namespace lsp
                     gr->query_draw(REDRAW_SURFACE);
             }
         }
-    }
-}
+
+        bool GraphItem::bound_box(ws::ISurface *s, ws::rectangle_t *r)
+        {
+            return false;
+        }
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

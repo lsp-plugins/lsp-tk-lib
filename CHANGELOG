@@ -7,6 +7,7 @@
 * Many code updates that could cause potential problems related to using another
   decimal point for floating-point number formatting.
 * FileDialog now synchronizes the state of selected_filter property.
+* Implemented widget overrides by priority on the graph widget.
 * Updated build scripts.
 
 === 1.0.18 ===

@@ -355,7 +355,7 @@ namespace lsp
             if (!(nFlags & F_LOCALIZED))
             {
                 sCache.truncate();
-                return (out->set(&sText)) ? STATUS_OK : STATUS_NO_MEM;
+                return expr::format(out, &sText, &sParams);
             }
 
             // Check that value has been cached
