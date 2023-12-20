@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.20 ===
+
+
 === 1.0.19 ===
 * Optimized work with atoms.
 * Many code updates that could cause potential problems related to using another

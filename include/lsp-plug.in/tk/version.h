@@ -24,7 +24,7 @@
 
 #define LSP_TK_LIB_MAJOR            1
 #define LSP_TK_LIB_MINOR            0
-#define LSP_TK_LIB_MICRO            19
+#define LSP_TK_LIB_MICRO            20
 
 #if defined(LSP_TK_LIB_PUBLISHER)
     #define LSP_TK_LIB_PUBLIC               LSP_EXPORT_MODIFIER
