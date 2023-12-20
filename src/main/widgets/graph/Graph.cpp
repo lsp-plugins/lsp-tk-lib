@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -23,6 +23,7 @@
 #include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/common/debug.h>
+#include <lsp-plug.in/lltl/ptrset.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -315,6 +316,24 @@ namespace lsp
             s->clip_end();
         }
 
+        ssize_t Graph::check_collision(const w_alloc_t *a, const w_alloc_t *b)
+        {
+            if ((a->nGroup != b->nGroup) || (a->nPriority == b->nPriority))
+                return 0;
+            if (!Size::overlap(&a->sRect, &b->sRect))
+                return 0;
+
+            return b->nPriority - a->nPriority;
+        }
+
+        ssize_t Graph::compare_walloc(const w_alloc_t *a, const w_alloc_t *b)
+        {
+            ssize_t diff = a->nGroup - b->nGroup;
+            if (diff == 0)
+                diff        = a->nPriority - b->nPriority;
+            return diff;
+        }
+
         void Graph::draw(ws::ISurface *s)
         {
             // Clear canvas
@@ -326,11 +345,62 @@ namespace lsp
             // Sync internal lists of axes and origins
             sync_lists();
 
+            // Compute list of discarded widgets
+            lltl::ptrset<GraphItem> discarded;
+            {
+                lltl::darray<w_alloc_t> grouped;
+
+                // Fill all grouped widgets
+                for (size_t i=0, n=vItems.size(); i<n; ++i)
+                {
+                    GraphItem *gi = vItems.get(i);
+                    if ((gi == NULL) || (!gi->visibility()->get()))
+                        continue;
+
+                    // Fill the widget allocation
+                    w_alloc_t wa;
+                    wa.nGroup = gi->priority_group()->get();
+                    if (wa.nGroup < 0)
+                        continue;
+                    if (!gi->bound_box(s, &wa.sRect))
+                        continue;
+
+                    wa.nPriority = gi->priority()->get();
+                    wa.pWidget   = gi;
+
+                    grouped.add(&wa);
+                }
+                grouped.qsort(compare_walloc);
+
+                // Scan for conflicting widgets and discard some widgets according to priority
+                for (size_t i=0, n=grouped.size(); i<n; ++i)
+                {
+                    w_alloc_t *wa = grouped.uget(i);
+                    if (wa == NULL)
+                        continue;
+
+                    for (size_t j=0; j<i; ++j)
+                    {
+                        w_alloc_t *wb = grouped.uget(j);
+                        if (wb == NULL)
+                            continue;
+
+                        if (check_collision(wb, wa) > 0)
+                        {
+                            discarded.put(wa->pWidget);
+                            break;
+                        }
+                    }
+                }
+            }
+
             // Draw all objects
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 GraphItem *gi = vItems.get(i);
                 if ((gi == NULL) || (!gi->visibility()->get()))
+                    continue;
+                if (discarded.contains(gi))
                     continue;
 
                 gi->render(s, &sICanvas, true);

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -111,6 +111,71 @@ namespace lsp
 
             if (prop->one_of(sText, sFont, sColor, sLayout, sTextAdjust, sHValue, sVValue, sHAxis, sVAxis, sOrigin))
                 query_draw();
+        }
+
+        bool GraphText::bound_box(ws::ISurface *s, ws::rectangle_t *r)
+        {
+            // Format the text
+            LSPString text;
+            sText.format(&text);
+            if (text.is_empty())
+                return false;
+            sTextAdjust.apply(&text);
+
+            // Graph
+            Graph *cv = graph();
+            if (cv == NULL)
+                return false;
+
+            // Get palette
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
+            float bright    = sBrightness.get();
+
+            lsp::Color font_color(sColor);
+            font_color.scale_lch_luminance(bright);
+
+            // Get center
+            float x = 0.0f, y = 0.0f;
+            cv->origin(sOrigin.get(), &x, &y);
+
+            // Apply horizontal axis
+            float hvalue = sHValue.get();
+            GraphAxis *haxis = cv->axis(sHAxis.get());
+            if (haxis == NULL)
+                return false;
+            if (!haxis->apply(&x, &y, &hvalue, 1))
+                return false;
+
+            // Apply vertical axis
+            float vvalue = sVValue.get();
+            GraphAxis *vaxis = cv->axis(sVAxis.get());
+            if (vaxis == NULL)
+                return false;
+            if (!vaxis->apply(&x, &y, &vvalue, 1))
+                return false;
+
+            // Now we are ready to output text
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+
+            sFont.get_parameters(s, fscaling, &fp);
+            sFont.get_multitext_parameters(s, &tp, fscaling, &text);
+
+            // Allocate position
+            r->nLeft        = x;
+            r->nTop         = y;
+            r->nWidth       = tp.Width;
+            r->nHeight      = lsp_max(tp.Height, fp.Height);
+            sPadding.add(r, scaling);
+
+            r->nLeft       += (sLayout.halign() - 1.0f) * r->nWidth * 0.5f;
+            r->nTop        -= (sLayout.valign() + 1.0f) * r->nHeight * 0.5f;
+
+            // Remove padding
+            sPadding.enter(r, scaling);
+
+            return true;
         }
 
         void GraphText::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

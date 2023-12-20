@@ -187,6 +187,7 @@ namespace lsp
                 static status_t         slot_on_bm_realized(Widget *sender, void *ptr, void *data);
 
                 static status_t         slot_on_filter_key_down(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_filter_submit(Widget *sender, void *ptr, void *data);
 
                 static status_t         slot_on_search_key_down(Widget *sender, void *ptr, void *data);
 
