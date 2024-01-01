@@ -28,7 +28,9 @@ namespace lsp
         Float::Float(prop::Listener *listener):
             SimpleProperty(listener)
         {
-            fValue      = 0.0f;
+            fValue          = 0.0f;
+            pTransform      = NULL;
+            pTransformArg   = NULL;
         }
 
         Float::~Float()
@@ -48,10 +50,15 @@ namespace lsp
             pStyle->set_float(nAtom, fValue);
         }
 
+        float Float::transform(float v) const
+        {
+            return (pTransform != NULL) ? pTransform(v, pTransformArg) : v;
+        }
+
         float Float::set(float v)
         {
             float prev = fValue;
-            fValue  = v;
+            fValue  = transform(v);
 
             sync();
             return prev;

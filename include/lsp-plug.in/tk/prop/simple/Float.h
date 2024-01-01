@@ -37,10 +37,15 @@ namespace lsp
         {
             protected:
                 float               fValue;
+                float_transform_t   pTransform;
+                mutable void       *pTransformArg;
 
             protected:
-                virtual void        commit(atom_t property);
-                virtual void        push();
+                virtual void        commit(atom_t property) override;
+                virtual void        push() override;
+
+            protected:
+                float               transform(float v) const;
 
             protected:
                 explicit Float(prop::Listener *listener = NULL);
@@ -50,6 +55,10 @@ namespace lsp
 
                 Float & operator = (const Float &) = delete;
                 Float & operator = (Float &&) = delete;
+
+            public:
+                inline void         set_transform(float_transform_t func, void *arg = NULL) { pTransform = func; pTransformArg = arg; }
+                inline void         clear_transform()       { set_transform(NULL, NULL);    }
 
             public:
                 /**
