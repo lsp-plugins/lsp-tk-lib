@@ -4,6 +4,7 @@
 
 === 1.0.20 ===
 * Added possibility to control the value set to RangeFloat and Float properties.
+* Updated build scripts.
 
 === 1.0.19 ===
 * Optimized work with atoms.
