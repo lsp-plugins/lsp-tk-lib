@@ -725,6 +725,7 @@ namespace lsp
                         sRedraw.launch(-1, 40);
                         query_draw(REDRAW_SURFACE);
                     }
+                    sVisibility.commit_value(true);
                     break;
 
                 case ws::UIE_HIDE:
@@ -740,6 +741,7 @@ namespace lsp
                         }
                         sRedraw.cancel();
                     }
+                    sVisibility.commit_value(false);
                     break;
 
                 case ws::UIE_REDRAW:
