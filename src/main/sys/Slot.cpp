@@ -76,7 +76,7 @@ namespace lsp
             } while (find_item(item.nID) != NULL);
 
             // Initialize item and bind it
-            size_t mask        = (intercept) ? BIND_DFL : BIND_DFL | BIND_INTERCEPT;
+            size_t mask        = (intercept) ? BIND_DFL | BIND_INTERCEPT : BIND_DFL;
             item.nFlags        = (enabled) ? mask | BIND_ENABLED : mask;
             item.pHandler      = handler;
             item.pPtr          = arg;

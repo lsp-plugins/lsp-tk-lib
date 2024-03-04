@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 мая 2023 г.
@@ -39,10 +39,12 @@ namespace lsp
         RangeFloat::RangeFloat(prop::Listener *listener):
             MultiProperty(vAtoms, P_COUNT, listener)
         {
-            fMin        = 0.0f;
-            fMax        = 1.0f;
-            fValue      = 0.0f;
-            nFlags      = F_AUTO_LIMIT;
+            fMin            = 0.0f;
+            fMax            = 1.0f;
+            fValue          = 0.0f;
+            nFlags          = F_AUTO_LIMIT;
+            pTransform      = NULL;
+            pTransformArg   = NULL;
         }
 
         RangeFloat::~RangeFloat()
@@ -194,7 +196,7 @@ namespace lsp
                 value       = value - truncf(value);
             if (nFlags & F_AUTO_LIMIT)
                 value       = lsp_limit(value, 0.0f, 1.0f);
-            value       = fMin + (fMax - fMin) * value;
+            value       = transform(fMin + (fMax - fMin) * value);
             if (value == old)
                 return old;
 
@@ -203,8 +205,14 @@ namespace lsp
             return old;
         }
 
+        float RangeFloat::transform(float v) const
+        {
+            return (pTransform != NULL) ? pTransform(v, pTransformArg) : v;
+        }
+
         float RangeFloat::do_limit(float value) const
         {
+            value = transform(value);
             return (nFlags & F_AUTO_LIMIT) ?
                 Property::limit(value, fMin, fMax) :
                 value;
@@ -231,7 +239,7 @@ namespace lsp
                     value  += delta;
             }
 
-            return value;
+            return do_limit(value);
         }
 
         float RangeFloat::change(float k, float step)

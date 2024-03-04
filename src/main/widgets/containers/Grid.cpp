@@ -75,6 +75,10 @@ namespace lsp
 
         void Grid::do_destroy()
         {
+            // Cleanup cached data
+            free_cells(&sAlloc);
+
+            // Unlink children
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Get widget
@@ -86,9 +90,8 @@ namespace lsp
                 w->pWidget = NULL;
             }
 
+            // Free list of children
             vItems.flush();
-
-            free_cells(&sAlloc);
         }
 
         void Grid::destroy()

@@ -52,6 +52,17 @@ namespace lsp
             PT_UNKNOWN  = -1
         };
 
+        // Forward class declaration
+        class Atoms;
+        class Widget;
+        class Style;
+        class IStyleListener;
+        class Widget;
+
+        // Value transformation functions
+        typedef float (* float_transform_t)(float value, void *arg);
+        typedef ssize_t (* int_transform_t)(ssize_t value, void *arg);
+
         namespace prop
         {
             typedef struct desc_t
@@ -65,15 +76,8 @@ namespace lsp
                 const char         *name;
                 ssize_t             value;
             } enum_t;
-        }
-
-        // Forward class declaration
-        class Atoms;
-        class Widget;
-        class Style;
-        class IStyleListener;
-        class Widget;
-    }
-}
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_PROP_TYPES_H_ */

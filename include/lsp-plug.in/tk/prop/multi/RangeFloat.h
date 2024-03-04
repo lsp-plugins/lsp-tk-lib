@@ -35,10 +35,6 @@ namespace lsp
          */
         class RangeFloat: public MultiProperty
         {
-            private:
-                RangeFloat & operator = (const RangeFloat &);
-                RangeFloat(const RangeFloat &);
-
             protected:
                 enum property_t
                 {
@@ -65,18 +61,30 @@ namespace lsp
                 float               fMin;
                 float               fMax;
                 size_t              nFlags;
+                float_transform_t   pTransform;
+                mutable void       *pTransformArg;
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 float               climited(float v) const;
                 float               change(float k, float step);
                 float               do_limit(float v) const;
+                float               transform(float v) const;
 
             protected:
                 explicit RangeFloat(prop::Listener *listener = NULL);
-                virtual ~RangeFloat();
+                RangeFloat(const RangeFloat &) = delete;
+                RangeFloat(RangeFloat &&) = delete;
+                virtual ~RangeFloat() override;
+
+                RangeFloat & operator = (const RangeFloat &) = delete;
+                RangeFloat & operator = (RangeFloat &&) = delete;
+
+            public:
+                inline void         set_transform(float_transform_t func, void *arg = NULL) { pTransform = func; pTransformArg = arg; }
+                inline void         clear_transform()       { set_transform(NULL, NULL);    }
 
             public:
                 inline float        get() const             { return do_limit(fValue);      }
