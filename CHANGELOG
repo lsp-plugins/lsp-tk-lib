@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.21 ===
+
+
 === 1.0.20 ===
 * Added possibility to control the value set to RangeFloat and Float properties.
 * Fixed illegal memory access when destroying Box, Grid and Menu widgets.
