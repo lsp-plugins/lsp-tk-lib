@@ -411,6 +411,14 @@ namespace lsp
 
         void Menu::do_destroy()
         {
+            // Cancel timers
+            sKeyTimer.cancel();
+            sMouseTimer.cancel();
+
+            // Cleanup cached data
+            vVisible.flush();
+
+            // Unlink children
             size_t n            = vItems.size();
             for (size_t i=0; i<n; ++i)
             {
@@ -421,12 +429,10 @@ namespace lsp
                 unlink_widget(item);
             }
 
-            // Cancel timers
-            sKeyTimer.cancel();
-            sMouseTimer.cancel();
-
-            vVisible.flush();
+            // Cleanup chilren
             vItems.flush();
+
+            // Destroy related window
             sWindow.destroy();
         }
 

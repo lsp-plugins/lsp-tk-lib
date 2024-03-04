@@ -161,6 +161,10 @@ namespace lsp
 
         void Box::do_destroy()
         {
+            // Clear cached values
+            vVisible.flush();
+
+            // Unlink children
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
                 // Get widget
@@ -169,8 +173,7 @@ namespace lsp
                     unlink_widget(w);
             }
 
-            // Cleanup collections
-            vVisible.flush();
+            // Free list of children
             vItems.flush();
         }
 
