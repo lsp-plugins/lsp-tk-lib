@@ -6,6 +6,7 @@
 * Added possibility to control the value set to RangeFloat and Float properties.
 * Fixed illegal memory access when destroying Box, Grid and Menu widgets.
 * Updated build scripts.
+* Updated module versions in dependencies.
 
 === 1.0.19 ===
 * Optimized work with atoms.
