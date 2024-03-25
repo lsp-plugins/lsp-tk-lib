@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 22 сент. 2020 г.
@@ -242,6 +242,7 @@ namespace lsp
                 tp.Height           = lsp_max(tp.Height, fp.Height);
             }
 
+            // Check for odd/even angle
             if (angle & 1)
             {
                 // Vertical
