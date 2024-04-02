@@ -3,6 +3,8 @@
 *******************************************************************************
 
 === 1.0.21 ===
+* Added empty text property for edit.
+* Fixed illegal memory access when destroying Box, Grid and Menu widgets.
 * Updated build scripts.
 
 === 1.0.20 ===
