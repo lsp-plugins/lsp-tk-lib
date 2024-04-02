@@ -803,7 +803,6 @@ namespace lsp
                 self->unlink_widget(item);
             }
 
-            self->vVisible.flush();
             self->query_resize();
         }
 
