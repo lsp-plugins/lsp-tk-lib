@@ -48,6 +48,7 @@ namespace lsp
                 sTabJoint.bind("tab.joint", this);
                 sHeadingFill.bind("heading.fill", this);
                 sHeadingSpacingFill.bind("heading.spacing.fill", this);
+                sTabPointer.bind("tab.pointer", this);
 
                 // Configure
                 sBorderColor.set("#888888");
@@ -93,6 +94,7 @@ namespace lsp
             sTabJoint(&sProperties),
             sHeadingFill(&sProperties),
             sHeadingSpacingFill(&sProperties),
+            sTabPointer(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -168,6 +170,7 @@ namespace lsp
             sTabJoint.bind("tab.joint", &sStyle);
             sHeadingFill.bind("heading.fill", &sStyle);
             sHeadingSpacingFill.bind("heading.spacing.fill", &sStyle);
+            sTabPointer.bind("tab.pointer", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -909,6 +912,13 @@ namespace lsp
             }
 
             return STATUS_OK;
+        }
+
+        ws::mouse_pointer_t TabControl::current_pointer()
+        {
+            if (pEventTab != NULL)
+                return sTabPointer.get();
+            return tk::WidgetContainer::current_pointer();
         }
 
         status_t TabControl::on_mouse_move(const ws::event_t *e)
