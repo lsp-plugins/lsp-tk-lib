@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 июл. 2017 г.
@@ -65,6 +65,16 @@ namespace lsp
                     F_MOUSE_IGN     = 1 << 2,
                 };
 
+                typedef struct estimation_t
+                {
+                    LSPString text;
+                    float scaling;
+                    float fscaling;
+                    ws::size_limit_t *r;
+                    ws::font_parameters_t fp;
+                    ws::text_parameters_t tp;
+                } estimation_t;
+
             protected:
                 size_t                      nMFlags;
                 size_t                      nState;
@@ -79,6 +89,7 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Padding               sIPadding;      // Internal padding
                 prop::WidgetPtr<Menu>       sPopup;         // Popup menu
+                lltl::parray<prop::String>  vEstimations;   // Estimation string
 
             protected:
                 static status_t                 slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -86,14 +97,16 @@ namespace lsp
                 static status_t                 slot_on_popup(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void                    size_request(ws::size_limit_t *r);
-                virtual void                    property_changed(Property *prop);
+                void                            estimate_string_size(estimation_t *e, tk::String *s);
+
+                virtual void                    size_request(ws::size_limit_t *r) override;
+                virtual void                    property_changed(Property *prop) override;
 
             public:
                 explicit Label(Display *dpy);
-                virtual ~Label();
+                virtual ~Label() override;
 
-                virtual status_t                init();
+                virtual status_t                init() override;
 
             public:
                 LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
@@ -108,22 +121,20 @@ namespace lsp
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,              &sPopup)
 
             public:
-                virtual void                    draw(ws::ISurface *s);
+                void                            clear_text_estimations();
+                tk::String                     *add_text_estimation();
 
+            public:
+                virtual void                    draw(ws::ISurface *s) override;
+
+            public:
                 virtual status_t                on_mouse_in(const ws::event_t *e);
-
                 virtual status_t                on_mouse_out(const ws::event_t *e);
-
                 virtual status_t                on_mouse_move(const ws::event_t *e);
-
                 virtual status_t                on_mouse_down(const ws::event_t *e);
-
                 virtual status_t                on_mouse_up(const ws::event_t *e);
-
                 virtual status_t                on_before_popup(Menu *menu);
-
                 virtual status_t                on_popup(Menu *menu);
-
                 virtual status_t                on_submit();
         };
     
