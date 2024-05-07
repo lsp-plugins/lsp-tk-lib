@@ -126,13 +126,13 @@ namespace lsp
 
             public:
                 virtual void                    draw(ws::ISurface *s) override;
+                virtual status_t                on_mouse_in(const ws::event_t *e) override;
+                virtual status_t                on_mouse_out(const ws::event_t *e) override;
+                virtual status_t                on_mouse_move(const ws::event_t *e) override;
+                virtual status_t                on_mouse_down(const ws::event_t *e) override;
+                virtual status_t                on_mouse_up(const ws::event_t *e) override;
 
             public:
-                virtual status_t                on_mouse_in(const ws::event_t *e);
-                virtual status_t                on_mouse_out(const ws::event_t *e);
-                virtual status_t                on_mouse_move(const ws::event_t *e);
-                virtual status_t                on_mouse_down(const ws::event_t *e);
-                virtual status_t                on_mouse_up(const ws::event_t *e);
                 virtual status_t                on_before_popup(Menu *menu);
                 virtual status_t                on_popup(Menu *menu);
                 virtual status_t                on_submit();
