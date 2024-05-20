@@ -41,6 +41,7 @@ namespace lsp
                 sCursorColor.bind("cursor.color", this);
                 sTextColor.bind("text.color", this);
                 sTextSelectedColor.bind("text.selected.color", this);
+                sEmptyTextColor.bind("text.empty.color", this);
                 sSelectionColor.bind("selection.color", this);
                 sBorderSize.bind("border.size", this);
                 sBorderGapSize.bind("border.gap.size", this);
@@ -55,6 +56,7 @@ namespace lsp
                 sCursorColor.set("#000000");
                 sTextColor.set("#000000");
                 sTextSelectedColor.set("#ffffff");
+                sEmptyTextColor.set("#000000");
                 sSelectionColor.set("#00c0ff");
                 sBorderSize.set(1);
                 sBorderGapSize.set(1);
@@ -163,6 +165,7 @@ namespace lsp
             sInput(this),
             sCursor(this),
             sText(&sProperties),
+            sEmptyText(&sProperties),
             sSelection(&sProperties),
             sFont(&sProperties),
             sColor(&sProperties),
@@ -171,6 +174,7 @@ namespace lsp
             sCursorColor(&sProperties),
             sTextColor(&sProperties),
             sTextSelectedColor(&sProperties),
+            sEmptyTextColor(&sProperties),
             sSelectionColor(&sProperties),
             sBorderSize(&sProperties),
             sBorderGapSize(&sProperties),
@@ -246,6 +250,7 @@ namespace lsp
             }
 
             sText.bind(&sStyle, pDisplay->dictionary());
+            sEmptyText.bind(&sStyle, pDisplay->dictionary());
             sSelection.bind("selection", &sStyle);
             sFont.bind("font", &sStyle);
             sColor.bind("color", &sStyle);
@@ -254,6 +259,7 @@ namespace lsp
             sCursorColor.bind("cursor.color", &sStyle);
             sTextColor.bind("text.color", &sStyle);
             sTextSelectedColor.bind("text.selected.color", &sStyle);
+            sEmptyTextColor.bind("text.empty.color", &sStyle);
             sSelectionColor.bind("selection.color", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderGapSize.bind("border.gap.size", &sStyle);
@@ -331,7 +337,8 @@ namespace lsp
                 sCursor.move(0);
                 query_draw();
             }
-
+            if (sEmptyText.is(prop))
+                query_draw();
             if (sFont.is(prop))
                 query_resize();
             if (sColor.is(prop))
@@ -342,11 +349,7 @@ namespace lsp
                 query_draw();
             if (sCursorColor.is(prop))
                 query_draw();
-            if (sTextColor.is(prop))
-                query_draw();
-            if (sTextSelectedColor.is(prop))
-                query_draw();
-            if (sSelectionColor.is(prop))
+            if (prop->one_of(sTextColor, sTextSelectedColor, sEmptyTextColor, sSelectionColor))
                 query_draw();
             if (sBorderSize.is(prop))
                 query_resize();
@@ -485,6 +488,12 @@ namespace lsp
             size_t cursize  = lsp_max(1.0f, scaling);
             bool aa         = s->set_antialiasing(true);
             lsp_finally { s->set_antialiasing(aa); };
+            bool use_empty_text =
+                (sText.is_empty()) &&
+                (!sEmptyText.is_empty()) &&
+                (!sCursor.visible()) &&
+                (!sCursor.shining());
+            prop::String *src_text = (use_empty_text) ? &sEmptyText : &sText;
 
             // Draw border
             if (border > 0)
@@ -529,7 +538,7 @@ namespace lsp
             xr.nWidth      -= cursize; // leave some place for cursor
 
             // Obtain text parameters
-            LSPString *text = sText.formatted();
+            LSPString *text = src_text->formatted();
             size_t cpos     = lsp_limit(sCursor.location(), 0, ssize_t(text->length()));
 
             sFont.get_parameters(s, fscaling, &fp);
@@ -574,7 +583,14 @@ namespace lsp
             xr.nHeight      = fp.Height;
 
             // Draw the text
-            if ((sSelection.valid()) && (!sSelection.is_empty()))
+            if (use_empty_text)
+            {
+                color.copy(sEmptyTextColor);
+                color.scale_lch_luminance(lightness);
+
+                sFont.draw(s, color, xr.nLeft, xr.nTop + fp.Ascent, fscaling, text);
+            }
+            else if ((sSelection.valid()) && (!sSelection.is_empty()))
             {
                 ssize_t first   = sSelection.starting();
                 ssize_t last    = sSelection.ending();

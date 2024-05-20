@@ -50,6 +50,7 @@ namespace lsp
                 prop::Boolean               sTabJoint;
                 prop::Boolean               sHeadingFill;
                 prop::Boolean               sHeadingSpacingFill;
+                prop::Pointer               sTabPointer;            // Tab pointer
             LSP_TK_STYLE_DEF_END
         } /* namespae style */
 
@@ -107,6 +108,7 @@ namespace lsp
                 prop::Boolean               sTabJoint;
                 prop::Boolean               sHeadingFill;
                 prop::Boolean               sHeadingSpacingFill;
+                prop::Pointer               sTabPointer;            // Tab pointer
 
                 prop::WidgetList<Tab>       vWidgets;
                 prop::WidgetPtr<Tab>        sSelected;
@@ -161,6 +163,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                    tab_joint,                  &sTabJoint)
                 LSP_TK_PROPERTY(Boolean,                    heading_fill,               &sHeadingFill)
                 LSP_TK_PROPERTY(Boolean,                    heading_spacing_fill,       &sHeadingSpacingFill)
+                LSP_TK_PROPERTY(Pointer,                    mouse_pointer,              &sTabPointer)
                 LSP_TK_PROPERTY(WidgetPtr<Tab>,             selected,                   &sSelected)
                 LSP_TK_PROPERTY(WidgetList<Tab>,            widgets,                    &vWidgets)
 
@@ -179,6 +182,7 @@ namespace lsp
                 virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
                 virtual status_t            on_mouse_out(const ws::event_t *e) override;
                 virtual status_t            on_key_down(const ws::event_t *e) override;
+                virtual ws::mouse_pointer_t current_pointer() override;
 
             public:
                 virtual status_t            on_change();

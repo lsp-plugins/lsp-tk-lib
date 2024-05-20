@@ -2,6 +2,14 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.21 ===
+* Added empty text property for edit.
+* Added text size estimation feature to the tk::Label widget.
+* Fixed illegal memory access when destroying Box, Grid and Menu widgets.
+* Added tab.pointer property to the tk::TabControl.
+* Updated build scripts.
+* Updated module versions in dependencies.
+
 === 1.0.20 ===
 * Added possibility to control the value set to RangeFloat and Float properties.
 * Fixed illegal memory access when destroying Box, Grid and Menu widgets.

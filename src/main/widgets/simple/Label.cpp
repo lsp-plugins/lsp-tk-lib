@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 июл. 2017 г.
@@ -19,10 +19,12 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <lsp-plug.in/tk/tk.h>
-#include <lsp-plug.in/stdlib/math.h>
-#include <private/tk/style/BuiltinStyle.h>
 #include <lsp-plug.in/common/debug.h>
+#include <lsp-plug.in/stdlib/math.h>
+#include <lsp-plug.in/stdlib/stdio.h>
+#include <lsp-plug.in/tk/tk.h>
+
+#include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
 {
@@ -77,6 +79,7 @@ namespace lsp
         Label::~Label()
         {
             nFlags     |= FINALIZED;
+            clear_text_estimations();
         }
 
         status_t Label::init()
@@ -216,6 +219,53 @@ namespace lsp
             }
         }
 
+        void Label::clear_text_estimations()
+        {
+            size_t removed = 0;
+            for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
+            {
+                prop::String *s = it.get();
+                if (s != NULL)
+                {
+                    ++removed;
+                    delete s;
+                }
+            }
+            vEstimations.clear();
+            if (removed > 0)
+                query_resize();
+        }
+
+        tk::String *Label::add_text_estimation()
+        {
+            prop::String *s = new prop::String(&sProperties);
+            if (s == NULL)
+                return NULL;
+            s->bind(&sStyle, pDisplay->dictionary());
+
+            if (vEstimations.add(s))
+                return s;
+
+            delete s;
+            return NULL;
+        }
+
+        void Label::estimate_string_size(estimation_t *e, tk::String *s)
+        {
+            if (s == NULL)
+                return;
+
+            // Form the text string
+            s->format(&e->text);
+            sTextAdjust.apply(&e->text);
+
+            // Estimate sizes
+            sFont.get_multitext_parameters(pDisplay, &e->tp, e->fscaling, &e->text);
+
+            e->r->nMinWidth     = lsp_max(e->r->nMinWidth, ceilf(e->tp.Width));
+            e->r->nMinHeight    = lsp_max(e->r->nMinHeight, ceilf(lsp_max(e->tp.Height, e->fp.Height)));
+        }
+
         void Label::size_request(ws::size_limit_t *r)
         {
             r->nMinWidth    = 0;
@@ -225,26 +275,21 @@ namespace lsp
             r->nPreWidth    = -1;
             r->nPreHeight   = -1;
 
-            // Form the text string
-            LSPString text;
-            sText.format(&text);
-            sTextAdjust.apply(&text);
+            // Form the estimation parameters
+            estimation_t e;
+            e.scaling       = lsp_max(0.0f, sScaling.get());
+            e.fscaling      = lsp_max(0.0f, e.scaling * sFontScaling.get());
+            e.r             = r;
+            sFont.get_parameters(pDisplay, e.fscaling, &e.fp);
 
-            // Estimate sizes
-            float scaling   = lsp_max(0.0f, sScaling.get());
-            float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            ws::font_parameters_t fp;
-            ws::text_parameters_t tp;
-
-            sFont.get_parameters(pDisplay, fscaling, &fp);
-            sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
-
-            r->nMinWidth    = ceil(tp.Width);
-            r->nMinHeight   = ceil(lsp_max(tp.Height, fp.Height));
-
+            // Estimate the size of the label
+            for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
+                estimate_string_size(&e, it.get());
+            estimate_string_size(&e, &sText);
+            
             // Apply size constraints
-            sConstraints.apply(r, scaling);
-            sIPadding.add(r, scaling);
+            sConstraints.apply(r, e.scaling);
+            sIPadding.add(r, e.scaling);
         }
 
         status_t Label::on_mouse_in(const ws::event_t *e)

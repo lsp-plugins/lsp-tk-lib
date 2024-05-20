@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 июн. 2017 г.
@@ -82,6 +82,7 @@ namespace lsp
                 sHoleColor.set("#000000");
 
                 sFont.set_size(12.0f);
+                sTextAdjust.set(tk::TA_NONE);
                 sConstraints.set(18, 18, -1, -1);
                 sTextLayout.set(0.0f, 0.0f);
                 sMode.set(BM_NORMAL);

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 нояб. 2022 г.
@@ -48,6 +48,7 @@ namespace lsp
                 sTabJoint.bind("tab.joint", this);
                 sHeadingFill.bind("heading.fill", this);
                 sHeadingSpacingFill.bind("heading.spacing.fill", this);
+                sTabPointer.bind("tab.pointer", this);
 
                 // Configure
                 sBorderColor.set("#888888");
@@ -93,6 +94,7 @@ namespace lsp
             sTabJoint(&sProperties),
             sHeadingFill(&sProperties),
             sHeadingSpacingFill(&sProperties),
+            sTabPointer(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -168,6 +170,7 @@ namespace lsp
             sTabJoint.bind("tab.joint", &sStyle);
             sHeadingFill.bind("heading.fill", &sStyle);
             sHeadingSpacingFill.bind("heading.spacing.fill", &sStyle);
+            sTabPointer.bind("tab.pointer", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -911,6 +914,13 @@ namespace lsp
             return STATUS_OK;
         }
 
+        ws::mouse_pointer_t TabControl::current_pointer()
+        {
+            if (pEventTab != NULL)
+                return sTabPointer.get();
+            return tk::WidgetContainer::current_pointer();
+        }
+
         status_t TabControl::on_mouse_move(const ws::event_t *e)
         {
             if (nMBState != 0)
@@ -1005,18 +1015,19 @@ namespace lsp
             if (item == NULL)
                 return;
 
-            TabControl *_this = widget_ptrcast<TabControl>(obj);
-            if (_this == NULL)
+            TabControl *self = widget_ptrcast<TabControl>(obj);
+            if (self == NULL)
                 return;
 
             // Reset active widget if present
-            if (_this->sSelected.get() == item)
-                _this->sSelected.set(NULL);
-            if (_this->pEventTab == item)
-                _this->pEventTab       = NULL;
+            if (self->sSelected.get() == item)
+                self->sSelected.set(NULL);
+            if (self->pEventTab == item)
+                self->pEventTab       = NULL;
 
-            _this->unlink_widget(item);
-            _this->query_resize();
+            self->vVisible.flush();
+            self->unlink_widget(item);
+            self->query_resize();
         }
 
         status_t TabControl::slot_on_change(Widget *sender, void *ptr, void *data)

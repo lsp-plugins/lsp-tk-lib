@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -790,20 +790,20 @@ namespace lsp
             if (item == NULL)
                 return;
 
-            ListBox *_this = widget_ptrcast<ListBox>(obj);
-            if (_this == NULL)
+            ListBox *self = widget_ptrcast<ListBox>(obj);
+            if (self == NULL)
                 return;
 
             // Special logic if the message was originated by the item list
-            if (_this->vItems.is(prop))
+            if (self->vItems.is(prop))
             {
                 // Remove widget from selection list
-                _this->vSelected.remove(item);
+                self->vSelected.remove(item);
                 // Unlink widget
-                _this->unlink_widget(item);
+                self->unlink_widget(item);
             }
 
-            _this->query_resize();
+            self->query_resize();
         }
 
         status_t ListBox::on_mouse_down(const ws::event_t *e)

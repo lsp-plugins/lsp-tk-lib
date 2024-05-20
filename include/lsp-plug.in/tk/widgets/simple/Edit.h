@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 29 авг. 2017 г.
@@ -45,6 +45,7 @@ namespace lsp
                 prop::Color             sCursorColor;
                 prop::Color             sTextColor;
                 prop::Color             sTextSelectedColor;
+                prop::Color             sEmptyTextColor;
                 prop::Color             sSelectionColor;
                 prop::Integer           sBorderSize;
                 prop::Integer           sBorderGapSize;
@@ -125,6 +126,7 @@ namespace lsp
                 ws::rectangle_t         sTextArea;
 
                 prop::String            sText;
+                prop::String            sEmptyText;
                 prop::TextSelection     sSelection;
                 prop::Font              sFont;
                 prop::Color             sColor;
@@ -133,6 +135,7 @@ namespace lsp
                 prop::Color             sCursorColor;
                 prop::Color             sTextColor;
                 prop::Color             sTextSelectedColor;
+                prop::Color             sEmptyTextColor;
                 prop::Color             sSelectionColor;
                 prop::Integer           sBorderSize;
                 prop::Integer           sBorderGapSize;
@@ -176,6 +179,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(String,             text,                           &sText)
+                LSP_TK_PROPERTY(String,             empty_text,                     &sEmptyText)
                 LSP_TK_PROPERTY(TextSelection,      selection,                      &sSelection)
                 LSP_TK_PROPERTY(Font,               font,                           &sFont)
                 LSP_TK_PROPERTY(Color,              color,                          &sColor)
@@ -184,6 +188,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              cursor_color,                   &sCursorColor)
                 LSP_TK_PROPERTY(Color,              text_color,                     &sTextColor)
                 LSP_TK_PROPERTY(Color,              text_selected_color,            &sTextSelectedColor)
+                LSP_TK_PROPERTY(Color,              placeholder_text_color,         &sEmptyTextColor)
                 LSP_TK_PROPERTY(Color,              selection_color,                &sSelectionColor)
                 LSP_TK_PROPERTY(Integer,            border_size,                    &sBorderSize)
                 LSP_TK_PROPERTY(Integer,            border_gap_size,                &sBorderGapSize)

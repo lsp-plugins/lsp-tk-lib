@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 24 сент. 2020 г.
@@ -292,6 +292,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
                 MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
 
                 lm->text_visible()->set(true);
+                lm->constraints()->set_width(12, 12);
                 lm->value()->set(0.5f);
                 lm->angle()->set(i*2);
                 sync_text(lm);
@@ -421,6 +422,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
                 MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
 
                 lm->text_visible()->set(false);
+                lm->constraints()->set_width(8, 8);
                 lm->value()->set(0.5f);
                 lm->angle()->set(i*2);
                 lm->reversive()->set(true);

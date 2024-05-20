@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 сент. 2020 г.
@@ -66,9 +66,6 @@ namespace lsp
                 static const w_class_t    metadata;
 
             private:
-                LedMeterChannel & operator = (const LedMeterChannel &);
-                LedMeterChannel(const LedMeterChannel &);
-
                 friend class LedMeter;
 
             protected:
@@ -107,7 +104,12 @@ namespace lsp
 
             public:
                 explicit LedMeterChannel(Display *dpy);
+                LedMeterChannel(const LedMeterChannel &) = delete;
+                LedMeterChannel(LedMeterChannel &&) = delete;
                 virtual ~LedMeterChannel() override;
+
+                LedMeterChannel & operator = (const LedMeterChannel &) = delete;
+                LedMeterChannel & operator = (LedMeterChannel &&) = delete;
 
                 virtual status_t            init() override;
 

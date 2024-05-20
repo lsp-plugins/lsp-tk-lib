@@ -43,7 +43,7 @@ namespace lsp
                 static const prop::enum_t ENUM[];
 
             protected:
-                explicit TextAdjust(prop::Listener *listener = NULL): Enum(ENUM, ws::BS_SINGLE, listener) {};
+                explicit TextAdjust(prop::Listener *listener = NULL): Enum(ENUM, TA_NONE, listener) {};
 
             public:
                 inline text_adjust_t        get() const     { return text_adjust_t(nValue); }

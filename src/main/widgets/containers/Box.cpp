@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -151,12 +151,13 @@ namespace lsp
             if (widget == NULL)
                 return;
 
-            Box *_this = widget_ptrcast<Box>(obj);
-            if (_this == NULL)
+            Box *self = widget_ptrcast<Box>(obj);
+            if (self == NULL)
                 return;
 
-            _this->unlink_widget(widget);
-            _this->query_resize();
+            self->vVisible.flush();
+            self->unlink_widget(widget);
+            self->query_resize();
         }
 
         void Box::do_destroy()
