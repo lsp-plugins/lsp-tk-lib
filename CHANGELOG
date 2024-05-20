@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.22 ===
+
+
 === 1.0.21 ===
 * Added empty text property for edit.
 * Added text size estimation feature to the tk::Label widget.
