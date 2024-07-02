@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 12 июн. 2021 г.
@@ -59,7 +59,7 @@ namespace lsp
             for (size_t i=vWidgets.size(); (i--) > 0;)
             {
                 tk::Widget *w = vWidgets.uget(i);
-//                lsp_trace("w = %p (%s)", w, w->get_class()->name);
+//                lsp_trace("destroy widget ptr=%p, class=%s", w, w->get_class()->name);
 
                 if (w != NULL)
                 {
@@ -320,6 +320,6 @@ namespace lsp
             return (uid != NULL) ? query_group(uid->get_utf8(), dst) : STATUS_BAD_ARGUMENTS;
         }
 
-    } /* tk */
-} /* lsp */
+    } /* namespace tk */
+} /* namespace lsp */
 
