@@ -99,6 +99,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
         LSPString tmp;
         tmp.fmt_ascii("%.1f", lm->value()->get());
         lm->text()->set_raw(&tmp);
+        lm->header()->set_raw("hdr");
     }
 
     static status_t slot_mouse_scroll(tk::Widget *sender, void *ptr, void *data)
@@ -292,6 +293,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
                 MTEST_ASSERT(grid->add(lm, 1, 4) == STATUS_OK);
 
                 lm->text_visible()->set(true);
+                lm->header_visible()->set(true);
                 lm->constraints()->set_width(12, 12);
                 lm->value()->set(0.5f);
                 lm->angle()->set(i*2);
@@ -308,6 +310,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
                 MTEST_ASSERT(grid->add(lm) == STATUS_OK);
 
                 lm->text_visible()->set(true);
+                lm->header_visible()->set(true);
                 lm->peak_visible()->set(true);
                 lm->value()->set_all(0.0f, -72.0f, 24.0f);
                 lm->peak()->set(0.0f);
@@ -404,6 +407,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeterchannel)
                 MTEST_ASSERT(grid->add(lm) == STATUS_OK);
 
                 lm->text_visible()->set(true);
+                lm->header_visible()->set(true);
                 lm->balance_visible()->set(true);
                 lm->balance()->set(0.5f);
                 lm->angle()->set(1 + i*2);

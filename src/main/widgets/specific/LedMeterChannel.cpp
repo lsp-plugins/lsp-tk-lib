@@ -33,6 +33,7 @@ namespace lsp
                 // Bind
                 sValue.bind("value", this);
                 sPeak.bind("peak", this);
+                sHeaderValue.bind("header.value", this);
                 sBalance.bind("balance", this);
                 sColor.bind("color", this);
                 sValueColor.bind("value.color", this);
@@ -40,11 +41,14 @@ namespace lsp
                 sPeakColor.bind("peak.color", this);
                 sPeakRanges.bind("peak.ranges", this);
                 sTextColor.bind("text.color", this);
+                sHeaderColor.bind("header.color", this);
                 sTextRanges.bind("text.ranges", this);
+                sHeaderRanges.bind("header.ranges", this);
                 sBalanceColor.bind("balance.color", this);
                 sPeakVisible.bind("peak.visible", this);
                 sBalanceVisible.bind("balance.visible", this);
                 sTextVisible.bind("text.visible", this);
+                sHeaderVisible.bind("header.visible", this);
                 sReversive.bind("reversive", this);
                 sActive.bind("active", this);
                 sMinSegments.bind("segments.min", this);
@@ -55,6 +59,7 @@ namespace lsp
                 // Configure
                 sValue.set_all(0.0f, 0.0f, 1.0f);
                 sPeak.set(0.0f);
+                sHeaderValue.set(0.0f);
                 sBalance.set(0.5f);
                 sColor.set("#000000");
                 sValueColor.set("#00ff00");
@@ -63,11 +68,14 @@ namespace lsp
                 sPeakRanges.set_all("");
                 sBalanceColor.set("#ffff00");
                 sTextColor.set("#00ff00");
+                sHeaderColor.set("#00ff00");
                 sTextRanges.set_all("");
+                sHeaderRanges.set_all("");
                 sBalanceColor.set("#ffff00");
                 sPeakVisible.set(false);
                 sBalanceVisible.set(false);
                 sTextVisible.set(false);
+                sHeaderVisible.set(false);
                 sReversive.set(false);
                 sActive.set(true);
                 sMinSegments.set(12);
@@ -87,6 +95,7 @@ namespace lsp
             Widget(dpy),
             sValue(&sProperties),
             sPeak(&sProperties),
+            sHeaderValue(&sProperties),
             sBalance(&sProperties),
             sColor(&sProperties),
             sValueColor(&sProperties),
@@ -94,10 +103,14 @@ namespace lsp
             sPeakColor(&sProperties),
             sPeakRanges(&sProperties),
             sTextColor(&sProperties),
+            sHeaderColor(&sProperties),
             sTextRanges(&sProperties),
+            sHeaderRanges(&sProperties),
             sBalanceColor(&sProperties),
             sText(&sProperties),
+            sHeader(&sProperties),
             sEstText(&sProperties),
+            sEstHeader(&sProperties),
             sPeakVisible(&sProperties),
             sBalanceVisible(&sProperties),
             sTextVisible(&sProperties),
@@ -140,6 +153,7 @@ namespace lsp
 
             sValue.bind("value", &sStyle);
             sPeak.bind("peak", &sStyle);
+            sHeaderValue.bind("header.value", &sStyle);
             sBalance.bind("balance", &sStyle);
             sColor.bind("color", &sStyle);
             sValueColor.bind("value.color", &sStyle);
@@ -147,13 +161,18 @@ namespace lsp
             sPeakColor.bind("peak.color", &sStyle);
             sPeakRanges.bind("peak.ranges", &sStyle);
             sTextColor.bind("text.color", &sStyle);
+            sHeaderColor.bind("header.color", &sStyle);
             sTextRanges.bind("text.ranges", &sStyle);
+            sHeaderRanges.bind("header.ranges", &sStyle);
             sBalanceColor.bind("balance.color", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
+            sHeader.bind(&sStyle, pDisplay->dictionary());
             sEstText.bind(&sStyle, pDisplay->dictionary());
+            sEstHeader.bind(&sStyle, pDisplay->dictionary());
             sPeakVisible.bind("peak.visible", &sStyle);
             sBalanceVisible.bind("balance.visible", &sStyle);
             sTextVisible.bind("text.visible", &sStyle);
+            sHeaderVisible.bind("header.visible", &sStyle);
             sReversive.bind("reversive", &sStyle);
             sActive.bind("active", &sStyle);
             sMinSegments.bind("segments.min", &sStyle);
@@ -166,6 +185,7 @@ namespace lsp
             sValue.set_auto_limit(false);
 
             sEstText.set_raw("+99.9");
+            sEstHeader.set_raw("+99.9");
 
             return STATUS_OK;
         }
@@ -176,6 +196,8 @@ namespace lsp
             if (sActive.get())
             {
                 if (sValue.is(prop))
+                    query_draw();
+                if ((sHeaderValue.is(prop)) && (sHeaderVisible.get()))
                     query_draw();
                 if (sPeak.is(prop) && (sPeakVisible.get()))
                     query_draw();
@@ -197,13 +219,13 @@ namespace lsp
                 query_draw();
             if (sBalanceColor.is(prop) && (sBalanceVisible.get()))
                 query_draw();
-            if (sText.is(prop) && (sTextVisible.get()))
+            if ((sTextVisible.get()) && (prop->one_of(sText, sEstText, sTextColor, sTextRanges)))
                 query_draw();
-            if (sEstText.is(prop) && (sTextVisible.get()))
-                query_resize();
+            if ((sHeaderVisible.get()) && (prop->one_of(sHeader, sEstHeader, sHeaderColor, sHeaderRanges)))
+                query_draw();
+            if (prop->one_of(sTextVisible, sHeaderVisible))
+                query_draw();
             if (sBalanceVisible.is(prop))
-                query_draw();
-            if (sTextVisible.is(prop))
                 query_draw();
             if (sReversive.is(prop))
                 query_draw();
@@ -213,7 +235,7 @@ namespace lsp
                 query_resize();
             if (sConstraints.is(prop))
                 query_resize();
-            if (sFont.is(prop) && (sTextVisible.get()))
+            if (sFont.is(prop) && (sTextVisible.get() || sHeaderVisible.get()))
                 query_resize();
             if (sBorder.is(prop))
                 query_resize();
@@ -229,17 +251,26 @@ namespace lsp
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle   = sAngle.get();
             bool has_text   = sTextVisible.get();
+            bool has_header = sHeaderVisible.get();
 
-            ws::text_parameters_t tp;
+            ws::text_parameters_t tp_text, tp_header;
             ws::font_parameters_t fp;
 
+            LSPString text;
             if (has_text)
             {
-                LSPString text;
                 sEstText.format(&text);
                 sFont.get_parameters(pDisplay, fscaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
-                tp.Height           = lsp_max(tp.Height, fp.Height);
+                sFont.get_text_parameters(pDisplay, &tp_text, fscaling, &text);
+                tp_text.Height      = lsp_max(tp_text.Height, fp.Height);
+            }
+
+            if (has_header)
+            {
+                sEstHeader.format(&text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp_header, fscaling, &text);
+                tp_header.Height    = lsp_max(tp_header.Height, fp.Height);
             }
 
             // Check for odd/even angle
@@ -251,8 +282,13 @@ namespace lsp
 
                 if (has_text)
                 {
-                    r->nMinHeight      += border + tp.Height;
-                    r->nMinWidth        = lsp_max(r->nMinWidth, tp.Width);
+                    r->nMinHeight      += border + tp_text.Height;
+                    r->nMinWidth        = lsp_max(r->nMinWidth, tp_text.Width);
+                }
+                if (has_header)
+                {
+                    r->nMinHeight      += border + tp_header.Height;
+                    r->nMinWidth        = lsp_max(r->nMinWidth, tp_header.Width);
                 }
             }
             else
@@ -263,8 +299,13 @@ namespace lsp
 
                 if (has_text)
                 {
-                    r->nMinWidth       += border + tp.Width;
-                    r->nMinHeight       = lsp_max(r->nMinHeight, tp.Height);
+                    r->nMinWidth       += border + tp_text.Width;
+                    r->nMinHeight       = lsp_max(r->nMinHeight, tp_text.Height);
+                }
+                if (has_header)
+                {
+                    r->nMinWidth       += border + tp_header.Width;
+                    r->nMinHeight       = lsp_max(r->nMinHeight, tp_header.Height);
                 }
             }
 
@@ -292,8 +333,9 @@ namespace lsp
             ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle       = sAngle.get();
             bool has_text       = sTextVisible.get();
+            bool has_header     = sTextVisible.get();
 
-            ws::text_parameters_t tp;
+            ws::text_parameters_t tp_text, tp_header;
             ws::font_parameters_t fp;
             ws::rectangle_t xr;
 
@@ -312,6 +354,11 @@ namespace lsp
             sAText.nWidth       = 0;
             sAText.nHeight      = 0;
 
+            sAHeader.nLeft      = 0;
+            sAHeader.nTop       = 0;
+            sAHeader.nWidth     = 0;
+            sAHeader.nHeight    = 0;
+
             sAMeter.nLeft       = 0;
             sAMeter.nTop        = 0;
             sAMeter.nWidth      = 0;
@@ -320,26 +367,48 @@ namespace lsp
             // Compute the amount of space used for text
             ssize_t led_size    = (angle & 1) ? xr.nHeight : xr.nWidth;
 
+            LSPString text;
             if (has_text)
             {
-                LSPString text;
                 sEstText.format(&text);
                 sFont.get_parameters(pDisplay, fscaling, &fp);
-                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
+                sFont.get_text_parameters(pDisplay, &tp_text, fscaling, &text);
 
                 if (angle & 1) // Vertical
                 {
-                    sAText.nLeft    = xr.nLeft;
-                    sAText.nWidth   = xr.nWidth;
-                    sAText.nHeight  = lsp_max(tp.Height, fp.Height);
-                    led_size       -= border + sAText.nHeight;
+                    sAText.nLeft        = xr.nLeft;
+                    sAText.nWidth       = xr.nWidth;
+                    sAText.nHeight      = lsp_max(tp_text.Height, fp.Height);
+                    led_size           -= border + sAText.nHeight;
                 }
                 else // Horizontal
                 {
-                    sAText.nTop     = xr.nTop;
-                    sAText.nWidth   = tp.Width;
-                    sAText.nHeight  = xr.nHeight;
-                    led_size       -= border + sAText.nWidth;
+                    sAText.nTop         = xr.nTop;
+                    sAText.nWidth       = tp_text.Width;
+                    sAText.nHeight      = xr.nHeight;
+                    led_size           -= border + sAText.nWidth;
+                }
+            }
+
+            if (has_header)
+            {
+                sEstHeader.format(&text);
+                sFont.get_parameters(pDisplay, fscaling, &fp);
+                sFont.get_text_parameters(pDisplay, &tp_header, fscaling, &text);
+
+                if (angle & 1) // Vertical
+                {
+                    sAHeader.nLeft      = xr.nLeft;
+                    sAHeader.nWidth     = xr.nWidth;
+                    sAHeader.nHeight    = lsp_max(tp_header.Height, fp.Height);
+                    led_size           -= border + sAHeader.nHeight;
+                }
+                else // Horizontal
+                {
+                    sAHeader.nTop       = xr.nTop;
+                    sAHeader.nWidth     = tp_header.Width;
+                    sAHeader.nHeight    = xr.nHeight;
+                    led_size           -= border + sAHeader.nWidth;
                 }
             }
 
@@ -357,12 +426,17 @@ namespace lsp
                     sAAll.nTop     += (gap >> 1);
                     sAAll.nHeight  -= gap;
 
+                    sAHeader.nTop   = xr.nTop;
+
                     sAMeter.nLeft   = xr.nLeft;
-                    sAMeter.nTop    = xr.nTop;
+                    sAMeter.nTop    = sAHeader.nTop;
                     sAMeter.nWidth  = xr.nWidth;
                     sAMeter.nHeight = led_size;
 
-                    sAText.nTop     = xr.nTop + sAMeter.nHeight + border;
+                    if (has_header)
+                        sAMeter.nTop   += sAHeader.nHeight + border;
+
+                    sAText.nTop     = sAMeter.nTop + sAMeter.nHeight + border;
 
                     break;
                 }
@@ -374,12 +448,17 @@ namespace lsp
                     sAAll.nTop     += (gap >> 1);
                     sAAll.nHeight  -= gap;
 
+                    sAText.nTop     = xr.nTop;
+
                     sAMeter.nLeft   = xr.nLeft;
-                    sAMeter.nTop    = xr.nTop + ((has_text) ? sAText.nHeight + border : 0);
+                    sAMeter.nTop    = sAText.nTop;
                     sAMeter.nWidth  = xr.nWidth;
                     sAMeter.nHeight = led_size;
 
-                    sAText.nTop     = xr.nTop;
+                    if (has_text)
+                        sAMeter.nTop   += sAText.nHeight + border;
+
+                    sAHeader.nTop   = sAMeter.nTop + sAMeter.nHeight + border;
 
                     break;
                 }
@@ -391,12 +470,16 @@ namespace lsp
                     sAAll.nLeft    += (gap >> 1);
                     sAAll.nWidth   -= gap;
 
-                    sAMeter.nLeft   = xr.nLeft;
+                    sAHeader.nLeft  = xr.nLeft;
+
+                    sAMeter.nLeft   = sAHeader.nLeft;
                     sAMeter.nTop    = xr.nTop;
                     sAMeter.nWidth  = led_size;
                     sAMeter.nHeight = xr.nHeight;
+                    if (has_header)
+                        sAMeter.nLeft  += sAHeader.nWidth + border;
 
-                    sAText.nLeft    = xr.nLeft + sAMeter.nWidth + border;
+                    sAText.nLeft    = sAMeter.nLeft + sAMeter.nWidth + border;
 
                     break;
                 }
@@ -409,16 +492,36 @@ namespace lsp
                     sAAll.nLeft    += (gap >> 1);
                     sAAll.nWidth   -= gap;
 
-                    sAMeter.nLeft   = xr.nLeft + ((has_text) ? sAText.nWidth + border : 0);
+                    sAText.nLeft    = xr.nLeft;
+
+                    sAMeter.nLeft   = sAText.nLeft;
                     sAMeter.nTop    = xr.nTop;
                     sAMeter.nWidth  = led_size;
                     sAMeter.nHeight = xr.nHeight;
+                    if (has_text)
+                        sAMeter.nLeft  += sAText.nWidth + border;
 
-                    sAText.nLeft    = xr.nLeft;
+                    sAHeader.nLeft  = sAMeter.nLeft + sAMeter.nWidth + border;
 
                     break;
                 }
             }
+        }
+
+        bool LedMeterChannel::is_text(ssize_t x, ssize_t y) const
+        {
+            if (!sTextVisible.get())
+                return false;
+
+            return Position::inside(&sAText, x, y);
+        }
+
+        bool LedMeterChannel::is_header(ssize_t x, ssize_t y) const
+        {
+            if (!sTextVisible.get())
+                return false;
+
+            return Position::inside(&sAHeader, x, y);
         }
 
         void LedMeterChannel::draw_meter(ws::ISurface *s, ssize_t angle, float scaling, float bright)
@@ -564,6 +667,32 @@ namespace lsp
             s->clip_end();
         }
 
+        void LedMeterChannel::draw_header(ws::ISurface *s, const Font *f, float fscaling, float bright)
+        {
+            if (!sActive.get())
+                return;
+
+            ws::font_parameters_t   fp;
+            ws::text_parameters_t   tp;
+
+            LSPString text;
+            sHeader.format(&text);
+            sFont.get_parameters(s, fscaling, &fp);
+            sFont.get_text_parameters(s, &tp, fscaling, &text);
+
+            ssize_t fx  = sAHeader.nLeft + ((sAHeader.nWidth  - tp.Width ) * 0.5f) + tp.XBearing;
+            ssize_t fy  = sAHeader.nTop  + ((sAHeader.nHeight - fp.Height) * 0.5f) + fp.Ascent;
+
+            float value             = sHeaderValue.get();
+            const lsp::Color *col   = get_color(value, &sHeaderRanges, &sHeaderColor);
+            lsp::Color xcol(*col);
+            xcol.scale_lch_luminance(bright);
+
+            s->clip_begin(&sAHeader);
+                sFont.draw(s, xcol, fx, fy, fscaling, &text);
+            s->clip_end();
+        }
+
         void LedMeterChannel::draw(ws::ISurface *s)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
@@ -580,6 +709,8 @@ namespace lsp
 
             if (sTextVisible.get())
                 draw_label(s, &sFont, fscaling, bright);
+            if (sHeaderVisible.get())
+                draw_header(s, &sFont, fscaling, bright);
         }
     } /* namespace tk */
 } /* namespace lsp */
