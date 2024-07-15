@@ -4,6 +4,7 @@
 
 === 1.0.23 ===
 * Added header support by tk::LedMeterChannel.
+* Added header support by tk::LedMeter.
 * Updated build scripts.
 
 === 1.0.22 ===

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 27 сент. 2020 г.
@@ -249,7 +249,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeter)
     void add_channels(tk::LedMeter *lm, size_t &vid, lltl::parray<handler_t> &vh, lltl::parray<tk::Widget> &widgets)
     {
         tk::LedMeterChannel *lc = NULL;
-        LSPString id;
+        LSPString id, ch_id;
 
         static const float hue[] = { 0.0f, 0.5f, 0.25f, 0.75f, 0.0f};
 
@@ -261,12 +261,17 @@ MTEST_BEGIN("tk.widgets.specific", ledmeter)
             MTEST_ASSERT(widgets.push(lc));
             MTEST_ASSERT(lm->add(lc) == STATUS_OK);
 
+            ch_id.fmt_ascii("ch%d", int(i));
+
             lc->text_visible()->set(true);
             lc->peak_visible()->set(true);
+            lc->header_visible()->set(true);
             lc->value()->set_all(-1.2f, -7.2f, 2.4f);
             lc->peak()->set(0.0f);
             lc->angle()->set(1 + i*2);
+            lc->header_value()->set(0.0f);
             lc->constraints()->set_min_height(128);
+            lc->header()->set_raw(&ch_id);
 
             lsp::Color c;
             tk::ColorRange *cr;
@@ -410,6 +415,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeter)
                 MTEST_ASSERT(grid->add(lm, 1, 2) == STATUS_OK);
 
                 lm->text_visible()->set(true);
+                lm->header_visible()->set(true);
                 lm->angle()->set(i*2);
                 add_channels(lm, vid, vh, widgets);
             }
@@ -424,6 +430,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeter)
                 MTEST_ASSERT(grid->add(lm, 1, 2) == STATUS_OK);
 
                 lm->text_visible()->set(true);
+                lm->header_visible()->set(true);
                 lm->stereo_groups()->set(false);
                 lm->angle()->set(i*2);
                 lm->constraints()->set_width(5*12 + lm->border()->get());
@@ -440,6 +447,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeter)
                 MTEST_ASSERT(grid->add(lm) == STATUS_OK);
 
                 lm->text_visible()->set(true);
+                lm->header_visible()->set(true);
                 lm->angle()->set(i*2 + 1);
                 add_channels(lm, vid, vh, widgets);
             }
@@ -454,6 +462,7 @@ MTEST_BEGIN("tk.widgets.specific", ledmeter)
                 MTEST_ASSERT(grid->add(lm) == STATUS_OK);
 
                 lm->text_visible()->set(true);
+                lm->header_visible()->set(true);
                 lm->stereo_groups()->set(false);
                 lm->angle()->set(i*2 + 1);
                 add_channels(lm, vid, vh, widgets);
