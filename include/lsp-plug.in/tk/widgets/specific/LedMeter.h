@@ -45,6 +45,7 @@ namespace lsp
                 prop::Boolean                       sSGroups;
                 prop::Boolean                       sTextVisible;
                 prop::Boolean                       sHeaderVisible;
+                prop::Boolean                       sPassEvents;
                 prop::Color                         sColor;
                 prop::Integer                       sMinChannelWidth;
             LSP_TK_STYLE_DEF_END
@@ -69,6 +70,7 @@ namespace lsp
                 prop::Boolean                       sSGroups;
                 prop::Boolean                       sTextVisible;
                 prop::Boolean                       sHeaderVisible;
+                prop::Boolean                       sPassEvents;
                 prop::Color                         sColor;
                 prop::Integer                       sMinChannelWidth;
 
@@ -114,6 +116,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                        stereo_groups,      &sSGroups)
                 LSP_TK_PROPERTY(Boolean,                        text_visible,       &sTextVisible)
                 LSP_TK_PROPERTY(Boolean,                        header_visible,     &sHeaderVisible)
+                LSP_TK_PROPERTY(Boolean,                        pass_events,        &sPassEvents)
                 LSP_TK_PROPERTY(Color,                          color,              &sColor)
                 LSP_TK_PROPERTY(Integer,                        min_channel_width,  &sMinChannelWidth)
 

@@ -38,6 +38,7 @@ namespace lsp
                 sSGroups.bind("stereo_groups", this);
                 sTextVisible.bind("text.visible", this);
                 sHeaderVisible.bind("header.visible", this);
+                sPassEvents.bind("events.pass", this);
                 sColor.bind("color", this);
                 sMinChannelWidth.bind("channel.width.min", this);
                 // Configure
@@ -48,6 +49,7 @@ namespace lsp
                 sSGroups.set(true);
                 sTextVisible.set(false);
                 sHeaderVisible.set(false);
+                sPassEvents.set(true);
                 sColor.set("#000000");
                 sMinChannelWidth.set(16);
                 // Override
@@ -70,6 +72,7 @@ namespace lsp
             sSGroups(&sProperties),
             sTextVisible(&sProperties),
             sHeaderVisible(&sProperties),
+            sPassEvents(&sProperties),
             sColor(&sProperties),
             sMinChannelWidth(&sProperties)
         {
@@ -130,6 +133,7 @@ namespace lsp
             sSGroups.bind("stereo_groups", &sStyle);
             sTextVisible.bind("text.visible", &sStyle);
             sHeaderVisible.bind("header.visible", &sStyle);
+            sPassEvents.bind("events.pass", &sStyle);
             sColor.bind("color", &sStyle);
             sMinChannelWidth.bind("channel.width.min", &sStyle);
 
@@ -548,6 +552,7 @@ namespace lsp
                         c->sAMeter      = xr;
                         c->sAText       = xtext;
                         c->sAHeader     = xheader;
+                        c->sSize        = sSize;
 
                         xr.nLeft       += hsegsize;
                         if (i & 1)
@@ -578,6 +583,7 @@ namespace lsp
                         c->sAMeter      = xr;
                         c->sAText       = xtext;
                         c->sAHeader     = xheader;
+                        c->sSize        = sSize;
 
                         xr.nLeft       += hsegsize;
                         xtext.nLeft    += hsegsize;
@@ -604,6 +610,7 @@ namespace lsp
                     c->sAMeter      = xr;
                     c->sAText       = xtext;
                     c->sAHeader     = xheader;
+                    c->sSize        = sSize;
 
                     xr.nTop        += hsegsize;
                     xtext.nTop     += hsegsize;
@@ -678,6 +685,9 @@ namespace lsp
 
         Widget *LedMeter::find_widget(ssize_t x, ssize_t y)
         {
+            if (!sPassEvents.get())
+                return NULL;
+
             // Update coordinates
             x -= sSize.nLeft;
             y -= sSize.nTop;

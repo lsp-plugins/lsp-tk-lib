@@ -510,16 +510,16 @@ namespace lsp
 
         bool LedMeterChannel::is_text(ssize_t x, ssize_t y) const
         {
-            if (!sTextVisible.get())
-                return false;
+            x -= sSize.nLeft;
+            y -= sSize.nTop;
 
             return Position::inside(&sAText, x, y);
         }
 
         bool LedMeterChannel::is_header(ssize_t x, ssize_t y) const
         {
-            if (!sTextVisible.get())
-                return false;
+            x -= sSize.nLeft;
+            y -= sSize.nTop;
 
             return Position::inside(&sAHeader, x, y);
         }
