@@ -55,10 +55,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                LedMeter & operator = (const LedMeter &);
-                LedMeter(const LedMeter &);
-
             protected:
                 lltl::parray<LedMeterChannel>       vVisible;
                 prop::WidgetList<LedMeterChannel>   vItems;
@@ -83,7 +79,12 @@ namespace lsp
 
             public:
                 explicit LedMeter(Display *dpy);
+                LedMeter(const LedMeter &) = delete;
+                LedMeter(LedMeter &&) = delete;
                 virtual ~LedMeter() override;
+
+                LedMeter & operator = (const LedMeter &) = delete;
+                LedMeter & operator = (LedMeter &&) = delete;
 
                 virtual status_t            init() override;
                 virtual void                destroy() override;
