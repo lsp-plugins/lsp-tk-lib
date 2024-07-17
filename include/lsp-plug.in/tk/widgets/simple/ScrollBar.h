@@ -110,7 +110,6 @@ namespace lsp
                 ssize_t                 nLastV;
                 float                   fLastValue;
                 float                   fCurrValue;
-                ws::mouse_pointer_t     enMousePointer;
                 ws::rectangle_t         sIncButton;
                 ws::rectangle_t         sDecButton;
                 ws::rectangle_t         sSpareSpace;
@@ -152,7 +151,6 @@ namespace lsp
                 size_t                          check_mouse_over(ssize_t x, ssize_t y);
                 void                            do_destroy();
                 void                            update_by_timer();
-                void                            update_cursor_state(ssize_t x, ssize_t y, bool set);
                 void                            update_slider();
                 void                            launch_timer();
                 void                            cancel_timer();
@@ -210,27 +208,19 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              text_active_color,      &sTextActiveColor)
 
             public:
-                virtual ws::mouse_pointer_t     current_pointer();
+                virtual status_t                on_mouse_down(const ws::event_t *e) override;
+                virtual status_t                on_mouse_up(const ws::event_t *e) override;
+                virtual status_t                on_key_down(const ws::event_t *e) override;
+                virtual status_t                on_key_up(const ws::event_t *e) override;
+                virtual status_t                on_mouse_move(const ws::event_t *e) override;
+                virtual status_t                on_mouse_scroll(const ws::event_t *e) override;
+                virtual status_t                on_mouse_pointer(pointer_event_t *e) override;
+                virtual void                    draw(ws::ISurface *s) override;
 
+            public:
                 virtual status_t                on_begin_edit();
-
                 virtual status_t                on_change();
-
                 virtual status_t                on_end_edit();
-
-                virtual status_t                on_mouse_down(const ws::event_t *e);
-
-                virtual status_t                on_mouse_up(const ws::event_t *e);
-
-                virtual status_t                on_key_down(const ws::event_t *e);
-
-                virtual status_t                on_key_up(const ws::event_t *e);
-
-                virtual status_t                on_mouse_move(const ws::event_t *e);
-
-                virtual status_t                on_mouse_scroll(const ws::event_t *e);
-
-                virtual void                    draw(ws::ISurface *s);
         };
 
     } /* namespace tk */

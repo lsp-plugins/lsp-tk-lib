@@ -188,6 +188,7 @@ namespace lsp
             if (id >= 0) id = sSlots.add(SLOT_RESIZE_PARENT, slot_resize_parent, self());
             if (id >= 0) id = sSlots.add(SLOT_DRAG_REQUEST, slot_drag_request, self());
             if (id >= 0) id = sSlots.add(SLOT_REALIZED, slot_realized, self());
+            if (id >= 0) id = sSlots.add(SLOT_MOUSE_POINTER, slot_mouse_pointer, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }
@@ -455,6 +456,16 @@ namespace lsp
             Widget *_this  = widget_ptrcast<Widget>(ptr);
             ws::rectangle_t *r = static_cast<ws::rectangle_t *>(data);
             return _this->on_realized(r);
+        }
+
+        status_t Widget::slot_mouse_pointer(Widget *sender, void *ptr, void *data)
+        {
+            if ((ptr == NULL) || (data == NULL))
+                return STATUS_BAD_ARGUMENTS;
+
+            Widget *self = widget_ptrcast<Widget>(ptr);
+            tk::pointer_event_t *pointer = static_cast<tk::pointer_event_t *>(data);
+            return self->on_mouse_pointer(pointer);
         }
 
         bool Widget::inside(ssize_t left, ssize_t top)
@@ -756,9 +767,20 @@ namespace lsp
             return (wnd != NULL) ? wnd->do_kill_focus(this) : false;
         }
 
-        ws::mouse_pointer_t Widget::current_pointer()
+        ws::mouse_pointer_t Widget::current_pointer(ssize_t x, ssize_t y)
         {
-            return sPointer.get();
+            ws::mouse_pointer_t mp = sPointer.get();
+            pointer_event_t ev;
+
+            ev.nLeft        = x;
+            ev.nTop         = y;
+            ev.enPointer    = mp;
+
+            status_t res = sSlots.execute(SLOT_MOUSE_POINTER, this, &ev);
+            if (res == STATUS_OK)
+                mp              = ev.enPointer;
+
+            return mp;
         }
 
         status_t Widget::handle_event(const ws::event_t *e)
@@ -964,6 +986,11 @@ namespace lsp
         {
             return STATUS_OK;
         }
-    }
 
+        status_t Widget::on_mouse_pointer(tk::pointer_event_t *ev)
+        {
+            return STATUS_OK;
+        }
+
+    } /* namespace tk */
 } /* namespace lsp */

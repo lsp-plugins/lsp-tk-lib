@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 авг. 2017 г.
@@ -131,7 +131,6 @@ namespace lsp
             nLastV              = 0;
             fLastValue          = 0.0f;
             fCurrValue          = 0.0f;
-            enMousePointer      = ws::MP_DEFAULT;
 
             sIncButton.nLeft    = -1;
             sIncButton.nTop     = -1;
@@ -424,11 +423,6 @@ namespace lsp
             return (_this != NULL) ? _this->on_end_edit() : STATUS_BAD_ARGUMENTS;
         }
 
-        ws::mouse_pointer_t ScrollBar::current_pointer()
-        {
-            return enMousePointer;
-        }
-
         size_t ScrollBar::check_mouse_over(ssize_t x, ssize_t y)
         {
             if (Position::inside(&sIncButton, x, y))
@@ -479,7 +473,6 @@ namespace lsp
 
                 // Check that we first hit inside the bar
                 size_t flags = check_mouse_over(e->nLeft, e->nTop);
-                update_cursor_state(e->nLeft, e->nTop, true);
 
                 if (flags == 0)
                 {
@@ -579,31 +572,29 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void ScrollBar::update_cursor_state(ssize_t x, ssize_t y, bool set)
+        status_t ScrollBar::on_mouse_pointer(pointer_event_t *e)
         {
-            size_t flags = (set) ? check_mouse_over(x,y) : 0;
+            size_t flags = check_mouse_over(e->nLeft, e->nTop); //(set) ? check_mouse_over(x, y) : 0;
             if (sOrientation.horizontal())
             {
                 if (flags & F_SLIDER_ACTIVE)
-                    enMousePointer = sSliderPointer.get(ws::MP_HSIZE);
+                    e->enPointer    = sSliderPointer.get(ws::MP_HSIZE);
                 else if (flags & F_SPARE_UP_ACTIVE)
-                    enMousePointer = sIncPointer.get(ws::MP_ARROW_RIGHT);
+                    e->enPointer    = sIncPointer.get(ws::MP_ARROW_RIGHT);
                 else if (flags & F_SPARE_DOWN_ACTIVE)
-                    enMousePointer = sIncPointer.get(ws::MP_ARROW_LEFT);
-                else
-                    enMousePointer = Widget::current_pointer();
+                    e->enPointer    = sIncPointer.get(ws::MP_ARROW_LEFT);
             }
             else
             {
                 if (flags & F_SLIDER_ACTIVE)
-                    enMousePointer = sSliderPointer.get(ws::MP_VSIZE);
+                    e->enPointer    = sSliderPointer.get(ws::MP_VSIZE);
                 else if (flags & F_SPARE_UP_ACTIVE)
-                    enMousePointer = sIncPointer.get(ws::MP_ARROW_DOWN);
+                    e->enPointer    = sIncPointer.get(ws::MP_ARROW_DOWN);
                 else if (flags & F_SPARE_DOWN_ACTIVE)
-                    enMousePointer = sIncPointer.get(ws::MP_ARROW_UP);
-                else
-                    enMousePointer = Widget::current_pointer();
+                    e->enPointer    = sIncPointer.get(ws::MP_ARROW_UP);
             }
+
+            return STATUS_OK;
         }
 
         status_t ScrollBar::on_key_down(const ws::event_t *e)
@@ -702,10 +693,6 @@ namespace lsp
                 }
             }
 
-            // Update value
-            if (nButtons == 0)
-                update_cursor_state(e->nLeft, e->nTop, false);
-
             value = sValue.limit(value);
             if (value != sValue.get())
             {
@@ -727,10 +714,7 @@ namespace lsp
             if (nXFlags & F_OUTSIDE)
                 return STATUS_OK;
             if (nButtons == 0)
-            {
-                update_cursor_state(e->nLeft, e->nTop, true);
                 return STATUS_OK;
-            }
 
             if (nXFlags & F_TRG_SLIDER_ACTIVE)
             {

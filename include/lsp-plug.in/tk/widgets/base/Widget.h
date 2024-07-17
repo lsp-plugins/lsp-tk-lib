@@ -137,6 +137,7 @@ namespace lsp
                 static status_t     slot_focus_out(Widget *sender, void *ptr, void *data);
                 static status_t     slot_drag_request(Widget *sender, void *ptr, void *data);
                 static status_t     slot_realized(Widget *sender, void *ptr, void *data);
+                static status_t     slot_mouse_pointer(Widget *sender, void *ptr, void *data);
 
             //---------------------------------------------------------------------------------
             // Interface for nested classes
@@ -323,9 +324,11 @@ namespace lsp
 
                 /**
                  * Get current mouse pointer
+                 * @param x current horizontal pointer in window coordinates
+                 * @param y current vertical pointer in window coordinates
                  * @return current mouse pointer
                  */
-                virtual ws::mouse_pointer_t current_pointer();
+                virtual ws::mouse_pointer_t current_pointer(ssize_t x, ssize_t y);
 
                 /** Check if there is redraw request pending
                  *
@@ -670,6 +673,13 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t        on_mouse_tri_click(const ws::event_t *e);
+
+                /**
+                 * Solve the actual value for the mouse pointer
+                 * @param ev pointer event for determining the mouse pointer
+                 * @return status of operation
+                 */
+                virtual status_t        on_mouse_pointer(tk::pointer_event_t *ev);
 
                 /** Geometry has changed: size or position
                  *

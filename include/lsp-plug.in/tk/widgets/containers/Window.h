@@ -246,6 +246,9 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Event handling
             public:
+                virtual status_t        on_mouse_pointer(pointer_event_t *e) override;
+
+            public:
                 /** Close event
                  *
                  * @param e close event

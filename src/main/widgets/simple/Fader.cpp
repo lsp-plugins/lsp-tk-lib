@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 нояб. 2017 г.
@@ -697,11 +697,14 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
-        ws::mouse_pointer_t Fader::current_pointer()
+        status_t Fader::on_mouse_pointer(pointer_event_t *e)
         {
-            return ((nXFlags & (F_MOVER | F_IGNORE)) == F_MOVER) ?
-                    sBtnPointer.get((sAngle.get() & 1) ? ws::MP_VSIZE : ws::MP_HSIZE) :
-                    Widget::current_pointer();
+            if ((nXFlags & (F_MOVER | F_IGNORE)) == F_MOVER)
+            {
+                ws::mouse_pointer_t dfl_pointer = (sAngle.get() & 1) ? ws::MP_VSIZE : ws::MP_HSIZE;
+                e->enPointer    = sBtnPointer.get(dfl_pointer);
+            }
+            return STATUS_OK;
         }
     
     } /* namespace tk */

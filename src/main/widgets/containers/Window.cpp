@@ -461,15 +461,20 @@ namespace lsp
             return update_pointer();
         }
 
+        status_t Window::on_mouse_pointer(pointer_event_t *e)
+        {
+            if ((!bOverridePointer) && (hMouse.pWidget != NULL) && (hMouse.pWidget != this))
+                e->enPointer    = hMouse.pWidget->current_pointer(e->nLeft, e->nTop);
+
+            return STATUS_OK;
+        }
+
         status_t Window::update_pointer()
         {
             if (pWindow == NULL)
                 return STATUS_OK;
 
-            ws::mouse_pointer_t mp  = sPointer.get();
-            if ((!bOverridePointer) && (hMouse.pWidget != NULL))
-                mp      = hMouse.pWidget->current_pointer();
-
+            ws::mouse_pointer_t mp  = current_pointer(hMouse.nLeft, hMouse.nTop);
             return (mp == pWindow->get_mouse_pointer()) ? STATUS_OK : pWindow->set_mouse_pointer(mp);
         }
 

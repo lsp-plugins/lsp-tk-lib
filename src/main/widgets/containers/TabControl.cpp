@@ -914,11 +914,13 @@ namespace lsp
             return STATUS_OK;
         }
 
-        ws::mouse_pointer_t TabControl::current_pointer()
+        status_t TabControl::on_mouse_pointer(pointer_event_t *e)
         {
-            if (pEventTab != NULL)
-                return sTabPointer.get();
-            return tk::WidgetContainer::current_pointer();
+            tk::Tab *tab = find_tab(e->nLeft, e->nTop);
+            if (tab != NULL)
+                e->enPointer        = sTabPointer.get();
+
+            return STATUS_OK;
         }
 
         status_t TabControl::on_mouse_move(const ws::event_t *e)

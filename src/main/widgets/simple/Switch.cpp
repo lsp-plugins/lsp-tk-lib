@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 июл. 2017 г.
@@ -74,7 +74,6 @@ namespace lsp
         {
             nState          = 0;
             nBMask          = 0;
-            enPointer       = ws::MP_DEFAULT;
 
             sButton.nLeft   = -1;
             sButton.nTop    = -1;
@@ -146,11 +145,6 @@ namespace lsp
                 query_resize();
             if (sDown.is(prop))
                 sync_state(sDown.get());
-        }
-
-        ws::mouse_pointer_t Switch::current_pointer()
-        {
-            return enPointer;
         }
 
         void Switch::draw(ws::ISurface *s)
@@ -435,21 +429,21 @@ namespace lsp
             if (bw > 0)
                 x_space            += lsp_max(1, bw * scaling) + lsp_max(1, scaling * 2.0f); // border + chamfer
 
-            enPointer           = Widget::current_pointer();
-
             ws::rectangle_t xr  = sButton;
             xr.nLeft           += x_space;
             xr.nTop            += x_space;
             xr.nWidth          -= x_space * 2;
             xr.nHeight         -= x_space * 2;
 
-            if (Position::inside(&xr, x, y))
-            {
-                enPointer           = sButtonPointer.get(ws::MP_HAND);
-                return true;
-            }
+            return Position::inside(&xr, x, y);
+        }
 
-            return false;
+        status_t Switch::on_mouse_pointer(pointer_event_t *e)
+        {
+            if (check_mouse_over(e->nLeft, e->nTop))
+                e->enPointer        = sButtonPointer.get(ws::MP_HAND);
+
+            return STATUS_OK;
         }
 
         status_t Switch::on_mouse_down(const ws::event_t *e)

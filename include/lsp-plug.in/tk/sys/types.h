@@ -50,6 +50,7 @@ namespace lsp
             SLOT_MOUSE_TRI_CLICK,   //!< SLOT_MOUSE_TRI_CLICK Triggered on mouse triple click
             SLOT_MOUSE_IN,          //!< SLOT_MOUSE_IN Triggered when mouse first entered widget's area
             SLOT_MOUSE_OUT,         //!< SLOT_MOUSE_OUT Triggered when mouse left widget's area
+            SLOT_MOUSE_POINTER,     //!< SLOT_MOUSE_POINTER called to resolve the current mouse pointer for the widget
             SLOT_SHOW,              //!< SLOT_SHOW Triggered when widget becomes visible
             SLOT_HIDE,              //!< SLOT_HIDE Triggered when widget becomes invisible
             SLOT_BEGIN_EDIT,        //!< SLOG_BEGIN_EDIT Triggered when the possible durable editing has started (for example, mouse click + drag)
