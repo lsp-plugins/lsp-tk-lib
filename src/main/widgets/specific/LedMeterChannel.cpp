@@ -56,6 +56,7 @@ namespace lsp
                 sFont.bind("font", this);
                 sBorder.bind("border", this);
                 sAngle.bind("angle", this);
+                sHeaderPointer.bind("header.pointer", this);
                 // Configure
                 sValue.set_all(0.0f, 0.0f, 1.0f);
                 sPeak.set(0.0f);
@@ -83,6 +84,7 @@ namespace lsp
                 sFont.set_size(9.0f);
                 sBorder.set(2);
                 sAngle.set(0);
+                sHeaderPointer.set(ws::MP_DEFAULT);
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
@@ -120,7 +122,8 @@ namespace lsp
             sConstraints(&sProperties),
             sFont(&sProperties),
             sBorder(&sProperties),
-            sAngle(&sProperties)
+            sAngle(&sProperties),
+            sHeaderPointer(&sProperties)
         {
             sAMeter.nLeft   = 0;
             sAMeter.nTop    = 0;
@@ -131,6 +134,11 @@ namespace lsp
             sAText.nTop     = 0;
             sAText.nWidth   = 0;
             sAText.nHeight  = 0;
+
+            sAHeader.nLeft  = 0;
+            sAHeader.nTop   = 0;
+            sAHeader.nWidth = 0;
+            sAHeader.nHeight= 0;
 
             sAAll.nLeft     = 0;
             sAAll.nTop      = 0;
@@ -180,6 +188,7 @@ namespace lsp
             sFont.bind("font", &sStyle);
             sBorder.bind("border", &sStyle);
             sAngle.bind("angle", &sStyle);
+            sHeaderPointer.bind("header.pointer", &sStyle);
 
             // Disable automatic limit apply
             sValue.set_auto_limit(false);
@@ -711,6 +720,14 @@ namespace lsp
                 draw_label(s, &sFont, fscaling, bright);
             if (sHeaderVisible.get())
                 draw_header(s, &sFont, fscaling, bright);
+        }
+
+        status_t LedMeterChannel::on_mouse_pointer(pointer_event_t *e)
+        {
+            if (is_header(e->nLeft, e->nTop))
+                e->enPointer    = sHeaderPointer.get();
+
+            return STATUS_OK;
         }
     } /* namespace tk */
 } /* namespace lsp */

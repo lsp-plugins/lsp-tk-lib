@@ -123,9 +123,9 @@ namespace lsp
                 static status_t                 slot_end_edit(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void                    size_request(ws::size_limit_t *r);
-                virtual void                    property_changed(Property *prop);
-                virtual void                    realize(const ws::rectangle_t *r);
+                virtual void                    size_request(ws::size_limit_t *r) override;
+                virtual void                    property_changed(Property *prop) override;
+                virtual void                    realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit Fader(Display *dpy);

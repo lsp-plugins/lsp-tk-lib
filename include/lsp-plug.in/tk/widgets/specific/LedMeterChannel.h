@@ -63,6 +63,7 @@ namespace lsp
                 prop::Font              sFont;
                 prop::Integer           sBorder;
                 prop::Integer           sAngle;
+                prop::Pointer           sHeaderPointer;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -104,6 +105,7 @@ namespace lsp
                 prop::Font              sFont;
                 prop::Integer           sBorder;
                 prop::Integer           sAngle;
+                prop::Pointer           sHeaderPointer;
 
                 ws::rectangle_t         sAAll;              // All drawing area
                 ws::rectangle_t         sAMeter;            // Meter drawing area
@@ -166,9 +168,11 @@ namespace lsp
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(Integer,            border,             &sBorder)
                 LSP_TK_PROPERTY(Integer,            angle,              &sAngle)
+                LSP_TK_PROPERTY(Pointer,            header_pointer,     &sHeaderPointer)
 
             public:
                 virtual void                draw(ws::ISurface *s) override;
+                virtual status_t            on_mouse_pointer(pointer_event_t *e) override;
         };
     } /* namespace tk */
 } /* namespace lsp */
