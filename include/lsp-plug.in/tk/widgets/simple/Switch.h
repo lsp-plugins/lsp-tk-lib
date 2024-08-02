@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 июл. 2017 г.
@@ -52,10 +52,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                Switch & operator = (const Switch &);
-                Switch(const Switch &);
-
             protected:
                 enum state_t
                 {
@@ -67,7 +63,6 @@ namespace lsp
                 size_t                      nState;
                 size_t                      nBMask;
                 ws::rectangle_t             sButton;
-                ws::mouse_pointer_t         enPointer;
 
                 prop::Color                 sColor;
                 prop::Color                 sTextColor;
@@ -89,15 +84,20 @@ namespace lsp
                 static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                property_changed(Property *prop);
-                virtual void                realize(const ws::rectangle_t *r);
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                property_changed(Property *prop) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit Switch(Display *dpy);
-                virtual ~Switch();
+                Switch(const Switch &) = delete;
+                Switch(Switch &&) = delete;
+                virtual ~Switch() override;
 
-                virtual status_t            init();
+                Switch & operator = (const Switch &) = delete;
+                Switch & operator = (Switch &&) = delete;
+
+                virtual status_t            init() override;
 
             public:
                 LSP_TK_PROPERTY(Color,              color,                      &sColor)
@@ -112,16 +112,13 @@ namespace lsp
                 LSP_TK_PROPERTY(Pointer,            button_pointer,             &sButtonPointer)
 
             public:
-                virtual ws::mouse_pointer_t     current_pointer();
+                virtual void                draw(ws::ISurface *s) override;
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
+                virtual status_t            on_mouse_pointer(pointer_event_t *e) override;
 
-                virtual void                draw(ws::ISurface *s);
-
-                virtual status_t            on_mouse_down(const ws::event_t *e);
-
-                virtual status_t            on_mouse_up(const ws::event_t *e);
-
-                virtual status_t            on_mouse_move(const ws::event_t *e);
-
+            public:
                 virtual status_t            on_change(bool set);
         };
     

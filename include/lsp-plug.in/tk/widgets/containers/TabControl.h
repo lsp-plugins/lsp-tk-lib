@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 нояб. 2022 г.
@@ -182,7 +182,7 @@ namespace lsp
                 virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
                 virtual status_t            on_mouse_out(const ws::event_t *e) override;
                 virtual status_t            on_key_down(const ws::event_t *e) override;
-                virtual ws::mouse_pointer_t current_pointer() override;
+                virtual status_t            on_mouse_pointer(pointer_event_t *e) override;
 
             public:
                 virtual status_t            on_change();

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 авг. 2017 г.
@@ -73,10 +73,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                ScrollBar & operator = (const ScrollBar &);
-                ScrollBar(const ScrollBar &);
-
             protected:
                 enum flags_t
                 {
@@ -110,7 +106,6 @@ namespace lsp
                 ssize_t                 nLastV;
                 float                   fLastValue;
                 float                   fCurrValue;
-                ws::mouse_pointer_t     enMousePointer;
                 ws::rectangle_t         sIncButton;
                 ws::rectangle_t         sDecButton;
                 ws::rectangle_t         sSpareSpace;
@@ -152,7 +147,6 @@ namespace lsp
                 size_t                          check_mouse_over(ssize_t x, ssize_t y);
                 void                            do_destroy();
                 void                            update_by_timer();
-                void                            update_cursor_state(ssize_t x, ssize_t y, bool set);
                 void                            update_slider();
                 void                            launch_timer();
                 void                            cancel_timer();
@@ -164,16 +158,21 @@ namespace lsp
                 static status_t                 timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:
-                virtual void                    size_request(ws::size_limit_t *r);
-                virtual void                    property_changed(Property *prop);
-                virtual void                    realize(const ws::rectangle_t *r);
+                virtual void                    size_request(ws::size_limit_t *r) override;
+                virtual void                    property_changed(Property *prop) override;
+                virtual void                    realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit ScrollBar(Display *dpy);
-                virtual ~ScrollBar();
+                ScrollBar(const ScrollBar &) = delete;
+                ScrollBar(ScrollBar &&) = delete;
+                virtual ~ScrollBar() override;
 
-                virtual status_t                init();
-                virtual void                    destroy();
+                ScrollBar & operator = (const ScrollBar &) = delete;
+                ScrollBar & operator = (ScrollBar &&) = delete;
+
+                virtual status_t                init() override;
+                virtual void                    destroy() override;
 
             public:
                 LSP_TK_PROPERTY(RangeFloat,         value,                  &sValue)
@@ -210,27 +209,19 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              text_active_color,      &sTextActiveColor)
 
             public:
-                virtual ws::mouse_pointer_t     current_pointer();
+                virtual status_t                on_mouse_down(const ws::event_t *e) override;
+                virtual status_t                on_mouse_up(const ws::event_t *e) override;
+                virtual status_t                on_key_down(const ws::event_t *e) override;
+                virtual status_t                on_key_up(const ws::event_t *e) override;
+                virtual status_t                on_mouse_move(const ws::event_t *e) override;
+                virtual status_t                on_mouse_scroll(const ws::event_t *e) override;
+                virtual status_t                on_mouse_pointer(pointer_event_t *e) override;
+                virtual void                    draw(ws::ISurface *s) override;
 
+            public:
                 virtual status_t                on_begin_edit();
-
                 virtual status_t                on_change();
-
                 virtual status_t                on_end_edit();
-
-                virtual status_t                on_mouse_down(const ws::event_t *e);
-
-                virtual status_t                on_mouse_up(const ws::event_t *e);
-
-                virtual status_t                on_key_down(const ws::event_t *e);
-
-                virtual status_t                on_key_up(const ws::event_t *e);
-
-                virtual status_t                on_mouse_move(const ws::event_t *e);
-
-                virtual status_t                on_mouse_scroll(const ws::event_t *e);
-
-                virtual void                    draw(ws::ISurface *s);
         };
 
     } /* namespace tk */

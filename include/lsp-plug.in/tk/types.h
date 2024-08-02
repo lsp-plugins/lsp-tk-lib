@@ -26,6 +26,9 @@
     #error "use <lsp-plug.in/tk/tk.h>"
 #endif
 
+// Basic dependencies
+#include <lsp-plug.in/ws/ws.h>
+
 // The default dictionary location
 #define LSP_TK_ENV_DICT_PATH            "dictionary"
 #define LSP_TK_ENV_DICT_PATH_DFL        "i18n"
@@ -192,6 +195,13 @@ namespace lsp
             float               fHAlign;        // Horizontal alignment over tether line
             float               fVAlign;        // Vertical alignment over the tether line
         } tether_t;
+
+        typedef struct pointer_event_t
+        {
+            ssize_t             nLeft;          // Mouse horizontal pointer position in window coordinates
+            ssize_t             nTop;           // Mouse vertical pointer position in window coordinates
+            ws::mouse_pointer_t enPointer;      // Mouse pointer value
+        } pointer_event_t;
 
         /**
          * File dialog mode

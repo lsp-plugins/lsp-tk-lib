@@ -36,6 +36,7 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(LedMeterChannel, Widget)
                 prop::RangeFloat        sValue;
                 prop::Float             sPeak;
+                prop::Float             sHeaderValue;
                 prop::Float             sBalance;
                 prop::Color             sColor;
                 prop::Color             sValueColor;
@@ -43,13 +44,18 @@ namespace lsp
                 prop::Color             sPeakColor;
                 prop::ColorRanges       sPeakRanges;
                 prop::Color             sTextColor;
+                prop::Color             sHeaderColor;
                 prop::ColorRanges       sTextRanges;
+                prop::ColorRanges       sHeaderRanges;
                 prop::Color             sBalanceColor;
                 prop::String            sText;
+                prop::String            sHeader;
                 prop::String            sEstText;
+                prop::String            sEstHeader;
                 prop::Boolean           sPeakVisible;
                 prop::Boolean           sBalanceVisible;
                 prop::Boolean           sTextVisible;
+                prop::Boolean           sHeaderVisible;
                 prop::Boolean           sReversive;
                 prop::Boolean           sActive;
                 prop::Integer           sMinSegments;
@@ -57,6 +63,7 @@ namespace lsp
                 prop::Font              sFont;
                 prop::Integer           sBorder;
                 prop::Integer           sAngle;
+                prop::Pointer           sHeaderPointer;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -71,6 +78,7 @@ namespace lsp
             protected:
                 prop::RangeFloat        sValue;
                 prop::Float             sPeak;
+                prop::Float             sHeaderValue;
                 prop::Float             sBalance;
                 prop::Color             sColor;
                 prop::Color             sValueColor;
@@ -78,13 +86,18 @@ namespace lsp
                 prop::Color             sPeakColor;
                 prop::ColorRanges       sPeakRanges;
                 prop::Color             sTextColor;
+                prop::Color             sHeaderColor;
                 prop::ColorRanges       sTextRanges;
+                prop::ColorRanges       sHeaderRanges;
                 prop::Color             sBalanceColor;
                 prop::String            sText;
+                prop::String            sHeader;
                 prop::String            sEstText;
+                prop::String            sEstHeader;
                 prop::Boolean           sPeakVisible;
                 prop::Boolean           sBalanceVisible;
                 prop::Boolean           sTextVisible;
+                prop::Boolean           sHeaderVisible;
                 prop::Boolean           sReversive;
                 prop::Boolean           sActive;
                 prop::Integer           sMinSegments;
@@ -92,14 +105,17 @@ namespace lsp
                 prop::Font              sFont;
                 prop::Integer           sBorder;
                 prop::Integer           sAngle;
+                prop::Pointer           sHeaderPointer;
 
                 ws::rectangle_t         sAAll;              // All drawing area
                 ws::rectangle_t         sAMeter;            // Meter drawing area
                 ws::rectangle_t         sAText;             // Text drawing area
+                ws::rectangle_t         sAHeader;           // Header drawing area
 
             protected:
                 void                        draw_meter(ws::ISurface *s, ssize_t angle, float scaling, float bright);
                 void                        draw_label(ws::ISurface *s, const Font *f, float fscaling, float bright);
+                void                        draw_header(ws::ISurface *s, const Font *f, float fscaling, float bright);
                 const lsp::Color           *get_color(float value, const ColorRanges *ranges, const Color *dfl);
 
             public:
@@ -113,6 +129,10 @@ namespace lsp
 
                 virtual status_t            init() override;
 
+            public:
+                bool                        is_text(ssize_t x, ssize_t y) const;
+                bool                        is_header(ssize_t x, ssize_t y) const;
+
             protected:
                 virtual void                property_changed(Property *prop) override;
                 virtual void                size_request(ws::size_limit_t *r) override;
@@ -121,6 +141,7 @@ namespace lsp
             public:
                 LSP_TK_PROPERTY(RangeFloat,         value,              &sValue)
                 LSP_TK_PROPERTY(Float,              peak,               &sPeak)
+                LSP_TK_PROPERTY(Float,              header_value,       &sHeaderValue)
                 LSP_TK_PROPERTY(Float,              balance,            &sBalance)
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
                 LSP_TK_PROPERTY(Color,              value_color,        &sValueColor)
@@ -128,13 +149,18 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              peak_color,         &sPeakColor)
                 LSP_TK_PROPERTY(ColorRanges,        peak_ranges,        &sPeakRanges)
                 LSP_TK_PROPERTY(Color,              text_color,         &sTextColor)
+                LSP_TK_PROPERTY(Color,              header_color,       &sHeaderColor)
                 LSP_TK_PROPERTY(ColorRanges,        text_ranges,        &sTextRanges)
+                LSP_TK_PROPERTY(ColorRanges,        header_ranges,      &sHeaderRanges)
                 LSP_TK_PROPERTY(Color,              balance_color,      &sBalanceColor)
                 LSP_TK_PROPERTY(String,             text,               &sText)
+                LSP_TK_PROPERTY(String,             header,             &sHeader)
                 LSP_TK_PROPERTY(String,             estimation_text,    &sEstText)
+                LSP_TK_PROPERTY(String,             estimation_header,  &sEstHeader)
                 LSP_TK_PROPERTY(Boolean,            peak_visible,       &sPeakVisible)
                 LSP_TK_PROPERTY(Boolean,            balance_visible,    &sBalanceVisible)
                 LSP_TK_PROPERTY(Boolean,            text_visible,       &sTextVisible)
+                LSP_TK_PROPERTY(Boolean,            header_visible,     &sHeaderVisible)
                 LSP_TK_PROPERTY(Boolean,            reversive,          &sReversive)
                 LSP_TK_PROPERTY(Boolean,            active,             &sActive)
                 LSP_TK_PROPERTY(Integer,            min_segments,       &sMinSegments)
@@ -142,9 +168,11 @@ namespace lsp
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(Integer,            border,             &sBorder)
                 LSP_TK_PROPERTY(Integer,            angle,              &sAngle)
+                LSP_TK_PROPERTY(Pointer,            header_pointer,     &sHeaderPointer)
 
             public:
                 virtual void                draw(ws::ISurface *s) override;
+                virtual status_t            on_mouse_pointer(pointer_event_t *e) override;
         };
     } /* namespace tk */
 } /* namespace lsp */

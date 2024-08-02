@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 25 сент. 2020 г.
@@ -41,8 +41,10 @@ namespace lsp
                 prop::Integer                       sBorder;
                 prop::Integer                       sAngle;
                 prop::String                        sEstText;
+                prop::String                        sEstHeader;
                 prop::Boolean                       sSGroups;
                 prop::Boolean                       sTextVisible;
+                prop::Boolean                       sHeaderVisible;
                 prop::Color                         sColor;
                 prop::Integer                       sMinChannelWidth;
             LSP_TK_STYLE_DEF_END
@@ -52,10 +54,6 @@ namespace lsp
         {
             public:
                 static const w_class_t    metadata;
-
-            private:
-                LedMeter & operator = (const LedMeter &);
-                LedMeter(const LedMeter &);
 
             protected:
                 lltl::parray<LedMeterChannel>       vVisible;
@@ -67,8 +65,10 @@ namespace lsp
                 prop::Integer                       sBorder;
                 prop::Integer                       sAngle;
                 prop::String                        sEstText;
+                prop::String                        sEstHeader;
                 prop::Boolean                       sSGroups;
                 prop::Boolean                       sTextVisible;
+                prop::Boolean                       sHeaderVisible;
                 prop::Color                         sColor;
                 prop::Integer                       sMinChannelWidth;
 
@@ -79,7 +79,12 @@ namespace lsp
 
             public:
                 explicit LedMeter(Display *dpy);
+                LedMeter(const LedMeter &) = delete;
+                LedMeter(LedMeter &&) = delete;
                 virtual ~LedMeter() override;
+
+                LedMeter & operator = (const LedMeter &) = delete;
+                LedMeter & operator = (LedMeter &&) = delete;
 
                 virtual status_t            init() override;
                 virtual void                destroy() override;
@@ -105,8 +110,10 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                        border,             &sBorder)
                 LSP_TK_PROPERTY(Integer,                        angle,              &sAngle)
                 LSP_TK_PROPERTY(String,                         estimation_text,    &sEstText)
+                LSP_TK_PROPERTY(String,                         estimation_header,  &sEstHeader)
                 LSP_TK_PROPERTY(Boolean,                        stereo_groups,      &sSGroups)
                 LSP_TK_PROPERTY(Boolean,                        text_visible,       &sTextVisible)
+                LSP_TK_PROPERTY(Boolean,                        header_visible,     &sHeaderVisible)
                 LSP_TK_PROPERTY(Color,                          color,              &sColor)
                 LSP_TK_PROPERTY(Integer,                        min_channel_width,  &sMinChannelWidth)
 
