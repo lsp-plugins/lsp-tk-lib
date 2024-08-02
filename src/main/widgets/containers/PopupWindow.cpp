@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2020 г.
@@ -123,7 +123,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t PopupWindow::sync_size()
+        status_t PopupWindow::sync_size(bool force)
         {
             ws::size_limit_t sr;
             ws::rectangle_t xr;

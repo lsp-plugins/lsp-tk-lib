@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2020 г.
@@ -61,7 +61,7 @@ namespace lsp
             protected:
                 virtual void                    hide_widget() override;
                 virtual void                    show_widget() override;
-                virtual status_t                sync_size() override;
+                virtual status_t                sync_size(bool force) override;
                 virtual void                    size_request(ws::size_limit_t *r) override;
 
                 virtual status_t                post_init();

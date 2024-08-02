@@ -175,17 +175,23 @@ namespace lsp
             return init_internal(true);
         }
 
-        status_t Window::sync_size()
+        status_t Window::sync_size(bool force)
         {
             // Request size limits of the window
             ws::size_limit_t sr;
-            ws::rectangle_t r;
+            ws::rectangle_t r, wsr;
 
             get_padded_size_limits(&sr);
             float scaling       = lsp_max(0.0f, sScaling.get());
             size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
-            sPosition.get(&r);
             sWindowSize.compute(&r, scaling);
+            pWindow->get_geometry(&wsr);
+            sPosition.get(&r);
+
+//            lsp_trace("Current window geometry: x=%d, y=%d, w=%d, h=%d",
+//                int(r.nLeft), int(r.nTop), int(r.nWidth), int(r.nHeight));
+//            lsp_trace("Window subsystem geometry: x=%d, y=%d, w=%d, h=%d",
+//                int(wsr.nLeft), int(wsr.nTop), int(wsr.nWidth), int(wsr.nHeight));
 
             // Set window's size constraints and update geometry
             if (sPolicy.get() == WP_GREEDY)
@@ -216,8 +222,16 @@ namespace lsp
                 xr.nHeight          = lsp_max(0, sr.nMinHeight) + border*2;
 
                 // Maximize the width
-                r.nWidth            = lsp_max(xr.nWidth,  r.nWidth);
-                r.nHeight           = lsp_max(xr.nHeight, r.nHeight);
+                if (force)
+                {
+                    r.nWidth            = lsp_max(xr.nWidth,  r.nWidth);
+                    r.nHeight           = lsp_max(xr.nHeight, r.nHeight);
+                }
+                else
+                {
+                    r.nWidth            = lsp_max(xr.nWidth,  r.nWidth, wsr.nWidth);
+                    r.nHeight           = lsp_max(xr.nHeight, r.nHeight, wsr.nHeight);
+                }
             }
 
             // Window size should be at least 1x1 pixel
@@ -226,7 +240,7 @@ namespace lsp
 
             // Check if we need to resize window
 //            lsp_trace("size constraints: w={%d, %d}, h={%d, %d}",
-//                    int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
+//                int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
 //            );
             pWindow->set_size_constraints(&sr);
             if ((sSize.nWidth != r.nWidth) || (sSize.nHeight != r.nHeight))
@@ -291,7 +305,7 @@ namespace lsp
                 return STATUS_OK;
 
             if (resize_pending())
-                sync_size();
+                sync_size(false);
 
             if (!redraw_pending())
                 return STATUS_OK;
@@ -545,8 +559,8 @@ namespace lsp
 ////                            int(l.nMinHeight), int(l.nMaxHeight)
 ////                        );
 //                }
-
                 query_resize();
+                sync_size(true);
             }
             if (sLayout.is(prop))
             {
@@ -584,7 +598,7 @@ namespace lsp
             // Update window parameters
             if (pWindow != NULL)
             {
-                sync_size();
+                sync_size(false);
                 update_pointer();
             }
 
@@ -764,33 +778,30 @@ namespace lsp
                     if (!bMapped)
                         break;
 
-                    if (!(nFlags & RESIZE_PENDING))
+                    lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+
+                    // Update the position of the window
+                    if ((sSize.nLeft != e->nLeft) || (sSize.nTop != e->nTop))
+                        sPosition.commit_value(e->nLeft, e->nTop);
+
+                    // Update size of the window
+                    if ((sSize.nWidth != e->nWidth) || (sSize.nHeight != e->nHeight))
                     {
-                        lsp_trace("resize to: l=%d, t=%d, w=%d, h=%d", int(e->nLeft), int(e->nTop), int(e->nWidth), int(e->nHeight));
+                        // Realize the widget only if size has changed
+                        sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
 
-                        // Update the position of the window
-                        if ((sSize.nLeft != e->nLeft) || (sSize.nTop != e->nTop))
-                            sPosition.commit_value(e->nLeft, e->nTop);
-
-                        // Update size of the window
-                        if ((sSize.nWidth != e->nWidth) || (sSize.nHeight != e->nHeight))
-                        {
-                            // Realize the widget only if size has changed
-                            sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
-
-                            ws::rectangle_t r = {
-                                e->nLeft,
-                                e->nTop,
-                                e->nWidth,
-                                e->nHeight
-                            };
-                            realize_widget(&r);
-                        }
-                        else
-                        {
-                            sSize.nLeft     = e->nLeft;
-                            sSize.nTop      = e->nTop;
-                        }
+                        ws::rectangle_t r = {
+                            e->nLeft,
+                            e->nTop,
+                            e->nWidth,
+                            e->nHeight
+                        };
+                        realize_widget(&r);
+                    }
+                    else
+                    {
+                        sSize.nLeft     = e->nLeft;
+                        sSize.nTop      = e->nTop;
                     }
                     break;
 
@@ -1002,6 +1013,7 @@ namespace lsp
         {
             sPosition.set(size->nLeft, size->nTop);
             sWindowSize.set(size->nWidth, size->nHeight, sScaling.get());
+            sync_size(true);
 
             return STATUS_OK;
         }
@@ -1009,6 +1021,7 @@ namespace lsp
         status_t Window::resize_window(ssize_t width, ssize_t height)
         {
             sWindowSize.set(width, height, sScaling.get());
+            sync_size(true);
             return STATUS_OK;
         }
 
