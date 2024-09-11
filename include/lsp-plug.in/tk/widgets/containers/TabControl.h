@@ -50,6 +50,7 @@ namespace lsp
                 prop::Boolean               sTabJoint;
                 prop::Boolean               sHeadingFill;
                 prop::Boolean               sHeadingSpacingFill;
+                prop::Boolean               sAggregateSize;
                 prop::Pointer               sTabPointer;            // Tab pointer
             LSP_TK_STYLE_DEF_END
         } /* namespae style */
@@ -108,6 +109,7 @@ namespace lsp
                 prop::Boolean               sTabJoint;
                 prop::Boolean               sHeadingFill;
                 prop::Boolean               sHeadingSpacingFill;
+                prop::Boolean               sAggregateSize;
                 prop::Pointer               sTabPointer;            // Tab pointer
 
                 prop::WidgetList<Tab>       vWidgets;
