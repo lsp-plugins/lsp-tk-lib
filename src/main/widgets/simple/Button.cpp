@@ -159,6 +159,7 @@ namespace lsp
         Button::~Button()
         {
             nFlags     |= FINALIZED;
+            clear_text_estimations();
         }
 
         status_t Button::init()
@@ -370,6 +371,53 @@ namespace lsp
                 r.nLeft + xoff, r.nTop + yoff,
                 r.nLeft + xoff, r.nTop + yoff,
                 radius);
+        }
+
+        void Button::clear_text_estimations()
+        {
+            size_t removed = 0;
+            for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
+            {
+                prop::String *s = it.get();
+                if (s != NULL)
+                {
+                    ++removed;
+                    delete s;
+                }
+            }
+            vEstimations.clear();
+            if (removed > 0)
+                query_resize();
+        }
+
+        tk::String *Button::add_text_estimation()
+        {
+            prop::String *s = new prop::String(&sProperties);
+            if (s == NULL)
+                return NULL;
+            s->bind(&sStyle, pDisplay->dictionary());
+
+            if (vEstimations.add(s))
+                return s;
+
+            delete s;
+            return NULL;
+        }
+
+        void Button::estimate_string_size(estimation_t *e, tk::String *s)
+        {
+            if (s == NULL)
+                return;
+
+            // Form the text string
+            s->format(&e->text);
+            sTextAdjust.apply(&e->text);
+
+            // Estimate sizes
+            sFont.get_multitext_parameters(pDisplay, &e->tp, e->fscaling, &e->text);
+
+            e->min_width     = lsp_max(e->min_width, ceilf(e->tp.Width));
+            e->min_height    = lsp_max(e->min_height, ceilf(lsp_max(e->tp.Height, e->fp.Height)));
         }
 
         void Button::draw(ws::ISurface *s)
@@ -610,7 +658,6 @@ namespace lsp
             ws::rectangle_t xr;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
 
             xr.nWidth       = 0;
             xr.nHeight      = 0;
@@ -621,17 +668,21 @@ namespace lsp
 
             if ((text.length() > 0) && (!sTextClip.get()))
             {
-                ws::font_parameters_t fp;
-                ws::text_parameters_t tp;
+                // Form the estimation parameters
+                estimation_t e;
+                e.scaling       = scaling;
+                e.fscaling      = lsp_max(0.0f, e.scaling * sFontScaling.get());
+                e.min_width     = 0;
+                e.min_height    = 0;
+                sFont.get_parameters(pDisplay, e.fscaling, &e.fp);
 
-                sFont.get_parameters(pDisplay, fscaling, &fp);
-                sFont.get_multitext_parameters(pDisplay, &tp, fscaling, &text);
+                // Estimate the size of the label
+                for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
+                    estimate_string_size(&e, it.get());
+                estimate_string_size(&e, &sText);
 
-                ssize_t tminw   = ceil(tp.Width);
-                ssize_t tminh   = ceil(lsp_max(tp.Height, fp.Height));
-
-                xr.nWidth          = lsp_max(xr.nWidth, tminw);
-                xr.nHeight         = lsp_max(xr.nHeight, tminh);
+                xr.nWidth          = lsp_max(xr.nWidth, e.min_width);
+                xr.nHeight         = lsp_max(xr.nHeight, e.min_height);
 
                 sTextPadding.add(&xr, scaling);
             }

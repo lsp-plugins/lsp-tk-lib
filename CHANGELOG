@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.24 ===
+* Added text estimation suppot for tk::Button widget. 
 * Added aggregate size computation (enabled by default) for tk::TabControl widget.
 * Fixed bug in bookmak editor (set first/last actions) of the tk::FileDialog widget.
 * Updated build scripts.
