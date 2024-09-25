@@ -258,6 +258,7 @@ namespace lsp
 
             alloc->wMinW        = 0;
             alloc->wMinH        = 0;
+            alloc->wItemH       = 0;
 
             LSPString s;
             ws::font_parameters_t fp;
@@ -299,8 +300,10 @@ namespace lsp
                 li->padding()->add(&ai->a, scaling);
 
                 // Update overall width and height
+                const ssize_t item_h = ai->a.nHeight + spacing;
                 alloc->wMinW    = lsp_max(alloc->wMinW, ai->a.nWidth);
-                alloc->wMinH   += ai->a.nHeight + spacing;
+                alloc->wMinH   += item_h;
+                alloc->wItemH   = lsp_max(alloc->wItemH, item_h);
             }
         }
 
@@ -438,15 +441,25 @@ namespace lsp
 
             if (a.bHBar)
             {
+                const ssize_t range = lsp_max(0, a.wMinW - a.sList.nWidth);
                 sHBar.realize_widget(&a.sHBar);
-                sHScroll.set_range(0, lsp_max(0, a.wMinW - a.sList.nWidth));
+                sHScroll.set_range(0, range);
                 sHBar.value()->set_range(sHScroll.min(), sHScroll.max());
+
+                const ssize_t step = lsp_max(range / 100, 2);
+                sHBar.step()->set_step(step);
+                sHBar.accel_step()->set_step(step * 5);
             }
             if (a.bVBar)
             {
+                const ssize_t range = lsp_max(0, a.wMinH - a.sList.nHeight);
                 sVBar.realize_widget(&a.sVBar);
-                sVScroll.set_range(0, lsp_max(0, a.wMinH - a.sList.nHeight));
+                sVScroll.set_range(0, range);
                 sVBar.value()->set_range(sVScroll.min(), sVScroll.max());
+
+                const ssize_t step = lsp_limit(range / 100, a.wItemH, a.wItemH * 5);
+                sVBar.step()->set_step(step);
+                sVBar.accel_step()->set_step(step * 5);
             }
 
             // Realize children

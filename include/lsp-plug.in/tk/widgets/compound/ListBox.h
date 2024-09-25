@@ -73,6 +73,7 @@ namespace lsp
                     lltl::darray<item_t>    vItems;     // Items
                     ssize_t                 wMinW;      // Minimum width
                     ssize_t                 wMinH;      // Minimum height
+                    ssize_t                 wItemH;     // Maximum item height
                     bool                    bHBar;      // Horizontal scroll enabled
                     bool                    bVBar;      // Vertical scroll enabled
                     ws::size_limit_t        sSize;      // Actual size
