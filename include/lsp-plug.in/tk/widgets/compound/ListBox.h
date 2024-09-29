@@ -118,6 +118,7 @@ namespace lsp
             protected:
                 size_t                          nBMask;
                 size_t                          nXFlags;
+                ssize_t                         nPendingIndex;  // Pending index
                 ssize_t                         nCurrIndex;
                 ssize_t                         nLastIndex;
                 size_t                          nKeyScroll;     // Key scroll direction
@@ -239,6 +240,7 @@ namespace lsp
                 virtual status_t            on_submit();
 
                 virtual void                scroll_to_current();
+                virtual void                scroll_to(size_t index);
         };
     } /* namespace tk */
 } /* namespace lsp */
