@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.25 ===
+
+
 === 1.0.24 ===
 * Improved ListBox behaviour relative to the item size.
 * Bugfixes in tk::ListBox related to item creation, deletion and selection.
