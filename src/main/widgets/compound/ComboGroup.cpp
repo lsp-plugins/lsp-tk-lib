@@ -209,6 +209,7 @@ namespace lsp
             // Configure Window
             sWindow.add(&sLBox);
             sWindow.set_tether(tether_list, sizeof(tether_list)/sizeof(tether_t));
+            sWindow.add_tether(TF_LEFT | TF_TOP | TF_HORIZONTAL | TF_HSTRETCH, 1.0f, -1.0f);
             sWindow.layout()->set_scale(1.0f);
 
             sFont.bind("font", &sStyle);

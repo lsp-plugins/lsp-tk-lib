@@ -94,6 +94,7 @@ namespace lsp
         {
             nBMask          = 0;
             nXFlags         = 0;
+            nPendingIndex   = -1;
             nCurrIndex      = -1;
             nLastIndex      = -1;
             nKeyScroll      = SCR_NONE;
@@ -258,6 +259,7 @@ namespace lsp
 
             alloc->wMinW        = 0;
             alloc->wMinH        = 0;
+            alloc->wItemH       = 0;
 
             LSPString s;
             ws::font_parameters_t fp;
@@ -299,8 +301,10 @@ namespace lsp
                 li->padding()->add(&ai->a, scaling);
 
                 // Update overall width and height
+                const ssize_t item_h = ai->a.nHeight + spacing;
                 alloc->wMinW    = lsp_max(alloc->wMinW, ai->a.nWidth);
-                alloc->wMinH   += ai->a.nHeight + spacing;
+                alloc->wMinH   += item_h;
+                alloc->wItemH   = lsp_max(alloc->wItemH, item_h);
             }
         }
 
@@ -438,42 +442,72 @@ namespace lsp
 
             if (a.bHBar)
             {
+                const ssize_t range = lsp_max(0, a.wMinW - a.sList.nWidth);
                 sHBar.realize_widget(&a.sHBar);
-                sHScroll.set_range(0, lsp_max(0, a.wMinW - a.sList.nWidth));
+                sHScroll.set_range(0, range);
                 sHBar.value()->set_range(sHScroll.min(), sHScroll.max());
+
+                const ssize_t step = lsp_max(range / 100, 2);
+                sHBar.step()->set_step(step);
+                sHBar.accel_step()->set_step(step * 5);
             }
             if (a.bVBar)
             {
+                const ssize_t range = lsp_max(0, a.wMinH - a.sList.nHeight);
                 sVBar.realize_widget(&a.sVBar);
-                sVScroll.set_range(0, lsp_max(0, a.wMinH - a.sList.nHeight));
+                sVScroll.set_range(0, range);
                 sVBar.value()->set_range(sVScroll.min(), sVScroll.max());
+
+                const ssize_t step = lsp_limit(range / 100, a.wItemH, a.wItemH * 5);
+                sVBar.step()->set_step(step);
+                sVBar.accel_step()->set_step(step * 5);
             }
 
             // Realize children
             realize_children();
 
-            // Update scrolling
-//            item_t *curr    = find_by_index(nCurrIndex);
-//            ssize_t start   = vVisible.index_of(curr);
-//            if (start >= 0)
-//            {
-//                if (scroll_to_item(start))
-//                    realize_children();
-//            }
+            // Check if there is pending scroll_to_item
+            if (nPendingIndex >= 0)
+            {
+                item_t *curr    = find_by_index(nPendingIndex);
+                ssize_t start   = (curr != NULL) ? vVisible.index_of(curr) : -1;
+                if ((start >= 0) && (scroll_to_item(start)))
+                {
+                    realize_children();
+                    nCurrIndex          = nPendingIndex;
+                }
+
+                // Commit new index
+                nPendingIndex       = -1;
+            }
 
             // Call parent for realize
             WidgetContainer::realize(r);
         }
 
-        void ListBox::scroll_to_current()
+        void ListBox::scroll_to(size_t index)
         {
-            item_t *curr    = find_by_index(nCurrIndex);
+            if (nFlags & SIZE_INVALID)
+            {
+                nPendingIndex       = index;
+                return;
+            }
+
+            item_t *curr    = find_by_index(index);
+            if (curr == NULL)
+                return;
+
             ssize_t start   = vVisible.index_of(curr);
             if (start >= 0)
             {
                 if (scroll_to_item(start))
                     realize_children();
             }
+        }
+
+        void ListBox::scroll_to_current()
+        {
+            scroll_to(nCurrIndex);
         }
 
         void ListBox::realize_children()
@@ -772,16 +806,18 @@ namespace lsp
             if (item == NULL)
                 return;
 
-            ListBox *_this = widget_ptrcast<ListBox>(obj);
-            if (_this == NULL)
+            ListBox *self = widget_ptrcast<ListBox>(obj);
+            if (self == NULL)
                 return;
 
             // Change parent only if we are working with the main item list.
-            if (_this->vItems.is(prop))
+            if (self->vItems.is(prop))
             {
-                item->set_parent(_this);
+                item->set_parent(self);
             }
-            _this->query_resize();
+
+            self->vVisible.clear();
+            self->query_resize();
         }
 
         void ListBox::on_remove_item(void *obj, Property *prop, void *w)
@@ -803,6 +839,7 @@ namespace lsp
                 self->unlink_widget(item);
             }
 
+            self->vVisible.clear();
             self->query_resize();
         }
 
@@ -945,7 +982,7 @@ namespace lsp
                 }
             }
 
-            lsp_trace("first = %d", int(first));
+//            lsp_trace("first = %d", int(first));
             it  = vVisible.uget(lsp_limit(first, 0, ssize_t(vVisible.size() - 1)));
             return (Position::inside(&it->r, x, y)) ? it : NULL;
         }

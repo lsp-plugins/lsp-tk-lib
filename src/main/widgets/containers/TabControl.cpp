@@ -48,6 +48,7 @@ namespace lsp
                 sTabJoint.bind("tab.joint", this);
                 sHeadingFill.bind("heading.fill", this);
                 sHeadingSpacingFill.bind("heading.spacing.fill", this);
+                sAggregateSize.bind("size.aggregate", this);
                 sTabPointer.bind("tab.pointer", this);
 
                 // Configure
@@ -67,6 +68,7 @@ namespace lsp
                 sTabJoint.set(true);
                 sHeadingFill.set(true);
                 sHeadingSpacingFill.set(true);
+                sAggregateSize.set(true);
             LSP_TK_STYLE_IMPL_END
 
             LSP_TK_BUILTIN_STYLE(TabControl, "TabControl", "root");
@@ -94,6 +96,7 @@ namespace lsp
             sTabJoint(&sProperties),
             sHeadingFill(&sProperties),
             sHeadingSpacingFill(&sProperties),
+            sAggregateSize(&sProperties),
             sTabPointer(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
@@ -169,6 +172,7 @@ namespace lsp
             sSizeConstraints.bind("size.constraints", &sStyle);
             sTabJoint.bind("tab.joint", &sStyle);
             sHeadingFill.bind("heading.fill", &sStyle);
+            sAggregateSize.bind("size.aggregate", &sStyle);
             sHeadingSpacingFill.bind("heading.spacing.fill", &sStyle);
             sTabPointer.bind("tab.pointer", &sStyle);
 
@@ -327,14 +331,35 @@ namespace lsp
             w_area.nHeight          = radius * 2;
 
             // Estimate the size of the area for the widget
-            tk::Tab *w  = current_tab();
-            if (w != NULL)
+            if (sAggregateSize.get())
             {
-                w->get_padded_size_limits(r);
-                if (r->nMinWidth > 0)
-                    w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
-                if (r->nMinHeight > 0)
-                    w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
+                // Compute the aggregate size for all tabs
+                for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+                {
+                    tk::Tab *w = vWidgets.get(i);
+                    if ((w != NULL) && (w->is_visible_child_of(this)))
+                    {
+                        w->get_padded_size_limits(r);
+
+                        if (r->nMinWidth > 0)
+                            w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
+                        if (r->nMinHeight > 0)
+                            w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
+                    }
+                }
+            }
+            else
+            {
+                // Compute the size for currently selected tab
+                tk::Tab *w  = current_tab();
+                if (w != NULL)
+                {
+                    w->get_padded_size_limits(r);
+                    if (r->nMinWidth > 0)
+                        w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
+                    if (r->nMinHeight > 0)
+                        w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
+                }
             }
 
             // Write the actual estimated values

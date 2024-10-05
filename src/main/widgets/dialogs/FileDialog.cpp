@@ -1322,11 +1322,13 @@ namespace lsp
             if (bm == NULL)
                 return STATUS_OK;
 
-            bm_entry_t **dst = _this->vBookmarks.prepend((bm_entry_t *)(NULL));
-            if (dst == NULL)
+            ssize_t index = _this->vBookmarks.index_of(bm);
+            if (index < 0)
+                return STATUS_OK;
+
+            if (!_this->vBookmarks.prepend(bm))
                 return STATUS_UNKNOWN_ERR;
-            _this->vBookmarks.premove(bm);
-            *dst        = bm;
+            _this->vBookmarks.remove(index + 1);
 
             return _this->sync_bookmarks();
         }
@@ -1338,11 +1340,13 @@ namespace lsp
             if (bm == NULL)
                 return STATUS_OK;
 
-            bm_entry_t **dst = _this->vBookmarks.append((bm_entry_t *)(NULL));
-            if (dst == NULL)
+            ssize_t index = _this->vBookmarks.index_of(bm);
+            if (index < 0)
+                return STATUS_OK;
+
+            if (!_this->vBookmarks.append(bm))
                 return STATUS_UNKNOWN_ERR;
-            _this->vBookmarks.premove(bm);
-            *dst        = bm;
+            _this->vBookmarks.remove(index);
 
             return _this->sync_bookmarks();
         }

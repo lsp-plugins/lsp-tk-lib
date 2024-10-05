@@ -97,6 +97,17 @@ namespace lsp
                     S_HOVER     = (1 << 10)
                 };
 
+                typedef struct estimation_t
+                {
+                    LSPString text;
+                    float scaling;
+                    float fscaling;
+                    ssize_t min_width;
+                    ssize_t min_height;
+                    ws::font_parameters_t fp;
+                    ws::text_parameters_t tp;
+                } estimation_t;
+
             protected:
                 size_t                  nState;
                 size_t                  nBMask;
@@ -140,8 +151,11 @@ namespace lsp
                 prop::Position          sTextDownShift;
                 prop::Position          sTextPressedShift;
 
+                lltl::parray<prop::String>  vEstimations;   // Estimation string
+
             protected:
                 void                update_mode(button_mode_t mode);
+                void                estimate_string_size(estimation_t *e, tk::String *s);
 
                 static status_t     slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t     slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -168,6 +182,10 @@ namespace lsp
                 Button & operator = (Button &&) = delete;
 
                 virtual status_t                init() override;
+
+            public:
+                void                            clear_text_estimations();
+                tk::String                     *add_text_estimation();
 
             public:
                 LSP_TK_PROPERTY(Color,              color,              &sColor)
