@@ -9,6 +9,7 @@
 * Added aggregate size computation (enabled by default) for tk::TabControl widget.
 * Fixed bug in bookmak editor (set first/last actions) of the tk::FileDialog widget.
 * Updated build scripts.
+* Updated module versions in dependencies.
 
 === 1.0.23 ===
 * Added header support by tk::LedMeterChannel.
