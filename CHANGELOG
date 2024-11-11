@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.26 ===
-
+* Small bugfix in LedMeterChannel related to header display.
 
 === 1.0.25 ===
 * Updated build scripts.

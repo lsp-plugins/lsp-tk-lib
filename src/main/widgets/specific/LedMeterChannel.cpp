@@ -342,7 +342,7 @@ namespace lsp
             ssize_t border      = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t angle       = sAngle.get();
             bool has_text       = sTextVisible.get();
-            bool has_header     = sTextVisible.get();
+            bool has_header     = sHeaderVisible.get();
 
             ws::text_parameters_t tp_text, tp_header;
             ws::font_parameters_t fp;
