@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -21,8 +21,9 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/alloc.h>
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp/dsp.h>
-#include <stdlib.h>
+#include <lsp-plug.in/stdlib/stdlib.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -289,7 +290,7 @@ namespace lsp
 
             s->set_antialiasing(aa);
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
