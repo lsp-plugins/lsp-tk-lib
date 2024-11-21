@@ -71,6 +71,8 @@ namespace lsp
             sFillColor(&sProperties),
             sData(&sProperties)
         {
+            pTransform          = NULL;
+            pTrData             = NULL;
             vBuffer             = NULL;
             nCapacity           = 0;
 
@@ -177,6 +179,14 @@ namespace lsp
             return off - start;
         }
 
+        void GraphMesh::set_transform(transform_t *func, void *data)
+        {
+            pTransform      = func;
+            pTrData         = data;
+
+            query_draw();
+        }
+
         void GraphMesh::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             // Get graph
@@ -206,7 +216,9 @@ namespace lsp
             cv->origin(sOrigin.get(), &cx, &cy);
 
             // Ensure that we have enough buffer size
-            size_t cap_size     = align_size(sData.size() * 2, DEFAULT_ALIGN);
+            const size_t vec_size   = sData.size();
+            const size_t nbuf       = (pTransform != NULL) ? 3 : 2;
+            size_t cap_size         = align_size(vec_size * nbuf, DEFAULT_ALIGN);
             if (nCapacity < cap_size)
             {
                 float *buf          = static_cast<float *>(realloc(vBuffer, cap_size * sizeof(float)));
@@ -217,9 +229,9 @@ namespace lsp
             }
 
             // Initialize X and Y vectors
-            size_t vec_size     = sData.size();
             float *x_vec        = &vBuffer[0];
             float *y_vec        = &x_vec[vec_size];
+            float *tmp_vec      = (pTransform != NULL) ? &y_vec[vec_size] : NULL;
             const float *x_src  = sData.x();
             const float *y_src  = sData.y();
 
@@ -248,10 +260,23 @@ namespace lsp
                     dsp::fill(y_vec, cy, vec_size);
 
                     // Calculate coordinates for each dot
-                    if (!xaxis->apply(x_vec, y_vec, &x_src[off], length))
-                        return;
-                    if (!yaxis->apply(x_vec, y_vec, &y_src[off], length))
-                        return;
+                    if (tmp_vec)
+                    {
+                        pTransform(pTrData, tmp_vec, &x_src[off], length);
+                        if (!xaxis->apply(x_vec, y_vec, tmp_vec, length))
+                            return;
+
+                        pTransform(pTrData, tmp_vec, &y_src[off], length);
+                        if (!yaxis->apply(x_vec, y_vec, tmp_vec, length))
+                            return;
+                    }
+                    else
+                    {
+                        if (!xaxis->apply(x_vec, y_vec, &x_src[off], length))
+                            return;
+                        if (!yaxis->apply(x_vec, y_vec, &y_src[off], length))
+                            return;
+                    }
 
                     // Draw part of mesh
                     line.copy(sColor);
@@ -277,10 +302,23 @@ namespace lsp
                 dsp::fill(y_vec, cy, vec_size);
 
                 // Calculate coordinates for each dot
-                if (!xaxis->apply(x_vec, y_vec, x_src, vec_size))
-                    return;
-                if (!yaxis->apply(x_vec, y_vec, y_src, vec_size))
-                    return;
+                if (tmp_vec)
+                {
+                    pTransform(pTrData, tmp_vec, x_src, vec_size);
+                    if (!xaxis->apply(x_vec, y_vec, tmp_vec, vec_size))
+                        return;
+
+                    pTransform(pTrData, tmp_vec, y_src, vec_size);
+                    if (!yaxis->apply(x_vec, y_vec, tmp_vec, vec_size))
+                        return;
+                }
+                else
+                {
+                    if (!xaxis->apply(x_vec, y_vec, x_src, vec_size))
+                        return;
+                    if (!yaxis->apply(x_vec, y_vec, y_src, vec_size))
+                        return;
+                }
 
                 if (sFill.get())
                     s->draw_poly(fill, line, width, x_vec, y_vec, vec_size);
