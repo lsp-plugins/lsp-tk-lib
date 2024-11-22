@@ -217,7 +217,7 @@ namespace lsp
 
             // Ensure that we have enough buffer size
             const size_t vec_size   = sData.size();
-            const size_t nbuf       = (pTransform != NULL) ? 3 : 2;
+            const size_t nbuf       = (pTransform != NULL) ? (sData.strobe() ? 4 : 3) : 2;
             size_t cap_size         = align_size(vec_size * nbuf, DEFAULT_ALIGN);
             if (nCapacity < cap_size)
             {
@@ -240,7 +240,14 @@ namespace lsp
 
             if (sData.strobe())
             {
+                // Get strobe and transform it if necessary
                 const float *s_src  = sData.s();
+                if (pTransform != NULL)
+                {
+                    float *s_vec        = &tmp_vec[vec_size];
+                    if (pTransform(s_vec, s_src, vec_size, STROBE, pTrData))
+                        s_src               = s_vec;
+                }
 
                 // Draw mesh divided into segments using strobes
                 size_t strobes      = lsp_max(sStrobes.get(), 0);
@@ -262,12 +269,12 @@ namespace lsp
                     // Calculate coordinates for each dot
                     if (tmp_vec)
                     {
-                        pTransform(pTrData, tmp_vec, &x_src[off], length);
-                        if (!xaxis->apply(x_vec, y_vec, tmp_vec, length))
+                        const float *x_buf = (pTransform(tmp_vec, &x_src[off], length, COORD_X, pTrData)) ? tmp_vec : &x_src[off];
+                        if (!xaxis->apply(x_vec, y_vec, x_buf, length))
                             return;
 
-                        pTransform(pTrData, tmp_vec, &y_src[off], length);
-                        if (!yaxis->apply(x_vec, y_vec, tmp_vec, length))
+                        const float *y_buf = (pTransform(tmp_vec, &y_src[off], length, COORD_Y, pTrData)) ? tmp_vec : &y_src[off];
+                        if (!yaxis->apply(x_vec, y_vec, y_buf, length))
                             return;
                     }
                     else
@@ -304,12 +311,12 @@ namespace lsp
                 // Calculate coordinates for each dot
                 if (tmp_vec)
                 {
-                    pTransform(pTrData, tmp_vec, x_src, vec_size);
-                    if (!xaxis->apply(x_vec, y_vec, tmp_vec, vec_size))
+                    const float *x_buf = (pTransform(tmp_vec, x_src, vec_size, COORD_X, pTrData)) ? tmp_vec : x_src;
+                    if (!xaxis->apply(x_vec, y_vec, x_buf, vec_size))
                         return;
 
-                    pTransform(pTrData, tmp_vec, y_src, vec_size);
-                    if (!yaxis->apply(x_vec, y_vec, tmp_vec, vec_size))
+                    const float *y_buf = (pTransform(tmp_vec, y_src, vec_size, COORD_Y, pTrData)) ? tmp_vec : y_src;
+                    if (!yaxis->apply(x_vec, y_vec, y_buf, vec_size))
                         return;
                 }
                 else
