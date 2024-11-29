@@ -71,6 +71,12 @@ namespace lsp
                     Widget             *pWidget;            // Keyboard handler
                 } key_handler_t;
 
+                typedef struct shortcut_t
+                {
+                    prop::Shortcut      sShortcut;
+                    Slot                sSlot;
+                } shortcut_t;
+
             public:
                 static const w_class_t    metadata;
 
@@ -82,6 +88,8 @@ namespace lsp
                 bool                    bMapped;
                 bool                    bOverridePointer;
                 float                   fScaling;           // Cached scaling factor
+                Shortcuts               sShortcuts;         // Shortcuts
+                ShortcutTracker         sShortcutTracker;   // Shortcut tracker
 
                 mouse_handler_t         hMouse;             // Mouse handler
                 key_handler_t           hKeys;              // Key handler
@@ -101,6 +109,8 @@ namespace lsp
                 prop::SizeConstraints   sSizeConstraints;
                 prop::Layout            sLayout;
                 prop::WindowPolicy      sPolicy;
+
+                lltl::parray<prop::Shortcut>    vShortcuts;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -176,6 +186,12 @@ namespace lsp
                 inline bool                     nested()                    { return pNativeHandle != NULL; }
 
                 inline ssize_t                  screen()                    { return (pWindow != NULL) ? pWindow->screen() : -1; };
+
+                /**
+                 * Get window shortcuts
+                 * @return window shortcuts
+                 */
+                inline Shortcuts               *shortcuts()                 { return &sShortcuts; }
 
                 virtual status_t                get_screen_rectangle(ws::rectangle_t *r, const ws::rectangle_t *sr) override;
                 virtual status_t                get_screen_rectangle(ws::rectangle_t *r) override;

@@ -66,6 +66,8 @@ namespace lsp
 
         Window::Window(Display *dpy, void *handle, ssize_t screen):
             WidgetContainer(dpy),
+            sShortcuts(NULL),
+            sShortcutTracker(&sShortcuts),
             sTitle(&sProperties),
             sRole(&sProperties),
             sBorderColor(&sProperties),
@@ -900,10 +902,16 @@ namespace lsp
                         hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
 
                     // Handle key press event
-                    if (h == this)
-                        result          = WidgetContainer::handle_event(e);
-                    else if (h != NULL)
-                        result          = h->handle_event(e);
+                    result          = sShortcutTracker.handle(h, e);
+                    if (result == STATUS_OK)
+                    {
+                        if (h == this)
+                            result          = WidgetContainer::handle_event(e);
+                        else if (h != NULL)
+                            result          = h->handle_event(e);
+                    }
+                    else if (result == STATUS_SKIP)
+                        result      = STATUS_OK;
 
                     break;
                 }
@@ -921,10 +929,16 @@ namespace lsp
                         hKeys.pWidget, pFocused, int(hKeys.vKeys.size()), h);
 
                     // Handle key press event
-                    if (h == this)
-                        result          = WidgetContainer::handle_event(e);
-                    else if (h != NULL)
-                        result          = h->handle_event(e);
+                    result          = sShortcutTracker.handle(h, e);
+                    if (result == STATUS_OK)
+                    {
+                        if (h == this)
+                            result          = WidgetContainer::handle_event(e);
+                        else if (h != NULL)
+                            result          = h->handle_event(e);
+                    }
+                    else if (result == STATUS_SKIP)
+                        result      = STATUS_OK;
 
                     break;
                 }

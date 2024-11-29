@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 12 июн. 2017 г.
@@ -56,16 +56,23 @@ namespace lsp
             protected:
                 lltl::darray<item_t>    vItems;
                 handler_id_t            nID;        // ID generator
+                bool                    bTracking;  // Tracking skip messages
 
             protected:
                 inline item_t          *find_item(handler_id_t id);
                 handler_id_t            bind(event_handler_t handler, bool intercept, void *arg, bool enabled);
                 size_t                  disable_all(bool handler, bool interceptor);
                 size_t                  enable_all(bool handler, bool interceptor);
+                status_t                track_result(status_t result) const;
 
             public:
-                explicit Slot();
+                explicit Slot(bool tracking = true);
+                Slot(const Slot &) = delete;
+                Slot(Slot &&) = delete;
                 ~Slot();
+
+                Slot & operator = (const Slot &) = delete;
+                Slot & operator = (Slot &&) = delete;
 
             public:
                 /** Bind slot
@@ -165,7 +172,7 @@ namespace lsp
                  */
                 status_t            execute(Widget *sender, void *data);
         };
-    }
+    } /* namespace tk */
 } /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_SYS_SLOTS_H_ */

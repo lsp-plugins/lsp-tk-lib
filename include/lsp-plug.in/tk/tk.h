@@ -124,6 +124,7 @@
 // System objects
 #include <lsp-plug.in/tk/sys/settings.h>
 #include <lsp-plug.in/tk/sys/Atoms.h>
+#include <lsp-plug.in/tk/sys/Shortcuts.h>
 #include <lsp-plug.in/tk/sys/Slot.h>
 #include <lsp-plug.in/tk/sys/SlotSet.h>
 #include <lsp-plug.in/tk/sys/Timer.h>
@@ -131,6 +132,7 @@
 
 // Utilitary objects
 #include <lsp-plug.in/tk/util/KeyboardHandler.h>
+#include <lsp-plug.in/tk/util/ShorcutTracker.h>
 #include <lsp-plug.in/tk/util/TextCursor.h>
 #include <lsp-plug.in/tk/util/TextDataSink.h>
 #include <lsp-plug.in/tk/util/TextDataSource.h>

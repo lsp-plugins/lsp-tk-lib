@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 13 июн. 2020 г.
@@ -22,6 +22,12 @@
 #ifndef LSP_PLUG_IN_TK_PROP_MULTI_SHORTCUT_H_
 #define LSP_PLUG_IN_TK_PROP_MULTI_SHORTCUT_H_
 
+#ifndef LSP_PLUG_IN_TK_IMPL
+    #error "use <lsp-plug.in/tk/tk.h>"
+#endif
+
+#include <lsp-plug.in/tk/sys/Slot.h>
+
 namespace lsp
 {
     namespace tk
@@ -32,10 +38,6 @@ namespace lsp
          */
         class Shortcut: public MultiProperty
         {
-            private:
-                Shortcut & operator = (const Shortcut &);
-                Shortcut(const Shortcut &);
-
             protected:
                 enum property_t
                 {
@@ -54,6 +56,7 @@ namespace lsp
                 atom_t              vAtoms[P_COUNT];    // Atom bindings
                 size_t              nMod;               // Modifiers
                 ws::code_t          nKey;               // Key
+                Slot                sSlot;              // Event handling
 
             protected:
                 static status_t     append_modifier(LSPString *s, size_t mod, size_t index);
@@ -62,6 +65,9 @@ namespace lsp
                 static status_t     format_value(LSPString *s, ws::code_t key, size_t mod);
                 static status_t     format_modifiers(LSPString *s, size_t mod);
                 static status_t     format_key(LSPString *s, ws::code_t key);
+
+                static bool         check_modifier(size_t mod, size_t check);
+                static bool         check_modifiers(size_t mod, size_t check);
 
             protected:
                 virtual void        push();
@@ -74,6 +80,13 @@ namespace lsp
 
             protected:
                 explicit Shortcut(prop::Listener *listener = NULL);
+                Shortcut(const Shortcut &) = delete;
+                Shortcut(Shortcut &&) = delete;
+
+                Shortcut & operator = (const Shortcut &) = delete;
+                Shortcut & operator = (Shortcut &&) = delete;
+
+            public:
                 virtual ~Shortcut();
 
             public:
@@ -118,13 +131,38 @@ namespace lsp
 
                 inline void         clear()                             { set(ws::WSK_UNKNOWN, 0);              }
 
+                inline Slot        *slot()                              { return &sSlot; }
+
+                bool                equals(const Shortcut *scut) const;
+                bool                equals(const Shortcut &scut) const;
+
+                /**
+                 * Set key and modifiers to be equal to the passed shortcut
+                 * @param scut passed shortcut
+                 */
+                void                set(const Shortcut *scut);
+
+                /**
+                 * Set key and modifiers to be equal to the passed shortcut
+                 * @param scut passed shortcut
+                 */
+                void                set(const Shortcut &scut);
+
                 /**
                  * Check that shortcut must trigger
                  * @param key key to check
                  * @param mod modifier
                  * @return true if shortcut must trigger
                  */
-                bool                check(ws::code_t key, size_t mod);
+                bool                match(ws::code_t key, size_t mod) const;
+
+                /**
+                 * Check if shortcut matches another shortcut
+                 * @param scut shotcut to check
+                 * @return true if shortcut matches the passed shortcut
+                 */
+                bool                match(const Shortcut *scut) const;
+                bool                match(const Shortcut &scut) const;
 
                 /**
                  * Format state to the string presentation
@@ -138,13 +176,13 @@ namespace lsp
         {
             class Shortcut: public tk::Shortcut
             {
-                private:
-                    Shortcut & operator = (const Shortcut &);
-                    Shortcut(const Shortcut &);
-
                 public:
                     inline Shortcut(prop::Listener *listener = NULL): tk::Shortcut(listener) {}
-                    inline ~Shortcut() {}
+                    Shortcut(const Shortcut &) = delete;
+                    Shortcut(Shortcut &&) = delete;
+
+                    Shortcut & operator = (const Shortcut &) = delete;
+                    Shortcut & operator = (Shortcut &&) = delete;
 
                 public:
                     /**
@@ -155,9 +193,8 @@ namespace lsp
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::Shortcut::bind(property, style, vAtoms, DESC, &sListener); }
             };
         }
-    }
-}
-
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_SHORTCUT_H_ */
