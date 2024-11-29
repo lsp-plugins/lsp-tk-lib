@@ -65,6 +65,11 @@ namespace lsp
                 virtual status_t    handle(Widget *widget, const ws::event_t *ev);
 
                 /**
+                 * Reset current state of the tracker
+                 */
+                virtual void        reset();
+
+                /**
                  * Check if tracker is enabled
                  * @return true if tracker is enabled
                  */

@@ -651,7 +651,7 @@ namespace lsp
 
         void Window::show()
         {
-            pActor      = NULL;
+            pActor              = NULL;
             return WidgetContainer::show();
         }
 
@@ -749,6 +749,7 @@ namespace lsp
                         sRedraw.launch(-1, 40);
                         query_draw(REDRAW_SURFACE);
                     }
+                    sShortcutTracker.reset();
                     sVisibility.commit_value(true);
                     break;
 
@@ -890,25 +891,29 @@ namespace lsp
                     // Find the keyboard event handler
                     lsp_trace("key down: keys.pWidget = %p, pFocused = %p, nkeys=%d",
                         hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
-                    Widget *h       = pFocused; //(hKeys.pWidget != NULL) ? hKeys.pWidget : pFocused;
-                    if (h == NULL)
-                        h               = find_widget(e->nLeft, e->nTop);
+                    Widget *handler     = (pFocused != NULL) ? pFocused : find_widget(e->nLeft, e->nTop);
 
                     // Take focus first and acquire keyboard lock
                     make_key_pressed(e->nCode);
-                    hKeys.pWidget       = h;
+                    hKeys.pWidget       = handler;
 
                     lsp_trace("update: keys.pWidget = %p, pFocused = %p, nkeys=%d",
                         hKeys.pWidget, pFocused, int(hKeys.vKeys.size()));
 
-                    // Handle key press event
-                    result          = sShortcutTracker.handle(h, e);
+                    if (handler == NULL)
+                        break;
+
+                    // Handle key press event by tracker first
+                    result          = sShortcutTracker.handle(handler, e);
                     if (result == STATUS_OK)
                     {
-                        if (h == this)
-                            result          = WidgetContainer::handle_event(e);
-                        else if (h != NULL)
-                            result          = h->handle_event(e);
+                        // Call handler only if widget has not changed
+                        if (hKeys.pWidget == handler)
+                        {
+                            result = (handler == this) ?
+                                WidgetContainer::handle_event(e) :
+                                handler->handle_event(e);
+                        }
                     }
                     else if (result == STATUS_SKIP)
                         result      = STATUS_OK;
@@ -919,23 +924,25 @@ namespace lsp
                 case ws::UIE_KEY_UP:
                 {
                     // Find the keyboard event handler
-                    Widget *h       = hKeys.pWidget;
+                    Widget *handler = hKeys.pWidget;
 
                     // Release key lock state
                     if (make_key_released(e->nCode) <= 0)
                         hKeys.pWidget       = NULL;
 
                     lsp_trace("key up  : keys.pWidget = %p, pFocused = %p, nkeys=%d, handler=%p",
-                        hKeys.pWidget, pFocused, int(hKeys.vKeys.size()), h);
+                        hKeys.pWidget, pFocused, int(hKeys.vKeys.size()), handler);
 
                     // Handle key press event
-                    result          = sShortcutTracker.handle(h, e);
+                    if (handler == NULL)
+                        break;
+
+                    result          = sShortcutTracker.handle(handler, e);
                     if (result == STATUS_OK)
                     {
-                        if (h == this)
-                            result          = WidgetContainer::handle_event(e);
-                        else if (h != NULL)
-                            result          = h->handle_event(e);
+                        result = (handler == this) ?
+                            WidgetContainer::handle_event(e) :
+                            handler->handle_event(e);
                     }
                     else if (result == STATUS_SKIP)
                         result      = STATUS_OK;
@@ -979,7 +986,14 @@ namespace lsp
 //                        h->handle_event(&ev);
 //                    }
 
+                    sShortcutTracker.reset();
                     do_kill_focus(pFocused);
+                    break;
+                }
+
+                case ws::UIE_FOCUS_IN:
+                {
+                    sShortcutTracker.reset();
                     break;
                 }
 
@@ -1139,6 +1153,10 @@ namespace lsp
 
         bool Window::do_kill_focus(Widget *w)
         {
+            // Ensure that widget is not handling keyboard events
+            if (hKeys.pWidget == w)
+                hKeys.pWidget       = NULL;
+
             // Check that widget owns focus
             if (w != pFocused)
                 return false;

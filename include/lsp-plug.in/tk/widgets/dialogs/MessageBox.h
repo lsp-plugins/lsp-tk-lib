@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 13 окт. 2020 г.
@@ -41,10 +41,6 @@ namespace lsp
          */
         class MessageBox: public Window
         {
-            private:
-                MessageBox & operator = (const MessageBox &);
-                MessageBox(const MessageBox &);
-
             public:
                 static const w_class_t metadata;
 
@@ -78,13 +74,21 @@ namespace lsp
 
             public:
                 explicit MessageBox(Display *dpy);
-                virtual ~MessageBox();
+                MessageBox(const MessageBox &) = delete;
+                MessageBox(MessageBox &&) = delete;
+                virtual ~MessageBox() override;
+                MessageBox & operator = (const MessageBox &) = delete;
+                MessageBox & operator = (MessageBox &&) = delete;
 
-                virtual status_t                init();
-                virtual void                    destroy();
+                virtual status_t                init() override;
+                virtual void                    destroy() override;
 
             protected:
                 static status_t                 slot_on_button_submit(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_on_dialog_escape(Widget *sender, void *ptr, void *data);
+                static status_t                 slot_on_dialog_return(Widget *sender, void *ptr, void *data);
+
+            protected:
                 static void                     on_add_item(void *obj, Property *prop, void *w);
                 static void                     on_remove_item(void *obj, Property *prop, void *w);
                 void                            do_destroy();
@@ -104,17 +108,19 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                button_spacing,             &sBtnSpacing)
                 LSP_TK_PROPERTY(Layout,                 button_layout,              &sBtnLayout)
 
+            public: // tk::Widget
+                virtual status_t                add(Widget *widget) override;
+                virtual status_t                remove(Widget *widget) override;
+                virtual status_t                remove_all() override;
+
             public:
                 virtual status_t                add(const char *text, event_handler_t handler = NULL, void *arg = NULL);
                 virtual status_t                add(const LSPString *text, event_handler_t handler = NULL, void *arg = NULL);
                 virtual status_t                add(const String *text, event_handler_t handler = NULL, void *arg = NULL);
                 virtual status_t                add(Button *btn);
                 virtual status_t                madd(Button *btn);
-                virtual status_t                add(Widget *widget);
-                virtual status_t                remove(Widget *widget);
-                virtual status_t                remove_all();
         };
-    }
-}
+    } /* namespace lsp */
+} /* namespace tk */
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_DIALOGS_MESSAGEBOX_H_ */

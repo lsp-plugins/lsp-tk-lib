@@ -148,6 +148,12 @@ namespace lsp
             return res;
         }
 
+        void ShortcutTracker::reset()
+        {
+            sState.clear();
+            vFired.clear();
+        }
+
         bool ShortcutTracker::enabled() const
         {
             return nEnabled >= 0;

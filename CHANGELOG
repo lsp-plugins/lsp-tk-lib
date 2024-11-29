@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.26 ===
+* Implemented shortcut handling mechancs by tk::Window.
 * Small bugfix in LedMeterChannel related to header display.
 
 === 1.0.25 ===

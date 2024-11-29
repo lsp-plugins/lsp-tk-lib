@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2020 г.
@@ -190,6 +190,12 @@ namespace lsp
                 static status_t         slot_on_filter_submit(Widget *sender, void *ptr, void *data);
 
                 static status_t         slot_on_search_key_down(Widget *sender, void *ptr, void *data);
+
+                static status_t         slot_on_dialog_escape(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_dialog_return(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_message_close(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_confirm_escape(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_confirm_return(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual status_t        on_dlg_action(void *data, bool list);

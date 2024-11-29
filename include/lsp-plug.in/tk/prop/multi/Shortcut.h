@@ -129,7 +129,7 @@ namespace lsp
                 inline size_t       remove_modifiers(size_t mod)        { return set_modifiers(nMod & (~mod));  }
                 inline size_t       toggle_modifiers(size_t mod)        { return set_modifiers(nMod ^ mod);     }
 
-                inline void         clear()                             { set(ws::WSK_UNKNOWN, 0);              }
+                inline void         clear()                             { set(ws::WSK_UNKNOWN, KM_NONE);        }
 
                 inline Slot        *slot()                              { return &sSlot; }
 
