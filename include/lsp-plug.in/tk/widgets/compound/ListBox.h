@@ -134,6 +134,7 @@ namespace lsp
                 prop::WidgetList<ListBoxItem>   vItems;
                 prop::WidgetSet<ListBoxItem>    vSelected;
                 prop::CollectionListener        sIListener;
+                prop::CollectionListener        sSListener;
 
                 prop::SizeConstraints           sSizeConstraints;
                 prop::Scrolling                 sHScrollMode;
@@ -173,6 +174,8 @@ namespace lsp
 
                 static void             on_add_item(void *obj, Property *prop, void *w);
                 static void             on_remove_item(void *obj, Property *prop, void *w);
+                static void             on_select_item(void *obj, Property *prop, void *w);
+                static void             on_deselect_item(void *obj, Property *prop, void *w);
                 static status_t         key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
 
             protected:

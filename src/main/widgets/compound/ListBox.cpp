@@ -75,7 +75,7 @@ namespace lsp
             sHBar(dpy),
             sVBar(dpy),
             vItems(&sProperties, &sIListener),
-            vSelected(&sProperties, &sIListener),
+            vSelected(&sProperties, &sSListener),
             sSizeConstraints(&sProperties),
             sHScrollMode(&sProperties),
             sVScrollMode(&sProperties),
@@ -165,6 +165,7 @@ namespace lsp
                 return result;
 
             sIListener.bind_all(this, on_add_item, on_remove_item);
+            sSListener.bind_all(this, on_select_item, on_deselect_item);
             sKeyTimer.bind(pDisplay);
             sKeyTimer.set_handler(key_scroll_handler, self());
 
@@ -843,6 +844,24 @@ namespace lsp
             self->query_resize();
         }
 
+        void ListBox::on_select_item(void *obj, Property *prop, void *w)
+        {
+            ListBox *self = widget_ptrcast<ListBox>(obj);
+            if (self == NULL)
+                return;
+
+            self->query_draw();
+        }
+
+        void ListBox::on_deselect_item(void *obj, Property *prop, void *w)
+        {
+            ListBox *self = widget_ptrcast<ListBox>(obj);
+            if (self == NULL)
+                return;
+
+            self->query_draw();
+        }
+
         status_t ListBox::on_mouse_down(const ws::event_t *e)
         {
             if (nBMask == 0)
@@ -1194,6 +1213,8 @@ namespace lsp
             if (mask == 0)
                 return STATUS_OK;
 
+            lsp_trace("on_key_scroll mask=0x%08x", int(mask));
+
             float scaling   = lsp_max(0.0f, sScaling.get());
             item_t *curr    = find_by_index(nCurrIndex);
             ssize_t start   = lsp_max(-1, vVisible.index_of(curr));
@@ -1227,7 +1248,7 @@ namespace lsp
                     }
                 }
             }
-            else if ((mask & SCR_UP) | (mask & SCR_KP_UP))
+            else if (mask & (SCR_UP | SCR_KP_UP))
             {
                 if (nKeyScroll & (SCR_UP | SCR_KP_UP))
                 {

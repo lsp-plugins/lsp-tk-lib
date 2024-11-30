@@ -3,6 +3,8 @@
 *******************************************************************************
 
 === 1.0.26 ===
+* Fixed bun in tk::ListBox widget which didn't allow to scroll the list box
+  when using keyboard keys.
 * Implemented shortcut handling mechancs by tk::Window.
 * Small bugfix in LedMeterChannel related to header display.
 
