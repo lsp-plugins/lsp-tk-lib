@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.26 ===
+* Removed internal key auto-repeat simulation for tk::ListBox.
 * Updated text clipping algorithm for tk::Button.
 * Fixed bun in tk::ListBox widget which didn't allow to scroll the list box
   when using keyboard keys.

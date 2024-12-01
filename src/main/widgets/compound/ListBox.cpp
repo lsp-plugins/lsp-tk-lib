@@ -166,8 +166,6 @@ namespace lsp
 
             sIListener.bind_all(this, on_add_item, on_remove_item);
             sSListener.bind_all(this, on_select_item, on_deselect_item);
-            sKeyTimer.bind(pDisplay);
-            sKeyTimer.set_handler(key_scroll_handler, self());
 
             // Configure scroll bars
             sHBar.orientation()->set(O_HORIZONTAL);
@@ -1102,6 +1100,8 @@ namespace lsp
         {
             size_t scroll   = nKeyScroll;
 
+            lsp_trace("keycode = 0x%x", int(e->nCode));
+
             nKeyScroll  = lsp_setflag(nKeyScroll, SCR_SHIFT, e->nState & ws::MCF_SHIFT);
             nKeyScroll  = lsp_setflag(nKeyScroll, SCR_CTRL, e->nState & ws::MCF_CONTROL);
 
@@ -1159,17 +1159,15 @@ namespace lsp
             }
 
             if ((scroll ^ nKeyScroll) & SCR_KEYMASK)
-            {
                 on_key_scroll();
-                if (scroll == 0)
-                    sKeyTimer.launch(-1, 250, 1000);
-            }
 
             return STATUS_OK;
         }
 
         status_t ListBox::on_key_up(const ws::event_t *e)
         {
+            lsp_trace("keycode = 0x%x", int(e->nCode));
+
             nKeyScroll  = lsp_setflag(nKeyScroll, SCR_SHIFT, e->nState & ws::MCF_SHIFT);
             nKeyScroll  = lsp_setflag(nKeyScroll, SCR_CTRL, e->nState & ws::MCF_CONTROL);
 
@@ -1193,16 +1191,7 @@ namespace lsp
                     break;
             }
 
-            if (!(nKeyScroll & SCR_KEYMASK))
-                sKeyTimer.cancel();
-
             return STATUS_OK;
-        }
-
-        status_t ListBox::key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)
-        {
-            ListBox *_this = widget_ptrcast<ListBox>(arg);
-            return (_this != NULL) ? _this->on_key_scroll() : STATUS_OK;
         }
 
         status_t ListBox::on_key_scroll()
