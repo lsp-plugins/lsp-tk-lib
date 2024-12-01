@@ -678,7 +678,7 @@ namespace lsp
             for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
                 estimate_string_size(&e, it.get());
 
-            if ((text.length() > 0) & (!sTextClip.get()))
+            if ((text.length() > 0) && (!sTextClip.get()))
                 estimate_string_size(&e, &sText);
 
             xr.nWidth          = lsp_max(xr.nWidth, e.min_width);
