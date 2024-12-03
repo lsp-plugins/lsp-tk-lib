@@ -176,6 +176,7 @@
 #include <lsp-plug.in/tk/widgets/containers/MultiLabel.h>
 #include <lsp-plug.in/tk/widgets/containers/Tab.h>
 #include <lsp-plug.in/tk/widgets/containers/TabControl.h>
+#include <lsp-plug.in/tk/widgets/containers/TabGroup.h>
 
 // Compound widgets
 #include <lsp-plug.in/tk/widgets/compound/Menu.h>
