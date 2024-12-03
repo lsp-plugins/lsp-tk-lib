@@ -114,7 +114,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              border_selected_color,  &sBorderSelectedColor);
                 LSP_TK_PROPERTY(Color,              border_hover_color,     &sBorderHoverColor);
                 LSP_TK_PROPERTY(Color,              text_color,             &sTextColor);
-                LSP_TK_PROPERTY(Color,              text_selected_coloer,   &sTextSelectedColor);
+                LSP_TK_PROPERTY(Color,              text_selected_color,    &sTextSelectedColor);
                 LSP_TK_PROPERTY(Color,              text_hover_color,       &sTextHoverColor);
                 LSP_TK_PROPERTY(Integer,            border_size,            &sBorderSize);
                 LSP_TK_PROPERTY(Integer,            border_radius,          &sBorderRadius);

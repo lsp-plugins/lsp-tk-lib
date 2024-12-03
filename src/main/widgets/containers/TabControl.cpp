@@ -726,7 +726,7 @@ namespace lsp
                 }
 
                 // Initialize palette
-                color.copy(select_color(mode, w->text_color(), w->text_selected_coloer(), w->text_hover_color()));
+                color.copy(select_color(mode, w->text_color(), w->text_selected_color(), w->text_hover_color()));
                 color.scale_lch_luminance(sBrightness.get());
 
                 // Draw background
