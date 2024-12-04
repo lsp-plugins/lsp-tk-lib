@@ -66,7 +66,6 @@ namespace lsp
                 };
 
             protected:
-                tk::Widget                 *pWidget;        // Wrapped widget
                 lltl::darray<tab_t>         vVisible;       // List of visible tab headings
                 ws::rectangle_t             sArea;          // Internal area for drawing the widget
                 ws::rectangle_t             sBounds;        // External area for drawing widget
@@ -98,11 +97,14 @@ namespace lsp
 
                 prop::WidgetList<TabItem>   vItems;
                 prop::WidgetPtr<TabItem>    sSelected;
+                prop::WidgetList<Widget>    vWidgets;
+                prop::WidgetPtr<Widget>     sActive;
                 prop::CollectionListener    sIListener;
 
             protected:
                 void                        allocate_tabs(size_t *max_tab_border, ws::rectangle_t *area, lltl::darray<tab_t> *tabs);
                 tk::TabItem                *current_tab();
+                tk::Widget                 *current_widget();
                 bool                        scroll_item(ssize_t increment);
                 tk::TabItem                *find_tab(ssize_t x, ssize_t y);
                 void                        draw_tab(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area);
@@ -150,8 +152,10 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                    heading_fill,               &sHeadingFill)
                 LSP_TK_PROPERTY(Boolean,                    heading_spacing_fill,       &sHeadingSpacingFill)
                 LSP_TK_PROPERTY(Pointer,                    mouse_pointer,              &sTabPointer)
+                LSP_TK_PROPERTY(WidgetList<TabItem>,        items,                      &vItems)
+                LSP_TK_PROPERTY(WidgetList<Widget>,         widgets,                    &vWidgets)
                 LSP_TK_PROPERTY(WidgetPtr<TabItem>,         selected,                   &sSelected)
-                LSP_TK_PROPERTY(WidgetList<TabItem>,        widgets,                    &vItems)
+                LSP_TK_PROPERTY(WidgetPtr<Widget>,          active,                     &sActive)
 
             public:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y) override;

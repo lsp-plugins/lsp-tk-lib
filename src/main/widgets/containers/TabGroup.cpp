@@ -60,10 +60,10 @@ namespace lsp
             sHeadingSpacingFill(&sProperties),
             sTabPointer(&sProperties),
             vItems(&sProperties, &sIListener),
-            sSelected(&sProperties)
+            sSelected(&sProperties),
+            vWidgets(&sProperties, &sIListener),
+            sActive(&sProperties)
         {
-            pWidget             = NULL;
-
             sArea.nLeft         = 0;
             sArea.nTop          = 0;
             sArea.nWidth        = 0;
@@ -157,13 +157,6 @@ namespace lsp
 
         void TabGroup::do_destroy()
         {
-            if (pWidget != NULL)
-            {
-                unlink_widget(pWidget);
-                pWidget = NULL;
-            }
-
-            // Cleanup items
             vItems.flush();
         }
 
@@ -180,9 +173,7 @@ namespace lsp
                 query_resize();
             if (prop->one_of(sTabJoint, sHeadingFill, sHeadingSpacingFill))
                 query_draw();
-            if (vItems.is(prop))
-                query_resize();
-            if (sSelected.is(prop))
+            if (prop->one_of(vWidgets, vItems, sActive, sSelected))
                 query_resize();
         }
 
@@ -292,9 +283,10 @@ namespace lsp
             w_area.nHeight          = radius * 2;
 
             // Estimate the size of the area for the widget
-            if (pWidget != NULL)
+            tk::Widget *w           = current_widget();
+            if (w != NULL)
             {
-                pWidget->get_padded_size_limits(r);
+                w->get_padded_size_limits(r);
                 if (r->nMinWidth > 0)
                     w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
                 if (r->nMinHeight > 0)
@@ -393,11 +385,12 @@ namespace lsp
             padding.nBottom         = (sEmbedding.bottom()) ? border : xborder;
 
             // Realize child widget
-            if (pWidget != NULL)
+            tk::Widget *w           = current_widget();
+            if (w != NULL)
             {
                 Padding::enter(&sArea, &sBounds, &padding);
-                if (pWidget->is_visible_child_of(this))
-                    pWidget->realize_widget(&sArea);
+                if (w->is_visible_child_of(this))
+                    w->realize_widget(&sArea);
             }
 
             // Commit allocation parameters
@@ -426,16 +419,17 @@ namespace lsp
             lsp_finally { s->set_antialiasing(aa); };
 
             // Draw background if child is invisible or not present
-            if ((pWidget != NULL) && (pWidget->is_visible_child_of(this)))
+            tk::Widget *w           = current_widget();
+            if ((w != NULL) && (w->is_visible_child_of(this)))
             {
-                pWidget->get_rectangle(&xr);
+                w->get_rectangle(&xr);
 
                 // Draw the nested widget
-                if ((force) || (pWidget->redraw_pending()))
+                if ((force) || (w->redraw_pending()))
                 {
                     if (Size::intersection(&xr, &sArea))
-                        pWidget->render(s, &xr, force);
-                    pWidget->commit_redraw();
+                        w->render(s, &xr, force);
+                    w->commit_redraw();
                 }
 
                 if (force)
@@ -446,7 +440,7 @@ namespace lsp
                         s->clip_begin(area);
                         lsp_finally { s->clip_end(); };
 
-                        pWidget->get_actual_bg_color(color);
+                        w->get_actual_bg_color(color);
                         s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                     }
                 }
@@ -724,32 +718,18 @@ namespace lsp
 
         status_t TabGroup::add(Widget *child)
         {
-            if ((child == NULL) || (child == this))
-                return STATUS_BAD_ARGUMENTS;
-            if (pWidget != NULL)
-                return STATUS_ALREADY_EXISTS;
-
-            child->set_parent(this);
-            pWidget = child;
-            query_resize();
-            return STATUS_OK;
+            return vWidgets.add(child);
         }
 
         status_t TabGroup::remove(Widget *child)
         {
-            if (pWidget != child)
-                return STATUS_NOT_FOUND;
-
-            unlink_widget(pWidget);
-            pWidget  = NULL;
-            query_resize();
-
-            return STATUS_OK;
+            return vWidgets.premove(child);
         }
 
         status_t TabGroup::remove_all()
         {
-            return (pWidget != NULL) ? remove(pWidget) : STATUS_OK;
+            vWidgets.clear();
+            return STATUS_OK;
         }
 
         status_t TabGroup::add_item(TabItem *child)
@@ -780,6 +760,17 @@ namespace lsp
         status_t TabGroup::on_submit()
         {
             return STATUS_OK;
+        }
+
+        tk::Widget *TabGroup::current_widget()
+        {
+            tk::Widget *active  = sActive.get();
+            if ((active != NULL) && (vWidgets.contains(active)))
+                return active;
+
+            TabItem *it     = sSelected.get();
+            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? vItems.index_of(it) : 0;
+            return vWidgets.get(index);
         }
 
         tk::TabItem *TabGroup::current_tab()
@@ -873,10 +864,11 @@ namespace lsp
 
         Widget *TabGroup::find_widget(ssize_t x, ssize_t y)
         {
-            if (pWidget == NULL)
+            Widget *widget  = current_widget();
+            if (widget == NULL)
                 return NULL;
-            if ((pWidget->is_visible_child_of(this)) && (pWidget->inside(x, y)))
-                return pWidget;
+            if ((widget->is_visible_child_of(this)) && (widget->inside(x, y)))
+                return widget;
 
             return NULL;
         }
@@ -1021,6 +1013,8 @@ namespace lsp
             // Reset active widget if present
             if (self->sSelected.get() == item)
                 self->sSelected.set(NULL);
+            if (self->sActive.get() == item)
+                self->sActive.set(NULL);
             if (self->pEventTab == item)
                 self->pEventTab       = NULL;
 
