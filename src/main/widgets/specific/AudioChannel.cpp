@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -47,6 +47,7 @@ namespace lsp
                 sLoopBorder.bind("loop.border", this);
                 sPlayBorder.bind("play.border", this);
                 sLineWidth.bind("line.width", this);
+                sMaxAmplitude.bind("amplitude.max", this);
                 sColor.bind("color", this);
                 sLineColor.bind("line.color", this);
                 sWaveBorderColor.bind("wave.border.color", this);
@@ -79,6 +80,7 @@ namespace lsp
                 sLoopBorder.set(1);
                 sPlayBorder.set(2);
                 sLineWidth.set(1);
+                sMaxAmplitude.set(1.0f);
                 sColor.set("#8800ff00");
                 sLineColor.set("#ffffff");
                 sWaveBorderColor.set("#00ff00");
@@ -123,6 +125,7 @@ namespace lsp
             sLoopBorder(&sProperties),
             sPlayBorder(&sProperties),
             sLineWidth(&sProperties),
+            sMaxAmplitude(&sProperties),
             sColor(&sProperties),
             sLineColor(&sProperties),
             sWaveBorderColor(&sProperties),
@@ -170,6 +173,7 @@ namespace lsp
             sLoopBorder.bind("loop.border", &sStyle);
             sPlayBorder.bind("play.border", &sStyle);
             sLineWidth.bind("line.width", &sStyle);
+            sMaxAmplitude.bind("amplitude.max", &sStyle);
             sColor.bind("color", &sStyle);
             sLineColor.bind("line.color", &sStyle);
             sWaveBorderColor.bind("wave.border.color", &sStyle);
@@ -197,7 +201,7 @@ namespace lsp
                 query_draw();
             if (prop->one_of(sHeadCut, sTailCut, sFadeIn, sFadeOut, sStretchBegin, sStretchEnd, sLoopBegin, sLoopEnd, sPlayPosition))
                 query_draw();
-            if (prop->one_of(sWaveBorder, sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sPlayBorder, sLineWidth))
+            if (prop->one_of(sWaveBorder, sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sPlayBorder, sLineWidth, sMaxAmplitude))
                 query_draw();
             if (prop->one_of(sColor, sLineColor, sWaveBorderColor,
                 sHeadCutColor, sTailCutColor, sFadeInColor, sFadeOutColor, sStretchColor, sLoopColor, sPlayColor,
@@ -219,7 +223,7 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void AudioChannel::draw_samples(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright)
+        void AudioChannel::draw_samples(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright, float max_amplitude)
         {
             // Check limits
             if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
@@ -241,7 +245,7 @@ namespace lsp
             float border        = (sWaveBorder.get() > 0) ? lsp_max(1.0f, sWaveBorder.get() * scaling) : 0.0f;
             float dx            = lsp_max(1.0f, float(r->nWidth) / float(samples));
             float kx            = lsp_max(1.0f, float(samples) / float(r->nWidth));
-            float ky            = -0.5f * (r->nHeight - border);
+            float ky            = -0.5f * (r->nHeight - border) / max_amplitude;
             float sy            = r->nTop + r->nHeight * 0.5f;
 
             x[0]                = -1.0f;
@@ -461,7 +465,7 @@ namespace lsp
                 };
 
                 // Draw channel
-                draw_samples(&r, s, samples, scaling, bright);
+                draw_samples(&r, s, samples, scaling, bright, sMaxAmplitude.get());
                 draw_range(&r, s, &stretch, samples, scaling, bright);
                 draw_range(&r, s, &loop, samples, scaling, bright);
                 draw_fades(&r, s, samples, scaling, bright);

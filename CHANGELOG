@@ -10,6 +10,7 @@
 * Implemented TabGroup widget.
 * Implemented shortcut handling mechancs by tk::Window.
 * Small bugfix in LedMeterChannel related to header display.
+* Added maximum amplitude property to AudioChannel and AudioSample.
 * Updated build scripts.
 
 === 1.0.25 ===
