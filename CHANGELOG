@@ -12,6 +12,8 @@
 * Small bugfix in LedMeterChannel related to header display.
 * Added maximum amplitude property to AudioChannel and AudioSample.
 * Added possibility to draw background around tk::GraphText widget.
+* Fixed stylesheets: keeping the order of properties same to the order in the XML
+  document when stylesheet is applied to styles.
 * Updated build scripts.
 
 === 1.0.25 ===

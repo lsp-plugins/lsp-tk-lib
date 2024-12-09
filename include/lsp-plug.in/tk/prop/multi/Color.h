@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 5 нояб. 2017 г.
@@ -38,10 +38,6 @@ namespace lsp
         class Color: public MultiProperty
         {
             protected:
-                Color & operator = (const Color &);
-                Color(const Color &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -63,7 +59,12 @@ namespace lsp
 
             protected:
                 explicit Color(prop::Listener *listener = NULL);
+                Color(const Color &) = delete;
+                Color(Color &&) = delete;
                 virtual ~Color();
+
+                Color & operator = (const Color &) = delete;
+                Color & operator = (Color &&) = delete;
 
             public:
                 inline void set_default()       { MultiProperty::set_default(vAtoms, DESC); };

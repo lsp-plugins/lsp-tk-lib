@@ -41,8 +41,8 @@ namespace lsp
                 sHAxis.bind("haxis", this);
                 sVAxis.bind("vaxis", this);
                 sOrigin.bind("origin", this);
-                sBg.bind("background", this);
-                sBgRadius.bind("background.radius", this);
+                sBg.bind("bg", this);
+                sBgRadius.bind("bg.radius", this);
                 sIPadding.bind("ipadding", this);
                 // Configure
                 sFont.set_size(10.0f);
@@ -111,8 +111,8 @@ namespace lsp
             sHAxis.bind("haxis", &sStyle);
             sVAxis.bind("vaxis", &sStyle);
             sOrigin.bind("origin", &sStyle);
-            sBg.bind("background", &sStyle);
-            sBgRadius.bind("background.radius", &sStyle);
+            sBg.bind("bg", &sStyle);
+            sBgRadius.bind("bg.radius", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
 
             return STATUS_OK;

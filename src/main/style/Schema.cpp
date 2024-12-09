@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 мая 2020 г.
@@ -497,36 +497,64 @@ namespace lsp
             return STATUS_OK;
         }
 
+        ssize_t Schema::compare_properties_by_order(const raw_property_t *a, const raw_property_t *b)
+        {
+            return a->order - b->order;
+        }
+
+        bool Schema::make_raw_properties(StyleSheet::style_t *xs, lltl::darray<raw_property_t> *props)
+        {
+            if (!props->reserve(xs->properties.size()))
+                return false;
+
+            for (lltl::iterator<lltl::pair<LSPString, StyleSheet::property_t>> it = xs->properties.items(); it; ++it)
+            {
+                raw_property_t *p = props->add();
+                if (p == NULL)
+                    return false;
+
+                p->name = it->key;
+                p->value = &it->value->value;
+                p->order = it->value->order;
+            }
+
+            props->qsort(compare_properties_by_order);
+
+            return true;
+        }
+
         status_t Schema::apply_settings(Style *s, StyleSheet::style_t *xs)
         {
-            lltl::parray<LSPString> pnames;
-            if (!xs->properties.keys(&pnames))
+            // Create raw property list
+            lltl::darray<raw_property_t> raw_properties;
+            if (!make_raw_properties(xs, &raw_properties))
                 return STATUS_NO_MEM;
 
             property_value_t v;
             status_t res;
 
-            for (size_t i=0, n=pnames.size(); i<n; ++i)
+            for (size_t i=0, n=raw_properties.size(); i<n; ++i)
             {
-                LSPString *name         = pnames.uget(i);
-                LSPString *value        = xs->properties.get(name);
-                property_type_t type    = s->get_type(name);
+                raw_property_t *prop    = raw_properties.uget(i);
+                property_type_t type    = s->get_type(prop->name);
 
-//                lsp_trace("  %s = %s [%d]",
-//                    name->get_utf8(),
-//                    value->get_utf8(),
-//                    int(pAtoms->atom_id(name))
+//                lsp_trace("  %s: %s[ord=%d] = %s [atom=%d]",
+//                    s->name(),
+//                    prop->name->get_utf8(),
+//                    int(prop->order),
+//                    prop->value->get_utf8(),
+//                    int(pAtoms->atom_id(prop->name))
 //                );
 
-                if (parse_property_value(&v, value, type) == STATUS_OK)
+                if (parse_property_value(&v, prop->value, type) == STATUS_OK)
                 {
                     bool over = s->set_override(true);
                     switch (v.type)
                     {
-                        case PT_BOOL:   res = s->set_bool(name, v.bvalue);      break;
-                        case PT_INT:    res = s->set_int(name, v.ivalue);       break;
-                        case PT_FLOAT:  res = s->set_float(name, v.fvalue);     break;
-                        case PT_STRING: res = s->set_string(name, &v.svalue);   break;
+                        case PT_BOOL:   res = s->set_bool(prop->name, v.bvalue);    break;
+                        case PT_INT:    res = s->set_int(prop->name, v.ivalue);     break;
+                        case PT_FLOAT:  res = s->set_float(prop->name, v.fvalue);   break;
+                        case PT_STRING: res = s->set_string(prop->name, &v.svalue); break;
                         default:        res = STATUS_OK;
                     }
                     s->set_override(over);

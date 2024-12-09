@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 нояб. 2020 г.
@@ -30,6 +30,7 @@ namespace lsp
     {
         StyleSheet::style_t::style_t()
         {
+            order_gen       = 0;
         }
 
         StyleSheet::style_t::~style_t()
@@ -44,13 +45,13 @@ namespace lsp
             parents.flush();
 
             // Destroy properties
-            lltl::parray<LSPString> vp;
+            lltl::parray<property_t> vp;
             properties.values(&vp);
             properties.flush();
 
             for (size_t i=0, n=vp.size(); i<n; ++i)
             {
-                LSPString *p = vp.uget(i);
+                property_t *p = vp.uget(i);
                 if (p != NULL)
                     delete p;
             }
@@ -914,18 +915,30 @@ namespace lsp
                         }
 
                         // Create property
-                        LSPString **dst     = style->properties.create(name);
+                        property_t **dst    = style->properties.create(name);
                         if (dst == NULL)
                         {
                             sError.fmt_utf8("Could not register property '%s' for style '%s'", name->get_utf8(), style->name.get_utf8());
                             return STATUS_NO_MEM;
                         }
 
-                        if ((*dst = value.clone()) == NULL)
+                        property_t *prop = new property_t;
+                        if (prop == NULL)
                         {
-                            sError.fmt_utf8("Could not register property '%s' for style '%s'", name->get_utf8(), style->name.get_utf8());
+                            sError.fmt_utf8("Could not allocate property '%s' for style '%s'", name->get_utf8(), style->name.get_utf8());
                             return STATUS_NO_MEM;
                         }
+                        lsp_finally {
+                            if (prop != NULL)
+                                delete prop;
+                        };
+                        prop->order     = style->order_gen++;
+                        if (!prop->value.set(&value))
+                        {
+                            sError.fmt_utf8("Could not copy value of property '%s' for style '%s'", name->get_utf8(), style->name.get_utf8());
+                            return STATUS_NO_MEM;
+                        }
+                        *dst            = release_ptr(prop);
 
                         return res;
                     }
@@ -1228,11 +1241,11 @@ namespace lsp
             style_t *s = (style != NULL) ? vStyles.get(style) : pRoot;
             if (s == NULL)
                 return STATUS_NOT_FOUND;
-            LSPString *value = s->properties.get(property);
-            if (value == NULL)
+            property_t *prop = s->properties.get(property);
+            if (prop == NULL)
                 return STATUS_NOT_FOUND;
 
-            return (dst->set(value)) ? STATUS_OK : STATUS_NO_MEM;
+            return (dst->set(&prop->value)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
         ssize_t StyleSheet::get_property(const char *style, const char *property, LSPString *dst) const
@@ -1443,8 +1456,9 @@ namespace lsp
 
             return STATUS_OK;
         }
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 
