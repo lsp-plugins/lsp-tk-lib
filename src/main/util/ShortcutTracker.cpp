@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/keyboard.h>
 
 namespace lsp
 {
@@ -37,25 +38,8 @@ namespace lsp
 
         bool ShortcutTracker::set_modifier(ws::code_t code, bool set)
         {
-            size_t modifier = 0;
-            switch (code)
-            {
-                case ws::WSK_CONTROL_L: modifier = KM_LCTRL; break;
-                case ws::WSK_CONTROL_R: modifier = KM_RCTRL; break;
-                case ws::WSK_ALT_L: modifier = KM_LALT; break;
-                case ws::WSK_ALT_R: modifier = KM_RALT; break;
-                case ws::WSK_SHIFT_L: modifier = KM_LSHIFT; break;
-                case ws::WSK_SHIFT_R: modifier = KM_RSHIFT; break;
-                case ws::WSK_META_L: modifier = KM_LMETA; break;
-                case ws::WSK_META_R: modifier = KM_RMETA; break;
-                case ws::WSK_SUPER_L: modifier = KM_LSUPER; break;
-                case ws::WSK_SUPER_R: modifier = KM_RSUPER; break;
-                case ws::WSK_HYPER_L: modifier = KM_LHYPER; break;
-                case ws::WSK_HYPER_R: modifier = KM_RHYPER; break;
-                default: break;
-            }
-
-            if (modifier == 0)
+            const size_t modifier = key_code_to_modifier(code);
+            if (modifier == KM_NONE)
                 return false;
 
             if (set)
