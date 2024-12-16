@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.27 ===
+
+
 === 1.0.26 ===
 * Removed internal key auto-repeat simulation for tk::ListBox.
 * Updated text clipping algorithm for tk::Button.
