@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -49,10 +49,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                ListBoxItem & operator = (const ListBoxItem &);
-                ListBoxItem(const ListBoxItem &);
-
             protected:
                 prop::String                sText;
                 prop::TextAdjust            sTextAdjust;
@@ -67,7 +63,12 @@ namespace lsp
 
             public:
                 explicit ListBoxItem(Display *dpy);
+                ListBoxItem(const ListBoxItem &) = delete;
+                ListBoxItem(ListBoxItem &&) = delete;
                 virtual ~ListBoxItem();
+
+                ListBoxItem & operator = (const ListBoxItem &) = delete;
+                ListBoxItem & operator = (ListBoxItem &&) = delete;
 
             public:
                 LSP_TK_PROPERTY(String,     text,                       &sText)

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -90,19 +90,9 @@ namespace lsp
 
         void ListBoxItem::property_changed(Property *prop)
         {
-            if (sText.is(prop))
+            if (prop->one_of(sText, sTextAdjust))
                 query_resize();
-            if (sTextAdjust.is(prop))
-                query_resize();
-            if (sBgSelectedColor.is(prop))
-                query_draw();
-            if (sBgHoverColor.is(prop))
-                query_draw();
-            if (sTextColor.is(prop))
-                query_draw();
-            if (sTextSelectedColor.is(prop))
-                query_draw();
-            if (sTextHoverColor.is(prop))
+            if (prop->one_of(sBgSelectedColor, sBgHoverColor, sTextColor, sTextSelectedColor, sTextHoverColor))
                 query_draw();
         }
     } /* namespace tk */

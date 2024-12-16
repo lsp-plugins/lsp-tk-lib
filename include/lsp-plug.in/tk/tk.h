@@ -124,6 +124,7 @@
 // System objects
 #include <lsp-plug.in/tk/sys/settings.h>
 #include <lsp-plug.in/tk/sys/Atoms.h>
+#include <lsp-plug.in/tk/sys/Shortcuts.h>
 #include <lsp-plug.in/tk/sys/Slot.h>
 #include <lsp-plug.in/tk/sys/SlotSet.h>
 #include <lsp-plug.in/tk/sys/Timer.h>
@@ -131,6 +132,7 @@
 
 // Utilitary objects
 #include <lsp-plug.in/tk/util/KeyboardHandler.h>
+#include <lsp-plug.in/tk/util/ShorcutTracker.h>
 #include <lsp-plug.in/tk/util/TextCursor.h>
 #include <lsp-plug.in/tk/util/TextDataSink.h>
 #include <lsp-plug.in/tk/util/TextDataSource.h>
@@ -160,6 +162,7 @@
 #include <lsp-plug.in/tk/widgets/simple/ScrollBar.h>
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/Switch.h>
+#include <lsp-plug.in/tk/widgets/simple/TabItem.h>
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
 
 // Container widgets
@@ -173,6 +176,7 @@
 #include <lsp-plug.in/tk/widgets/containers/MultiLabel.h>
 #include <lsp-plug.in/tk/widgets/containers/Tab.h>
 #include <lsp-plug.in/tk/widgets/containers/TabControl.h>
+#include <lsp-plug.in/tk/widgets/containers/TabGroup.h>
 
 // Compound widgets
 #include <lsp-plug.in/tk/widgets/compound/Menu.h>

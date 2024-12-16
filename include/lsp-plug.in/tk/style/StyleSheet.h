@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 нояб. 2020 г.
@@ -46,17 +46,21 @@ namespace lsp
         class StyleSheet
         {
             private:
-                StyleSheet & operator = (const StyleSheet &);
-                StyleSheet(const StyleSheet &);
-
                 friend class Schema;
 
             protected:
+                typedef struct property_t
+                {
+                    size_t                                  order;      // Property order
+                    LSPString                               value;      // Property value
+                } property_t;
+
                 typedef struct style_t
                 {
+                    size_t                                  order_gen;  // Property order generator
                     LSPString                               name;       // Name of style
                     lltl::parray<LSPString>                 parents;    // List of parents
-                    lltl::pphash<LSPString, LSPString>      properties; // properties
+                    lltl::pphash<LSPString, property_t>     properties; // properties
 
                     style_t();
                     ~style_t();
@@ -86,7 +90,12 @@ namespace lsp
 
             public:
                 explicit StyleSheet();
+                StyleSheet(const StyleSheet &) = delete;
+                StyleSheet(StyleSheet &&) = delete;
                 ~StyleSheet();
+
+                StyleSheet & operator = (const StyleSheet &) = delete;
+                StyleSheet & operator = (StyleSheet &&) = delete;
 
             protected:
                 status_t            parse_document(xml::PullParser *p);
@@ -145,8 +154,9 @@ namespace lsp
             public:
                 const LSPString    *error() const { return &sError;     }
         };
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

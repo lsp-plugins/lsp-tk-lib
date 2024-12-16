@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 12 июн. 2017 г.
@@ -27,9 +27,10 @@ namespace lsp
 {
     namespace tk
     {
-        Slot::Slot()
+        Slot::Slot(bool tracking)
         {
             nID         = 0;
+            bTracking   = tracking;
         }
 
         Slot::~Slot()
@@ -230,6 +231,13 @@ namespace lsp
             return enable_all(false, true);
         }
 
+        status_t Slot::track_result(status_t result) const
+        {
+            if (!bTracking)
+                return result;
+            return (result == STATUS_SKIP) ? STATUS_OK : result;
+        }
+
         status_t Slot::execute(Widget *sender, void *data)
         {
             // Make a copy of handlers first
@@ -246,7 +254,7 @@ namespace lsp
                 {
                     status_t result      = ptr->pHandler(sender, ptr->pPtr, data);
                     if (result != STATUS_OK)
-                        return (result == STATUS_SKIP) ? STATUS_OK : result;
+                        return track_result(result);
                 }
             }
 
@@ -259,12 +267,12 @@ namespace lsp
                 {
                     status_t result      = ptr->pHandler(sender, ptr->pPtr, data);
                     if (result != STATUS_OK)
-                        return result;
+                        return track_result(result);
                 }
             }
 
             return STATUS_OK;
         }
 
-    }
+    } /* namespace tk */
 } /* namespace lsp */

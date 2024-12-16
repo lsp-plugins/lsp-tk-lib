@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 9 нояб. 2022 г.
+ * Created on: 4 дек. 2024 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,8 +19,8 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LSP_PLUG_IN_TK_WIDGETS_CONTAINERS_TAB_H_
-#define LSP_PLUG_IN_TK_WIDGETS_CONTAINERS_TAB_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_SIMPLE_TABITEM_H_
+#define LSP_PLUG_IN_TK_WIDGETS_SIMPLE_TABITEM_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
@@ -33,8 +33,7 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(Tab, WidgetContainer)
-                prop::Layout                sLayout;                // Widget layout inside of the tab
+            LSP_TK_STYLE_DEF_BEGIN(TabItem, Widget)
                 prop::String                sText;                  // Heading tab text
                 prop::TextAdjust            sTextAdjust;            // Heading tab text adjustment
                 prop::TextLayout            sTextLayout;            // Heading tab text layout
@@ -54,7 +53,7 @@ namespace lsp
             LSP_TK_STYLE_DEF_END
         } /* namespace style */
 
-        class Tab: public WidgetContainer
+        class TabItem: public Widget
         {
             public:
                 static const w_class_t    metadata;
@@ -62,7 +61,6 @@ namespace lsp
             protected:
                 Widget                     *pWidget;
 
-                prop::Layout                sLayout;                // Widget layout inside of the tab
                 prop::String                sText;                  // Heading tab text
                 prop::TextAdjust            sTextAdjust;            // Heading tab text adjustment
                 prop::TextLayout            sTextLayout;            // Heading tab text layout
@@ -81,27 +79,20 @@ namespace lsp
                 prop::Integer               sBorderRadius;          // Border radius of the heading tab
 
             protected:
-                void                    do_destroy();
-
-            protected:
                 virtual void            property_changed(Property *prop) override;
-                virtual void            size_request(ws::size_limit_t *r) override;
-                virtual void            realize(const ws::rectangle_t *r) override;
 
             public:
-                explicit Tab(Display *dpy);
-                Tab(const Tab &) = delete;
-                Tab(Tab &&) = delete;
-                virtual ~Tab() override;
+                explicit TabItem(Display *dpy);
+                TabItem(const TabItem &) = delete;
+                TabItem(TabItem &&) = delete;
+                virtual ~TabItem() override;
 
-                Tab & operator = (const Tab &) = delete;
-                Tab & operator = (Tab &&) = delete;
+                TabItem & operator = (const TabItem &) = delete;
+                TabItem & operator = (TabItem &&) = delete;
 
                 virtual status_t            init() override;
-                virtual void                destroy() override;
 
             public:
-                LSP_TK_PROPERTY(Layout,             layout,                 &sLayout);
                 LSP_TK_PROPERTY(String,             text,                   &sText);
                 LSP_TK_PROPERTY(TextAdjust,         text_adjust,            &sTextAdjust);
                 LSP_TK_PROPERTY(TextLayout,         text_layout,            &sTextLayout);
@@ -118,18 +109,11 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              text_hover_color,       &sTextHoverColor);
                 LSP_TK_PROPERTY(Integer,            border_size,            &sBorderSize);
                 LSP_TK_PROPERTY(Integer,            border_radius,          &sBorderRadius);
-
-            public:
-                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
-
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
-
-                virtual status_t            add(Widget *widget) override;
-                virtual status_t            remove(Widget *widget) override;
         };
 
     } /* namespace tk */
 } /* namespace lsp */
 
 
-#endif /* LSP_PLUG_IN_TK_WIDGETS_CONTAINERS_TAB_H_ */
+
+#endif /* LSP_PLUG_IN_TK_WIDGETS_SIMPLE_TABITEM_H_ */

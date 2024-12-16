@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -77,6 +77,7 @@ namespace lsp
                 sLoopBorder.bind("loop.border", this);
                 sPlayBorder.bind("play.border", this);
                 sLineWidth.bind("line.width", this);
+                sMaxAmplitude.bind("amplitude.max", this);
                 sLineColor.bind("line.color", this);
                 sConstraints.bind("size.constraints", this);
                 sActive.bind("active", this);
@@ -118,6 +119,7 @@ namespace lsp
                 sLoopBorder.set(1);
                 sPlayBorder.set(2);
                 sLineWidth.set(1);
+                sMaxAmplitude.set(1.0f);
                 sLineColor.set("#ffffff");
                 sConstraints.set_all(-1);
                 sActive.set(false);
@@ -172,6 +174,7 @@ namespace lsp
             sLoopBorder(&sProperties),
             sPlayBorder(&sProperties),
             sLineWidth(&sProperties),
+            sMaxAmplitude(&sProperties),
             sLineColor(&sProperties),
             sConstraints(&sProperties),
             sActive(&sProperties),
@@ -279,6 +282,7 @@ namespace lsp
             sLoopBorder.bind("loop.border", &sStyle);
             sPlayBorder.bind("play.border", &sStyle);
             sLineWidth.bind("line.width", &sStyle);
+            sMaxAmplitude.bind("amplitude.max", &sStyle);
             sLineColor.bind("line.color", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sActive.bind("active", &sStyle);
@@ -331,7 +335,7 @@ namespace lsp
 
             if (sWaveBorder.is(prop))
                 query_resize();
-            if (prop->one_of(sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sPlayBorder, sLineWidth))
+            if (prop->one_of(sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sPlayBorder, sLineWidth, sMaxAmplitude))
                 query_draw();
 
             if (sLineColor.is(prop))
@@ -463,7 +467,7 @@ namespace lsp
             vVisible.swap(&channels);
         }
 
-        void AudioSample::draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples)
+        void AudioSample::draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float max_amplitude)
         {
             // Check limits
             if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
@@ -493,7 +497,7 @@ namespace lsp
             float border        = (sWaveBorder.get() > 0) ? lsp_max(1.0f, sWaveBorder.get() * scaling) : 0.0f;
             float dx            = lsp_max(1.0f, float(r->nWidth) / float(samples));
             float kx            = lsp_max(1.0f, float(samples) / float(r->nWidth));
-            float ky            = -0.5f * (r->nHeight - border);
+            float ky            = -0.5f * (r->nHeight - border) / max_amplitude;
             float sy            = r->nTop + r->nHeight * 0.5f;
 
             x[0]                = -1.0f;
@@ -678,7 +682,7 @@ namespace lsp
             s->line(wire, x, r->nTop, x, r->nTop + r->nHeight, border);
         }
 
-        void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down)
+        void AudioSample::draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down, float max_amplitude)
         {
             // Check limits
             if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
@@ -708,7 +712,7 @@ namespace lsp
             float border        = (sWaveBorder.get() > 0) ? lsp_max(1.0f, sWaveBorder.get() * scaling) : 0.0f;
             float dx            = lsp_max(1.0f, float(r->nWidth) / float(samples));
             float kx            = lsp_max(1.0f, float(samples) / float(r->nWidth));
-            float ky            = ((down) ? 1.0f : -1.0f) * (r->nHeight - border);
+            float ky            = ((down) ? 1.0f : -1.0f) * (r->nHeight - border) / max_amplitude;
             float sy            = (down) ? r->nTop : r->nTop + r->nHeight;
 
             x[0]                = -1.0f;
@@ -969,7 +973,7 @@ namespace lsp
                     for (size_t i=0; i<items; ++i)
                     {
                         AudioChannel *c     = vVisible.uget(i);
-                        draw_channel2(&xr, s, c, samples, i & 1);
+                        draw_channel2(&xr, s, c, samples, i & 1, sMaxAmplitude.get());
                         xr.nTop            += xr.nHeight;
                     }
 
@@ -1037,7 +1041,7 @@ namespace lsp
                     for (size_t i=0; i<items; ++i)
                     {
                         AudioChannel *c     = vVisible.uget(i);
-                        draw_channel1(&xr, s, c, samples);
+                        draw_channel1(&xr, s, c, samples, sMaxAmplitude.get());
                         xr.nTop            += xr.nHeight;
                     }
 

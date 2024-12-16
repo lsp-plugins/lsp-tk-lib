@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2020 г.
@@ -790,6 +790,14 @@ namespace lsp
             if (id < 0)
                 return -id;
 
+            Shortcut *scut = NULL;
+            if ((scut = shortcuts()->append(ws::WSK_ESCAPE, KM_NONE)) != NULL)
+                scut->slot()->bind(slot_on_dialog_escape, self());
+            if ((scut = shortcuts()->append(ws::WSK_RETURN, KM_NONE)) != NULL)
+                scut->slot()->bind(slot_on_dialog_return, self());
+            if ((scut = shortcuts()->append(ws::WSK_KEYPAD_ENTER, KM_NONE)) != NULL)
+                scut->slot()->bind(slot_on_dialog_return, self());
+
             // Bind properties
             sMode.bind("mode", &sStyle);
             sCustomAction.bind("custom.action", &sStyle);
@@ -1553,6 +1561,14 @@ namespace lsp
                 LSP_STATUS_ASSERT(pWConfirm->add("actions.confirm.no"));
                 pWConfirm->buttons()->get(0)->constraints()->set_min_width(96);
                 pWConfirm->buttons()->get(1)->constraints()->set_min_width(96);
+
+                Shortcut *scut = NULL;
+                if ((scut = pWConfirm->shortcuts()->append(ws::WSK_ESCAPE, KM_NONE)) != NULL)
+                    scut->slot()->bind(slot_on_confirm_escape, self());
+                if ((scut = pWConfirm->shortcuts()->append(ws::WSK_RETURN, KM_NONE)) != NULL)
+                    scut->slot()->bind(slot_on_confirm_return, self());
+                if ((scut = pWConfirm->shortcuts()->append(ws::WSK_KEYPAD_ENTER, KM_NONE)) != NULL)
+                    scut->slot()->bind(slot_on_confirm_return, self());
             }
 
             LSP_STATUS_ASSERT(pWConfirm->message()->set(&sConfirmMsg));
@@ -2522,6 +2538,15 @@ namespace lsp
 
                 LSP_STATUS_ASSERT(pWMessage->add("actions.ok"));
                 pWMessage->buttons()->get(0)->constraints()->set_min_width(96);
+
+                // Global message box event handling
+                Shortcut *scut = NULL;
+                if ((scut = pWMessage->shortcuts()->append(ws::WSK_ESCAPE, KM_NONE)) != NULL)
+                    scut->slot()->bind(slot_on_message_close, pWMessage->self());
+                if ((scut = pWMessage->shortcuts()->append(ws::WSK_RETURN, KM_NONE)) != NULL)
+                    scut->slot()->bind(slot_on_message_close, pWMessage->self());
+                if ((scut = pWMessage->shortcuts()->append(ws::WSK_KEYPAD_ENTER, KM_NONE)) != NULL)
+                    scut->slot()->bind(slot_on_message_close, pWMessage->self());
             }
             LSP_STATUS_ASSERT(pWMessage->title()->set(title));
             LSP_STATUS_ASSERT(pWMessage->heading()->set(heading));
@@ -2540,6 +2565,61 @@ namespace lsp
             pWMessage->show(this);
             return STATUS_OK;
         }
+
+        status_t FileDialog::slot_on_dialog_escape(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *self = widget_ptrcast<FileDialog>(ptr);
+            if (self == NULL)
+                return STATUS_OK;
+
+            lsp_trace("on_dialog_escape sender=%p", sender);
+
+            return self->on_dlg_cancel(data);
+        }
+
+        status_t FileDialog::slot_on_dialog_return(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *self = widget_ptrcast<FileDialog>(ptr);
+            if (self == NULL)
+                return STATUS_OK;
+
+            if ((sender == &self->sWFiles) || (sender == &self->sWPath))
+                return STATUS_OK;
+
+            lsp_trace("on_dialog_return sender=%p", sender);
+
+            return self->on_dlg_action(data, false);
+        }
+
+        status_t FileDialog::slot_on_message_close(Widget *sender, void *ptr, void *data)
+        {
+            MessageBox *mbox = widget_ptrcast<MessageBox>(ptr);
+            if (mbox == NULL)
+                return STATUS_OK;
+
+            mbox->hide();
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_confirm_escape(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *self = widget_ptrcast<FileDialog>(ptr);
+            if (self == NULL)
+                return STATUS_OK;
+
+            self->pWConfirm->hide();
+            return STATUS_OK;
+        }
+
+        status_t FileDialog::slot_on_confirm_return(Widget *sender, void *ptr, void *data)
+        {
+            FileDialog *self = widget_ptrcast<FileDialog>(ptr);
+            if (self == NULL)
+                return STATUS_OK;
+
+            return self->on_dlg_confirm(data);
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

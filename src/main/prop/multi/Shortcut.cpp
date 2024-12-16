@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 14 июн. 2020 г.
@@ -207,7 +207,7 @@ namespace lsp
         Shortcut::Shortcut(prop::Listener *listener):
             MultiProperty(vAtoms, P_COUNT, listener)
         {
-            nMod        = 0;
+            nMod        = KM_NONE;
             nKey        = ws::WSK_UNKNOWN;
         }
 
@@ -282,6 +282,31 @@ namespace lsp
             nMod    = mod;
             sync();
             return old;
+        }
+
+        bool Shortcut::equals(const Shortcut *scut) const
+        {
+            if (scut == NULL)
+                return (nKey == ws::WSK_UNKNOWN) && (nMod == KM_NONE);
+            return (nKey == scut->nKey) && (nMod == scut->nMod);
+        }
+
+        bool Shortcut::equals(const Shortcut &scut) const
+        {
+            return (nKey == scut.nKey) && (nMod == scut.nMod);
+        }
+
+        void Shortcut::set(const Shortcut *scut)
+        {
+            if (scut == NULL)
+                set(ws::WSK_UNKNOWN, KM_NONE);
+            else
+                set(scut->nKey, scut->nMod);
+        }
+
+        void Shortcut::set(const Shortcut &scut)
+        {
+            set(scut.nKey, scut.nMod);
         }
 
         void Shortcut::parse_value(const LSPString *s)
@@ -428,40 +453,52 @@ namespace lsp
             return res;
         }
 
-        bool Shortcut::check(ws::code_t key, size_t mod)
+        bool Shortcut::check_modifier(size_t mod, size_t check)
         {
-            if (nKey != key)
-                return false;
+            check &= 0x03;
+            switch (mod & 0x03)
+            {
+                case 0: return check == 0;
+                case 1: case 2: return check == mod;
+                case 3: return check != 0;
+                default: break;
+            }
 
-            size_t xmod = nMod;
+            return false;
+        }
+
+        bool Shortcut::check_modifiers(size_t mod, size_t check)
+        {
             for (size_t i=0; i<(sizeof(MOD_DESC) / sizeof(mod_desc_t)); ++i)
             {
-                size_t mask = mod & 3;
-                switch (xmod & 3)
-                {
-                    case 0:
-                        if (mask != 0)
-                            return false;
-                        break;
-                    case 1:
-                        if (mask != 1)
-                            return false;
-                        break;
-                    case 2:
-                        if (mask != 2)
-                            return false;
-                        break;
-                    case 3:
-                        if (mask == 0)
-                            return false;
-                        break;
-                }
+                if (!check_modifier(mod, check))
+                    return false;
 
                 mod  >>= 2;
-                xmod >>= 2;
+                check >>= 2;
             }
 
             return true;
+        }
+
+        bool Shortcut::match(ws::code_t key, size_t mod) const
+        {
+            if ((nKey != key) || (nKey == ws::WSK_UNKNOWN))
+                return false;
+
+            return check_modifiers(nMod, mod);
+        }
+
+        bool Shortcut::match(const Shortcut *scut) const
+        {
+            if (scut == NULL)
+                return false;
+            return match(scut->nKey, scut->nMod);
+        }
+
+        bool Shortcut::match(const Shortcut &scut) const
+        {
+            return match(scut.nKey, scut.nMod);
         }
 
         status_t Shortcut::format(LSPString *s)

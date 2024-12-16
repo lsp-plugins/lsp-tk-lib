@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 5 мая 2020 г.
@@ -140,6 +140,7 @@ namespace lsp
             KM_SUPER    = KM_LSUPER | KM_RSUPER,
             KM_HYPER    = KM_LHYPER | KM_RHYPER,
 
+            KM_NONE     = 0,
             KM_ALL      = KM_CTRL | KM_ALT | KM_SHIFT | KM_META | KM_SUPER | KM_HYPER
         };
 

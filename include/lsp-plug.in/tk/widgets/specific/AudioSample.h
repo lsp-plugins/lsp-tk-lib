@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -43,6 +43,7 @@ namespace lsp
                 prop::Integer           sLoopBorder;                // Loop border
                 prop::Integer           sPlayBorder;                // Play position border
                 prop::Integer           sLineWidth;                 // Line width
+                prop::Float             sMaxAmplitude;              // Maximum amplitude
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
                 prop::Boolean           sActive;                    // Active, allow button press
@@ -85,10 +86,6 @@ namespace lsp
 
                 static const size_t LABELS      = 5;
 
-            private:
-                AudioSample & operator = (const AudioSample &);
-                AudioSample(const AudioSample &);
-
             protected:
                 enum flags_t
                 {
@@ -118,6 +115,7 @@ namespace lsp
                 prop::Integer           sLoopBorder;                // Loop border
                 prop::Integer           sPlayBorder;                // Play position border
                 prop::Integer           sLineWidth;                 // Line width
+                prop::Float             sMaxAmplitude;              // Maximum amplitude
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
                 prop::Boolean           sActive;                    // Active, allow button press
@@ -169,9 +167,9 @@ namespace lsp
                 virtual void            hide_widget() override;
 
                 void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, range_t *range, size_t samples);
-                void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
+                void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float max_amplitude);
                 void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
-                void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down);
+                void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down, float max_amplitude);
                 void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, size_t samples, bool down);
                 void                    draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_main_text(ws::ISurface *s);
@@ -188,7 +186,12 @@ namespace lsp
 
             public:
                 explicit AudioSample(Display *dpy);
-                virtual ~AudioSample();
+                AudioSample(const AudioSample &) = delete;
+                AudioSample(AudioSample &&) = delete;
+                virtual ~AudioSample() override;
+
+                AudioSample & operator = (const AudioSample &) = delete;
+                AudioSample & operator = (AudioSample &&) = delete;
 
                 virtual status_t            init() override;
                 virtual void                destroy() override;
@@ -203,6 +206,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                loop_border,            &sLoopBorder)
                 LSP_TK_PROPERTY(Integer,                play_border,            &sPlayBorder)
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth)
+                LSP_TK_PROPERTY(Float,                  max_amplitude,          &sMaxAmplitude)
                 LSP_TK_PROPERTY(Color,                  line_color,             &sLineColor)
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints)
                 LSP_TK_PROPERTY(Boolean,                active,                 &sActive)
@@ -240,27 +244,18 @@ namespace lsp
 
             public:
                 virtual void                query_draw(size_t flags = REDRAW_SURFACE) override;
-
                 virtual void                draw(ws::ISurface *s) override;
-
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
-
                 virtual status_t            add(Widget *widget) override;
-
                 virtual status_t            remove(Widget *child) override;
-
                 virtual status_t            remove_all() override;
 
+            public:
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;
-
                 virtual status_t            on_mouse_up(const ws::event_t *e) override;
-
                 virtual status_t            on_mouse_move(const ws::event_t *e) override;
-
                 virtual status_t            on_before_popup(Menu *menu);
-
                 virtual status_t            on_popup(Menu *menu);
-
                 virtual status_t            on_submit();
         };
     } /* namespace tk */

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 13 окт. 2020 г.
@@ -209,6 +209,15 @@ namespace lsp
             if (pBtnStyle == NULL)
                 return STATUS_BAD_STATE;
 
+            // Event handling
+            Shortcut *scut = NULL;
+            if ((scut = shortcuts()->append(ws::WSK_ESCAPE, KM_NONE)) != NULL)
+                scut->slot()->bind(slot_on_dialog_escape, self());
+            if ((scut = shortcuts()->append(ws::WSK_RETURN, KM_NONE)) != NULL)
+                scut->slot()->bind(slot_on_dialog_return, self());
+            if ((scut = shortcuts()->append(ws::WSK_KEYPAD_ENTER, KM_NONE)) != NULL)
+                scut->slot()->bind(slot_on_dialog_return, self());
+
             // Bind
             sVSpacing.bind("spacing", pVBox);
             sHeadingVisibility.bind("visible", pHeadingStyle);
@@ -257,6 +266,17 @@ namespace lsp
 
             return STATUS_OK;
         }
+
+        status_t MessageBox::slot_on_dialog_escape(Widget *sender, void *ptr, void *data)
+        {
+            return STATUS_OK;
+        }
+
+        status_t MessageBox::slot_on_dialog_return(Widget *sender, void *ptr, void *data)
+        {
+            return STATUS_OK;
+        }
+
 
         void MessageBox::on_add_item(void *obj, Property *prop, void *w)
         {
@@ -376,6 +396,6 @@ namespace lsp
             vButtons.clear();
             return STATUS_OK;
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 

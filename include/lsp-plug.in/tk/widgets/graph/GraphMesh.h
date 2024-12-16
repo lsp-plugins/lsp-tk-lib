@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -51,9 +51,24 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                GraphMesh & operator = (const GraphMesh &);
-                GraphMesh(const GraphMesh &);
+            public:
+                enum coord_t
+                {
+                    COORD_X,
+                    COORD_Y,
+                    STROBE
+                };
+
+                /**
+                 * Waveform transformation function
+                 * @param dst destination buffer to store result
+                 * @param src source buffer to read result
+                 * @param count number of elements to process
+                 * @param coord coordinate type
+                 * @param data supplementary user data
+                 * @return true if modified data has been stored to destination buffer
+                 */
+                typedef bool transform_t(float *dst, const float *src, size_t count, coord_t coord, void *data);
 
             protected:
                 prop::Integer               sOrigin;        // Index of origin
@@ -66,6 +81,8 @@ namespace lsp
                 prop::Color                 sFillColor;     // Fill color
                 prop::GraphMeshData         sData;          // Graph mesh data
 
+                transform_t                *pTransform;     // Transform function
+                void                       *pTrData;        // Transform data
                 float                      *vBuffer;        // Temporary buffer
                 size_t                      nCapacity;      // Capacity of the temporary buffer
 
@@ -75,14 +92,22 @@ namespace lsp
                 size_t                      get_length(const float *v, size_t off, size_t count);
 
             protected:
-                virtual void                property_changed(Property *prop);
+                virtual void                property_changed(Property *prop) override;
 
             public:
                 explicit GraphMesh(Display *dpy);
-                virtual ~GraphMesh();
+                GraphMesh(const GraphMesh &) = delete;
+                GraphMesh(GraphMesh &&) = delete;
+                virtual ~GraphMesh() override;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                GraphMesh & operator = (const GraphMesh &) = delete;
+                GraphMesh & operator = (GraphMesh &&) = delete;
+
+                virtual status_t            init() override;
+                virtual void                destroy() override;
+
+            public:
+                void                        set_transform(transform_t *func, void *data = NULL);
 
             public:
                 LSP_TK_PROPERTY(Integer,            origin,                     &sOrigin)
@@ -96,10 +121,11 @@ namespace lsp
                 LSP_TK_PROPERTY(GraphMeshData,      data,                       &sData)
 
             public:
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
         };
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_GRAPH_GRAPHMESH_H_ */

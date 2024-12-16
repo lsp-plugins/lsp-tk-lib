@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -21,8 +21,9 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <lsp-plug.in/common/alloc.h>
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/dsp/dsp.h>
-#include <stdlib.h>
+#include <lsp-plug.in/stdlib/stdlib.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -70,6 +71,8 @@ namespace lsp
             sFillColor(&sProperties),
             sData(&sProperties)
         {
+            pTransform          = NULL;
+            pTrData             = NULL;
             vBuffer             = NULL;
             nCapacity           = 0;
 
@@ -176,6 +179,14 @@ namespace lsp
             return off - start;
         }
 
+        void GraphMesh::set_transform(transform_t *func, void *data)
+        {
+            pTransform      = func;
+            pTrData         = data;
+
+            query_draw();
+        }
+
         void GraphMesh::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             // Get graph
@@ -205,7 +216,9 @@ namespace lsp
             cv->origin(sOrigin.get(), &cx, &cy);
 
             // Ensure that we have enough buffer size
-            size_t cap_size     = align_size(sData.size() * 2, DEFAULT_ALIGN);
+            const size_t vec_size   = sData.size();
+            const size_t nbuf       = (pTransform != NULL) ? (sData.strobe() ? 4 : 3) : 2;
+            size_t cap_size         = align_size(vec_size * nbuf, DEFAULT_ALIGN);
             if (nCapacity < cap_size)
             {
                 float *buf          = static_cast<float *>(realloc(vBuffer, cap_size * sizeof(float)));
@@ -216,9 +229,9 @@ namespace lsp
             }
 
             // Initialize X and Y vectors
-            size_t vec_size     = sData.size();
             float *x_vec        = &vBuffer[0];
             float *y_vec        = &x_vec[vec_size];
+            float *tmp_vec      = (pTransform != NULL) ? &y_vec[vec_size] : NULL;
             const float *x_src  = sData.x();
             const float *y_src  = sData.y();
 
@@ -227,7 +240,14 @@ namespace lsp
 
             if (sData.strobe())
             {
+                // Get strobe and transform it if necessary
                 const float *s_src  = sData.s();
+                if (pTransform != NULL)
+                {
+                    float *s_vec        = &tmp_vec[vec_size];
+                    if (pTransform(s_vec, s_src, vec_size, STROBE, pTrData))
+                        s_src               = s_vec;
+                }
 
                 // Draw mesh divided into segments using strobes
                 size_t strobes      = lsp_max(sStrobes.get(), 0);
@@ -247,10 +267,23 @@ namespace lsp
                     dsp::fill(y_vec, cy, vec_size);
 
                     // Calculate coordinates for each dot
-                    if (!xaxis->apply(x_vec, y_vec, &x_src[off], length))
-                        return;
-                    if (!yaxis->apply(x_vec, y_vec, &y_src[off], length))
-                        return;
+                    if (tmp_vec)
+                    {
+                        const float *x_buf = (pTransform(tmp_vec, &x_src[off], length, COORD_X, pTrData)) ? tmp_vec : &x_src[off];
+                        if (!xaxis->apply(x_vec, y_vec, x_buf, length))
+                            return;
+
+                        const float *y_buf = (pTransform(tmp_vec, &y_src[off], length, COORD_Y, pTrData)) ? tmp_vec : &y_src[off];
+                        if (!yaxis->apply(x_vec, y_vec, y_buf, length))
+                            return;
+                    }
+                    else
+                    {
+                        if (!xaxis->apply(x_vec, y_vec, &x_src[off], length))
+                            return;
+                        if (!yaxis->apply(x_vec, y_vec, &y_src[off], length))
+                            return;
+                    }
 
                     // Draw part of mesh
                     line.copy(sColor);
@@ -276,10 +309,23 @@ namespace lsp
                 dsp::fill(y_vec, cy, vec_size);
 
                 // Calculate coordinates for each dot
-                if (!xaxis->apply(x_vec, y_vec, x_src, vec_size))
-                    return;
-                if (!yaxis->apply(x_vec, y_vec, y_src, vec_size))
-                    return;
+                if (tmp_vec)
+                {
+                    const float *x_buf = (pTransform(tmp_vec, x_src, vec_size, COORD_X, pTrData)) ? tmp_vec : x_src;
+                    if (!xaxis->apply(x_vec, y_vec, x_buf, vec_size))
+                        return;
+
+                    const float *y_buf = (pTransform(tmp_vec, y_src, vec_size, COORD_Y, pTrData)) ? tmp_vec : y_src;
+                    if (!yaxis->apply(x_vec, y_vec, y_buf, vec_size))
+                        return;
+                }
+                else
+                {
+                    if (!xaxis->apply(x_vec, y_vec, x_src, vec_size))
+                        return;
+                    if (!yaxis->apply(x_vec, y_vec, y_src, vec_size))
+                        return;
+                }
 
                 if (sFill.get())
                     s->draw_poly(fill, line, width, x_vec, y_vec, vec_size);
@@ -289,7 +335,7 @@ namespace lsp
 
             s->set_antialiasing(aa);
         }
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 

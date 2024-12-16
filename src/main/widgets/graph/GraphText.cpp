@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -21,6 +21,7 @@
 
 #include <lsp-plug.in/tk/tk.h>
 #include <private/tk/style/BuiltinStyle.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
 
 namespace lsp
 {
@@ -40,6 +41,9 @@ namespace lsp
                 sHAxis.bind("haxis", this);
                 sVAxis.bind("vaxis", this);
                 sOrigin.bind("origin", this);
+                sBg.bind("bg", this);
+                sBgRadius.bind("bg.radius", this);
+                sIPadding.bind("ipadding", this);
                 // Configure
                 sFont.set_size(10.0f);
                 sLayout.set(1.0f, 1.0f, 0.0f, 0.0f);
@@ -50,6 +54,9 @@ namespace lsp
                 sHAxis.set(0);
                 sVAxis.set(1);
                 sOrigin.set(0);
+                sBg.set(false);
+                sBgRadius.set(4);
+                sIPadding.set_all(2);
                 // Override
                 sPadding.set(2);
                 // Commit
@@ -73,7 +80,10 @@ namespace lsp
             sVValue(&sProperties),
             sHAxis(&sProperties),
             sVAxis(&sProperties),
-            sOrigin(&sProperties)
+            sOrigin(&sProperties),
+            sBg(&sProperties),
+            sBgRadius(&sProperties),
+            sIPadding(&sProperties)
         {
             pClass              = &metadata;
         }
@@ -101,6 +111,9 @@ namespace lsp
             sHAxis.bind("haxis", &sStyle);
             sVAxis.bind("vaxis", &sStyle);
             sOrigin.bind("origin", &sStyle);
+            sBg.bind("bg", &sStyle);
+            sBgRadius.bind("bg.radius", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
 
             return STATUS_OK;
         }
@@ -109,7 +122,8 @@ namespace lsp
         {
             GraphItem::property_changed(prop);
 
-            if (prop->one_of(sText, sFont, sColor, sLayout, sTextAdjust, sHValue, sVValue, sHAxis, sVAxis, sOrigin))
+            if (prop->one_of(sText, sFont, sColor, sLayout, sTextAdjust,
+                sHValue, sVValue, sHAxis, sVAxis, sOrigin, sBg, sBgRadius, sIPadding))
                 query_draw();
         }
 
@@ -238,48 +252,25 @@ namespace lsp
             r.nLeft        += (sLayout.halign() - 1.0f) * r.nWidth * 0.5f;
             r.nTop         -= (sLayout.valign() + 1.0f) * r.nHeight * 0.5f;
 
-//            lsp::Color tmp;
-//            tmp.set_rgb24(0x880000);
-//            s->fill_rect(tmp, SURFMASK_NONE, 0.0f, &r);
-//            tmp.set_rgb24(0xffff00);
-//            s->line(tmp, x-3, y-3, x+3, y+3, 1.0f);
-//            s->line(tmp, x-3, y+3, x+3, y-3, 1.0f);
-
             // Center point
             sPadding.enter(&r, scaling);
-            float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
-            float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
-            float dy        = (r.nHeight - tp.Height) * 0.5f;
-            ssize_t ty      = r.nTop + dy * valign - fp.Descent;
 
-            // Estimate text size
-            ssize_t last = 0, curr = 0, tail = 0, len = text.length();
-
-            while (curr < len)
+            if (sBg.get())
             {
-                // Get next line indexes
-                curr    = text.index_of(last, '\n');
-                if (curr < 0)
-                {
-                    curr        = len;
-                    tail        = len;
-                }
-                else
-                {
-                    tail        = curr;
-                    if ((tail > last) && (text.at(tail-1) == '\r'))
-                        --tail;
-                }
+                ws::rectangle_t bgr;
+                sIPadding.leave(&bgr, &r, scaling);
 
-                // Calculate text location
-                sFont.get_text_parameters(s, &tp, fscaling, &text, last, tail);
-                float dx    = (r.nWidth - tp.Width) * 0.5f;
-                ssize_t tx  = r.nLeft   + dx * halign - tp.XBearing;
-                ty         += fp.Height;
+//                lsp_trace("bgr.left = %d, bgr.top = %d", int(bgr.nLeft), int(bgr.nTop));
 
-                sFont.draw(s, font_color, tx, ty, fscaling, &text, last, tail);
-                last    = curr + 1;
+                const ssize_t radius  = lsp_max(sBgRadius.get(), 0);
+                const ssize_t pad     = floorf(radius * scaling * M_SQRT1_2);
+                s->fill_rect(*sBgColor.color(), SURFMASK_ALL_CORNER, radius,
+                    bgr.nLeft - pad, bgr.nTop - pad, bgr.nWidth + pad * 2, bgr.nHeight + pad * 2);
             }
+
+            draw_multiline_text(s,
+                &sFont, &r, font_color, &fp, &tp,
+                sTextLayout.halign(), sTextLayout.valign(), fscaling, &text);
         }
     } /* namespace tk */
 } /* namespace lsp */

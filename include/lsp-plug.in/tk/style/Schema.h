@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 мая 2020 г.
@@ -63,16 +63,19 @@ namespace lsp
          */
         class Schema
         {
-            private:
-                Schema & operator = (const Schema &);
-                Schema(const Schema &);
-
             protected:
                 enum flags_t
                 {
                     S_CONFIGURING   = 1 << 0,       // Schema is in configuration state
                     S_INITIALIZED   = 1 << 1,       // Schema is initialized
                 };
+
+                typedef struct raw_property_t
+                {
+                    const LSPString *name;
+                    const LSPString *value;
+                    ssize_t order;
+                } raw_property_t;
 
                 typedef struct property_value_t
                 {
@@ -103,6 +106,10 @@ namespace lsp
                 prop::Boolean                       sInvertMouseVScroll;
 
             protected:
+                static ssize_t      compare_properties_by_order(const raw_property_t *a, const raw_property_t *b);
+                static bool         make_raw_properties(StyleSheet::style_t *xs, lltl::darray<raw_property_t> *props);
+
+            protected:
                 status_t            create_builtin_style(IStyleFactory *init);
                 status_t            create_style(const LSPString *name);
                 status_t            create_missing_styles(const StyleSheet *sheet);
@@ -125,7 +132,12 @@ namespace lsp
 
             public:
                 explicit Schema(Atoms *atoms, Display *dpy);
+                Schema(const Schema &) = delete;
+                Schema(Schema &&) = delete;
                 virtual ~Schema();
+
+                Schema & operator = (const Schema &) = delete;
+                Schema & operator = (Schema &&) = delete;
 
                 /**
                  * Initialize schema with the specified list of styles

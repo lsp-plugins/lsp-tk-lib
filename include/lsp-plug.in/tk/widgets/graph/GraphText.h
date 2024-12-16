@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -45,6 +45,9 @@ namespace lsp
                 prop::Integer           sHAxis;
                 prop::Integer           sVAxis;
                 prop::Integer           sOrigin;
+                prop::Boolean           sBg;
+                prop::Integer           sBgRadius;
+                prop::Padding           sIPadding;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -65,6 +68,9 @@ namespace lsp
                 prop::Integer           sHAxis;
                 prop::Integer           sVAxis;
                 prop::Integer           sOrigin;
+                prop::Boolean           sBg;
+                prop::Integer           sBgRadius;
+                prop::Padding           sIPadding;
 
             protected:
                 virtual void                property_changed(Property *prop) override;
@@ -92,6 +98,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            haxis,              &sHAxis)
                 LSP_TK_PROPERTY(Integer,            vaxis,              &sVAxis)
                 LSP_TK_PROPERTY(Integer,            origin,             &sOrigin)
+                LSP_TK_PROPERTY(Boolean,            bg,                 &sBg)
+                LSP_TK_PROPERTY(Integer,            bg_radius,          &sBgRadius)
+                LSP_TK_PROPERTY(Padding,            ipadding,           &sIPadding)
 
             public:
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;

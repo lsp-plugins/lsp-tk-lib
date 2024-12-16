@@ -45,6 +45,7 @@ The full list of provided widgets:
   * MultiLabel - widget that allows to implement overlay of multiple labels on the same area.
   * ScrollArea - container that allows to package widget into limited rectangular space.
   * TabControl - container that allows to organize widgets as a set of tabs.
+  * TabGroup - container that behaves similar to ComboGroup but uses tabs insetad of combo box.
   * Window - window widget.
 * Dialogs:
   * FileDialog - widget for selecting files for load/save operations.

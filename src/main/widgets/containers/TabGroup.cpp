@@ -3,7 +3,7 @@
  *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 8 нояб. 2022 г.
+ * Created on: 3 дек. 2024 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -30,55 +30,17 @@ namespace lsp
     {
         namespace style
         {
-            LSP_TK_STYLE_IMPL_BEGIN(TabControl, WidgetContainer)
-                // Bind
-                sBorderColor.bind("border.color", this);
-                sHeadingColor.bind("heading.color", this);
-                sHeadingSpacingColor.bind("heading.spacing.color", this);
-                sHeadingGapColor.bind("heading.gap.color", this);
-                sBorderSize.bind("border.size", this);
-                sBorderRadius.bind("border.radius", this);
-                sTabSpacing.bind("tab.spacing", this);
-                sHeadingSpacing.bind("heading.spacing", this);
-                sHeadingGap.bind("heading.gap", this);
-                sHeadingGapBrightness.bind("heading.gap.brightness", this);
-                sEmbedding.bind("embed", this);
-                sHeading.bind("heading", this);
-                sSizeConstraints.bind("size.constraints", this);
-                sTabJoint.bind("tab.joint", this);
-                sHeadingFill.bind("heading.fill", this);
-                sHeadingSpacingFill.bind("heading.spacing.fill", this);
-                sAggregateSize.bind("size.aggregate", this);
-                sTabPointer.bind("tab.pointer", this);
-
-                // Configure
-                sBorderColor.set("#888888");
-                sHeadingColor.set("#cccccc");
-                sHeadingSpacingColor.set("#cccccc");
-                sHeadingGapColor.set("#cccccc");
-                sBorderSize.set(2);
-                sBorderRadius.set(10);
-                sTabSpacing.set(1);
-                sEmbedding.set(false);
-                sHeadingSpacing.set(-1);
-                sHeadingGap.set(-1);
-                sHeadingGapBrightness.set(1.0f);
-                sHeading.set(-1.0f, -1.0f, 0.0f, 0.0f);
-                sSizeConstraints.set_all(-1);
-                sTabJoint.set(true);
-                sHeadingFill.set(true);
-                sHeadingSpacingFill.set(true);
-                sAggregateSize.set(true);
+            LSP_TK_STYLE_IMPL_BEGIN(TabGroup, TabControl)
             LSP_TK_STYLE_IMPL_END
 
-            LSP_TK_BUILTIN_STYLE(TabControl, "TabControl", "root");
+            LSP_TK_BUILTIN_STYLE(TabGroup, "TabGroup", "TabControl");
         } /* namepsace style */
 
         //-----------------------------------------------------------------------------
-        // TabControl implementation
-        const w_class_t TabControl::metadata        = { "TabControl", &WidgetContainer::metadata };
+        // TabGroup implementation
+        const w_class_t TabGroup::metadata        = { "TabGroup", &WidgetContainer::metadata };
 
-        TabControl::TabControl(Display *dpy):
+        TabGroup::TabGroup(Display *dpy):
             WidgetContainer(dpy),
             sBorderColor(&sProperties),
             sHeadingColor(&sProperties),
@@ -96,10 +58,11 @@ namespace lsp
             sTabJoint(&sProperties),
             sHeadingFill(&sProperties),
             sHeadingSpacingFill(&sProperties),
-            sAggregateSize(&sProperties),
             sTabPointer(&sProperties),
+            vItems(&sProperties, &sIListener),
+            sSelected(&sProperties),
             vWidgets(&sProperties, &sIListener),
-            sSelected(&sProperties)
+            sActive(&sProperties)
         {
             sArea.nLeft         = 0;
             sArea.nTop          = 0;
@@ -141,13 +104,13 @@ namespace lsp
             pClass              = &metadata;
         }
 
-        TabControl::~TabControl()
+        TabGroup::~TabGroup()
         {
             nFlags     |= FINALIZED;
             do_destroy();
         }
 
-        status_t TabControl::init()
+        status_t TabGroup::init()
         {
             // Initialize widgets
             status_t result = WidgetContainer::init();
@@ -156,7 +119,7 @@ namespace lsp
 
             sIListener.bind_all(this, on_add_widget, on_remove_widget);
 
-            // Configure Window
+            // Configure Properties
             sBorderColor.bind("border.color", &sStyle);
             sHeadingColor.bind("heading.color", &sStyle);
             sHeadingSpacingColor.bind("heading.spacing.color", &sStyle);
@@ -172,7 +135,6 @@ namespace lsp
             sSizeConstraints.bind("size.constraints", &sStyle);
             sTabJoint.bind("tab.joint", &sStyle);
             sHeadingFill.bind("heading.fill", &sStyle);
-            sAggregateSize.bind("size.aggregate", &sStyle);
             sHeadingSpacingFill.bind("heading.spacing.fill", &sStyle);
             sTabPointer.bind("tab.pointer", &sStyle);
 
@@ -186,31 +148,23 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void TabControl::destroy()
+        void TabGroup::destroy()
         {
             nFlags     |= FINALIZED;
             do_destroy();
             WidgetContainer::destroy();
         }
 
-        void TabControl::do_destroy()
+        void TabGroup::do_destroy()
         {
-            for (size_t i=0, n=vWidgets.size(); i<n; ++i)
-            {
-                // Get widget
-                Widget *w = vWidgets.get(i);
-                if (w != NULL)
-                    unlink_widget(w);
-            }
-
-            // Cleanup collections
-            vWidgets.flush();
+            vItems.flush();
         }
 
-        void TabControl::property_changed(Property *prop)
+        void TabGroup::property_changed(Property *prop)
         {
             WidgetContainer::property_changed(prop);
 
+            // Self properties
             if (prop->one_of(sBorderColor, sHeadingColor, sHeadingSpacingColor, sHeadingGapColor, sHeadingGapBrightness))
                 query_draw();
             if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing, sHeadingSpacing, sHeadingGap))
@@ -219,13 +173,11 @@ namespace lsp
                 query_resize();
             if (prop->one_of(sTabJoint, sHeadingFill, sHeadingSpacingFill))
                 query_draw();
-            if (vWidgets.is(prop))
-                query_resize();
-            if (sSelected.is(prop))
+            if (prop->one_of(vWidgets, vItems, sActive, sSelected))
                 query_resize();
         }
 
-        void TabControl::allocate_tabs(size_t *max_tab_border, ws::rectangle_t *area, lltl::darray<tab_t> *tabs)
+        void TabGroup::allocate_tabs(size_t *max_tab_border, ws::rectangle_t *area, lltl::darray<tab_t> *tabs)
         {
             float scaling           = lsp_max(0.0f, sScaling.get());
             float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
@@ -244,9 +196,9 @@ namespace lsp
             size_t max_b            = 0;
 
             // Step 1: allocate tabs
-            for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                tk::Tab *w = vWidgets.get(i);
+                tk::TabItem *w          = vItems.get(i);
                 if ((w == NULL) || (!w->is_visible_child_of(this)))
                     continue;
 
@@ -301,7 +253,7 @@ namespace lsp
             *max_tab_border         = max_b;
         }
 
-        void TabControl::size_request(ws::size_limit_t *r)
+        void TabGroup::size_request(ws::size_limit_t *r)
         {
             ws::rectangle_t tab_area, w_area;
             size_t max_tab_border;
@@ -331,35 +283,14 @@ namespace lsp
             w_area.nHeight          = radius * 2;
 
             // Estimate the size of the area for the widget
-            if (sAggregateSize.get())
+            tk::Widget *w           = current_widget();
+            if (w != NULL)
             {
-                // Compute the aggregate size for all tabs
-                for (size_t i=0, n=vWidgets.size(); i<n; ++i)
-                {
-                    tk::Tab *w = vWidgets.get(i);
-                    if ((w != NULL) && (w->is_visible_child_of(this)))
-                    {
-                        w->get_padded_size_limits(r);
-
-                        if (r->nMinWidth > 0)
-                            w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
-                        if (r->nMinHeight > 0)
-                            w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
-                    }
-                }
-            }
-            else
-            {
-                // Compute the size for currently selected tab
-                tk::Tab *w  = current_tab();
-                if (w != NULL)
-                {
-                    w->get_padded_size_limits(r);
-                    if (r->nMinWidth > 0)
-                        w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
-                    if (r->nMinHeight > 0)
-                        w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
-                }
+                w->get_padded_size_limits(r);
+                if (r->nMinWidth > 0)
+                    w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
+                if (r->nMinHeight > 0)
+                    w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
             }
 
             // Write the actual estimated values
@@ -374,7 +305,7 @@ namespace lsp
             sSizeConstraints.apply(r, scaling);
         }
 
-        void TabControl::realize(const ws::rectangle_t *r)
+        void TabGroup::realize(const ws::rectangle_t *r)
         {
             WidgetContainer::realize(r);
 
@@ -454,17 +385,19 @@ namespace lsp
             padding.nBottom         = (sEmbedding.bottom()) ? border : xborder;
 
             // Realize child widget
-            tk::Tab *w  = current_tab();
-            Padding::enter(&sArea, &sBounds, &padding);
-
-            if ((w != NULL) && (w->is_visible_child_of(this)))
-                w->realize_widget(&sArea);
+            tk::Widget *w           = current_widget();
+            if (w != NULL)
+            {
+                Padding::enter(&sArea, &sBounds, &padding);
+                if (w->is_visible_child_of(this))
+                    w->realize_widget(&sArea);
+            }
 
             // Commit allocation parameters
             vVisible.swap(&tabs);
         }
 
-        void TabControl::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
+        void TabGroup::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             if (nFlags & REDRAW_SURFACE)
                 force = true;
@@ -480,23 +413,23 @@ namespace lsp
             float bright            = lsp_max(0.0f, sBrightness.get());
             bool top_align          = sHeading.valign() <= 0.0f;
             bool bg                 = false;
-            tk::Tab *ct             = current_tab();
 
             // Set anti-aliasing
             bool aa                 = s->set_antialiasing(false);
             lsp_finally { s->set_antialiasing(aa); };
 
             // Draw background if child is invisible or not present
-            if ((ct != NULL) && (ct->is_visible_child_of(this)))
+            tk::Widget *w           = current_widget();
+            if ((w != NULL) && (w->is_visible_child_of(this)))
             {
-                ct->get_rectangle(&xr);
+                w->get_rectangle(&xr);
 
                 // Draw the nested widget
-                if ((force) || (ct->redraw_pending()))
+                if ((force) || (w->redraw_pending()))
                 {
                     if (Size::intersection(&xr, &sArea))
-                        ct->render(s, &xr, force);
-                    ct->commit_redraw();
+                        w->render(s, &xr, force);
+                    w->commit_redraw();
                 }
 
                 if (force)
@@ -507,7 +440,7 @@ namespace lsp
                         s->clip_begin(area);
                         lsp_finally { s->clip_end(); };
 
-                        ct->get_actual_bg_color(color);
+                        w->get_actual_bg_color(color);
                         s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                     }
                 }
@@ -565,12 +498,13 @@ namespace lsp
             }
 
             // Draw tabs
+            tk::TabItem *ct         = current_tab();
             if (Size::overlap(area, &sTabArea))
             {
                 for (size_t i=0, n=vVisible.size(); i<n; ++i)
                 {
                     tab_t *tab              = vVisible.uget(i);
-                    tk::Tab *w              = tab->widget;
+                    tk::TabItem *w      = tab->widget;
                     tab_mode_t mode         = (w == ct) ? TM_SELECTED :
                                               (w == pEventTab) ? TM_HOVER :
                                               TM_NORMAL;
@@ -619,10 +553,10 @@ namespace lsp
             }
         }
 
-        void TabControl::draw_tab(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area)
+        void TabGroup::draw_tab(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area)
         {
             // Compute parameters
-            tk::Tab *w              = tab->widget;
+            tk::TabItem *w          = tab->widget;
             lsp::Color color;
             ws::rectangle_t clip, r;
             ws::font_parameters_t fp;
@@ -769,7 +703,7 @@ namespace lsp
             }
         }
 
-        const lsp::Color *TabControl::select_color(tab_mode_t mode, const tk::Color *normal, const tk::Color * selected, const tk::Color *hover)
+        const lsp::Color *TabGroup::select_color(tab_mode_t mode, const tk::Color *normal, const tk::Color * selected, const tk::Color *hover)
         {
             switch (mode)
             {
@@ -782,50 +716,73 @@ namespace lsp
             return normal->color();
         }
 
-        status_t TabControl::add(Widget *child)
+        status_t TabGroup::add(Widget *child)
         {
-            Tab *tab = widget_cast<Tab>(child);
-            if (tab == NULL)
-                return STATUS_BAD_TYPE;
-
-            return vWidgets.add(tab);
+            return vWidgets.add(child);
         }
 
-        status_t TabControl::remove(Widget *child)
+        status_t TabGroup::remove(Widget *child)
         {
-            Tab *tab = widget_cast<Tab>(child);
-            if (tab == NULL)
-                return STATUS_BAD_TYPE;
-
-            return vWidgets.premove(tab);
+            return vWidgets.premove(child);
         }
 
-        status_t TabControl::remove_all()
+        status_t TabGroup::remove_all()
         {
             vWidgets.clear();
             return STATUS_OK;
         }
 
-        status_t TabControl::on_change()
+        status_t TabGroup::add_item(TabItem *child)
+        {
+            return vItems.add(child);
+        }
+
+        status_t TabGroup::remove_item(TabItem *child)
+        {
+            TabItem *item = widget_cast<TabItem>(child);
+            if (item == NULL)
+                return STATUS_BAD_TYPE;
+
+            return vItems.premove(item);
+        }
+
+        status_t TabGroup::remove_all_items()
+        {
+            vItems.clear();
+            return STATUS_OK;
+        }
+
+        status_t TabGroup::on_change()
         {
             return STATUS_OK;
         }
 
-        status_t TabControl::on_submit()
+        status_t TabGroup::on_submit()
         {
             return STATUS_OK;
         }
 
-        tk::Tab *TabControl::current_tab()
+        tk::Widget *TabGroup::current_widget()
         {
-            tk::Tab *it     = sSelected.get();
-            if ((it != NULL) && (vWidgets.contains(it)) && (it->is_visible_child_of(this)))
+            tk::Widget *active  = sActive.get();
+            if ((active != NULL) && (vWidgets.contains(active)))
+                return active;
+
+            TabItem *it     = sSelected.get();
+            ssize_t index   = ((it != NULL) && (it->visibility()->get())) ? vItems.index_of(it) : 0;
+            return vWidgets.get(index);
+        }
+
+        tk::TabItem *TabGroup::current_tab()
+        {
+            tk::TabItem *it = sSelected.get();
+            if ((it != NULL) && (vItems.contains(it)) && (it->is_visible_child_of(this)))
                 return it;
 
             // Find first visible tab
-            for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+            for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                it = vWidgets.get(i);
+                it = vItems.get(i);
                 if ((it != NULL) && (it->is_visible_child_of(this)))
                 {
                     sSelected.set(it);
@@ -836,7 +793,7 @@ namespace lsp
             return NULL;
         }
 
-        tk::Tab *TabControl::find_tab(ssize_t x, ssize_t y)
+        tk::TabItem *TabGroup::find_tab(ssize_t x, ssize_t y)
         {
             // First simple test to match cursor the specific area
             if (!Position::inside(&sTabArea, x, y))
@@ -851,7 +808,7 @@ namespace lsp
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 tab_t *tab              = vVisible.uget(i);
-                tk::Tab *w              = tab->widget;
+                tk::TabItem *w      = tab->widget;
                 size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
 
                 if (Position::rminside(&tab->bounds, x, y, mask, tab_radius))
@@ -861,16 +818,16 @@ namespace lsp
             return NULL;
         }
 
-        bool TabControl::scroll_item(ssize_t increment)
+        bool TabGroup::scroll_item(ssize_t increment)
         {
-            tk::Tab *sel    = current_tab();
-            ssize_t count   = vWidgets.size();
+            tk::TabItem *sel    = current_tab();
+            ssize_t count           = vItems.size();
             if (increment == 0)
                 return false;
             increment      %= count;
 
             // Do the loop until we find another one tab to select
-            for (ssize_t i=vWidgets.index_of(sel); i<count; )
+            for (ssize_t i=vItems.index_of(sel); i<count; )
             {
                 i  += increment;
                 if (i < 0)
@@ -878,7 +835,7 @@ namespace lsp
                 else if (i >= count)
                     i -= count;
 
-                tk::Tab *it     = vWidgets.get(i);
+                tk::TabItem *it     = vItems.get(i);
                 if ((it != NULL) && (it->is_visible_child_of(this)))
                 {
                     if (sel == it)
@@ -892,7 +849,7 @@ namespace lsp
             return false;
         }
 
-        status_t TabControl::on_mouse_down(const ws::event_t *e)
+        status_t TabGroup::on_mouse_down(const ws::event_t *e)
         {
             if (nMBState == 0)
             {
@@ -905,13 +862,18 @@ namespace lsp
             return STATUS_OK;
         }
 
-        Widget *TabControl::find_widget(ssize_t x, ssize_t y)
+        Widget *TabGroup::find_widget(ssize_t x, ssize_t y)
         {
-            tk::Tab *tab    = current_tab();
-            return (tab != NULL) ? tab->find_widget(x, y) : NULL;
+            Widget *widget  = current_widget();
+            if (widget == NULL)
+                return NULL;
+            if ((widget->is_visible_child_of(this)) && (widget->inside(x, y)))
+                return widget;
+
+            return NULL;
         }
 
-        status_t TabControl::on_mouse_up(const ws::event_t *e)
+        status_t TabGroup::on_mouse_up(const ws::event_t *e)
         {
             size_t mask     = 1 << e->nCode;
             size_t prev     = nMBState;
@@ -921,7 +883,7 @@ namespace lsp
             {
                 if ((e->nCode == ws::MCB_LEFT) && (pEventTab != NULL))
                 {
-                    tk::Tab *found = find_tab(e->nLeft, e->nTop);
+                    tk::TabItem *found = find_tab(e->nLeft, e->nTop);
                     if ((found == pEventTab) && (sSelected.get() != found))
                     {
                         sSelected.set(found);
@@ -939,21 +901,21 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t TabControl::on_mouse_pointer(pointer_event_t *e)
+        status_t TabGroup::on_mouse_pointer(pointer_event_t *e)
         {
-            tk::Tab *tab = find_tab(e->nLeft, e->nTop);
+            tk::TabItem *tab = find_tab(e->nLeft, e->nTop);
             if (tab != NULL)
                 e->enPointer        = sTabPointer.get();
 
             return STATUS_OK;
         }
 
-        status_t TabControl::on_mouse_move(const ws::event_t *e)
+        status_t TabGroup::on_mouse_move(const ws::event_t *e)
         {
             if (nMBState != 0)
                 return STATUS_OK;
 
-            tk::Tab *tab = find_tab(e->nLeft, e->nTop);
+            tk::TabItem *tab = find_tab(e->nLeft, e->nTop);
             if (pEventTab != tab)
             {
                 pEventTab   = tab;
@@ -963,7 +925,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t TabControl::on_mouse_out(const ws::event_t *e)
+        status_t TabGroup::on_mouse_out(const ws::event_t *e)
         {
             if (nMBState != 0)
                 return STATUS_OK;
@@ -976,7 +938,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t TabControl::on_mouse_scroll(const ws::event_t *e)
+        status_t TabGroup::on_mouse_scroll(const ws::event_t *e)
         {
             if (nMBState != 0)
                 return STATUS_OK;
@@ -999,7 +961,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t TabControl::on_key_down(const ws::event_t *e)
+        status_t TabGroup::on_key_down(const ws::event_t *e)
         {
             switch (e->nCode)
             {
@@ -1022,33 +984,37 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void TabControl::on_add_widget(void *obj, Property *prop, void *w)
+        void TabGroup::on_add_widget(void *obj, Property *prop, void *w)
         {
             Widget *item = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
-            TabControl *_this = widget_ptrcast<TabControl>(obj);
-            if (_this == NULL)
+            TabGroup *self = widget_ptrcast<TabGroup>(obj);
+            if (self == NULL)
                 return;
 
-            item->set_parent(_this);
-            _this->query_resize();
+            item->set_parent(self);
+
+            self->vVisible.clear();
+            self->query_resize();
         }
 
-        void TabControl::on_remove_widget(void *obj, Property *prop, void *w)
+        void TabGroup::on_remove_widget(void *obj, Property *prop, void *w)
         {
             Widget *item = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
-            TabControl *self = widget_ptrcast<TabControl>(obj);
+            TabGroup *self = widget_ptrcast<TabGroup>(obj);
             if (self == NULL)
                 return;
 
             // Reset active widget if present
             if (self->sSelected.get() == item)
                 self->sSelected.set(NULL);
+            if (self->sActive.get() == item)
+                self->sActive.set(NULL);
             if (self->pEventTab == item)
                 self->pEventTab       = NULL;
 
@@ -1057,17 +1023,20 @@ namespace lsp
             self->query_resize();
         }
 
-        status_t TabControl::slot_on_change(Widget *sender, void *ptr, void *data)
+        status_t TabGroup::slot_on_change(Widget *sender, void *ptr, void *data)
         {
-            TabControl *_this = widget_ptrcast<TabControl>(ptr);
+            TabGroup *_this = widget_ptrcast<TabGroup>(ptr);
             return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
-        status_t TabControl::slot_on_submit(Widget *sender, void *ptr, void *data)
+        status_t TabGroup::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
-            TabControl *_this = widget_ptrcast<TabControl>(ptr);
+            TabGroup *_this = widget_ptrcast<TabGroup>(ptr);
             return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
         }
 
     } /* namespace tk */
 } /* namespace lsp */
+
+
+

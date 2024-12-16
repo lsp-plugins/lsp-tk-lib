@@ -2,6 +2,21 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.26 ===
+* Removed internal key auto-repeat simulation for tk::ListBox.
+* Updated text clipping algorithm for tk::Button.
+* Fixed bun in tk::ListBox widget which didn't allow to scroll the list box
+  when using keyboard keys.
+* Implemented TabGroup widget.
+* Implemented shortcut handling mechancs by tk::Window.
+* Small bugfix in LedMeterChannel related to header display.
+* Added maximum amplitude property to AudioChannel and AudioSample.
+* Added possibility to draw background around tk::GraphText widget.
+* Fixed stylesheets: keeping the order of properties same to the order in the XML
+  document when stylesheet is applied to styles.
+* Updated build scripts.
+* Updated module versions in dependencies.
+
 === 1.0.25 ===
 * Updated build scripts.
 * Updated module versions in dependencies.

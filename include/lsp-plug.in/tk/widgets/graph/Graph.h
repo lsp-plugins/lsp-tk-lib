@@ -142,6 +142,13 @@ namespace lsp
                 GraphAxis                  *axis(size_t index)          { return vAxis.get(index);      }
 
                 /**
+                 * Get index of specific axis
+                 * @param axis index of specific axis
+                 * @return index of specific axis
+                 */
+                ssize_t                     indexof_axis(const GraphAxis *axis) { return vAxis.index_of(axis);      }
+
+                /**
                  * Get basis by index, valid only at render time
                  *
                  * @param index index of the basis
@@ -156,6 +163,13 @@ namespace lsp
                  * @return origin or NULL
                  */
                 GraphOrigin                *origin(size_t index)        { return vOrigins.get(index);   }
+
+                /**
+                 * Get index of specific origin
+                 * @param axis index of specific origin
+                 * @return index of specific origin
+                 */
+                ssize_t                     indexof_origin(const GraphOrigin *origin) { return vOrigins.index_of(origin);       }
 
                 bool                        origin(size_t index, float *x, float *y);
                 bool                        origin(GraphOrigin *o, float *x, float *y);

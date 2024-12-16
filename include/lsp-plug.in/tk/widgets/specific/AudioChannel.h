@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -52,6 +52,7 @@ namespace lsp
                 prop::Integer           sLoopBorder;        // Loop border
                 prop::Integer           sPlayBorder;        // Playback position border
                 prop::Integer           sLineWidth;         // Line width
+                prop::Float             sMaxAmplitude;      // maximum amplitude that can be displayed
                 prop::Color             sColor;             // Color of the audio channel
                 prop::Color             sLineColor;         // Line color
                 prop::Color             sWaveBorderColor;   // Color of the wave border
@@ -79,8 +80,6 @@ namespace lsp
                 static const w_class_t    metadata;
 
             private:
-                AudioChannel & operator = (const AudioChannel &);
-                AudioChannel(const AudioChannel &);
                 friend class AudioSample;
 
             protected:
@@ -112,6 +111,7 @@ namespace lsp
                 prop::Integer           sLoopBorder;        // Loop border
                 prop::Integer           sPlayBorder;        // Playback position border
                 prop::Integer           sLineWidth;         // Line width
+                prop::Float             sMaxAmplitude;      // maximum amplitude that can be displayed
                 prop::Color             sColor;             // Color of the audio channel
                 prop::Color             sLineColor;         // Line color
                 prop::Color             sWaveBorderColor;   // Color of the wave border
@@ -132,14 +132,19 @@ namespace lsp
                 virtual void            size_request(ws::size_limit_t *r);
                 virtual void            property_changed(Property *prop);
 
-                void                    draw_samples(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
+                void                    draw_samples(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright, float max_amplitude);
                 void                    draw_fades(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
                 void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, range_t *range, size_t samples, float scaling, float bright);
                 void                    draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
 
             public:
                 explicit AudioChannel(Display *dpy);
+                AudioChannel(const AudioChannel &) = delete;
+                AudioChannel(AudioChannel &&) = delete;
                 virtual ~AudioChannel();
+
+                AudioChannel & operator = (const AudioChannel &) = delete;
+                AudioChannel & operator = (AudioChannel &) = delete;
 
                 virtual status_t        init();
 
@@ -161,6 +166,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                fade_out_border,        &sFadeOutBorder);
                 LSP_TK_PROPERTY(Integer,                stretch_border,         &sStretchBorder);
                 LSP_TK_PROPERTY(Integer,                line_width,             &sLineWidth);
+                LSP_TK_PROPERTY(Float,                  max_amplitude,          &sMaxAmplitude);
                 LSP_TK_PROPERTY(Color,                  color,                  &sColor);
                 LSP_TK_PROPERTY(Color,                  wave_border_color,      &sWaveBorderColor);
                 LSP_TK_PROPERTY(Color,                  head_cut_color,         &sHeadCutColor);
@@ -180,7 +186,7 @@ namespace lsp
             public:
                 virtual void            draw(ws::ISurface *s);
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_AUDIOCHANNEL_H_ */

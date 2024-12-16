@@ -666,26 +666,25 @@ namespace lsp
             sText.format(&text);
             sTextAdjust.apply(&text);
 
-            if ((text.length() > 0) && (!sTextClip.get()))
-            {
-                // Form the estimation parameters
-                estimation_t e;
-                e.scaling       = scaling;
-                e.fscaling      = lsp_max(0.0f, e.scaling * sFontScaling.get());
-                e.min_width     = 0;
-                e.min_height    = 0;
-                sFont.get_parameters(pDisplay, e.fscaling, &e.fp);
+            // Form the estimation parameters
+            estimation_t e;
+            e.scaling       = scaling;
+            e.fscaling      = lsp_max(0.0f, e.scaling * sFontScaling.get());
+            e.min_width     = 0;
+            e.min_height    = 0;
+            sFont.get_parameters(pDisplay, e.fscaling, &e.fp);
 
-                // Estimate the size of the label
-                for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
-                    estimate_string_size(&e, it.get());
+            // Estimate the size of the label
+            for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
+                estimate_string_size(&e, it.get());
+
+            if ((text.length() > 0) && (!sTextClip.get()))
                 estimate_string_size(&e, &sText);
 
-                xr.nWidth          = lsp_max(xr.nWidth, e.min_width);
-                xr.nHeight         = lsp_max(xr.nHeight, e.min_height);
+            xr.nWidth          = lsp_max(xr.nWidth, e.min_width);
+            xr.nHeight         = lsp_max(xr.nHeight, e.min_height);
 
-                sTextPadding.add(&xr, scaling);
-            }
+            sTextPadding.add(&xr, scaling);
 
             float border        = sBorderSize.get() * scaling;
             border              = lsp_max(border, sBorderPressedSize.get() * scaling);

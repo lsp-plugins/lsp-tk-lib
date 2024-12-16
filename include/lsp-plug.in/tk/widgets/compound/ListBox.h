@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -124,7 +124,6 @@ namespace lsp
                 size_t                          nKeyScroll;     // Key scroll direction
                 ListBoxItem                    *pHoverItem;     // Hover item
 
-                Timer                           sKeyTimer;      // Key scroll timer
                 ScrollBar                       sHBar;
                 ScrollBar                       sVBar;
                 ws::rectangle_t                 sArea;
@@ -134,6 +133,7 @@ namespace lsp
                 prop::WidgetList<ListBoxItem>   vItems;
                 prop::WidgetSet<ListBoxItem>    vSelected;
                 prop::CollectionListener        sIListener;
+                prop::CollectionListener        sSListener;
 
                 prop::SizeConstraints           sSizeConstraints;
                 prop::Scrolling                 sHScrollMode;
@@ -173,7 +173,8 @@ namespace lsp
 
                 static void             on_add_item(void *obj, Property *prop, void *w);
                 static void             on_remove_item(void *obj, Property *prop, void *w);
-                static status_t         key_scroll_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg);
+                static void             on_select_item(void *obj, Property *prop, void *w);
+                static void             on_deselect_item(void *obj, Property *prop, void *w);
 
             protected:
                 virtual void            property_changed(Property *prop) override;

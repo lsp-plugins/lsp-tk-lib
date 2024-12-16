@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 окт. 2019 г.
@@ -571,12 +571,12 @@ namespace lsp
         #define LSP_TK_STYLE_DEF_BEGIN(Name, Parent) \
             class Name : public Parent \
             { \
-                private: \
-                    Name & operator = (Name &); \
-                    Name(const Name &); \
-                \
                 public: \
                     explicit Name(::lsp::tk::Schema *schema, const char *name, const char *parents); \
+                    Name(const Name &) = delete; \
+                    Name(Name &&) = delete; \
+                    Name & operator = (const Name &) = delete; \
+                    Name & operator = (Name &&) = delete; \
                 \
                 public: \
                     virtual ::lsp::status_t     init(); \
