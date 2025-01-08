@@ -808,7 +808,22 @@ namespace lsp
                 FWD_EVENT(ws::UIE_MOUSE_TRI_CLICK, SLOT_MOUSE_TRI_CLICK )
                 FWD_EVENT(ws::UIE_FOCUS_IN, SLOT_FOCUS_IN )
                 FWD_EVENT(ws::UIE_FOCUS_OUT, SLOT_FOCUS_OUT )
-                FWD_EVENT(ws::UIE_DRAG_REQUEST, SLOT_DRAG_REQUEST )
+
+                case ws::UIE_DRAG_REQUEST:
+                {
+                    // Call nested handler first
+                    Widget *handler = find_widget(e->nLeft, e->nTop);
+                    if ((handler != NULL) && (handler != this))
+                        handler->handle_event(e);
+
+                    // Handle the event if drag request is still pending
+                    if (pDisplay->drag_pending())
+                    {
+                        ws::event_t tmp = *e;
+                        sSlots.execute(SLOT_DRAG_REQUEST, this, &tmp);
+                    }
+                    break;
+                }
 
                 default:
                     break;

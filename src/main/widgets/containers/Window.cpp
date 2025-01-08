@@ -951,18 +951,6 @@ namespace lsp
                 }
 
                 //-------------------------------------------------------------
-                // Drag & Drop
-                case ws::UIE_DRAG_REQUEST:
-                {
-                    Widget *h   = find_widget(e->nLeft, e->nTop);
-                    if (h == this)
-                        WidgetContainer::handle_event(e);
-                    else if (h != NULL)
-                        h->handle_event(e);
-                    break;
-                }
-
-                //-------------------------------------------------------------
                 // Focus events
                 case ws::UIE_FOCUS_OUT:
                 {

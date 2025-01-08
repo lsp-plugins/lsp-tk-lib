@@ -279,7 +279,14 @@ namespace lsp
                 status_t set_clipboard(size_t id, ws::IDataSource *src);
 
                 /**
-                 * Reject drag event
+                 * Check if drag request is still pending wihin the drag event processing.
+                 * @return true if drag event is currently processed and drag request was not accepted nor rejected.
+                 */
+                bool drag_pending();
+
+                /**
+                 * Force to reject drag event. This method should be called only if widget handles that
+                 * it receives the drag request with invalid data related to this widget.
                  * @return status of operation
                  */
                 status_t reject_drag();
@@ -292,6 +299,7 @@ namespace lsp
                  * @return status of operation
                  */
                 status_t accept_drag(ws::IDataSink *sink, ws::drag_t action, const ws::rectangle_t *r=NULL);
+
 
                 /**
                  * Get NULL-terminated list of provided MIME types for a drag

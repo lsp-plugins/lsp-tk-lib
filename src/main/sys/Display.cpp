@@ -429,6 +429,11 @@ namespace lsp
             return pDisplay->set_clipboard(id, src);
         }
 
+        bool Display::drag_pending()
+        {
+            return pDisplay->drag_pending();
+        }
+
         status_t Display::reject_drag()
         {
             return pDisplay->reject_drag();
