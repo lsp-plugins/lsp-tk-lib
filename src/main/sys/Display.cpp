@@ -293,11 +293,6 @@ namespace lsp
                 pDisplay->quit_main();
         }
 
-        ws::ISurface *Display::create_surface(size_t width, size_t height)
-        {
-            return (pDisplay != NULL) ? pDisplay->create_surface(width, height) : NULL;
-        }
-
         void Display::sync()
         {
             if (pDisplay != NULL)

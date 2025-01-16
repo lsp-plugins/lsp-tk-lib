@@ -325,14 +325,6 @@ namespace lsp
                  */
                 inline status_t get_pointer_location(size_t *screen, ssize_t *left, ssize_t *top) { return pDisplay->get_pointer_location(screen, left, top); }
 
-                /** Create surface
-                 *
-                 * @param width surface width
-                 * @param height surface height
-                 * @return pointer to created surface or NULL
-                 */
-                ws::ISurface *create_surface(size_t width, size_t height);
-
                 /**
                  * Queue widget for removal. Because all widget operations are done in the
                  * main event loop, it's unsafe to destroy widget immediately in callback
