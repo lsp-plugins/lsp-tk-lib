@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 нояб. 2017 г.
@@ -579,8 +579,8 @@ namespace lsp
                     sborder.scale_lch_luminance(bright);
 
                     g = s->radial_gradient(0, sSize.nHeight, scaling, sSize.nHeight, delta);
-                    g->add_color(0.0, sborder);
-                    g->add_color(1.0, 0.5 * sborder.red(), 0.5 *  sborder.green(), 0.5 * sborder.blue());
+                    g->set_start(sborder);
+                    g->set_stop(0.5 * sborder.red(), 0.5 *  sborder.green(), 0.5 * sborder.blue());
                     s->fill_rect(g, SURFMASK_ALL_CORNER, sradius, &h);
                     delete g;
 
@@ -655,9 +655,9 @@ namespace lsp
                     // Create gradient
                     g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
                     bborder.lightness(1.0f);
-                    g->add_color(0.0, bborder.red(), bborder.green(), bborder.blue());
+                    g->set_start(bborder.red(), bborder.green(), bborder.blue());
                     bborder.lightness(xb * l);
-                    g->add_color(1.0, bborder.red(), bborder.green(), bborder.blue());
+                    g->set_stop(bborder.red(), bborder.green(), bborder.blue());
                     s->fill_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
                     delete g;
 
@@ -672,9 +672,9 @@ namespace lsp
                 // Draw button face
                 g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
                 button.lightness(1.0f);
-                g->add_color(0.0, button.red(), button.green(), button.blue());
+                g->set_start(button.red(), button.green(), button.blue());
                 button.lightness(xb);
-                g->add_color(1.0, button.red(), button.green(), button.blue());
+                g->set_stop(button.red(), button.green(), button.blue());
                 s->fill_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
                 delete g;
             }

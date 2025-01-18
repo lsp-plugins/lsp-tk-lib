@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -296,8 +296,8 @@ namespace lsp
                 ws::IGradient *gr   = s->radial_gradient(x, y, x, y, radius);
                 if (gr != NULL)
                 {
-                    gr->add_color(0.0f, gcol);
-                    gr->add_color(1.0f, gcol, 1.0f);
+                    gr->set_start(gcol);
+                    gr->set_stop(gcol, 1.0f);
                     s->fill_circle(gr, x, y, radius);
                     delete gr;
                 }

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 окт. 2020 г.
@@ -287,8 +287,8 @@ namespace lsp
                 hole.lightness(bright);
 
                 gr = s->radial_gradient(r->nLeft, r->nTop + r->nHeight, r->nLeft, r->nTop + r->nHeight, delta);
-                gr->add_color(0.0, hole);
-                gr->add_color(1.0, 0.5 * hole.red(), 0.5 *  hole.green(), 0.5 * hole.blue());
+                gr->set_start(hole);
+                gr->set_stop(0.5 * hole.red(), 0.5 *  hole.green(), 0.5 * hole.blue());
                 s->fill_rect(gr, SURFMASK_ALL_CORNER, hole_r, &h);
                 delete gr;
 
@@ -307,8 +307,8 @@ namespace lsp
             screw.scale_lch_luminance(0.5f);
 
             gr = s->radial_gradient(cx + (rad * M_RGOLD_RATIO), cy - (rad * M_RGOLD_RATIO), cx, cy, rad);
-            gr->add_color(0.0, 1.0, 1.0, 1.0);
-            gr->add_color(1.0, screw);
+            gr->set_start(1.0, 1.0, 1.0);
+            gr->set_stop(screw);
             s->fill_circle(gr, cx, cy, rad);
             delete gr;
 
@@ -317,8 +317,8 @@ namespace lsp
             float a_cos     = (rad - lwidth) * cosf(angle), a_sin = (rad - lwidth) * sinf(angle);
 
             gr = s->radial_gradient(cx - (rad * M_RGOLD_RATIO), cy + (rad * M_RGOLD_RATIO), cx, cy, rad);
-            gr->add_color(0.0, 1.0, 1.0, 1.0);
-            gr->add_color(1.0, screw);
+            gr->set_start(1.0, 1.0, 1.0);
+            gr->set_stop(screw);
             ws::surf_line_cap_t cap = s->set_line_cap(ws::SURFLCAP_ROUND);
             s->line(gr, cx + a_cos, cy + a_sin, cx - a_cos, cy - a_sin, lwidth);
             s->line(gr, cx - a_sin, cy + a_cos, cx + a_sin, cy - a_cos, lwidth);
@@ -391,9 +391,9 @@ namespace lsp
                             btn.nWidth);
 
                 logo.lightness(bright * 1.5f);
-                gr->add_color(0.0f, logo);
+                gr->set_start(logo);
                 logo.lightness(bright);
-                gr->add_color(1.0f, logo);
+                gr->set_stop(logo);
                 s->fill_rect(gr, SURFMASK_ALL_CORNER, chamfer - i + 1, btn.nLeft, btn.nTop, btn.nWidth, btn.nHeight);
                 delete gr;
 

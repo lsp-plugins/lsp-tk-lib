@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 июн. 2017 г.
@@ -474,29 +474,29 @@ namespace lsp
 
                 // Left
                 g   =  s->linear_gradient(h_p, c_y, 0, c_y);
-                g->add_color(0.0, lc, 0.5f);
-                g->add_color(1.0, color, 1.0f);
+                g->set_start(lc, 0.5f);
+                g->set_stop(color, 1.0f);
                 s->fill_triangle(g, 0, 0, c_x, c_y, 0, ye);
                 delete g;
 
                 // Right
                 g   =  s->linear_gradient(xe - h_p, c_y, xe, c_y);
-                g->add_color(0.0, lc, 0.5f);
-                g->add_color(1.0, color, 1.0f);
+                g->set_start(lc, 0.5f);
+                g->set_stop(color, 1.0f);
                 s->fill_triangle(g, xe, ye, c_x, c_y, xe, 0);
                 delete g;
 
                 // Top
                 g   =  s->linear_gradient(c_x, v_p, c_x, 0);
-                g->add_color(0.0, lc, 0.5f);
-                g->add_color(1.0, color, 1.0f);
+                g->set_start(lc, 0.5f);
+                g->set_stop(color, 1.0f);
                 s->fill_triangle(g, 0, 0, xe, 0, c_x, c_y);
                 delete g;
 
                 // Bottom
                 g   =  s->linear_gradient(c_x, ye - v_p, c_x, ye);
-                g->add_color(0.0, lc, 0.5f);
-                g->add_color(1.0, color, 1.0f);
+                g->set_start(lc, 0.5f);
+                g->set_stop(color, 1.0f);
                 s->fill_triangle(g, xe, ye, 0, ye, c_x, c_y);
                 delete g;
 
@@ -531,10 +531,10 @@ namespace lsp
                             g = create_gradient(s, r, pressed, delta);
                             xc.copy(color);
                             xc.scale_hsl_lightness(bright);
-                            g->add_color(0.0, xc.red(), xc.green(), xc.blue());
+                            g->set_start(xc.red(), xc.green(), xc.blue());
                             xc.copy(color);
                             xc.scale_hsl_lightness(xb * bright);
-                            g->add_color(1.0, xc.red(), xc.green(), xc.blue());
+                            g->set_stop(xc.red(), xc.green(), xc.blue());
                             s->fill_rect(g, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop, r.nWidth, r.nHeight);
                             delete g;
 
@@ -561,10 +561,10 @@ namespace lsp
                     g = create_gradient(s, r, pressed, delta);
                     xc.copy(color);
                     xc.scale_hsl_lightness(1.0f);
-                    g->add_color(0.0, xc.red(), xc.green(), xc.blue());
+                    g->set_start(xc.red(), xc.green(), xc.blue());
                     xc.copy(color);
                     xc.scale_hsl_lightness(xb);
-                    g->add_color(1.0, xc.red(), xc.green(), xc.blue());
+                    g->set_stop(xc.red(), xc.green(), xc.blue());
                     s->fill_rect(g, SURFMASK_NONE, 0.0f, &r);
                     delete g;
                 }

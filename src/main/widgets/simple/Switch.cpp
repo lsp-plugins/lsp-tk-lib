@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 июл. 2017 г.
@@ -197,8 +197,8 @@ namespace lsp
                         r.nLeft + r.nWidth, r.nTop,
                         delta * 2.0f);
 
-                    g->add_color(0.0, bc.red(), bc.green(), bc.blue());
-                    g->add_color(1.0, 0.5 * bc.red(), 0.5 *  bc.green(), 0.5 * bc.blue());
+                    g->set_start(bc.red(), bc.green(), bc.blue());
+                    g->set_stop(0.5 * bc.red(), 0.5 *  bc.green(), 0.5 * bc.blue());
                     s->wire_rect(g, SURFMASK_NONE, 0.0f, r.nLeft, r.nTop, r.nWidth-1, r.nHeight-1, 1.0f);
                     delete g;
 
@@ -217,8 +217,8 @@ namespace lsp
                     r.nLeft + r.nWidth, r.nTop,
                     delta * 2.0f);
 
-                g->add_color(0.0, bc.red(), bc.green(), bc.blue());
-                g->add_color(1.0, 0.5 * bc.red(), 0.5 *  bc.green(), 0.5 * bc.blue());
+                g->set_start(bc.red(), bc.green(), bc.blue());
+                g->set_stop(0.5 * bc.red(), 0.5 *  bc.green(), 0.5 * bc.blue());
                 s->fill_rect(g, SURFMASK_NONE, 0.0f, &r);
                 delete g;
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 июл. 2017 г.
@@ -598,8 +598,8 @@ namespace lsp
 
                     // Draw cap
                     ws::IGradient *gr = s->radial_gradient(c_x + xr, c_y - xr, c_x + xr, c_y - xr, xr * 4.0);
-                    gr->add_color(0.0f, scol);
-                    gr->add_color(1.0f, sdcol);
+                    gr->set_start(scol);
+                    gr->set_stop(sdcol);
                     s->fill_circle(gr, c_x, c_y, xr);
                     delete gr;
 

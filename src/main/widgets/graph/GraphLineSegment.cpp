@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 июн. 2023 г.
@@ -329,8 +329,8 @@ namespace lsp
                         if (g != NULL)
                         {
                             lsp_finally { delete g; };
-                            g->add_color(0.0f, bcol_l);
-                            g->add_color(1.0f, bcol_l, 1.0f);
+                            g->set_start(bcol_l);
+                            g->set_stop(bcol_l, 1.0f);
 
                             dot2f_t p3      = shift2f(x[1], y[1], perp, -(lborder + hw));
                             dot2f_t p4      = shift2f(x[1], y[1], perp, -hw);
@@ -348,8 +348,8 @@ namespace lsp
                         if (g != NULL)
                         {
                             lsp_finally { delete g; };
-                            g->add_color(0.0f, bcol_r);
-                            g->add_color(1.0f, bcol_r, 1.0f);
+                            g->set_start(bcol_r);
+                            g->set_stop(bcol_r, 1.0f);
 
                             dot2f_t p3      = shift2f(x[1], y[1], perp, (rborder + hw));
                             dot2f_t p4      = shift2f(x[1], y[1], perp, hw);

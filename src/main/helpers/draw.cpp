@@ -59,8 +59,8 @@ namespace lsp
                         size->nLeft, size->nTop + size->nHeight,
                         size->nLeft, size->nTop + size->nHeight,
                         pr * 1.5f);
-                    g->add_color(0.0f, l);
-                    g->add_color(1.0f, c);
+                    g->set_start(l);
+                    g->set_stop(c);
                     s->wire_rect(
                         g, mask, iradius - i,
                         size->nLeft + i + 0.5f, size->nTop + i + 0.5f,
@@ -109,8 +109,8 @@ namespace lsp
                 size_t pr   = sqrtf(float(width)*float(width) + float(height)*float(height));
 
                 ws::IGradient *gr = (*g)->radial_gradient(width, 0, width, 0, pr);
-                gr->add_color(0.0f, c, 0.85f);
-                gr->add_color(1.0f, c, 1.0f);
+                gr->set_start(c, 0.85f);
+                gr->set_stop(c, 1.0f);
 
                 bool aa = (*g)->set_antialiasing(true);
                 (*g)->fill_rect(gr, mask, radius, 0, 0, width, height);
@@ -176,8 +176,8 @@ namespace lsp
                         ssize_t xrr = lsp_max(0, radius - i);
 
                         gr = (*g)->radial_gradient(0, height, i, height, pr * 1.5f);
-                        gr->add_color(0.0f, l);
-                        gr->add_color(1.0f, bc);
+                        gr->set_start(l);
+                        gr->set_stop(bc);
                         (*g)->wire_rect(
                             gr, mask, xrr,
                             i+ 0.5f, i + 0.5f, width - (i << 1) - 1, height - (i << 1) - 1,
@@ -194,8 +194,8 @@ namespace lsp
 
                 // Draw glass effect
                 gr = (*g)->radial_gradient(width, 0, width, 0, pr);
-                gr->add_color(0.0f, gc, 0.85f);
-                gr->add_color(1.0f, gc, 1.0f);
+                gr->set_start(gc, 0.85f);
+                gr->set_stop(gc, 1.0f);
 
                 (*g)->fill_rect(
                     gr, mask, lsp_max(0, radius - thick),

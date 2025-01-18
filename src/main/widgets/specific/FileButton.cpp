@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 сент. 2020 г.
@@ -356,9 +356,9 @@ namespace lsp
                     else
                         gr = s->radial_gradient(b.nWidth, b.nTop, b.nWidth, b.nTop, b_rad * 3.0f);
 
-                    gr->add_color(0.0f, dcol);
+                    gr->set_start(dcol);
                     dcol.darken(0.9f);
-                    gr->add_color(1.0f, dcol);
+                    gr->set_stop(dcol);
 
                     init_points(xa, ya, b);
                     s->fill_poly(gr, xa, ya, NPOINTS);
