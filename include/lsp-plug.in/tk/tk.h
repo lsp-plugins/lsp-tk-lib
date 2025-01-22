@@ -191,7 +191,6 @@
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeter.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeterChannel.h>
-#include <lsp-plug.in/tk/widgets/specific/RackEars.h>
 
 // 3D rendering
 #include <lsp-plug.in/tk/widgets/3d/Area3D.h>

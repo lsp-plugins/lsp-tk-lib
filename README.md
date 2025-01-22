@@ -85,7 +85,6 @@ The full list of provided widgets:
   * Fraction - music fraction with numerator and denominator.
   * LedMeter - led level/peak meter with multiple channels.
   * LedMeterChannel - single-channel level/peak meter.
-  * RackEars - rack ears of the rack-looking device.
 
 ## Styling system
 
