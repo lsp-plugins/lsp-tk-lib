@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 22 авг. 2020 г.
@@ -123,36 +123,39 @@ namespace lsp
         }
 
         ws::ISurface * create_border_glass(
-            ws::ISurface **g, ws::ISurface *s,
+            ws::ISurface **g, ws::ISurface *src,
             const lsp::Color &gc, const lsp::Color &bc,
             size_t mask, ssize_t thick, ssize_t radius,
             size_t width, size_t height, bool flat
         )
         {
+            ws::ISurface *s = *g;
+
             // Check surface
-            if (*g != NULL)
+            if (s != NULL)
             {
-                if ((width != (*g)->width()) || (height != (*g)->height()))
+                if ((!s->valid()) || (width != s->width()) || (height != s->height()))
                 {
-                    (*g)->destroy();
-                    delete *g;
-                    (*g)        = NULL;
+                    s->destroy();
+                    delete s;
+                    s        = NULL;
                 }
             }
 
             // Create new surface if needed
-            if ((*g) != NULL)
-                return *g;
+            if (s != NULL)
+                return s;
 
-            *g          = (s != NULL) ? s->create(width, height) : NULL;
-            if ((*g) == NULL)
+            s          = (src != NULL) ? src->create(width, height) : NULL;
+            if (s == NULL)
                 return NULL;
+            *g          = s;
 
-            (*g)->begin();
+            s->begin();
             {
                 // Pre-calculate params
                 ws::IGradient *gr = NULL;
-                bool aa = (*g)->set_antialiasing(true);
+                bool aa = s->set_antialiasing(true);
                 float pr = sqrtf(float(width)*float(width) + float(height)*float(height));
 
                 // Draw border
@@ -160,7 +163,7 @@ namespace lsp
                 {
                     float hthick  = thick * 0.5f;
 
-                    (*g)->wire_rect(
+                    s->wire_rect(
                         bc, mask, lsp_max(0.0f, radius - hthick),
                         hthick, hthick, width - thick, height - thick,
                         thick
@@ -175,17 +178,17 @@ namespace lsp
                         l.blend(bc, bright);
                         ssize_t xrr = lsp_max(0, radius - i);
 
-                        gr = (*g)->radial_gradient(0, height, i, height, pr * 1.5f);
+                        gr = s->radial_gradient(0, height, i, height, pr * 1.5f);
                         gr->set_start(l);
                         gr->set_stop(bc);
-                        (*g)->wire_rect(
+                        s->wire_rect(
                             gr, mask, xrr,
                             i+ 0.5f, i + 0.5f, width - (i << 1) - 1, height - (i << 1) - 1,
                             1.0f);
                         delete gr;
                     }
 
-                    (*g)->wire_rect(
+                    s->wire_rect(
                         bc, mask, lsp_max(0, radius - thick),
                         thick + 0.5f, thick + 0.5f,
                         width - (thick << 1) - 1, height - (thick << 1) - 1,
@@ -193,20 +196,20 @@ namespace lsp
                 }
 
                 // Draw glass effect
-                gr = (*g)->radial_gradient(width, 0, width, 0, pr);
+                gr = s->radial_gradient(width, 0, width, 0, pr);
                 gr->set_start(gc, 0.85f);
                 gr->set_stop(gc, 1.0f);
 
-                (*g)->fill_rect(
+                s->fill_rect(
                     gr, mask, lsp_max(0, radius - thick),
                     thick, thick,
                     width - (thick << 1), height - (thick << 1));
-                (*g)->set_antialiasing(aa);
+                s->set_antialiasing(aa);
                 delete gr;
             }
-            (*g)->end();
+            s->end();
 
-            return *g;
+            return s;
         }
 
         void draw_border_back(
@@ -284,7 +287,8 @@ namespace lsp
                 last    = curr + 1;
             }
         }
-    }
-}
+
+    } /* namespace lsp */
+} /* namespace tk */
 
 
