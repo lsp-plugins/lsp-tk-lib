@@ -334,9 +334,9 @@ namespace lsp
 
                             dot2f_t p3      = shift2f(x[1], y[1], perp, -(lborder + hw));
                             dot2f_t p4      = shift2f(x[1], y[1], perp, -hw);
-                            float px[5]     = { p1.x, p2.x, p3.x, p4.x, p1.x };
-                            float py[5]     = { p1.y, p2.y, p3.y, p4.y, p1.y };
-                            s->fill_poly(g, px, py, 5);
+                            float px[4]     = { p1.x, p2.x, p3.x, p4.x };
+                            float py[4]     = { p1.y, p2.y, p3.y, p4.y };
+                            s->fill_poly(g, px, py, 4);
                         }
                     }
 
@@ -353,9 +353,9 @@ namespace lsp
 
                             dot2f_t p3      = shift2f(x[1], y[1], perp, (rborder + hw));
                             dot2f_t p4      = shift2f(x[1], y[1], perp, hw);
-                            float px[5]     = { p1.x, p2.x, p3.x, p4.x, p1.x };
-                            float py[5]     = { p1.y, p2.y, p3.y, p4.y, p1.y };
-                            s->fill_poly(g, px, py, 5);
+                            float px[4]     = { p1.x, p2.x, p3.x, p4.x };
+                            float py[4]     = { p1.y, p2.y, p3.y, p4.y };
+                            s->fill_poly(g, px, py, 4);
                         }
                     }
                 }
