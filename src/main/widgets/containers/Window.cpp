@@ -325,22 +325,12 @@ namespace lsp
 
             s->begin();
             {
-                ws::ISurface *bs = get_surface(s);
-                if (bs != NULL)
-                {
-                    bs->begin();
-                    {
-                        ws::rectangle_t xr;
-                        xr.nLeft    = 0;
-                        xr.nTop     = 0;
-                        xr.nWidth   = sSize.nWidth;
-                        xr.nHeight  = sSize.nHeight;
-                        render(bs, &xr, flags);
-                    }
-                    bs->end();
-
-                    s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
-                }
+                ws::rectangle_t xr;
+                xr.nLeft    = 0;
+                xr.nTop     = 0;
+                xr.nWidth   = sSize.nWidth;
+                xr.nHeight  = sSize.nHeight;
+                render(s, &xr, flags);
             }
             s->end();
             commit_redraw();

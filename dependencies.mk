@@ -1,6 +1,6 @@
 #
-# Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
-#           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+# Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+#           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
 #
 # This file is part of lsp-tk-lib
 #
@@ -34,12 +34,13 @@ TEST_DEPENDENCIES = \
 #------------------------------------------------------------------------------
 # Linux dependencies
 LINUX_DEPENDENCIES = \
-  LIBPTHREAD \
+  LIBCAIRO \
   LIBDL \
+  LIBFONTCONFIG \
+  LIBFREETYPE \
+  LIBPTHREAD \
   LIBRT \
   LIBSNDFILE \
-  LIBCAIRO \
-  LIBFREETYPE \
   LIBX11 \
   LIBXRANDR
 
@@ -56,13 +57,14 @@ endif
 #------------------------------------------------------------------------------
 # BSD dependencies
 BSD_DEPENDENCIES = \
-  LIBPTHREAD \
+  LIBCAIRO \
   LIBDL \
+  LIBFONTCONFIG \
+  LIBFREETYPE \
+  LIBICONV \
+  LIBPTHREAD \
   LIBRT \
   LIBSNDFILE \
-  LIBICONV \
-  LIBCAIRO \
-  LIBFREETYPE \
   LIBX11 \
   LIBXRANDR
 
