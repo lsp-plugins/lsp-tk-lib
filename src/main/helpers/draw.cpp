@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 22 авг. 2020 г.
@@ -26,10 +26,10 @@ namespace lsp
 {
     namespace tk
     {
-        void draw_border(ws::ISurface *s,
-                const lsp::Color &c, size_t mask, ssize_t thick, size_t iradius,
-                const ws::rectangle_t *size, bool flat
-        )
+        void draw_border(
+            ws::ISurface *s,
+            const lsp::Color & c, size_t mask, ssize_t thick, size_t iradius,
+            const ws::rectangle_t *size, bool flat)
         {
             // Draw border
             bool aa = s->set_antialiasing(true);
@@ -79,45 +79,81 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
-        ws::ISurface *create_glass(ws::ISurface **g, ws::ISurface *s,
-                const lsp::Color &c,
-                size_t mask, ssize_t radius, size_t width, size_t height
-        )
+        bool create_cached_surface(ws::ISurface **g, ws::ISurface *parent, size_t width, size_t height)
         {
+            bool redraw = false;
+
             // Check surface
-            if (*g != NULL)
+            ws::ISurface *s = *g;
+            lsp_finally { *g = s; };
+
+            if (s != NULL)
             {
-                if ((width != (*g)->width()) || (height != (*g)->height()))
+                // Check validity of the surface
+                if (!s->valid())
                 {
-                    (*g)->destroy();
-                    delete *g;
-                    (*g)        = NULL;
+                    // Surface is invalid, destroy it
+                    s->destroy();
+                    delete s;
+                    s           = NULL;
+                }
+                else if ((width != s->width()) || (height != s->height()))
+                {
+                    // Surface size changed, try to resize
+                    if (!s->resize(width, height))
+                    {
+                        // Failed to resize, destroy it
+                        s->destroy();
+                        delete s;
+                        s           = NULL;
+                    }
+
+                    // Mark surface as needs for redraw
+                    redraw      = true;
                 }
             }
 
             // Create new surface if needed
-            if ((*g) != NULL)
-                return *g;
+            if (s == NULL)
+            {
+                s           = (parent != NULL) ? parent->create(width, height) : NULL;
+                if (s == NULL)
+                    return false;
+                redraw      = true;
+            }
 
-            *g          = (s != NULL) ? s->create(width, height) : NULL;
-            if ((*g) == NULL)
-                return NULL;
+            return redraw;
+        }
 
-            (*g)->begin();
+        ws::ISurface *create_glass(
+            ws::ISurface **g, ws::ISurface *s,
+            const lsp::Color & c,
+            size_t mask, ssize_t radius, size_t width, size_t height)
+        {
+            // Create new surface if needed
+            bool redraw = create_cached_surface(g, s, width, height);
+            if ((s = *g) == NULL)
+                return s;
+
+            // Check if we need to redraw surface
+            if (!redraw)
+                return s;
+
+            s->begin();
             {
                 // Draw glass effect
                 size_t pr   = sqrtf(float(width)*float(width) + float(height)*float(height));
 
-                ws::IGradient *gr = (*g)->radial_gradient(width, 0, width, 0, pr);
+                ws::IGradient *gr = s->radial_gradient(width, 0, width, 0, pr);
                 gr->set_start(c, 0.85f);
                 gr->set_stop(c, 1.0f);
 
-                bool aa = (*g)->set_antialiasing(true);
-                (*g)->fill_rect(gr, mask, radius, 0, 0, width, height);
-                (*g)->set_antialiasing(aa);
+                bool aa = s->set_antialiasing(true);
+                s->fill_rect(gr, mask, radius, 0, 0, width, height);
+                s->set_antialiasing(aa);
                 delete gr;
             }
-            (*g)->end();
+            s->end();
 
             return *g;
         }
@@ -126,33 +162,22 @@ namespace lsp
             ws::ISurface **g, ws::ISurface *s,
             const lsp::Color &gc, const lsp::Color &bc,
             size_t mask, ssize_t thick, ssize_t radius,
-            size_t width, size_t height, bool flat
-        )
+            size_t width, size_t height, bool flat)
         {
-            // Check surface
-            if (*g != NULL)
-            {
-                if ((width != (*g)->width()) || (height != (*g)->height()))
-                {
-                    (*g)->destroy();
-                    delete *g;
-                    (*g)        = NULL;
-                }
-            }
-
             // Create new surface if needed
-            if ((*g) != NULL)
-                return *g;
+            bool redraw = create_cached_surface(g, s, width, height);
+            if ((s = *g) == NULL)
+                return s;
 
-            *g          = (s != NULL) ? s->create(width, height) : NULL;
-            if ((*g) == NULL)
-                return NULL;
+            // Check if we need to redraw surface
+            if (!redraw)
+                return s;
 
-            (*g)->begin();
+            s->begin();
             {
                 // Pre-calculate params
                 ws::IGradient *gr = NULL;
-                bool aa = (*g)->set_antialiasing(true);
+                bool aa = s->set_antialiasing(true);
                 float pr = sqrtf(float(width)*float(width) + float(height)*float(height));
 
                 // Draw border
@@ -160,7 +185,7 @@ namespace lsp
                 {
                     float hthick  = thick * 0.5f;
 
-                    (*g)->wire_rect(
+                    s->wire_rect(
                         bc, mask, lsp_max(0.0f, radius - hthick),
                         hthick, hthick, width - thick, height - thick,
                         thick
@@ -175,17 +200,17 @@ namespace lsp
                         l.blend(bc, bright);
                         ssize_t xrr = lsp_max(0, radius - i);
 
-                        gr = (*g)->radial_gradient(0, height, i, height, pr * 1.5f);
+                        gr = s->radial_gradient(0, height, i, height, pr * 1.5f);
                         gr->set_start(l);
                         gr->set_stop(bc);
-                        (*g)->wire_rect(
+                        s->wire_rect(
                             gr, mask, xrr,
                             i+ 0.5f, i + 0.5f, width - (i << 1) - 1, height - (i << 1) - 1,
                             1.0f);
                         delete gr;
                     }
 
-                    (*g)->wire_rect(
+                    s->wire_rect(
                         bc, mask, lsp_max(0, radius - thick),
                         thick + 0.5f, thick + 0.5f,
                         width - (thick << 1) - 1, height - (thick << 1) - 1,
@@ -193,20 +218,20 @@ namespace lsp
                 }
 
                 // Draw glass effect
-                gr = (*g)->radial_gradient(width, 0, width, 0, pr);
+                gr = s->radial_gradient(width, 0, width, 0, pr);
                 gr->set_start(gc, 0.85f);
                 gr->set_stop(gc, 1.0f);
 
-                (*g)->fill_rect(
+                s->fill_rect(
                     gr, mask, lsp_max(0, radius - thick),
                     thick, thick,
                     width - (thick << 1), height - (thick << 1));
-                (*g)->set_antialiasing(aa);
+                s->set_antialiasing(aa);
                 delete gr;
             }
-            (*g)->end();
+            s->end();
 
-            return *g;
+            return s;
         }
 
         void draw_border_back(
@@ -214,8 +239,7 @@ namespace lsp
             const lsp::Color &c, size_t mask,
             ssize_t thick, size_t radius,
             ssize_t left, ssize_t top,
-            ssize_t width, ssize_t height
-        )
+            ssize_t width, ssize_t height)
         {
             // Draw border
             bool aa = s->set_antialiasing(true);
@@ -230,8 +254,7 @@ namespace lsp
             ws::ISurface *s,
             const lsp::Color &c, size_t mask,
             ssize_t thick, size_t radius,
-            const ws::rectangle_t *size
-        )
+            const ws::rectangle_t *size)
         {
             draw_border_back(s, c, mask, thick, radius,
                     size->nLeft, size->nTop, size->nWidth, size->nHeight);
@@ -245,8 +268,7 @@ namespace lsp
             const ws::font_parameters_t *fp,
             const ws::text_parameters_t *tp,
             float halign, float valign, float fscaling,
-            const LSPString *text
-        )
+            const LSPString *text)
         {
             ws::text_parameters_t xtp;
             halign         += 1.0f;
@@ -284,7 +306,8 @@ namespace lsp
                 last    = curr + 1;
             }
         }
-    }
-}
+
+    } /* namespace lsp */
+} /* namespace tk */
 
 

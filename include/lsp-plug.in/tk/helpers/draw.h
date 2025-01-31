@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 22 авг. 2020 г.
@@ -39,9 +39,18 @@ namespace lsp
          */
 
         void draw_border(ws::ISurface *s,
-                const lsp::Color &c, size_t mask, ssize_t thick, size_t iradius,
-                const ws::rectangle_t *size, bool flat
-        );
+            const lsp::Color &c, size_t mask, ssize_t thick, size_t iradius,
+            const ws::rectangle_t *size, bool flat);
+
+        /**
+         * Create cached off-screen surface
+         * @param g pointer that holds pointer to the surface (may be updated)
+         * @param parent pointer to the parent surface
+         * @param width width of the surface
+         * @param height height of the surface
+         * @return true if surface needs to be redrawn (if it was created or resized)
+         */
+        bool create_cached_surface(ws::ISurface **g, ws::ISurface *parent, size_t width, size_t height);
 
         /** Create glass
          *
@@ -55,9 +64,8 @@ namespace lsp
          * @return pointer to the glass on succes or null on error
          */
         ws::ISurface *create_glass(ws::ISurface **g, ws::ISurface *s,
-                const lsp::Color &c,
-                size_t mask, ssize_t radius, size_t width, size_t height
-        );
+            const lsp::Color &c,
+            size_t mask, ssize_t radius, size_t width, size_t height);
 
         /** Create glass with border
          *
