@@ -79,33 +79,65 @@ namespace lsp
             s->set_antialiasing(aa);
         }
 
-        ws::ISurface *create_glass(
-            ws::ISurface **g, ws::ISurface *src,
-            const lsp::Color & c,
-            size_t mask, ssize_t radius, size_t width, size_t height)
+        bool create_cached_surface(ws::ISurface **g, ws::ISurface *parent, size_t width, size_t height)
         {
-            ws::ISurface *s = *g;
+            bool redraw = false;
 
             // Check surface
+            ws::ISurface *s = *g;
+            lsp_finally { *g = s; };
+
             if (s != NULL)
             {
-                if ((!s->valid()) || (width != s->width()) || (height != s->height()))
+                // Check validity of the surface
+                if (!s->valid())
                 {
+                    // Surface is invalid, destroy it
                     s->destroy();
                     delete s;
                     s           = NULL;
-                    *g          = s;
+                }
+                else if ((width != s->width()) || (height != s->height()))
+                {
+                    // Surface size changed, try to resize
+                    if (!s->resize(width, height))
+                    {
+                        // Failed to resize, destroy it
+                        s->destroy();
+                        delete s;
+                        s           = NULL;
+                    }
+
+                    // Mark surface as needs for redraw
+                    redraw      = true;
                 }
             }
 
             // Create new surface if needed
-            if (s != NULL)
-                return *g;
-
-            s           = (s != NULL) ? s->create(width, height) : NULL;
             if (s == NULL)
-                return NULL;
-            *g          = s;
+            {
+                s           = (parent != NULL) ? parent->create(width, height) : NULL;
+                if (s == NULL)
+                    return false;
+                redraw      = true;
+            }
+
+            return redraw;
+        }
+
+        ws::ISurface *create_glass(
+            ws::ISurface **g, ws::ISurface *s,
+            const lsp::Color & c,
+            size_t mask, ssize_t radius, size_t width, size_t height)
+        {
+            // Create new surface if needed
+            bool redraw = create_cached_surface(g, s, width, height);
+            if ((s = *g) == NULL)
+                return s;
+
+            // Check if we need to redraw surface
+            if (!redraw)
+                return s;
 
             s->begin();
             {
@@ -127,33 +159,19 @@ namespace lsp
         }
 
         ws::ISurface * create_border_glass(
-            ws::ISurface **g, ws::ISurface *src,
+            ws::ISurface **g, ws::ISurface *s,
             const lsp::Color &gc, const lsp::Color &bc,
             size_t mask, ssize_t thick, ssize_t radius,
             size_t width, size_t height, bool flat)
         {
-            ws::ISurface *s = *g;
-
-            // Check surface
-            if (s != NULL)
-            {
-                if ((!s->valid()) || (width != s->width()) || (height != s->height()))
-                {
-                    s->destroy();
-                    delete s;
-                    s           = NULL;
-                    *g          = s;
-                }
-            }
-
             // Create new surface if needed
-            if (s != NULL)
+            bool redraw = create_cached_surface(g, s, width, height);
+            if ((s = *g) == NULL)
                 return s;
 
-            s          = (src != NULL) ? src->create(width, height) : NULL;
-            if (s == NULL)
-                return NULL;
-            *g          = s;
+            // Check if we need to redraw surface
+            if (!redraw)
+                return s;
 
             s->begin();
             {

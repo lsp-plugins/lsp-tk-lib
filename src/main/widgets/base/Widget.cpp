@@ -20,7 +20,10 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+
 #include <lsp-plug.in/common/debug.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
+
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -630,41 +633,13 @@ namespace lsp
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s, ssize_t width, ssize_t height)
         {
-            // Check surface
-            if (pSurface != NULL)
-            {
-                if ((!pSurface->valid()) ||
-                    (width != ssize_t(pSurface->width())) ||
-                    (height != ssize_t(pSurface->height())))
-                {
-                    pSurface->destroy();
-                    delete pSurface;
-                    pSurface    = NULL;
-                }
-            }
-
             // Create new surface if needed
+            bool redraw = create_cached_surface(&pSurface, s, width, height);
             if (pSurface == NULL)
-            {
-                if (s == NULL)
-                    return NULL;
-
-                // Do not return surface if size is negative
-                if ((width <= 0) || (height <= 0))
-                    return NULL;
-
-                pSurface        = s->create(width, height);
-                if (pSurface == NULL)
-                {
-                    lsp_warn("Failed to create surface obj=%p, width=%d, height=%d",
-                        pSurface, int(width), int(height));
-                    return NULL;
-                }
-                nFlags         |= REDRAW_SURFACE;
-            }
+                return s;
 
             // Redraw surface if required
-            if (nFlags & REDRAW_SURFACE)
+            if ((redraw) || (nFlags & REDRAW_SURFACE))
             {
                 pSurface->begin();
                     draw(pSurface);
