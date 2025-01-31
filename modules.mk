@@ -137,7 +137,7 @@ LIBOLE_TYPE                := opt
 LIBOLE_LDFLAGS             := -lole32
 
 LIBOPENGL32_VERSION        := system
-LIBOPENGL32_NAME           := libole
+LIBOPENGL32_NAME           := libopengl32
 LIBOPENGL32_TYPE           := opt
 LIBOPENGL32_LDFLAGS        := -lopengl32
 
