@@ -208,103 +208,107 @@ namespace lsp
         void Grid::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             lsp::Color bg_color;
+            ws::rectangle_t xr;
             get_actual_bg_color(bg_color);
 
             // Check dirty flag
             if (nFlags & REDRAW_SURFACE)
                 force = true;
 
-            // No widgets to draw?
-            if (sAlloc.vTable.is_empty())
+            // Pass 1: render space around nested widgets, optimize for draw calls
+            s->clip_begin(area);
             {
-                s->clip_begin(area);
+                lsp_finally { s->clip_end(); };
+
+                // No widgets to draw?
+                if (sAlloc.vTable.is_empty())
+                {
                     s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
-                s->clip_end();
-                return;
-            }
-
-            float scaling       = lsp_max(0.0f, sScaling.get());
-            ssize_t hspacing    = scaling * sHSpacing.get();
-            ssize_t vspacing    = scaling * sVSpacing.get();
-            ws::rectangle_t xr;
-
-            // Render nested widgets
-            for (size_t i=0, n=sAlloc.vTable.size(); i<n; ++i)
-            {
-                cell_t *w = sAlloc.vTable.uget(i);
-
-                if (w->pWidget == NULL)
-                {
-                    get_actual_bg_color(bg_color);
-
-                    size_t cw   = w->a.nWidth;
-                    size_t ch   = w->a.nHeight;
-                    if (size_t(w->nLeft + w->nCols) < sAlloc.nCols)
-                        cw         += hspacing;
-                    if (size_t(w->nTop  + w->nRows) < sAlloc.nRows)
-                        ch         += vspacing;
-
-                    s->clip_begin(area);
-                        s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, w->a.nLeft, w->a.nTop, cw, ch);
-                    s->clip_end();
-                    continue;
+                    return;
                 }
 
-                // Render the child widget
-                if ((force) || (w->pWidget->redraw_pending()))
-                {
-                    if (Size::intersection(&xr, area, &w->s))
-                        w->pWidget->render(s, &xr, force);
-                    w->pWidget->commit_redraw();
-                }
+                const float scaling     = lsp_max(0.0f, sScaling.get());
+                const ssize_t hspacing  = scaling * sHSpacing.get();
+                const ssize_t vspacing  = scaling * sVSpacing.get();
 
-                // Fill unused space with background
-                if (force)
+                for (size_t i=0, n=sAlloc.vTable.size(); i<n; ++i)
                 {
-                    s->clip_begin(area);
+                    cell_t *w = sAlloc.vTable.uget(i);
+
+                    if (w->pWidget == NULL)
                     {
-                        // Draw widget area
-                        if (Size::overlap(area, &w->a))
-                        {
-                            w->pWidget->get_actual_bg_color(bg_color);
-                            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &w->a, &w->s);
-                        }
-
-                        // Need to draw spacing?
                         get_actual_bg_color(bg_color);
-                        if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
-                        {
-                            xr.nLeft    = w->a.nLeft + w->a.nWidth;
-                            xr.nTop     = w->a.nTop;
-                            xr.nWidth   = hspacing;
-                            xr.nHeight  = w->a.nHeight;
 
-                            if (Size::overlap(area, &xr))
-                                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
+                        size_t cw   = w->a.nWidth;
+                        size_t ch   = w->a.nHeight;
+                        if (size_t(w->nLeft + w->nCols) < sAlloc.nCols)
+                            cw         += hspacing;
+                        if (size_t(w->nTop  + w->nRows) < sAlloc.nRows)
+                            ch         += vspacing;
 
-                            if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
-                            {
-                                xr.nLeft    = w->a.nLeft;
-                                xr.nTop     = w->a.nTop + w->a.nHeight;
-                                xr.nWidth   = w->a.nWidth + hspacing;
-                                xr.nHeight  = vspacing;
+                        s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, w->a.nLeft, w->a.nTop, cw, ch);
+                        continue;
+                    }
 
-                                if (Size::overlap(area, &xr))
-                                    s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
-                            }
-                        }
-                        else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
+                    // Fill unused space with background
+                    if (!force)
+                        continue;
+
+                    // Draw widget area
+                    if (Size::overlap(area, &w->a))
+                    {
+                        w->pWidget->get_actual_bg_color(bg_color);
+                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &w->a, &w->s);
+                    }
+
+                    // Need to draw spacing?
+                    get_actual_bg_color(bg_color);
+                    if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
+                    {
+                        xr.nLeft    = w->a.nLeft + w->a.nWidth;
+                        xr.nTop     = w->a.nTop;
+                        xr.nWidth   = hspacing;
+                        xr.nHeight  = w->a.nHeight;
+
+                        if (Size::overlap(area, &xr))
+                            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
+
+                        if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
                         {
                             xr.nLeft    = w->a.nLeft;
                             xr.nTop     = w->a.nTop + w->a.nHeight;
-                            xr.nWidth   = w->a.nWidth;
+                            xr.nWidth   = w->a.nWidth + hspacing;
                             xr.nHeight  = vspacing;
 
                             if (Size::overlap(area, &xr))
                                 s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
                         }
                     }
-                    s->clip_end();
+                    else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
+                    {
+                        xr.nLeft    = w->a.nLeft;
+                        xr.nTop     = w->a.nTop + w->a.nHeight;
+                        xr.nWidth   = w->a.nWidth;
+                        xr.nHeight  = vspacing;
+
+                        if (Size::overlap(area, &xr))
+                            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
+                    }
+                }
+            } // clip_begin()
+
+            // Pass 2: Render nested widgets
+            for (size_t i=0, n=sAlloc.vTable.size(); i<n; ++i)
+            {
+                cell_t *w = sAlloc.vTable.uget(i);
+                if (w->pWidget == NULL)
+                    continue;
+
+                if ((force) || (w->pWidget->redraw_pending()))
+                {
+                    if (Size::intersection(&xr, area, &w->s))
+                        w->pWidget->render(s, &xr, force);
+                    w->pWidget->commit_redraw();
                 }
             }
         }

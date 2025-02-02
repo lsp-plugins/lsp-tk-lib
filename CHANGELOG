@@ -6,6 +6,7 @@
 * Implemented OpenGL drawing surface supporf for X11 protocol. Can be disabled
   by setting LSP_WS_LIB_GLXSURFACE=off environment variable.
 * Optimized surface drawing and sizing algorithm.
+* Rendering optimizations in widget containers.
 * Removed outdated RackEars widget.
 * Updated widget drawing code to match new interface of ws::IGradient.
 

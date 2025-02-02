@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -115,19 +115,7 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (vItems.is(prop))
-                query_resize();
-            if (sSpacing.is(prop))
-                query_resize();
-            if (sBorder.is(prop))
-                query_resize();
-            if (sHomogeneous.is(prop))
-                query_resize();
-            if (sOrientation.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sBorderColor.is(prop))
+            if (prop->one_of(vItems, sSpacing, sBorder, sHomogeneous, sOrientation, sConstraints, sBorderColor))
                 query_resize();
         }
 
@@ -237,35 +225,82 @@ namespace lsp
 
             // Estimate palette
             ws::rectangle_t xr;
-            lsp::Color bg_color, border_color;
-            float scaling   = lsp_max(0.0f, sScaling.get());
-            float bright    = sBrightness.get();
-            size_t border   = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
-            get_actual_bg_color(bg_color);
 
-            // Draw background if needed
-            if ((vVisible.is_empty()) && (force))
+            if (force)
             {
+                lsp::Color bg_color, border_color;
+                float scaling   = lsp_max(0.0f, sScaling.get());
+                float bright    = sBrightness.get();
+                size_t border   = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+                get_actual_bg_color(bg_color);
+
+                // Enable clipping
                 s->clip_begin(area);
-                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
-                if (border > 0)
+                lsp_finally { s->clip_end(); };
+
+                // Draw background if no child widget is present
+                if (vVisible.is_empty())
                 {
-                    border_color.copy(sBorderColor);
-                    border_color.scale_lch_luminance(bright);
-                    Rectangle::enter_border(&xr, &sSize, border);
-                    s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                    s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
+                    if (border > 0)
+                    {
+                        border_color.copy(sBorderColor);
+                        border_color.scale_lch_luminance(bright);
+                        Rectangle::enter_border(&xr, &sSize, border);
+                        s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                    }
+                    return;
                 }
 
-                s->clip_end();
-                return;
+                // Compute spacing size and layout
+                const ssize_t spacing       = scaling * sSpacing.get();
+                const bool horizontal       = sOrientation.horizontal();
+
+                // Pass 1: fill unused space with background, optimize for draw calls
+                for (size_t i=0, n=vVisible.size(); i<n; ++i)
+                {
+                    cell_t *wc = vVisible.uget(i);
+                    Widget *w = wc->pWidget;
+
+                    w->get_actual_bg_color(bg_color);
+                    if (Size::overlap(area, &wc->a))
+                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &wc->a, &wc->s);
+
+                    // Draw spacing
+                    if (((i + 1) < n) && (spacing > 0))
+                    {
+                        get_actual_bg_color(bg_color);
+                        if (horizontal)
+                        {
+                            xr.nLeft    = wc->a.nLeft + wc->a.nWidth;
+                            xr.nTop     = wc->a.nTop;
+                            xr.nWidth   = spacing;
+                            xr.nHeight  = wc->a.nHeight;
+                        }
+                        else
+                        {
+                            xr.nLeft    = wc->a.nLeft;
+                            xr.nTop     = wc->a.nTop + wc->a.nHeight;
+                            xr.nWidth   = wc->a.nWidth;
+                            xr.nHeight  = spacing;
+                        }
+
+                        if (Size::overlap(area, &xr))
+                            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
+                    }
+
+                    // Draw border
+                    if (border > 0)
+                    {
+                        border_color.copy(sBorderColor);
+                        border_color.scale_lch_luminance(bright);
+                        Rectangle::enter_border(&xr, &sSize, border);
+                        s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                    }
+                }
             }
 
-            // Compute spacing size
-            ssize_t spacing     = scaling * sSpacing.get();
-
-            // Draw items
-            bool horizontal     = sOrientation.horizontal();
-
+            // Pass 2: render nested widgets
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 cell_t *wc = vVisible.uget(i);
@@ -277,50 +312,6 @@ namespace lsp
                     if (Size::intersection(&xr, area, &wc->s))
                         w->render(s, &xr, force);
                     w->commit_redraw();
-                }
-
-                // Fill unused space with background
-                if (force)
-                {
-                    s->clip_begin(area);
-                    {
-                        w->get_actual_bg_color(bg_color);
-                        if (Size::overlap(area, &wc->a))
-                            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &wc->a, &wc->s);
-
-                        // Draw spacing
-                        if (((i + 1) < n) && (spacing > 0))
-                        {
-                            get_actual_bg_color(bg_color);
-                            if (horizontal)
-                            {
-                                xr.nLeft    = wc->a.nLeft + wc->a.nWidth;
-                                xr.nTop     = wc->a.nTop;
-                                xr.nWidth   = spacing;
-                                xr.nHeight  = wc->a.nHeight;
-                            }
-                            else
-                            {
-                                xr.nLeft    = wc->a.nLeft;
-                                xr.nTop     = wc->a.nTop + wc->a.nHeight;
-                                xr.nWidth   = wc->a.nWidth;
-                                xr.nHeight  = spacing;
-                            }
-
-                            if (Size::overlap(area, &xr))
-                                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
-                        }
-
-                        // Draw border
-                        if (border > 0)
-                        {
-                            border_color.copy(sBorderColor);
-                            border_color.scale_lch_luminance(bright);
-                            Rectangle::enter_border(&xr, &sSize, border);
-                            s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
-                        }
-                    }
-                    s->clip_end();
                 }
             }
         }

@@ -330,7 +330,7 @@ namespace lsp
                 xr.nTop     = 0;
                 xr.nWidth   = sSize.nWidth;
                 xr.nHeight  = sSize.nHeight;
-                render(s, &xr, flags);
+                render(s, &xr, flags & REDRAW_SURFACE);
             }
             s->end();
             commit_redraw();
