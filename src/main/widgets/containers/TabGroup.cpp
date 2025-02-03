@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 дек. 2024 г.
@@ -504,7 +504,7 @@ namespace lsp
                 for (size_t i=0, n=vVisible.size(); i<n; ++i)
                 {
                     tab_t *tab              = vVisible.uget(i);
-                    tk::TabItem *w      = tab->widget;
+                    tk::TabItem *w          = tab->widget;
                     tab_mode_t mode         = (w == ct) ? TM_SELECTED :
                                               (w == pEventTab) ? TM_HOVER :
                                               TM_NORMAL;
@@ -551,6 +551,21 @@ namespace lsp
                     if (sHead[i].nWidth > 0)
                         s->fill_rect(color, SURFMASK_NO_CORNER, radius, &sHead[i]);
             }
+
+            // Draw tab text
+            if (Size::overlap(area, &sTabArea))
+            {
+                for (size_t i=0, n=vVisible.size(); i<n; ++i)
+                {
+                    tab_t *tab              = vVisible.uget(i);
+                    tk::TabItem *w          = tab->widget;
+                    tab_mode_t mode         = (w == ct) ? TM_SELECTED :
+                                              (w == pEventTab) ? TM_HOVER :
+                                              TM_NORMAL;
+
+                    draw_tab_text(s, tab, mode, area);
+                }
+            }
         }
 
         void TabGroup::draw_tab(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area)
@@ -559,18 +574,16 @@ namespace lsp
             tk::TabItem *w          = tab->widget;
             lsp::Color color;
             ws::rectangle_t clip, r;
-            ws::font_parameters_t fp;
-            ws::text_parameters_t tp;
 
             float bright            = lsp_max(0.0f, sBrightness.get());
             float scaling           = lsp_max(0.0f, sScaling.get());
-            float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
             ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
             bool top_align          = sHeading.valign() <= 0.0f;
-
-            s->set_antialiasing(true);
             size_t mask             = (top_align) ? SURFMASK_T_CORNER : SURFMASK_B_CORNER;
+
+            const bool aa           = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
 
             // Draw tab header
             r                   = tab->bounds;
@@ -619,6 +632,19 @@ namespace lsp
                         tab->bounds.nLeft + tab->border, sBounds.nTop + sBounds.nHeight - border,
                         tab->bounds.nWidth - tab->border * 2, border);
             }
+        }
+
+        void TabGroup::draw_tab_text(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area)
+        {
+            // Compute parameters
+            tk::TabItem *w          = tab->widget;
+            lsp::Color color;
+            ws::rectangle_t clip, r;
+            ws::font_parameters_t fp;
+            ws::text_parameters_t tp;
+
+            float scaling           = lsp_max(0.0f, sScaling.get());
+            float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
 
             // Draw tab text
             if (Size::intersection(&clip, &tab->text, area))
