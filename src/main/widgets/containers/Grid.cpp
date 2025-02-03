@@ -128,6 +128,7 @@ namespace lsp
             cell->nRows     = 0;
             cell->nCols     = 0;
             cell->nTag      = 0;
+            cell->bDrawn    = false;
 
             return cell;
         }
@@ -169,17 +170,8 @@ namespace lsp
         void Grid::property_changed(Property *prop)
         {
             WidgetContainer::property_changed(prop);
-            if (sRows.is(prop))
-                query_resize();
-            if (sColumns.is(prop))
-                query_resize();
-            if (sHSpacing.is(prop))
-                query_resize();
-            if (sVSpacing.is(prop))
-                query_resize();
-            if (sOrientation.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
+
+            if (prop->one_of(sRows, sColumns, sHSpacing, sVSpacing, sOrientation, sConstraints))
                 query_resize();
         }
 
@@ -214,6 +206,13 @@ namespace lsp
             // Check dirty flag
             if (nFlags & REDRAW_SURFACE)
                 force = true;
+
+            // Pass 0: Mark widgets not being drawn
+            for (size_t i=0, n=sAlloc.vTable.size(); i<n; ++i)
+            {
+                cell_t *w = sAlloc.vTable.uget(i);
+                w->bDrawn = false;
+            }
 
             // Pass 1: render space around nested widgets, optimize for draw calls
             s->clip_begin(area);
@@ -297,12 +296,13 @@ namespace lsp
                 }
             } // clip_begin()
 
-            // Pass 2: Render nested widgets
+            // Pass 2: Render nested widgets, draw once wigets contained in multiple cells
             for (size_t i=0, n=sAlloc.vTable.size(); i<n; ++i)
             {
                 cell_t *w = sAlloc.vTable.uget(i);
-                if (w->pWidget == NULL)
+                if ((w->pWidget == NULL) || (w->bDrawn))
                     continue;
+                w->bDrawn           = true; // Mark widget as been drawn
 
                 if ((force) || (w->pWidget->redraw_pending()))
                 {
