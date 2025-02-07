@@ -39,6 +39,15 @@ namespace lsp
                 sTipColor.bind("tip.color", this);
                 sBalanceTipColor.bind("balance.tip.color", this);
                 sMeterColor.bind("meter.color", this);
+
+                sInactiveColor.bind("inactive.color", this);
+                sInactiveScaleColor.bind("inactive.scale.color", this);
+                sInactiveBalanceColor.bind("inactive.balance.color", this);
+                sInactiveHoleColor.bind("inactive.hole.color", this);
+                sInactiveTipColor.bind("inactive.tip.color", this);
+                sInactiveBalanceTipColor.bind("inactive.balance.tip.color", this);
+                sInactiveMeterColor.bind("inactive.meter.color", this);
+
                 sSizeRange.bind("size.range", this);
                 sScale.bind("scale.size", this);
                 sValue.bind("value", this);
@@ -53,6 +62,7 @@ namespace lsp
                 sScaleActive.bind("scale.active", this);
                 sMeterActive.bind("meter.active", this);
                 sEditable.bind("editable", this);
+                sActive.bind("active", this);
                 sHoleSize.bind("hole.size", this);
                 sGapSize.bind("gap.size", this);
                 sScaleBrightness.bind("scale.brightness", this);
@@ -67,6 +77,15 @@ namespace lsp
                 sMeterColor.set("#88ff0000");
                 sTipColor.set("#000000");
                 sBalanceTipColor.set("#0000ff");
+
+                sInactiveColor.set("#eeeeee");
+                sInactiveScaleColor.set("#00ee00");
+                sInactiveBalanceColor.set("#0000ee");
+                sInactiveHoleColor.set("#000000");
+                sInactiveMeterColor.set("#ccff0000");
+                sInactiveTipColor.set("#444444");
+                sInactiveBalanceTipColor.set("#000088");
+
                 sSizeRange.set(8, -1);
                 sScale.set(4);
                 sValue.set_all(0.5f, 0.0f, 1.0f);
@@ -81,6 +100,7 @@ namespace lsp
                 sScaleActive.set(true);
                 sMeterActive.set(false);
                 sEditable.set(true);
+                sActive.set(true);
                 sHoleSize.set(1);
                 sGapSize.set(1);
                 sScaleBrightness.set(0.75f);
@@ -93,15 +113,29 @@ namespace lsp
 
         const w_class_t Knob::metadata      = { "Knob", &Widget::metadata };
 
+        Knob::colors_t::colors_t(tk::prop::Listener * properties):
+            sColor(properties),
+            sScaleColor(properties),
+            sBalanceColor(properties),
+            sHoleColor(properties),
+            sTipColor(properties),
+            sBalanceTipColor(properties),
+            sMeterColor(properties)
+        {
+        }
+
+        bool Knob::colors_t::property_changed(tk::Property * prop)
+        {
+            return prop->one_of(
+                sColor, sScaleColor, sBalanceColor,
+                sHoleColor, sTipColor, sBalanceTipColor,
+                sMeterColor);
+        }
+
         Knob::Knob(Display *dpy):
             Widget(dpy),
-            sColor(&sProperties),
-            sScaleColor(&sProperties),
-            sBalanceColor(&sProperties),
-            sHoleColor(&sProperties),
-            sTipColor(&sProperties),
-            sBalanceTipColor(&sProperties),
-            sMeterColor(&sProperties),
+            sSActive(&sProperties),
+            sSInactive(&sProperties),
             sSizeRange(&sProperties),
             sScale(&sProperties),
             sValue(&sProperties),
@@ -116,6 +150,7 @@ namespace lsp
             sScaleActive(&sProperties),
             sMeterActive(&sProperties),
             sEditable(&sProperties),
+            sActive(&sProperties),
             sHoleSize(&sProperties),
             sGapSize(&sProperties),
             sScaleBrightness(&sProperties),
@@ -141,12 +176,20 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            sColor.bind("color", &sStyle);
-            sScaleColor.bind("scale.color", &sStyle);
-            sHoleColor.bind("hole.color", &sStyle);
-            sTipColor.bind("tip.color", &sStyle);
-            sBalanceTipColor.bind("balance.tip.color", &sStyle);
-            sMeterColor.bind("meter.color", &sStyle);
+            sSActive.sColor.bind("color", &sStyle);
+            sSActive.sScaleColor.bind("scale.color", &sStyle);
+            sSActive.sHoleColor.bind("hole.color", &sStyle);
+            sSActive.sTipColor.bind("tip.color", &sStyle);
+            sSActive.sBalanceTipColor.bind("balance.tip.color", &sStyle);
+            sSActive.sMeterColor.bind("meter.color", &sStyle);
+
+            sSInactive.sColor.bind("inactive.color", &sStyle);
+            sSInactive.sScaleColor.bind("inactive.scale.color", &sStyle);
+            sSInactive.sHoleColor.bind("inactive.hole.color", &sStyle);
+            sSInactive.sTipColor.bind("inactive.tip.color", &sStyle);
+            sSInactive.sBalanceTipColor.bind("inactive.balance.tip.color", &sStyle);
+            sSInactive.sMeterColor.bind("inactive.meter.color", &sStyle);
+
             sSizeRange.bind("size.range", &sStyle);
             sScale.bind("scale.size", &sStyle);
             sValue.bind("value", &sStyle);
@@ -161,6 +204,7 @@ namespace lsp
             sScaleActive.bind("scale.active", &sStyle);
             sMeterActive.bind("meter.active", &sStyle);
             sEditable.bind("editable", &sStyle);
+            sActive.bind("active", &sStyle);
             sHoleSize.bind("hole.size", &sStyle);
             sGapSize.bind("gap.size", &sStyle);
             sScaleBrightness.bind("scale.brightness", &sStyle);
@@ -181,8 +225,19 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (prop->one_of(sColor, sScaleColor, sBalanceColor, sHoleColor, sTipColor, sBalanceTipColor, sMeterColor))
+            if (prop->is(sActive))
                 query_draw();
+
+            if (sActive.get())
+            {
+                if (sSActive.property_changed(prop))
+                    query_draw();
+            }
+            else
+            {
+                if (sSInactive.property_changed(prop))
+                    query_draw();
+            }
 
             if (prop->one_of(sSizeRange, sScale, sHoleSize, sGapSize))
                 query_resize();
@@ -434,6 +489,7 @@ namespace lsp
             float meter_max     = sValue.get_normalized(sMeterMax.get());
 
             // Calculate knob parameters
+            const bool active   = sActive.get();
             ssize_t c_x         = (sSize.nWidth >> 1);
             ssize_t c_y         = (sSize.nHeight >> 1);
             size_t xr           = lsp_min(sSize.nWidth, sSize.nHeight) >> 1;
@@ -442,22 +498,24 @@ namespace lsp
             size_t gap          = (sGapSize.get() > 0) ? lsp_max(1.0f, sGapSize.get() * scaling) : 0;
             size_t scale        = lsp_max(0, sScale.get() * scaling);
 
+            const colors_t *colors  = (active) ? &sSActive : &sSInactive;
+
             // Prepare the color palette
             lsp::Color scol, sdcol, mcol;
             if (sBalanceColorCustom.get())
             {
-                scol.copy(sBalanceColor);
-                sdcol.copy(sScaleColor);
+                scol.copy(colors->sBalanceColor);
+                sdcol.copy(colors->sScaleColor);
             }
             else
             {
-                scol.copy(sScaleColor);
-                sdcol.copy(sScaleColor);
+                scol.copy(colors->sScaleColor);
+                sdcol.copy(colors->sScaleColor);
                 sdcol.scale_hsl_lightness(sScaleBrightness.get());
             }
-            mcol.copy(sMeterColor);
+            mcol.copy(colors->sMeterColor);
 
-            lsp::Color hcol(sHoleColor);
+            lsp::Color hcol(colors->sHoleColor);
             lsp::Color bg_color;
 
             get_actual_bg_color(bg_color);
@@ -515,7 +573,7 @@ namespace lsp
                 {
                     if (sBalanceTipColorCustom.get())
                     {
-                        scol.copy(sBalanceTipColor);
+                        scol.copy(colors->sBalanceTipColor);
                         scol.scale_lch_luminance(bright);
                     }
 
@@ -569,8 +627,8 @@ namespace lsp
 
             if (sFlat.get())
             {
-                lsp::Color cap(sColor);
-                lsp::Color tip(sTipColor);
+                lsp::Color cap(colors->sColor);
+                lsp::Color tip(colors->sTipColor);
                 cap.scale_lch_luminance(bright);
                 tip.scale_lch_luminance(bright);
 
@@ -584,8 +642,8 @@ namespace lsp
             }
             else
             {
-                lsp::Color cap(sColor);
-                lsp::Color tip(sTipColor);
+                lsp::Color cap(colors->sColor);
+                lsp::Color tip(colors->sTipColor);
 
                 for (size_t i=0; i<=chamfer; ++i, --xr)
                 {
