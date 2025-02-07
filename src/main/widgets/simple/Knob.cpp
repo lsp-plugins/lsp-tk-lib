@@ -79,8 +79,8 @@ namespace lsp
                 sBalanceTipColor.set("#0000ff");
 
                 sInactiveColor.set("#eeeeee");
-                sInactiveScaleColor.set("#00ee00");
-                sInactiveBalanceColor.set("#0000ee");
+                sInactiveScaleColor.set("#eeeeee");
+                sInactiveBalanceColor.set("#cccccc");
                 sInactiveHoleColor.set("#000000");
                 sInactiveMeterColor.set("#ccff0000");
                 sInactiveTipColor.set("#444444");
