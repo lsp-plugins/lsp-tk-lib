@@ -33,22 +33,22 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(Knob, Widget)
+            typedef struct KnobColors
+            {
                 prop::Color         sColor;
                 prop::Color         sScaleColor;
                 prop::Color         sBalanceColor;
-                prop::Color         sHoleColor;
                 prop::Color         sTipColor;
                 prop::Color         sBalanceTipColor;
                 prop::Color         sMeterColor;
 
-                prop::Color         sInactiveColor;
-                prop::Color         sInactiveScaleColor;
-                prop::Color         sInactiveBalanceColor;
-                prop::Color         sInactiveHoleColor;
-                prop::Color         sInactiveTipColor;
-                prop::Color         sInactiveBalanceTipColor;
-                prop::Color         sInactiveMeterColor;
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } KnobColors;
+
+            LSP_TK_STYLE_DEF_BEGIN(Knob, Widget)
+                KnobColors          vColors[2];
+                prop::Color         sHoleColor;
 
                 prop::SizeRange     sSizeRange;
                 prop::Float         sScale;
@@ -87,27 +87,13 @@ namespace lsp
                     S_CLICK
                 };
 
-                typedef struct colors_t
-                {
-                    prop::Color         sColor;
-                    prop::Color         sScaleColor;
-                    prop::Color         sBalanceColor;
-                    prop::Color         sHoleColor;
-                    prop::Color         sTipColor;
-                    prop::Color         sBalanceTipColor;
-                    prop::Color         sMeterColor;
-
-                    colors_t(tk::prop::Listener * listener);
-                    bool                property_changed(tk::Property * prop);
-                } colors_t;
-
             protected:
                 ssize_t             nLastY;
                 size_t              nState;
                 size_t              nButtons;
 
-                colors_t            sSActive;
-                colors_t            sSInactive;
+                style::KnobColors   vColors[2];
+                prop::Color         sHoleColor;
 
                 prop::SizeRange     sSizeRange;
                 prop::Float         sScale;
@@ -135,6 +121,7 @@ namespace lsp
                 size_t                          check_mouse_over(ssize_t x, ssize_t y);
                 void                            update_value(float delta);
                 void                            on_click(ssize_t x, ssize_t y);
+                style::KnobColors              *select_colors();
 
             protected:
                 static status_t                 slot_begin_edit(Widget *sender, void *ptr, void *data);
@@ -157,21 +144,21 @@ namespace lsp
                 virtual status_t                init() override;
 
             public:
-                LSP_TK_PROPERTY(Color,              color,                      &sSActive.sColor)
-                LSP_TK_PROPERTY(Color,              scale_color,                &sSActive.sScaleColor)
-                LSP_TK_PROPERTY(Color,              balance_color,              &sSActive.sBalanceColor)
-                LSP_TK_PROPERTY(Color,              hole_color,                 &sSActive.sHoleColor)
-                LSP_TK_PROPERTY(Color,              tip_color,                  &sSActive.sTipColor)
-                LSP_TK_PROPERTY(Color,              balance_tip_color,          &sSActive.sBalanceTipColor)
-                LSP_TK_PROPERTY(Color,              meter_color,                &sSActive.sMeterColor)
+                LSP_TK_PROPERTY(Color,              color,                      &vColors[0].sColor)
+                LSP_TK_PROPERTY(Color,              scale_color,                &vColors[0].sScaleColor)
+                LSP_TK_PROPERTY(Color,              balance_color,              &vColors[0].sBalanceColor)
+                LSP_TK_PROPERTY(Color,              tip_color,                  &vColors[0].sTipColor)
+                LSP_TK_PROPERTY(Color,              balance_tip_color,          &vColors[0].sBalanceTipColor)
+                LSP_TK_PROPERTY(Color,              meter_color,                &vColors[0].sMeterColor)
 
-                LSP_TK_PROPERTY(Color,              inactive_color,             &sSInactive.sColor)
-                LSP_TK_PROPERTY(Color,              inactive_scale_color,       &sSInactive.sScaleColor)
-                LSP_TK_PROPERTY(Color,              inactive_balance_color,     &sSInactive.sBalanceColor)
-                LSP_TK_PROPERTY(Color,              inactive_hole_color,        &sSInactive.sHoleColor)
-                LSP_TK_PROPERTY(Color,              inactive_tip_color,         &sSInactive.sTipColor)
-                LSP_TK_PROPERTY(Color,              inactive_balance_tip_color, &sSInactive.sBalanceTipColor)
-                LSP_TK_PROPERTY(Color,              inactive_meter_color,       &sSInactive.sMeterColor)
+                LSP_TK_PROPERTY(Color,              inactive_color,             &vColors[1].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_scale_color,       &vColors[1].sScaleColor)
+                LSP_TK_PROPERTY(Color,              inactive_balance_color,     &vColors[1].sBalanceColor)
+                LSP_TK_PROPERTY(Color,              inactive_tip_color,         &vColors[1].sTipColor)
+                LSP_TK_PROPERTY(Color,              inactive_balance_tip_color, &vColors[1].sBalanceTipColor)
+                LSP_TK_PROPERTY(Color,              inactive_meter_color,       &vColors[1].sMeterColor)
+
+                LSP_TK_PROPERTY(Color,              hole_color,                 &sHoleColor)
 
                 LSP_TK_PROPERTY(SizeRange,          size,                       &sSizeRange)
                 LSP_TK_PROPERTY(Float,              scale,                      &sScale)
