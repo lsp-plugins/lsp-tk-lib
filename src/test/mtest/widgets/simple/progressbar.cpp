@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 07 июн. 2020 г.
@@ -107,6 +107,8 @@ MTEST_BEGIN("tk.widgets.simple", progressbar)
                 pb->value()->add(0.05f, true);
             else if (ev->nCode == ws::MCB_RIGHT)
                 pb->value()->sub(0.05f, true);
+            else if (ev->nCode == ws::MCB_MIDDLE)
+                pb->active()->toggle();
         }
 
         return STATUS_OK;
