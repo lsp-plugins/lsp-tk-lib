@@ -11,7 +11,8 @@
   * tk::Edit;
   * tk::Fader;
   * tk::Indicator;
-  * tk::Knob.
+  * tk::Knob;
+  * tk::Led.
 * Optimized surface drawing and sizing algorithm.
 * Rendering optimizations in widget containers.
 * Removed outdated RackEars widget.
