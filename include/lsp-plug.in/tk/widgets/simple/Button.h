@@ -119,15 +119,18 @@ namespace lsp
                     ws::text_parameters_t tp;
                 } estimation_t;
 
-                static constexpr size_t BTN_0       = style::BUTTON_NONE;
-                static constexpr size_t BTN_1       = style::BUTTON_DOWN;
-                static constexpr size_t BTN_2       = BTN_0 | style::BUTTON_HOVER;
-                static constexpr size_t BTN_3       = BTN_1 | style::BUTTON_HOVER;
-                static constexpr size_t BTN_4       = BTN_0 | style::BUTTON_INACTIVE;
-                static constexpr size_t BTN_5       = BTN_1 | style::BUTTON_INACTIVE;
-                static constexpr size_t BTN_6       = BTN_2 | style::BUTTON_INACTIVE;
-                static constexpr size_t BTN_7       = BTN_3 | style::BUTTON_INACTIVE;
-                static constexpr size_t BTN_TOTAL   = BTN_7 + 1;
+                enum btn_flags_t
+                {
+                    BTN_0       = style::BUTTON_NONE,
+                    BTN_1       = style::BUTTON_DOWN,
+                    BTN_2       = BTN_0 | style::BUTTON_HOVER,
+                    BTN_3       = BTN_1 | style::BUTTON_HOVER,
+                    BTN_4       = BTN_0 | style::BUTTON_INACTIVE,
+                    BTN_5       = BTN_1 | style::BUTTON_INACTIVE,
+                    BTN_6       = BTN_2 | style::BUTTON_INACTIVE,
+                    BTN_7       = BTN_3 | style::BUTTON_INACTIVE,
+                    BTN_TOTAL   = style::BUTTON_TOTAL
+                };
 
             protected:
                 size_t                  nState;

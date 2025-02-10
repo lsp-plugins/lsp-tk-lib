@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2020 г.
@@ -230,10 +230,10 @@ namespace lsp
 
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ExtCheck, CheckBox)
                 // Override
-                sColor.set("#ffff00");
+                vColors[CHECKBOX_NONE].sColor.set("#ffff00");
                 sChecked.set(true);
                 // Commit
-                sColor.override();
+                vColors[CHECKBOX_NONE].sColor.override();
                 sChecked.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck", "CheckBox");
