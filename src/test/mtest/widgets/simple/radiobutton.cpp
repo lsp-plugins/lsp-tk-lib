@@ -99,6 +99,14 @@ MTEST_BEGIN("tk.widgets.simple", radiobutton)
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
 
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+        if (ev->nCode == ws::MCB_MIDDLE)
+        {
+            tk::RadioButton *rb = tk::widget_cast<tk::RadioButton>(sender);
+            if (rb != NULL)
+                rb->active()->toggle();
+        }
+
         return STATUS_OK;
     }
 

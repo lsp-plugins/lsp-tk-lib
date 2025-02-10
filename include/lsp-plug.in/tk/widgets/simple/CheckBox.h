@@ -90,7 +90,7 @@ namespace lsp
                     CHK_1       = style::CHECKBOX_HOVER,
                     CHK_2       = style::CHECKBOX_INACTIVE,
                     CHK_3       = style::CHECKBOX_HOVER | style::CHECKBOX_INACTIVE,
-                    CHK_TOTAL   = style::BUTTON_TOTAL
+                    CHK_TOTAL   = style::CHECKBOX_TOTAL
                 };
 
             protected:
