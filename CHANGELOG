@@ -15,6 +15,7 @@
   * tk::Led;
   * tk::ProgressBar;
   * tk::RadioButton.
+* Removed tk::Switch widget as being outdated.
 * Optimized surface drawing and sizing algorithm.
 * Rendering optimizations in widget containers.
 * Removed outdated RackEars widget.
