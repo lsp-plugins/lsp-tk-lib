@@ -46,8 +46,16 @@ namespace lsp
                 bool property_changed(Property *prop);
             } KnobColors;
 
+            enum KnobColorState
+            {
+                KNOB_NORMAL         = 0,
+                KNOB_INACTIVE       = 1 << 0,
+
+                KNOB_TOTAL          = 1 << 1
+            };
+
             LSP_TK_STYLE_DEF_BEGIN(Knob, Widget)
-                KnobColors          vColors[2];
+                KnobColors          vColors[KNOB_TOTAL];
                 prop::Color         sHoleColor;
 
                 prop::SizeRange     sSizeRange;
@@ -87,12 +95,19 @@ namespace lsp
                     S_CLICK
                 };
 
+                enum knob_flags_t
+                {
+                    KNOB_0      = style::KNOB_NORMAL,
+                    KNOB_1      = style::KNOB_INACTIVE,
+                    KNOB_TOTAL  = style::KNOB_TOTAL
+                };
+
             protected:
                 ssize_t             nLastY;
                 size_t              nState;
                 size_t              nButtons;
 
-                style::KnobColors   vColors[2];
+                style::KnobColors   vColors[style::KNOB_TOTAL];
                 prop::Color         sHoleColor;
 
                 prop::SizeRange     sSizeRange;
@@ -144,19 +159,19 @@ namespace lsp
                 virtual status_t                init() override;
 
             public:
-                LSP_TK_PROPERTY(Color,              color,                      &vColors[0].sColor)
-                LSP_TK_PROPERTY(Color,              scale_color,                &vColors[0].sScaleColor)
-                LSP_TK_PROPERTY(Color,              balance_color,              &vColors[0].sBalanceColor)
-                LSP_TK_PROPERTY(Color,              tip_color,                  &vColors[0].sTipColor)
-                LSP_TK_PROPERTY(Color,              balance_tip_color,          &vColors[0].sBalanceTipColor)
-                LSP_TK_PROPERTY(Color,              meter_color,                &vColors[0].sMeterColor)
+                LSP_TK_PROPERTY(Color,              color,                      &vColors[KNOB_0].sColor)
+                LSP_TK_PROPERTY(Color,              scale_color,                &vColors[KNOB_0].sScaleColor)
+                LSP_TK_PROPERTY(Color,              balance_color,              &vColors[KNOB_0].sBalanceColor)
+                LSP_TK_PROPERTY(Color,              tip_color,                  &vColors[KNOB_0].sTipColor)
+                LSP_TK_PROPERTY(Color,              balance_tip_color,          &vColors[KNOB_0].sBalanceTipColor)
+                LSP_TK_PROPERTY(Color,              meter_color,                &vColors[KNOB_0].sMeterColor)
 
-                LSP_TK_PROPERTY(Color,              inactive_color,             &vColors[1].sColor)
-                LSP_TK_PROPERTY(Color,              inactive_scale_color,       &vColors[1].sScaleColor)
-                LSP_TK_PROPERTY(Color,              inactive_balance_color,     &vColors[1].sBalanceColor)
-                LSP_TK_PROPERTY(Color,              inactive_tip_color,         &vColors[1].sTipColor)
-                LSP_TK_PROPERTY(Color,              inactive_balance_tip_color, &vColors[1].sBalanceTipColor)
-                LSP_TK_PROPERTY(Color,              inactive_meter_color,       &vColors[1].sMeterColor)
+                LSP_TK_PROPERTY(Color,              inactive_color,             &vColors[KNOB_1].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_scale_color,       &vColors[KNOB_1].sScaleColor)
+                LSP_TK_PROPERTY(Color,              inactive_balance_color,     &vColors[KNOB_1].sBalanceColor)
+                LSP_TK_PROPERTY(Color,              inactive_tip_color,         &vColors[KNOB_1].sTipColor)
+                LSP_TK_PROPERTY(Color,              inactive_balance_tip_color, &vColors[KNOB_1].sBalanceTipColor)
+                LSP_TK_PROPERTY(Color,              inactive_meter_color,       &vColors[KNOB_1].sMeterColor)
 
                 LSP_TK_PROPERTY(Color,              hole_color,                 &sHoleColor)
 

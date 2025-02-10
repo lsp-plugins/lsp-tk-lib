@@ -45,7 +45,7 @@ namespace lsp
 
             enum CheckBoxColorState
             {
-                CHECKBOX_NONE       = 0,
+                CHECKBOX_NORMAL       = 0,
                 CHECKBOX_HOVER      = 1 << 0,
                 CHECKBOX_INACTIVE   = 1 << 1,
 
@@ -86,7 +86,7 @@ namespace lsp
 
                 enum chk_flags_t
                 {
-                    CHK_0       = style::CHECKBOX_NONE,
+                    CHK_0       = style::CHECKBOX_NORMAL,
                     CHK_1       = style::CHECKBOX_HOVER,
                     CHK_2       = style::CHECKBOX_INACTIVE,
                     CHK_3       = style::CHECKBOX_HOVER | style::CHECKBOX_INACTIVE,
@@ -130,7 +130,7 @@ namespace lsp
                 CheckBox & operator = (const CheckBox &) = delete;
                 CheckBox & operator = (CheckBox &&) = delete;
 
-                virtual status_t                init();
+                virtual status_t                init() override;
 
             public:
                 LSP_TK_PROPERTY(Color,                      color,                              &vColors[CHK_0].sColor);

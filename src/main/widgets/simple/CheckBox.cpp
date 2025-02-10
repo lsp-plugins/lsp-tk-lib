@@ -30,7 +30,7 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(CheckBox, Widget)
                 // Bind
-                CheckBoxColors *c = &vColors[CHECKBOX_NONE];
+                CheckBoxColors *c = &vColors[CHECKBOX_NORMAL];
                 c->sColor.bind("color", this);
                 c->sFillColor.bind("fill.color", this);
                 c->sBorderColor.bind("border.color", this);
@@ -65,7 +65,7 @@ namespace lsp
                 sActive.bind("active", this);
 
                 // Configure
-                c = &vColors[CHECKBOX_NONE];
+                c = &vColors[CHECKBOX_NORMAL];
                 c->sColor.set("#00ccff");
                 c->sFillColor.set("#ffffff");
                 c->sBorderColor.set("#000000");
@@ -157,7 +157,7 @@ namespace lsp
                 return res;
 
             // Bind properties
-            style::CheckBoxColors *c = &vColors[style::CHECKBOX_NONE];
+            style::CheckBoxColors *c = &vColors[style::CHECKBOX_NORMAL];
             c->sColor.bind("color", &sStyle);
             c->sFillColor.bind("fill.color", &sStyle);
             c->sBorderColor.bind("border.color", &sStyle);
@@ -200,9 +200,9 @@ namespace lsp
 
         style::CheckBoxColors *CheckBox::select_colors()
         {
-            size_t flags = (nState & XF_HOVER) ? style::CHECKBOX_HOVER : style::CHECKBOX_NONE;
-            if (!sActive.get())
-                flags          |= style::CHECKBOX_INACTIVE;
+            size_t flags = (sActive.get()) ? style::CHECKBOX_NORMAL : style::CHECKBOX_INACTIVE;
+            if (nState & XF_HOVER)
+                flags          |= style::CHECKBOX_HOVER;
 
             return &vColors[flags];
         }
@@ -213,6 +213,9 @@ namespace lsp
 
             style::CheckBoxColors *cols = select_colors();
             if (cols->property_changed(prop))
+                query_draw();
+
+            if (prop->is(sActive))
                 query_draw();
 
             if (prop->one_of(sConstraints, sBorderSize, sBorderRadius,

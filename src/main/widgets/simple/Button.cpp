@@ -31,7 +31,7 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Button, Widget)
                 // Bind colors
-                ButtonColors *c = &vColors[BUTTON_NONE];
+                ButtonColors *c = &vColors[BUTTON_NORMAL];
                 c->sColor.bind("color", this);
                 c->sTextColor.bind("text.color", this);
                 c->sBorderColor.bind("border.color", this);
@@ -96,7 +96,7 @@ namespace lsp
                 sTextDownShift.bind("text.down.shift", this);
                 sTextPressedShift.bind("text.pressed.shift", this);
                 // Configure
-                c = &vColors[BUTTON_NONE];
+                c = &vColors[BUTTON_NORMAL];
                 c->sColor.set("#cccccc");
                 c->sTextColor.set("#000000");
                 c->sBorderColor.set("#888888");
@@ -230,7 +230,7 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
-            style::ButtonColors *c = &vColors[style::BUTTON_NONE];
+            style::ButtonColors *c = &vColors[style::BUTTON_NORMAL];
             c->sColor.bind("color", &sStyle);
             c->sTextColor.bind("text.color", &sStyle);
             c->sBorderColor.bind("border.color", &sStyle);
@@ -373,7 +373,7 @@ namespace lsp
 
         style::ButtonColors *Button::select_colors()
         {
-            size_t flags = style::BUTTON_NONE;
+            size_t flags = style::BUTTON_NORMAL;
             if ((nState & S_DOWN) && ((nState & S_LED) || (sLed.get() > 0) || (sDownColors.get())))
                 flags      |= style::BUTTON_DOWN;
 

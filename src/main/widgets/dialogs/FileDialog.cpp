@@ -230,10 +230,10 @@ namespace lsp
 
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ExtCheck, CheckBox)
                 // Override
-                vColors[CHECKBOX_NONE].sColor.set("#ffff00");
+                vColors[CHECKBOX_NORMAL].sColor.set("#ffff00");
                 sChecked.set(true);
                 // Commit
-                vColors[CHECKBOX_NONE].sColor.override();
+                vColors[CHECKBOX_NORMAL].sColor.override();
                 sChecked.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck", "CheckBox");

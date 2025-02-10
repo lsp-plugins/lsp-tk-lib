@@ -45,7 +45,7 @@ namespace lsp
 
             enum ButtonColorState
             {
-                BUTTON_NONE         = 0,
+                BUTTON_NORMAL       = 0,
                 BUTTON_DOWN         = 1 << 0,
                 BUTTON_HOVER        = 1 << 1,
                 BUTTON_INACTIVE     = 1 << 2,
@@ -121,7 +121,7 @@ namespace lsp
 
                 enum btn_flags_t
                 {
-                    BTN_0       = style::BUTTON_NONE,
+                    BTN_0       = style::BUTTON_NORMAL,
                     BTN_1       = style::BUTTON_DOWN,
                     BTN_2       = BTN_0 | style::BUTTON_HOVER,
                     BTN_3       = BTN_1 | style::BUTTON_HOVER,
@@ -171,13 +171,12 @@ namespace lsp
             protected:
                 void                update_mode(button_mode_t mode);
                 void                estimate_string_size(estimation_t *e, tk::String *s);
+                style::ButtonColors *select_colors();
 
+            protected:
                 static status_t     slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t     slot_on_submit(Widget *sender, void *ptr, void *data);
                 static ws::IGradient   *create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float radius);
-
-
-                style::ButtonColors *select_colors();
 
             protected:
                 virtual void        size_request(ws::size_limit_t *r) override;

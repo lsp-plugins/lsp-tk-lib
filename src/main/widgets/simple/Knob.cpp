@@ -32,7 +32,7 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Knob, Widget)
                 // Bind
-                KnobColors *c = &vColors[0];
+                KnobColors *c = &vColors[KNOB_NORMAL];
                 c->sColor.bind("color", this);
                 c->sScaleColor.bind("scale.color", this);
                 c->sBalanceColor.bind("balance.color", this);
@@ -40,7 +40,7 @@ namespace lsp
                 c->sBalanceTipColor.bind("balance.tip.color", this);
                 c->sMeterColor.bind("meter.color", this);
 
-                c = &vColors[1];
+                c = &vColors[KNOB_INACTIVE];
                 c->sColor.bind("inactive.color", this);
                 c->sScaleColor.bind("inactive.scale.color", this);
                 c->sBalanceColor.bind("inactive.balance.color", this);
@@ -73,7 +73,7 @@ namespace lsp
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
 
                 // Configure
-                c = &vColors[0];
+                c = &vColors[KNOB_NORMAL];
                 c->sColor.set("#cccccc");
                 c->sScaleColor.set("#00cc00");
                 c->sBalanceColor.set("#0000cc");
@@ -81,7 +81,7 @@ namespace lsp
                 c->sTipColor.set("#000000");
                 c->sBalanceTipColor.set("#0000ff");
 
-                c = &vColors[1];
+                c = &vColors[KNOB_INACTIVE];
                 c->sColor.set("#eeeeee");
                 c->sScaleColor.set("#eeeeee");
                 c->sBalanceColor.set("#cccccc");
@@ -159,12 +159,12 @@ namespace lsp
             sBalanceTipColorCustom(&sProperties),
             sInvertMouseVScroll(&sProperties)
         {
-            vColors[0].listener(&sProperties);
-            vColors[1].listener(&sProperties);
-
             nLastY      = -1;
             nState      = 0;
             nButtons    = 0;
+
+            for (size_t i=0; i<KNOB_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
 
             pClass      = &metadata;
         }
@@ -180,7 +180,7 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            style::KnobColors *c = &vColors[0];
+            style::KnobColors *c = &vColors[style::KNOB_NORMAL];
             c->sColor.bind("color", &sStyle);
             c->sScaleColor.bind("scale.color", &sStyle);
             c->sBalanceColor.bind("balance.color", &sStyle);
@@ -188,7 +188,7 @@ namespace lsp
             c->sBalanceTipColor.bind("balance.tip.color", &sStyle);
             c->sMeterColor.bind("meter.color", &sStyle);
 
-            c = &vColors[1];
+            c = &vColors[style::KNOB_INACTIVE];
             c->sColor.bind("inactive.color", &sStyle);
             c->sScaleColor.bind("inactive.scale.color", &sStyle);
             c->sBalanceColor.bind("inactive.balance.color", &sStyle);
@@ -233,17 +233,18 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (prop->is(sActive))
-                query_draw();
-
             style::KnobColors *colors = select_colors();
             if (colors->property_changed(prop))
+                query_draw();
+
+            if (prop->is(sActive))
                 query_draw();
 
             if (prop->one_of(sSizeRange, sScale, sHoleSize, sGapSize))
                 query_resize();
 
-            if (prop->one_of(sValue, sBalance, sMeterMin, sMeterMax, sCycling, sScaleMarks, sBalanceColorCustom, sFlat, sScaleBrightness,
+            if (prop->one_of(sValue, sBalance, sMeterMin, sMeterMax, sCycling,
+                sScaleMarks, sBalanceColorCustom, sFlat, sScaleBrightness,
                 sBalanceTipSize, sBalanceTipColorCustom))
                 query_draw();
 
@@ -482,7 +483,8 @@ namespace lsp
 
         style::KnobColors *Knob::select_colors()
         {
-            return (sActive.get()) ? &vColors[0] : &vColors[1];
+            size_t flags = (sActive.get()) ? style::KNOB_NORMAL : style::KNOB_INACTIVE;
+            return &vColors[flags];
         }
 
         void Knob::draw(ws::ISurface *s)
