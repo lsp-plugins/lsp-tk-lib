@@ -100,7 +100,7 @@ MTEST_BEGIN("tk.widgets.simple", button)
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
 
         ws::event_t *ev = static_cast<ws::event_t *>(data);
-        if (ev->nState & ws::MCF_MIDDLE)
+        if (ev->nCode == ws::MCB_MIDDLE)
         {
             tk::Button *btn = tk::widget_cast<tk::Button>(sender);
             if (btn != NULL)
