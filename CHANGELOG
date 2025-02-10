@@ -9,6 +9,7 @@
   * tk::Button;
   * tk::CheckBox;
   * tk::Edit;
+  * tk::Fader;
   * tk::Knob.
 * Optimized surface drawing and sizing algorithm.
 * Rendering optimizations in widget containers.

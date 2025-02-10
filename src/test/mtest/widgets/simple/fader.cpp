@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 05 июн. 2020 г.
@@ -98,6 +98,14 @@ MTEST_BEGIN("tk.widgets.simple", fader)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
+
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+        if (ev->nState & ws::MCF_MIDDLE)
+        {
+            tk::Fader *fdr = tk::widget_cast<tk::Fader>(sender);
+            if (fdr != NULL)
+                fdr->active()->toggle();
+        }
 
         return STATUS_OK;
     }
@@ -240,6 +248,7 @@ MTEST_BEGIN("tk.widgets.simple", fader)
             fd->button_width()->set(14);
             fd->button_pointer()->set(ws::MP_HSIZE);
             fd->balance_color()->set_rgb24(0xffff00);
+            fd->inactive_balance_color()->set_rgb24(0xcccccc);
             fd->balance_color_custom()->set(true);
             fd->angle()->set(0);
             fd->balance()->set(0.5f);
@@ -261,6 +270,7 @@ MTEST_BEGIN("tk.widgets.simple", fader)
                 fd->button_aspect()->set((x + 1.0f) / 4.0f);
                 fd->button_pointer()->set(ws::MP_VSIZE);
                 fd->balance_color()->set_rgb24(0xffff00);
+                fd->inactive_balance_color()->set_rgb24(0xcccccc);
                 fd->balance_color_custom()->set(true);
 
                 fd->angle()->set(1);
@@ -284,6 +294,7 @@ MTEST_BEGIN("tk.widgets.simple", fader)
                 fd->button_aspect()->set((x + 1.0f) / 4.0f);
                 fd->button_pointer()->set(ws::MP_VSIZE);
                 fd->balance_color()->set_rgb24(0xffff00);
+                fd->inactive_balance_color()->set_rgb24(0xcccccc);
                 fd->balance_color_custom()->set(true);
 
                 fd->angle()->set(3);
@@ -301,6 +312,7 @@ MTEST_BEGIN("tk.widgets.simple", fader)
             fd->button_border_color()->set(fd->button_color());
             fd->button_pointer()->set(ws::MP_HSIZE);
             fd->balance_color()->set_rgb24(0xffff00);
+            fd->inactive_balance_color()->set_rgb24(0xcccccc);
             fd->balance_color_custom()->set(true);
             fd->angle()->set(2);
             fd->balance()->set(0.5f);
