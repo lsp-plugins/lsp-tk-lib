@@ -13,6 +13,7 @@
   * tk::Indicator;
   * tk::Knob;
   * tk::Led;
+  * tk::MenuItem;
   * tk::ProgressBar;
   * tk::RadioButton;
   * tk::ScrollBar.
