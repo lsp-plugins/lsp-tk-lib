@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 дек. 2024 г.
@@ -18,7 +18,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
-
 
 #include <lsp-plug.in/test-fw/mtest.h>
 #include <lsp-plug.in/tk/tk.h>
@@ -99,6 +98,18 @@ MTEST_BEGIN("tk.widgets.containers", tabgroup)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
+
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+        if (ev->nState & ws::MCF_MIDDLE)
+        {
+            tk::TabItem *item = tk::widget_cast<tk::TabItem>(sender);
+            if (item != NULL)
+                item->active()->toggle();
+
+            tk::TabGroup *grp = tk::widget_cast<tk::TabGroup>(sender);
+            if (grp != NULL)
+                grp->selected()->get()->active()->toggle();
+        }
 
         return STATUS_OK;
     }
