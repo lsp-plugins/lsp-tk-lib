@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -33,14 +33,31 @@ namespace lsp
         // Style definition
         namespace style
         {
+            typedef struct ListBoxItemColors
+            {
+                prop::Color                 sBgColor;
+                prop::Color                 sTextColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } ListBoxItemColors;
+
+            enum ListBoxItemColorState
+            {
+                LISTBOXITEM_NORMAL          = 0,
+                LISTBOXITEM_SELECTED        = 1 << 0,
+                LISTBOXITEM_HOVER           = 1 << 1,
+                LISTBOXITEM_INACTIVE        = 1 << 2,
+
+                LISTBOXITEM_TOTAL           = 1 << 3
+            };
+
             LSP_TK_STYLE_DEF_BEGIN(ListBoxItem, Widget)
+                ListBoxItemColors           vColors[LISTBOXITEM_TOTAL];
+
                 prop::String                sText;
                 prop::TextAdjust            sTextAdjust;
-                prop::Color                 sBgSelectedColor;
-                prop::Color                 sBgHoverColor;
-                prop::Color                 sTextColor;
-                prop::Color                 sTextSelectedColor;
-                prop::Color                 sTextHoverColor;
+                prop::Boolean               sActive;
             LSP_TK_STYLE_DEF_END
         }
         
@@ -49,38 +66,68 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            protected:
-                prop::String                sText;
-                prop::TextAdjust            sTextAdjust;
-                prop::Color                 sBgSelectedColor;
-                prop::Color                 sBgHoverColor;
-                prop::Color                 sTextColor;
-                prop::Color                 sTextSelectedColor;
-                prop::Color                 sTextHoverColor;
+            private:
+                friend class ListBox;
 
             protected:
-                virtual void                property_changed(Property *prop);
+                enum litm_flags_t
+                {
+                    LITM_0          = style::LISTBOXITEM_NORMAL,
+                    LITM_1          = style::LISTBOXITEM_SELECTED,
+                    LITM_2          = style::LISTBOXITEM_HOVER,
+                    LITM_3          = style::LISTBOXITEM_SELECTED | style::LISTBOXITEM_HOVER,
+                    LITM_4          = style::LISTBOXITEM_INACTIVE,
+                    LITM_5          = style::LISTBOXITEM_SELECTED | style::LISTBOXITEM_INACTIVE,
+                    LITM_6          = style::LISTBOXITEM_HOVER | style::LISTBOXITEM_INACTIVE,
+                    LITM_7          = style::LISTBOXITEM_SELECTED | style::LISTBOXITEM_HOVER | style::LISTBOXITEM_INACTIVE,
+
+                    LITM_TOTAL      = style::LISTBOXITEM_TOTAL
+                };
+
+            protected:
+                style::ListBoxItemColors    vColors[style::LISTBOXITEM_TOTAL];
+                prop::String                sText;
+                prop::TextAdjust            sTextAdjust;
+                prop::Boolean               sActive;
+
+            protected:
+                style::ListBoxItemColors   *select_colors(bool selected, bool hover);
+
+            protected:
+                virtual void                property_changed(Property *prop) override;
 
             public:
                 explicit ListBoxItem(Display *dpy);
                 ListBoxItem(const ListBoxItem &) = delete;
                 ListBoxItem(ListBoxItem &&) = delete;
-                virtual ~ListBoxItem();
+                virtual ~ListBoxItem() override;
 
                 ListBoxItem & operator = (const ListBoxItem &) = delete;
                 ListBoxItem & operator = (ListBoxItem &&) = delete;
 
-            public:
-                LSP_TK_PROPERTY(String,     text,                       &sText)
-                LSP_TK_PROPERTY(TextAdjust, text_adjust,                &sTextAdjust)
-                LSP_TK_PROPERTY(Color,      bg_selected_color,          &sBgSelectedColor)
-                LSP_TK_PROPERTY(Color,      bg_hover_color,             &sBgHoverColor)
-                LSP_TK_PROPERTY(Color,      text_color,                 &sTextColor)
-                LSP_TK_PROPERTY(Color,      text_selected_color,        &sTextSelectedColor)
-                LSP_TK_PROPERTY(Color,      text_hover_color,           &sTextHoverColor)
+                virtual status_t            init() override;
 
             public:
-                virtual status_t            init();
+                LSP_TK_PROPERTY(Color,      text_color,                         &vColors[LITM_0].sTextColor)
+                LSP_TK_PROPERTY(Color,      bg_selected_color,                  &vColors[LITM_1].sBgColor)
+                LSP_TK_PROPERTY(Color,      text_selected_color,                &vColors[LITM_1].sTextColor)
+                LSP_TK_PROPERTY(Color,      bg_hover_color,                     &vColors[LITM_2].sBgColor)
+                LSP_TK_PROPERTY(Color,      text_hover_color,                   &vColors[LITM_2].sTextColor)
+                LSP_TK_PROPERTY(Color,      bg_selected_hover_color,            &vColors[LITM_3].sBgColor)
+                LSP_TK_PROPERTY(Color,      text_selected_hover_color,          &vColors[LITM_3].sTextColor)
+                LSP_TK_PROPERTY(Color,      inactive_bg_color,                  &vColors[LITM_4].sBgColor)
+                LSP_TK_PROPERTY(Color,      inactive_text_color,                &vColors[LITM_4].sTextColor)
+                LSP_TK_PROPERTY(Color,      inactive_bg_selected_color,         &vColors[LITM_5].sBgColor)
+                LSP_TK_PROPERTY(Color,      inactive_text_selected_color,       &vColors[LITM_5].sTextColor)
+                LSP_TK_PROPERTY(Color,      inactive_bg_hover_color,            &vColors[LITM_6].sBgColor)
+                LSP_TK_PROPERTY(Color,      inactive_text_hover_color,          &vColors[LITM_6].sTextColor)
+                LSP_TK_PROPERTY(Color,      inactive_bg_selected_hover_color,   &vColors[LITM_7].sBgColor)
+                LSP_TK_PROPERTY(Color,      inactive_text_selected_hover_color, &vColors[LITM_7].sTextColor)
+
+                LSP_TK_PROPERTY(String,     text,                               &sText)
+                LSP_TK_PROPERTY(TextAdjust, text_adjust,                        &sTextAdjust)
+                LSP_TK_PROPERTY(Boolean,    active,                             &sActive)
+
         };
     
     } /* namespace tk */

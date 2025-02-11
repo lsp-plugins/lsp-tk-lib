@@ -185,13 +185,16 @@ namespace lsp
             // Self properties
             style::MenuItemColors *colors = select_colors();
             if (colors->property_changed(prop))
+            {
                 query_draw();
+                tk::Menu *parent = widget_cast<tk::Menu>(this->parent());
+                if (parent != NULL)
+                    parent->query_draw(REDRAW_CHILD | REDRAW_SURFACE);
+            }
 
             if (sActive.is(prop))
             {
                 query_draw();
-
-                // Call parent menu for redraw
                 tk::Menu *parent = widget_cast<tk::Menu>(this->parent());
                 if (parent != NULL)
                     parent->query_draw(REDRAW_CHILD | REDRAW_SURFACE);

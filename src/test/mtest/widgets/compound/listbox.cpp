@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 4 авг. 2020 г.
@@ -147,6 +147,23 @@ MTEST_BEGIN("tk.widgets.compound", listbox)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
+
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+        if (ev->nCode == ws::MCB_MIDDLE)
+        {
+            tk::ListBox *list = tk::widget_cast<tk::ListBox>(sender);
+            if (list != NULL)
+            {
+                lltl::parray<tk::ListBoxItem> widgets;
+                list->selected()->values(&widgets);
+                for (size_t i=0; i<widgets.size(); ++i)
+                    widgets.get(i)->active()->toggle();
+            }
+
+            tk::ListBoxItem *item = tk::widget_cast<tk::ListBoxItem>(sender);
+            if (item != NULL)
+                item->active()->toggle();
+        }
 
         return STATUS_OK;
     }

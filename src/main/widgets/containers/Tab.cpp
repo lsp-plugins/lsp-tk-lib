@@ -278,6 +278,13 @@ namespace lsp
                         tc->query_draw(REDRAW_CHILD | REDRAW_SURFACE);
                     break;
                 }
+            if (sActive.is(prop))
+            {
+                query_draw();
+                tk::TabControl *tc = tk::widget_cast<tk::TabControl>(pParent);
+                if (tc != NULL)
+                    tc->query_draw(REDRAW_CHILD | REDRAW_SURFACE);
+            }
 
             if (prop->one_of(sBorderSize, sBorderRadius))
                 query_resize();

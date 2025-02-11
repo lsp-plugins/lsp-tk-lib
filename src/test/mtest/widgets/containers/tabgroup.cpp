@@ -100,7 +100,7 @@ MTEST_BEGIN("tk.widgets.containers", tabgroup)
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
 
         ws::event_t *ev = static_cast<ws::event_t *>(data);
-        if (ev->nState & ws::MCF_MIDDLE)
+        if (ev->nCode == ws::MCB_MIDDLE)
         {
             tk::TabItem *item = tk::widget_cast<tk::TabItem>(sender);
             if (item != NULL)

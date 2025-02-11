@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -675,31 +675,17 @@ namespace lsp
                         if (!Size::overlap(&xa, &it->r)) // Do not draw invisible items
                             continue;
 
+                        const style::ListBoxItemColors *colors = li->select_colors(
+                            vSelected.contains(li), it->item == pHoverItem);
+
                         text.clear();
                         li->text()->format(&text);
                         li->text_adjust()->apply(&text);
-                        bool selected = vSelected.contains(li);
                         sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 
-                        if (selected)
-                        {
-                            col.copy(li->bg_selected_color()->color());
-                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
-                            col.copy(li->text_selected_color()->color());
-                        }
-                        else if (it->item == pHoverItem)
-                        {
-                            col.copy(li->bg_hover_color()->color());
-                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
-                            col.copy(li->text_hover_color()->color());
-                        }
-                        else
-                        {
-                            li->get_actual_bg_color(col);
-                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
-                            col.copy(li->text_color()->color());
-                        }
-
+                        col.copy(colors->sBgColor);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
+                        col.copy(colors->sTextColor);
                         li->padding()->enter(&xr, &it->r, scaling);
                         sFont.draw(s, col,
                             xr.nLeft,
