@@ -17,6 +17,7 @@
   * tk::ProgressBar;
   * tk::RadioButton;
   * tk::ScrollBar;
+  * tk::Tab;
   * tk::TabItem.
 * Removed tk::Switch widget as being outdated.
 * Optimized surface drawing and sizing algorithm.

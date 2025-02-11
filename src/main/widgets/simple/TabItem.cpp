@@ -246,7 +246,10 @@ namespace lsp
             // Self properties
             for (size_t i=0; i<style::TABITEM_TOTAL; ++i)
                 if (vColors[i].property_changed(prop))
+                {
                     query_draw();
+                    break;
+                }
 
             if (sActive.is(prop))
                 query_draw();
