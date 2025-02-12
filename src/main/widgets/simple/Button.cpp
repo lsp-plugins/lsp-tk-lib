@@ -204,6 +204,8 @@ namespace lsp
             sTextDownShift(&sProperties),
             sTextPressedShift(&sProperties)
         {
+            pClass          = &metadata;
+
             for (size_t i=0; i<BTN_TOTAL; ++i)
                 vColors[i].listener(&sProperties);
 
@@ -215,7 +217,6 @@ namespace lsp
             sButton.nWidth  = 0;
             sButton.nHeight = 0;
 
-            pClass          = &metadata;
         }
         
         Button::~Button()

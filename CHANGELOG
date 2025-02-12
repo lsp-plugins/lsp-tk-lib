@@ -10,6 +10,7 @@
   * tk::CheckBox;
   * tk::Edit;
   * tk::Fader;
+  * tk::FileButton;
   * tk::Indicator;
   * tk::Knob;
   * tk::Led;
