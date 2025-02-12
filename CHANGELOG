@@ -11,6 +11,7 @@
   * tk::Edit;
   * tk::Fader;
   * tk::FileButton;
+  * tk::Fraction;
   * tk::Indicator;
   * tk::Knob;
   * tk::Led;
