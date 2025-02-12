@@ -8,6 +8,7 @@
 * Added inactive state and colors for following widgets:
   * tk::Button;
   * tk::CheckBox;
+  * tk::ComboBox;
   * tk::Edit;
   * tk::Fader;
   * tk::FileButton;
