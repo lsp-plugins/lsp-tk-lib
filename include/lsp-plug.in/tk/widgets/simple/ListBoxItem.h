@@ -91,7 +91,7 @@ namespace lsp
                 prop::Boolean               sActive;
 
             protected:
-                style::ListBoxItemColors   *select_colors(bool selected, bool hover);
+                style::ListBoxItemColors   *select_colors(bool selected, bool hover, bool active);
 
             protected:
                 virtual void                property_changed(Property *prop) override;

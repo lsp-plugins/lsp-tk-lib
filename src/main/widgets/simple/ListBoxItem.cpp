@@ -186,9 +186,9 @@ namespace lsp
             return res;
         }
 
-        style::ListBoxItemColors *ListBoxItem::select_colors(bool selected, bool hover)
+        style::ListBoxItemColors *ListBoxItem::select_colors(bool selected, bool hover, bool active)
         {
-            size_t flags = (sActive.get()) ? style::TABITEM_NORMAL : style::TABITEM_INACTIVE;
+            size_t flags = ((active) && (sActive.get())) ? style::TABITEM_NORMAL : style::TABITEM_INACTIVE;
             if (selected)
                 flags          |= style::TABITEM_SELECTED;
             if (hover)

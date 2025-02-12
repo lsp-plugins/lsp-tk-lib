@@ -15,6 +15,7 @@
   * tk::Indicator;
   * tk::Knob;
   * tk::Led;
+  * tk::ListBox;
   * tk::ListBoxItem;
   * tk::MenuItem;
   * tk::ProgressBar;

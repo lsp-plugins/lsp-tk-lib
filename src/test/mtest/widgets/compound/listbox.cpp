@@ -154,10 +154,15 @@ MTEST_BEGIN("tk.widgets.compound", listbox)
             tk::ListBox *list = tk::widget_cast<tk::ListBox>(sender);
             if (list != NULL)
             {
-                lltl::parray<tk::ListBoxItem> widgets;
-                list->selected()->values(&widgets);
-                for (size_t i=0; i<widgets.size(); ++i)
-                    widgets.get(i)->active()->toggle();
+                if (ev->nState & ws::MCF_SHIFT)
+                    list->active()->toggle();
+                else
+                {
+                    lltl::parray<tk::ListBoxItem> widgets;
+                    list->selected()->values(&widgets);
+                    for (size_t i=0; i<widgets.size(); ++i)
+                        widgets.get(i)->active()->toggle();
+                }
             }
 
             tk::ListBoxItem *item = tk::widget_cast<tk::ListBoxItem>(sender);
