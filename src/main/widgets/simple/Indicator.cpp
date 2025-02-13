@@ -257,14 +257,12 @@ namespace lsp
             text.fmt_ascii("%c", ch);
             sFont.get_text_parameters(s, &tp, fscaling, &text);
 
-            sFont.draw
-            (
+            sFont.draw(
                 s, on,
-                x + (nDWidth - tp.Width) * 0.5f,
-                y + (nDHeight - fp->Height) + fp->Ascent,
+                truncf(x + (nDWidth - tp.Width) * 0.5f),
+                truncf(y + (nDHeight - fp->Height) + fp->Ascent),
                 fscaling,
-                &text
-            );
+                &text);
         }
 
         void Indicator::size_request(ws::size_limit_t *r)
