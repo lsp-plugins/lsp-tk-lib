@@ -30,19 +30,47 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_IMPL_BEGIN(Button, Widget)
-                // Bind
-                sColor.bind("color", this);
-                sTextColor.bind("text.color", this);
-                sBorderColor.bind("border.color", this);
-                sDownColor.bind("down.color", this);
-                sTextDownColor.bind("text.down.color", this);
-                sBorderDownColor.bind("border.down.color", this);
-                sHoverColor.bind("hover.color", this);
-                sTextHoverColor.bind("text.hover.color", this);
-                sBorderHoverColor.bind("border.hover.color", this);
-                sDownHoverColor.bind("down.hover.color", this);
-                sTextDownHoverColor.bind("text.down.hover.color", this);
-                sBorderDownHoverColor.bind("border.down.hover.color", this);
+                // Bind colors
+                ButtonColors *c = &vColors[BUTTON_NORMAL];
+                c->sColor.bind("color", this);
+                c->sTextColor.bind("text.color", this);
+                c->sBorderColor.bind("border.color", this);
+
+                c = &vColors[BUTTON_DOWN];
+                c->sColor.bind("down.color", this);
+                c->sTextColor.bind("text.down.color", this);
+                c->sBorderColor.bind("border.down.color", this);
+
+                c = &vColors[BUTTON_HOVER];
+                c->sColor.bind("hover.color", this);
+                c->sTextColor.bind("text.hover.color", this);
+                c->sBorderColor.bind("border.hover.color", this);
+
+                c = &vColors[BUTTON_DOWN | BUTTON_HOVER];
+                c->sColor.bind("down.hover.color", this);
+                c->sTextColor.bind("text.down.hover.color", this);
+                c->sBorderColor.bind("border.down.hover.color", this);
+
+                c = &vColors[BUTTON_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sTextColor.bind("inactive.text.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+
+                c = &vColors[BUTTON_DOWN | BUTTON_INACTIVE];
+                c->sColor.bind("inactive.down.color", this);
+                c->sTextColor.bind("inactive.text.down.color", this);
+                c->sBorderColor.bind("inactive.border.down.color", this);
+
+                c = &vColors[BUTTON_HOVER | BUTTON_INACTIVE];
+                c->sColor.bind("inactive.hover.color", this);
+                c->sTextColor.bind("inactive.text.hover.color", this);
+                c->sBorderColor.bind("inactive.border.hover.color", this);
+
+                c = &vColors[BUTTON_DOWN | BUTTON_HOVER | BUTTON_INACTIVE];
+                c->sColor.bind("inactive.down.hover.color", this);
+                c->sTextColor.bind("inactive.text.down.hover.color", this);
+                c->sBorderColor.bind("inactive.border.down.hover.color", this);
+
                 sHoleColor.bind("hole.color", this);
 
                 sFont.bind("font", this);
@@ -57,6 +85,7 @@ namespace lsp
                 sBorderPressedSize.bind("border.pressed.size", this);
                 sBorderDownSize.bind("border.down.size", this);
                 sEditable.bind("editable", this);
+                sActive.bind("active", this);
                 sHole.bind("hole", this);
                 sFlat.bind("flat", this);
                 sTextClip.bind("text.clip", this);
@@ -67,18 +96,46 @@ namespace lsp
                 sTextDownShift.bind("text.down.shift", this);
                 sTextPressedShift.bind("text.pressed.shift", this);
                 // Configure
-                sColor.set("#cccccc");
-                sTextColor.set("#000000");
-                sBorderColor.set("#888888");
-                sHoverColor.set("#ffffff");
-                sTextHoverColor.set("#000000");
-                sBorderHoverColor.set("#cccccc");
-                sDownColor.set("#00cc00");
-                sTextDownColor.set("#000000");
-                sBorderDownColor.set("#888888");
-                sDownHoverColor.set("#00ff00");
-                sTextDownHoverColor.set("#444444");
-                sBorderDownHoverColor.set("#888888");
+                c = &vColors[BUTTON_NORMAL];
+                c->sColor.set("#cccccc");
+                c->sTextColor.set("#000000");
+                c->sBorderColor.set("#888888");
+
+                c = &vColors[BUTTON_DOWN];
+                c->sColor.set("#ffffff");
+                c->sTextColor.set("#000000");
+                c->sBorderColor.set("#cccccc");
+
+                c = &vColors[BUTTON_HOVER];
+                c->sColor.set("#00cc00");
+                c->sTextColor.set("#000000");
+                c->sBorderColor.set("#888888");
+
+                c = &vColors[BUTTON_DOWN | BUTTON_HOVER];
+                c->sColor.set("#00ff00");
+                c->sTextColor.set("#444444");
+                c->sBorderColor.set("#888888");
+
+                c = &vColors[BUTTON_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sTextColor.set("#444444");
+                c->sBorderColor.set("#444444");
+
+                c = &vColors[BUTTON_DOWN | BUTTON_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sTextColor.set("#444444");
+                c->sBorderColor.set("#cccccc");
+
+                c = &vColors[BUTTON_HOVER | BUTTON_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sTextColor.set("#000000");
+                c->sBorderColor.set("#888888");
+
+                c = &vColors[BUTTON_DOWN | BUTTON_HOVER | BUTTON_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sTextColor.set("#444444");
+                c->sBorderColor.set("#888888");
+
                 sHoleColor.set("#000000");
 
                 sFont.set_size(12.0f);
@@ -93,6 +150,7 @@ namespace lsp
                 sBorderPressedSize.set(3);
                 sBorderDownSize.set(2);
                 sEditable.set(true);
+                sActive.set(true);
                 sHole.set(true);
                 sFlat.set(false);
                 sTextClip.set(false);
@@ -103,24 +161,24 @@ namespace lsp
                 sTextPressedShift.set(1, 1);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Button, "Button", "root");
+
+            void ButtonColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sTextColor.listener(listener);
+                sBorderColor.listener(listener);
+            }
+
+            bool ButtonColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sTextColor, sBorderColor);
+            }
         }
 
         const w_class_t Button::metadata        = { "Button", &Widget::metadata };
 
         Button::Button(Display *dpy):
             Widget(dpy),
-            sColor(&sProperties),
-            sTextColor(&sProperties),
-            sBorderColor(&sProperties),
-            sDownColor(&sProperties),
-            sTextDownColor(&sProperties),
-            sBorderDownColor(&sProperties),
-            sHoverColor(&sProperties),
-            sTextHoverColor(&sProperties),
-            sBorderHoverColor(&sProperties),
-            sDownHoverColor(&sProperties),
-            sTextDownHoverColor(&sProperties),
-            sBorderDownHoverColor(&sProperties),
             sHoleColor(&sProperties),
             sFont(&sProperties),
             sText(&sProperties),
@@ -135,6 +193,7 @@ namespace lsp
             sBorderPressedSize(&sProperties),
             sBorderDownSize(&sProperties),
             sEditable(&sProperties),
+            sActive(&sProperties),
             sHole(&sProperties),
             sFlat(&sProperties),
             sTextClip(&sProperties),
@@ -145,6 +204,11 @@ namespace lsp
             sTextDownShift(&sProperties),
             sTextPressedShift(&sProperties)
         {
+            pClass          = &metadata;
+
+            for (size_t i=0; i<BTN_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             nState          = 0;
             nBMask          = 0;
             nChanges        = 0;
@@ -153,7 +217,6 @@ namespace lsp
             sButton.nWidth  = 0;
             sButton.nHeight = 0;
 
-            pClass          = &metadata;
         }
         
         Button::~Button()
@@ -168,18 +231,46 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
-            sColor.bind("color", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sDownColor.bind("down.color", &sStyle);
-            sTextDownColor.bind("text.down.color", &sStyle);
-            sBorderDownColor.bind("border.down.color", &sStyle);
-            sHoverColor.bind("hover.color", &sStyle);
-            sTextHoverColor.bind("text.hover.color", &sStyle);
-            sBorderHoverColor.bind("border.hover.color", &sStyle);
-            sDownHoverColor.bind("down.hover.color", &sStyle);
-            sTextDownHoverColor.bind("text.down.hover.color", &sStyle);
-            sBorderDownHoverColor.bind("border.down.hover.color", &sStyle);
+            style::ButtonColors *c = &vColors[style::BUTTON_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+
+            c = &vColors[style::BUTTON_DOWN];
+            c->sColor.bind("down.color", &sStyle);
+            c->sTextColor.bind("text.down.color", &sStyle);
+            c->sBorderColor.bind("border.down.color", &sStyle);
+
+            c = &vColors[style::BUTTON_HOVER];
+            c->sColor.bind("hover.color", &sStyle);
+            c->sTextColor.bind("text.hover.color", &sStyle);
+            c->sBorderColor.bind("border.hover.color", &sStyle);
+
+            c = &vColors[style::BUTTON_DOWN | style::BUTTON_HOVER];
+            c->sColor.bind("down.hover.color", &sStyle);
+            c->sTextColor.bind("text.down.hover.color", &sStyle);
+            c->sBorderColor.bind("border.down.hover.color", &sStyle);
+
+            c = &vColors[style::BUTTON_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+
+            c = &vColors[style::BUTTON_DOWN | style::BUTTON_INACTIVE];
+            c->sColor.bind("inactive.down.color", &sStyle);
+            c->sTextColor.bind("inactive.text.down.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.down.color", &sStyle);
+
+            c = &vColors[style::BUTTON_HOVER | style::BUTTON_INACTIVE];
+            c->sColor.bind("inactive.hover.color", &sStyle);
+            c->sTextColor.bind("inactive.text.hover.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.hover.color", &sStyle);
+
+            c = &vColors[style::BUTTON_DOWN | style::BUTTON_HOVER | style::BUTTON_INACTIVE];
+            c->sColor.bind("inactive.down.hover.color", &sStyle);
+            c->sTextColor.bind("inactive.text.down.hover.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.down.hover.color", &sStyle);
+
             sHoleColor.bind("hole.color", &sStyle);
 
             sFont.bind("font", &sStyle);
@@ -195,6 +286,7 @@ namespace lsp
             sBorderPressedSize.bind("border.pressed.size", &sStyle);
             sBorderDownSize.bind("border.down.size", &sStyle);
             sEditable.bind("editable", &sStyle);
+            sActive.bind("active", &sStyle);
             sHole.bind("hole", &sStyle);
             sFlat.bind("flat", &sStyle);
             sTextClip.bind("text.clip", &sStyle);
@@ -217,27 +309,16 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            prop::Color &color = select_color();
-            prop::Color &text_color = select_text_color();
-            prop::Color &border_color = select_border_color();
-
-            if (color.is(prop))
-                query_draw();
-            if (text_color.is(prop))
-                query_draw();
-            if (border_color.is(prop))
+            style::ButtonColors *cols = select_colors();
+            if (cols->property_changed(prop))
                 query_draw();
 
-            if (sHoleColor.is(prop))
+            if (prop->one_of(sHoleColor, sHover, sGradient, sActive))
                 query_draw();
-            if (sFont.is(prop))
+
+            if (prop->one_of(sFont, sText, sTextAdjust, sConstraints, sBorderSize, sBorderPressedSize, sBorderDownSize))
                 query_resize();
-            if (sText.is(prop))
-                query_resize();
-            if (sTextAdjust.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
-                query_resize();
+
             if (sTextLayout.is(prop))
                 query_draw();
             if (sTextClip.is(prop))
@@ -255,12 +336,6 @@ namespace lsp
                     query_resize();
                 }
             }
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderPressedSize.is(prop))
-                query_resize();
-            if (sBorderDownSize.is(prop))
-                query_resize();
 
             if (sHole.is(prop))
             {
@@ -295,35 +370,18 @@ namespace lsp
                 nState = sEditable.add_as_flag(nState, S_EDITABLE);
                 query_draw();
             }
-
-            if (sHover.is(prop))
-                query_draw();
-            if (sGradient.is(prop))
-                query_draw();
         }
 
-        prop::Color &Button::select4(prop::Color &dfl, prop::Color &hover, prop::Color &down, prop::Color &hover_down)
+        style::ButtonColors *Button::select_colors()
         {
-            bool xdown = (nState & S_DOWN) && ((nState & S_LED) || (sLed.get() > 0) || (sDownColors.get()));
+            size_t flags = (sActive.get()) ? style::BUTTON_NORMAL : style::BUTTON_INACTIVE;
+            if ((nState & S_DOWN) && ((nState & S_LED) || (sLed.get() > 0) || (sDownColors.get())))
+                flags      |= style::BUTTON_DOWN;
+
             if ((sHover.get()) && (nState & S_HOVER))
-                return (xdown) ? hover_down : hover;
+                flags      |= style::BUTTON_HOVER;
 
-            return (xdown) ? down : dfl;
-        }
-
-        prop::Color &Button::select_color()
-        {
-            return select4(sColor, sHoverColor, sDownColor, sDownHoverColor);
-        }
-
-        prop::Color &Button::select_text_color()
-        {
-            return select4(sTextColor, sTextHoverColor, sTextDownColor, sTextDownHoverColor);
-        }
-
-        prop::Color &Button::select_border_color()
-        {
-            return select4(sBorderColor, sBorderHoverColor, sBorderDownColor, sBorderDownHoverColor);
+            return &vColors[flags];
         }
 
         void Button::update_mode(button_mode_t mode)
@@ -432,10 +490,12 @@ namespace lsp
             r.nTop             -= sSize.nTop;
 
             // Prepare palette
+            const style::ButtonColors *colors = select_colors();
+
             lsp::Color bg_color;
-            lsp::Color color(select_color());
-            lsp::Color tcolor(select_text_color());
-            lsp::Color border_color(select_border_color());
+            lsp::Color color(colors->sColor);
+            lsp::Color tcolor(colors->sTextColor);
+            lsp::Color border_color(colors->sBorderColor);
             lsp::Color xc;
 
             get_actual_bg_color(bg_color);

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 июл. 2019 г.
@@ -31,41 +31,81 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(ProgressBar, Widget)
                 // Bind
+                style::ProgressBarColors *c = &vColors[style::PROGRESSBAR_NORMAL];
+                c->sColor.bind("color", this);
+                c->sTextColor.bind("text.color", this);
+                c->sInvColor.bind("inv.color", this);
+                c->sInvTextColor.bind("text.inv.color", this);
+                c->sBorderColor.bind("border.color", this);
+                c->sBorderGapColor.bind("border.gap.color", this);
+
+                c = &vColors[style::PROGRESSBAR_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sTextColor.bind("inactive.text.color", this);
+                c->sInvColor.bind("inactive.inv.color", this);
+                c->sInvTextColor.bind("inactive.text.inv.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sBorderGapColor.bind("inactive.border.gap.color", this);
+
                 sValue.bind("value", this);
                 sConstraints.bind("size", this);
                 sTextLayout.bind("text.layout", this);
                 sShowText.bind("text.show", this);
+                sActive.bind("active", this);
                 sFont.bind("font", this);
-                sBorderColor.bind("border.color", this);
-                sBorderGapColor.bind("border.gap.color", this);
                 sBorderSize.bind("border.size", this);
                 sBorderGapSize.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
-                sColor.bind("color", this);
-                sTextColor.bind("text.color", this);
-                sInvColor.bind("inv.color", this);
-                sInvTextColor.bind("text.inv.color", this);
+
                 // Configure
+                c = &vColors[style::PROGRESSBAR_NORMAL];
+                c->sColor.set("#008800");
+                c->sTextColor.set("#ffffff");
+                c->sInvColor.set("#ffffff");
+                c->sInvTextColor.set("#000000");
+                c->sBorderColor.set("#444444");
+                c->sBorderGapColor.set("#000000");
+
+                c = &vColors[style::PROGRESSBAR_INACTIVE];
+                c->sColor.set("#888888");
+                c->sTextColor.set("#cccccc");
+                c->sInvColor.set("#cccccc");
+                c->sInvTextColor.set("#000000");
+                c->sBorderColor.set("#222222");
+                c->sBorderGapColor.set("#000000");
+
                 sValue.set(0.5f);
                 sConstraints.set(-1, -1, -1, -1);
                 sTextLayout.set(0.0f, 0.0f);
                 sShowText.set(true);
+                sActive.set(true);
                 sFont.set_size(12.0f);
-                sBorderColor.set("#444444");
-                sBorderGapColor.set("#000000");
                 sBorderSize.set(1);
                 sBorderGapSize.set(1);
                 sBorderRadius.set(4);
-                sColor.set("#008800");
-                sTextColor.set("#ffffff");
-                sInvColor.set("#ffffff");
-                sInvTextColor.set("#000000");
+
                 // Override
                 sAllocation.set(true, false, false, false);
+
                 // Commit
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ProgressBar, "ProgressBar", "root");
+
+            void ProgressBarColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sTextColor.listener(listener);
+                sInvColor.listener(listener);
+                sInvTextColor.listener(listener);
+                sBorderColor.listener(listener);
+                sBorderGapColor.listener(listener);
+            }
+
+            bool ProgressBarColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sTextColor, sInvColor, sInvTextColor, sBorderColor, sBorderGapColor);
+            }
         }
 
         const w_class_t ProgressBar::metadata           = { "ProgressBar", &Widget::metadata };
@@ -77,23 +117,21 @@ namespace lsp
             sText(&sProperties),
             sTextLayout(&sProperties),
             sShowText(&sProperties),
+            sActive(&sProperties),
             sFont(&sProperties),
-            sBorderColor(&sProperties),
-            sBorderGapColor(&sProperties),
             sBorderSize(&sProperties),
             sBorderGapSize(&sProperties),
-            sBorderRadius(&sProperties),
-            sColor(&sProperties),
-            sTextColor(&sProperties),
-            sInvColor(&sProperties),
-            sInvTextColor(&sProperties)
+            sBorderRadius(&sProperties)
         {
+            pClass              = &metadata;
+
+            for (size_t i=0; i<PBAR_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             sTextArea.nLeft     = -1;
             sTextArea.nTop      = -1;
             sTextArea.nWidth    = 0;
             sTextArea.nHeight   = 0;
-
-            pClass              = &metadata;
         }
         
         ProgressBar::~ProgressBar()
@@ -107,59 +145,58 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
+            style::ProgressBarColors *c = &vColors[style::PROGRESSBAR_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+            c->sInvColor.bind("inv.color", &sStyle);
+            c->sInvTextColor.bind("text.inv.color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sBorderGapColor.bind("border.gap.color", &sStyle);
+
+            c = &vColors[style::PROGRESSBAR_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+            c->sInvColor.bind("inactive.inv.color", &sStyle);
+            c->sInvTextColor.bind("inactive.text.inv.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sBorderGapColor.bind("inactive.border.gap.color", &sStyle);
+
             sValue.bind("value", &sStyle);
             sConstraints.bind("size", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sTextLayout.bind("text.layout", &sStyle);
             sShowText.bind("text.show", &sStyle);
+            sActive.bind("active", &sStyle);
             sFont.bind("font", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sBorderGapColor.bind("border.gap.color", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderGapSize.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
-            sColor.bind("color", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
-            sInvColor.bind("inv.color", &sStyle);
-            sInvTextColor.bind("text.inv.color", &sStyle);
 
             return STATUS_OK;
+        }
+
+        style::ProgressBarColors *ProgressBar::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::INDICATOR_NORMAL : style::INDICATOR_INACTIVE;
+            return &vColors[flags];
         }
 
         void ProgressBar::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
 
-            if (sValue.is(prop))
+            // Self properties
+            style::ProgressBarColors *colors = select_colors();
+            if (colors->property_changed(prop))
                 query_draw();
-            if (sConstraints.is(prop))
+
+            if (sActive.is(prop))
+                query_draw();
+
+            if (prop->one_of(sValue, sText, sTextLayout))
+                query_draw();
+            if (prop->one_of(sConstraints, sShowText, sFont, sBorderSize, sBorderGapSize, sBorderRadius))
                 query_resize();
-            if (sText.is(prop))
-                query_draw();
-            if (sTextLayout.is(prop))
-                query_draw();
-            if (sShowText.is(prop))
-                query_resize();
-            if (sFont.is(prop))
-                query_resize();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderGapSize.is(prop))
-                query_resize();
-            if (sBorderGapColor.is(prop))
-                query_draw();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sTextColor.is(prop))
-                query_draw();
-            if (sInvColor.is(prop))
-                query_draw();
-            if (sInvTextColor.is(prop))
-                query_draw();
         }
 
         void ProgressBar::size_request(ws::size_limit_t *r)
@@ -288,6 +325,7 @@ namespace lsp
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
+            const style::ProgressBarColors *colors = select_colors();
 
             ws::rectangle_t xr  = sSize;
             xr.nLeft            = 0;
@@ -303,7 +341,7 @@ namespace lsp
             // Draw the border (if it is)
             if (border > 0)
             {
-                lsp::Color bcolor(sBorderColor);
+                lsp::Color bcolor(colors->sBorderColor);
                 bcolor.scale_lch_luminance(bright);
 
                 s->fill_rect(bcolor, SURFMASK_ALL_CORNER, radius, &xr);
@@ -316,7 +354,7 @@ namespace lsp
                 // Draw the border gap
                 if (gap > 0)
                 {
-                    bcolor.copy(sBorderGapColor);
+                    bcolor.copy(colors->sBorderGapColor);
                     bcolor.scale_lch_luminance(bright);
 
                     s->fill_rect(bcolor, SURFMASK_ALL_CORNER, radius, &xr);
@@ -335,7 +373,7 @@ namespace lsp
             // Draw progress
             if (split > 0)
             {
-                lsp::Color color(sColor);
+                lsp::Color color(colors->sColor);
                 color.scale_lch_luminance(bright);
 
                 s->clip_begin(xr.nLeft, xr.nTop, split, xr.nHeight);
@@ -344,7 +382,7 @@ namespace lsp
             }
             if (split < xr.nWidth)
             {
-                lsp::Color color(sInvColor);
+                lsp::Color color(colors->sInvColor);
                 color.scale_lch_luminance(bright);
 
                 s->clip_begin(xr.nLeft + split, xr.nTop, xr.nWidth - split, xr.nHeight);
@@ -365,7 +403,7 @@ namespace lsp
 
                 if (split > 0)
                 {
-                    lsp::Color color(sTextColor);
+                    lsp::Color color(colors->sTextColor);
                     color.scale_lch_luminance(bright);
 
                     s->clip_begin(xr.nLeft, xr.nTop, split, xr.nHeight);
@@ -375,7 +413,7 @@ namespace lsp
 
                 if (split < sTextArea.nWidth)
                 {
-                    lsp::Color color(sInvTextColor);
+                    lsp::Color color(colors->sInvTextColor);
                     color.scale_lch_luminance(bright);
 
                     s->clip_begin(xr.nLeft + split, xr.nTop, xr.nWidth - split, xr.nHeight);

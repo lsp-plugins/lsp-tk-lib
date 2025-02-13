@@ -108,7 +108,7 @@ namespace lsp
          * @param s destination surface to perform draw
          * @param font font to use
          * @param r rectangle to fit the font
-         * @param color color of the rectangle
+         * @param color color of the text
          * @param fp font parameters
          * @param tp text parameters
          * @param halign horizontal font alignment
@@ -126,7 +126,8 @@ namespace lsp
             float halign, float valign, float fscaling,
             const LSPString *text
         );
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_HELPERS_DRAW_H_ */

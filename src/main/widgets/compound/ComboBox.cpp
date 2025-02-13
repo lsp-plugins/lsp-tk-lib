@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 авг. 2020 г.
@@ -31,37 +31,60 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(ComboBox, WidgetContainer)
                 // Bind
+                style::ComboBoxColors *c = &vColors[style::COMBOBOX_NORMAL];
+                c->sColor.bind("color", this);
+                c->sSpinColor.bind("spin.color", this);
+                c->sTextColor.bind("text.color", this);
+                c->sSpinTextColor.bind("spin.text.color", this);
+                c->sBorderColor.bind("border.color", this);
+                c->sBorderGapColor.bind("border.gap.color", this);
+
+                c = &vColors[style::COMBOBOX_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sSpinColor.bind("inactive.spin.color", this);
+                c->sTextColor.bind("inactive.text.color", this);
+                c->sSpinTextColor.bind("inactive.spin.text.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sBorderGapColor.bind("inactive.border.gap.color", this);
+
                 sBorderSize.bind("border.size", this);
                 sBorderGap.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sSpinSize.bind("spin.size", this);
                 sSpinSeparator.bind("spin.separator", this);
-                sColor.bind("color", this);
-                sSpinColor.bind("spin.color", this);
-                sTextColor.bind("text.color", this);
-                sSpinTextColor.bind("spin.text.color", this);
-                sBorderColor.bind("border.color", this);
-                sBorderGapColor.bind("border.gap.color", this);
                 sOpened.bind("opened", this);
+                sActive.bind("active", this);
                 sTextFit.bind("text.fit", this);
                 sFont.bind("font", this);
                 sTextAdjust.bind("text.adjust", this);
                 sConstraints.bind("size.constraints", this);
                 sTextLayout.bind("text.layout", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
+
                 // Configure
+                c = &vColors[style::COMBOBOX_NORMAL];
+                c->sColor.set("#ffffff");
+                c->sSpinColor.set("#ffffff");
+                c->sTextColor.set("#000000");
+                c->sSpinTextColor.set("#000000");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#cccccc");
+
+                c = &vColors[style::COMBOBOX_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sSpinColor.set("#cccccc");
+                c->sTextColor.set("#444444");
+                c->sSpinTextColor.set("#444444");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#888888");
+
                 sBorderSize.set(1);
                 sBorderGap.set(1);
                 sBorderRadius.set(4);
                 sSpinSize.set(10);
                 sSpinSeparator.set(1);
-                sColor.set("#ffffff");
-                sSpinColor.set("#ffffff");
-                sTextColor.set("#000000");
-                sSpinTextColor.set("#000000");
-                sBorderColor.set("#000000");
-                sBorderGapColor.set("#cccccc");
                 sOpened.set(false);
+                sActive.set(true);
                 sTextFit.set(1.0f, 1.0f);
                 sFont.set_size(12.0f);
                 sTextAdjust.set(TA_NONE);
@@ -76,6 +99,21 @@ namespace lsp
 
             // ComboBox::List style
             LSP_TK_BUILTIN_STYLE(ListBox, "ComboBox::List", "ListBox");
+
+            void ComboBoxColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sSpinColor.listener(listener);
+                sTextColor.listener(listener);
+                sSpinTextColor.listener(listener);
+                sBorderColor.listener(listener);
+                sBorderGapColor.listener(listener);
+            }
+
+            bool ComboBoxColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sSpinColor, sTextColor, sSpinTextColor, sBorderColor, sBorderGapColor);
+            }
         }
 
         //-----------------------------------------------------------------------------
@@ -85,8 +123,8 @@ namespace lsp
         ComboBox::Window::Window(Display *dpy, ComboBox *cbox):
             PopupWindow(dpy)
         {
-            pCBox           = cbox;
             pClass          = &metadata;
+            pCBox           = cbox;
         }
 
         status_t ComboBox::Window::on_hide()
@@ -108,8 +146,8 @@ namespace lsp
         ComboBox::List::List(Display *dpy, ComboBox *cbox):
             ListBox(dpy)
         {
-            pCBox           = cbox;
             pClass          = &metadata;
+            pCBox           = cbox;
         }
 
         void ComboBox::List::property_changed(Property *prop)
@@ -155,13 +193,8 @@ namespace lsp
             sBorderRadius(&sProperties),
             sSpinSize(&sProperties),
             sSpinSeparator(&sProperties),
-            sColor(&sProperties),
-            sSpinColor(&sProperties),
-            sTextColor(&sProperties),
-            sSpinTextColor(&sProperties),
-            sBorderColor(&sProperties),
-            sBorderGapColor(&sProperties),
             sOpened(&sProperties),
+            sActive(&sProperties),
             sTextFit(&sProperties),
             sFont(&sProperties),
             sTextAdjust(&sProperties),
@@ -171,6 +204,11 @@ namespace lsp
             sInvertMouseVScroll(&sProperties),
             sSelected(&sProperties)
         {
+            pClass          = &metadata;
+
+            for (size_t i=0; i<style::COMBOBOX_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             sTArea.nLeft    = 0;
             sTArea.nTop     = 0;
             sTArea.nWidth   = 0;
@@ -187,8 +225,6 @@ namespace lsp
             sVArea.nHeight  = 0;
 
             nMBState        = 0;
-
-            pClass          = &metadata;
         }
 
         ComboBox::~ComboBox()
@@ -230,18 +266,29 @@ namespace lsp
             sWindow.add_tether(TF_LEFT | TF_TOP | TF_HORIZONTAL | TF_HSTRETCH, 1.0f, -1.0f);
             sWindow.layout()->set_scale(1.0f);
 
+            style::ComboBoxColors *c = &vColors[style::COMBOBOX_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sSpinColor.bind("spin.color", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+            c->sSpinTextColor.bind("spin.text.color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sBorderGapColor.bind("border.gap.color", &sStyle);
+
+            c = &vColors[style::COMBOBOX_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sSpinColor.bind("inactive.spin.color", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+            c->sSpinTextColor.bind("inactive.spin.text.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sBorderGapColor.bind("inactive.border.gap.color", &sStyle);
+
             sBorderSize.bind("border.size", &sStyle);
             sBorderGap.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sSpinSize.bind("spin.size", &sStyle);
             sSpinSeparator.bind("spin.separator", &sStyle);
-            sColor.bind("color", &sStyle);
-            sSpinColor.bind("spin.color", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
-            sSpinTextColor.bind("spin.text.color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sBorderGapColor.bind("border.gap.color", &sStyle);
             sOpened.bind("opened", &sStyle);
+            sActive.bind("active", &sStyle);
             sTextFit.bind("text.fit", &sStyle);
             sFont.bind("font", &sStyle);
             sTextAdjust.bind("text.adjust", &sStyle);
@@ -259,32 +306,31 @@ namespace lsp
             return STATUS_OK;
         }
 
+        style::ComboBoxColors *ComboBox::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::LISTBOX_NORMAL : style::LISTBOX_INACTIVE;
+            return &vColors[flags];
+        }
+
         void ComboBox::property_changed(Property *prop)
         {
             WidgetContainer::property_changed(prop);
 
-            if (sBorderSize.is(prop))
+            // Self properties
+            style::ComboBoxColors *colors = select_colors();
+            if (colors->property_changed(prop))
+                query_draw();
+
+            if (sActive.is(prop))
+            {
+                sLBox.active()->set(sActive.get());
+                query_draw();
+            }
+
+            if (prop->one_of(sBorderSize, sBorderGap, sBorderRadius, sSpinSize, sSpinSeparator,
+                sTextFit, sFont, sTextAdjust, sConstraints, sTextLayout, sEmptyText))
                 query_resize();
-            if (sBorderGap.is(prop))
-                query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sSpinSize.is(prop))
-                query_resize();
-            if (sSpinSeparator.is(prop))
-                query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sSpinColor.is(prop))
-                query_draw();
-            if (sTextColor.is(prop))
-                query_draw();
-            if (sSpinTextColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sBorderGapColor.is(prop))
-                query_draw();
+
             if (sOpened.is(prop))
             {
                 bool visible = sWindow.visibility()->get();
@@ -306,18 +352,6 @@ namespace lsp
                         sWindow.hide();
                 }
             }
-            if (sTextFit.is(prop))
-                query_resize();
-            if (sFont.is(prop))
-                query_resize();
-            if (sTextAdjust.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sTextLayout.is(prop))
-                query_draw();
-            if (sEmptyText.is(prop))
-                query_resize();
             if (sSelected.is(prop))
             {
                 ListBoxItem *it = sSelected.get();
@@ -446,6 +480,7 @@ namespace lsp
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             float bright        = sBrightness.get();
             estimate_parameters(&a, scaling);
+            const style::ComboBoxColors *colors = select_colors();
 
             ta                  = sTArea;
             sa                  = sSArea;
@@ -467,7 +502,7 @@ namespace lsp
             // Draw the border
             if (a.border > 0)
             {
-                c.copy(sBorderColor);
+                c.copy(colors->sBorderColor);
                 c.scale_lch_luminance(bright);
                 s->set_antialiasing(true);
                 s->fill_rect(c, SURFMASK_ALL_CORNER, a.radius, 0, 0, sSize.nWidth, sSize.nHeight);
@@ -495,7 +530,7 @@ namespace lsp
                 // Draw border gap
                 if (a.bgap > 0)
                 {
-                    c.copy(sBorderGapColor);
+                    c.copy(colors->sBorderGapColor);
                     c.scale_lch_luminance(bright);
                     s->fill_rect(c, SURFMASK_L_CORNER, radius, &ta);
 
@@ -507,7 +542,7 @@ namespace lsp
                 }
 
                 // Draw the prime color
-                c.copy(sColor);
+                c.copy(colors->sColor);
                 c.scale_lch_luminance(bright);
                 s->fill_rect(c, SURFMASK_L_CORNER, radius, &ta);
 
@@ -548,7 +583,7 @@ namespace lsp
 
                 s->clip_begin(&ta);
                 {
-                    c.copy(sTextColor);
+                    c.copy(colors->sTextColor);
                     c.scale_lch_luminance(bright);
                     sFont.draw(s, c, x, y, fscaling, &text);
                 }
@@ -564,7 +599,7 @@ namespace lsp
                 // Draw border gap
                 if (a.bgap > 0)
                 {
-                    c.copy(sBorderGapColor);
+                    c.copy(colors->sBorderGapColor);
                     c.scale_lch_luminance(bright);
                     s->fill_rect(c, SURFMASK_R_CORNER, radius, &sa);
 
@@ -575,12 +610,12 @@ namespace lsp
                 }
 
                 // Draw the prime color
-                c.copy(sSpinColor);
+                c.copy(colors->sSpinColor);
                 c.scale_lch_luminance(bright);
                 s->fill_rect(c, SURFMASK_R_CORNER, radius, &sa);
 
                 // Draw arrows
-                c.copy(sSpinTextColor);
+                c.copy(colors->sSpinTextColor);
                 c.scale_lch_luminance(bright);
                 s->fill_triangle(
                     c,
@@ -602,7 +637,7 @@ namespace lsp
                 // Draw separator gap
                 if (a.sgap > 0)
                 {
-                    c.copy(sBorderGapColor);
+                    c.copy(colors->sBorderGapColor);
                     c.scale_lch_luminance(bright);
                     s->fill_rect(c, SURFMASK_NONE, 0.0f, &va);
 
@@ -612,7 +647,7 @@ namespace lsp
 
                 if (va.nWidth > 0)
                 {
-                    c.copy(sBorderColor);
+                    c.copy(colors->sBorderColor);
                     c.scale_lch_luminance(bright);
                     s->fill_rect(c, SURFMASK_NONE, 0.0f, &va);
                 }

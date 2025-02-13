@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 авг. 2020 г.
@@ -35,19 +35,37 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(ComboBox, WidgetContainer)
-                prop::Integer               sBorderSize;
-                prop::Integer               sBorderGap;
-                prop::Integer               sBorderRadius;
-                prop::Integer               sSpinSize;
-                prop::Integer               sSpinSeparator;
+            typedef struct ComboBoxColors
+            {
                 prop::Color                 sColor;
                 prop::Color                 sSpinColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sSpinTextColor;
                 prop::Color                 sBorderColor;
                 prop::Color                 sBorderGapColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } ComboBoxColors;
+
+            enum ComboBoxColorState
+            {
+                COMBOBOX_NORMAL         = 0,
+                COMBOBOX_INACTIVE       = 1 << 0,
+
+                COMBOBOX_TOTAL          = 1 << 1
+            };
+
+            LSP_TK_STYLE_DEF_BEGIN(ComboBox, WidgetContainer)
+                ComboBoxColors              vColors[COMBOBOX_TOTAL];
+
+                prop::Integer               sBorderSize;
+                prop::Integer               sBorderGap;
+                prop::Integer               sBorderRadius;
+                prop::Integer               sSpinSize;
+                prop::Integer               sSpinSeparator;
                 prop::Boolean               sOpened;
+                prop::Boolean               sActive;
                 prop::TextFitness           sTextFit;
                 prop::Font                  sFont;
                 prop::TextAdjust            sTextAdjust;
@@ -113,22 +131,25 @@ namespace lsp
                         virtual status_t    on_change() override;
                 };
 
+                enum cbox_flags_t
+                {
+                    CBOX_0              = style::COMBOBOX_NORMAL,
+                    CBOX_1              = style::COMBOBOX_INACTIVE,
+                    CBOX_TOTAL          = style::COMBOBOX_TOTAL
+                };
+
             protected:
                 List                        sLBox;          // List box
                 Window                      sWindow;        // Popup window
 
+                style::ComboBoxColors       vColors[style::COMBOBOX_TOTAL];
                 prop::Integer               sBorderSize;
                 prop::Integer               sBorderGap;
                 prop::Integer               sBorderRadius;
                 prop::Integer               sSpinSize;
                 prop::Integer               sSpinSeparator;
-                prop::Color                 sColor;
-                prop::Color                 sSpinColor;
-                prop::Color                 sTextColor;
-                prop::Color                 sSpinTextColor;
-                prop::Color                 sBorderColor;
-                prop::Color                 sBorderGapColor;
                 prop::Boolean               sOpened;
+                prop::Boolean               sActive;
                 prop::TextFitness           sTextFit;
                 prop::Font                  sFont;
                 prop::TextAdjust            sTextAdjust;
@@ -147,7 +168,9 @@ namespace lsp
                 void                    do_destroy();
                 void                    estimate_parameters(alloc_t *alloc, float scaling);
                 bool                    scroll_item(ssize_t direction, size_t count);
+                style::ComboBoxColors  *select_colors();
 
+            protected:
                 static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
@@ -169,29 +192,37 @@ namespace lsp
                 virtual void                destroy() override;
 
             public:
-                LSP_TK_PROPERTY(Integer,                    border_size,            &sBorderSize)
-                LSP_TK_PROPERTY(Integer,                    border_gap,             &sBorderGap)
-                LSP_TK_PROPERTY(Integer,                    border_radius,          &sBorderRadius)
-                LSP_TK_PROPERTY(Integer,                    spin_size,              &sSpinSize)
-                LSP_TK_PROPERTY(Integer,                    spin_separator,         &sSpinSeparator)
-                LSP_TK_PROPERTY(Color,                      color,                  &sColor)
-                LSP_TK_PROPERTY(Color,                      spin_color,             &sSpinColor)
-                LSP_TK_PROPERTY(Color,                      text_color,             &sTextColor)
-                LSP_TK_PROPERTY(Color,                      spin_text_color,        &sSpinTextColor)
-                LSP_TK_PROPERTY(Color,                      border_color,           &sBorderColor)
-                LSP_TK_PROPERTY(Color,                      border_gap_color,       &sBorderGapColor)
-                LSP_TK_PROPERTY(Boolean,                    opened,                 &sOpened)
-                LSP_TK_PROPERTY(TextFitness,                text_fit,               &sTextFit)
-                LSP_TK_PROPERTY(SizeConstraints,            constraints,            &sConstraints)
-                LSP_TK_PROPERTY(Font,                       font,                   &sFont)
-                LSP_TK_PROPERTY(TextAdjust,                 text_adjust,            &sTextAdjust)
-                LSP_TK_PROPERTY(TextLayout,                 text_layout,            &sTextLayout)
-                LSP_TK_PROPERTY(String,                     empty_text,             &sEmptyText)
-                LSP_TK_PROPERTY(Boolean,                    invert_mouse_vscroll,   &sInvertMouseVScroll);
-                LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,               &sSelected)
+                LSP_TK_PROPERTY(Color,                      color,                      &vColors[CBOX_0].sColor)
+                LSP_TK_PROPERTY(Color,                      spin_color,                 &vColors[CBOX_0].sSpinColor)
+                LSP_TK_PROPERTY(Color,                      text_color,                 &vColors[CBOX_0].sTextColor)
+                LSP_TK_PROPERTY(Color,                      spin_text_color,            &vColors[CBOX_0].sSpinTextColor)
+                LSP_TK_PROPERTY(Color,                      border_color,               &vColors[CBOX_0].sBorderColor)
+                LSP_TK_PROPERTY(Color,                      border_gap_color,           &vColors[CBOX_0].sBorderGapColor)
+                LSP_TK_PROPERTY(Color,                      inactive_color,             &vColors[CBOX_1].sColor)
+                LSP_TK_PROPERTY(Color,                      inactive_spin_color,        &vColors[CBOX_1].sSpinColor)
+                LSP_TK_PROPERTY(Color,                      inactive_text_color,        &vColors[CBOX_1].sTextColor)
+                LSP_TK_PROPERTY(Color,                      inactive_spin_text_color,   &vColors[CBOX_1].sSpinTextColor)
+                LSP_TK_PROPERTY(Color,                      inactive_border_color,      &vColors[CBOX_1].sBorderColor)
+                LSP_TK_PROPERTY(Color,                      inactive_border_gap_color,  &vColors[CBOX_1].sBorderGapColor)
 
-                LSP_TK_PROPERTY(Font,                       list_font,              sLBox.font())
-                LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,                  sLBox.items())
+                LSP_TK_PROPERTY(Integer,                    border_size,                &sBorderSize)
+                LSP_TK_PROPERTY(Integer,                    border_gap,                 &sBorderGap)
+                LSP_TK_PROPERTY(Integer,                    border_radius,              &sBorderRadius)
+                LSP_TK_PROPERTY(Integer,                    spin_size,                  &sSpinSize)
+                LSP_TK_PROPERTY(Integer,                    spin_separator,             &sSpinSeparator)
+                LSP_TK_PROPERTY(Boolean,                    opened,                     &sOpened)
+                LSP_TK_PROPERTY(Boolean,                    active,                     &sActive)
+                LSP_TK_PROPERTY(TextFitness,                text_fit,                   &sTextFit)
+                LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sConstraints)
+                LSP_TK_PROPERTY(Font,                       font,                       &sFont)
+                LSP_TK_PROPERTY(TextAdjust,                 text_adjust,                &sTextAdjust)
+                LSP_TK_PROPERTY(TextLayout,                 text_layout,                &sTextLayout)
+                LSP_TK_PROPERTY(String,                     empty_text,                 &sEmptyText)
+                LSP_TK_PROPERTY(Boolean,                    invert_mouse_vscroll,       &sInvertMouseVScroll);
+                LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,                   &sSelected)
+
+                LSP_TK_PROPERTY(Font,                       list_font,                  sLBox.font())
+                LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,                      sLBox.items())
 
             public:
                 virtual status_t            add(Widget *child) override;

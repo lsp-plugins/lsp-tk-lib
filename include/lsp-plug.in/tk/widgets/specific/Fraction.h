@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 авг. 2020 г.
@@ -33,14 +33,33 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(Fraction, Widget)
+            typedef struct FractionColors
+            {
                 prop::Color                 sColor;         // Fraction color
+                prop::Color                 sNumColor;      // Fraction numerator color
+                prop::Color                 sDenColor;      // Fraction denominator color
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } FractionColors;
+
+            enum FractionColorState
+            {
+                FRACTION_NORMAL         = 0,
+                FRACTION_INACTIVE       = 1 << 0,
+
+                FRACTION_TOTAL          = 1 << 1
+            };
+
+            LSP_TK_STYLE_DEF_BEGIN(Fraction, Widget)
+                FractionColors              vColors[FRACTION_TOTAL];
+
                 prop::Font                  sFont;          // Font
                 prop::Float                 sAngle;         // Fraction angle
                 prop::Integer               sTextPad;       // Text padding
                 prop::Integer               sThick;         // Thickness
+                prop::Boolean               sActive;        // Activity flag
 
-                prop::Color                 sItemColor[2];
                 prop::String                sItemText[2];
                 prop::Boolean               sItemOpened[2];
             LSP_TK_STYLE_DEF_END
@@ -54,10 +73,6 @@ namespace lsp
         {
             public:
                 static const w_class_t    metadata;
-
-            private:
-                Fraction & operator = (const Fraction &);
-                Fraction(const Fraction &);
 
             private:
                 static const tether_t tether_list[];
@@ -79,6 +94,13 @@ namespace lsp
                     float           dy;
                 } alloc_t;
 
+                enum frac_flags_t
+                {
+                    FRAC_0          = style::FRACTION_NORMAL,
+                    FRAC_1          = style::FRACTION_INACTIVE,
+                    FRAC_TOTAL      = style::FRACTION_TOTAL
+                };
+
                 class Combo;
 
                 class Window: public PopupWindow
@@ -93,9 +115,8 @@ namespace lsp
                     public:
                         explicit Window(Display *dpy, Fraction *frac, Combo *combo);
 
-                        virtual status_t        on_hide();
-
-                        virtual status_t        on_show();
+                        virtual status_t        on_hide() override;
+                        virtual status_t        on_show() override;
                 };
 
                 class List: public ListBox
@@ -111,12 +132,11 @@ namespace lsp
                         explicit List(Display *dpy, Fraction *cbox, Combo *combo);
 
                     protected:
-                        virtual void        property_changed(Property *prop);
+                        virtual void        property_changed(Property *prop) override;
 
                     public:
-                        virtual status_t    on_submit();
-
-                        virtual status_t    on_change();
+                        virtual status_t    on_submit() override;
+                        virtual status_t    on_change() override;
                 };
 
                 class Combo
@@ -125,7 +145,6 @@ namespace lsp
                         Fraction                       *pFrac;
                         List                            sList;
                         Window                          sWindow;
-                        prop::Color                     sColor;
                         prop::String                    sText;
                         prop::WidgetPtr<ListBoxItem>    sSelected;
                         prop::Boolean                   sOpened;
@@ -146,14 +165,19 @@ namespace lsp
                 Combo                       sNum;           // Numerator combo
                 Combo                       sDen;           // Denominator combo
 
-                prop::Color                 sColor;         // Fraction color
+                style::FractionColors       vColors[style::FRACTION_TOTAL];
                 prop::Font                  sFont;          // Font
                 prop::Float                 sAngle;         // Fraction angle
                 prop::Integer               sTextPad;       // Text padding
                 prop::Integer               sThick;         // Thickness
+                prop::Boolean               sActive;        // Activity flag
 
                 size_t                      nMBState;       // Mouse button state
                 mstate_t                    enTrgState;     // Trigger state
+
+            protected:
+                static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
                 void                        do_destroy();
@@ -161,55 +185,61 @@ namespace lsp
                 ssize_t                     estimate_size(Combo *cb, ws::rectangle_t *r);
                 void                        allocate(alloc_t *a);
 
-                static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
-                static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
                 bool                        check_mouse_over(const ws::rectangle_t *area, const ws::event_t *ev);
+                style::FractionColors      *select_colors();
 
             protected:
-                virtual void                property_changed(Property *prop);
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                realize(const ws::rectangle_t *r);
+                virtual void                property_changed(Property *prop) override;
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit Fraction(Display *dpy);
-                virtual ~Fraction();
+                Fraction(const Fraction &) = delete;
+                Fraction(Fraction &&) = delete;
+                virtual ~Fraction() override;
+                Fraction & operator = (const Fraction &) = delete;
+                Fraction & operator = (Fraction &&) = delete;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
-                LSP_TK_PROPERTY(Color,                      color,                  &sColor)
+                LSP_TK_PROPERTY(Color,                      color,                  &vColors[FRAC_0].sColor)
+                LSP_TK_PROPERTY(Color,                      num_color,              &vColors[FRAC_0].sNumColor)
+                LSP_TK_PROPERTY(Color,                      den_color,              &vColors[FRAC_0].sDenColor)
+                LSP_TK_PROPERTY(Color,                      inactive_color,         &vColors[FRAC_1].sColor)
+                LSP_TK_PROPERTY(Color,                      inactive_num_color,     &vColors[FRAC_1].sNumColor)
+                LSP_TK_PROPERTY(Color,                      inactive_den_color,     &vColors[FRAC_1].sDenColor)
+
                 LSP_TK_PROPERTY(Font,                       font,                   &sFont)
                 LSP_TK_PROPERTY(Float,                      angle,                  &sAngle)
                 LSP_TK_PROPERTY(Integer,                    text_pad,               &sTextPad)
                 LSP_TK_PROPERTY(Integer,                    thickness,              &sThick)
+                LSP_TK_PROPERTY(Boolean,                    active,                 &sActive)
 
-                LSP_TK_PROPERTY(Color,                      num_color,              &sNum.sColor)
                 LSP_TK_PROPERTY(String,                     num_empty_text,         &sNum.sText)
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     num_selected,           &sNum.sSelected)
                 LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    num_items,               sNum.sList.items())
                 LSP_TK_PROPERTY(Boolean,                    num_opened,             &sNum.sOpened)
 
-                LSP_TK_PROPERTY(Color,                      den_color,              &sDen.sColor)
                 LSP_TK_PROPERTY(String,                     den_empty_text,         &sDen.sText)
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     den_selected,           &sDen.sSelected)
                 LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    den_items,               sDen.sList.items())
                 LSP_TK_PROPERTY(Boolean,                    den_opened,             &sDen.sOpened)
 
             public:
-                virtual status_t            on_mouse_down(const ws::event_t *e);
+                virtual status_t            on_mouse_down(const ws::event_t *e) override;
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
+                virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
+                virtual void                draw(ws::ISurface *s) override;
 
-                virtual status_t            on_mouse_up(const ws::event_t *e);
-
-                virtual status_t            on_mouse_scroll(const ws::event_t *e);
-
+            public:
                 virtual status_t            on_change();
-
                 virtual status_t            on_submit();
-
-                virtual void                draw(ws::ISurface *s);
         };
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_SPECIFIC_FRACTION_H_ */

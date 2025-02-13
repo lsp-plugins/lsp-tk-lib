@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 29 авг. 2017 г.
@@ -33,41 +33,89 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Edit, Widget)
                 // Init
+                EditColors *c = &vColors[EDIT_NORMAL];
+                c->sColor.bind("color", this);
+                c->sBorderColor.bind("border.color", this);
+                c->sBorderGapColor.bind("border.gap.color", this);
+                c->sCursorColor.bind("cursor.color", this);
+                c->sTextColor.bind("text.color", this);
+                c->sTextSelectedColor.bind("text.selected.color", this);
+                c->sEmptyTextColor.bind("text.empty.color", this);
+                c->sSelectionColor.bind("selection.color", this);
+
+                c = &vColors[EDIT_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sBorderGapColor.bind("inactive.border.gap.color", this);
+                c->sCursorColor.bind("inactive.cursor.color", this);
+                c->sTextColor.bind("inactive.text.color", this);
+                c->sTextSelectedColor.bind("inactive.text.selected.color", this);
+                c->sEmptyTextColor.bind("inactive.text.empty.color", this);
+                c->sSelectionColor.bind("inactive.selection.color", this);
+
                 sSelection.bind("selection", this);
                 sFont.bind("font", this);
-                sColor.bind("color", this);
-                sBorderColor.bind("border.color", this);
-                sBorderGapColor.bind("border.gap.color", this);
-                sCursorColor.bind("cursor.color", this);
-                sTextColor.bind("text.color", this);
-                sTextSelectedColor.bind("text.selected.color", this);
-                sEmptyTextColor.bind("text.empty.color", this);
-                sSelectionColor.bind("selection.color", this);
                 sBorderSize.bind("border.size", this);
                 sBorderGapSize.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sConstraints.bind("size.constraints", this);
+                sActive.bind("active", this);
+
                 // Configure
+                c = &vColors[EDIT_NORMAL];
+                c->sColor.set("#ffffff");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#cccccc");
+                c->sCursorColor.set("#000000");
+                c->sTextColor.set("#000000");
+                c->sTextSelectedColor.set("#ffffff");
+                c->sEmptyTextColor.set("#000000");
+                c->sSelectionColor.set("#00c0ff");
+
+                c = &vColors[EDIT_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#888888");
+                c->sCursorColor.set("#000000");
+                c->sTextColor.set("#000000");
+                c->sTextSelectedColor.set("#cccccc");
+                c->sEmptyTextColor.set("#000000");
+                c->sSelectionColor.set("#0080cc");
+
                 sSelection.set(-1, -1);
                 sFont.set_size(12.0f);
-                sColor.set("#ffffff");
-                sBorderColor.set("#000000");
-                sBorderGapColor.set("#cccccc");
-                sCursorColor.set("#000000");
-                sTextColor.set("#000000");
-                sTextSelectedColor.set("#ffffff");
-                sEmptyTextColor.set("#000000");
-                sSelectionColor.set("#00c0ff");
+
                 sBorderSize.set(1);
                 sBorderGapSize.set(1);
                 sBorderRadius.set(4);
                 sConstraints.set(-1, -1, -1, 8);
+                sActive.set(true);
+
                 // Override
                 sPointer.set(ws::MP_IBEAM);
                 // Commit
                 sPointer.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Edit, "Edit", "root");
+
+            void EditColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sBorderColor.listener(listener);
+                sBorderGapColor.listener(listener);
+                sCursorColor.listener(listener);
+                sTextColor.listener(listener);
+                sTextSelectedColor.listener(listener);
+                sEmptyTextColor.listener(listener);
+                sSelectionColor.listener(listener);
+            }
+
+            bool EditColors::property_changed(Property *prop)
+            {
+                return prop->one_of(
+                    sColor, sBorderColor, sBorderGapColor, sCursorColor,
+                    sTextColor, sTextSelectedColor, sEmptyTextColor, sSelectionColor);
+            }
         }
 
         const w_class_t Edit::metadata      = { "Edit", &Widget::metadata };
@@ -168,18 +216,11 @@ namespace lsp
             sEmptyText(&sProperties),
             sSelection(&sProperties),
             sFont(&sProperties),
-            sColor(&sProperties),
-            sBorderColor(&sProperties),
-            sBorderGapColor(&sProperties),
-            sCursorColor(&sProperties),
-            sTextColor(&sProperties),
-            sTextSelectedColor(&sProperties),
-            sEmptyTextColor(&sProperties),
-            sSelectionColor(&sProperties),
             sBorderSize(&sProperties),
             sBorderGapSize(&sProperties),
             sBorderRadius(&sProperties),
             sConstraints(&sProperties),
+            sActive(&sProperties),
             sPopup(&sProperties)
         {
             sTextPos            = 0;
@@ -195,6 +236,9 @@ namespace lsp
             sTextArea.nTop      = -1;
             sTextArea.nWidth    = 0;
             sTextArea.nHeight   = 0;
+
+            for (size_t i=0; i<EDIT_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
 
             pClass          = &metadata;
         }
@@ -249,22 +293,35 @@ namespace lsp
                 sScroll.set_handler(timer_handler, self());
             }
 
+            style::EditColors *c = &vColors[style::EDIT_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sBorderGapColor.bind("border.gap.color", &sStyle);
+            c->sCursorColor.bind("cursor.color", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+            c->sTextSelectedColor.bind("text.selected.color", &sStyle);
+            c->sEmptyTextColor.bind("text.empty.color", &sStyle);
+            c->sSelectionColor.bind("selection.color", &sStyle);
+
+            c = &vColors[style::EDIT_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sBorderGapColor.bind("inactive.border.gap.color", &sStyle);
+            c->sCursorColor.bind("inactive.cursor.color", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+            c->sTextSelectedColor.bind("inactive.text.selected.color", &sStyle);
+            c->sEmptyTextColor.bind("inactive.text.empty.color", &sStyle);
+            c->sSelectionColor.bind("inactive.selection.color", &sStyle);
+
             sText.bind(&sStyle, pDisplay->dictionary());
             sEmptyText.bind(&sStyle, pDisplay->dictionary());
             sSelection.bind("selection", &sStyle);
             sFont.bind("font", &sStyle);
-            sColor.bind("color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sBorderGapColor.bind("border.gap.color", &sStyle);
-            sCursorColor.bind("cursor.color", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
-            sTextSelectedColor.bind("text.selected.color", &sStyle);
-            sEmptyTextColor.bind("text.empty.color", &sStyle);
-            sSelectionColor.bind("selection.color", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderGapSize.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
+            sActive.bind("active", &sStyle);
             sPopup.bind(widget_ptrcast<Menu>(vMenu[0]));
 
             // Bind slots
@@ -320,6 +377,12 @@ namespace lsp
             return STATUS_OK;
         }
 
+        style::EditColors *Edit::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::EDIT_NORMAL : style::EDIT_INACTIVE;
+            return &vColors[flags];
+        }
+
         void Edit::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
@@ -327,7 +390,11 @@ namespace lsp
                 sCursor.set_visibility(sVisibility.get() && has_focus());
 
             // Self properties
-            if (sSelection.is(prop))
+            style::EditColors *cols = select_colors();
+            if (cols->property_changed(prop))
+                query_draw();
+
+            if (sActive.is(prop))
                 query_draw();
 
             if (sText.is(prop))
@@ -337,27 +404,9 @@ namespace lsp
                 sCursor.move(0);
                 query_draw();
             }
-            if (sEmptyText.is(prop))
+            if (prop->one_of(sSelection, sEmptyText))
                 query_draw();
-            if (sFont.is(prop))
-                query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sBorderGapColor.is(prop))
-                query_draw();
-            if (sCursorColor.is(prop))
-                query_draw();
-            if (prop->one_of(sTextColor, sTextSelectedColor, sEmptyTextColor, sSelectionColor))
-                query_draw();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderGapSize.is(prop))
-                query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
+            if (prop->one_of(sFont, sBorderSize, sBorderGapSize, sBorderRadius, sConstraints))
                 query_resize();
         }
 
@@ -495,10 +544,12 @@ namespace lsp
                 (!sCursor.shining());
             prop::String *src_text = (use_empty_text) ? &sEmptyText : &sText;
 
+            const style::EditColors *colors = select_colors();
+
             // Draw border
             if (border > 0)
             {
-                color.copy(sBorderColor);
+                color.copy(colors->sBorderColor);
                 color.scale_lch_luminance(lightness);
                 s->fill_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
@@ -511,7 +562,7 @@ namespace lsp
                 ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
                 if (gap > 0)
                 {
-                    color.copy(sBorderGapColor);
+                    color.copy(colors->sBorderGapColor);
                     color.scale_lch_luminance(lightness);
                     s->fill_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
@@ -524,7 +575,7 @@ namespace lsp
             }
 
             // Draw main background
-            color.copy(sColor);
+            color.copy(colors->sColor);
             color.scale_lch_luminance(lightness);
             s->fill_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
 
@@ -585,7 +636,7 @@ namespace lsp
             // Draw the text
             if (use_empty_text)
             {
-                color.copy(sEmptyTextColor);
+                color.copy(colors->sEmptyTextColor);
                 color.scale_lch_luminance(lightness);
 
                 sFont.draw(s, color, xr.nLeft, xr.nTop + fp.Ascent, fscaling, text);
@@ -596,9 +647,9 @@ namespace lsp
                 ssize_t last    = sSelection.ending();
                 ssize_t xpos    = xr.nLeft + sTextPos;
 
-                lsp::Color scolor(sSelectionColor);
-                lsp::Color stcolor(sTextSelectedColor);
-                color.copy(sTextColor);
+                lsp::Color scolor(colors->sSelectionColor);
+                lsp::Color stcolor(colors->sTextSelectedColor);
+                color.copy(colors->sTextColor);
                 color.scale_lch_luminance(lightness);
                 scolor.scale_lch_luminance(lightness);
                 stcolor.scale_lch_luminance(lightness);
@@ -626,7 +677,7 @@ namespace lsp
             }
             else
             {
-                color.copy(sTextColor);
+                color.copy(colors->sTextColor);
                 color.scale_lch_luminance(lightness);
 
                 sFont.draw(s, color, xr.nLeft + sTextPos, xr.nTop + fp.Ascent, fscaling, text);
@@ -637,7 +688,7 @@ namespace lsp
             // Draw cursor if required
             if (sCursor.visible() && sCursor.shining())
             {
-                color.copy(sCursorColor);
+                color.copy(colors->sCursorColor);
                 color.scale_lch_luminance(lightness);
 
                 if (sCursor.inserting())
@@ -652,7 +703,7 @@ namespace lsp
                     else
                     {
                         // Draw background
-                        lsp::Color bcolor(sColor);
+                        lsp::Color bcolor(colors->sColor);
                         bcolor.scale_lch_luminance(lightness);
 
                         sFont.get_text_parameters(s, &tp, fscaling, text, sCursor.position(), sCursor.position() + 1);

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 06 июн. 2020 г.
@@ -107,6 +107,8 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
                 ind->text_shift()->add(1);
             else if (ev->nCode == ws::MCB_RIGHT)
                 ind->text_shift()->sub(1);
+            else if (ev->nCode == ws::MCB_MIDDLE)
+                ind->active()->toggle();
         }
 
         return STATUS_OK;

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 июл. 2017 г.
@@ -52,9 +52,6 @@ namespace lsp
                 static const w_class_t    metadata;
 
             private:
-                Label & operator = (const Label &);
-                Label(const Label &);
-
                 friend class MultiLabel;
 
             protected:
@@ -104,7 +101,11 @@ namespace lsp
 
             public:
                 explicit Label(Display *dpy);
+                Label(const Label &) = delete;
+                Label(Label &&) = delete;
                 virtual ~Label() override;
+                Label & operator = (const Label &) = delete;
+                Label & operator = (Label &&) = delete;
 
                 virtual status_t                init() override;
 

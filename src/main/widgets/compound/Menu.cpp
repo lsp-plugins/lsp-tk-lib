@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 18 сент. 2017 г.
@@ -871,6 +871,7 @@ namespace lsp
 
                 // Get child widget
                 MenuItem *mi        = pi->item;
+                style::MenuItemColors *colors = mi->select_colors();
 
                 // Commit redraw for child widget
                 mi->commit_redraw();
@@ -878,7 +879,7 @@ namespace lsp
                 // Just separator?
                 if (mi->type()->separator())
                 {
-                    color.copy(mi->text_color()->color());
+                    color.copy(colors->sTextColor);
                     color.scale_lch_luminance(bright);
                     s->fill_rect(color, SURFMASK_NONE, 0.0f, &pi->text);
                     continue;
@@ -887,7 +888,7 @@ namespace lsp
                 // Selected element?
                 if (nSelected == i)
                 {
-                    color.copy(mi->bg_selected_color()->color());
+                    color.copy(colors->sBgSelectedColor);
                     color.scale_lch_luminance(bright);
                     s->fill_rect(color, SURFMASK_NONE, 0.0f, &pi->area);
                 }
@@ -895,10 +896,7 @@ namespace lsp
                 // Draw text
                 mi->text()->format(&text);
                 mi->text_adjust()->apply(&text);
-                if (nSelected == i)
-                    color.copy(mi->text_selected_color()->color());
-                else
-                    color.copy(mi->text_color()->color());
+                color.copy((nSelected == i) ? colors->sTextSelectedColor : colors->sTextColor);
                 color.scale_lch_luminance(bright);
                 sFont.draw(s, color, pi->text.nLeft, pi->text.nTop + fp.Ascent, fscaling, &text);
 
@@ -931,7 +929,7 @@ namespace lsp
                     r                   = pi->check;
                     if (bw > 0)
                     {
-                        color.copy(mi->check_border_color()->color());
+                        color.copy(colors->sCheckBorderColor);
                         color.scale_lch_luminance(bright);
                         s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         r.nLeft            += bw;
@@ -940,7 +938,7 @@ namespace lsp
                         r.nHeight          -= bw * 2;
                         br                  = lsp_max(0, br - bw);
 
-                        color.copy(mi->check_bg_color()->color());
+                        color.copy(colors->sCheckBgColor);
                         color.scale_lch_luminance(bright);
                         s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
 
@@ -952,17 +950,14 @@ namespace lsp
 
                         if (mi->checked()->get())
                         {
-                            color.copy(mi->check_color()->color());
+                            color.copy(colors->sCheckColor);
                             color.scale_lch_luminance(bright);
                             s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                         }
                     }
                     else
                     {
-                        if (mi->checked()->get())
-                            color.copy(mi->check_color()->color());
-                        else
-                            color.copy(mi->check_bg_color()->color());
+                        color.copy((mi->checked()->get()) ? colors->sCheckColor : colors->sCheckBgColor);
                         color.scale_lch_luminance(bright);
                         s->fill_rect(color, SURFMASK_ALL_CORNER, br, &r);
                     }
@@ -977,29 +972,26 @@ namespace lsp
 
                     if (bw > 0)
                     {
-                        color.copy(mi->check_border_color()->color());
+                        color.copy(colors->sCheckBorderColor);
                         color.scale_lch_luminance(bright);
                         s->fill_circle(color, xc, yc, br);
                         br                  = lsp_max(0.0f, br - bw);
 
-                        color.copy(mi->check_bg_color()->color());
+                        color.copy(colors->sCheckBgColor);
                         color.scale_lch_luminance(bright);
                         s->fill_circle(color, xc, yc, br);
                         br                  = lsp_max(0, br - bgap);
 
                         if (mi->checked()->get())
                         {
-                            color.copy(mi->check_color()->color());
+                            color.copy(colors->sCheckColor);
                             color.scale_lch_luminance(bright);
                             s->fill_circle(color, xc, yc, br);
                         }
                     }
                     else
                     {
-                        if (mi->checked()->get())
-                            color.copy(mi->check_color()->color());
-                        else
-                            color.copy(mi->check_bg_color()->color());
+                        color.copy((mi->checked()->get()) ? colors->sCheckColor : colors->sCheckBgColor);
                         color.scale_lch_luminance(bright);
                         s->fill_circle(color, xc, yc, br);
                     }

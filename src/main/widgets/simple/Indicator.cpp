@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 июл. 2017 г.
@@ -31,8 +31,14 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Indicator, Widget)
                 // Bind
-                sColor.bind("color", this);
-                sTextColor.bind("text.color", this);
+                IndicatorColors *c = &vColors[INDICATOR_NORMAL];
+                c->sColor.bind("color", this);
+                c->sTextColor.bind("text.color", this);
+
+                c = &vColors[INDICATOR_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sTextColor.bind("inactive.text.color", this);
+
                 sRows.bind("rows", this);
                 sColumns.bind("columns", this);
                 sShift.bind("text.shift", this);
@@ -40,12 +46,20 @@ namespace lsp
                 sLoop.bind("text.loop", this);
                 sDarkText.bind("text.dark", this);
                 sModern.bind("modern", this);
+                sActive.bind("active", this);
                 sFont.bind("font", this);
                 sSpacing.bind("spacing", this);
                 sIPadding.bind("ipadding", this);
+
                 // Configure
-                sColor.set("#111111");
-                sTextColor.set("#00ff00");
+                c = &vColors[INDICATOR_NORMAL];
+                c->sColor.set("#111111");
+                c->sTextColor.set("#00ff00");
+
+                c = &vColors[INDICATOR_INACTIVE];
+                c->sColor.set("#111111");
+                c->sTextColor.set("#cccccc");
+
                 sRows.set(1);
                 sColumns.set(5);
                 sShift.set(0);
@@ -53,15 +67,28 @@ namespace lsp
                 sLoop.set(false);
                 sDarkText.set(true);
                 sModern.set(false);
+                sActive.set(true);
                 sFont.set_size(16);
                 sFont.set_bold(true);
                 sSpacing.set(0);
                 sIPadding.set(1);
+
                 // Override
                 sFont.override();
                 sSpacing.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Indicator, "Indicator", "root");
+
+            void IndicatorColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sTextColor.listener(listener);
+            }
+
+            bool IndicatorColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sTextColor);
+            }
         }
 
         typedef struct rect_t
@@ -128,7 +155,6 @@ namespace lsp
 
         Indicator::Indicator(Display *dpy):
             Widget(dpy),
-            sTextColor(&sProperties),
             sRows(&sProperties),
             sColumns(&sProperties),
             sShift(&sProperties),
@@ -137,11 +163,15 @@ namespace lsp
             sDarkText(&sProperties),
             sText(&sProperties),
             sModern(&sProperties),
+            sActive(&sProperties),
             sFont(&sProperties),
             sSpacing(&sProperties),
             sIPadding(&sProperties)
         {
             pClass      = &metadata;
+
+            for (size_t i=0; i<IND_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
 
             nDWidth     = -1;
             nDHeight    = -1;
@@ -158,8 +188,14 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
-            sColor.bind("color", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
+            style::IndicatorColors *c = &vColors[style::INDICATOR_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+
+            c = &vColors[style::INDICATOR_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+
             sRows.bind("rows", &sStyle);
             sColumns.bind("columns", &sStyle);
             sShift.bind("text.shift", &sStyle);
@@ -168,6 +204,7 @@ namespace lsp
             sDarkText.bind("text.dark", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sModern.bind("modern", &sStyle);
+            sActive.bind("active", &sStyle);
             sFont.bind("font", &sStyle);
             sSpacing.bind("spacing", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
@@ -175,35 +212,28 @@ namespace lsp
             return STATUS_OK;
         }
 
+        style::IndicatorColors *Indicator::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::INDICATOR_NORMAL : style::INDICATOR_INACTIVE;
+            return &vColors[flags];
+        }
+
         void Indicator::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
-            if (sColor.is(prop))
+
+            // Self properties
+            style::IndicatorColors *cols = select_colors();
+            if (cols->property_changed(prop))
                 query_draw();
-            if (sTextColor.is(prop))
+
+            if (sActive.is(prop))
                 query_draw();
-            if (sRows.is(prop))
+
+            if (prop->one_of(sRows, sColumns, sModern, sFont, sSpacing, sIPadding))
                 query_resize();
-            if (sColumns.is(prop))
-                query_resize();
-            if (sShift.is(prop))
+            if (prop->one_of(sShift, sTextGap, sLoop, sDarkText, sText))
                 query_draw();
-            if (sTextGap.is(prop))
-                query_draw();
-            if (sLoop.is(prop))
-                query_draw();
-            if (sDarkText.is(prop))
-                query_draw();
-            if (sText.is(prop))
-                query_draw();
-            if (sModern.is(prop))
-                query_resize();
-            if (sFont.is(prop))
-                query_resize();
-            if (sSpacing.is(prop))
-                query_resize();
-            if (sIPadding.is(prop))
-                query_resize();
         }
 
         void Indicator::calc_digit_size(ssize_t *w, ssize_t *h)
@@ -324,6 +354,8 @@ namespace lsp
             size_t last     = rows * cols;
             ssize_t spacing = (sSpacing.get() > 0) ? lsp_max(1.0f, sSpacing.get() * scaling) : 0;
             bool dark       = sDarkText.get();
+            const style::IndicatorColors *colors = select_colors();
+
             ws::rectangle_t xr;
 
             xr.nLeft        = 0;
@@ -332,9 +364,9 @@ namespace lsp
             xr.nHeight      = sSize.nHeight;
 
             // Prepare palette
-            lsp::Color color(sColor);
-            lsp::Color on(sTextColor);
-            lsp::Color off(sTextColor);
+            lsp::Color color(colors->sColor);
+            lsp::Color on(colors->sTextColor);
+            lsp::Color off(colors->sTextColor);
 
             off.blend(color, 0.05f);
             on.scale_lch_luminance(bright);

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -33,6 +33,14 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(ListBox, WidgetContainer)
                 // Bind
+                style::ListBoxColors *c = &vColors[style::LISTBOX_NORMAL];
+                c->sBorderColor.bind("border.color", this);
+                c->sListBgColor.bind("list.bg.color", this);
+
+                c = &vColors[style::LISTBOX_INACTIVE];
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sListBgColor.bind("inactive.list.bg.color", this);
+
                 sSizeConstraints.bind("size.constraints", this);
                 sHScrollMode.bind("hscroll.mode", this);
                 sVScrollMode.bind("vscroll.mode", this);
@@ -42,13 +50,21 @@ namespace lsp
                 sBorderSize.bind("border.size", this);
                 sBorderGap.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
-                sBorderColor.bind("border.color", this);
-                sListBgColor.bind("list.bg.color", this);
                 sSpacing.bind("spacing", this);
                 sMultiSelect.bind("selection.multiple", this);
+                sActive.bind("active", this);
                 sHScrollSpacing.bind("hscroll.spacing", this);
                 sVScrollSpacing.bind("vscroll.spacing", this);
+
                 // Configure
+                c = &vColors[style::LISTBOX_NORMAL];
+                c->sBorderColor.set("#000000");
+                c->sListBgColor.set("#ffffff");
+
+                c = &vColors[style::LISTBOX_INACTIVE];
+                c->sBorderColor.set("#000000");
+                c->sListBgColor.set("#cccccc");
+
                 sSizeConstraints.set_all(-1);
                 sHScrollMode.set(SCROLL_OPTIONAL);
                 sVScrollMode.set(SCROLL_OPTIONAL);
@@ -58,14 +74,24 @@ namespace lsp
                 sBorderSize.set(1);
                 sBorderGap.set(1);
                 sBorderRadius.set(4);
-                sBorderColor.set("#000000");
-                sListBgColor.set("#ffffff");
                 sSpacing.set(0);
                 sMultiSelect.set(false);
+                sActive.set(true);
                 sHScrollSpacing.set(1);
                 sVScrollSpacing.set(1);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ListBox, "ListBox", "root");
+
+            void ListBoxColors::listener(tk::prop::Listener *listener)
+            {
+                sBorderColor.listener(listener);
+                sListBgColor.listener(listener);
+            }
+
+            bool ListBoxColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sBorderColor, sListBgColor);
+            }
         }
 
         const w_class_t ListBox::metadata               = { "ListBox", &WidgetContainer::metadata };
@@ -85,13 +111,17 @@ namespace lsp
             sBorderSize(&sProperties),
             sBorderGap(&sProperties),
             sBorderRadius(&sProperties),
-            sBorderColor(&sProperties),
-            sListBgColor(&sProperties),
             sSpacing(&sProperties),
             sMultiSelect(&sProperties),
+            sActive(&sProperties),
             sHScrollSpacing(&sProperties),
             sVScrollSpacing(&sProperties)
         {
+            pClass      = &metadata;
+
+            for (size_t i=0; i<style::LISTBOX_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             nBMask          = 0;
             nXFlags         = 0;
             nPendingIndex   = -1;
@@ -109,8 +139,6 @@ namespace lsp
             sList.nTop      = 0;
             sList.nWidth    = 0;
             sList.nHeight   = 0;
-
-            pClass      = &metadata;
         }
         
         ListBox::~ListBox()
@@ -185,6 +213,14 @@ namespace lsp
             sVBar.slots()->bind(SLOT_KEY_UP, slot_on_scroll_key_event, self());
 
             // Init style
+            style::ListBoxColors *c = &vColors[style::LISTBOX_NORMAL];
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sListBgColor.bind("list.bg.color", &sStyle);
+
+            c = &vColors[style::LISTBOX_INACTIVE];
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sListBgColor.bind("inactive.list.bg.color", &sStyle);
+
             sSizeConstraints.bind("size.constraints", &sStyle);
             sHScrollMode.bind("hscroll.mode", &sStyle);
             sVScrollMode.bind("vscroll.mode", &sStyle);
@@ -194,10 +230,9 @@ namespace lsp
             sBorderSize.bind("border.size", &sStyle);
             sBorderGap.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sListBgColor.bind("list.bg.color", &sStyle);
             sSpacing.bind("spacing", &sStyle);
             sMultiSelect.bind("selection.multiple", &sStyle);
+            sActive.bind("active", &sStyle);
             sHScrollSpacing.bind("hscroll.spacing", &sStyle);
             sVScrollSpacing.bind("vscroll.spacing", &sStyle);
 
@@ -211,39 +246,44 @@ namespace lsp
             return (id >= 0) ? STATUS_OK : -id;
         }
 
+        style::ListBoxColors *ListBox::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::LISTBOX_NORMAL : style::LISTBOX_INACTIVE;
+            return &vColors[flags];
+        }
+
         void ListBox::property_changed(Property *prop)
         {
             WidgetContainer::property_changed(prop);
-            if (sSizeConstraints.is(prop))
+
+            // Self properties
+            style::ListBoxColors *colors = select_colors();
+            if (colors->property_changed(prop))
+                query_draw();
+
+            if (sActive.is(prop))
+            {
+                const bool active = sActive.get();
+                sHBar.active()->set(active);
+                sVBar.active()->set(active);
+                query_draw();
+            }
+
+            if (prop->one_of(sSizeConstraints, sHScrollMode, sVScrollMode, sFont,
+                sBorderSize, sBorderRadius, sSpacing, vItems))
                 query_resize();
-            if (sHScrollMode.is(prop))
-                query_resize();
-            if (sVScrollMode.is(prop))
-                query_resize();
+
             if (sHScroll.is(prop))
                 sHBar.value()->set(sHScroll.get());
             if (sVScroll.is(prop))
                 sVBar.value()->set(sVScroll.get());
-            if (sFont.is(prop))
-                query_resize();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sListBgColor.is(prop))
-                query_draw();
-            if (sSpacing.is(prop))
-                query_resize();
+
             if (sMultiSelect.is(prop))
             {
                 if (!sMultiSelect.get())
                     keep_single_selection();
             }
 
-            if (vItems.is(prop))
-                query_resize();
             if (vSelected.is(prop))
                 query_draw();
         }
@@ -560,6 +600,8 @@ namespace lsp
             ssize_t radius      = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t hsspacing   = lsp_max(0.0f, sHScrollSpacing.get() * scaling);
             ssize_t vsspacing   = lsp_max(0.0f, sVScrollSpacing.get() * scaling);
+            const bool active   = sActive.get();
+            const style::ListBoxColors *colors = select_colors();
 
             lsp::Color col;
             get_actual_bg_color(col);
@@ -638,11 +680,11 @@ namespace lsp
                         s->fill_frame(col, SURFMASK_NONE, 0.0f, &sArea, &sList);
 
                         aa = s->set_antialiasing(true);
-                            col.copy(sBorderColor);
+                            col.copy(colors->sBorderColor);
                             xr = sArea;
                             s->fill_rect(col, SURFMASK_ALL_CORNER, radius, &xr);
 
-                            col.copy(sListBgColor);
+                            col.copy(colors->sListBgColor);
                             xr.nLeft       += border;
                             xr.nTop        += border;
                             xr.nWidth      -= border * 2;
@@ -675,31 +717,17 @@ namespace lsp
                         if (!Size::overlap(&xa, &it->r)) // Do not draw invisible items
                             continue;
 
+                        const style::ListBoxItemColors *icolors = li->select_colors(
+                            vSelected.contains(li), it->item == pHoverItem, active);
+
                         text.clear();
                         li->text()->format(&text);
                         li->text_adjust()->apply(&text);
-                        bool selected = vSelected.contains(li);
                         sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
 
-                        if (selected)
-                        {
-                            col.copy(li->bg_selected_color()->color());
-                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
-                            col.copy(li->text_selected_color()->color());
-                        }
-                        else if (it->item == pHoverItem)
-                        {
-                            col.copy(li->bg_hover_color()->color());
-                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
-                            col.copy(li->text_hover_color()->color());
-                        }
-                        else
-                        {
-                            li->get_actual_bg_color(col);
-                            s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
-                            col.copy(li->text_color()->color());
-                        }
-
+                        col.copy(icolors->sBgColor);
+                        s->fill_rect(col, SURFMASK_NONE, 0.0f, &it->r);
+                        col.copy(icolors->sTextColor);
                         li->padding()->enter(&xr, &it->r, scaling);
                         sFont.draw(s, col,
                             xr.nLeft,

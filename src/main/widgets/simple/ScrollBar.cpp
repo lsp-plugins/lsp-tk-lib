@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 авг. 2017 г.
@@ -32,6 +32,36 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(ScrollBar, Widget)
                 // Bind
+                style::ScrollBarColors *c = &vColors[style::SCROLLBAR_NORMAL];
+                c->sButtonColor.bind("button.color", this);
+                c->sButtonActiveColor.bind("button.active.color", this);
+                c->sIncColor.bind("inc.color", this);
+                c->sIncActiveColor.bind("inc.active.color", this);
+                c->sDecColor.bind("dec.color", this);
+                c->sDecActiveColor.bind("dec.active.color", this);
+                c->sBorderColor.bind("border.color", this);
+                c->sBorderGapColor.bind("border.gap.color", this);
+                c->sSliderColor.bind("slider.color", this);
+                c->sSliderBorderColor.bind("slider.border.color", this);
+                c->sSliderActiveColor.bind("slider.active.color", this);
+                c->sTextColor.bind("text.color", this);
+                c->sTextActiveColor.bind("text.active.color", this);
+
+                c = &vColors[style::SCROLLBAR_INACTIVE];
+                c->sButtonColor.bind("inactive.button.color", this);
+                c->sButtonActiveColor.bind("inactive.button.active.color", this);
+                c->sIncColor.bind("inactive.inc.color", this);
+                c->sIncActiveColor.bind("inactive.inc.active.color", this);
+                c->sDecColor.bind("inactive.dec.color", this);
+                c->sDecActiveColor.bind("inactive.dec.active.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sBorderGapColor.bind("inactive.border.gap.color", this);
+                c->sSliderColor.bind("inactive.slider.color", this);
+                c->sSliderBorderColor.bind("inactive.slider.border.color", this);
+                c->sSliderActiveColor.bind("inactive.slider.active.color", this);
+                c->sTextColor.bind("inactive.text.color", this);
+                c->sTextActiveColor.bind("inactive.text.active.color", this);
+
                 sValue.bind("value", this);
                 sStep.bind("step", this);
                 sAccelStep.bind("accel.step", this);
@@ -46,21 +76,39 @@ namespace lsp
                 sSliderBorderSize.bind("slider.border.size", this);
                 sInvertMouseHScroll.bind("mouse.hscroll.invert", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
+                sActive.bind("active", this);
 
-                sButtonColor.bind("button.color", this);
-                sButtonActiveColor.bind("button.active.color", this);
-                sIncColor.bind("inc.color", this);
-                sIncActiveColor.bind("inc.active.color", this);
-                sDecColor.bind("dec.color", this);
-                sDecActiveColor.bind("dec.active.color", this);
-                sBorderColor.bind("border.color", this);
-                sBorderGapColor.bind("border.gap.color", this);
-                sSliderColor.bind("slider.color", this);
-                sSliderBorderColor.bind("slider.border.color", this);
-                sSliderActiveColor.bind("slider.active.color", this);
-                sTextColor.bind("text.color", this);
-                sTextActiveColor.bind("text.active.color", this);
                 // Configure
+                c = &vColors[style::SCROLLBAR_NORMAL];
+                c->sButtonColor.set("#cccccc");
+                c->sButtonActiveColor.set("#ffffff");
+                c->sIncColor.set("#888888");
+                c->sIncActiveColor.set("#ffffff");
+                c->sDecColor.set("#888888");
+                c->sDecActiveColor.set("#ffffff");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#888888");
+                c->sSliderColor.set("#cccccc");
+                c->sSliderBorderColor.set("#000000");
+                c->sSliderActiveColor.set("#ffffff");
+                c->sTextColor.set("#000000");
+                c->sTextActiveColor.set("#000000");
+
+                c = &vColors[style::SCROLLBAR_INACTIVE];
+                c->sButtonColor.set("#888888");
+                c->sButtonActiveColor.set("#cccccc");
+                c->sIncColor.set("#444444");
+                c->sIncActiveColor.set("#cccccc");
+                c->sDecColor.set("#444444");
+                c->sDecActiveColor.set("#cccccc");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#444444");
+                c->sSliderColor.set("#888888");
+                c->sSliderBorderColor.set("#000000");
+                c->sSliderActiveColor.set("#cccccc");
+                c->sTextColor.set("#000000");
+                c->sTextActiveColor.set("#000000");
+
                 sValue.set(0.5f);
                 sStep.set(0.01f);
                 sAccelStep.set(0.05f);
@@ -75,22 +123,36 @@ namespace lsp
                 sSliderBorderSize.set(1);
                 sInvertMouseHScroll.set(false);
                 sInvertMouseVScroll.set(false);
+                sActive.set(true);
 
-                sButtonColor.set("#cccccc");
-                sButtonActiveColor.set("#ffffff");
-                sIncColor.set("#888888");
-                sIncActiveColor.set("#ffffff");
-                sDecColor.set("#888888");
-                sDecActiveColor.set("#ffffff");
-                sBorderColor.set("#000000");
-                sBorderGapColor.set("#888888");
-                sSliderColor.set("#cccccc");
-                sSliderBorderColor.set("#000000");
-                sSliderActiveColor.set("#ffffff");
-                sTextColor.set("#000000");
-                sTextActiveColor.set("#000000");
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ScrollBar, "ScrollBar", "root");
+
+            void ScrollBarColors::listener(tk::prop::Listener *listener)
+            {
+                sButtonColor.listener(listener);
+                sButtonActiveColor.listener(listener);
+                sIncColor.listener(listener);
+                sIncActiveColor.listener(listener);
+                sDecColor.listener(listener);
+                sDecActiveColor.listener(listener);
+                sBorderColor.listener(listener);
+                sBorderGapColor.listener(listener);
+                sSliderColor.listener(listener);
+                sSliderBorderColor.listener(listener);
+                sSliderActiveColor.listener(listener);
+                sTextColor.listener(listener);
+                sTextActiveColor.listener(listener);
+            }
+
+            bool ScrollBarColors::property_changed(Property *prop)
+            {
+                return prop->one_of(
+                    sButtonColor, sButtonActiveColor, sIncColor, sIncActiveColor,
+                    sDecColor, sDecActiveColor, sBorderColor, sBorderGapColor,
+                    sSliderColor, sSliderBorderColor, sSliderActiveColor, sTextColor,
+                    sTextActiveColor);
+            }
         }
 
         const w_class_t ScrollBar::metadata         = { "ScrollBar", &Widget::metadata };
@@ -111,20 +173,13 @@ namespace lsp
             sSliderBorderSize(&sProperties),
             sInvertMouseHScroll(&sProperties),
             sInvertMouseVScroll(&sProperties),
-            sButtonColor(&sProperties),
-            sButtonActiveColor(&sProperties),
-            sIncColor(&sProperties),
-            sIncActiveColor(&sProperties),
-            sDecColor(&sProperties),
-            sDecActiveColor(&sProperties),
-            sBorderColor(&sProperties),
-            sBorderGapColor(&sProperties),
-            sSliderColor(&sProperties),
-            sSliderBorderColor(&sProperties),
-            sSliderActiveColor(&sProperties),
-            sTextColor(&sProperties),
-            sTextActiveColor(&sProperties)
+            sActive(&sProperties)
         {
+            pClass          = &metadata;
+
+            for (size_t i=0; i<style::SCROLLBAR_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             nXFlags             = 0;
             nButtons            = 0;
             nKeys               = 0;
@@ -151,8 +206,6 @@ namespace lsp
             sSlider.nTop        = -1;
             sSlider.nWidth      = 0;
             sSlider.nHeight     = 0;
-
-            pClass          = &metadata;
         }
 
         ScrollBar::~ScrollBar()
@@ -177,6 +230,36 @@ namespace lsp
             sTimer.bind(pDisplay);
             sTimer.set_handler(timer_handler, this);
 
+            style::ScrollBarColors *c = &vColors[style::SCROLLBAR_NORMAL];
+            c->sButtonColor.bind("button.color", &sStyle);
+            c->sButtonActiveColor.bind("button.active.color", &sStyle);
+            c->sIncColor.bind("inc.color", &sStyle);
+            c->sIncActiveColor.bind("inc.active.color", &sStyle);
+            c->sDecColor.bind("dec.color", &sStyle);
+            c->sDecActiveColor.bind("dec.active.color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sBorderGapColor.bind("border.gap.color", &sStyle);
+            c->sSliderColor.bind("slider.color", &sStyle);
+            c->sSliderBorderColor.bind("slider.border.color", &sStyle);
+            c->sSliderActiveColor.bind("slider.active.color", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+            c->sTextActiveColor.bind("text.active.color", &sStyle);
+
+            c = &vColors[style::SCROLLBAR_INACTIVE];
+            c->sButtonColor.bind("inactive.button.color", &sStyle);
+            c->sButtonActiveColor.bind("inactive.button.active.color", &sStyle);
+            c->sIncColor.bind("inactive.inc.color", &sStyle);
+            c->sIncActiveColor.bind("inactive.inc.active.color", &sStyle);
+            c->sDecColor.bind("inactive.dec.color", &sStyle);
+            c->sDecActiveColor.bind("inactive.dec.active.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sBorderGapColor.bind("inactive.border.gap.color", &sStyle);
+            c->sSliderColor.bind("inactive.slider.color", &sStyle);
+            c->sSliderBorderColor.bind("inactive.slider.border.color", &sStyle);
+            c->sSliderActiveColor.bind("inactive.slider.active.color", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+            c->sTextActiveColor.bind("inactive.text.active.color", &sStyle);
+
             sValue.bind("value", &sStyle);
             sStep.bind("step", &sStyle);
             sAccelStep.bind("accel.step", &sStyle);
@@ -191,20 +274,7 @@ namespace lsp
             sSliderBorderSize.bind("slider.border.size", &sStyle);
             sInvertMouseHScroll.bind("mouse.hscroll.invert", &sStyle);
             sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
-
-            sButtonColor.bind("button.color", &sStyle);
-            sButtonActiveColor.bind("button.active.color", &sStyle);
-            sIncColor.bind("inc.color", &sStyle);
-            sIncActiveColor.bind("inc.active.color", &sStyle);
-            sDecColor.bind("dec.color", &sStyle);
-            sDecActiveColor.bind("dec.active.color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sBorderGapColor.bind("border.gap.color", &sStyle);
-            sSliderColor.bind("slider.color", &sStyle);
-            sSliderBorderColor.bind("slider.border.color", &sStyle);
-            sSliderActiveColor.bind("slider.active.color", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
-            sTextActiveColor.bind("text.active.color", &sStyle);
+            sActive.bind("active", &sStyle);
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -234,49 +304,29 @@ namespace lsp
             sTimer.cancel();
         }
 
+        style::ScrollBarColors *ScrollBar::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::SCROLLBAR_NORMAL : style::SCROLLBAR_INACTIVE;
+            return &vColors[flags];
+        }
+
         void ScrollBar::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
 
-            if (sValue.is(prop))
-                update_slider();
-            if (sStep.is(prop))
-                update_slider();
-            if (sAccelStep.is(prop))
-                update_slider();
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sOrientation.is(prop))
-                query_resize();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderGap.is(prop))
-                query_resize();
-            if (sSliderBorderSize.is(prop))
-                query_resize();
+            // Self properties
+            style::ScrollBarColors *colors = select_colors();
+            if (colors->property_changed(prop))
+                query_draw();
 
-            if (sButtonColor.is(prop))
+            if (sActive.is(prop))
                 query_draw();
-            if (sButtonActiveColor.is(prop))
-                query_draw();
-            if (sIncColor.is(prop))
-                query_draw();
-            if (sIncActiveColor.is(prop))
-                query_draw();
-            if (sDecColor.is(prop))
-                query_draw();
-            if (sDecActiveColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sBorderGapColor.is(prop))
-                query_draw();
-            if (sSliderColor.is(prop))
-                query_draw();
-            if (sSliderBorderColor.is(prop))
-                query_draw();
-            if (sSliderActiveColor.is(prop))
-                query_draw();
+
+            if (prop->one_of(sValue, sStep, sAccelStep))
+                update_slider();
+
+            if (prop->one_of(sConstraints, sOrientation, sBorderSize, sBorderGap, sSliderBorderSize))
+                query_resize();
         }
 
         void ScrollBar::size_request(ws::size_limit_t *r)
@@ -891,6 +941,7 @@ namespace lsp
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get() * scaling) : 0;
             ssize_t sborder = (sSliderBorderSize.get() > 0) ? lsp_max(1.0f, sSliderBorderSize.get() * scaling) : 0;
+            const style::ScrollBarColors *colors = select_colors();
 
             // Draw background
             lsp::Color color;
@@ -906,7 +957,7 @@ namespace lsp
             // Draw border
             if (border > 0)
             {
-                color.copy(sBorderColor);
+                color.copy(colors->sBorderColor);
                 color.scale_lch_luminance(bright);
 
                 s->fill_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
@@ -920,7 +971,7 @@ namespace lsp
             // Draw border gap
             if (gap > 0)
             {
-                color.copy(sBorderGapColor);
+                color.copy(colors->sBorderGapColor);
                 color.scale_lch_luminance(bright);
                 s->fill_rect(color, SURFMASK_ALL_CORNER, radius, &xr);
             }
@@ -931,11 +982,11 @@ namespace lsp
                 xr              = sDecButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? colors->sButtonActiveColor : colors->sButtonColor);
                 color.scale_lch_luminance(bright);
                 s->fill_rect(color, SURFMASK_L_CORNER, radius, &xr);
 
-                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? colors->sTextActiveColor : colors->sTextColor);
                 s->fill_triangle(
                     color,
                     xr.nLeft + xr.nWidth * 0.25f, xr.nTop + xr.nHeight * 0.5f,
@@ -946,11 +997,11 @@ namespace lsp
                 xr              = sIncButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? colors->sButtonActiveColor : colors->sButtonColor);
                 color.scale_lch_luminance(bright);
                 s->fill_rect(color, SURFMASK_R_CORNER, radius, &xr);
 
-                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? colors->sTextActiveColor : colors->sTextColor);
                 s->fill_triangle(
                     color,
                     xr.nLeft + xr.nWidth * 0.75f, xr.nTop + xr.nHeight * 0.5f,
@@ -965,7 +1016,7 @@ namespace lsp
 
                 if (xr.nWidth > 0)
                 {
-                    color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
+                    color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? colors->sIncActiveColor : colors->sIncColor);
                     color.scale_lch_luminance(bright);
                     s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
                 }
@@ -978,7 +1029,7 @@ namespace lsp
 
                 if (xr.nWidth > 0)
                 {
-                    color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
+                    color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? colors->sDecActiveColor : colors->sDecColor);
                     color.scale_lch_luminance(bright);
                     s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
                 }
@@ -989,11 +1040,11 @@ namespace lsp
                 xr              = sDecButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? colors->sButtonActiveColor : colors->sButtonColor);
                 color.scale_lch_luminance(bright);
                 s->fill_rect(color, SURFMASK_T_CORNER, radius, &xr);
 
-                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nXFlags & F_BTN_DOWN_ACTIVE) ? colors->sTextActiveColor : colors->sTextColor);
                 s->fill_triangle(
                     color,
                     xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.25f,
@@ -1004,11 +1055,11 @@ namespace lsp
                 xr              = sIncButton;
                 xr.nLeft       -= sSize.nLeft;
                 xr.nTop        -= sSize.nTop;
-                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sButtonActiveColor : sButtonColor);
+                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? colors->sButtonActiveColor : colors->sButtonColor);
                 color.scale_lch_luminance(bright);
                 s->fill_rect(color, SURFMASK_B_CORNER, radius, &xr);
 
-                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? sTextActiveColor : sTextColor);
+                color.copy((nXFlags & F_BTN_UP_ACTIVE) ? colors->sTextActiveColor : colors->sTextColor);
                 s->fill_triangle(
                     color,
                     xr.nLeft + xr.nWidth * 0.5f,  xr.nTop + xr.nHeight * 0.75f,
@@ -1023,7 +1074,7 @@ namespace lsp
 
                 if (xr.nHeight > 0)
                 {
-                    color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? sIncActiveColor : sIncColor);
+                    color.copy((nXFlags & F_SPARE_DOWN_ACTIVE) ? colors->sIncActiveColor : colors->sIncColor);
                     color.scale_lch_luminance(bright);
                     s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
                 }
@@ -1036,7 +1087,7 @@ namespace lsp
 
                 if (xr.nHeight > 0)
                 {
-                    color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? sDecActiveColor : sDecColor);
+                    color.copy((nXFlags & F_SPARE_UP_ACTIVE) ? colors->sDecActiveColor : colors->sDecColor);
                     color.scale_lch_luminance(bright);
                     s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
                 }
@@ -1050,7 +1101,7 @@ namespace lsp
 
             if (sborder > 0)
             {
-                color.copy(sSliderBorderColor);
+                color.copy(colors->sSliderBorderColor);
                 color.scale_lch_luminance(bright);
                 s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
 
@@ -1060,7 +1111,7 @@ namespace lsp
                 xr.nHeight     -= sborder * 2;
             }
 
-            color.copy((nXFlags & F_SLIDER_ACTIVE) ? sSliderActiveColor : sSliderColor);
+            color.copy((nXFlags & F_SLIDER_ACTIVE) ? colors->sSliderActiveColor : colors->sSliderColor);
             color.scale_lch_luminance(bright);
             s->fill_rect(color, SURFMASK_NONE, 0.0f, &xr);
 

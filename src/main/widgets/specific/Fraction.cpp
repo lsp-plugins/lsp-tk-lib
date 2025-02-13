@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 авг. 2020 г.
@@ -29,12 +29,6 @@ namespace lsp
     {
         namespace style
         {
-            static const char *prop_color[] =
-            {
-                "num.color",
-                "den.color"
-            };
-
             static const char *prop_opened[] =
             {
                 "num.opened",
@@ -44,27 +38,39 @@ namespace lsp
             // Fraction style
             LSP_TK_STYLE_IMPL_BEGIN(Fraction, Widget)
                 // Bind
-                sColor.bind("color", this);
+                style::FractionColors *c = &vColors[style::FRACTION_NORMAL];
+                c->sColor.bind("color", this);
+                c->sNumColor.bind("num.color", this);
+                c->sDenColor.bind("den.color", this);
+
+                c = &vColors[style::FRACTION_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sNumColor.bind("inactive.num.color", this);
+                c->sDenColor.bind("inactive.den.color", this);
+
                 sFont.bind("font", this);
                 sAngle.bind("angle", this);
                 sTextPad.bind("text.pad", this);
                 sThick.bind("thick", this);
-                for (size_t i=0; i<2; ++i)
-                {
-                    sItemColor[i].bind(prop_color[i], this);
-                    sItemOpened[i].bind(prop_opened[i], this);
-                }
+                sActive.bind("active", this);
+
                 // Configure
-                sColor.set("#000000");
+                c = &vColors[style::FRACTION_NORMAL];
+                c->sColor.set("#000000");
+                c->sNumColor.set("#000000");
+                c->sDenColor.set("#000000");
+
+                c = &vColors[style::FRACTION_INACTIVE];
+                c->sColor.set("#444444");
+                c->sNumColor.set("#444444");
+                c->sDenColor.set("#444444");
+
                 sFont.set_size(14.0f);
                 sAngle.set(60.0f);
                 sTextPad.set(6);
                 sThick.set(1);
-                for (size_t i=0; i<2; ++i)
-                {
-                    sItemColor[i].set("#000000");
-                    sItemOpened[i].set(false);
-                }
+                sActive.set(true);
+
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
@@ -75,6 +81,18 @@ namespace lsp
 
             // Fraction::List style
             LSP_TK_BUILTIN_STYLE(ListBox, "Fraction::List", "ListBox");
+
+            void FractionColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sNumColor.listener(listener);
+                sDenColor.listener(listener);
+            }
+
+            bool FractionColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sNumColor, sDenColor);
+            }
         }
 
         //-----------------------------------------------------------------------------
@@ -84,10 +102,11 @@ namespace lsp
         Fraction::Window::Window(Display *dpy, Fraction *frac, Combo *combo):
             PopupWindow(dpy)
         {
+            pClass          = &metadata;
+
             pFrac           = frac;
             pCombo          = combo;
 
-            pClass          = &metadata;
         }
 
         status_t Fraction::Window::on_hide()
@@ -152,7 +171,6 @@ namespace lsp
         Fraction::Combo::Combo(Display *dpy, Fraction *frac):
             sList(dpy, frac, this),
             sWindow(dpy, frac, this),
-            sColor(&frac->sProperties),
             sText(&frac->sProperties),
             sSelected(&frac->sProperties),
             sOpened(&frac->sProperties)
@@ -169,7 +187,6 @@ namespace lsp
         {
             Style *style    = &pFrac->sStyle;
 
-            sColor.bind(style::prop_color[idx], style);
             sText.bind(style, pFrac->display()->dictionary());
             sOpened.bind(style::prop_opened[idx], style);
 
@@ -197,8 +214,6 @@ namespace lsp
 
         void Fraction::Combo::property_changed(Property *prop)
         {
-            if (sColor.is(prop))
-                pFrac->query_draw();
             if (sText.is(prop))
                 pFrac->query_resize();
             if (sSelected.is(prop))
@@ -267,16 +282,19 @@ namespace lsp
             Widget(dpy),
             sNum(dpy, this),
             sDen(dpy, this),
-            sColor(&sProperties),
             sFont(&sProperties),
             sAngle(&sProperties),
             sTextPad(&sProperties),
-            sThick(&sProperties)
+            sThick(&sProperties),
+            sActive(&sProperties)
         {
+            pClass          = &metadata;
+
             nMBState        = 0;
             enTrgState      = NONE_CLICK;
 
-            pClass          = &metadata;
+            for (size_t i=0; i<style::FRACTION_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
         }
 
         Fraction::~Fraction()
@@ -340,11 +358,21 @@ namespace lsp
             if (res == STATUS_OK)
                 res     = sDen.init(1);
 
-            sColor.bind("color", &sStyle);
+            style::FractionColors *c = &vColors[style::FRACTION_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sNumColor.bind("num.color", &sStyle);
+            c->sDenColor.bind("den.color", &sStyle);
+
+            c = &vColors[style::FRACTION_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sNumColor.bind("inactive.num.color", &sStyle);
+            c->sDenColor.bind("inactive.den.color", &sStyle);
+
             sFont.bind("font", &sStyle);
             sAngle.bind("angle", &sStyle);
             sTextPad.bind("text.pad", &sStyle);
             sThick.bind("thick", &sStyle);
+            sActive.bind("active", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -356,21 +384,27 @@ namespace lsp
             return STATUS_OK;
         }
 
+        style::FractionColors *Fraction::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::FRACTION_NORMAL : style::FRACTION_INACTIVE;
+            return &vColors[flags];
+        }
+
         void Fraction::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
             sNum.property_changed(prop);
             sDen.property_changed(prop);
 
-            if (sColor.is(prop))
+            // Self properties
+            style::FractionColors *colors = select_colors();
+            if (colors->property_changed(prop))
                 query_draw();
-            if (sFont.is(prop))
-                query_resize();
-            if (sAngle.is(prop))
-                query_resize();
-            if (sTextPad.is(prop))
-                query_resize();
-            if (sThick.is(prop))
+
+            if (sActive.is(prop))
+                query_draw();
+
+            if (prop->one_of(sFont, sAngle, sTextPad, sThick))
                 query_resize();
         }
 
@@ -497,12 +531,13 @@ namespace lsp
             float bright    = sBrightness.get();
             float angle     = sAngle.get() * M_PI / 180.0f;
             float lw        = lsp_max(1.0f, sThick.get() * scaling * ((sFont.bold()) ? 2.0f : 1.0f));
+            const style::FractionColors *colors = select_colors();
 
             // Prepare palette
             lsp::Color bg_color;
-            lsp::Color color(sColor);
-            lsp::Color tc(sNum.sColor);
-            lsp::Color bc(sDen.sColor);
+            lsp::Color color(colors->sColor);
+            lsp::Color tc(colors->sNumColor);
+            lsp::Color bc(colors->sDenColor);
 
             get_actual_bg_color(bg_color);
             color.scale_lch_luminance(bright);
@@ -556,29 +591,16 @@ namespace lsp
             s->line(color, cx + dx, cy - dy, cx - dx, cy + dy, lw);
 
             // Output numerator and denominator
-//            s->fill_rect(tc, SURFMASK_NONE, 0, sNum.sArea.nLeft, sNum.sArea.nTop, 1, 1);
-//            s->wire_rect(
-//                tc,
-//                SURFMASK_NONE, 0,
-//                sNum.sArea.nLeft - sNum.sArea.nWidth*0.5f, sNum.sArea.nTop  - sNum.sArea.nHeight*0.5f,
-//                sNum.sArea.nWidth, sNum.sArea.nHeight, 1.0f);
-//            s->fill_rect(bc, SURFMASK_NONE, 0, sDen.sArea.nLeft, sDen.sArea.nTop, 1, 1);
-//            s->wire_rect(
-//                bc,
-//                SURFMASK_NONE, 0,
-//                sDen.sArea.nLeft - sDen.sArea.nWidth*0.5f, sDen.sArea.nTop  - sDen.sArea.nHeight*0.5f,
-//                sDen.sArea.nWidth, sDen.sArea.nHeight, 1.0f);
-
             sFont.draw(
                 s, tc,
-                sNum.sArea.nLeft - (tp.Width*0.5f) - tp.XBearing,
-                sNum.sArea.nTop  + fp.Ascent  - fp.Height*0.5f,
+                truncf(sNum.sArea.nLeft - (tp.Width * 0.5f) - tp.XBearing),
+                truncf(sNum.sArea.nTop  + fp.Ascent  - fp.Height*0.5f),
                 fscaling, &num
             );
             sFont.draw(
                 s, bc,
-                sDen.sArea.nLeft - (bp.Width*0.5f) - bp.XBearing,
-                sDen.sArea.nTop  + fp.Ascent  - fp.Height*0.5f,
+                truncf(sDen.sArea.nLeft - (bp.Width * 0.5f) - bp.XBearing),
+                truncf(sDen.sArea.nTop  + fp.Ascent  - fp.Height*0.5f),
                 fscaling, &den
             );
 
@@ -669,5 +691,5 @@ namespace lsp
             return STATUS_OK;
         }
 
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */

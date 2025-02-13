@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2022 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2022 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 13 нояб. 2022 г.
@@ -98,6 +98,18 @@ MTEST_BEGIN("tk.widgets.containers", tabcontrol)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
+
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+        if (ev->nCode == ws::MCB_MIDDLE)
+        {
+            tk::Tab *tab = tk::widget_cast<tk::Tab>(sender);
+            if (tab != NULL)
+                tab->active()->toggle();
+
+            tk::TabControl *ctl = tk::widget_cast<tk::TabControl>(sender);
+            if (ctl != NULL)
+                ctl->selected()->get()->active()->toggle();
+        }
 
         return STATUS_OK;
     }

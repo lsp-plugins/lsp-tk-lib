@@ -571,11 +571,7 @@ namespace lsp
                 {
                     tab_t *tab              = vVisible.uget(i);
                     tk::Tab *w              = tab->widget;
-                    tab_mode_t mode         = (w == ct) ? TM_SELECTED :
-                                              (w == pEventTab) ? TM_HOVER :
-                                              TM_NORMAL;
-
-                    draw_tab(s, tab, mode, area);
+                    draw_tab(s, tab, (w == ct), (w == pEventTab), area);
                 }
             }
 
@@ -625,16 +621,12 @@ namespace lsp
                 {
                     tab_t *tab              = vVisible.uget(i);
                     tk::Tab *w              = tab->widget;
-                    tab_mode_t mode         = (w == ct) ? TM_SELECTED :
-                                              (w == pEventTab) ? TM_HOVER :
-                                              TM_NORMAL;
-
-                    draw_tab_text(s, tab, mode, area);
+                    draw_tab_text(s, tab, (w == ct), (w == pEventTab), area);
                 }
             }
         }
 
-        void TabControl::draw_tab(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area)
+        void TabControl::draw_tab(ws::ISurface *s, const tab_t *tab, bool selected, bool hover, const ws::rectangle_t *area)
         {
             // Compute parameters
             tk::Tab *w              = tab->widget;
@@ -647,6 +639,7 @@ namespace lsp
             size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
             bool top_align          = sHeading.valign() <= 0.0f;
             size_t mask             = (top_align) ? SURFMASK_T_CORNER : SURFMASK_B_CORNER;
+            const style::TabColors *colors = tab->widget->select_colors(selected, hover);
 
             const bool aa           = s->set_antialiasing(true);
             lsp_finally { s->set_antialiasing(aa); };
@@ -668,26 +661,26 @@ namespace lsp
                 if (r.nHeight > 0)
                 {
                     // Draw the tab background
-                    color.copy(select_color(mode, w->color(), w->selected_color(), w->hover_color()));
+                    color.copy(colors->sColor);
                     color.scale_lch_luminance(bright);
                     s->fill_rect(color, mask, tab_radius, &tab->bounds);
 
                     // Draw the tab border
-                    color.copy(select_color(mode, w->border_color(), w->border_selected_color(), w->border_hover_color()));
+                    color.copy(colors->sBorderColor);
                     color.scale_lch_luminance(bright);
                     s->wire_rect(color, mask, tab_radius, &tab->bounds, tab->border);
                 }
             }
 
             // For selected tab: join it with the body
-            if ((mode == TM_SELECTED) && (nTabShift < 0) &&
+            if ((selected) && (nTabShift < 0) &&
                 (sTabJoint.get()) && (Size::overlap(area, &sBounds)))
             {
                 s->clip_begin(area);
                 lsp_finally { s->clip_end(); };
 
                 // Erase the border
-                color.copy(select_color(mode, w->color(), w->selected_color(), w->hover_color()));
+                color.copy(colors->sColor);
                 color.scale_lch_luminance(bright);
                 if (top_align)
                     s->fill_rect(color, SURFMASK_NO_CORNER, 0,
@@ -701,7 +694,7 @@ namespace lsp
 
         }
 
-        void TabControl::draw_tab_text(ws::ISurface *s, const tab_t *tab, tab_mode_t mode, const ws::rectangle_t *area)
+        void TabControl::draw_tab_text(ws::ISurface *s, const tab_t *tab, bool selected, bool hover, const ws::rectangle_t *area)
         {
             // Compute parameters
             tk::Tab *w              = tab->widget;
@@ -712,6 +705,7 @@ namespace lsp
 
             float scaling           = lsp_max(0.0f, sScaling.get());
             float fscaling          = lsp_max(0.0f, scaling * sFontScaling.get());
+            const style::TabColors *colors = tab->widget->select_colors(selected, hover);
 
             // Draw tab text
             if (Size::intersection(&clip, &tab->text, area))
@@ -753,7 +747,7 @@ namespace lsp
                 }
 
                 // Initialize palette
-                color.copy(select_color(mode, w->text_color(), w->text_selected_color(), w->text_hover_color()));
+                color.copy(colors->sTextColor);
                 color.scale_lch_luminance(sBrightness.get());
 
                 // Draw background
@@ -794,19 +788,6 @@ namespace lsp
                     last    = curr + 1;
                 }
             }
-        }
-
-        const lsp::Color *TabControl::select_color(tab_mode_t mode, const tk::Color *normal, const tk::Color * selected, const tk::Color *hover)
-        {
-            switch (mode)
-            {
-                case TM_SELECTED:   return selected->color();
-                case TM_HOVER:      return hover->color();
-                case TM_NORMAL:
-                default:
-                    break;
-            }
-            return normal->color();
         }
 
         status_t TabControl::add(Widget *child)

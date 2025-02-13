@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 июл. 2017 г.
@@ -49,10 +49,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                Separator & operator = (const Separator &);
-                Separator(const Separator &);
-
             protected:
                 prop::Orientation       sOrientation;
                 prop::Color             sColor;
@@ -60,14 +56,18 @@ namespace lsp
                 prop::Integer           sThickness;
 
             protected:
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                property_changed(Property *prop);
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                property_changed(Property *prop) override;
 
             public:
                 explicit Separator(Display *dpy);
-                virtual ~Separator();
+                Separator(const Separator &) = delete;
+                Separator(Separator &&) = delete;
+                virtual ~Separator() override;
+                Separator & operator = (const Separator &) = delete;
+                Separator & operator = (Separator &&) = delete;
 
-                virtual status_t init();
+                virtual status_t init() override;
 
             public:
                 LSP_TK_PROPERTY(Color,              color,                      &sColor)
@@ -76,7 +76,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            thickness,                  &sThickness)
 
             public:
-                virtual void render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
         };
     
