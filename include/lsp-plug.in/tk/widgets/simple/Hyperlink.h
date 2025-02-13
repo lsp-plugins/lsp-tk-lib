@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2017 г.
@@ -53,10 +53,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                Hyperlink & operator = (const Hyperlink &);
-                Hyperlink(const Hyperlink &);
-
             protected:
                 enum state_t
                 {
@@ -91,15 +87,19 @@ namespace lsp
                 void                            do_destroy();
 
             protected:
-                virtual void                    size_request(ws::size_limit_t *r);
-                virtual void                    property_changed(Property *prop);
+                virtual void                    size_request(ws::size_limit_t *r) override;
+                virtual void                    property_changed(Property *prop) override;
 
             public:
                 explicit Hyperlink(Display *dpy);
-                virtual ~Hyperlink();
+                Hyperlink(const Hyperlink &) = delete;
+                Hyperlink(Hyperlink &&) = delete;
+                virtual ~Hyperlink() override;
+                Hyperlink & operator = (const Hyperlink &) = delete;
+                Hyperlink & operator = (Hyperlink &&) = delete;
 
-                virtual status_t                init();
-                virtual void                    destroy();
+                virtual status_t                init() override;
+                virtual void                    destroy() override;
 
             public:
                 LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
@@ -118,24 +118,17 @@ namespace lsp
                 status_t                        follow_url() const;
 
             public:
-                virtual void                    draw(ws::ISurface *s);
+                virtual void                    draw(ws::ISurface *s) override;
+                virtual status_t                on_mouse_in(const ws::event_t *e) override;
+                virtual status_t                on_mouse_out(const ws::event_t *e) override;
+                virtual status_t                on_mouse_move(const ws::event_t *e) override;
+                virtual status_t                on_mouse_down(const ws::event_t *e) override;
+                virtual status_t                on_mouse_up(const ws::event_t *e) override;
 
-                virtual status_t                on_mouse_in(const ws::event_t *e);
-
-                virtual status_t                on_mouse_out(const ws::event_t *e);
-
-                virtual status_t                on_mouse_move(const ws::event_t *e);
-
-                virtual status_t                on_mouse_down(const ws::event_t *e);
-
-                virtual status_t                on_mouse_up(const ws::event_t *e);
-
+            public:
                 virtual status_t                on_before_popup(Menu *menu);
-
                 virtual status_t                on_popup(Menu *menu);
-
                 virtual status_t                on_submit();
-
         };
 
     } /* namespace tk */

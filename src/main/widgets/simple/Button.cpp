@@ -374,15 +374,12 @@ namespace lsp
 
         style::ButtonColors *Button::select_colors()
         {
-            size_t flags = style::BUTTON_NORMAL;
+            size_t flags = (sActive.get()) ? style::BUTTON_NORMAL : style::BUTTON_INACTIVE;
             if ((nState & S_DOWN) && ((nState & S_LED) || (sLed.get() > 0) || (sDownColors.get())))
                 flags      |= style::BUTTON_DOWN;
 
             if ((sHover.get()) && (nState & S_HOVER))
                 flags      |= style::BUTTON_HOVER;
-
-            if (!sActive.get())
-                flags      |= style::BUTTON_INACTIVE;
 
             return &vColors[flags];
         }

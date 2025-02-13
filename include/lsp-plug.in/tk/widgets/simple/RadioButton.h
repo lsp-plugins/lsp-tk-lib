@@ -70,9 +70,6 @@ namespace lsp
          */
         class RadioButton: public Widget
         {
-            private:
-
-
             public:
                 static const w_class_t    metadata;
 

@@ -45,11 +45,11 @@ namespace lsp
 
             enum CheckBoxColorState
             {
-                CHECKBOX_NORMAL       = 0,
-                CHECKBOX_HOVER      = 1 << 0,
-                CHECKBOX_INACTIVE   = 1 << 1,
+                CHECKBOX_NORMAL         = 0,
+                CHECKBOX_HOVER          = 1 << 0,
+                CHECKBOX_INACTIVE       = 1 << 1,
 
-                CHECKBOX_TOTAL      = 1 << 2
+                CHECKBOX_TOTAL          = 1 << 2
             };
 
             LSP_TK_STYLE_DEF_BEGIN(CheckBox, Widget)
