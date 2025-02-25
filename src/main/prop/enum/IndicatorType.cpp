@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 8 мая 2020 г.
+ * Created on: 25 февр. 2025 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,15 +25,20 @@ namespace lsp
 {
     namespace tk
     {
-        const prop::enum_t BorderStyle::ENUM[] =
+        const prop::enum_t IndicatorType::ENUM[] =
         {
-            { "segment",        INDICATOR_SEGMENT   },
-            { "pixel",          INDICATOR_PIXEL     },
-            { "modern",         INDICATOR_MODERN    },
+            { "dialog",         ws::BS_DIALOG       },
+            { "single",         ws::BS_SINGLE       },
+            { "none",           ws::BS_NONE         },
+            { "popup",          ws::BS_POPUP        },
+            { "combo",          ws::BS_COMBO        },
+            { "sizeable",       ws::BS_SIZEABLE     },
+            { "dropdown",       ws::BS_DROPDOWN     },
             { NULL,             -1                  }
         };
 
     } /* namespace tk */
 } /* namespace lsp */
+
 
 

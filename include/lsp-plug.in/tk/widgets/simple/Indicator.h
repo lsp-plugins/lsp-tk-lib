@@ -60,7 +60,7 @@ namespace lsp
                 prop::Boolean       sLoop;          // Loop flag
                 prop::Boolean       sDarkText;      // Enables drawing of the dark text/dark segments
                 prop::String        sText;          // Actual text to display
-                prop::Boolean       sModern;        // Modern design
+                prop::IndicatorType sType;          // Indicator type
                 prop::Boolean       sActive;        // Active/inactive state
                 prop::Font          sFont;          // Font properties
                 prop::Integer       sSpacing;       // Spacing between digits
@@ -91,8 +91,8 @@ namespace lsp
                 prop::Boolean           sLoop;          // Loop flag
                 prop::Boolean           sDarkText;      // Enables drawing of the dark text/dark segments
                 prop::String            sText;          // Actual text to display
-                prop::Boolean           sModern;        // Modern design
-                prop::Boolean       sActive;        // Active/inactive state
+                prop::IndicatorType     sType;          // Indicator type
+                prop::Boolean           sActive;        // Active/inactive state
                 prop::Font              sFont;          // Font properties
                 prop::Integer           sSpacing;       // Spacing between digits
                 prop::Padding           sIPadding;      // Internal padding
@@ -102,6 +102,7 @@ namespace lsp
 
             protected:
                 void                    draw_digit(ws::ISurface *s, float x, float y, size_t state, const lsp::Color &on, const lsp::Color &off);
+                void                    draw_pixel(ws::ISurface *s, float x, float y, char ch, const lsp::Color &on, const lsp::Color &off);
                 void                    draw_simple(ws::ISurface *s, float x, float y, char ch, const lsp::Color &on, const ws::font_parameters_t *fp);
                 uint8_t                 get_char(const LSPString *str, size_t index);
                 void                    calc_digit_size(ssize_t *w, ssize_t *h);
@@ -135,7 +136,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            text_loop,              &sLoop)
                 LSP_TK_PROPERTY(Boolean,            dark_text,              &sDarkText)
                 LSP_TK_PROPERTY(String,             text,                   &sText)
-                LSP_TK_PROPERTY(Boolean,            modern,                 &sModern)
+                LSP_TK_PROPERTY(IndicatorType,      type,                   &sType)
                 LSP_TK_PROPERTY(Boolean,            active,                 &sActive)
                 LSP_TK_PROPERTY(Font,               font,                   &sFont)
                 LSP_TK_PROPERTY(Integer,            spacing,                &sSpacing)

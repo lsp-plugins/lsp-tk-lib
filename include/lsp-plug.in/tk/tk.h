@@ -59,6 +59,7 @@
 #include <lsp-plug.in/tk/prop/enum/BorderStyle.h>
 #include <lsp-plug.in/tk/prop/enum/FileDialogMode.h>
 #include <lsp-plug.in/tk/prop/enum/GraphFrameFunction.h>
+#include <lsp-plug.in/tk/prop/enum/IndicatorType.h>
 #include <lsp-plug.in/tk/prop/enum/MenuItemType.h>
 #include <lsp-plug.in/tk/prop/enum/WindowPolicy.h>
 #include <lsp-plug.in/tk/prop/enum/Pointer.h>
