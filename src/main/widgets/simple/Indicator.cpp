@@ -138,14 +138,14 @@ namespace lsp
             { 0,  3,  6 },  // 0
             { 0,  0, 10 },  // 1
             { 0,  0,  2 },  // 2
-            { 1,  1,  0 },  // 3
-            { 0,  6,  2 },  // 4
-            { 0,  6, 10 },  // 5
-            { 1,  1, 16 },  // 6
-            { 1,  1,  8 },  // 7
-            { 2, 10, 16 },  // 8
-            { 2, 10,  5 },  // 9
-            { 2, 10, 11 },  // A
+            { 1,  2,  0 },  // 3
+            { 0,  8,  2 },  // 4
+            { 0,  8, 10 },  // 5
+            { 1,  2, 16 },  // 6
+            { 1,  2,  8 },  // 7
+            { 2, 12, 16 },  // 8
+            { 2, 12,  5 },  // 9
+            { 2, 12, 11 },  // A
         };
 
         static const char *estimate = "0123456789WX_%:";
@@ -397,9 +397,9 @@ namespace lsp
             {
                 case INDICATOR_PIXEL:
                 {
-                    const float psize   = 2.0f * fscaling;
-                    *w      = 8 * psize;
-                    *h      = 15 * psize;
+                    const float psize   = 1.6f * fscaling;
+                    *w      = ceilf(8.0f * psize);
+                    *h      = ceilf(15.0f * psize);
                     break;
                 }
 
@@ -424,8 +424,8 @@ namespace lsp
 
                 case INDICATOR_SEGMENT:
                 default:
-                    *w      = 16 * fscaling;
-                    *h      = 20 * fscaling;
+                    *w      = ceilf(16.0f * fscaling);
+                    *h      = ceilf(20.0f * fscaling);
                     break;
             }
         }
@@ -468,9 +468,9 @@ namespace lsp
         void Indicator::draw_pixel(ws::ISurface *s, float x, float y, char ch, const lsp::Color &on, const lsp::Color &off)
         {
             const float fscaling= lsp_max(0.0f, sScaling.get() * sFontScaling.get());
-            const float ppad    = 0.1f * fscaling;
-            const float prsize  = 1.8f * fscaling;
-            const float psize   = 2.0f * fscaling;
+            const float psize   = 1.6f * fscaling;
+            const float ppad    = 0.05f * psize;
+            const float prsize  = psize - ppad * 2.0f;
             bool dark           = sDarkText.get();
 
             const uint8_t *p    = &ascii_bitmap[(ch & 0x7f) * 15];

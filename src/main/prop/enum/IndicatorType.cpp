@@ -27,13 +27,9 @@ namespace lsp
     {
         const prop::enum_t IndicatorType::ENUM[] =
         {
-            { "dialog",         ws::BS_DIALOG       },
-            { "single",         ws::BS_SINGLE       },
-            { "none",           ws::BS_NONE         },
-            { "popup",          ws::BS_POPUP        },
-            { "combo",          ws::BS_COMBO        },
-            { "sizeable",       ws::BS_SIZEABLE     },
-            { "dropdown",       ws::BS_DROPDOWN     },
+            { "segment",        INDICATOR_SEGMENT   },
+            { "pixel",          INDICATOR_PIXEL     },
+            { "modern",         INDICATOR_MODERN    },
             { NULL,             -1                  }
         };
 
