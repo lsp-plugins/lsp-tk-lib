@@ -64,7 +64,6 @@ namespace lsp
 
                 typedef struct estimation_t
                 {
-                    LSPString text;
                     float scaling;
                     float fscaling;
                     ws::size_limit_t *r;
@@ -95,6 +94,9 @@ namespace lsp
 
             protected:
                 void                            estimate_string_size(estimation_t *e, tk::String *s);
+                void                            estimate_string_size(estimation_t *e, const LSPString *s);
+                static bool                     contains_digit(const LSPString *s);
+                static void                     set_all_digits(LSPString *s, lsp_wchar_t new_ch);
 
                 virtual void                    size_request(ws::size_limit_t *r) override;
                 virtual void                    property_changed(Property *prop) override;

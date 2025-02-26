@@ -5,6 +5,7 @@
 === 1.0.27 ===
 * Implemented OpenGL drawing surface supporf for X11 protocol. Can be disabled
   by setting LSP_WS_LIB_GLXSURFACE=off environment variable.
+* Improved size estimation algorithm for tk::Label widget.
 * Added inactive state and colors for following widgets:
   * tk::Button;
   * tk::CheckBox;
