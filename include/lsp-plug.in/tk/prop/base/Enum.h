@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 мая 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class Enum: public SimpleProperty
         {
-            private:
-                Enum & operator = (const Enum &);
-                Enum(const Enum &);
-
             protected:
                 ssize_t             nValue;
                 const prop::enum_t *pEnum;
@@ -60,7 +56,12 @@ namespace lsp
 
             protected:
                 explicit Enum(const prop::enum_t *xenum, size_t dfl, prop::Listener *listener = NULL);
-                virtual ~Enum();
+                Enum(const Enum &) = delete;
+                Enum(Enum &&) = delete;
+                virtual ~Enum() override;
+
+                Enum & operator = (const Enum &) = delete;
+                Enum & operator = (Enum &&) = delete;
 
             public:
                 status_t            parse(const char *value);
@@ -68,8 +69,8 @@ namespace lsp
                 inline ssize_t      index() const               { return nValue;            }
                 inline ssize_t      set_index(ssize_t v)        { return set(v);            }
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

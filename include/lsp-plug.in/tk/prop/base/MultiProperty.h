@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 мая 2020 г.
@@ -38,10 +38,6 @@ namespace lsp
          */
         class MultiProperty: public Property
         {
-            private:
-                MultiProperty & operator = (const MultiProperty &);
-                MultiProperty(const MultiProperty &);
-
             protected:
                 status_t        unbind(atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);
                 status_t        bind(atom_t id, Style *style, atom_t *atoms, const prop::desc_t *desc, IStyleListener *listener);
@@ -52,9 +48,14 @@ namespace lsp
 
             protected:
                 explicit MultiProperty(atom_t *atoms, size_t size, prop::Listener *listener = NULL);
+                MultiProperty(const MultiProperty &) = delete;
+                MultiProperty(MultiProperty &&) = delete;
+
+                MultiProperty & operator = (const MultiProperty &) = delete;
+                MultiProperty & operator = (MultiProperty &&) = delete;
         };
 
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_PROP_BASE_MULTIPROPERTY_H_ */
