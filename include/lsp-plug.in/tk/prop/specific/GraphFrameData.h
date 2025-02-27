@@ -77,7 +77,7 @@ namespace lsp
 
             protected:
                 void            sync();
-                void            commit(atom_t property);
+                virtual void    commit(atom_t property) override;
                 bool            resize_buffer(size_t rows, size_t cols);
                 ssize_t         row_index(uint32_t id, size_t range) const;
 

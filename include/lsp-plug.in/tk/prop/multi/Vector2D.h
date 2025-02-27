@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 25 авг. 2020 г.
@@ -117,12 +117,13 @@ namespace lsp
              */
             class Vector2D: public tk::Vector2D
             {
-                private:
-                    Vector2D & operator = (const Vector2D &);
-                    Vector2D(const Vector2D &);
-
                 public:
                     explicit Vector2D(prop::Listener *listener = NULL): tk::Vector2D(listener) {};
+                    Vector2D(const Vector2D &) = delete;
+                    Vector2D(Vector2D &&) = delete;
+
+                    Vector2D & operator = (const Vector2D &) = delete;
+                    Vector2D & operator = (Vector2D &&) = delete;
 
                 public:
                     /**
@@ -137,8 +138,8 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Vector2D::unbind(vAtoms, DESC, &sListener); };
             };
-        } /* namespace prop */
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

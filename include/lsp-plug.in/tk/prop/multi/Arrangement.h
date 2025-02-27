@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 13 июн. 2021 г.
@@ -40,10 +40,6 @@ namespace lsp
         class Arrangement: public MultiProperty
         {
             protected:
-                Arrangement & operator = (const Arrangement &);
-                Arrangement(const Arrangement &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -62,14 +58,19 @@ namespace lsp
                 float               vAlign;             // Vertical alignment
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 void                parse(const LSPString *s);
 
             protected:
                 explicit Arrangement(prop::Listener *listener = NULL);
-                virtual ~Arrangement();
+                Arrangement(const Arrangement &) = delete;
+                Arrangement(Arrangement &&) = delete;
+                virtual ~Arrangement() override;
+
+                Arrangement & operator = (const Arrangement &) = delete;
+                Arrangement & operator = (Arrangement &&) = delete;
 
             public:
                 inline float        halign() const              { return hAlign;    }
@@ -96,12 +97,13 @@ namespace lsp
              */
             class Arrangement: public tk::Arrangement
             {
-                private:
-                    Arrangement & operator = (const Arrangement &);
-                    Arrangement(const Arrangement &);
-
                 public:
                     explicit Arrangement(prop::Listener *listener = NULL): tk::Arrangement(listener) {};
+                    Arrangement(const Arrangement &) = delete;
+                    Arrangement(Arrangement &&) = delete;
+
+                    Arrangement & operator = (const Arrangement &) = delete;
+                    Arrangement & operator = (Arrangement &&) = delete;
 
                 public:
                     /**
@@ -118,9 +120,11 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
+
 
 
 

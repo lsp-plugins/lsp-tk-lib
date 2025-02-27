@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 29 мая 2020 г.
@@ -33,10 +33,6 @@ namespace lsp
         class SizeRange: public MultiProperty
         {
             protected:
-                SizeRange & operator = (const SizeRange &);
-                SizeRange(const SizeRange &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -55,12 +51,17 @@ namespace lsp
                 ssize_t             nMax;               // Maximum size
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit SizeRange(prop::Listener *listener = NULL);
-                virtual ~SizeRange();
+                SizeRange(const SizeRange &) = delete;
+                SizeRange(SizeRange &&) = delete;
+                virtual ~SizeRange() override;
+
+                SizeRange & operator = (const SizeRange &) = delete;
+                SizeRange & operator = (SizeRange &&) = delete;
 
             public:
                 inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); };
@@ -90,12 +91,13 @@ namespace lsp
              */
             class SizeRange: public tk::SizeRange
             {
-                private:
-                    SizeRange & operator = (const SizeRange &);
-                    SizeRange(const SizeRange &);
-
                 public:
                     explicit SizeRange(prop::Listener *listener = NULL): tk::SizeRange(listener) {};
+                    SizeRange(const SizeRange &) = delete;
+                    SizeRange(SizeRange &&) = delete;
+
+                    SizeRange & operator = (const SizeRange &) = delete;
+                    SizeRange & operator = (SizeRange &&) = delete;
 
                 public:
                     /**
@@ -111,9 +113,10 @@ namespace lsp
                     inline status_t     unbind()                                        { return tk::SizeRange::unbind(vAtoms, DESC, &sListener); };
 
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_SIZERANGE_H_ */

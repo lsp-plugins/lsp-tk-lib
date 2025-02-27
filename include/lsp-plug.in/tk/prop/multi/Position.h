@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 мая 2020 г.
@@ -37,10 +37,6 @@ namespace lsp
         class Position: public MultiProperty
         {
             protected:
-                Position & operator = (const Position &);
-                Position(const Position &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -59,13 +55,18 @@ namespace lsp
                 ssize_t             nTop;               // Top
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
                 void                parse(const LSPString *s);
 
             protected:
                 explicit Position(prop::Listener *listener = NULL);
-                virtual ~Position();
+                Position(const Position &) = delete;
+                Position(Position &&) = delete;
+                virtual ~Position() override;
+
+                Position & operator = (const Position &) = delete;
+                Position & operator = (Position &&) = delete;
 
             public:
                 inline void         set_default()                   { MultiProperty::set_default(vAtoms, DESC);     }
@@ -100,12 +101,13 @@ namespace lsp
              */
             class Position: public tk::Position
             {
-                private:
-                    Position & operator = (const Position &);
-                    Position(const Position &);
-
                 public:
                     explicit Position(prop::Listener *listener = NULL): tk::Position(listener) {};
+                    Position(const Position &) = delete;
+                    Position(Position &&) = delete;
+
+                    Position & operator = (const Position &) = delete;
+                    Position & operator = (Position &&) = delete;
 
                 public:
                     /**
@@ -128,8 +130,10 @@ namespace lsp
                      */
                     void                commit_value(ssize_t left, ssize_t top);
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
+
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_POSITION_H_ */

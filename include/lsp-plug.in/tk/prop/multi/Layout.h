@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 15 мая 2020 г.
@@ -42,10 +42,6 @@ namespace lsp
         class Layout: public MultiProperty
         {
             protected:
-                Layout & operator = (const Layout &);
-                Layout(const Layout &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -68,14 +64,19 @@ namespace lsp
                 float               vScale;             // Vertical scale
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 void                parse(const LSPString *s);
 
             protected:
                 explicit Layout(prop::Listener *listener = NULL);
-                virtual ~Layout();
+                Layout(const Layout &) = delete;
+                Layout(Layout &&) = delete;
+                virtual ~Layout() override;
+
+                Layout & operator = (const Layout &) = delete;
+                Layout & operator = (Layout &&) = delete;
 
             public:
                 inline float        halign() const              { return hAlign;    }
@@ -111,12 +112,13 @@ namespace lsp
              */
             class Layout: public tk::Layout
             {
-                private:
-                    Layout & operator = (const Layout &);
-                    Layout(const Layout &);
-
                 public:
                     explicit Layout(prop::Listener *listener = NULL): tk::Layout(listener) {};
+                    Layout(const Layout &) = delete;
+                    Layout(Layout &&) = delete;
+
+                    Layout & operator = (const Layout &) = delete;
+                    Layout & operator = (Layout &&) = delete;
 
                 public:
                     /**
@@ -133,9 +135,10 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
-    
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_LAYOUT_H_ */

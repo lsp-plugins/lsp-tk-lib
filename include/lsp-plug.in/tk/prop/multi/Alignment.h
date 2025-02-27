@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 июн. 2021 г.
@@ -42,10 +42,6 @@ namespace lsp
         class Alignment: public MultiProperty
         {
             protected:
-                Alignment & operator = (const Alignment &);
-                Alignment(const Alignment &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -64,14 +60,19 @@ namespace lsp
                 float               nScale;             // Scaling
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 void                parse(const LSPString *s);
 
             protected:
                 explicit Alignment(prop::Listener *listener = NULL);
-                virtual ~Alignment();
+                Alignment(const Alignment &) = delete;
+                Alignment(Alignment &&) = delete;
+                virtual ~Alignment() override;
+
+                Alignment & operator = (const Alignment &) = delete;
+                Alignment & operator = (Alignment &&) = delete;
 
             public:
                 inline float        align() const               { return nAlign;    }
@@ -108,12 +109,12 @@ namespace lsp
              */
             class Alignment: public tk::Alignment
             {
-                private:
-                    Alignment & operator = (const Alignment &);
-                    Alignment(const Alignment &);
-
                 public:
                     explicit Alignment(prop::Listener *listener = NULL): tk::Alignment(listener) {};
+                    Alignment(const Alignment &) = delete;
+                    Alignment(Alignment &&) = delete;
+                    Alignment & operator = (const Alignment &) = delete;
+                    Alignment & operator = (Alignment &&) = delete;
 
                 public:
                     /**
@@ -130,8 +131,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

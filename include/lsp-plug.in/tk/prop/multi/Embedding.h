@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 26 июн. 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class Embedding: public MultiProperty
         {
-            private:
-                Embedding & operator = (const Embedding &);
-                Embedding(const Embedding &);
-
             protected:
                 static const prop::desc_t   DESC[];
 
@@ -77,12 +73,17 @@ namespace lsp
             protected:
                 bool            set_flag(size_t flag, bool set);
 
-                virtual void    push();
-                virtual void    commit(atom_t property);
+                virtual void    push() override;
+                virtual void    commit(atom_t property) override;
 
             protected:
                 Embedding(prop::Listener *listener = NULL);
-                virtual ~Embedding();
+                Embedding(const Embedding &) = delete;
+                Embedding(Embedding &&) = delete;
+                virtual ~Embedding() override;
+
+                Embedding & operator = (const Embedding &) = delete;
+                Embedding & operator = (Embedding &&) = delete;
 
             public:
                 inline bool     left() const                    { return nFlags & M_LEFT;               }
@@ -109,12 +110,13 @@ namespace lsp
              */
             class Embedding: public tk::Embedding
             {
-                private:
-                    Embedding & operator = (const Embedding &);
-                    Embedding(const Embedding &);
-
                 public:
                     explicit Embedding(prop::Listener *listener = NULL): tk::Embedding(listener) {}
+                    Embedding(const Embedding &) = delete;
+                    Embedding(Embedding &&) = delete;
+
+                    Embedding & operator = (const Embedding &) = delete;
+                    Embedding & operator = (Embedding &&) = delete;
 
                 public:
                     /**
@@ -130,10 +132,11 @@ namespace lsp
                     inline status_t     unbind()                                        { return tk::Embedding::unbind(vAtoms, DESC, &sListener); };
 
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 
 

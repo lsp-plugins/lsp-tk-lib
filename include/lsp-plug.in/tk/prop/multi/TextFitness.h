@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 12 авг. 2020 г.
@@ -32,10 +32,6 @@ namespace lsp
         class TextFitness: public MultiProperty
         {
             protected:
-                TextFitness & operator = (const TextFitness &);
-                TextFitness(const TextFitness &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -54,14 +50,19 @@ namespace lsp
                 float               vFit;               // Vertical fitness
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 void                parse(const LSPString *s);
 
             protected:
                 explicit TextFitness(prop::Listener *listener = NULL);
-                virtual ~TextFitness();
+                TextFitness(const TextFitness &) = delete;
+                TextFitness(TextFitness &&) = delete;
+                virtual ~TextFitness() override;
+
+                TextFitness & operator = (const TextFitness &) = delete;
+                TextFitness & operator = (TextFitness &&) = delete;
 
             public:
                 inline float        hfit() const                { return hFit;      }
@@ -83,12 +84,13 @@ namespace lsp
              */
             class TextFitness: public tk::TextFitness
             {
-                private:
-                    TextFitness & operator = (const TextFitness &);
-                    TextFitness(const TextFitness &);
-
                 public:
                     explicit TextFitness(prop::Listener *listener = NULL): tk::TextFitness(listener) {};
+                    TextFitness(const TextFitness &) = delete;
+                    TextFitness(TextFitness &&) = delete;
+
+                    TextFitness & operator = (const TextFitness &) = delete;
+                    TextFitness & operator = (TextFitness &&) = delete;
 
                 public:
                     /**
@@ -103,8 +105,10 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::TextFitness::unbind(vAtoms, DESC, &sListener); };
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
+
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_TEXTFITNESS_H_ */
