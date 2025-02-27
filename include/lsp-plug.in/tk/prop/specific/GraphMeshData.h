@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 сент. 2020 г.
@@ -124,8 +124,9 @@ namespace lsp
                     inline status_t     bind(const char *property, Style *style)        { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphMeshData::bind(property, style, vAtoms, DESC, &sListener); }
             };
+
         } /* namespace prop */
-    } /*namespace tk */
+    } /* namespace tk */
 } /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_PROP_SPECIFIC_GRAPHMESHDATA_H_ */

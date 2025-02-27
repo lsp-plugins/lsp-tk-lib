@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 мая 2020 г.
@@ -100,12 +100,13 @@ namespace lsp
              */
             class Allocation: public tk::Allocation
             {
-                private:
-                    Allocation & operator = (const Allocation &);
-                    Allocation(const Allocation &);
-
                 public:
                     explicit Allocation(prop::Listener *listener = NULL): tk::Allocation(listener) {};
+                    Allocation(const Allocation &) = delete;
+                    Allocation(Allocation &&) = delete;
+
+                    Allocation & operator = (const Allocation &) = delete;
+                    Allocation & operator = (Allocation &&) = delete;
 
                 public:
                     /**
@@ -120,8 +121,8 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Allocation::unbind(); };
             };
+
         } /* namespace prop */
-    
     } /* namespace tk */
 } /* namespace lsp */
 

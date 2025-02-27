@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 мая 2020 г.
@@ -39,14 +39,14 @@ namespace lsp
                 bool                bValue;
 
             protected:
-                virtual void        commit(atom_t property);
-                virtual void        push();
+                virtual void        commit(atom_t property) override;
+                virtual void        push() override;
 
             protected:
                 explicit Boolean(prop::Listener *listener = NULL);
                 Boolean(const Boolean &) = delete;
                 Boolean(Boolean &&) = delete;
-                virtual ~Boolean();
+                virtual ~Boolean() override;
 
                 Boolean & operator = (const Boolean &) = delete;
                 Boolean & operator = (Boolean &&) = delete;
@@ -99,12 +99,13 @@ namespace lsp
              */
             class Boolean: public tk::Boolean
             {
-                private:
-                    Boolean & operator = (const Boolean &);
-                    Boolean(const Boolean &);
-
                 public:
                     explicit inline Boolean(prop::Listener *listener = NULL): tk::Boolean(listener) {};
+                    Boolean(const Boolean &) = delete;
+                    Boolean(Boolean &&) = delete;
+
+                    Boolean & operator = (const Boolean &) = delete;
+                    Boolean & operator = (Boolean &&) = delete;
 
                 public:
                     /**
@@ -128,8 +129,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
-        } /* namespace prop */
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

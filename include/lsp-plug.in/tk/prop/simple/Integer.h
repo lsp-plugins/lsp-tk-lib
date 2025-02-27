@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 мая 2020 г.
@@ -39,14 +39,14 @@ namespace lsp
                 ssize_t             nValue;
 
             protected:
-                virtual void        commit(atom_t property);
-                virtual void        push();
+                virtual void        commit(atom_t property) override;
+                virtual void        push() override;
 
             protected:
                 explicit Integer(prop::Listener *listener = NULL);
                 Integer(const Integer &) = delete;
                 Integer(Integer &&) = delete;
-                virtual ~Integer();
+                virtual ~Integer() override;
 
                 Integer & operator = (const Integer &) = delete;
                 Integer & operator = (Integer &&) = delete;
@@ -83,12 +83,13 @@ namespace lsp
              */
             class Integer: public tk::Integer
             {
-                private:
-                    Integer & operator = (const Integer &);
-                    Integer(const Integer &);
-
                 public:
                     explicit Integer(prop::Listener *listener = NULL): tk::Integer(listener) {};
+                    Integer(const Integer &) = delete;
+                    Integer(Integer &&) = delete;
+
+                    Integer & operator = (const Integer &) = delete;
+                    Integer & operator = (Integer &&) = delete;
 
                 public:
                     ssize_t             commit_value(ssize_t value);
@@ -107,8 +108,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
+
         } /* namespace prop */
-    
     } /* namespace tk */
 } /* namespace lsp */
 

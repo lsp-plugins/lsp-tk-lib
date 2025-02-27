@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 мар. 2020 г.
@@ -58,7 +58,7 @@ namespace lsp
                         explicit inline Params(String *ps) { pString = ps; bLock = false; }
 
                     protected:
-                        virtual void        modified();
+                        virtual void        modified() override;
 
                     public:
                         inline void         set_lock(bool lock) { bLock = lock; }
@@ -85,14 +85,14 @@ namespace lsp
                 status_t            commit_raw(const LSPString *s);
                 status_t            commit(const LSPString *s, const expr::Parameters *params);
 
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit String(prop::Listener *listener = NULL);
                 String(const String &) = delete;
                 String(String &&) = delete;
-                virtual ~String();
+                virtual ~String() override;
 
                 String & operator = (const String &) = delete;
                 String & operator = (String &&) = delete;
@@ -240,9 +240,6 @@ namespace lsp
         {
             class String: public tk::String
             {
-                private:
-
-
                 public:
                     explicit String(prop::Listener *listener = NULL): tk::String(listener) {};
                     String(const String &)= delete;
@@ -278,8 +275,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
+
         } /* namespace prop */
-    
     } /* namespace tk */
 } /* namespace lsp */
 

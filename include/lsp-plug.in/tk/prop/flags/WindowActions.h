@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 мая 2020 г.
@@ -109,12 +109,13 @@ namespace lsp
         {
             class WindowActions: public tk::WindowActions
             {
-                private:
-                    WindowActions & operator = (const WindowActions &);
-                    WindowActions(const WindowActions &);
-
                 public:
                     explicit WindowActions(prop::Listener *listener = NULL): tk::WindowActions(listener) {};
+                    WindowActions(const WindowActions &) = delete;
+                    WindowActions(WindowActions &&) = delete;
+
+                    WindowActions & operator = (const WindowActions &) = delete;
+                    WindowActions & operator = (WindowActions &&) = delete;
 
                 public:
                     /**
@@ -129,6 +130,7 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::WindowActions::unbind(); };
             };
+
         } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
