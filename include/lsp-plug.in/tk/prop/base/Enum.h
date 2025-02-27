@@ -51,8 +51,8 @@ namespace lsp
                 ssize_t             init(Style *style, ssize_t v);
                 ssize_t             override(Style *style, ssize_t v);
 
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit Enum(const prop::enum_t *xenum, size_t dfl, prop::Listener *listener = NULL);

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -35,16 +35,17 @@ namespace lsp
          */
         class FloatArray: public Property
         {
-            private:
-                FloatArray & operator = (const FloatArray &);
-                FloatArray(const FloatArray &);
-
             protected:
                 lltl::darray<float>     vItems;
 
             protected:
                 explicit FloatArray(prop::Listener *listener = NULL);
-                virtual ~FloatArray();
+                FloatArray(const FloatArray &) = delete;
+                FloatArray(FloatArray &&) = delete;
+                virtual ~FloatArray() override;
+
+                FloatArray & operator = (const FloatArray &) = delete;
+                FloatArray & operator = (FloatArray &&) = delete;
 
             public:
                 /**
@@ -206,16 +207,18 @@ namespace lsp
         {
             class FloatArray: public tk::FloatArray
             {
-                private:
-                    FloatArray & operator = (const FloatArray &);
-                    FloatArray(const FloatArray &);
-
                 public:
                     explicit inline FloatArray(prop::Listener *listener = NULL): tk::FloatArray(listener) {}
+                    FloatArray(const FloatArray &) = delete;
+                    FloatArray(FloatArray &&) = delete;
+
+                    FloatArray & operator = (const FloatArray &) = delete;
+                    FloatArray & operator = (FloatArray &&) = delete;
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 1 авг. 2020 г.
@@ -34,10 +34,6 @@ namespace lsp
     {
         class GenericWidgetSet: public Property
         {
-            private:
-                GenericWidgetSet & operator = (const GenericWidgetSet &);
-                GenericWidgetSet(const GenericWidgetSet &);
-
             protected:
                 const w_class_t                *pMeta;
                 prop::CollectionListener       *pCListener;
@@ -45,7 +41,12 @@ namespace lsp
 
             public:
                 explicit GenericWidgetSet(const w_class_t *meta, prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL);
-                virtual ~GenericWidgetSet();
+                GenericWidgetSet(const GenericWidgetSet &) = delete;
+                GenericWidgetSet(GenericWidgetSet &&) = delete;
+                virtual ~GenericWidgetSet() override;
+
+                GenericWidgetSet & operator = (const GenericWidgetSet &) = delete;
+                GenericWidgetSet & operator = (GenericWidgetSet &&) = delete;
 
             public:
                 status_t        add(Widget *w);
@@ -61,66 +62,68 @@ namespace lsp
         };
 
         template <class widget_t>
-            class WidgetSet: public GenericWidgetSet
-            {
-                private:
-                    WidgetSet<widget_t> & operator = (const WidgetSet<widget_t> &);
-                    WidgetSet(const WidgetSet<widget_t> &);
+        class WidgetSet: public GenericWidgetSet
+        {
+            protected:
+                inline widget_t    *wcast(Widget *w)                    { return (w != NULL) ? static_cast<widget_t*>(w) : NULL;    }
 
-                protected:
-                    inline widget_t    *wcast(Widget *w)                    { return (w != NULL) ? static_cast<widget_t*>(w) : NULL;    }
+            public:
+                explicit WidgetSet(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): GenericWidgetSet(&widget_t::metadata, listener, clistener) {}
+                WidgetSet(const WidgetSet<widget_t> &) = delete;
+                WidgetSet(WidgetSet<widget_t> &&) = delete;
 
-                public:
-                    explicit WidgetSet(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): GenericWidgetSet(&widget_t::metadata, listener, clistener) {}
+                WidgetSet<widget_t> & operator = (const WidgetSet<widget_t> &) = delete;
+                WidgetSet<widget_t> & operator = (WidgetSet<widget_t> &&) = delete;
 
-                public:
-                    inline size_t       size() const                        { return sSet.size();                           }
-                    inline status_t     add(widget_t *w)                    { return GenericWidgetSet::add(w);              }
-                    inline status_t     remove(widget_t *w)                 { return GenericWidgetSet::remove(w);           }
-                    inline bool         contains(const widget_t *w) const   { return sSet.contains(w);                      }
-                    inline status_t     toggle(widget_t *w)                 { return GenericWidgetSet::toggle(w);           }
-                    inline widget_t    *any()                               { return wcast(sSet.any());                     }
+            public:
+                inline size_t       size() const                        { return sSet.size();                           }
+                inline status_t     add(widget_t *w)                    { return GenericWidgetSet::add(w);              }
+                inline status_t     remove(widget_t *w)                 { return GenericWidgetSet::remove(w);           }
+                inline bool         contains(const widget_t *w) const   { return sSet.contains(w);                      }
+                inline status_t     toggle(widget_t *w)                 { return GenericWidgetSet::toggle(w);           }
+                inline widget_t    *any()                               { return wcast(sSet.any());                     }
 
-                    inline bool         values(lltl::parray<widget_t> *dst)
-                    {
-                        union {
-                            lltl::parray<widget_t> *wt;
-                            lltl::parray<Widget>   *wg;
-                        } x;
-                        x.wt = dst;
-                        if (!sSet.values(x.wg))
-                            return false;
+                inline bool         values(lltl::parray<widget_t> *dst)
+                {
+                    union {
+                        lltl::parray<widget_t> *wt;
+                        lltl::parray<Widget>   *wg;
+                    } x;
+                    x.wt = dst;
+                    if (!sSet.values(x.wg))
+                        return false;
 
-                        for (size_t i=0, n=dst->size(); i<n; ++i)
-                            dst->set(i, wcast(dst->uget(i)));
+                    for (size_t i=0, n=dst->size(); i<n; ++i)
+                        dst->set(i, wcast(dst->uget(i)));
 
-                        return true;
-                    }
-                    inline bool         values(lltl::parray<Widget> &dst)   { return values(&dst);                          }
+                    return true;
+                }
+                inline bool         values(lltl::parray<Widget> &dst)   { return values(&dst);                          }
 
-                    using GenericWidgetSet::values;
+                using GenericWidgetSet::values;
 
-                    inline status_t     swap(WidgetSet<widget_t> *lst)      { return GenericWidgetSet::swap(lst);           }
-                    inline status_t     swap(WidgetSet<widget_t> &lst)      { return GenericWidgetSet::swap(&lst);          }
-            };
+                inline status_t     swap(WidgetSet<widget_t> *lst)      { return GenericWidgetSet::swap(lst);           }
+                inline status_t     swap(WidgetSet<widget_t> &lst)      { return GenericWidgetSet::swap(&lst);          }
+        };
 
         namespace prop
         {
             template <class widget_t>
-                class WidgetSet: public tk::WidgetSet<widget_t>
-                {
-                    private:
-                        WidgetSet<widget_t> & operator = (const WidgetSet<widget_t> &);
-                        WidgetSet(const WidgetSet<widget_t> &);
+            class WidgetSet: public tk::WidgetSet<widget_t>
+            {
+                public:
+                    explicit WidgetSet(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::WidgetSet<widget_t>(listener, clistener) {}
+                    WidgetSet(const WidgetSet<widget_t> &) = delete;
+                    WidgetSet(WidgetSet<widget_t> &&) = delete;
+                    WidgetSet<widget_t> & operator = (const WidgetSet<widget_t> &) = delete;
+                    WidgetSet<widget_t> & operator = (WidgetSet<widget_t> &&) = delete;
 
-                    public:
-                        explicit WidgetSet(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::WidgetSet<widget_t>(listener, clistener) {}
+                public:
+                    inline void         flush()                             { this->sSet.flush();                                               }
+            };
 
-                    public:
-                        inline void         flush()                             { this->sSet.flush();                                               }
-                };
-        }
-    
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

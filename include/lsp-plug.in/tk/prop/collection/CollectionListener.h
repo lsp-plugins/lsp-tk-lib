@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 29 июл. 2020 г.
@@ -47,10 +47,6 @@ namespace lsp
              */
             class CollectionListener
             {
-                private:
-                    CollectionListener &operator = (const CollectionListener &);
-                    CollectionListener(const CollectionListener &);
-
                 protected:
                     void               *pAddObj;
                     collection_cb_t     pAddCb;
@@ -59,7 +55,12 @@ namespace lsp
 
                 public:
                     explicit CollectionListener();
+                    CollectionListener(const CollectionListener &) = delete;
+                    CollectionListener(CollectionListener &&) = delete;
                     virtual ~CollectionListener();
+
+                    CollectionListener &operator = (const CollectionListener &) = delete;
+                    CollectionListener &operator = (CollectionListener &&) = delete;
 
                 public:
                     void            bind_add(void *obj, collection_cb_t cb);
@@ -85,9 +86,10 @@ namespace lsp
                      */
                     virtual void    remove(Property *prop, void *item);
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

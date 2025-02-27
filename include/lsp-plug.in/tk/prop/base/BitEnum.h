@@ -50,8 +50,8 @@ namespace lsp
                 size_t              xtoggle(size_t v);
                 size_t              xset_all(size_t v);
 
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit BitEnum(const prop::enum_t *xenum, prop::Listener *listener = NULL);

@@ -51,7 +51,6 @@ namespace lsp
 
             public:
                 inline bool                 is_default() const  { return pCurr == pDfl;             }
-
                 inline bool                 is_set() const      { return pCurr != NULL;             }
         };
 
