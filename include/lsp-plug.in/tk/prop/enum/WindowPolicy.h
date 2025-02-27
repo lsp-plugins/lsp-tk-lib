@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 мая 2020 г.
@@ -32,15 +32,15 @@ namespace lsp
     {
         class WindowPolicy: public Enum
         {
-            private:
-                WindowPolicy & operator = (const WindowPolicy &);
-                WindowPolicy(const WindowPolicy &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit WindowPolicy(prop::Listener *listener = NULL): Enum(ENUM, WP_NORMAL, listener) {};
+                WindowPolicy(const WindowPolicy &) = delete;
+                WindowPolicy(WindowPolicy &&) = delete;
+                WindowPolicy & operator = (const WindowPolicy &) = delete;
+                WindowPolicy & operator = (WindowPolicy &&) = delete;
 
             public:
                 inline window_policy_t      get() const             { return window_policy_t(nValue); }
@@ -51,12 +51,12 @@ namespace lsp
         {
             class WindowPolicy: public tk::WindowPolicy
             {
-                private:
-                    WindowPolicy & operator = (const WindowPolicy &);
-                    WindowPolicy(const WindowPolicy &);
-
                 public:
                     explicit WindowPolicy(prop::Listener *listener = NULL): tk::WindowPolicy(listener) {};
+                    WindowPolicy(const WindowPolicy &) = delete;
+                    WindowPolicy(WindowPolicy &&) = delete;
+                    WindowPolicy & operator = (const WindowPolicy &) = delete;
+                    WindowPolicy & operator = (WindowPolicy &&) = delete;
 
                 public:
                     /**
@@ -73,7 +73,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

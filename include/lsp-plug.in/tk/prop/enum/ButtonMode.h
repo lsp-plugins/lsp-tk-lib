@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 июн. 2020 г.
@@ -32,15 +32,15 @@ namespace lsp
     {
         class ButtonMode: public Enum
         {
-            private:
-                ButtonMode & operator = (const ButtonMode &);
-                ButtonMode(const ButtonMode &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit ButtonMode(prop::Listener *listener = NULL): Enum(ENUM, BM_NORMAL, listener) {};
+                ButtonMode(const ButtonMode &) = delete;
+                ButtonMode(ButtonMode &&) = delete;
+                ButtonMode & operator = (const ButtonMode &) = delete;
+                ButtonMode & operator = (ButtonMode &&) = delete;
 
             public:
                 inline button_mode_t    get() const                 { return button_mode_t(nValue); }
@@ -59,12 +59,12 @@ namespace lsp
         {
             class ButtonMode: public tk::ButtonMode
             {
-                private:
-                    ButtonMode & operator = (const ButtonMode &);
-                    ButtonMode(const ButtonMode &);
-
                 public:
                     explicit ButtonMode(prop::Listener *listener = NULL): tk::ButtonMode(listener) {};
+                    ButtonMode(const ButtonMode &) = delete;
+                    ButtonMode(ButtonMode &&) = delete;
+                    ButtonMode & operator = (const ButtonMode &) = delete;
+                    ButtonMode & operator = (ButtonMode &&) = delete;
 
                 public:
                     /**
@@ -81,10 +81,10 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
-
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_ENUM_BUTTONMODE_H_ */

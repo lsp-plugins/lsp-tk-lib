@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 мая 2020 г.
@@ -32,15 +32,15 @@ namespace lsp
     {
         class FileDialogMode: public Enum
         {
-            private:
-                FileDialogMode & operator = (const FileDialogMode &);
-                FileDialogMode(const FileDialogMode &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit FileDialogMode(prop::Listener *listener = NULL): Enum(ENUM, FDM_OPEN_FILE, listener) {};
+                FileDialogMode(const FileDialogMode &) = delete;
+                FileDialogMode(FileDialogMode &&) = delete;
+                FileDialogMode & operator = (const FileDialogMode &) = delete;
+                FileDialogMode & operator = (FileDialogMode &&) = delete;
 
             public:
                 inline file_dialog_mode_t   get() const                 { return file_dialog_mode_t(nValue);            }
@@ -58,12 +58,12 @@ namespace lsp
         {
             class FileDialogMode: public tk::FileDialogMode
             {
-                private:
-                    FileDialogMode & operator = (const FileDialogMode &);
-                    FileDialogMode(const FileDialogMode &);
-
                 public:
                     explicit FileDialogMode(prop::Listener *listener = NULL): tk::FileDialogMode(listener) {};
+                    FileDialogMode(const FileDialogMode &) = delete;
+                    FileDialogMode(FileDialogMode &&) = delete;
+                    FileDialogMode & operator = (const FileDialogMode &) = delete;
+                    FileDialogMode & operator = (FileDialogMode &&) = delete;
 
                 public:
                     /**
@@ -80,7 +80,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

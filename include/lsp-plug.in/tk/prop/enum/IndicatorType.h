@@ -79,7 +79,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 сент. 2020 г.
@@ -32,15 +32,15 @@ namespace lsp
     {
         class GraphFrameFunction: public Enum
         {
-            private:
-                GraphFrameFunction & operator = (const GraphFrameFunction &);
-                GraphFrameFunction(const GraphFrameFunction &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit GraphFrameFunction(prop::Listener *listener = NULL): Enum(ENUM, GFF_DEFAULT, listener) {};
+                GraphFrameFunction(const GraphFrameFunction &) = delete;
+                GraphFrameFunction(GraphFrameFunction &&) = delete;
+                GraphFrameFunction & operator = (const GraphFrameFunction &) = delete;
+                GraphFrameFunction & operator = (GraphFrameFunction &&) = delete;
 
             public:
                 inline graph_frame_function_t   get() const                     { return graph_frame_function_t(nValue);        }
@@ -65,12 +65,12 @@ namespace lsp
         {
             class GraphFrameFunction: public tk::GraphFrameFunction
             {
-                private:
-                    GraphFrameFunction & operator = (const GraphFrameFunction &);
-                    GraphFrameFunction(const GraphFrameFunction &);
-
                 public:
                     explicit GraphFrameFunction(prop::Listener *listener = NULL): tk::GraphFrameFunction(listener) {};
+                    GraphFrameFunction(const GraphFrameFunction &) = delete;
+                    GraphFrameFunction(GraphFrameFunction &&) = delete;
+                    GraphFrameFunction & operator = (const GraphFrameFunction &) = delete;
+                    GraphFrameFunction & operator = (GraphFrameFunction &&) = delete;
 
                 public:
                     /**
@@ -87,7 +87,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

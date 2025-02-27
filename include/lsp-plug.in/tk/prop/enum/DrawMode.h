@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 июн. 2020 г.
@@ -32,15 +32,15 @@ namespace lsp
     {
         class DrawMode: public Enum
         {
-            private:
-                DrawMode & operator = (const DrawMode &);
-                DrawMode(const DrawMode &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit DrawMode(prop::Listener *listener = NULL): Enum(ENUM, DM_CLASSIC, listener) {};
+                DrawMode(const DrawMode &) = delete;
+                DrawMode(DrawMode &&) = delete;
+                DrawMode & operator = (const DrawMode &) = delete;
+                DrawMode & operator = (DrawMode &&) = delete;
 
             public:
                 inline draw_mode_t      get() const                 { return draw_mode_t(nValue); }
@@ -57,12 +57,12 @@ namespace lsp
         {
             class DrawMode: public tk::DrawMode
             {
-                private:
-                    DrawMode & operator = (const DrawMode &);
-                    DrawMode(const DrawMode &);
-
                 public:
                     explicit DrawMode(prop::Listener *listener = NULL): tk::DrawMode(listener) {};
+                    DrawMode(const DrawMode &) = delete;
+                    DrawMode(DrawMode &&) = delete;
+                    DrawMode & operator = (const DrawMode &) = delete;
+                    DrawMode & operator = (DrawMode &&) = delete;
 
                 public:
                     /**
@@ -79,7 +79,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

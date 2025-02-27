@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 мая 2020 г.
@@ -35,15 +35,15 @@ namespace lsp
          */
         class Pointer: public Enum
         {
-            private:
-                Pointer & operator = (const Pointer &);
-                Pointer(const Pointer &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit Pointer(prop::Listener *listener = NULL): Enum(ENUM, ws::MP_DEFAULT, listener) {};
+                Pointer(const Pointer &) = delete;
+                Pointer(Pointer &&) = delete;
+                Pointer & operator = (const Pointer &) = delete;
+                Pointer & operator = (Pointer &&) = delete;
 
             public:
                 inline ws::mouse_pointer_t  get() const                         { return ws::mouse_pointer_t(nValue);           }
@@ -55,12 +55,12 @@ namespace lsp
         {
             class Pointer: public tk::Pointer
             {
-                private:
-                    Pointer & operator = (const Pointer &);
-                    Pointer(const Pointer &);
-
                 public:
                     explicit Pointer(prop::Listener *listener = NULL): tk::Pointer(listener) {};
+                    Pointer(const Pointer &) = delete;
+                    Pointer(Pointer &&) = delete;
+                    Pointer & operator = (const Pointer &) = delete;
+                    Pointer & operator = (Pointer &&) = delete;
 
                 public:
                     /**
@@ -77,7 +77,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 
