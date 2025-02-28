@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 сент. 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class StringList: public SimpleProperty
         {
-            private:
-                StringList & operator = (const StringList &);
-                StringList(const StringList &);
-
             protected:
                 // Wrapper around the string
                 class StringItem: public tk::String
@@ -66,7 +62,7 @@ namespace lsp
                         explicit Listener(StringList *lst)      { pList = lst; }
 
                     public:
-                        virtual void        notify(atom_t property);
+                        virtual void        notify(atom_t property) override;
                 };
 
                 class Changes: public prop::Listener
@@ -83,7 +79,7 @@ namespace lsp
                         }
 
                     public:
-                        virtual void        notify(Property *prop);
+                        virtual void        notify(Property *prop) override;
 
                         inline void         enable(bool enable) { bEnabled = enable; }
                 };
@@ -102,11 +98,16 @@ namespace lsp
                 StringItem         *create_item();
                 void                sync();
                 void                invalidate();
-                void                commit(atom_t property);
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit StringList(prop::Listener *listener = NULL);
-                virtual ~StringList();
+                StringList(const StringList &) = delete;
+                StringList(StringList &&) = delete;
+                virtual ~StringList() override;
+
+                StringList & operator = (const StringList &) = delete;
+                StringList & operator = (StringList &&) = delete;
 
             public:
                 /**
@@ -181,12 +182,13 @@ namespace lsp
         {
             class StringList: public tk::StringList
             {
-                private:
-                    StringList & operator = (const StringList &);
-                    StringList(const StringList &);
-
                 public:
                     explicit StringList(prop::Listener *listener = NULL): tk::StringList(listener) {};
+                    StringList(const StringList &) = delete;
+                    StringList(StringList &&) = delete;
+
+                    StringList & operator = (const StringList &) = delete;
+                    StringList & operator = (StringList &&) = delete;
 
                 public:
                     /**
@@ -202,9 +204,10 @@ namespace lsp
                      */
                     inline status_t     unbind()                    { return tk::StringList::unbind(); };
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_COLLECTION_STRINGLIST_H_ */

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 июн. 2020 г.
@@ -37,10 +37,6 @@ namespace lsp
         class TextSelection: public MultiProperty
         {
             protected:
-                TextSelection & operator = (const TextSelection &);
-                TextSelection(const TextSelection &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -60,14 +56,19 @@ namespace lsp
                 ssize_t             nLimit;             // Selection limit, invisible property
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 void                parse(const LSPString *s);
 
             protected:
                 explicit TextSelection(prop::Listener *listener = NULL);
-                virtual ~TextSelection();
+                TextSelection(const TextSelection &) = delete;
+                TextSelection(TextSelection &&) = delete;
+                virtual ~TextSelection() override;
+
+                TextSelection & operator = (const TextSelection &) = delete;
+                TextSelection & operator = (TextSelection &&) = delete;
 
             public:
                 inline ssize_t      first() const               { return nFirst;                            }
@@ -99,12 +100,13 @@ namespace lsp
              */
             class TextSelection: public tk::TextSelection
             {
-                private:
-                    TextSelection & operator = (const TextSelection &);
-                    TextSelection(const TextSelection &);
-
                 public:
                     explicit TextSelection(prop::Listener *listener = NULL): tk::TextSelection(listener) {};
+                    TextSelection(const TextSelection &) = delete;
+                    TextSelection(TextSelection &&) = delete;
+
+                    TextSelection & operator = (const TextSelection &) = delete;
+                    TextSelection & operator = (TextSelection &&) = delete;
 
                 public:
                     void                set_limit(ssize_t limit);
@@ -121,11 +123,10 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::TextSelection::unbind(vAtoms, DESC, &sListener); };
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
-
 
 
 

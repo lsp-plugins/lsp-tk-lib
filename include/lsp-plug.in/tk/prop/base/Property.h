@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 мая 2020 г.
@@ -42,10 +42,6 @@ namespace lsp
          */
         class Property
         {
-            private:
-                Property & operator = (const Property &);
-                Property(const Property &);
-
             protected:
                 class Listener: public IStyleListener
                 {
@@ -77,7 +73,12 @@ namespace lsp
                 explicit Property(prop::Listener *listener = NULL);
 
             public:
-                virtual            ~Property();
+                Property(const Property &) = delete;
+                Property(Property &&) = delete;
+                virtual ~Property();
+
+                Property & operator = (const Property &) = delete;
+                Property & operator = (Property &&) = delete;
 
             protected:
                 static const prop::enum_t *find_enum(const LSPString *s, const prop::enum_t *xenum);
@@ -136,8 +137,8 @@ namespace lsp
                 }
         };
 
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_BASE_PROPERTY_H_ */

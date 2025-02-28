@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 мая 2020 г.
@@ -33,10 +33,6 @@ namespace lsp
         class Size: public MultiProperty
         {
             protected:
-                Size & operator = (const Size &);
-                Size(const Size &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -55,12 +51,17 @@ namespace lsp
                 size_t              nHeight;            // Height
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit Size(prop::Listener *listener = NULL);
-                virtual ~Size();
+                Size(const Size &) = delete;
+                Size(Size &&) = delete;
+                virtual ~Size() override;
+
+                Size & operator = (const Size &) = delete;
+                Size & operator = (Size &&) = delete;
 
             public:
                 inline void         set_default()       { MultiProperty::set_default(vAtoms, DESC); };
@@ -97,12 +98,13 @@ namespace lsp
              */
             class Size: public tk::Size
             {
-                private:
-                    Size & operator = (const Size &);
-                    Size(const Size &);
-
                 public:
                     explicit Size(prop::Listener *listener = NULL): tk::Size(listener) {};
+                    Size(const Size &) = delete;
+                    Size(Size &&) = delete;
+
+                    Size & operator = (const Size &) = delete;
+                    Size & operator = (Size &&) = delete;
 
                 public:
                     /**
@@ -126,9 +128,10 @@ namespace lsp
                     void                commit_value(size_t width, size_t height, float scale);
                     void                commit_value(const ws::rectangle_t *rect, float scale);
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

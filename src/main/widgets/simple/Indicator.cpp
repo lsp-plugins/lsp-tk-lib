@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 июл. 2017 г.
@@ -31,43 +31,84 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Indicator, Widget)
                 // Bind
-                sColor.bind("color", this);
-                sTextColor.bind("text.color", this);
+                IndicatorColors *c = &vColors[INDICATOR_NORMAL];
+                c->sColor.bind("color", this);
+                c->sTextColor.bind("text.color", this);
+
+                c = &vColors[INDICATOR_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sTextColor.bind("inactive.text.color", this);
+
                 sRows.bind("rows", this);
                 sColumns.bind("columns", this);
                 sShift.bind("text.shift", this);
                 sTextGap.bind("text.gap", this);
                 sLoop.bind("text.loop", this);
                 sDarkText.bind("text.dark", this);
-                sModern.bind("modern", this);
+                sType.bind("type", this);
+                sActive.bind("active", this);
                 sFont.bind("font", this);
                 sSpacing.bind("spacing", this);
                 sIPadding.bind("ipadding", this);
+
                 // Configure
-                sColor.set("#111111");
-                sTextColor.set("#00ff00");
+                c = &vColors[INDICATOR_NORMAL];
+                c->sColor.set("#111111");
+                c->sTextColor.set("#00ff00");
+
+                c = &vColors[INDICATOR_INACTIVE];
+                c->sColor.set("#111111");
+                c->sTextColor.set("#cccccc");
+
                 sRows.set(1);
                 sColumns.set(5);
                 sShift.set(0);
                 sTextGap.set(0);
                 sLoop.set(false);
                 sDarkText.set(true);
-                sModern.set(false);
+                sType.set(INDICATOR_SEGMENT);
+                sActive.set(true);
                 sFont.set_size(16);
                 sFont.set_bold(true);
                 sSpacing.set(0);
                 sIPadding.set(1);
+
                 // Override
                 sFont.override();
                 sSpacing.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Indicator, "Indicator", "root");
+
+            void IndicatorColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sTextColor.listener(listener);
+            }
+
+            bool IndicatorColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sTextColor);
+            }
         }
 
-        typedef struct rect_t
+        typedef struct point_t
         {
-            int         x, y, w, h;
-        } rect_t;
+            uint8_t x;
+            uint8_t y;
+        } point_t;
+
+        typedef struct shape_t
+        {
+            uint8_t n;
+            point_t p[6];
+        } shape_t;
+
+        typedef struct segment_t
+        {
+            uint8_t shape;
+            uint8_t dx;
+            uint8_t dy;
+        } segment_t;
 
         /**
          * Indicator segments:
@@ -76,28 +117,35 @@ namespace lsp
          *      33333
          *     2     4
          *     2     4  9
-         *     2  0  4  9
+         *     2  0  4
          *      77777
          *     1  0  5  A
-         *     1     5  A
+         *     1     5
          *     1     5
          *      66666   8
          *
          */
 
-        static const rect_t segments[] =
+        static const shape_t shapes[] =
         {
-            {   4,  6,  1,  5   },  // 0
-            {   0, 10,  1,  5   },  // 1
-            {   0,  2,  1,  5   },  // 2
-            {   2,  0,  5,  1   },  // 3
-            {   8,  2,  1,  5   },  // 4
-            {   8, 10,  1,  5   },  // 5
-            {   2, 16,  5,  1   },  // 6
-            {   2,  8,  5,  1   },  // 7
-            {  12, 16,  1,  1   },  // 8
-            {  12,  5,  1,  1   },  // 9
-            {  12, 11,  1,  1   }   // A
+            { 4, {  {0, 1}, {1, 0}, {2, 1}, {2, 5}, {1, 6}, {0, 5} }  },  // vertical
+            { 4, {  {0, 1}, {1, 0}, {5, 0}, {6, 1}, {5, 2}, {1, 2} }  },  // horizontal
+            { 2, {  {0, 0}, {2, 0}, {2, 2}, {0, 2}, {0, 0}, {0, 0} }  },  // dot
+        };
+
+        static const segment_t segments[] =
+        {
+            { 0,  3,  6 },  // 0
+            { 0,  0, 10 },  // 1
+            { 0,  0,  2 },  // 2
+            { 1,  2,  0 },  // 3
+            { 0,  8,  2 },  // 4
+            { 0,  8, 10 },  // 5
+            { 1,  2, 16 },  // 6
+            { 1,  2,  8 },  // 7
+            { 2, 12, 16 },  // 8
+            { 2, 12,  5 },  // 9
+            { 2, 12, 11 },  // A
         };
 
         static const char *estimate = "0123456789WX_%:";
@@ -124,11 +172,142 @@ namespace lsp
             // Special cases: M, W, m, w
         };
 
+        static const uint8_t ascii_bitmap[] =
+        {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x00,
+            0x00, 0x00, 0x7E, 0x81, 0xA5, 0x81, 0x81, 0xBD, 0x99, 0x81, 0x81, 0x7E, 0x00, 0x00, 0x00,   //0x01,
+            0x00, 0x00, 0x7E, 0xFF, 0xDB, 0xFF, 0xFF, 0xC3, 0xE7, 0xFF, 0xFF, 0x7E, 0x00, 0x00, 0x00,   //0x02,
+            0x00, 0x00, 0x00, 0x00, 0x6C, 0xFE, 0xFE, 0xFE, 0xFE, 0x7C, 0x38, 0x10, 0x00, 0x00, 0x00,   //0x03,
+            0x00, 0x00, 0x00, 0x00, 0x10, 0x38, 0x7C, 0xFE, 0x7C, 0x38, 0x10, 0x00, 0x00, 0x00, 0x00,   //0x04,
+            0x00, 0x00, 0x00, 0x18, 0x3C, 0x3C, 0xE7, 0xE7, 0xE7, 0x18, 0x18, 0x3C, 0x00, 0x00, 0x00,   //0x05,
+            0x00, 0x00, 0x00, 0x18, 0x3C, 0x7E, 0xFF, 0xFF, 0x7E, 0x18, 0x18, 0x3C, 0x00, 0x00, 0x00,   //0x06,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x3C, 0x3C, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x07,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xE7, 0xC3, 0xC3, 0xE7, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,   //0x08,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x3C, 0x66, 0x42, 0x42, 0x66, 0x3C, 0x00, 0x00, 0x00, 0x00,   //0x09,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xC3, 0x99, 0xBD, 0xBD, 0x99, 0xC3, 0xFF, 0xFF, 0xFF, 0xFF,   //0x0A,
+            0x00, 0x00, 0x1E, 0x0E, 0x1A, 0x32, 0x78, 0xCC, 0xCC, 0xCC, 0xCC, 0x78, 0x00, 0x00, 0x00,   //0x0B,
+            0x00, 0x00, 0x3C, 0x66, 0x66, 0x66, 0x66, 0x3C, 0x18, 0x7E, 0x18, 0x18, 0x00, 0x00, 0x00,   //0x0C,
+            0x00, 0x00, 0x3F, 0x33, 0x3F, 0x30, 0x30, 0x30, 0x30, 0x70, 0xF0, 0xE0, 0x00, 0x00, 0x00,   //0x0D,
+            0x00, 0x00, 0x7F, 0x63, 0x7F, 0x63, 0x63, 0x63, 0x63, 0x67, 0xE7, 0xE6, 0xC0, 0x00, 0x00,   //0x0E,
+            0x00, 0x00, 0x00, 0x18, 0x18, 0xDB, 0x3C, 0xE7, 0x3C, 0xDB, 0x18, 0x18, 0x00, 0x00, 0x00,   //0x0F,
+            0x00, 0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFE, 0xF8, 0xF0, 0xE0, 0xC0, 0x80, 0x00, 0x00, 0x00,   //0x10,
+            0x00, 0x02, 0x06, 0x0E, 0x1E, 0x3E, 0xFE, 0x3E, 0x1E, 0x0E, 0x06, 0x02, 0x00, 0x00, 0x00,   //0x11,
+            0x00, 0x00, 0x18, 0x3C, 0x7E, 0x18, 0x18, 0x18, 0x7E, 0x3C, 0x18, 0x00, 0x00, 0x00, 0x00,   //0x12,
+            0x00, 0x00, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x00, 0x66, 0x66, 0x00, 0x00, 0x00,   //0x13,
+            0x00, 0x00, 0x7F, 0xDB, 0xDB, 0xDB, 0x7B, 0x1B, 0x1B, 0x1B, 0x1B, 0x1B, 0x00, 0x00, 0x00,   //0x14,
+            0x00, 0x7C, 0xC6, 0x60, 0x38, 0x6C, 0xC6, 0xC6, 0x6C, 0x38, 0x0C, 0xC6, 0x7C, 0x00, 0x00,   //0x15,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFE, 0xFE, 0xFE, 0xFE, 0x00, 0x00, 0x00,   //0x16,
+            0x00, 0x00, 0x18, 0x3C, 0x7E, 0x18, 0x18, 0x18, 0x7E, 0x3C, 0x18, 0x7E, 0x00, 0x00, 0x00,   //0x17,
+            0x00, 0x00, 0x18, 0x3C, 0x7E, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x00, 0x00, 0x00,   //0x18,
+            0x00, 0x00, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x7E, 0x3C, 0x18, 0x00, 0x00, 0x00,   //0x19,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x0C, 0xFE, 0x0C, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x1A,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x60, 0xFE, 0x60, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x1B, esc
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xC0, 0xC0, 0xC0, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x1C,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x28, 0x6C, 0xFE, 0x6C, 0x28, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x1D,
+            0x00, 0x00, 0x00, 0x00, 0x10, 0x38, 0x38, 0x7C, 0x7C, 0xFE, 0xFE, 0x00, 0x00, 0x00, 0x00,   //0x1E,
+            0x00, 0x00, 0x00, 0x00, 0xFE, 0xFE, 0x7C, 0x7C, 0x38, 0x38, 0x10, 0x00, 0x00, 0x00, 0x00,   //0x1F,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x20, ' '
+            0x00, 0x00, 0x18, 0x3C, 0x3C, 0x3C, 0x18, 0x18, 0x18, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00,   //0x21, '!'
+            0x00, 0x66, 0x66, 0x66, 0x24, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x22, '"'
+            0x00, 0x00, 0x00, 0x6C, 0x6C, 0xFE, 0x6C, 0x6C, 0x6C, 0xFE, 0x6C, 0x6C, 0x00, 0x00, 0x00,   //0x23, '#'
+            0x00, 0x18, 0x18, 0x7C, 0xC6, 0xC2, 0xC0, 0x7C, 0x06, 0x86, 0xC6, 0x7C, 0x18, 0x18, 0x00,   //0x24, '$'
+            0x00, 0x00, 0x00, 0x00, 0xC2, 0xC6, 0x0C, 0x18, 0x30, 0x60, 0xC6, 0x86, 0x00, 0x00, 0x00,   //0x25, '%'
+            0x00, 0x00, 0x38, 0x6C, 0x6C, 0x38, 0x76, 0xDC, 0xCC, 0xCC, 0xCC, 0x76, 0x00, 0x00, 0x00,   //0x26, '&'
+            0x00, 0x30, 0x30, 0x30, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x27, '''
+            0x00, 0x00, 0x0C, 0x18, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x18, 0x0C, 0x00, 0x00, 0x00,   //0x28, '('
+            0x00, 0x00, 0x30, 0x18, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x18, 0x30, 0x00, 0x00, 0x00,   //0x29, ')'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x66, 0x3C, 0xFF, 0x3C, 0x66, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x2A, '*'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x7E, 0x18, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x2B, '+'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x18, 0x30, 0x00, 0x00,   //0x2C, '
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x2D, '-'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00,   //0x2E, '.'
+            0x00, 0x00, 0x00, 0x00, 0x02, 0x06, 0x0C, 0x18, 0x30, 0x60, 0xC0, 0x80, 0x00, 0x00, 0x00,   //0x2F, '/'
+            0x00, 0x00, 0x38, 0x6C, 0xC6, 0xC6, 0xD6, 0xD6, 0xC6, 0xC6, 0x6C, 0x38, 0x00, 0x00, 0x00,   //0x30, '0'
+            0x00, 0x00, 0x18, 0x38, 0x78, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x7E, 0x00, 0x00, 0x00,   //0x31, '1'
+            0x00, 0x00, 0x7C, 0xC6, 0x06, 0x0C, 0x18, 0x30, 0x60, 0xC0, 0xC6, 0xFE, 0x00, 0x00, 0x00,   //0x32, '2'
+            0x00, 0x00, 0x7C, 0xC6, 0x06, 0x06, 0x3C, 0x06, 0x06, 0x06, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x33, '3'
+            0x00, 0x00, 0x0C, 0x1C, 0x3C, 0x6C, 0xCC, 0xFE, 0x0C, 0x0C, 0x0C, 0x1E, 0x00, 0x00, 0x00,   //0x34, '4'
+            0x00, 0x00, 0xFE, 0xC0, 0xC0, 0xC0, 0xFC, 0x06, 0x06, 0x06, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x35, '5'
+            0x00, 0x00, 0x38, 0x60, 0xC0, 0xC0, 0xFC, 0xC6, 0xC6, 0xC6, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x36, '6'
+            0x00, 0x00, 0xFE, 0xC6, 0x06, 0x06, 0x0C, 0x18, 0x30, 0x30, 0x30, 0x30, 0x00, 0x00, 0x00,   //0x37, '7'
+            0x00, 0x00, 0x7C, 0xC6, 0xC6, 0xC6, 0x7C, 0xC6, 0xC6, 0xC6, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x38, '8'
+            0x00, 0x00, 0x7C, 0xC6, 0xC6, 0xC6, 0x7E, 0x06, 0x06, 0x06, 0x0C, 0x78, 0x00, 0x00, 0x00,   //0x39, '9'
+            0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00, 0x00,   //0x3A, ':'
+            0x00, 0x00, 0x00, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00, 0x18, 0x18, 0x30, 0x00, 0x00, 0x00,   //0x3B, ';'
+            0x00, 0x00, 0x00, 0x06, 0x0C, 0x18, 0x30, 0x60, 0x30, 0x18, 0x0C, 0x06, 0x00, 0x00, 0x00,   //0x3C, '<'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x7E, 0x00, 0x00, 0x7E, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x3D, '='
+            0x00, 0x00, 0x00, 0x60, 0x30, 0x18, 0x0C, 0x06, 0x0C, 0x18, 0x30, 0x60, 0x00, 0x00, 0x00,   //0x3E, '>'
+            0x00, 0x00, 0x7C, 0xC6, 0xC6, 0x0C, 0x18, 0x18, 0x18, 0x00, 0x18, 0x18, 0x00, 0x00, 0x00,   //0x3F, '?'
+            0x00, 0x00, 0x00, 0x7C, 0xC6, 0xC6, 0xDE, 0xDE, 0xDE, 0xDC, 0xC0, 0x7C, 0x00, 0x00, 0x00,   //0x40, '@'
+            0x00, 0x00, 0x10, 0x38, 0x6C, 0xC6, 0xC6, 0xFE, 0xC6, 0xC6, 0xC6, 0xC6, 0x00, 0x00, 0x00,   //0x41, 'A'
+            0x00, 0x00, 0xFC, 0x66, 0x66, 0x66, 0x7C, 0x66, 0x66, 0x66, 0x66, 0xFC, 0x00, 0x00, 0x00,   //0x42, 'B'
+            0x00, 0x00, 0x3C, 0x66, 0xC2, 0xC0, 0xC0, 0xC0, 0xC0, 0xC2, 0x66, 0x3C, 0x00, 0x00, 0x00,   //0x43, 'C'
+            0x00, 0x00, 0xF8, 0x6C, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x6C, 0xF8, 0x00, 0x00, 0x00,   //0x44, 'D'
+            0x00, 0x00, 0xFE, 0x66, 0x62, 0x68, 0x78, 0x68, 0x60, 0x62, 0x66, 0xFE, 0x00, 0x00, 0x00,   //0x45, 'E'
+            0x00, 0x00, 0xFE, 0x66, 0x62, 0x68, 0x78, 0x68, 0x60, 0x60, 0x60, 0xF0, 0x00, 0x00, 0x00,   //0x46, 'F'
+            0x00, 0x00, 0x3C, 0x66, 0xC2, 0xC0, 0xC0, 0xDE, 0xC6, 0xC6, 0x66, 0x3A, 0x00, 0x00, 0x00,   //0x47, 'G'
+            0x00, 0x00, 0xC6, 0xC6, 0xC6, 0xC6, 0xFE, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0x00, 0x00, 0x00,   //0x48, 'H'
+            0x00, 0x00, 0x3C, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x00, 0x00, 0x00,   //0x49, 'I'
+            0x00, 0x00, 0x1E, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0xCC, 0xCC, 0xCC, 0x78, 0x00, 0x00, 0x00,   //0x4A, 'J'
+            0x00, 0x00, 0xE6, 0x66, 0x66, 0x6C, 0x78, 0x78, 0x6C, 0x66, 0x66, 0xE6, 0x00, 0x00, 0x00,   //0x4B, 'K'
+            0x00, 0x00, 0xF0, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x62, 0x66, 0xFE, 0x00, 0x00, 0x00,   //0x4C, 'L'
+            0x00, 0x00, 0xC6, 0xEE, 0xFE, 0xFE, 0xD6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0x00, 0x00, 0x00,   //0x4D, 'M'
+            0x00, 0x00, 0xC6, 0xE6, 0xF6, 0xFE, 0xDE, 0xCE, 0xC6, 0xC6, 0xC6, 0xC6, 0x00, 0x00, 0x00,   //0x4E, 'N'
+            0x00, 0x00, 0x7C, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x4F, 'O'
+            0x00, 0x00, 0xFC, 0x66, 0x66, 0x66, 0x7C, 0x60, 0x60, 0x60, 0x60, 0xF0, 0x00, 0x00, 0x00,   //0x50, 'P'
+            0x00, 0x00, 0x7C, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xD6, 0xDE, 0x7C, 0x0C, 0x0E, 0x00,   //0x51, 'Q'
+            0x00, 0x00, 0xFC, 0x66, 0x66, 0x66, 0x7C, 0x6C, 0x66, 0x66, 0x66, 0xE6, 0x00, 0x00, 0x00,   //0x52, 'R'
+            0x00, 0x00, 0x7C, 0xC6, 0xC6, 0x60, 0x38, 0x0C, 0x06, 0xC6, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x53, 'S'
+            0x00, 0x00, 0x7E, 0x7E, 0x5A, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x00, 0x00, 0x00,   //0x54, 'T'
+            0x00, 0x00, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x55, 'U'
+            0x00, 0x00, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0x6C, 0x38, 0x10, 0x00, 0x00, 0x00,   //0x56, 'V'
+            0x00, 0x00, 0xC6, 0xC6, 0xC6, 0xC6, 0xD6, 0xD6, 0xD6, 0xFE, 0xEE, 0x6C, 0x00, 0x00, 0x00,   //0x57, 'W'
+            0x00, 0x00, 0xC6, 0xC6, 0x6C, 0x7C, 0x38, 0x38, 0x7C, 0x6C, 0xC6, 0xC6, 0x00, 0x00, 0x00,   //0x58, 'X'
+            0x00, 0x00, 0x66, 0x66, 0x66, 0x66, 0x3C, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x00, 0x00, 0x00,   //0x59, 'Y'
+            0x00, 0x00, 0xFE, 0xC6, 0x86, 0x0C, 0x18, 0x30, 0x60, 0xC2, 0xC6, 0xFE, 0x00, 0x00, 0x00,   //0x5A, 'Z'
+            0x00, 0x00, 0x3C, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x3C, 0x00, 0x00, 0x00,   //0x5B, '['
+            0x00, 0x00, 0x00, 0x80, 0xC0, 0xE0, 0x70, 0x38, 0x1C, 0x0E, 0x06, 0x02, 0x00, 0x00, 0x00,   //0x5C, '\'
+            0x00, 0x00, 0x3C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x0C, 0x3C, 0x00, 0x00, 0x00,   //0x5D, ']'
+            0x10, 0x38, 0x6C, 0xC6, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x5E, '^'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00,   //0x5F, '_'
+            0x30, 0x30, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x60, '`'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x78, 0x0C, 0x7C, 0xCC, 0xCC, 0xCC, 0x76, 0x00, 0x00, 0x00,   //0x61, 'a'
+            0x00, 0x00, 0xE0, 0x60, 0x60, 0x78, 0x6C, 0x66, 0x66, 0x66, 0x66, 0x7C, 0x00, 0x00, 0x00,   //0x62, 'b'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0xC6, 0xC0, 0xC0, 0xC0, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x63, 'c'
+            0x00, 0x00, 0x1C, 0x0C, 0x0C, 0x3C, 0x6C, 0xCC, 0xCC, 0xCC, 0xCC, 0x76, 0x00, 0x00, 0x00,   //0x64, 'd'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0xC6, 0xFE, 0xC0, 0xC0, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x65, 'e'
+            0x00, 0x00, 0x38, 0x6C, 0x64, 0x60, 0xF0, 0x60, 0x60, 0x60, 0x60, 0xF0, 0x00, 0x00, 0x00,   //0x66, 'f'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x76, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0x7C, 0x0C, 0xCC, 0x78,   //0x67, 'g'
+            0x00, 0x00, 0xE0, 0x60, 0x60, 0x6C, 0x76, 0x66, 0x66, 0x66, 0x66, 0xE6, 0x00, 0x00, 0x00,   //0x68, 'h'
+            0x00, 0x00, 0x18, 0x18, 0x00, 0x38, 0x18, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x00, 0x00, 0x00,   //0x69, 'i'
+            0x00, 0x00, 0x06, 0x06, 0x00, 0x0E, 0x06, 0x06, 0x06, 0x06, 0x06, 0x06, 0x66, 0x66, 0x3C,   //0x6A, 'j'
+            0x00, 0x00, 0xE0, 0x60, 0x60, 0x66, 0x6C, 0x78, 0x78, 0x6C, 0x66, 0xE6, 0x00, 0x00, 0x00,   //0x6B, 'k'
+            0x00, 0x00, 0x38, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x18, 0x3C, 0x00, 0x00, 0x00,   //0x6C, 'l'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xEC, 0xFE, 0xD6, 0xD6, 0xD6, 0xD6, 0xC6, 0x00, 0x00, 0x00,   //0x6D, 'm'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xDC, 0x66, 0x66, 0x66, 0x66, 0x66, 0x66, 0x00, 0x00, 0x00,   //0x6E, 'n'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x6F, 'o'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xDC, 0x66, 0x66, 0x66, 0x66, 0x66, 0x7C, 0x60, 0x60, 0xF0,   //0x70, 'p'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x76, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0x7C, 0x0C, 0x0C, 0x1E,   //0x71, 'q'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xDC, 0x76, 0x66, 0x60, 0x60, 0x60, 0xF0, 0x00, 0x00, 0x00,   //0x72, 'r'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x7C, 0xC6, 0x60, 0x38, 0x0C, 0xC6, 0x7C, 0x00, 0x00, 0x00,   //0x73, 's'
+            0x00, 0x00, 0x10, 0x30, 0x30, 0xFC, 0x30, 0x30, 0x30, 0x30, 0x36, 0x1C, 0x00, 0x00, 0x00,   //0x74, 't'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0xCC, 0x76, 0x00, 0x00, 0x00,   //0x75, 'u'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x66, 0x66, 0x66, 0x66, 0x66, 0x3C, 0x18, 0x00, 0x00, 0x00,   //0x76, 'v'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xC6, 0xC6, 0xD6, 0xD6, 0xD6, 0xFE, 0x6C, 0x00, 0x00, 0x00,   //0x77, 'w'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xC6, 0x6C, 0x38, 0x38, 0x38, 0x6C, 0xC6, 0x00, 0x00, 0x00,   //0x78, 'x'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0xC6, 0x7E, 0x06, 0x0C, 0xF8,   //0x79, 'y'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0xFE, 0xCC, 0x18, 0x30, 0x60, 0xC6, 0xFE, 0x00, 0x00, 0x00,   //0x7A, 'z'
+            0x00, 0x00, 0x0E, 0x18, 0x18, 0x18, 0x70, 0x18, 0x18, 0x18, 0x18, 0x0E, 0x00, 0x00, 0x00,   //0x7B, '{'
+            0x00, 0x00, 0x18, 0x18, 0x18, 0x18, 0x00, 0x18, 0x18, 0x18, 0x18, 0x18, 0x00, 0x00, 0x00,   //0x7C, '|'
+            0x00, 0x00, 0x70, 0x18, 0x18, 0x18, 0x0E, 0x18, 0x18, 0x18, 0x18, 0x70, 0x00, 0x00, 0x00,   //0x7D, '}'
+            0x00, 0x00, 0x76, 0xDC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x7E, '~'
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,   //0x7F, delete
+        };
+
         const w_class_t Indicator::metadata =           { "Indicator", &Widget::metadata };
 
         Indicator::Indicator(Display *dpy):
             Widget(dpy),
-            sTextColor(&sProperties),
             sRows(&sProperties),
             sColumns(&sProperties),
             sShift(&sProperties),
@@ -136,12 +315,16 @@ namespace lsp
             sLoop(&sProperties),
             sDarkText(&sProperties),
             sText(&sProperties),
-            sModern(&sProperties),
+            sType(&sProperties),
+            sActive(&sProperties),
             sFont(&sProperties),
             sSpacing(&sProperties),
             sIPadding(&sProperties)
         {
             pClass      = &metadata;
+
+            for (size_t i=0; i<IND_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
 
             nDWidth     = -1;
             nDHeight    = -1;
@@ -158,8 +341,14 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
-            sColor.bind("color", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
+            style::IndicatorColors *c = &vColors[style::INDICATOR_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+
+            c = &vColors[style::INDICATOR_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+
             sRows.bind("rows", &sStyle);
             sColumns.bind("columns", &sStyle);
             sShift.bind("text.shift", &sStyle);
@@ -167,7 +356,8 @@ namespace lsp
             sLoop.bind("text.loop", &sStyle);
             sDarkText.bind("text.dark", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
-            sModern.bind("modern", &sStyle);
+            sType.bind("type", &sStyle);
+            sActive.bind("active", &sStyle);
             sFont.bind("font", &sStyle);
             sSpacing.bind("spacing", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
@@ -175,76 +365,129 @@ namespace lsp
             return STATUS_OK;
         }
 
+        style::IndicatorColors *Indicator::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::INDICATOR_NORMAL : style::INDICATOR_INACTIVE;
+            return &vColors[flags];
+        }
+
         void Indicator::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
-            if (sColor.is(prop))
+
+            // Self properties
+            style::IndicatorColors *cols = select_colors();
+            if (cols->property_changed(prop))
                 query_draw();
-            if (sTextColor.is(prop))
+
+            if (sActive.is(prop))
                 query_draw();
-            if (sRows.is(prop))
+
+            if (prop->one_of(sRows, sColumns, sType, sFont, sSpacing, sIPadding))
                 query_resize();
-            if (sColumns.is(prop))
-                query_resize();
-            if (sShift.is(prop))
+            if (prop->one_of(sShift, sTextGap, sLoop, sDarkText, sText))
                 query_draw();
-            if (sTextGap.is(prop))
-                query_draw();
-            if (sLoop.is(prop))
-                query_draw();
-            if (sDarkText.is(prop))
-                query_draw();
-            if (sText.is(prop))
-                query_draw();
-            if (sModern.is(prop))
-                query_resize();
-            if (sFont.is(prop))
-                query_resize();
-            if (sSpacing.is(prop))
-                query_resize();
-            if (sIPadding.is(prop))
-                query_resize();
         }
 
         void Indicator::calc_digit_size(ssize_t *w, ssize_t *h)
         {
             float fscaling  = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
-            if (!sModern.get())
-            {
-                *w  = 16 * fscaling;
-                *h  = 20 * fscaling;
-                return;
-            }
 
-            // Estimate the size of the most wide char
-            LSPString text;
-            ws::font_parameters_t fp;
-            ws::text_parameters_t tp;
-            sFont.get_parameters(pDisplay, fscaling, &fp);
-            *w  = 0;
-            *h  = fp.Height;
-
-            for (const char *c = estimate; *c != '\0'; ++c)
+            switch (sType.get())
             {
-                text.fmt_ascii("%c", *c);
-                sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
-                *w  = lsp_max(*w, ceilf(tp.Width));
-                *h  = lsp_max(*h, ceilf(tp.Height));
+                case INDICATOR_PIXEL:
+                {
+                    const float psize   = 1.6f * fscaling;
+                    *w      = ceilf(8.0f * psize);
+                    *h      = ceilf(15.0f * psize);
+                    break;
+                }
+
+                case INDICATOR_MODERN:
+                {
+                    LSPString text;
+                    ws::font_parameters_t fp;
+                    ws::text_parameters_t tp;
+                    sFont.get_parameters(pDisplay, fscaling, &fp);
+                    *w  = 0;
+                    *h  = fp.Height;
+
+                    for (const char *c = estimate; *c != '\0'; ++c)
+                    {
+                        text.fmt_ascii("%c", *c);
+                        sFont.get_text_parameters(pDisplay, &tp, fscaling, &text);
+                        *w  = lsp_max(*w, ceilf(tp.Width));
+                        *h  = lsp_max(*h, ceilf(tp.Height));
+                    }
+                    break;
+                }
+
+                case INDICATOR_SEGMENT:
+                default:
+                    *w      = ceilf(16.0f * fscaling);
+                    *h      = ceilf(20.0f * fscaling);
+                    break;
             }
         }
 
         void Indicator::draw_digit(ws::ISurface *s, float x, float y, size_t state, const lsp::Color &on, const lsp::Color &off)
         {
-            float fscaling  = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
-            const rect_t *r = segments;
-            bool dark       = sDarkText.get();
+            const float fscaling    = lsp_max(0.0f, sScaling.get() * sFontScaling.get());
+            const segment_t *seg    = segments;
+            bool dark               = sDarkText.get();
 
-            for (size_t i=0, m=1; i<11; ++i, m <<= 1, ++r)
+            for (size_t i=0, m=1; i<11; ++i, m <<= 1, ++seg)
             {
-                if (state & m)
-                    s->wire_rect(on, SURFMASK_NONE, 0.0f, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
-                else if (dark)
-                    s->wire_rect(off, SURFMASK_NONE, 0.0f, x + r->x * fscaling - 0.5f, y + r->y * fscaling - 0.5f, r->w * fscaling, r->h * fscaling, fscaling);
+                // Obtain color
+                const lsp::Color *c =
+                    (state & m) ? &on :
+                    (dark) ? &off : NULL;
+                if (c == NULL)
+                    continue;
+
+                const float dx      = x + seg->dx * fscaling + 0.5f;
+                const float dy      = y + seg->dy * fscaling + 0.5f;
+
+                const shape_t *sh   = &shapes[seg->shape];
+
+                const point_t *p0 = &sh->p[0];
+                for (size_t i=1; i <= sh->n; ++i)
+                {
+                    const point_t *p1 = &sh->p[i];
+                    const point_t *p2 = &sh->p[i + 1];
+
+                    s->fill_triangle(*c,
+                        dx + float(p0->x) * fscaling, dy + float(p0->y) * fscaling,
+                        dx + float(p1->x) * fscaling, dy + float(p1->y) * fscaling,
+                        dx + float(p2->x) * fscaling, dy + float(p2->y) * fscaling
+                    );
+                }
+            }
+        }
+
+        void Indicator::draw_pixel(ws::ISurface *s, float x, float y, char ch, const lsp::Color &on, const lsp::Color &off)
+        {
+            const float fscaling= lsp_max(0.0f, sScaling.get() * sFontScaling.get());
+            const float psize   = 1.6f * fscaling;
+            const float ppad    = 0.05f * psize;
+            const float prsize  = psize - ppad * 2.0f;
+            bool dark           = sDarkText.get();
+
+            const uint8_t *p    = &ascii_bitmap[(ch & 0x7f) * 15];
+
+            for (size_t dy=0; dy<15; ++dy)
+            {
+                uint8_t row         = *p++;
+                const float py      = y + dy*psize + ppad;
+
+                for (size_t dx=0; dx < 8; ++dx)
+                {
+                    const float px      = x + dx*psize + ppad;
+                    if (row & (0x80 >> dx))
+                        s->fill_rect(on, SURFMASK_NONE, 0.0f, px, py, prsize, prsize);
+                    else if (dark)
+                        s->fill_rect(off, SURFMASK_NONE, 0.0f, px, py, prsize, prsize);
+                }
             }
         }
 
@@ -257,14 +500,12 @@ namespace lsp
             text.fmt_ascii("%c", ch);
             sFont.get_text_parameters(s, &tp, fscaling, &text);
 
-            sFont.draw
-            (
+            sFont.draw(
                 s, on,
-                x + (nDWidth - tp.Width) * 0.5f,
-                y + (nDHeight - fp->Height) + fp->Ascent,
+                truncf(x + (nDWidth - tp.Width) * 0.5f),
+                truncf(y + (nDHeight - fp->Height) + fp->Ascent),
                 fscaling,
-                &text
-            );
+                &text);
         }
 
         void Indicator::size_request(ws::size_limit_t *r)
@@ -326,6 +567,8 @@ namespace lsp
             size_t last     = rows * cols;
             ssize_t spacing = (sSpacing.get() > 0) ? lsp_max(1.0f, sSpacing.get() * scaling) : 0;
             bool dark       = sDarkText.get();
+            const style::IndicatorColors *colors = select_colors();
+
             ws::rectangle_t xr;
 
             xr.nLeft        = 0;
@@ -334,9 +577,9 @@ namespace lsp
             xr.nHeight      = sSize.nHeight;
 
             // Prepare palette
-            lsp::Color color(sColor);
-            lsp::Color on(sTextColor);
-            lsp::Color off(sTextColor);
+            lsp::Color color(colors->sColor);
+            lsp::Color on(colors->sTextColor);
+            lsp::Color off(colors->sTextColor);
 
             off.blend(color, 0.05f);
             on.scale_lch_luminance(bright);
@@ -346,128 +589,202 @@ namespace lsp
             // Draw glass
             s->clear(color);
 
-            bool aa = s->set_antialiasing(true);
+            const bool aa = s->set_antialiasing(true);
+            lsp_finally { s->set_antialiasing(aa); };
             sIPadding.enter(&xr, scaling);
 
             LSPString text;
             sText.format(&text);
 
-            if (sModern.get())
+            switch (sType.get())
             {
-                ws::font_parameters_t fp;
-                sFont.get_parameters(s, scaling, &fp);
-
-                for (size_t offset = 0, ich = 0; offset < last; )
+                case INDICATOR_MODERN:
                 {
-                    // Get character
-                    uint8_t ch  = get_char(&text, ich++);
+                    ws::font_parameters_t fp;
+                    sFont.get_parameters(s, scaling, &fp);
 
-                    // Output character
-                    size_t col      = offset % cols;
-                    size_t row      = offset / cols;
+                    for (size_t offset = 0, ich = 0; offset < last; )
+                    {
+                        // Get character
+                        uint8_t ch  = get_char(&text, ich++);
 
-                    if (ch == '\n') // Need to fill up to end-of-line
-                    {
-                        if (dark)
-                        {
-                            for ( ; col < cols; ++col, ++offset)
-                                draw_simple
-                                (
-                                    s,
-                                    xr.nLeft + col*(nDWidth + spacing),
-                                    xr.nTop  + row*(nDHeight + spacing),
-                                    '8', off, &fp
-                                );
-                        }
-                    }
-                    else
-                    {
-                        if (ch == ' ')
+                        // Output character
+                        size_t col      = offset % cols;
+                        size_t row      = offset / cols;
+
+                        if (ch == '\n') // Need to fill up to end-of-line
                         {
                             if (dark)
                             {
+                                for ( ; col < cols; ++col, ++offset)
+                                    draw_simple
+                                    (
+                                        s,
+                                        xr.nLeft + col*(nDWidth + spacing),
+                                        xr.nTop  + row*(nDHeight + spacing),
+                                        '8', off, &fp
+                                    );
+                            }
+                        }
+                        else
+                        {
+                            if (ch == ' ')
+                            {
+                                if (dark)
+                                {
+                                    draw_simple
+                                    (
+                                        s,
+                                        xr.nLeft + col*(nDWidth + spacing),
+                                        xr.nTop  + row*(nDHeight + spacing),
+                                        '8', off, &fp
+                                    );
+                                }
+                            }
+                            else
                                 draw_simple
                                 (
                                     s,
                                     xr.nLeft + col*(nDWidth + spacing),
                                     xr.nTop  + row*(nDHeight + spacing),
-                                    '8', off, &fp
+                                    ch, on, &fp
                                 );
+                            ++offset;
+                        }
+                    }
+                    break;
+                } // INDICATOR_MODERN
+
+                case INDICATOR_PIXEL:
+                {
+                    ws::font_parameters_t fp;
+                    sFont.get_parameters(s, scaling, &fp);
+
+                    for (size_t offset = 0, ich = 0; offset < last; )
+                    {
+                        // Get character
+                        uint8_t ch  = get_char(&text, ich++);
+
+                        // Output character
+                        size_t col      = offset % cols;
+                        size_t row      = offset / cols;
+
+                        if (ch == '\n') // Need to fill up to end-of-line
+                        {
+                            if (dark)
+                            {
+                                for ( ; col < cols; ++col, ++offset)
+                                    draw_pixel
+                                    (
+                                        s,
+                                        xr.nLeft + col*(nDWidth + spacing),
+                                        xr.nTop  + row*(nDHeight + spacing),
+                                        ' ', on, off
+                                    );
                             }
                         }
                         else
-                            draw_simple
-                            (
-                                s,
-                                xr.nLeft + col*(nDWidth + spacing),
-                                xr.nTop  + row*(nDHeight + spacing),
-                                ch, on, &fp
-                            );
-                        ++offset;
-                    }
-                }
-            }
-            else
-            {
-                uint8_t unget = 0;
-                for (size_t offset = 0, ich = 0; offset < last; )
-                {
-                    // Get character
-                    uint8_t ch  = (unget > 0) ? unget : get_char(&text, ich++);
-
-                    // Check for special case
-                    if (!unget)
-                    {
-                        switch (ch)
                         {
-                            case 'M':
-                                unget   = ch;
-                                ch      = 'N';
-                                break;
-                            case 'm':
-                                unget   = ch;
-                                ch      = 'n';
-                                break;
-                            case 'W':
-                                unget   = ch;
-                                ch      = 'U';
-                                break;
-                            case 'w':
-                                unget   = ch;
-                                ch      = 'v';
-                                break;
+                            if (ch == ' ')
+                            {
+                                if (dark)
+                                {
+                                    draw_pixel
+                                    (
+                                        s,
+                                        xr.nLeft + col*(nDWidth + spacing),
+                                        xr.nTop  + row*(nDHeight + spacing),
+                                        ch, on, off
+                                    );
+                                }
+                            }
+                            else
+                                draw_pixel
+                                (
+                                    s,
+                                    xr.nLeft + col*(nDWidth + spacing),
+                                    xr.nTop  + row*(nDHeight + spacing),
+                                    ch, on, off
+                                );
+                            ++offset;
                         }
                     }
-                    else
+
+                    break;
+                } // INDICATOR_PIXEL
+
+                case INDICATOR_SEGMENT:
+                default:
+                {
+                    uint8_t unget = 0;
+                    for (size_t offset = 0, ich = 0; offset < last; )
                     {
-                        unget       = 0;
-                        if (ch == '\r')
-                            continue;
-                    }
+                        // Get character
+                        uint8_t ch  = (unget > 0) ? unget : get_char(&text, ich++);
 
-                    // Save state
-                    size_t state    = ascii_map[ch & 0xff];
+                        // Check for special case
+                        if (!unget)
+                        {
+                            switch (ch)
+                            {
+                                case 'M':
+                                    unget   = ch;
+                                    ch      = 'N';
+                                    break;
+                                case 'm':
+                                    unget   = ch;
+                                    ch      = 'n';
+                                    break;
+                                case 'W':
+                                    unget   = ch;
+                                    ch      = 'U';
+                                    break;
+                                case 'w':
+                                    unget   = ch;
+                                    ch      = 'v';
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            unget       = 0;
+                            if (ch == '\r')
+                                continue;
+                        }
 
-                    // Lookup for extra characters
-                    uint8_t ch2     = get_char(&text, ich);
-                    switch (ch2)
-                    {
-                        case '.':
-                        case ':':
-                            state      |= ascii_map[ch2];
-                            ++ich;
-                            break;
-                        default:
-                            break;
-                    }
+                        // Save state
+                        size_t state    = ascii_map[ch & 0xff];
 
-                    // Output character
-                    size_t col      = offset % cols;
-                    size_t row      = offset / cols;
+                        // Lookup for extra characters
+                        uint8_t ch2     = get_char(&text, ich);
+                        switch (ch2)
+                        {
+                            case '.':
+                            case ':':
+                                state      |= ascii_map[ch2];
+                                ++ich;
+                                break;
+                            default:
+                                break;
+                        }
 
-                    if (ch == '\n') // Need to fill up to end-of-line
-                    {
-                        for ( ; col < cols; ++col, ++offset)
+                        // Output character
+                        size_t col      = offset % cols;
+                        size_t row      = offset / cols;
+
+                        if (ch == '\n') // Need to fill up to end-of-line
+                        {
+                            for ( ; col < cols; ++col, ++offset)
+                                draw_digit
+                                (
+                                    s,
+                                    xr.nLeft + col*(nDWidth + spacing),
+                                    xr.nTop  + row*(nDHeight + spacing),
+                                    state, on, off
+                                );
+                        }
+                        else
+                        {
                             draw_digit
                             (
                                 s,
@@ -475,22 +792,12 @@ namespace lsp
                                 xr.nTop  + row*(nDHeight + spacing),
                                 state, on, off
                             );
+                            ++offset;
+                        }
                     }
-                    else
-                    {
-                        draw_digit
-                        (
-                            s,
-                            xr.nLeft + col*(nDWidth + spacing),
-                            xr.nTop  + row*(nDHeight + spacing),
-                            state, on, off
-                        );
-                        ++offset;
-                    }
-                }
-            }
-
-            s->set_antialiasing(aa);
+                    break;
+                } // INDICATOR_SEGMENT
+            } // switch
         }
 
     } /* namespace tk */

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 нояб. 2017 г.
@@ -33,12 +33,29 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(Fader, Widget)
+            typedef struct FaderColors
+            {
                 prop::Color                     sBtnColor;
                 prop::Color                     sBtnBorderColor;
                 prop::Color                     sScaleColor;
                 prop::Color                     sScaleBorderColor;
                 prop::Color                     sBalanceColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } FaderColors;
+
+            enum FaderColorState
+            {
+                FADER_NORMAL        = 0,
+                FADER_INACTIVE      = 1 << 0,
+
+                FADER_TOTAL         = 1 << 1
+            };
+
+            LSP_TK_STYLE_DEF_BEGIN(Fader, Widget)
+                FaderColors                     vColors[FADER_TOTAL];
+
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
                 prop::StepFloat                 sStep;
@@ -57,6 +74,7 @@ namespace lsp
                 prop::Float                     sScaleBrightness;
                 prop::Boolean                   sBalanceColorCustom;
                 prop::Boolean                   sInvertMouseVScroll;
+                prop::Boolean                   sActive;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -76,6 +94,13 @@ namespace lsp
                     F_MOVER         = 1 << 2
                 };
 
+                enum fader_flags_t
+                {
+                    FADER_0         = style::FADER_NORMAL,
+                    FADER_1         = style::FADER_INACTIVE,
+                    FADER_TOTAL     = style::FADER_TOTAL
+                };
+
             protected:
                 ssize_t                         nLastV;
                 size_t                          nButtons;
@@ -85,11 +110,7 @@ namespace lsp
                 ws::rectangle_t                 sButton;
                 ws::rectangle_t                 sHole;
 
-                prop::Color                     sBtnColor;
-                prop::Color                     sBtnBorderColor;
-                prop::Color                     sScaleColor;
-                prop::Color                     sScaleBorderColor;
-                prop::Color                     sBalanceColor;
+                style::FaderColors              vColors[FADER_TOTAL];
                 prop::SizeRange                 sSizeRange;
                 prop::RangeFloat                sValue;
                 prop::StepFloat                 sStep;
@@ -108,6 +129,7 @@ namespace lsp
                 prop::Float                     sScaleBrightness;
                 prop::Boolean                   sBalanceColorCustom;
                 prop::Boolean                   sInvertMouseVScroll;
+                prop::Boolean                   sActive;
 
             protected:
                 float                           limit_value(float value);
@@ -116,6 +138,7 @@ namespace lsp
                 void                            update_cursor_state(ssize_t x, ssize_t y, bool set);
                 float                           update_value(float value);
                 void                            sync_button_pos();
+                style::FaderColors             *select_colors();
 
             protected:
                 static status_t                 slot_begin_edit(Widget *sender, void *ptr, void *data);
@@ -138,32 +161,38 @@ namespace lsp
                 virtual status_t                init() override;
 
             public:
-                LSP_TK_PROPERTY(Color,          button_color,               &sBtnColor);
-                LSP_TK_PROPERTY(Color,          button_border_color,        &sBtnBorderColor);
-                LSP_TK_PROPERTY(Color,          scale_color,                &sScaleColor);
-                LSP_TK_PROPERTY(Color,          scale_border_color,         &sScaleBorderColor);
-                LSP_TK_PROPERTY(Color,          balance_color,              &sBalanceColor);
-                LSP_TK_PROPERTY(SizeRange,      size,                       &sSizeRange);
-                LSP_TK_PROPERTY(RangeFloat,     value,                      &sValue);
-                LSP_TK_PROPERTY(StepFloat,      step,                       &sStep);
-                LSP_TK_PROPERTY(SizeRange,      button_width,               &sBtnWidth);
-                LSP_TK_PROPERTY(Float,          button_aspect,              &sBtnAspect);
-                LSP_TK_PROPERTY(Pointer,        button_pointer,             &sBtnPointer);
-                LSP_TK_PROPERTY(Integer,        angle,                      &sAngle);
-                LSP_TK_PROPERTY(Integer,        scale_width,                &sScaleWidth);
-                LSP_TK_PROPERTY(Integer,        scale_border,               &sScaleBorder);
-                LSP_TK_PROPERTY(Integer,        scale_radius,               &sScaleRadius);
-                LSP_TK_PROPERTY(Boolean,        scale_gradient,             &sScaleGradient);
-                LSP_TK_PROPERTY(Integer,        button_border,              &sBtnBorder);
-                LSP_TK_PROPERTY(Integer,        button_radius,              &sBtnRadius);
-                LSP_TK_PROPERTY(Boolean,        button_gradient,            &sBtnGradient);
-                LSP_TK_PROPERTY(Float,          balance,                    &sBalance);
-                LSP_TK_PROPERTY(Float,          scale_brightness,           &sScaleBrightness);
-                LSP_TK_PROPERTY(Boolean,        balance_color_custom,       &sBalanceColorCustom);
-                LSP_TK_PROPERTY(Boolean,        invert_mouse_vscroll,       &sInvertMouseVScroll);
+                LSP_TK_PROPERTY(Color,          button_color,                   &vColors[FADER_0].sBtnColor);
+                LSP_TK_PROPERTY(Color,          button_border_color,            &vColors[FADER_0].sBtnBorderColor);
+                LSP_TK_PROPERTY(Color,          scale_color,                    &vColors[FADER_0].sScaleColor);
+                LSP_TK_PROPERTY(Color,          scale_border_color,             &vColors[FADER_0].sScaleBorderColor);
+                LSP_TK_PROPERTY(Color,          balance_color,                  &vColors[FADER_0].sBalanceColor);
+                LSP_TK_PROPERTY(Color,          inactive_button_color,          &vColors[FADER_1].sBtnColor);
+                LSP_TK_PROPERTY(Color,          inactive_button_border_color,   &vColors[FADER_1].sBtnBorderColor);
+                LSP_TK_PROPERTY(Color,          inactive_scale_color,           &vColors[FADER_1].sScaleColor);
+                LSP_TK_PROPERTY(Color,          inactive_scale_border_color,    &vColors[FADER_1].sScaleBorderColor);
+                LSP_TK_PROPERTY(Color,          inactive_balance_color,         &vColors[FADER_1].sBalanceColor);
+
+                LSP_TK_PROPERTY(SizeRange,      size,                           &sSizeRange);
+                LSP_TK_PROPERTY(RangeFloat,     value,                          &sValue);
+                LSP_TK_PROPERTY(StepFloat,      step,                           &sStep);
+                LSP_TK_PROPERTY(SizeRange,      button_width,                   &sBtnWidth);
+                LSP_TK_PROPERTY(Float,          button_aspect,                  &sBtnAspect);
+                LSP_TK_PROPERTY(Pointer,        button_pointer,                 &sBtnPointer);
+                LSP_TK_PROPERTY(Integer,        angle,                          &sAngle);
+                LSP_TK_PROPERTY(Integer,        scale_width,                    &sScaleWidth);
+                LSP_TK_PROPERTY(Integer,        scale_border,                   &sScaleBorder);
+                LSP_TK_PROPERTY(Integer,        scale_radius,                   &sScaleRadius);
+                LSP_TK_PROPERTY(Boolean,        scale_gradient,                 &sScaleGradient);
+                LSP_TK_PROPERTY(Integer,        button_border,                  &sBtnBorder);
+                LSP_TK_PROPERTY(Integer,        button_radius,                  &sBtnRadius);
+                LSP_TK_PROPERTY(Boolean,        button_gradient,                &sBtnGradient);
+                LSP_TK_PROPERTY(Float,          balance,                        &sBalance);
+                LSP_TK_PROPERTY(Float,          scale_brightness,               &sScaleBrightness);
+                LSP_TK_PROPERTY(Boolean,        balance_color_custom,           &sBalanceColorCustom);
+                LSP_TK_PROPERTY(Boolean,        invert_mouse_vscroll,           &sInvertMouseVScroll);
+                LSP_TK_PROPERTY(Boolean,        active,                         &sActive);
 
             public:
-
                 virtual status_t                on_mouse_down(const ws::event_t *e) override;
                 virtual status_t                on_mouse_up(const ws::event_t *e) override;
                 virtual status_t                on_mouse_move(const ws::event_t *e) override;

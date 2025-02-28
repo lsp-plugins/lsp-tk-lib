@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 июн. 2020 г.
@@ -39,10 +39,6 @@ namespace lsp
         class TextLayout: public MultiProperty
         {
             protected:
-                TextLayout & operator = (const TextLayout &);
-                TextLayout(const TextLayout &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -61,14 +57,19 @@ namespace lsp
                 float               vAlign;             // Vertical alignment
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 void                parse(const LSPString *s);
 
             protected:
                 explicit TextLayout(prop::Listener *listener = NULL);
-                virtual ~TextLayout();
+                TextLayout(const TextLayout &) = delete;
+                TextLayout(TextLayout &&) = delete;
+                virtual ~TextLayout() override;
+
+                TextLayout & operator = (const TextLayout &) = delete;
+                TextLayout & operator = (TextLayout &&) = delete;
 
             public:
                 inline float        halign() const              { return hAlign;    }
@@ -89,12 +90,13 @@ namespace lsp
              */
             class TextLayout: public tk::TextLayout
             {
-                private:
-                    TextLayout & operator = (const TextLayout &);
-                    TextLayout(const TextLayout &);
-
                 public:
                     explicit TextLayout(prop::Listener *listener = NULL): tk::TextLayout(listener) {};
+                    TextLayout(const TextLayout &) = delete;
+                    TextLayout(TextLayout &&) = delete;
+
+                    TextLayout & operator = (const TextLayout &) = delete;
+                    TextLayout & operator = (TextLayout &&) = delete;
 
                 public:
                     /**
@@ -111,11 +113,10 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
-
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_TEXTLAYOUT_H_ */

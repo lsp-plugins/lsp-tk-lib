@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -35,7 +35,26 @@ namespace lsp
         // Style definition
         namespace style
         {
+            typedef struct ListBoxColors
+            {
+                prop::Color                     sBorderColor;
+                prop::Color                     sListBgColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } ListBoxColors;
+
+            enum ListBoxColorState
+            {
+                LISTBOX_NORMAL          = 0,
+                LISTBOX_INACTIVE        = 1 << 0,
+
+                LISTBOX_TOTAL           = 1 << 1
+            };
+
             LSP_TK_STYLE_DEF_BEGIN(ListBox, WidgetContainer)
+                ListBoxColors                   vColors[LISTBOX_TOTAL];
+
                 prop::SizeConstraints           sSizeConstraints;
                 prop::Scrolling                 sHScrollMode;
                 prop::Scrolling                 sVScrollMode;
@@ -45,10 +64,9 @@ namespace lsp
                 prop::Integer                   sBorderSize;
                 prop::Integer                   sBorderGap;
                 prop::Integer                   sBorderRadius;
-                prop::Color                     sBorderColor;
-                prop::Color                     sListBgColor;
                 prop::Integer                   sSpacing;
                 prop::Boolean                   sMultiSelect;
+                prop::Boolean                   sActive;
                 prop::Integer                   sHScrollSpacing;
                 prop::Integer                   sVScrollSpacing;
             LSP_TK_STYLE_DEF_END
@@ -115,6 +133,13 @@ namespace lsp
                     F_CHANGED           = 1 << 2
                 };
 
+                enum lbox_flags_t
+                {
+                    LBOX_0              = style::LISTBOX_NORMAL,
+                    LBOX_1              = style::LISTBOX_INACTIVE,
+                    LBOX_TOTAL          = style::LISTBOX_TOTAL
+                };
+
             protected:
                 size_t                          nBMask;
                 size_t                          nXFlags;
@@ -129,6 +154,8 @@ namespace lsp
                 ws::rectangle_t                 sArea;
                 ws::rectangle_t                 sList;
                 lltl::darray<item_t>            vVisible;
+
+                style::ListBoxColors            vColors[style::LISTBOX_TOTAL];
 
                 prop::WidgetList<ListBoxItem>   vItems;
                 prop::WidgetSet<ListBoxItem>    vSelected;
@@ -145,10 +172,9 @@ namespace lsp
                 prop::Integer                   sBorderSize;
                 prop::Integer                   sBorderGap;
                 prop::Integer                   sBorderRadius;
-                prop::Color                     sBorderColor;
-                prop::Color                     sListBgColor;
                 prop::Integer                   sSpacing;
                 prop::Boolean                   sMultiSelect;
+                prop::Boolean                   sActive;
                 prop::Integer                   sHScrollSpacing;
                 prop::Integer                   sVScrollSpacing;
 
@@ -164,6 +190,7 @@ namespace lsp
                 void                    select_single(ssize_t index, bool add);
                 status_t                on_key_scroll();
                 bool                    scroll_to_item(ssize_t vindex);
+                style::ListBoxColors   *select_colors();
 
             protected:
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
@@ -194,28 +221,32 @@ namespace lsp
                 virtual void                destroy() override;
 
             public:
-                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sSizeConstraints)
-                LSP_TK_PROPERTY(Scrolling,          hscroll_mode,       &sHScrollMode)
-                LSP_TK_PROPERTY(Scrolling,          vscroll_mode,       &sVScrollMode)
+                LSP_TK_PROPERTY(Color,              border_color,               &vColors[LBOX_0].sBorderColor)
+                LSP_TK_PROPERTY(Color,              list_bg_color,              &vColors[LBOX_0].sListBgColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_color,      &vColors[LBOX_1].sBorderColor)
+                LSP_TK_PROPERTY(Color,              inactive_list_bg_color,     &vColors[LBOX_1].sListBgColor)
 
-                LSP_TK_PROPERTY(RangeFloat,         hscroll,            &sHScroll)
-                LSP_TK_PROPERTY(RangeFloat,         vscroll,            &sVScroll)
-                LSP_TK_PROPERTY(StepFloat,          hstep,              sHBar.step())
-                LSP_TK_PROPERTY(StepFloat,          vstep,              sVBar.step())
-                LSP_TK_PROPERTY(StepFloat,          haccel_step,        sHBar.accel_step())
-                LSP_TK_PROPERTY(StepFloat,          vaccel_step,        sVBar.accel_step())
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,                &sSizeConstraints)
+                LSP_TK_PROPERTY(Scrolling,          hscroll_mode,               &sHScrollMode)
+                LSP_TK_PROPERTY(Scrolling,          vscroll_mode,               &sVScrollMode)
 
-                LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,      &vItems)
-                LSP_TK_PROPERTY(WidgetSet<ListBoxItem>,     selected,   &vSelected)
+                LSP_TK_PROPERTY(RangeFloat,         hscroll,                    &sHScroll)
+                LSP_TK_PROPERTY(RangeFloat,         vscroll,                    &sVScroll)
+                LSP_TK_PROPERTY(StepFloat,          hstep,                      sHBar.step())
+                LSP_TK_PROPERTY(StepFloat,          vstep,                      sVBar.step())
+                LSP_TK_PROPERTY(StepFloat,          haccel_step,                sHBar.accel_step())
+                LSP_TK_PROPERTY(StepFloat,          vaccel_step,                sVBar.accel_step())
+
+                LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,              &vItems)
+                LSP_TK_PROPERTY(WidgetSet<ListBoxItem>,     selected,           &vSelected)
 
                 LSP_TK_PROPERTY(Font,               font,                       &sFont)
                 LSP_TK_PROPERTY(Integer,            spacing,                    &sSpacing)
                 LSP_TK_PROPERTY(Integer,            border_size,                &sBorderSize)
                 LSP_TK_PROPERTY(Integer,            border_gap,                 &sBorderGap)
                 LSP_TK_PROPERTY(Integer,            border_radius,              &sBorderRadius)
-                LSP_TK_PROPERTY(Color,              border_color,               &sBorderColor)
-                LSP_TK_PROPERTY(Color,              list_bg_color,              &sListBgColor)
                 LSP_TK_PROPERTY(Boolean,            multi_select,               &sMultiSelect)
+                LSP_TK_PROPERTY(Boolean,            active,                     &sActive)
 
                 LSP_TK_PROPERTY(Integer,            hscroll_spacing,            &sHScrollSpacing)
                 LSP_TK_PROPERTY(Integer,            vscroll_spacing,            &sVScrollSpacing)

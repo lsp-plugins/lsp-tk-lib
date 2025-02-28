@@ -68,6 +68,7 @@ namespace lsp
                     size_t              nRows;      // Number of rows taken by cell
                     size_t              nCols;      // Number of columns taken by cell
                     size_t              nTag;       // Tag
+                    bool                bDrawn;     // Drawn flag
                 } cell_t;
 
                 typedef struct header_t

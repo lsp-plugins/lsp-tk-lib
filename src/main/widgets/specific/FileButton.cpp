@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 сент. 2020 г.
@@ -20,6 +20,7 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -30,43 +31,90 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(FileButton, Widget)
                 // Bind
+                style::FileButtonColors *c = &vColors[style::FILEBUTTON_NORMAL];
+                c->sColor.bind("color", this);
+                c->sInvColor.bind("inv.color", this);
+                c->sBorderColor.bind("border.color", this);
+                c->sInvBorderColor.bind("border.inv.color", this);
+                c->sLineColor.bind("line.color", this);
+                c->sInvLineColor.bind("line.inv.color", this);
+                c->sTextColor.bind("text.color", this);
+                c->sInvTextColor.bind("text.inv.color", this);
+
+                c = &vColors[style::FILEBUTTON_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sInvColor.bind("inactive.inv.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sInvBorderColor.bind("inactive.border.inv.color", this);
+                c->sLineColor.bind("inactive.line.color", this);
+                c->sInvLineColor.bind("inactive.line.inv.color", this);
+                c->sTextColor.bind("inactive.text.color", this);
+                c->sInvTextColor.bind("inactive.text.inv.color", this);
+
                 sValue.bind("value", this);
                 sFont.bind("font", this);
                 sTextLayout.bind("text.layout", this);
                 sTextPadding.bind("text.padding", this);
                 sConstraints.bind("size.constraints", this);
                 sGradient.bind("gradient", this);
+                sActive.bind("active", this);
                 sBorderSize.bind("border.size", this);
                 sBorderPressedSize.bind("border.pressed.size", this);
-                sColor.bind("color", this);
-                sInvColor.bind("inv.color", this);
-                sBorderColor.bind("border.color", this);
-                sInvBorderColor.bind("border.inv.color", this);
-                sLineColor.bind("line.color", this);
-                sInvLineColor.bind("line.inv.color", this);
-                sTextColor.bind("text.color", this);
-                sInvTextColor.bind("text.inv.color", this);
+
                 // Configure
+                c = &vColors[style::FILEBUTTON_NORMAL];
+                c->sColor.set("#cccccc");
+                c->sInvColor.set("#00cc00");
+                c->sBorderColor.set("#000000");
+                c->sInvBorderColor.set("#ffffff");
+                c->sLineColor.set("#000000");
+                c->sInvLineColor.set("#000000");
+                c->sTextColor.set("#cccccc");
+                c->sInvTextColor.set("#00cc00");
+
+                c = &vColors[style::FILEBUTTON_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sInvColor.set("#888888");
+                c->sBorderColor.set("#000000");
+                c->sInvBorderColor.set("#ffffff");
+                c->sLineColor.set("#000000");
+                c->sInvLineColor.set("#000000");
+                c->sTextColor.set("#cccccc");
+                c->sInvTextColor.set("#444444");
+
                 sValue.set_all(0.0f, 0.0f, 1.0f);
                 sFont.set_size(10.0f);
                 sTextLayout.set(0.0f, 0.0f);
                 sTextPadding.set(2, 2, 2, 2);
                 sConstraints.set_all(-1);
                 sGradient.set(true);
+                sActive.set(true);
                 sBorderSize.set(4);
                 sBorderPressedSize.set(3);
-                sColor.set("#cccccc");
-                sInvColor.set("#00cc00");
-                sBorderColor.set("#000000");
-                sInvBorderColor.set("#ffffff");
-                sLineColor.set("#000000");
-                sInvLineColor.set("#000000");
-                sTextColor.set("#cccccc");
-                sInvTextColor.set("#00cc00");
+
                 // Override
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileButton, "FileButton", "root");
+
+            void FileButtonColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sInvColor.listener(listener);
+                sBorderColor.listener(listener);
+                sInvBorderColor.listener(listener);
+                sLineColor.listener(listener);
+                sInvLineColor.listener(listener);
+                sTextColor.listener(listener);
+                sInvTextColor.listener(listener);
+            }
+
+            bool FileButtonColors::property_changed(Property *prop)
+            {
+                return prop->one_of(
+                    sColor, sInvColor, sBorderColor, sInvBorderColor,
+                    sLineColor, sInvLineColor, sTextColor, sInvTextColor);
+            }
         }
 
         #define NPOINTS 9
@@ -85,17 +133,15 @@ namespace lsp
             sTextPadding(&sProperties),
             sConstraints(&sProperties),
             sGradient(&sProperties),
+            sActive(&sProperties),
             sBorderSize(&sProperties),
-            sBorderPressedSize(&sProperties),
-            sColor(&sProperties),
-            sInvColor(&sProperties),
-            sBorderColor(&sProperties),
-            sInvBorderColor(&sProperties),
-            sLineColor(&sProperties),
-            sInvLineColor(&sProperties),
-            sTextColor(&sProperties),
-            sInvTextColor(&sProperties)
+            sBorderPressedSize(&sProperties)
         {
+            pClass              = &metadata;
+
+            for (size_t i=0; i<style::FILEBUTTON_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             nBMask              = 0;
             nXFlags             = 0;
 
@@ -103,8 +149,6 @@ namespace lsp
             sButton.nTop        = 0;
             sButton.nWidth      = 0;
             sButton.nHeight     = 0;
-
-            pClass              = &metadata;
         }
 
         FileButton::~FileButton()
@@ -118,6 +162,26 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
+            style::FileButtonColors *c = &vColors[style::FILEBUTTON_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sInvColor.bind("inv.color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sInvBorderColor.bind("border.inv.color", &sStyle);
+            c->sLineColor.bind("line.color", &sStyle);
+            c->sInvLineColor.bind("line.inv.color", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+            c->sInvTextColor.bind("text.inv.color", &sStyle);
+
+            c = &vColors[style::FILEBUTTON_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sInvColor.bind("inactive.inv.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sInvBorderColor.bind("inactive.border.inv.color", &sStyle);
+            c->sLineColor.bind("inactive.line.color", &sStyle);
+            c->sInvLineColor.bind("inactive.line.inv.color", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+            c->sInvTextColor.bind("inactive.text.inv.color", &sStyle);
+
             sValue.bind("value", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sTextList.bind(&sStyle, pDisplay->dictionary());
@@ -126,16 +190,9 @@ namespace lsp
             sTextPadding.bind("text.padding", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sGradient.bind("gradient", &sStyle);
+            sActive.bind("active", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderPressedSize.bind("border.pressed.size", &sStyle);
-            sColor.bind("color", &sStyle);
-            sInvColor.bind("inv.color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sInvBorderColor.bind("border.inv.color", &sStyle);
-            sLineColor.bind("line.color", &sStyle);
-            sInvLineColor.bind("line.inv.color", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
-            sInvTextColor.bind("text.inv.color", &sStyle);
 
             // Additional slots
             handler_id_t id = 0;
@@ -144,46 +201,30 @@ namespace lsp
             return (id >= 0) ? STATUS_OK : -id;
         }
 
+        style::FileButtonColors *FileButton::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::FILEBUTTON_NORMAL : style::FILEBUTTON_INACTIVE;
+            return &vColors[flags];
+        }
+
         void FileButton::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
 
-            if (sValue.is(prop))
+            // Self properties
+            style::FileButtonColors *colors = select_colors();
+            if (colors->property_changed(prop))
                 query_draw();
-            if (sText.is(prop))
+
+            if (sActive.is(prop))
+                query_draw();
+
+            if (prop->one_of(sValue, sGradient))
+                query_draw();
+
+            if (prop->one_of(sText, sTextList, sFont, sTextLayout,
+                sTextPadding, sConstraints, sBorderSize, sBorderPressedSize))
                 query_resize();
-            if (sTextList.is(prop))
-                query_resize();
-            if (sFont.is(prop))
-                query_resize();
-            if (sTextLayout.is(prop))
-                query_resize();
-            if (sTextPadding.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sGradient.is(prop))
-                query_draw();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderPressedSize.is(prop))
-                query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sInvColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sInvBorderColor.is(prop))
-                query_draw();
-            if (sLineColor.is(prop))
-                query_draw();
-            if (sInvLineColor.is(prop))
-                query_draw();
-            if (sTextColor.is(prop))
-                query_draw();
-            if (sInvTextColor.is(prop))
-                query_draw();
         }
 
         void FileButton::size_request(ws::size_limit_t *r)
@@ -263,6 +304,7 @@ namespace lsp
             float v                 = sValue.get_normalized();
             float bright            = sBrightness.get();
             lsp::Color bg;
+            const style::FileButtonColors *colors = select_colors();
 
             get_actual_bg_color(bg);
             s->clear(bg);
@@ -273,10 +315,10 @@ namespace lsp
             clip.nWidth             = v * sButton.nWidth;
             if (clip.nWidth > 0)
             {
-                lsp::Color col(sInvColor);
-                lsp::Color text(sInvTextColor);
-                lsp::Color line(sInvLineColor);
-                lsp::Color border(sBorderColor);
+                lsp::Color col(colors->sInvColor);
+                lsp::Color text(colors->sInvTextColor);
+                lsp::Color line(colors->sInvLineColor);
+                lsp::Color border(colors->sBorderColor);
                 col.scale_lch_luminance(bright);
                 text.scale_lch_luminance(bright);
                 line.scale_lch_luminance(bright);
@@ -291,10 +333,10 @@ namespace lsp
             clip.nWidth             = sButton.nWidth - clip.nWidth;
             if (clip.nWidth > 0)
             {
-                lsp::Color col(sColor);
-                lsp::Color text(sTextColor);
-                lsp::Color line(sLineColor);
-                lsp::Color border(sInvBorderColor);
+                lsp::Color col(colors->sColor);
+                lsp::Color text(colors->sTextColor);
+                lsp::Color line(colors->sLineColor);
+                lsp::Color border(colors->sInvBorderColor);
                 col.scale_lch_luminance(bright);
                 text.scale_lch_luminance(bright);
                 line.scale_lch_luminance(bright);
@@ -356,9 +398,9 @@ namespace lsp
                     else
                         gr = s->radial_gradient(b.nWidth, b.nTop, b.nWidth, b.nTop, b_rad * 3.0f);
 
-                    gr->add_color(0.0f, dcol);
+                    gr->set_start(dcol);
                     dcol.darken(0.9f);
-                    gr->add_color(1.0f, dcol);
+                    gr->set_stop(dcol);
 
                     init_points(xa, ya, b);
                     s->fill_poly(gr, xa, ya, NPOINTS);
@@ -412,39 +454,11 @@ namespace lsp
             sText.format(&stext);
             sFont.get_multitext_parameters(s, &tp, fscaling, &stext);
 
-            float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
-            float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
-            float dy        = (b.nHeight - tp.Height) * 0.5f;
-            ssize_t y       = b.nTop + dy * valign - fp.Descent;
-
-            // Estimate text size
-            ssize_t last = 0, curr = 0, tail = 0, len = stext.length();
-
-            while (curr < len)
-            {
-                // Get next line indexes
-                curr    = stext.index_of(last, '\n');
-                if (curr < 0)
-                {
-                    curr        = len;
-                    tail        = len;
-                }
-                else
-                {
-                    tail        = curr;
-                    if ((tail > last) && (stext.at(tail-1) == '\r'))
-                        --tail;
-                }
-
-                // Calculate text location
-                sFont.get_text_parameters(s, &tp, fscaling, &stext, last, tail);
-                float dx    = (b.nWidth - tp.Width) * 0.5f;
-                ssize_t x   = b.nLeft   + dx * halign - tp.XBearing;
-                y          += fp.Height;
-
-                sFont.draw(s, text, x, y, fscaling, &stext, last, tail);
-                last    = curr + 1;
-            }
+            draw_multiline_text(
+                s, &sFont, &b, text,
+                &fp, &tp,
+                sTextLayout.halign(), sTextLayout.valign(),
+                fscaling, &stext);
         }
 
         status_t FileButton::on_mouse_down(const ws::event_t *e)
@@ -536,7 +550,8 @@ namespace lsp
         {
             return STATUS_OK;
         }
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 

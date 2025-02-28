@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 29 авг. 2017 г.
@@ -19,8 +19,8 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LSP_PLUG_IN_TK_WIDGETS_EDIT_H_
-#define LSP_PLUG_IN_TK_WIDGETS_EDIT_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_SIMPLE_EDIT_H_
+#define LSP_PLUG_IN_TK_WIDGETS_SIMPLE_EDIT_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
@@ -35,10 +35,8 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(Edit, Widget)
-                prop::String            sText;
-                prop::TextSelection     sSelection;
-                prop::Font              sFont;
+            typedef struct EditColors
+            {
                 prop::Color             sColor;
                 prop::Color             sBorderColor;
                 prop::Color             sBorderGapColor;
@@ -47,10 +45,30 @@ namespace lsp
                 prop::Color             sTextSelectedColor;
                 prop::Color             sEmptyTextColor;
                 prop::Color             sSelectionColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } EditColors;
+
+            enum EditColorState
+            {
+                EDIT_NORMAL         = 0,
+                EDIT_INACTIVE       = 1 << 0,
+
+                EDIT_TOTAL          = 1 << 1
+            };
+
+            LSP_TK_STYLE_DEF_BEGIN(Edit, Widget)
+                EditColors              vColors[EDIT_TOTAL];
+
+                prop::String            sText;
+                prop::TextSelection     sSelection;
+                prop::Font              sFont;
                 prop::Integer           sBorderSize;
                 prop::Integer           sBorderGapSize;
                 prop::Integer           sBorderRadius;
                 prop::SizeConstraints   sConstraints;
+                prop::Boolean           sActive;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -58,10 +76,6 @@ namespace lsp
         {
             public:
                 static const w_class_t    metadata;
-
-            private:
-                Edit & operator = (const Edit &);
-                Edit(const Edit &);
 
             protected:
                 class EditCursor: public TextCursor
@@ -111,6 +125,13 @@ namespace lsp
                         void                    unbind();
                 };
 
+                enum chk_flags_t
+                {
+                    EDIT_0      = style::EDIT_NORMAL,
+                    EDIT_1      = style::EDIT_INACTIVE,
+                    EDIT_TOTAL  = style::EDIT_TOTAL
+                };
+
             protected:
                 size_t                  nMBState;
                 ssize_t                 sTextPos;
@@ -125,22 +146,16 @@ namespace lsp
 
                 ws::rectangle_t         sTextArea;
 
+                style::EditColors       vColors[EDIT_TOTAL];
                 prop::String            sText;
                 prop::String            sEmptyText;
                 prop::TextSelection     sSelection;
                 prop::Font              sFont;
-                prop::Color             sColor;
-                prop::Color             sBorderColor;
-                prop::Color             sBorderGapColor;
-                prop::Color             sCursorColor;
-                prop::Color             sTextColor;
-                prop::Color             sTextSelectedColor;
-                prop::Color             sEmptyTextColor;
-                prop::Color             sSelectionColor;
                 prop::Integer           sBorderSize;
                 prop::Integer           sBorderGapSize;
                 prop::Integer           sBorderRadius;
                 prop::SizeConstraints   sConstraints;
+                prop::Boolean           sActive;
                 prop::WidgetPtr<Menu>   sPopup;
 
             protected:
@@ -164,67 +179,73 @@ namespace lsp
                 void                                paste_clipboard(const LSPString *data);
                 void                                do_destroy();
                 status_t                            create_default_menu();
+                style::EditColors                  *select_colors();
 
             protected:
-                virtual void                        size_request(ws::size_limit_t *r);
-                virtual void                        property_changed(Property *prop);
-                virtual void                        realize(const ws::rectangle_t *r);
+                virtual void                        size_request(ws::size_limit_t *r) override;
+                virtual void                        property_changed(Property *prop) override;
+                virtual void                        realize(const ws::rectangle_t *r) override;
 
             public:
-                explicit                            Edit(Display *dpy);
-                virtual                            ~Edit();
+                explicit Edit(Display *dpy);
+                Edit(const Edit &) = delete;
+                Edit(Edit &&) = delete;
+                virtual ~Edit() override;
+                Edit & operator = (const Edit &) = delete;
+                Edit & operator = (Edit &&) = delete;
 
-                virtual status_t                    init();
-                virtual void                        destroy();
-
-            public:
-                LSP_TK_PROPERTY(String,             text,                           &sText)
-                LSP_TK_PROPERTY(String,             empty_text,                     &sEmptyText)
-                LSP_TK_PROPERTY(TextSelection,      selection,                      &sSelection)
-                LSP_TK_PROPERTY(Font,               font,                           &sFont)
-                LSP_TK_PROPERTY(Color,              color,                          &sColor)
-                LSP_TK_PROPERTY(Color,              border_color,                   &sBorderColor)
-                LSP_TK_PROPERTY(Color,              border_gap_color,               &sBorderGapColor)
-                LSP_TK_PROPERTY(Color,              cursor_color,                   &sCursorColor)
-                LSP_TK_PROPERTY(Color,              text_color,                     &sTextColor)
-                LSP_TK_PROPERTY(Color,              text_selected_color,            &sTextSelectedColor)
-                LSP_TK_PROPERTY(Color,              placeholder_text_color,         &sEmptyTextColor)
-                LSP_TK_PROPERTY(Color,              selection_color,                &sSelectionColor)
-                LSP_TK_PROPERTY(Integer,            border_size,                    &sBorderSize)
-                LSP_TK_PROPERTY(Integer,            border_gap_size,                &sBorderGapSize)
-                LSP_TK_PROPERTY(Integer,            border_radius,                  &sBorderRadius)
-                LSP_TK_PROPERTY(SizeConstraints,    constraints,                    &sConstraints)
-                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,                          &sPopup)
+                virtual status_t                    init() override;
+                virtual void                        destroy() override;
 
             public:
-                virtual void                    draw(ws::ISurface *s);
+                LSP_TK_PROPERTY(Color,              color,                              &vColors[EDIT_0].sColor)
+                LSP_TK_PROPERTY(Color,              border_color,                       &vColors[EDIT_0].sBorderColor)
+                LSP_TK_PROPERTY(Color,              border_gap_color,                   &vColors[EDIT_0].sBorderGapColor)
+                LSP_TK_PROPERTY(Color,              cursor_color,                       &vColors[EDIT_0].sCursorColor)
+                LSP_TK_PROPERTY(Color,              text_color,                         &vColors[EDIT_0].sTextColor)
+                LSP_TK_PROPERTY(Color,              text_selected_color,                &vColors[EDIT_0].sTextSelectedColor)
+                LSP_TK_PROPERTY(Color,              placeholder_text_color,             &vColors[EDIT_0].sEmptyTextColor)
+                LSP_TK_PROPERTY(Color,              selection_color,                    &vColors[EDIT_0].sSelectionColor)
 
+                LSP_TK_PROPERTY(Color,              inactive_color,                     &vColors[EDIT_1].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_color,              &vColors[EDIT_1].sBorderColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_gap_color,          &vColors[EDIT_1].sBorderGapColor)
+                LSP_TK_PROPERTY(Color,              inactive_cursor_color,              &vColors[EDIT_1].sCursorColor)
+                LSP_TK_PROPERTY(Color,              inactive_text_color,                &vColors[EDIT_1].sTextColor)
+                LSP_TK_PROPERTY(Color,              inactive_text_selected_color,       &vColors[EDIT_1].sTextSelectedColor)
+                LSP_TK_PROPERTY(Color,              inactive_placeholder_text_color,    &vColors[EDIT_1].sEmptyTextColor)
+                LSP_TK_PROPERTY(Color,              inactive_selection_color,           &vColors[EDIT_1].sSelectionColor)
+
+                LSP_TK_PROPERTY(String,             text,                               &sText)
+                LSP_TK_PROPERTY(String,             empty_text,                         &sEmptyText)
+                LSP_TK_PROPERTY(TextSelection,      selection,                          &sSelection)
+                LSP_TK_PROPERTY(Font,               font,                               &sFont)
+                LSP_TK_PROPERTY(Integer,            border_size,                        &sBorderSize)
+                LSP_TK_PROPERTY(Integer,            border_gap_size,                    &sBorderGapSize)
+                LSP_TK_PROPERTY(Integer,            border_radius,                      &sBorderRadius)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,                        &sConstraints)
+                LSP_TK_PROPERTY(Boolean,            active,                             &sActive);
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,                              &sPopup)
+
+            public:
+                virtual void                    draw(ws::ISurface *s) override;
+                virtual status_t                on_mouse_down(const ws::event_t *e) override;
+                virtual status_t                on_mouse_up(const ws::event_t *e) override;
+                virtual status_t                on_mouse_move(const ws::event_t *e) override;
+                virtual status_t                on_mouse_dbl_click(const ws::event_t *e) override;
+                virtual status_t                on_mouse_tri_click(const ws::event_t *e) override;
+                virtual status_t                on_focus_in(const ws::event_t *e) override;
+                virtual status_t                on_focus_out(const ws::event_t *e) override;
+                virtual status_t                on_key_down(const ws::event_t *e) override;
+                virtual status_t                on_key_up(const ws::event_t *e) override;
+
+            public:
                 virtual status_t                on_change();
-
-                virtual status_t                on_mouse_down(const ws::event_t *e);
-
-                virtual status_t                on_mouse_up(const ws::event_t *e);
-
-                virtual status_t                on_mouse_move(const ws::event_t *e);
-
-                virtual status_t                on_mouse_dbl_click(const ws::event_t *e);
-
-                virtual status_t                on_mouse_tri_click(const ws::event_t *e);
-
-                virtual status_t                on_focus_in(const ws::event_t *e);
-
-                virtual status_t                on_focus_out(const ws::event_t *e);
-
-                virtual status_t                on_key_down(const ws::event_t *e);
-
-                virtual status_t                on_key_up(const ws::event_t *e);
-
                 virtual status_t                on_before_popup(Menu *menu);
-
                 virtual status_t                on_popup(Menu *menu);
         };
 
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* LSP_PLUG_IN_TK_WIDGETS_EDIT_H_ */
+#endif /* LSP_PLUG_IN_TK_WIDGETS_SIMPLE_EDIT_H_ */

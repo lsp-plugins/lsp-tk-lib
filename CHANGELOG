@@ -2,6 +2,36 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.27 ===
+* Implemented OpenGL drawing surface supporf for X11 protocol. Can be disabled
+  by setting LSP_WS_LIB_GLXSURFACE=off environment variable.
+* Improved size estimation algorithm for tk::Label widget.
+* Added inactive state and colors for following widgets:
+  * tk::Button;
+  * tk::CheckBox;
+  * tk::ComboBox;
+  * tk::Edit;
+  * tk::Fader;
+  * tk::FileButton;
+  * tk::Fraction;
+  * tk::Indicator;
+  * tk::Knob;
+  * tk::Led;
+  * tk::ListBox;
+  * tk::ListBoxItem;
+  * tk::MenuItem;
+  * tk::ProgressBar;
+  * tk::RadioButton;
+  * tk::ScrollBar;
+  * tk::Tab;
+  * tk::TabItem.
+* Removed tk::Switch widget as being outdated.
+* Optimized surface drawing and sizing algorithm.
+* Rendering optimizations in widget containers.
+* Removed outdated RackEars widget.
+* Updated widget drawing code to match new interface of ws::IGradient.
+* Updated module versions in dependencies.
+
 === 1.0.26 ===
 * Removed internal key auto-repeat simulation for tk::ListBox.
 * Updated text clipping algorithm for tk::Button.

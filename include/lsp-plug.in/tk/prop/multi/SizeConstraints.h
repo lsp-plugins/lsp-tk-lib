@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 мая 2020 г.
@@ -33,10 +33,6 @@ namespace lsp
         class SizeConstraints: public MultiProperty
         {
             protected:
-                SizeConstraints & operator = (const SizeConstraints &);
-                SizeConstraints(const SizeConstraints &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -59,12 +55,17 @@ namespace lsp
                 ws::size_limit_t    sValue;             // Value
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit SizeConstraints(prop::Listener *listener = NULL);
-                virtual ~SizeConstraints();
+                SizeConstraints(const SizeConstraints &) = delete;
+                SizeConstraints(SizeConstraints &&) = delete;
+                virtual ~SizeConstraints() override;
+
+                SizeConstraints & operator = (const SizeConstraints &) = delete;
+                SizeConstraints & operator = (SizeConstraints &&) = delete;
 
             public:
                 inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); };
@@ -152,12 +153,13 @@ namespace lsp
              */
             class SizeConstraints: public tk::SizeConstraints
             {
-                private:
-                    SizeConstraints & operator = (const SizeConstraints &);
-                    SizeConstraints(const SizeConstraints &);
-
                 public:
                     explicit SizeConstraints(prop::Listener *listener = NULL): tk::SizeConstraints(listener) {};
+                    SizeConstraints(const SizeConstraints &) = delete;
+                    SizeConstraints(SizeConstraints &&) = delete;
+
+                    SizeConstraints & operator = (const SizeConstraints &) = delete;
+                    SizeConstraints & operator = (SizeConstraints &&) = delete;
 
                 public:
                     /**
@@ -172,9 +174,10 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::SizeConstraints::unbind(vAtoms, DESC, &sListener); };
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_SIZECONSTRAINTS_H_ */

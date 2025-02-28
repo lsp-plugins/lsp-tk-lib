@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 июн. 2017 г.
@@ -33,19 +33,29 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(Button, Widget)
+            typedef struct ButtonColors
+            {
                 prop::Color             sColor;
                 prop::Color             sTextColor;
                 prop::Color             sBorderColor;
-                prop::Color             sDownColor;
-                prop::Color             sTextDownColor;
-                prop::Color             sBorderDownColor;
-                prop::Color             sHoverColor;
-                prop::Color             sTextHoverColor;
-                prop::Color             sBorderHoverColor;
-                prop::Color             sDownHoverColor;
-                prop::Color             sTextDownHoverColor;
-                prop::Color             sBorderDownHoverColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } ButtonColors;
+
+            enum ButtonColorState
+            {
+                BUTTON_NORMAL       = 0,
+                BUTTON_DOWN         = 1 << 0,
+                BUTTON_HOVER        = 1 << 1,
+                BUTTON_INACTIVE     = 1 << 2,
+
+                BUTTON_TOTAL        = 1 << 3
+            };
+
+            LSP_TK_STYLE_DEF_BEGIN(Button, Widget)
+                ButtonColors            vColors[BUTTON_TOTAL];
+
                 prop::Color             sHoleColor;
 
                 prop::Font              sFont;
@@ -61,6 +71,7 @@ namespace lsp
                 prop::Integer           sBorderPressedSize;
                 prop::Integer           sBorderDownSize;
                 prop::Boolean           sEditable;
+                prop::Boolean           sActive;
                 prop::Boolean           sHole;
                 prop::Boolean           sFlat;
                 prop::Boolean           sTextClip;
@@ -108,24 +119,27 @@ namespace lsp
                     ws::text_parameters_t tp;
                 } estimation_t;
 
+                enum btn_flags_t
+                {
+                    BTN_0       = style::BUTTON_NORMAL,
+                    BTN_1       = style::BUTTON_DOWN,
+                    BTN_2       = BTN_0 | style::BUTTON_HOVER,
+                    BTN_3       = BTN_1 | style::BUTTON_HOVER,
+                    BTN_4       = BTN_0 | style::BUTTON_INACTIVE,
+                    BTN_5       = BTN_1 | style::BUTTON_INACTIVE,
+                    BTN_6       = BTN_2 | style::BUTTON_INACTIVE,
+                    BTN_7       = BTN_3 | style::BUTTON_INACTIVE,
+                    BTN_TOTAL   = style::BUTTON_TOTAL
+                };
+
             protected:
                 size_t                  nState;
                 size_t                  nBMask;
                 size_t                  nChanges;
                 ws::rectangle_t         sButton;
 
-                prop::Color             sColor;
-                prop::Color             sTextColor;
-                prop::Color             sBorderColor;
-                prop::Color             sDownColor;
-                prop::Color             sTextDownColor;
-                prop::Color             sBorderDownColor;
-                prop::Color             sHoverColor;
-                prop::Color             sTextHoverColor;
-                prop::Color             sBorderHoverColor;
-                prop::Color             sDownHoverColor;
-                prop::Color             sTextDownHoverColor;
-                prop::Color             sBorderDownHoverColor;
+                style::ButtonColors     vColors[style::BUTTON_TOTAL];
+
                 prop::Color             sHoleColor;
 
                 prop::Font              sFont;
@@ -141,6 +155,7 @@ namespace lsp
                 prop::Integer           sBorderPressedSize;
                 prop::Integer           sBorderDownSize;
                 prop::Boolean           sEditable;
+                prop::Boolean           sActive;
                 prop::Boolean           sHole;
                 prop::Boolean           sFlat;
                 prop::Boolean           sTextClip;
@@ -156,16 +171,12 @@ namespace lsp
             protected:
                 void                update_mode(button_mode_t mode);
                 void                estimate_string_size(estimation_t *e, tk::String *s);
+                style::ButtonColors *select_colors();
 
+            protected:
                 static status_t     slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t     slot_on_submit(Widget *sender, void *ptr, void *data);
                 static ws::IGradient   *create_gradient(ws::ISurface *s, ws::rectangle_t &r, size_t pressed, float radius);
-
-
-                prop::Color        &select4(prop::Color &dfl, prop::Color &hover, prop::Color &down, prop::Color &hover_down);
-                prop::Color        &select_color();
-                prop::Color        &select_text_color();
-                prop::Color        &select_border_color();
 
             protected:
                 virtual void        size_request(ws::size_limit_t *r) override;
@@ -188,19 +199,31 @@ namespace lsp
                 tk::String                     *add_text_estimation();
 
             public:
-                LSP_TK_PROPERTY(Color,              color,              &sColor)
-                LSP_TK_PROPERTY(Color,              text_color,         &sTextColor)
-                LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
-                LSP_TK_PROPERTY(Color,              down_color,         &sDownColor)
-                LSP_TK_PROPERTY(Color,              text_down_color,    &sTextDownColor)
-                LSP_TK_PROPERTY(Color,              border_down_color,  &sBorderDownColor)
-                LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)
-                LSP_TK_PROPERTY(Color,              text_hover_color,   &sTextHoverColor)
-                LSP_TK_PROPERTY(Color,              border_hover_color, &sBorderHoverColor)
-                LSP_TK_PROPERTY(Color,              down_hover_color,        &sDownHoverColor)
-                LSP_TK_PROPERTY(Color,              text_down_hover_color,   &sTextDownHoverColor)
-                LSP_TK_PROPERTY(Color,              border_down_hover_color, &sBorderDownHoverColor)
-                LSP_TK_PROPERTY(Color,              hole_color,         &sHoleColor)
+                LSP_TK_PROPERTY(Color,              color,                              &vColors[BTN_0].sColor)
+                LSP_TK_PROPERTY(Color,              text_color,                         &vColors[BTN_0].sTextColor)
+                LSP_TK_PROPERTY(Color,              border_color,                       &vColors[BTN_0].sBorderColor)
+                LSP_TK_PROPERTY(Color,              down_color,                         &vColors[BTN_1].sColor)
+                LSP_TK_PROPERTY(Color,              text_down_color,                    &vColors[BTN_1].sTextColor)
+                LSP_TK_PROPERTY(Color,              border_down_color,                  &vColors[BTN_1].sBorderColor)
+                LSP_TK_PROPERTY(Color,              hover_color,                        &vColors[BTN_2].sColor)
+                LSP_TK_PROPERTY(Color,              text_hover_color,                   &vColors[BTN_2].sTextColor)
+                LSP_TK_PROPERTY(Color,              border_hover_color,                 &vColors[BTN_2].sBorderColor)
+                LSP_TK_PROPERTY(Color,              down_hover_color,                   &vColors[BTN_3].sColor)
+                LSP_TK_PROPERTY(Color,              text_down_hover_color,              &vColors[BTN_3].sTextColor)
+                LSP_TK_PROPERTY(Color,              border_down_hover_color,            &vColors[BTN_3].sBorderColor)
+                LSP_TK_PROPERTY(Color,              inactive_color,                     &vColors[BTN_4].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_text_color,                &vColors[BTN_4].sTextColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_color,              &vColors[BTN_4].sBorderColor)
+                LSP_TK_PROPERTY(Color,              inactive_down_color,                &vColors[BTN_5].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_text_down_color,           &vColors[BTN_5].sTextColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_down_color,         &vColors[BTN_5].sBorderColor)
+                LSP_TK_PROPERTY(Color,              inactive_hover_color,               &vColors[BTN_6].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_text_hover_color,          &vColors[BTN_6].sTextColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_hover_color,        &vColors[BTN_6].sBorderColor)
+                LSP_TK_PROPERTY(Color,              inactive_down_hover_color,          &vColors[BTN_7].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_text_down_hover_color,     &vColors[BTN_7].sTextColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_down_hover_color,   &vColors[BTN_7].sBorderColor)
+                LSP_TK_PROPERTY(Color,              hole_color,                         &sHoleColor)
 
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
                 LSP_TK_PROPERTY(String,             text,               &sText)
@@ -214,6 +237,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_pressed_size,&sBorderPressedSize)
                 LSP_TK_PROPERTY(Integer,            border_down_size,   &sBorderDownSize)
                 LSP_TK_PROPERTY(Boolean,            editable,           &sEditable)
+                LSP_TK_PROPERTY(Boolean,            active,             &sActive)
                 LSP_TK_PROPERTY(Boolean,            hole,               &sHole)
                 LSP_TK_PROPERTY(Boolean,            flat,               &sFlat)
                 LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)

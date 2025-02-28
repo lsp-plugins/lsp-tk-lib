@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 15 июн. 2020 г.
@@ -32,17 +32,18 @@ namespace lsp
     {
         class Ptr: public Property
         {
-            private:
-                Ptr & operator = (const Ptr &);
-                Ptr(const Ptr &);
-
             protected:
                 void                       *pCurr;
                 void                       *pDfl;
 
             protected:
                 explicit Ptr(prop::Listener *listener = NULL);
-                virtual ~Ptr();
+                Ptr(const Ptr &) = delete;
+                Ptr(Ptr &&) = delete;
+                virtual ~Ptr() override;
+
+                Ptr & operator = (const Ptr &) = delete;
+                Ptr & operator = (Ptr &&) = delete;
 
             protected:
                 void                       *set(void *ptr);
@@ -50,11 +51,10 @@ namespace lsp
 
             public:
                 inline bool                 is_default() const  { return pCurr == pDfl;             }
-
                 inline bool                 is_set() const      { return pCurr != NULL;             }
         };
 
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_PROP_BASE_PTR_H_ */

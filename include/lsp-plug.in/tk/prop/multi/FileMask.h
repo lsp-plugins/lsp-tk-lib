@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 окт. 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class FileMask: public Property
         {
-            private:
-                FileMask & operator = (const FileMask &);
-                FileMask(const FileMask &);
-
             protected:
                 class PListener: public prop::Listener
                 {
@@ -50,7 +46,7 @@ namespace lsp
                         explicit PListener(FileMask *prop);
 
                     public:
-                        virtual void    notify(Property *prop);
+                        virtual void    notify(Property *prop) override;
                         inline ssize_t  lock()      { return ++nLocks; }
                         inline ssize_t  unlock()    { return --nLocks; }
                 };
@@ -69,7 +65,12 @@ namespace lsp
 
             protected:
                 explicit FileMask(prop::Listener *listener = NULL);
-                virtual ~FileMask();
+                FileMask(const FileMask &) = delete;
+                FileMask(FileMask &&) = delete;
+                virtual ~FileMask() override;
+
+                FileMask & operator = (const FileMask &) = delete;
+                FileMask & operator = (FileMask &&) = delete;
 
             public:
                 LSP_TK_PROPERTY(String,             title,                  &sTitle);
@@ -88,12 +89,12 @@ namespace lsp
         {
             class FileMask: public tk::FileMask
             {
-                private:
-                    FileMask & operator = (const FileMask &);
-                    FileMask(const FileMask &);
-
                 public:
                     explicit FileMask(prop::Listener *listener = NULL): tk::FileMask(listener) {}
+                    FileMask(const FileMask &) = delete;
+                    FileMask(FileMask &&) = delete;
+                    FileMask & operator = (const FileMask &) = delete;
+                    FileMask & operator = (FileMask &&) = delete;
 
                 public:
                     /**
@@ -111,9 +112,11 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                     }
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
+
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_FILEMASK_H_ */

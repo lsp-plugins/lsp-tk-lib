@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 15 июн. 2020 г.
@@ -34,64 +34,66 @@ namespace lsp
          * Pointer to the widget
          */
         template <class widget_t>
-            class WidgetPtr: public Ptr
-            {
-                private:
-                    WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &);
-                    WidgetPtr(const WidgetPtr<widget_t> &);
+        class WidgetPtr: public Ptr
+        {
+            protected:
+                inline WidgetPtr<widget_t> *ccast() const       { return const_cast< WidgetPtr<widget_t> >(this);                               }
+                inline widget_t            *wcast(void *w)      { return (w != NULL) ? static_cast<widget_t*>(static_cast<Widget *>(w)) : NULL; }
+                static inline void         *vcast(Widget *w)    { return w;                         }
 
-                protected:
-                    inline WidgetPtr<widget_t> *ccast() const       { return const_cast< WidgetPtr<widget_t> >(this);                               }
-                    inline widget_t            *wcast(void *w)      { return (w != NULL) ? static_cast<widget_t*>(static_cast<Widget *>(w)) : NULL; }
-                    static inline void         *vcast(Widget *w)    { return w;                         }
+            protected:
+                const w_class_t            *pMeta;
 
-                protected:
-                    const w_class_t            *pMeta;
+            protected:
+                explicit WidgetPtr(prop::Listener *listener = NULL): Ptr(listener)
+                {
+                    pMeta   = &widget_t::metadata;
+                }
+                WidgetPtr(const WidgetPtr<widget_t> &) = delete;
+                WidgetPtr(WidgetPtr<widget_t> &&) = delete;
 
-                protected:
-                    explicit WidgetPtr(prop::Listener *listener = NULL): Ptr(listener)
-                    {
-                        pMeta   = &widget_t::metadata;
-                    }
+                virtual ~WidgetPtr() override
+                {
+                    pMeta   = NULL;
+                }
 
-                    virtual ~WidgetPtr()
-                    {
-                        pMeta   = NULL;
-                    }
+                WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &) = delete;
+                WidgetPtr<widget_t> & operator = (WidgetPtr<widget_t> &&) = delete;
 
-                public:
-                    inline widget_t            *get()               { return wcast(pCurr);                  }
-                    inline const widget_t      *get() const         { return ccast()->get();                }
+            public:
+                inline widget_t            *get()               { return wcast(pCurr);                  }
+                inline const widget_t      *get() const         { return ccast()->get();                }
 
-                    inline widget_t            *get_default()       { return wcast(pDfl);                   }
-                    inline const widget_t      *get_default() const { return ccast()->get_default();        }
+                inline widget_t            *get_default()       { return wcast(pDfl);                   }
+                inline const widget_t      *get_default() const { return ccast()->get_default();        }
 
-                    inline widget_t            *set(widget_t *w)    { return ((w != NULL) && (w->instance_of(pMeta))) ? wcast(Ptr::set(vcast(w))) : wcast(Ptr::set(NULL)); }
-                    inline widget_t            *set_default()       { return wcast(Ptr::set_default());     }
-            };
+                inline widget_t            *set(widget_t *w)    { return ((w != NULL) && (w->instance_of(pMeta))) ? wcast(Ptr::set(vcast(w))) : wcast(Ptr::set(NULL)); }
+                inline widget_t            *set_default()       { return wcast(Ptr::set_default());     }
+        };
 
         namespace prop
         {
             template <class widget_t>
-                class WidgetPtr: public tk::WidgetPtr<widget_t>
-                {
-                    private:
-                        WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &);
-                        WidgetPtr(const WidgetPtr<widget_t> &);
+            class WidgetPtr: public tk::WidgetPtr<widget_t>
+            {
+                public:
+                    explicit WidgetPtr(prop::Listener *listener = NULL): tk::WidgetPtr<widget_t>(listener) {}
+                    WidgetPtr(const WidgetPtr<widget_t> &) = delete;
+                    WidgetPtr(WidgetPtr<widget_t> &&) = delete;
+                    WidgetPtr<widget_t> & operator = (const WidgetPtr<widget_t> &) = delete;
+                    WidgetPtr<widget_t> & operator = (WidgetPtr<widget_t> &&) = delete;
 
-                    public:
-                        explicit WidgetPtr(prop::Listener *listener = NULL): tk::WidgetPtr<widget_t>(listener) {}
+                public:
+                    inline void             bind(widget_t *dfl)
+                    {
+                        this->pDfl      = tk::WidgetPtr<widget_t>::vcast(dfl);
+                        this->pCurr     = this->pDfl;
+                    }
+            };
 
-                    public:
-                        inline void             bind(widget_t *dfl)
-                        {
-                            this->pDfl      = tk::WidgetPtr<widget_t>::vcast(dfl);
-                            this->pCurr     = this->pDfl;
-                        }
-                };
-        }
-    }
-}
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_COLLECTION_WIDGETPTR_H_ */

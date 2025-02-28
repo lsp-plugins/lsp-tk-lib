@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 26 июн. 2020 г.
@@ -140,37 +140,14 @@ namespace lsp
         void Group::property_changed(Property *prop)
         {
             Align::property_changed(prop);
-            if (sFont.is(prop))
+
+            if (prop->one_of(sFont, sTextAdjust, sText, sShowText, sBorder, sTextPadding, sRadius, sEmbedding, sIPadding, sHeading))
                 query_resize();
-            if (sTextAdjust.is(prop))
-                query_resize();
-            if (sColor.is(prop))
+
+            if (prop->one_of(sColor, sTextColor))
                 query_draw();
-            if (sIBGColor.is(prop))
-                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
-            if (sTextColor.is(prop))
-                query_draw();
-            if (sText.is(prop))
-                query_resize();
-            if (sShowText.is(prop))
-                query_resize();
-            if (sBorder.is(prop))
-                query_resize();
-            if (sTextPadding.is(prop))
-                query_resize();
-            if (sRadius.is(prop))
-                query_resize();
-            if (sTextRadius.is(prop))
-                query_resize();
-            if (sEmbedding.is(prop))
-                query_resize();
-            if (sIPadding.is(prop))
-                query_resize();
-            if (sHeading.is(prop))
-                query_resize();
-            if (sIBGInherit.is(prop))
-                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
-            if (sIBGBrightness.is(prop))
+
+            if (prop->one_of(sIBGColor, sIBGInherit, sIBGBrightness))
                 query_draw(REDRAW_CHILD | REDRAW_SURFACE);
         }
 
@@ -218,7 +195,7 @@ namespace lsp
             alloc->rtext        = xr;
 
             // Compute padding
-            ssize_t xborder = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
+            ssize_t xborder = lsp_max(float(border), (radius - border) * M_SQRT1_2);
             padding_t pad;
 
             pad.nLeft       = (sEmbedding.left())   ? border : xborder;
@@ -351,14 +328,6 @@ namespace lsp
             {
                 pWidget->get_rectangle(&xr);
 
-                // Draw the nested widget
-                if ((force) || (pWidget->redraw_pending()))
-                {
-                    if (Size::intersection(&xr, &sSize))
-                        pWidget->render(s, &xr, force);
-                    pWidget->commit_redraw();
-                }
-
                 if (force)
                 {
                     // Render the child background
@@ -371,6 +340,14 @@ namespace lsp
                         }
                         s->clip_end();
                     }
+                }
+
+                // Draw the nested widget
+                if ((force) || (pWidget->redraw_pending()))
+                {
+                    if (Size::intersection(&xr, &sSize))
+                        pWidget->render(s, &xr, force);
+                    pWidget->commit_redraw();
                 }
             }
             else

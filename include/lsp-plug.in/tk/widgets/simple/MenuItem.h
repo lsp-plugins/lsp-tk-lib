@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 18 сент. 2017 г.
@@ -35,18 +35,35 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(MenuItem, Widget)
-                prop::String                sText;
-                prop::TextAdjust            sTextAdjust;
-                prop::MenuItemType          sType;
-                prop::Boolean               sChecked;
+            typedef struct MenuItemColors
+            {
                 prop::Color                 sBgSelectedColor;
                 prop::Color                 sTextColor;
                 prop::Color                 sTextSelectedColor;
                 prop::Color                 sCheckColor;
                 prop::Color                 sCheckBgColor;
                 prop::Color                 sCheckBorderColor;
-                prop::Color                 sCheckBorderGapColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } MenuItemColors;
+
+            enum MenuItemColorState
+            {
+                MENUITEM_NORMAL         = 0,
+                MENUITEM_INACTIVE       = 1 << 0,
+
+                MENUITEM_TOTAL          = 1 << 1
+            };
+
+            LSP_TK_STYLE_DEF_BEGIN(MenuItem, Widget)
+                MenuItemColors              vColors[MENUITEM_TOTAL];
+
+                prop::String                sText;
+                prop::TextAdjust            sTextAdjust;
+                prop::MenuItemType          sType;
+                prop::Boolean               sChecked;
+                prop::Boolean               sActive;
                 prop::Shortcut              sShortcut;
             LSP_TK_STYLE_DEF_END
         }
@@ -56,63 +73,75 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                MenuItem & operator = (const MenuItem &);
-                MenuItem(const MenuItem &);
-
             protected:
                 friend class Menu;
 
+                enum mitm_flags_t
+                {
+                    MITM_0          = style::MENUITEM_NORMAL,
+                    MITM_1          = style::MENUITEM_INACTIVE,
+                    MITM_TOTAL      = style::MENUITEM_TOTAL
+                };
+
             protected:
+                style::MenuItemColors       vColors[style::MENUITEM_TOTAL];
                 prop::WidgetPtr<Menu>       sMenu;
                 prop::String                sText;
                 prop::TextAdjust            sTextAdjust;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
-                prop::Color                 sBgSelectedColor;
-                prop::Color                 sTextColor;
-                prop::Color                 sTextSelectedColor;
-                prop::Color                 sCheckColor;
-                prop::Color                 sCheckBgColor;
-                prop::Color                 sCheckBorderColor;
-                prop::Color                 sCheckBorderGapColor;
+                prop::Boolean               sActive;
                 prop::Shortcut              sShortcut;
 
             protected:
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
-                virtual void                property_changed(Property *prop);
+                style::MenuItemColors      *select_colors();
+
+            protected:
+                virtual void                property_changed(Property *prop) override;
 
             public:
                 explicit MenuItem(Display *dpy);
-                virtual ~MenuItem();
+                MenuItem(const MenuItem &) = delete;
+                MenuItem(MenuItem &&) = delete;
+                virtual ~MenuItem() override;
+                MenuItem & operator = (const MenuItem &) = delete;
+                MenuItem & operator = (MenuItem &&) = delete;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
-                LSP_TK_PROPERTY(WidgetPtr<Menu>,            menu,                       &sMenu)
-                LSP_TK_PROPERTY(String,                     text,                       &sText)
-                LSP_TK_PROPERTY(TextAdjust,                 text_adjust,                &sTextAdjust)
-                LSP_TK_PROPERTY(MenuItemType,               type,                       &sType)
-                LSP_TK_PROPERTY(Boolean,                    checked,                    &sChecked)
-                LSP_TK_PROPERTY(Color,                      bg_selected_color,          &sBgSelectedColor)
-                LSP_TK_PROPERTY(Color,                      text_color,                 &sTextColor)
-                LSP_TK_PROPERTY(Color,                      text_selected_color,        &sTextSelectedColor)
-                LSP_TK_PROPERTY(Color,                      check_color,                &sCheckColor)
-                LSP_TK_PROPERTY(Color,                      check_bg_color,             &sCheckBgColor)
-                LSP_TK_PROPERTY(Color,                      check_border_color,         &sCheckBorderColor)
-                LSP_TK_PROPERTY(Shortcut,                   shortcut,                   &sShortcut)
+                LSP_TK_PROPERTY(Color,                  bg_selected_color,              &vColors[MITM_0].sBgSelectedColor)
+                LSP_TK_PROPERTY(Color,                  text_color,                     &vColors[MITM_0].sTextColor)
+                LSP_TK_PROPERTY(Color,                  text_selected_color,            &vColors[MITM_0].sTextSelectedColor)
+                LSP_TK_PROPERTY(Color,                  check_color,                    &vColors[MITM_0].sCheckColor)
+                LSP_TK_PROPERTY(Color,                  check_bg_color,                 &vColors[MITM_0].sCheckBgColor)
+                LSP_TK_PROPERTY(Color,                  check_border_color,             &vColors[MITM_0].sCheckBorderColor)
+                LSP_TK_PROPERTY(Color,                  inactive_bg_selected_color,     &vColors[MITM_1].sBgSelectedColor)
+                LSP_TK_PROPERTY(Color,                  inactive_text_color,            &vColors[MITM_1].sTextColor)
+                LSP_TK_PROPERTY(Color,                  inactive_text_selected_color,   &vColors[MITM_1].sTextSelectedColor)
+                LSP_TK_PROPERTY(Color,                  inactive_check_color,           &vColors[MITM_1].sCheckColor)
+                LSP_TK_PROPERTY(Color,                  inactive_check_bg_color,        &vColors[MITM_1].sCheckBgColor)
+                LSP_TK_PROPERTY(Color,                  inactive_check_border_color,    &vColors[MITM_1].sCheckBorderColor)
+
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,        menu,                           &sMenu)
+                LSP_TK_PROPERTY(String,                 text,                           &sText)
+                LSP_TK_PROPERTY(TextAdjust,             text_adjust,                    &sTextAdjust)
+                LSP_TK_PROPERTY(MenuItemType,           type,                           &sType)
+                LSP_TK_PROPERTY(Boolean,                checked,                        &sChecked)
+                LSP_TK_PROPERTY(Boolean,                active,                         &sActive)
+                LSP_TK_PROPERTY(Shortcut,               shortcut,                       &sShortcut)
+
+            public:
+                virtual status_t            on_focus_in(const ws::event_t *e) override;
+                virtual status_t            on_mouse_in(const ws::event_t *e) override;
+                virtual status_t            on_mouse_up(const ws::event_t *e) override;
 
             public:
                 virtual status_t            on_submit();
-
-                virtual status_t            on_focus_in(const ws::event_t *e);
-
-                virtual status_t            on_mouse_in(const ws::event_t *e);
-
-                virtual status_t            on_mouse_up(const ws::event_t *e);
         };
     
     } /* namespace tk */

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 27 мая 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class Font: public MultiProperty
         {
-            protected:
-                Font & operator = (const Font &);
-                Font(const Font &);
-
             protected:
                 enum property_t
                 {
@@ -87,7 +83,12 @@ namespace lsp
 
             protected:
                 explicit Font(prop::Listener *listener = NULL);
+                Font(const Font &) = delete;
+                Font(Font &&) = delete;
                 virtual ~Font() override;
+
+                Font & operator = (const Font &) = delete;
+                Font & operator = (Font &&) = delete;
 
             public:
                 inline void         set_default()           { MultiProperty::set_default(vAtoms, DESC); }
@@ -161,12 +162,13 @@ namespace lsp
         {
             class Font: public tk::Font
             {
-                private:
-                    Font & operator = (const Font &);
-                    Font(const Font &);
-
                 public:
                     explicit Font(prop::Listener *listener = NULL): tk::Font(listener) {};
+                    Font(const Font &) = delete;
+                    Font(Font &&) = delete;
+
+                    Font & operator = (const Font &) = delete;
+                    Font & operator = (Font &&) = delete;
 
                 public:
                     /**
@@ -181,10 +183,11 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Font::unbind(vAtoms, DESC, &sListener); };
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 нояб. 2020 г.
@@ -30,39 +30,88 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(RadioButton, Widget)
                 // Bind
+                style::RadioButtonColors *c = &vColors[style::RADIOBUTTON_NORMAL];
+                c->sColor.bind("color", this);
+                c->sFillColor.bind("fill.color", this);
+                c->sBorderColor.bind("border.color", this);
+                c->sBorderGapColor.bind("border.gap.color", this);
+
+                c = &vColors[style::RADIOBUTTON_HOVER];
+                c->sColor.bind("hover.color", this);
+                c->sFillColor.bind("fill.hover.color", this);
+                c->sBorderColor.bind("border.hover.color", this);
+                c->sBorderGapColor.bind("border.gap.hover.color", this);
+
+                c = &vColors[style::RADIOBUTTON_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sFillColor.bind("inactive.fill.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sBorderGapColor.bind("inactive.border.gap.color", this);
+
+                c = &vColors[style::RADIOBUTTON_HOVER | style::RADIOBUTTON_INACTIVE];
+                c->sColor.bind("inactive.hover.color", this);
+                c->sFillColor.bind("inactive.fill.hover.color", this);
+                c->sBorderColor.bind("inactive.border.hover.color", this);
+                c->sBorderGapColor.bind("inactive.border.gap.hover.color", this);
+
                 sConstraints.bind("size.constraints", this);
                 sBorderSize.bind("border.size", this);
                 sBorderGapSize.bind("border.gap.size", this);
                 sCheckGapSize.bind("check.gap.size", this);
                 sCheckMinSize.bind("check.min.size", this);
                 sChecked.bind("checked", this);
-                sColor.bind("color", this);
-                sHoverColor.bind("hover.color", this);
-                sFillColor.bind("fill.color", this);
-                sFillHoverColor.bind("fill.hover.color", this);
-                sBorderColor.bind("border.color", this);
-                sBorderHoverColor.bind("border.hover.color", this);
-                sBorderGapColor.bind("border.gap.color", this);
-                sBorderGapHoverColor.bind("border.gap.hover.color", this);
+                sActive.bind("active", this);
+
                 // Configure
+                c = &vColors[style::RADIOBUTTON_NORMAL];
+                c->sColor.set("#00ccff");
+                c->sFillColor.set("#ffffff");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#cccccc");
+
+                c = &vColors[style::RADIOBUTTON_HOVER];
+                c->sColor.set("#ff8800");
+                c->sFillColor.set("#ffeeee");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#cccccc");
+
+                c = &vColors[style::RADIOBUTTON_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sFillColor.set("#888888");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#888888");
+
+                c = &vColors[style::RADIOBUTTON_HOVER | style::RADIOBUTTON_INACTIVE];
+                c->sColor.set("#cccccc");
+                c->sFillColor.set("#888888");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#888888");
+
                 sConstraints.set_all(16);
                 sBorderSize.set(1);
                 sBorderGapSize.set(1);
                 sCheckGapSize.set(2);
                 sCheckMinSize.set(4);
                 sChecked.set(false);
-                sColor.set("#00ccff");
-                sHoverColor.set("#ff8800");
-                sFillColor.set("#ffffff");
-                sFillHoverColor.set("#ffeeee");
-                sBorderColor.set("#000000");
-                sBorderHoverColor.set("#000000");
-                sBorderGapColor.set("#cccccc");
-                sBorderGapHoverColor.set("#cccccc");
+                sActive.set(true);
+
                 // Commit
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(RadioButton, "RadioButton", "root");
+
+            void RadioButtonColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sFillColor.listener(listener);
+                sBorderColor.listener(listener);
+                sBorderGapColor.listener(listener);
+            }
+
+            bool RadioButtonColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sFillColor, sBorderColor, sBorderGapColor);
+            }
         }
 
         const w_class_t RadioButton::metadata      = { "RadioButton", &Widget::metadata };
@@ -75,15 +124,13 @@ namespace lsp
             sCheckGapSize(&sProperties),
             sCheckMinSize(&sProperties),
             sChecked(&sProperties),
-            sColor(&sProperties),
-            sHoverColor(&sProperties),
-            sFillColor(&sProperties),
-            sFillHoverColor(&sProperties),
-            sBorderColor(&sProperties),
-            sBorderHoverColor(&sProperties),
-            sBorderGapColor(&sProperties),
-            sBorderGapHoverColor(&sProperties)
+            sActive(&sProperties)
         {
+            pClass          = &metadata;
+
+            for (size_t i=0; i<RBTN_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             nState          = 0;
             nBMask          = 0;
 
@@ -91,8 +138,6 @@ namespace lsp
             sArea.nTop      = 0;
             sArea.nWidth    = 0;
             sArea.nHeight   = 0;
-
-            pClass          = &metadata;
         }
 
         RadioButton::~RadioButton()
@@ -106,20 +151,45 @@ namespace lsp
                 return res;
 
             // Bind properties
+            style::RadioButtonColors *c = &vColors[style::RADIOBUTTON_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sFillColor.bind("fill.color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sBorderGapColor.bind("border.gap.color", &sStyle);
+
+            c = &vColors[style::RADIOBUTTON_HOVER];
+            c->sColor.bind("hover.color", &sStyle);
+            c->sFillColor.bind("fill.hover.color", &sStyle);
+            c->sBorderColor.bind("border.hover.color", &sStyle);
+            c->sBorderGapColor.bind("border.gap.hover.color", &sStyle);
+
+            c = &vColors[style::RADIOBUTTON_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sFillColor.bind("inactive.fill.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sBorderGapColor.bind("inactive.border.gap.color", &sStyle);
+
+            c = &vColors[style::RADIOBUTTON_HOVER | style::RADIOBUTTON_INACTIVE];
+            c->sColor.bind("inactive.hover.color", &sStyle);
+            c->sFillColor.bind("inactive.fill.hover.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.hover.color", &sStyle);
+            c->sBorderGapColor.bind("inactive.border.gap.hover.color", &sStyle);
+
             sConstraints.bind("size.constraints", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderGapSize.bind("border.gap.size", &sStyle);
             sCheckGapSize.bind("check.gap.size", &sStyle);
             sCheckMinSize.bind("check.min.size", &sStyle);
             sChecked.bind("checked", &sStyle);
-            sColor.bind("color", &sStyle);
-            sHoverColor.bind("hover.color", &sStyle);
-            sFillColor.bind("fill.color", &sStyle);
-            sFillHoverColor.bind("fill.hover.color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sBorderHoverColor.bind("border.hover.color", &sStyle);
-            sBorderGapColor.bind("border.gap.color", &sStyle);
-            sBorderGapHoverColor.bind("border.gap.hover.color", &sStyle);
+            sActive.bind("active", &sStyle);
+
+            sConstraints.bind("size.constraints", &sStyle);
+            sBorderSize.bind("border.size", &sStyle);
+            sBorderGapSize.bind("border.gap.size", &sStyle);
+            sCheckGapSize.bind("check.gap.size", &sStyle);
+            sCheckMinSize.bind("check.min.size", &sStyle);
+            sChecked.bind("checked", &sStyle);
+            sActive.bind("active", &sStyle);
 
             // Additional slots
             handler_id_t id = 0;
@@ -128,41 +198,34 @@ namespace lsp
             return (id >= 0) ? STATUS_OK : -id;
         }
 
+        style::RadioButtonColors *RadioButton::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::CHECKBOX_NORMAL : style::CHECKBOX_INACTIVE;
+            if (nState & XF_HOVER)
+                flags          |= style::CHECKBOX_HOVER;
+
+            return &vColors[flags];
+        }
+
         void RadioButton::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
 
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderGapSize.is(prop))
-                query_resize();
-            if (sCheckGapSize.is(prop))
-                query_resize();
-            if (sCheckMinSize.is(prop))
-                query_resize();
+            style::RadioButtonColors *colors = select_colors();
+            if (colors->property_changed(prop))
+                query_draw();
+
+            if (prop->is(sActive))
+                query_draw();
+
             if (sChecked.is(prop))
             {
                 nState  = lsp_setflag(nState, XF_CHECKED, sChecked.get());
                 query_draw();
             }
-            if (sColor.is(prop))
-                query_draw();
-            if (sHoverColor.is(prop))
-                query_draw();
-            if (sFillColor.is(prop))
-                query_draw();
-            if (sFillHoverColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sBorderHoverColor.is(prop))
-                query_draw();
-            if (sBorderGapColor.is(prop))
-                query_draw();
-            if (sBorderGapHoverColor.is(prop))
-                query_draw();
+
+            if (prop->one_of(sConstraints, sBorderSize, sBorderGapSize, sCheckGapSize, sCheckMinSize))
+                query_resize();
         }
 
         void RadioButton::size_request(ws::size_limit_t *r)
@@ -212,6 +275,7 @@ namespace lsp
             float cx            = sArea.nLeft - sSize.nLeft + r;
             float cy            = sArea.nTop  - sSize.nTop  + r;
             size_t state        = nState;
+            const style::RadioButtonColors *colors = select_colors();
 
             ckgap               = lsp_max(ckgap, bgap);
 
@@ -224,7 +288,7 @@ namespace lsp
             // Draw border
             if (border > 0)
             {
-                c.copy((state & XF_HOVER) ? sBorderHoverColor : sBorderColor);
+                c.copy(colors->sBorderColor);
                 c.scale_lch_luminance(bright);
                 s->fill_circle(c, cx, cy, r);
                 r                  -= border;
@@ -234,14 +298,14 @@ namespace lsp
             float frad          = r;
             if (bgap > 0)
             {
-                c.copy((state & XF_HOVER) ? sBorderGapHoverColor : sBorderGapColor);
+                c.copy(colors->sBorderGapColor);
                 c.scale_lch_luminance(bright);
                 s->fill_circle(c, cx, cy, frad);
                 frad               -= bgap;
             }
 
             // Draw fill
-            c.copy((state & XF_HOVER) ? sFillHoverColor : sFillColor);
+            c.copy(colors->sFillColor);
             c.scale_lch_luminance(bright);
             s->fill_circle(c, cx, cy, frad);
 
@@ -249,7 +313,7 @@ namespace lsp
             if (state & XF_CHECKED)
             {
                 r                  -= ckgap;
-                c.copy((state & XF_HOVER) ? sHoverColor : sColor);
+                c.copy(colors->sColor);
                 c.scale_lch_luminance(bright);
                 s->fill_circle(c, cx, cy, r);
             }

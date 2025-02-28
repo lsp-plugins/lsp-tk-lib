@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 25 сент. 2020 г.
@@ -634,12 +634,19 @@ namespace lsp
             col.scale_lch_luminance(bright);
             s->fill_rect(col, SURFMASK_NONE, 0.0f, &sAAll);
 
+            // Pass 1: Draw meter body
             for (size_t i=0, n=vVisible.size(); i<n; ++i)
             {
                 LedMeterChannel *c = vVisible.uget(i);
-
-                float mbright   = lsp_min(bright, c->brightness()->get());
+                const float mbright     = lsp_min(bright, c->brightness()->get());
                 c->draw_meter(s, angle, scaling, mbright);
+            }
+
+            // Pass 2: Draw related text and commit pending for redraw flag
+            for (size_t i=0, n=vVisible.size(); i<n; ++i)
+            {
+                LedMeterChannel *c = vVisible.uget(i);
+                float mbright   = lsp_min(bright, c->brightness()->get());
                 if (has_text)
                     c->draw_label(s, &sFont, fscaling, mbright);
                 if (has_header)

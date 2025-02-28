@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 06 июн. 2020 г.
@@ -107,6 +107,8 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
                 ind->text_shift()->add(1);
             else if (ev->nCode == ws::MCB_RIGHT)
                 ind->text_shift()->sub(1);
+            else if (ev->nCode == ws::MCB_MIDDLE)
+                ind->active()->toggle();
         }
 
         return STATUS_OK;
@@ -206,7 +208,7 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
         MTEST_ASSERT(wnd->add(grid) == STATUS_OK);
         grid->bg_color()->set_rgb(1.0f, 1.0f, 1.0f);
         grid->padding()->set(8);
-        grid->rows()->set(6);
+        grid->rows()->set(9);
         grid->columns()->set(2);
         grid->orientation()->set_horizontal();
         grid->hspacing()->set(2);
@@ -217,7 +219,7 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
             LSPString id;
             int iid = 0;
 
-            for (size_t i=0; i<2; ++i)
+            for (size_t i=0; i<3; ++i)
             {
                 // Create indicator
                 MTEST_ASSERT(id.fmt_ascii("indicator-%d", iid++));
@@ -230,7 +232,7 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
                 ind->columns()->set(16);
                 ind->text_loop()->set(true);
                 ind->text_gap()->set(4);
-                ind->modern()->set(i);
+                ind->type()->set(tk::indicator_type_t(i));
 
                 ind->text()->set_raw(
                     " !\"#$%&'()*+,-./"
@@ -253,7 +255,7 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
                 ind->text_gap()->set(4);
                 ind->text_color()->set_rgb24(0xffff00);
                 ind->text()->set_raw("2020-06-06 16:13:00");
-                ind->modern()->set(i);
+                ind->type()->set(tk::indicator_type_t(i));
 
                 // Third indicator
                 MTEST_ASSERT(id.fmt_ascii("indicator-%d", iid++));
@@ -268,7 +270,7 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
                 ind->text_gap()->set(4);
                 ind->text_color()->set_rgb24(0x00ccff);
                 ind->text()->set_raw("This is test\nof multiline text\nin the indicator.");
-                ind->modern()->set(i);
+                ind->type()->set(tk::indicator_type_t(i));
 
                 // Fourth indicator
                 MTEST_ASSERT(id.fmt_ascii("indicator-%d", iid++));
@@ -283,7 +285,7 @@ MTEST_BEGIN("tk.widgets.simple", indicator)
                 ind->text_gap()->set(4);
                 ind->text_color()->set_rgb24(0x00ffcc);
                 ind->text()->set_raw("(10+1)*2=22");
-                ind->modern()->set(i);
+                ind->type()->set(tk::indicator_type_t(i));
                 ind->dark_text()->set(false);
             }
         }

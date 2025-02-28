@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2017 г.
@@ -42,10 +42,6 @@ namespace lsp
          */
         class WidgetContainer: public Widget
         {
-            private:
-                WidgetContainer & operator = (const WidgetContainer &);
-                WidgetContainer(const WidgetContainer &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -53,8 +49,12 @@ namespace lsp
             // Construction and destruction
             public:
                 explicit WidgetContainer(Display *dpy);
+                WidgetContainer(const WidgetContainer &) = delete;
+                WidgetContainer(WidgetContainer &&) = delete;
+                virtual ~WidgetContainer() override;
 
-                virtual ~WidgetContainer();
+                WidgetContainer & operator = (const WidgetContainer &) = delete;
+                WidgetContainer & operator = (WidgetContainer &&) = delete;
 
             //---------------------------------------------------------------------------------
             // Manipulation

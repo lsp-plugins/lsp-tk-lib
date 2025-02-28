@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 14 авг. 2020 г.
@@ -243,16 +243,14 @@ namespace lsp
         void ComboGroup::property_changed(Property *prop)
         {
             WidgetContainer::property_changed(prop);
-            if (sFont.is(prop))
+
+            if (prop->one_of(sFont, sTextAdjust, sBorder, sPadding, sTextPadding, sRadius, sEmbedding, sHeading,
+                    sEmptyText, sTextRadius, sSpinSize, sSpinSpacing, sLayout, sSizeConstraints, sActive, vWidgets))
                 query_resize();
-            if (sTextAdjust.is(prop))
-                query_resize();
-            if (sColor.is(prop))
+
+            if (prop->one_of(sColor, sTextColor))
                 query_draw();
-            if (sTextColor.is(prop))
-                query_draw();
-            if (sEmptyText.is(prop))
-                query_resize();
+
             if (sOpened.is(prop))
             {
                 bool visible = sWindow.visibility()->get();
@@ -274,28 +272,7 @@ namespace lsp
                         sWindow.hide();
                 }
             }
-            if (sBorder.is(prop))
-                query_resize();
-            if (sPadding.is(prop))
-                query_resize();
-            if (sRadius.is(prop))
-                query_resize();
-            if (sTextRadius.is(prop))
-                query_resize();
-            if (sSpinSize.is(prop))
-                query_resize();
-            if (sSpinSpacing.is(prop))
-                query_resize();
-            if (sEmbedding.is(prop))
-                query_resize();
-            if (sLayout.is(prop))
-                query_resize();
-            if (sSizeConstraints.is(prop))
-                query_resize();
-            if (sHeading.is(prop))
-                query_resize();
-            if (vWidgets.is(prop))
-                query_resize();
+
             if (sSelected.is(prop))
             {
                 ListBoxItem *it = sSelected.get();
@@ -308,8 +285,6 @@ namespace lsp
                     sSelected.set(NULL);
                 query_resize();
             }
-            if (sActive.is(prop))
-                query_resize();
         }
 
         void ComboGroup::on_add_widget(void *obj, Property *prop, void *w)
@@ -383,7 +358,7 @@ namespace lsp
             alloc->rtext        = xr;
 
             // Compute padding
-            ssize_t xborder = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
+            ssize_t xborder = lsp_max(float(border), (radius-border) * M_SQRT1_2);
             padding_t pad;
 
             pad.nLeft       = (sEmbedding.left())   ? border : xborder;

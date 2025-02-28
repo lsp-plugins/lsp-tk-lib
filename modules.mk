@@ -1,6 +1,6 @@
 #
-# Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
-#           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+# Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+#           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
 #
 # This file is part of lsp-tk-lib
 #
@@ -19,61 +19,61 @@
 #
 
 # Variables that describe dependencies
-LSP_COMMON_LIB_VERSION     := 1.0.40
+LSP_COMMON_LIB_VERSION     := 1.0.41
 LSP_COMMON_LIB_NAME        := lsp-common-lib
 LSP_COMMON_LIB_TYPE        := src
 LSP_COMMON_LIB_URL_RO      := https://github.com/lsp-plugins/$(LSP_COMMON_LIB_NAME).git
 LSP_COMMON_LIB_URL_RW      := git@github.com:lsp-plugins/$(LSP_COMMON_LIB_NAME).git
 
-LSP_TEST_FW_VERSION        := 1.0.29
+LSP_TEST_FW_VERSION        := 1.0.30
 LSP_TEST_FW_NAME           := lsp-test-fw
 LSP_TEST_FW_TYPE           := src
 LSP_TEST_FW_URL_RO         := https://github.com/lsp-plugins/$(LSP_TEST_FW_NAME).git
 LSP_TEST_FW_URL_RW         := git@github.com:lsp-plugins/$(LSP_TEST_FW_NAME).git
 
-LSP_LLTL_LIB_VERSION       := 1.0.23
+LSP_LLTL_LIB_VERSION       := 1.0.24
 LSP_LLTL_LIB_NAME          := lsp-lltl-lib
 LSP_LLTL_LIB_TYPE          := src
 LSP_LLTL_LIB_URL_RO        := https://github.com/lsp-plugins/$(LSP_LLTL_LIB_NAME).git
 LSP_LLTL_LIB_URL_RW        := git@github.com:lsp-plugins/$(LSP_LLTL_LIB_NAME).git
 
-LSP_RUNTIME_LIB_VERSION    := 1.0.26
+LSP_RUNTIME_LIB_VERSION    := 1.0.27
 LSP_RUNTIME_LIB_NAME       := lsp-runtime-lib
 LSP_RUNTIME_LIB_TYPE       := src
 LSP_RUNTIME_LIB_URL_RO     := https://github.com/lsp-plugins/$(LSP_RUNTIME_LIB_NAME).git
 LSP_RUNTIME_LIB_URL_RW     := git@github.com:lsp-plugins/$(LSP_RUNTIME_LIB_NAME).git
 
-LSP_R3D_IFACE_VERSION      := 1.0.22
+LSP_R3D_IFACE_VERSION      := 1.0.23
 LSP_R3D_IFACE_NAME         := lsp-r3d-iface
 LSP_R3D_IFACE_TYPE         := src
 LSP_R3D_IFACE_URL_RO       := https://github.com/lsp-plugins/$(LSP_R3D_IFACE_NAME).git
 LSP_R3D_IFACE_URL_RW       := git@github.com:lsp-plugins/$(LSP_R3D_IFACE_NAME).git
 
-LSP_R3D_BASE_LIB_VERSION   := 1.0.22
+LSP_R3D_BASE_LIB_VERSION   := 1.0.23
 LSP_R3D_BASE_LIB_NAME      := lsp-r3d-base-lib
 LSP_R3D_BASE_LIB_TYPE      := src
 LSP_R3D_BASE_LIB_URL_RO    := https://github.com/lsp-plugins/$(LSP_R3D_BASE_LIB_NAME).git
 LSP_R3D_BASE_LIB_URL_RW    := git@github.com:lsp-plugins/$(LSP_R3D_BASE_LIB_NAME).git
 
-LSP_R3D_GLX_LIB_VERSION    := 1.0.22
+LSP_R3D_GLX_LIB_VERSION    := 1.0.23
 LSP_R3D_GLX_LIB_NAME       := lsp-r3d-glx-lib
 LSP_R3D_GLX_LIB_TYPE       := src
 LSP_R3D_GLX_LIB_URL_RO     := https://github.com/lsp-plugins/$(LSP_R3D_GLX_LIB_NAME).git
 LSP_R3D_GLX_LIB_URL_RW     := git@github.com:lsp-plugins/$(LSP_R3D_GLX_LIB_NAME).git
 
-LSP_R3D_WGL_LIB_VERSION    := 1.0.17
+LSP_R3D_WGL_LIB_VERSION    := 1.0.18
 LSP_R3D_WGL_LIB_NAME       := lsp-r3d-wgl-lib
 LSP_R3D_WGL_LIB_TYPE       := src
 LSP_R3D_WGL_LIB_URL_RO     := https://github.com/lsp-plugins/$(LSP_R3D_WGL_LIB_NAME).git
 LSP_R3D_WGL_LIB_URL_RW     := git@github.com:lsp-plugins/$(LSP_R3D_WGL_LIB_NAME).git
 
-LSP_WS_LIB_VERSION         := 1.0.26
+LSP_WS_LIB_VERSION         := 1.0.27
 LSP_WS_LIB_NAME            := lsp-ws-lib
 LSP_WS_LIB_TYPE            := src
 LSP_WS_LIB_URL_RO          := https://github.com/lsp-plugins/$(LSP_WS_LIB_NAME).git
 LSP_WS_LIB_URL_RW          := git@github.com:lsp-plugins/$(LSP_WS_LIB_NAME).git
 
-LSP_DSP_LIB_VERSION        := 1.0.28
+LSP_DSP_LIB_VERSION        := 1.0.29
 LSP_DSP_LIB_NAME           := lsp-dsp-lib
 LSP_DSP_LIB_TYPE           := src
 LSP_DSP_LIB_URL_RO         := https://github.com/lsp-plugins/$(LSP_DSP_LIB_NAME).git
@@ -84,20 +84,24 @@ LIBCAIRO_VERSION           := system
 LIBCAIRO_NAME              := cairo
 LIBCAIRO_TYPE              := pkg
 
-LIBDL_VERSION              := system
-LIBDL_NAME                 := libdl
-LIBDL_TYPE                 := opt
-LIBDL_LDFLAGS              := -ldl
-
 LIBD2D1_VERSION            := system
 LIBD2D1_NAME               := libd2d1
 LIBD2D1_TYPE               := opt
 LIBD2D1_LDFLAGS            := -ld2d1
 
+LIBDL_VERSION              := system
+LIBDL_NAME                 := libdl
+LIBDL_TYPE                 := opt
+LIBDL_LDFLAGS              := -ldl
+
 LIBDWRITE_VERSION          := system
 LIBDWRITE_NAME             := libdwrite
 LIBDWRITE_TYPE             := opt
 LIBDWRITE_LDFLAGS          := -ldwrite
+
+LIBFONTCONFIG_VERSION      := system
+LIBFONTCONFIG_NAME         := fontconfig
+LIBFONTCONFIG_TYPE         := pkg
 
 LIBFREETYPE_VERSION        := system
 LIBFREETYPE_NAME           := freetype2
@@ -133,7 +137,7 @@ LIBOLE_TYPE                := opt
 LIBOLE_LDFLAGS             := -lole32
 
 LIBOPENGL32_VERSION        := system
-LIBOPENGL32_NAME           := libole
+LIBOPENGL32_NAME           := libopengl32
 LIBOPENGL32_TYPE           := opt
 LIBOPENGL32_LDFLAGS        := -lopengl32
 

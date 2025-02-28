@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 5 нояб. 2017 г.
@@ -54,14 +54,14 @@ namespace lsp
                 lsp::Color          sColor;             // Color holder
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit Color(prop::Listener *listener = NULL);
                 Color(const Color &) = delete;
                 Color(Color &&) = delete;
-                virtual ~Color();
+                virtual ~Color() override;
 
                 Color & operator = (const Color &) = delete;
                 Color & operator = (Color &&) = delete;
@@ -250,12 +250,12 @@ namespace lsp
              */
             class Color: public tk::Color
             {
-                private:
-                    Color & operator = (const Color &);
-                    Color(const Color &);
-
                 public:
                     explicit inline Color(prop::Listener *listener = NULL): tk::Color(listener) {};
+                    Color(const Color &) = delete;
+                    Color(Color &&) = delete;
+                    Color & operator = (const Color &) = delete;
+                    Color & operator = (Color &&) = delete;
 
                 public:
                     /**
@@ -272,9 +272,10 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_COLOR_H_ */

@@ -59,6 +59,7 @@
 #include <lsp-plug.in/tk/prop/enum/BorderStyle.h>
 #include <lsp-plug.in/tk/prop/enum/FileDialogMode.h>
 #include <lsp-plug.in/tk/prop/enum/GraphFrameFunction.h>
+#include <lsp-plug.in/tk/prop/enum/IndicatorType.h>
 #include <lsp-plug.in/tk/prop/enum/MenuItemType.h>
 #include <lsp-plug.in/tk/prop/enum/WindowPolicy.h>
 #include <lsp-plug.in/tk/prop/enum/Pointer.h>
@@ -161,7 +162,6 @@
 #include <lsp-plug.in/tk/widgets/simple/RadioButton.h>
 #include <lsp-plug.in/tk/widgets/simple/ScrollBar.h>
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
-#include <lsp-plug.in/tk/widgets/simple/Switch.h>
 #include <lsp-plug.in/tk/widgets/simple/TabItem.h>
 #include <lsp-plug.in/tk/widgets/simple/Void.h>
 
@@ -191,7 +191,6 @@
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeter.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeterChannel.h>
-#include <lsp-plug.in/tk/widgets/specific/RackEars.h>
 
 // 3D rendering
 #include <lsp-plug.in/tk/widgets/3d/Area3D.h>

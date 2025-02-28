@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 нояб. 2017 г.
@@ -31,11 +31,20 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Fader, Widget)
                 // Init
-                sBtnColor.bind("button.color", this);
-                sBtnBorderColor.bind("button.border.color", this);
-                sScaleColor.bind("scale.color", this);
-                sScaleBorderColor.bind("scale.border.color", this);
-                sBalanceColor.bind("balance.color", this);
+                FaderColors *c = &vColors[FADER_NORMAL];
+                c->sBtnColor.bind("button.color", this);
+                c->sBtnBorderColor.bind("button.border.color", this);
+                c->sScaleColor.bind("scale.color", this);
+                c->sScaleBorderColor.bind("scale.border.color", this);
+                c->sBalanceColor.bind("balance.color", this);
+
+                c = &vColors[FADER_INACTIVE];
+                c->sBtnColor.bind("inactive.button.color", this);
+                c->sBtnBorderColor.bind("inactive.button.border.color", this);
+                c->sScaleColor.bind("inactive.scale.color", this);
+                c->sScaleBorderColor.bind("inactive.scale.border.color", this);
+                c->sBalanceColor.bind("inactive.balance.color", this);
+
                 sSizeRange.bind("size", this);
                 sValue.bind("value", this);
                 sStep.bind("step", this);
@@ -54,12 +63,23 @@ namespace lsp
                 sScaleBrightness.bind("scale.brightness", this);
                 sBalanceColorCustom.bind("balance.color.custom", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
+                sActive.bind("active", this);
+
                 // Configure
-                sBtnColor.set("#cccccc");
-                sBtnBorderColor.set("#cccccc");
-                sScaleColor.set("#000000");
-                sScaleBorderColor.set("#ffffff");
-                sBalanceColor.set("#000000");
+                c = &vColors[FADER_NORMAL];
+                c->sBtnColor.set("#cccccc");
+                c->sBtnBorderColor.set("#cccccc");
+                c->sScaleColor.set("#000000");
+                c->sScaleBorderColor.set("#ffffff");
+                c->sBalanceColor.set("#000000");
+
+                c = &vColors[FADER_INACTIVE];
+                c->sBtnColor.set("#888888");
+                c->sBtnBorderColor.set("#888888");
+                c->sScaleColor.set("#000000");
+                c->sScaleBorderColor.set("#cccccc");
+                c->sBalanceColor.set("#000000");
+
                 sSizeRange.set(64, -1);
                 sValue.set(0.5f);
                 sStep.set(0.01f);
@@ -78,19 +98,29 @@ namespace lsp
                 sScaleBrightness.set(0.75f);
                 sBalanceColorCustom.set(false);
                 sInvertMouseVScroll.set(false);
+                sActive.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Fader, "Fader", "root");
+
+            void FaderColors::listener(tk::prop::Listener *listener)
+            {
+                sBtnColor.listener(listener);
+                sBtnBorderColor.listener(listener);
+                sScaleColor.listener(listener);
+                sScaleBorderColor.listener(listener);
+                sBalanceColor.listener(listener);
+            }
+
+            bool FaderColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sBtnColor, sBtnBorderColor, sScaleColor, sScaleBorderColor, sBalanceColor);
+            }
         }
 
         const w_class_t Fader::metadata         = { "Fader", &Widget::metadata };
         
         Fader::Fader(Display *dpy):
             Widget(dpy),
-            sBtnColor(&sProperties),
-            sBtnBorderColor(&sProperties),
-            sScaleColor(&sProperties),
-            sScaleBorderColor(&sProperties),
-            sBalanceColor(&sProperties),
             sSizeRange(&sProperties),
             sValue(&sProperties),
             sStep(&sProperties),
@@ -108,7 +138,8 @@ namespace lsp
             sBalance(&sProperties),
             sScaleBrightness(&sProperties),
             sBalanceColorCustom(&sProperties),
-            sInvertMouseVScroll(&sProperties)
+            sInvertMouseVScroll(&sProperties),
+            sActive(&sProperties)
         {
             nLastV          = 0;
             nButtons        = 0;
@@ -126,6 +157,9 @@ namespace lsp
             sHole.nWidth    = 0;
             sHole.nHeight   = 0;
 
+            for (size_t i=0; i<FADER_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             pClass          = &metadata;
         }
         
@@ -141,11 +175,20 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
-            sBtnColor.bind("button.color", &sStyle);
-            sBtnBorderColor.bind("button.border.color", &sStyle);
-            sScaleColor.bind("scale.color", &sStyle);
-            sScaleBorderColor.bind("scale.border.color", &sStyle);
-            sBalanceColor.bind("balance.color", &sStyle);
+            style::FaderColors *c = &vColors[style::FADER_NORMAL];
+            c->sBtnColor.bind("button.color", &sStyle);
+            c->sBtnBorderColor.bind("button.border.color", &sStyle);
+            c->sScaleColor.bind("scale.color", &sStyle);
+            c->sScaleBorderColor.bind("scale.border.color", &sStyle);
+            c->sBalanceColor.bind("balance.color", &sStyle);
+
+            c = &vColors[style::FADER_INACTIVE];
+            c->sBtnColor.bind("inactive.button.color", &sStyle);
+            c->sBtnBorderColor.bind("inactive.button.border.color", &sStyle);
+            c->sScaleColor.bind("inactive.scale.color", &sStyle);
+            c->sScaleBorderColor.bind("inactive.scale.border.color", &sStyle);
+            c->sBalanceColor.bind("inactive.balance.color", &sStyle);
+
             sSizeRange.bind("size", &sStyle);
             sValue.bind("value", &sStyle);
             sStep.bind("step", &sStyle);
@@ -164,6 +207,7 @@ namespace lsp
             sScaleBrightness.bind("scale.brightness", &sStyle);
             sBalanceColorCustom.bind("balance.color.custom", &sStyle);
             sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
+            sActive.bind("active", &sStyle);
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -175,49 +219,32 @@ namespace lsp
             return STATUS_OK;
         }
 
+        style::FaderColors *Fader::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::FADER_NORMAL : style::FADER_INACTIVE;
+            return &vColors[flags];
+        }
+
         void Fader::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
 
-            if (sBtnColor.is(prop))
+            // Self properties
+            style::FaderColors *cols = select_colors();
+            if (cols->property_changed(prop))
                 query_draw();
-            if (sBtnBorderColor.is(prop))
+
+            if (sActive.is(prop))
                 query_draw();
-            if (sScaleColor.is(prop))
-                query_draw();
-            if (sScaleBorderColor.is(prop))
-                query_draw();
-            if (sBalanceColor.is(prop))
-                query_draw();
-            if (sSizeRange.is(prop))
-                query_resize();
+
             if (sValue.is(prop))
                 sync_button_pos();
-            if (sBtnWidth.is(prop))
+
+            if (prop->one_of(sSizeRange, sBtnWidth, sBtnAspect, sAngle, sScaleWidth,
+                sScaleBorder, sScaleRadius, sBtnBorder, sBtnRadius))
                 query_resize();
-            if (sBtnAspect.is(prop))
-                query_resize();
-            if (sAngle.is(prop))
-                query_resize();
-            if (sScaleWidth.is(prop))
-                query_resize();
-            if (sScaleBorder.is(prop))
-                query_resize();
-            if (sScaleRadius.is(prop))
-                query_resize();
-            if (sScaleGradient.is(prop))
-                query_draw();
-            if (sBtnBorder.is(prop))
-                query_resize();
-            if (sBtnRadius.is(prop))
-                query_resize();
-            if (sBtnGradient.is(prop))
-                query_draw();
-            if (sBalance.is(prop))
-                query_draw();
-            if (sScaleBrightness.is(prop))
-                query_draw();
-            if (sBalanceColorCustom.is(prop))
+
+            if (prop->one_of(sScaleGradient, sBtnGradient, sBalance, sScaleBrightness, sBalanceColorCustom))
                 query_draw();
         }
 
@@ -533,23 +560,24 @@ namespace lsp
             ssize_t bradius     = (sBtnRadius.get() > 0) ? lsp_max(1, scaling * sBtnRadius.get()) : 0.0f;
             size_t angle        = sAngle.get();
             float bright        = sBrightness.get();
+            const style::FaderColors *colors = select_colors();
 
             // Prepare palette
             lsp::Color bg_color;
-            lsp::Color button(sBtnColor);
+            lsp::Color button(colors->sBtnColor);
             lsp::Color scol, sdcol;
-            lsp::Color bborder(sBtnBorderColor);
-            lsp::Color sborder(sScaleBorderColor);
+            lsp::Color bborder(colors->sBtnBorderColor);
+            lsp::Color sborder(colors->sScaleBorderColor);
 
             if (sBalanceColorCustom.get())
             {
-                scol.copy(sBalanceColor);
-                sdcol.copy(sScaleColor);
+                scol.copy(colors->sBalanceColor);
+                sdcol.copy(colors->sScaleColor);
             }
             else
             {
-                scol.copy(sScaleColor);
-                sdcol.copy(sScaleColor);
+                scol.copy(colors->sScaleColor);
+                sdcol.copy(colors->sScaleColor);
                 sdcol.scale_hsl_lightness(sScaleBrightness.get());
             }
 
@@ -579,8 +607,8 @@ namespace lsp
                     sborder.scale_lch_luminance(bright);
 
                     g = s->radial_gradient(0, sSize.nHeight, scaling, sSize.nHeight, delta);
-                    g->add_color(0.0, sborder);
-                    g->add_color(1.0, 0.5 * sborder.red(), 0.5 *  sborder.green(), 0.5 * sborder.blue());
+                    g->set_start(sborder);
+                    g->set_stop(0.5 * sborder.red(), 0.5 *  sborder.green(), 0.5 * sborder.blue());
                     s->fill_rect(g, SURFMASK_ALL_CORNER, sradius, &h);
                     delete g;
 
@@ -655,9 +683,9 @@ namespace lsp
                     // Create gradient
                     g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
                     bborder.lightness(1.0f);
-                    g->add_color(0.0, bborder.red(), bborder.green(), bborder.blue());
+                    g->set_start(bborder.red(), bborder.green(), bborder.blue());
                     bborder.lightness(xb * l);
-                    g->add_color(1.0, bborder.red(), bborder.green(), bborder.blue());
+                    g->set_stop(bborder.red(), bborder.green(), bborder.blue());
                     s->fill_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
                     delete g;
 
@@ -672,9 +700,9 @@ namespace lsp
                 // Draw button face
                 g = s->radial_gradient(h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, h.nLeft + h.nWidth + bchamfer, h.nTop - bchamfer, delta);
                 button.lightness(1.0f);
-                g->add_color(0.0, button.red(), button.green(), button.blue());
+                g->set_start(button.red(), button.green(), button.blue());
                 button.lightness(xb);
-                g->add_color(1.0, button.red(), button.green(), button.blue());
+                g->set_stop(button.red(), button.green(), button.blue());
                 s->fill_rect(g, SURFMASK_ALL_CORNER, bradius, &h);
                 delete g;
             }

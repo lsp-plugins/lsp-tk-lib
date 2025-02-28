@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 июн. 2021 г.
@@ -35,15 +35,15 @@ namespace lsp
          */
         class TextAdjust: public Enum
         {
-            private:
-                TextAdjust & operator = (const TextAdjust &);
-                TextAdjust(const TextAdjust &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit TextAdjust(prop::Listener *listener = NULL): Enum(ENUM, TA_NONE, listener) {};
+                TextAdjust(const TextAdjust &) = delete;
+                TextAdjust(TextAdjust &&) = delete;
+                TextAdjust & operator = (const TextAdjust &) = delete;
+                TextAdjust & operator = (TextAdjust &&) = delete;
 
             public:
                 inline text_adjust_t        get() const     { return text_adjust_t(nValue); }
@@ -67,12 +67,12 @@ namespace lsp
         {
             class TextAdjust: public tk::TextAdjust
             {
-                private:
-                    TextAdjust & operator = (const TextAdjust &);
-                    TextAdjust(const TextAdjust &);
-
                 public:
                     explicit TextAdjust(prop::Listener *listener = NULL): tk::TextAdjust(listener) {};
+                    TextAdjust(const TextAdjust &) = delete;
+                    TextAdjust(TextAdjust &&) = delete;
+                    TextAdjust & operator = (const TextAdjust &) = delete;
+                    TextAdjust & operator = (TextAdjust &&) = delete;
 
                 public:
                     /**
@@ -89,11 +89,10 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
-    }
-}
 
-
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_ENUM_TEXTADJUST_H_ */

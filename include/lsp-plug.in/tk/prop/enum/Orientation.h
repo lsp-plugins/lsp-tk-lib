@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 мая 2020 г.
@@ -32,15 +32,15 @@ namespace lsp
     {
         class Orientation: public Enum
         {
-            private:
-                Orientation & operator = (const Orientation &);
-                Orientation(const Orientation &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit Orientation(prop::Listener *listener = NULL): Enum(ENUM, O_HORIZONTAL, listener) {};
+                Orientation(const Orientation &) = delete;
+                Orientation(Orientation &&) = delete;
+                Orientation & operator = (const Orientation &) = delete;
+                Orientation & operator = (Orientation &&) = delete;
 
             public:
                 inline orientation_t        get() const                 { return orientation_t(nValue);         }
@@ -56,12 +56,12 @@ namespace lsp
         {
             class Orientation: public tk::Orientation
             {
-                private:
-                    Orientation & operator = (const Orientation &);
-                    Orientation(const Orientation &);
-
                 public:
                     explicit Orientation(prop::Listener *listener = NULL): tk::Orientation(listener) {};
+                    Orientation(const Orientation &) = delete;
+                    Orientation(Orientation &&) = delete;
+                    Orientation & operator = (const Orientation &) = delete;
+                    Orientation & operator = (Orientation &&) = delete;
 
                 public:
                     /**
@@ -78,7 +78,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

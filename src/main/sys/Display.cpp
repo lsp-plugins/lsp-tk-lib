@@ -293,11 +293,6 @@ namespace lsp
                 pDisplay->quit_main();
         }
 
-        ws::ISurface *Display::create_surface(size_t width, size_t height)
-        {
-            return (pDisplay != NULL) ? pDisplay->create_surface(width, height) : NULL;
-        }
-
         void Display::sync()
         {
             if (pDisplay != NULL)
@@ -427,6 +422,11 @@ namespace lsp
         status_t Display::set_clipboard(size_t id, ws::IDataSource *src)
         {
             return pDisplay->set_clipboard(id, src);
+        }
+
+        bool Display::drag_pending()
+        {
+            return pDisplay->drag_pending();
         }
 
         status_t Display::reject_drag()

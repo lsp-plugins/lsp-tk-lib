@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 окт. 2020 г.
@@ -44,7 +44,7 @@ namespace lsp
                 explicit PathPattern(prop::Listener *listener = NULL);
                 PathPattern(const PathPattern &) = delete;
                 PathPattern(PathPattern &&) = delete;
-                virtual ~PathPattern();
+                virtual ~PathPattern() override;
 
                 PathPattern & operator = (const PathPattern &) = delete;
                 PathPattern & operator = (PathPattern &&);
@@ -79,13 +79,15 @@ namespace lsp
         {
             class PathPattern: public tk::PathPattern
             {
-                private:
-                    PathPattern & operator = (const PathPattern &);
-                    PathPattern(const PathPattern &);
-
                 public:
                     explicit PathPattern(prop::Listener *listener = NULL): tk::PathPattern(listener) {};
+                    PathPattern(const PathPattern &) = delete;
+                    PathPattern(PathPattern &&) = delete;
+
+                    PathPattern & operator = (const PathPattern &) = delete;
+                    PathPattern & operator = (PathPattern &&);
             };
+
         } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */

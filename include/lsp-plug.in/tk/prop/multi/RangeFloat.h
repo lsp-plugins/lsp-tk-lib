@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 4 июн. 2020 г.
@@ -121,12 +121,13 @@ namespace lsp
              */
             class RangeFloat: public tk::RangeFloat
             {
-                private:
-                    RangeFloat & operator = (const RangeFloat &);
-                    RangeFloat(const RangeFloat &);
-
                 public:
                     explicit RangeFloat(prop::Listener *listener = NULL): tk::RangeFloat(listener) {};
+                    RangeFloat(const RangeFloat &) = delete;
+                    RangeFloat(RangeFloat &&) = delete;
+
+                    RangeFloat & operator = (const RangeFloat &) = delete;
+                    RangeFloat & operator = (RangeFloat &&) = delete;
 
                 public:
                     bool                lock_range(bool lock = true);
@@ -151,10 +152,11 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::RangeFloat::unbind(vAtoms, DESC, &sListener); };
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 
 

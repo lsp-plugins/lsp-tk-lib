@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 нояб. 2020 г.
@@ -30,6 +30,30 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(CheckBox, Widget)
                 // Bind
+                CheckBoxColors *c = &vColors[CHECKBOX_NORMAL];
+                c->sColor.bind("color", this);
+                c->sFillColor.bind("fill.color", this);
+                c->sBorderColor.bind("border.color", this);
+                c->sBorderGapColor.bind("border.gap.color", this);
+
+                c = &vColors[CHECKBOX_HOVER];
+                c->sColor.bind("hover.color", this);
+                c->sFillColor.bind("fill.hover.color", this);
+                c->sBorderColor.bind("border.hover.color", this);
+                c->sBorderGapColor.bind("border.gap.hover.color", this);
+
+                c = &vColors[CHECKBOX_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sFillColor.bind("inactive.fill.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sBorderGapColor.bind("inactive.border.gap.color", this);
+
+                c = &vColors[CHECKBOX_HOVER | CHECKBOX_INACTIVE];
+                c->sColor.bind("inactive.hover.color", this);
+                c->sFillColor.bind("inactive.fill.hover.color", this);
+                c->sBorderColor.bind("inactive.border.hover.color", this);
+                c->sBorderGapColor.bind("inactive.border.gap.hover.color", this);
+
                 sConstraints.bind("size.constraints", this);
                 sBorderSize.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
@@ -38,15 +62,33 @@ namespace lsp
                 sCheckGapSize.bind("check.gap.size", this);
                 sCheckMinSize.bind("check.min.size", this);
                 sChecked.bind("checked", this);
-                sColor.bind("color", this);
-                sHoverColor.bind("hover.color", this);
-                sFillColor.bind("fill.color", this);
-                sFillHoverColor.bind("fill.hover.color", this);
-                sBorderColor.bind("border.color", this);
-                sBorderHoverColor.bind("border.hover.color", this);
-                sBorderGapColor.bind("border.gap.color", this);
-                sBorderGapHoverColor.bind("border.gap.hover.color", this);
+                sActive.bind("active", this);
+
                 // Configure
+                c = &vColors[CHECKBOX_NORMAL];
+                c->sColor.set("#00ccff");
+                c->sFillColor.set("#ffffff");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#cccccc");
+
+                c = &vColors[CHECKBOX_HOVER];
+                c->sColor.set("#ff8800");
+                c->sFillColor.set("#ffeeee");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#cccccc");
+
+                c = &vColors[CHECKBOX_INACTIVE];
+                c->sColor.set("#888888");
+                c->sFillColor.set("#cccccc");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#cccccc");
+
+                c = &vColors[CHECKBOX_HOVER | CHECKBOX_INACTIVE];
+                c->sColor.set("#ff8888");
+                c->sFillColor.set("#ffcccc");
+                c->sBorderColor.set("#000000");
+                c->sBorderGapColor.set("#cccccc");
+
                 sConstraints.set_all(16);
                 sBorderSize.set(1);
                 sBorderRadius.set(4);
@@ -54,18 +96,25 @@ namespace lsp
                 sCheckGapSize.set(2);
                 sCheckMinSize.set(4);
                 sChecked.set(false);
-                sColor.set("#00ccff");
-                sHoverColor.set("#ff8800");
-                sFillColor.set("#ffffff");
-                sFillHoverColor.set("#ffeeee");
-                sBorderColor.set("#000000");
-                sBorderHoverColor.set("#000000");
-                sBorderGapColor.set("#cccccc");
-                sBorderGapHoverColor.set("#cccccc");
+                sActive.set(true);
+
                 // Commit
                 sConstraints.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(CheckBox, "CheckBox", "root");
+
+            void CheckBoxColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sFillColor.listener(listener);
+                sBorderColor.listener(listener);
+                sBorderGapColor.listener(listener);
+            }
+
+            bool CheckBoxColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sFillColor, sBorderColor, sBorderGapColor);
+            }
         }
 
         const w_class_t CheckBox::metadata      = { "CheckBox", &Widget::metadata };
@@ -80,14 +129,7 @@ namespace lsp
             sCheckGapSize(&sProperties),
             sCheckMinSize(&sProperties),
             sChecked(&sProperties),
-            sColor(&sProperties),
-            sHoverColor(&sProperties),
-            sFillColor(&sProperties),
-            sFillHoverColor(&sProperties),
-            sBorderColor(&sProperties),
-            sBorderHoverColor(&sProperties),
-            sBorderGapColor(&sProperties),
-            sBorderGapHoverColor(&sProperties)
+            sActive(&sProperties)
         {
             nRadius         = 0;
             nState          = 0;
@@ -97,6 +139,9 @@ namespace lsp
             sArea.nTop      = 0;
             sArea.nWidth    = 0;
             sArea.nHeight   = 0;
+
+            for (size_t i=0; i<CHK_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
 
             pClass          = &metadata;
         }
@@ -112,6 +157,30 @@ namespace lsp
                 return res;
 
             // Bind properties
+            style::CheckBoxColors *c = &vColors[style::CHECKBOX_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sFillColor.bind("fill.color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sBorderGapColor.bind("border.gap.color", &sStyle);
+
+            c = &vColors[style::CHECKBOX_HOVER];
+            c->sColor.bind("hover.color", &sStyle);
+            c->sFillColor.bind("fill.hover.color", &sStyle);
+            c->sBorderColor.bind("border.hover.color", &sStyle);
+            c->sBorderGapColor.bind("border.gap.hover.color", &sStyle);
+
+            c = &vColors[style::CHECKBOX_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sFillColor.bind("inactive.fill.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sBorderGapColor.bind("inactive.border.gap.color", &sStyle);
+
+            c = &vColors[style::CHECKBOX_HOVER | style::CHECKBOX_INACTIVE];
+            c->sColor.bind("inactive.hover.color", &sStyle);
+            c->sFillColor.bind("inactive.fill.hover.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.hover.color", &sStyle);
+            c->sBorderGapColor.bind("inactive.border.gap.hover.color", &sStyle);
+
             sConstraints.bind("size.constraints", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
@@ -120,14 +189,7 @@ namespace lsp
             sCheckGapSize.bind("check.gap.size", &sStyle);
             sCheckMinSize.bind("check.min.size", &sStyle);
             sChecked.bind("checked", &sStyle);
-            sColor.bind("color", &sStyle);
-            sHoverColor.bind("hover.color", &sStyle);
-            sFillColor.bind("fill.color", &sStyle);
-            sFillHoverColor.bind("fill.hover.color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sBorderHoverColor.bind("border.hover.color", &sStyle);
-            sBorderGapColor.bind("border.gap.color", &sStyle);
-            sBorderGapHoverColor.bind("border.gap.hover.color", &sStyle);
+            sActive.bind("active", &sStyle);
 
             // Additional slots
             handler_id_t id = 0;
@@ -136,45 +198,34 @@ namespace lsp
             return (id >= 0) ? STATUS_OK : -id;
         }
 
+        style::CheckBoxColors *CheckBox::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::CHECKBOX_NORMAL : style::CHECKBOX_INACTIVE;
+            if (nState & XF_HOVER)
+                flags          |= style::CHECKBOX_HOVER;
+
+            return &vColors[flags];
+        }
+
         void CheckBox::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
 
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sBorderSize.is(prop))
-                query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sBorderGapSize.is(prop))
-                query_resize();
-            if (sCheckRadius.is(prop))
-                query_resize();
-            if (sCheckGapSize.is(prop))
-                query_resize();
-            if (sCheckMinSize.is(prop))
+            style::CheckBoxColors *cols = select_colors();
+            if (cols->property_changed(prop))
+                query_draw();
+
+            if (prop->is(sActive))
+                query_draw();
+
+            if (prop->one_of(sConstraints, sBorderSize, sBorderRadius,
+                sBorderGapSize, sCheckRadius, sCheckGapSize, sCheckMinSize))
                 query_resize();
             if (sChecked.is(prop))
             {
                 nState  = lsp_setflag(nState, XF_CHECKED, sChecked.get());
                 query_draw();
             }
-            if (sColor.is(prop))
-                query_draw();
-            if (sHoverColor.is(prop))
-                query_draw();
-            if (sFillColor.is(prop))
-                query_draw();
-            if (sFillHoverColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sBorderHoverColor.is(prop))
-                query_draw();
-            if (sBorderGapColor.is(prop))
-                query_draw();
-            if (sBorderGapHoverColor.is(prop))
-                query_draw();
         }
 
         void CheckBox::size_request(ws::size_limit_t *r)
@@ -228,6 +279,7 @@ namespace lsp
             ssize_t bgap        = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
             ssize_t irad        = (sCheckRadius.get() > 0) ? lsp_max(1.0f, sCheckRadius.get() * scaling) : 0;
             ssize_t ckgap       = (sCheckGapSize.get() > 0) ? lsp_max(1.0f, sCheckGapSize.get() * scaling) : 0;
+            const style::CheckBoxColors *colors = select_colors();
 
             ssize_t brad        = nRadius;
             size_t state        = nState;
@@ -246,7 +298,7 @@ namespace lsp
             // Draw border
             if (border > 0)
             {
-                c.copy((state & XF_HOVER) ? sBorderHoverColor : sBorderColor);
+                c.copy(colors->sBorderColor);
                 c.scale_lch_luminance(bright);
                 s->fill_rect(c, SURFMASK_ALL_CORNER, brad, &xr);
 
@@ -262,7 +314,7 @@ namespace lsp
             ssize_t frad        = brad;
             if (bgap > 0)
             {
-                c.copy((state & XF_HOVER) ? sBorderGapHoverColor : sBorderGapColor);
+                c.copy(colors->sBorderGapColor);
                 c.scale_lch_luminance(bright);
                 s->fill_rect(c, SURFMASK_ALL_CORNER, frad, &fr);
 
@@ -274,7 +326,7 @@ namespace lsp
             }
 
             // Draw fill
-            c.copy((state & XF_HOVER) ? sFillHoverColor : sFillColor);
+            c.copy(colors->sFillColor);
             c.scale_lch_luminance(bright);
             s->fill_rect(c, SURFMASK_ALL_CORNER, frad, &fr);
 
@@ -287,7 +339,7 @@ namespace lsp
                 xr.nHeight         -= ckgap * 2;
                 brad                = lsp_max(irad, brad - ckgap);
 
-                c.copy((state & XF_HOVER) ? sHoverColor : sColor);
+                c.copy(colors->sColor);
                 c.scale_lch_luminance(bright);
                 s->fill_rect(c, SURFMASK_ALL_CORNER, brad, &xr);
             }

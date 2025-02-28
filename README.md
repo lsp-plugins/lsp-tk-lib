@@ -76,7 +76,6 @@ The full list of provided widgets:
   * RadioButton - rounded single on/off toggle.
   * ScrollBar - single scroll bar.
   * Separator - separator widget to visually separate space allocated in widget containers.
-  * Switch - an analog-looking on/off toggle.
   * Void - void widget which can be used for filling empty area.
 * Specifific widgets
   * AudioChannel - single audio channel oscillogram.
@@ -85,7 +84,6 @@ The full list of provided widgets:
   * Fraction - music fraction with numerator and denominator.
   * LedMeter - led level/peak meter with multiple channels.
   * LedMeterChannel - single-channel level/peak meter.
-  * RackEars - rack ears of the rack-looking device.
 
 ## Styling system
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 14 июн. 2020 г.
@@ -32,15 +32,15 @@ namespace lsp
     {
         class MenuItemType: public Enum
         {
-            private:
-                MenuItemType & operator = (const MenuItemType &);
-                MenuItemType(const MenuItemType &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit MenuItemType(prop::Listener *listener = NULL): Enum(ENUM, MI_NORMAL, listener) {};
+                MenuItemType(const MenuItemType &) = delete;
+                MenuItemType(MenuItemType &&) = delete;
+                MenuItemType & operator = (const MenuItemType &) = delete;
+                MenuItemType & operator = (MenuItemType &&) = delete;
 
             public:
                 inline menu_item_type_t     get() const                 { return menu_item_type_t(nValue);          }
@@ -61,12 +61,12 @@ namespace lsp
         {
             class MenuItemType: public tk::MenuItemType
             {
-                private:
-                    MenuItemType & operator = (const MenuItemType &);
-                    MenuItemType(const MenuItemType &);
-
                 public:
                     explicit MenuItemType(prop::Listener *listener = NULL): tk::MenuItemType(listener) {};
+                    MenuItemType(const MenuItemType &) = delete;
+                    MenuItemType(MenuItemType &&) = delete;
+                    MenuItemType & operator = (const MenuItemType &) = delete;
+                    MenuItemType & operator = (MenuItemType &&) = delete;
 
                 public:
                     /**
@@ -83,7 +83,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

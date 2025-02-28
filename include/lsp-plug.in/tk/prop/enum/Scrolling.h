@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 мая 2020 г.
@@ -32,15 +32,15 @@ namespace lsp
     {
         class Scrolling: public Enum
         {
-            private:
-                Scrolling & operator = (const Scrolling &);
-                Scrolling(const Scrolling &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit Scrolling(prop::Listener *listener = NULL): Enum(ENUM, SCROLL_NONE, listener) {};
+                Scrolling(const Scrolling &) = delete;
+                Scrolling(Scrolling &&) = delete;
+                Scrolling & operator = (const Scrolling &) = delete;
+                Scrolling & operator = (Scrolling &&) = delete;
 
             public:
                 inline scrolling_t          get() const                 { return scrolling_t(nValue);           }
@@ -62,12 +62,12 @@ namespace lsp
         {
             class Scrolling: public tk::Scrolling
             {
-                private:
-                    Scrolling & operator = (const Scrolling &);
-                    Scrolling(const Scrolling &);
-
                 public:
                     explicit Scrolling(prop::Listener *listener = NULL): tk::Scrolling(listener) {};
+                    Scrolling(const Scrolling &) = delete;
+                    Scrolling(Scrolling &&) = delete;
+                    Scrolling & operator = (const Scrolling &) = delete;
+                    Scrolling & operator = (Scrolling &&) = delete;
 
                 public:
                     /**
@@ -84,7 +84,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

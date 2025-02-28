@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 июл. 2017 г.
@@ -23,6 +23,7 @@
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/stdlib/stdio.h>
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
 
 #include <private/tk/style/BuiltinStyle.h>
 
@@ -111,23 +112,11 @@ namespace lsp
         void Label::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
-            if (sTextLayout.is(prop))
+
+            if (prop->one_of(sTextLayout, sColor, sHoverColor, sHover))
                 query_draw();
-            if (sTextAdjust.is(prop))
-                query_resize();
-            if (sFont.is(prop))
-                query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sHoverColor.is(prop))
-                query_draw();
-            if (sHover.is(prop))
-                query_draw();
-            if (sText.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sIPadding.is(prop))
+
+            if (prop->one_of(sTextAdjust, sFont, sText, sConstraints, sIPadding))
                 query_resize();
         }
 
@@ -184,39 +173,10 @@ namespace lsp
             // Draw background
             s->clear(bg_color);
 
-            float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
-            float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
-            float dy        = (r.nHeight - tp.Height) * 0.5f;
-            ssize_t y       = r.nTop + dy * valign - fp.Descent;
-
-            // Estimate text size
-            ssize_t last = 0, curr = 0, tail = 0, len = text.length();
-
-            while (curr < len)
-            {
-                // Get next line indexes
-                curr    = text.index_of(last, '\n');
-                if (curr < 0)
-                {
-                    curr        = len;
-                    tail        = len;
-                }
-                else
-                {
-                    tail        = curr;
-                    if ((tail > last) && (text.at(tail-1) == '\r'))
-                        --tail;
-                }
-
-                // Calculate text location
-                sFont.get_text_parameters(s, &tp, fscaling, &text, last, tail);
-                float dx    = (r.nWidth - tp.Width) * 0.5f;
-                ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
-                y          += fp.Height;
-
-                sFont.draw(s, f_color, x, y, fscaling, &text, last, tail);
-                last    = curr + 1;
-            }
+            draw_multiline_text(s,
+                &sFont, &r, f_color, &fp, &tp,
+                sTextLayout.halign(), sTextLayout.valign(),
+                fscaling, &text);
         }
 
         void Label::clear_text_estimations()
@@ -244,10 +204,43 @@ namespace lsp
             s->bind(&sStyle, pDisplay->dictionary());
 
             if (vEstimations.add(s))
+            {
+                query_resize();
                 return s;
+            }
 
             delete s;
             return NULL;
+        }
+
+        void Label::estimate_string_size(estimation_t *e, const LSPString *s)
+        {
+            sFont.get_multitext_parameters(pDisplay, &e->tp, e->fscaling, s);
+
+            e->r->nMinWidth     = lsp_max(e->r->nMinWidth, ceilf(e->tp.Width));
+            e->r->nMinHeight    = lsp_max(e->r->nMinHeight, ceilf(lsp_max(e->tp.Height, e->fp.Height)));
+        }
+
+        bool Label::contains_digit(const LSPString *s)
+        {
+            const lsp_wchar_t *chars = s->characters();
+            for (size_t i=0, n=s->length(); i<n; ++i)
+            {
+                const lsp_wchar_t ch = chars[i];
+                if ((ch >= '0') && (ch <= '9'))
+                    return true;
+            }
+            return false;
+        }
+
+        void Label::set_all_digits(LSPString *s, lsp_wchar_t new_ch)
+        {
+            for (size_t i=0, n=s->length(); i<n; ++i)
+            {
+                const lsp_wchar_t ch = s->char_at(i);
+                if ((ch >= '0') && (ch <= '9'))
+                    s->set_at(i, new_ch);
+            }
         }
 
         void Label::estimate_string_size(estimation_t *e, tk::String *s)
@@ -255,15 +248,22 @@ namespace lsp
             if (s == NULL)
                 return;
 
+            LSPString text;
+
             // Form the text string
-            s->format(&e->text);
-            sTextAdjust.apply(&e->text);
+            s->format(&text);
+            sTextAdjust.apply(&text);
+            estimate_string_size(e, &text);
 
-            // Estimate sizes
-            sFont.get_multitext_parameters(pDisplay, &e->tp, e->fscaling, &e->text);
-
-            e->r->nMinWidth     = lsp_max(e->r->nMinWidth, ceilf(e->tp.Width));
-            e->r->nMinHeight    = lsp_max(e->r->nMinHeight, ceilf(lsp_max(e->tp.Height, e->fp.Height)));
+            // Check that text contains digits
+            if (contains_digit(&text))
+            {
+                for (char ch = '0'; ch <= '9'; ++ch)
+                {
+                    set_all_digits(&text, ch);
+                    estimate_string_size(e, &text);
+                }
+            }
         }
 
         void Label::size_request(ws::size_limit_t *r)

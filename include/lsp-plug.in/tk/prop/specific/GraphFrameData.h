@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 сент. 2020 г.
@@ -77,7 +77,7 @@ namespace lsp
 
             protected:
                 void            sync();
-                void            commit(atom_t property);
+                virtual void    commit(atom_t property) override;
                 bool            resize_buffer(size_t rows, size_t cols);
                 ssize_t         row_index(uint32_t id, size_t range) const;
 
@@ -85,7 +85,7 @@ namespace lsp
                 explicit GraphFrameData(prop::Listener *listener);
                 GraphFrameData(const GraphFrameData &) = delete;
                 GraphFrameData(GraphFrameData &&) = delete;
-                virtual ~GraphFrameData();
+                virtual ~GraphFrameData() override;
 
                 GraphFrameData & operator = (const GraphFrameData &) = delete;
                 GraphFrameData & operator = (GraphFrameData &&) = delete;
@@ -126,12 +126,13 @@ namespace lsp
         {
             class GraphFrameData: public tk::GraphFrameData
             {
-                private:
-                    GraphFrameData &operator = (const GraphFrameData &);
-                    GraphFrameData(const GraphFrameData &);
-
                 public:
                     explicit inline GraphFrameData(prop::Listener *listener = NULL): tk::GraphFrameData(listener) {}
+                    GraphFrameData(const GraphFrameData &) = delete;
+                    GraphFrameData(GraphFrameData &&) = delete;
+
+                    GraphFrameData & operator = (const GraphFrameData &) = delete;
+                    GraphFrameData & operator = (GraphFrameData &&) = delete;
 
                 public:
                     inline status_t     bind(atom_t property, Style *style)             { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
@@ -139,8 +140,9 @@ namespace lsp
                     inline status_t     bind(const LSPString *property, Style *style)   { return tk::GraphFrameData::bind(property, style, vAtoms, DESC, &sListener); }
 
             };
+
         } /* namespace prop */
-    } /*namespace tk */
+    } /* namespace tk */
 } /* namespace lsp */
 
 

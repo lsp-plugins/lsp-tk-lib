@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 июн. 2020 г.
@@ -38,10 +38,6 @@ namespace lsp
          */
         class StepFloat: public MultiProperty
         {
-            private:
-                StepFloat & operator = (const StepFloat &);
-                StepFloat(const StepFloat &);
-
             protected:
                 enum property_t
                 {
@@ -63,15 +59,20 @@ namespace lsp
                 float               fDecel;
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 float               climited(float v) const;
                 float               change(float k, float step);
 
             protected:
                 explicit StepFloat(prop::Listener *listener = NULL);
-                virtual ~StepFloat();
+                StepFloat(const StepFloat &) = delete;
+                StepFloat(StepFloat &&) = delete;
+                virtual ~StepFloat() override;
+
+                StepFloat & operator = (const StepFloat &) = delete;
+                StepFloat & operator = (StepFloat &&) = delete;
 
             public:
                 inline float        get() const             { return fStep;                             }
@@ -101,12 +102,13 @@ namespace lsp
              */
             class StepFloat: public tk::StepFloat
             {
-                private:
-                    StepFloat & operator = (const StepFloat &);
-                    StepFloat(const StepFloat &);
-
                 public:
                     explicit StepFloat(prop::Listener *listener = NULL): tk::StepFloat(listener) {};
+                    StepFloat(const StepFloat &) = delete;
+                    StepFloat(StepFloat &&) = delete;
+
+                    StepFloat & operator = (const StepFloat &) = delete;
+                    StepFloat & operator = (StepFloat &&) = delete;
 
                 public:
                     /**
@@ -122,10 +124,11 @@ namespace lsp
                     inline status_t     unbind()                                        { return tk::StepFloat::unbind(vAtoms, DESC, &sListener); };
 
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_STEPFLOAT_H_ */

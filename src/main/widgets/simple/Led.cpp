@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 июл. 2017 г.
@@ -30,11 +30,19 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Led, Widget)
                 // Bind
-                sColor.bind("color", this);
-                sLedColor.bind("led.color", this);
+                LedColors *c = &vColors[LED_NORMAL];
+                c->sColor.bind("color", this);
+                c->sLedColor.bind("led.color", this);
+                c->sBorderColor.bind("border.color", this);
+                c->sLedBorderColor.bind("led.border.color", this);
+
+                c = &vColors[LED_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sLedColor.bind("inactive.led.color", this);
+                c->sBorderColor.bind("inactive.border.color", this);
+                c->sLedBorderColor.bind("inactive.led.border.color", this);
+
                 sHoleColor.bind("hole.color", this);
-                sBorderColor.bind("border.color", this);
-                sLedBorderColor.bind("led.border.color", this);
                 sConstraints.bind("size.constraints", this);
                 sOn.bind("on", this);
                 sHole.bind("hole", this);
@@ -42,12 +50,22 @@ namespace lsp
                 sRound.bind("round", this);
                 sBorderSize.bind("border.size", this);
                 sGradient.bind("gradient", this);
+                sActive.bind("active", this);
+
                 // Configure
-                sColor.set("#cccccc");
-                sLedColor.set("#00cc00");
+                c = &vColors[LED_NORMAL];
+                c->sColor.set("#cccccc");
+                c->sLedColor.set("#00cc00");
+                c->sBorderColor.set("#888888");
+                c->sLedBorderColor.set("#008800");
+
+                c = &vColors[LED_INACTIVE];
+                c->sColor.set("#888888");
+                c->sLedColor.set("#cccccc");
+                c->sBorderColor.set("#444444");
+                c->sLedBorderColor.set("#888888");
+
                 sHoleColor.set("#000000");
-                sBorderColor.set("#888888");
-                sLedBorderColor.set("#008800");
                 sConstraints.set(8, 8, -1, -1);
                 sOn.set(false);
                 sHole.set(true);
@@ -55,28 +73,42 @@ namespace lsp
                 sLed.set(8);
                 sBorderSize.set(3);
                 sGradient.set(true);
+                sActive.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Led, "Led", "root");
+
+            void LedColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+                sLedColor.listener(listener);
+                sBorderColor.listener(listener);
+                sLedBorderColor.listener(listener);
+            }
+
+            bool LedColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sLedColor, sBorderColor, sLedBorderColor);
+            }
         }
 
         const w_class_t Led::metadata           = { "Led", &Widget::metadata };
 
         Led::Led(Display *dpy):
             Widget(dpy),
-            sColor(&sProperties),
             sHoleColor(&sProperties),
-            sLedColor(&sProperties),
-            sBorderColor(&sProperties),
-            sLedBorderColor(&sProperties),
             sConstraints(&sProperties),
             sOn(&sProperties),
             sHole(&sProperties),
             sLed(&sProperties),
             sRound(&sProperties),
             sBorderSize(&sProperties),
-            sGradient(&sProperties)
+            sGradient(&sProperties),
+            sActive(&sProperties)
         {
             pClass      = &metadata;
+
+            for (size_t i=0; i<LED_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
         }
 
         Led::~Led()
@@ -90,11 +122,20 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            sColor.bind("color", &sStyle);
-            sLedColor.bind("led.color", &sStyle);
+            style::LedColors *c = &vColors[style::LED_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sLedColor.bind("led.color", &sStyle);
+            c->sBorderColor.bind("border.color", &sStyle);
+            c->sLedBorderColor.bind("led.border.color", &sStyle);
+
+            c = &vColors[style::LED_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sLedColor.bind("inactive.led.color", &sStyle);
+            c->sBorderColor.bind("inactive.border.color", &sStyle);
+            c->sLedBorderColor.bind("inactive.led.border.color", &sStyle);
+
             sHoleColor.bind("hole.color", &sStyle);
-            sBorderColor.bind("border.color", &sStyle);
-            sLedBorderColor.bind("led.border.color", &sStyle);
+
             sConstraints.bind("size.constraints", &sStyle);
             sOn.bind("on", &sStyle);
             sHole.bind("hole", &sStyle);
@@ -102,33 +143,33 @@ namespace lsp
             sRound.bind("round", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sGradient.bind("gradient", &sStyle);
+            sActive.bind("active", &sStyle);
 
             return STATUS_OK;
+        }
+
+        style::LedColors *Led::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::LED_NORMAL : style::LED_INACTIVE;
+            return &vColors[flags];
         }
 
         void Led::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
 
-            if (sColor.is(prop))
+            // Self properties
+            style::LedColors *colors = select_colors();
+            if (colors->property_changed(prop))
                 query_draw();
-            if (sLedColor.is(prop))
+
+            if (sActive.is(prop))
                 query_draw();
-            if (sHoleColor.is(prop))
+
+            if (prop->one_of(sHoleColor, sOn))
                 query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sLedBorderColor.is(prop))
-                query_draw();
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sHole.is(prop))
-                query_resize();
-            if (sOn.is(prop))
-                query_draw();
-            if (sRound.is(prop))
-                query_resize();
-            if (sBorderSize.is(prop))
+
+            if (prop->one_of(sConstraints, sHole, sRound, sBorderSize))
                 query_resize();
         }
 
@@ -184,12 +225,13 @@ namespace lsp
             ssize_t border      = (gradient) ? 0 : lsp_max(0.0f, scaling * sBorderSize.get());
             ssize_t extra       = lsp_max(sz_hole, sz_led) + border;
             bool on             = sOn.get();
+            const style::LedColors *colors = select_colors();
 
             // Estimate palette
             lsp::Color bg_color;
             lsp::Color hole(sHoleColor);
-            lsp::Color col((on) ? sLedColor : sColor);
-            lsp::Color border_color((on) ? sLedBorderColor : sBorderColor);
+            lsp::Color col((on) ? colors->sLedColor : colors->sColor);
+            lsp::Color border_color((on) ? colors->sLedBorderColor : colors->sBorderColor);
 
             get_actual_bg_color(bg_color);
             col.scale_lch_luminance(brightness);
@@ -212,8 +254,8 @@ namespace lsp
             if ((light > 0) && (on))
             {
                 g = s->radial_gradient(cx, cy, cx, cy, xr);
-                g->add_color(0.0, col, 0.5f);
-                g->add_color(1.0, col, 1.0f);
+                g->set_start(col, 0.5f);
+                g->set_stop(col, 1.0f);
                 s->fill_circle(g, cx, cy, xr);
                 delete g;
             }
@@ -227,15 +269,15 @@ namespace lsp
                     c_light.lightness(c_light.lightness() * 1.5);
 
                     g = s->radial_gradient(cx, cy, cx, cy, r);
-                    g->add_color(0.0f, c_light);
-                    g->add_color(1.0f, col);
+                    g->set_start(c_light);
+                    g->set_stop(col);
                     s->fill_circle(g, cx, cy, r);
                     delete g;
 
                     // Add blink
                     g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), cx, cy, r);
-                    g->add_color(0.0, 1.0, 1.0, 1.0, 0.0f);
-                    g->add_color(1.0, 1.0, 1.0, 1.0, 1.0f);
+                    g->set_start(1.0, 1.0, 1.0, 0.0f);
+                    g->set_stop(1.0, 1.0, 1.0, 1.0f);
                     s->fill_circle(g, cx, cy, r);
                     delete g;
                 }
@@ -246,15 +288,15 @@ namespace lsp
 
                     // Draw led glass
                     g = s->radial_gradient(cx, cy, cx, cy, r);
-                    g->add_color(0.0, col);
-                    g->add_color(1.0, c);
+                    g->set_start(col);
+                    g->set_stop(c);
                     s->fill_circle(g, cx, cy, r);
                     delete g;
 
                     // Add blink
                     g = s->radial_gradient(cx + (r * 0.25f), cy - (r * 0.25f), cx, cy, r);
-                    g->add_color(0.0, 1.0, 1.0, 1.0, 0.5);
-                    g->add_color(1.0, 1.0, 1.0, 1.0, 1.0);
+                    g->set_start(1.0, 1.0, 1.0, 0.5);
+                    g->set_stop(1.0, 1.0, 1.0, 1.0);
                     s->fill_circle(g, cx, cy, r);
                     delete g;
                 }
@@ -282,6 +324,7 @@ namespace lsp
             ssize_t outer       = lsp_max(hole, light);
             bool on             = sOn.get();
             bool gradient       = sGradient.get();
+            const style::LedColors *colors = select_colors();
 
             ws::rectangle_t r;
             r.nLeft             = outer;
@@ -291,8 +334,8 @@ namespace lsp
 
             // Prepare palette
             lsp::Color bg_color;
-            lsp::Color color((on) ? sLedColor : sColor);
-            lsp::Color border_color((on) ? sLedBorderColor : sBorderColor);
+            lsp::Color color((on) ? colors->sLedColor : colors->sColor);
+            lsp::Color border_color((on) ? colors->sLedBorderColor : colors->sBorderColor);
 
             get_actual_bg_color(bg_color);
 
@@ -328,29 +371,29 @@ namespace lsp
 
                 // Left
                 g   =  s->linear_gradient(h_p, c_y, 0, c_y);
-                g->add_color(0.0, lc, 0.5f);
-                g->add_color(1.0, color, 1.0f);
+                g->set_start(lc, 0.5f);
+                g->set_stop(color, 1.0f);
                 s->fill_triangle(g, 0, 0, c_x, c_y, 0, ye);
                 delete g;
 
                 // Right
                 g   =  s->linear_gradient(xe - h_p, c_y, xe, c_y);
-                g->add_color(0.0, lc, 0.5f);
-                g->add_color(1.0, color, 1.0f);
+                g->set_start(lc, 0.5f);
+                g->set_stop(color, 1.0f);
                 s->fill_triangle(g, xe, ye, c_x, c_y, xe, 0);
                 delete g;
 
                 // Top
                 g   =  s->linear_gradient(c_x, v_p, c_x, 0);
-                g->add_color(0.0, lc, 0.5f);
-                g->add_color(1.0, color, 1.0f);
+                g->set_start(lc, 0.5f);
+                g->set_stop(color, 1.0f);
                 s->fill_triangle(g, 0, 0, xe, 0, c_x, c_y);
                 delete g;
 
                 // Bottom
                 g   =  s->linear_gradient(c_x, ye - v_p, c_x, ye);
-                g->add_color(0.0, lc, 0.5f);
-                g->add_color(1.0, color, 1.0f);
+                g->set_start(lc, 0.5f);
+                g->set_stop(color, 1.0f);
                 s->fill_triangle(g, xe, ye, 0, ye, c_x, c_y);
                 delete g;
             }
@@ -375,9 +418,9 @@ namespace lsp
                             delta);
 
                         color.lightness(bright);
-                        g->add_color(0.0, color.red(), color.green(), color.blue());
+                        g->set_start(color.red(), color.green(), color.blue());
                         color.lightness(xb * bright);
-                        g->add_color(1.0, color.red(), color.green(), color.blue());
+                        g->set_stop(color.red(), color.green(), color.blue());
                         s->fill_rect(g, SURFMASK_NONE, 0.0f, &r);
                         delete g;
 
@@ -394,9 +437,9 @@ namespace lsp
                         r.nLeft + r.nWidth, r.nTop,
                         delta);
                     color.lightness(1.0f);
-                    g->add_color(0.0, color.red(), color.green(), color.blue());
+                    g->set_start(color.red(), color.green(), color.blue());
                     color.lightness(xb);
-                    g->add_color(1.0, color.red(), color.green(), color.blue());
+                    g->set_stop(color.red(), color.green(), color.blue());
                     s->fill_rect(g, SURFMASK_NONE, 0.0f, &r);
                     delete g;
                 }

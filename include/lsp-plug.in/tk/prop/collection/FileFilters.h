@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class FileFilters: public Property
         {
-            private:
-                FileFilters & operator = (const FileFilters &);
-                FileFilters(const FileFilters &);
-
             protected:
                 class Listener: public prop::Listener
                 {
@@ -53,7 +49,7 @@ namespace lsp
                             pFilters    = prop;
                         }
 
-                        virtual void    notify(Property *prop);
+                        virtual void    notify(Property *prop) override;
                         inline void     set_lock(bool lock)     { bLock = lock;             }
                 };
 
@@ -76,7 +72,12 @@ namespace lsp
 
             protected:
                 explicit FileFilters(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL);
-                virtual ~FileFilters();
+                FileFilters(const FileFilters &) = delete;
+                FileFilters(FileFilters &&) = delete;
+                virtual ~FileFilters() override;
+
+                FileFilters & operator = (const FileFilters &) = delete;
+                FileFilters & operator = (FileFilters &&) = delete;
 
             public:
                 /**
@@ -180,12 +181,13 @@ namespace lsp
         {
             class FileFilters: public tk::FileFilters
             {
-                private:
-                    FileFilters & operator = (const FileFilters &);
-                    FileFilters(const FileFilters &);
-
                 public:
                     explicit FileFilters(prop::Listener *listener = NULL, prop::CollectionListener *clistener = NULL): tk::FileFilters(listener, clistener) {}
+                    FileFilters(const FileFilters &) = delete;
+                    FileFilters(FileFilters &&) = delete;
+
+                    FileFilters & operator = (const FileFilters &) = delete;
+                    FileFilters & operator = (FileFilters &&) = delete;
 
                 public:
                     /**
@@ -203,8 +205,9 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)  { pListener = listener;                         }
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_PROP_COLLECTION_FILEFILTERS_H_ */

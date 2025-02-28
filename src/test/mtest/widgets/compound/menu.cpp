@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2020 г.
@@ -107,6 +107,14 @@ MTEST_BEGIN("tk.widgets.compound", menu)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
+
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+        if (ev->nCode == ws::MCB_MIDDLE)
+        {
+            tk::MenuItem *mi = tk::widget_cast<tk::MenuItem>(sender);
+            if (mi != NULL)
+                mi->active()->toggle();
+        }
 
         return STATUS_OK;
     }

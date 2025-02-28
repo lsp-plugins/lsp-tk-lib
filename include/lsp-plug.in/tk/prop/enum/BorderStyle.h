@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 мая 2020 г.
@@ -35,15 +35,15 @@ namespace lsp
          */
         class BorderStyle: public Enum
         {
-            private:
-                BorderStyle & operator = (const BorderStyle &);
-                BorderStyle(const BorderStyle &);
-
             protected:
                 static const prop::enum_t ENUM[];
 
             protected:
                 explicit BorderStyle(prop::Listener *listener = NULL): Enum(ENUM, ws::BS_SINGLE, listener) {};
+                BorderStyle(const BorderStyle &) = delete;
+                BorderStyle(BorderStyle &&) = delete;
+                BorderStyle & operator = (const BorderStyle &) = delete;
+                BorderStyle & operator = (BorderStyle &&) = delete;
 
             public:
                 inline ws::border_style_t   get() const     { return ws::border_style_t(nValue); }
@@ -56,12 +56,12 @@ namespace lsp
         {
             class BorderStyle: public tk::BorderStyle
             {
-                private:
-                    BorderStyle & operator = (const BorderStyle &);
-                    BorderStyle(const BorderStyle &);
-
                 public:
                     explicit BorderStyle(prop::Listener *listener = NULL): tk::BorderStyle(listener) {};
+                    BorderStyle(const BorderStyle &) = delete;
+                    BorderStyle(BorderStyle &&) = delete;
+                    BorderStyle & operator = (const BorderStyle &) = delete;
+                    BorderStyle & operator = (BorderStyle &&) = delete;
 
                 public:
                     /**
@@ -78,10 +78,10 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        }
-    }
-}
 
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 #endif /* LSP_PLUG_IN_TK_PROP_ENUM_BORDERSTYLE_H_ */

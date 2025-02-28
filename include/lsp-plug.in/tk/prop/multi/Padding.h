@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 12 июл. 2017 г.
@@ -33,10 +33,6 @@ namespace lsp
         class Padding: public MultiProperty
         {
             protected:
-                Padding & operator = (const Padding &);
-                Padding(const Padding &);
-
-            protected:
                 enum property_t
                 {
                     P_VALUE,
@@ -57,15 +53,20 @@ namespace lsp
                 padding_t           sValue;             // Padding value
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 void                parse(const LSPString *s);
                 void                parse_css(const LSPString *s);
 
             protected:
                 explicit Padding(prop::Listener *listener = NULL);
-                virtual ~Padding();
+                Padding(const Padding &) = delete;
+                Padding(Padding &&) = delete;
+                virtual ~Padding() override;
+
+                Padding & operator = (const Padding &) = delete;
+                Padding & operator = (Padding &&) = delete;
 
             public:
                 inline void         set_default()       { MultiProperty::set_default(vAtoms, DESC); };
@@ -140,12 +141,13 @@ namespace lsp
              */
             class Padding: public tk::Padding
             {
-                private:
-                    Padding & operator = (const Padding &);
-                    Padding(const Padding &);
-
                 public:
                     explicit Padding(prop::Listener *listener = NULL): tk::Padding(listener) {};
+                    Padding(const Padding &) = delete;
+                    Padding(Padding &&) = delete;
+
+                    Padding & operator = (const Padding &) = delete;
+                    Padding & operator = (Padding &&) = delete;
 
                 public:
                     /**
@@ -161,9 +163,10 @@ namespace lsp
                     inline status_t     unbind()                                        { return tk::Padding::unbind(vAtoms, DESC, &sListener); };
 
             };
-        }
-    
+
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_PADDING_H_ */

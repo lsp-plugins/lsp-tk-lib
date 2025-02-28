@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 14 мая 2020 г.
@@ -32,10 +32,6 @@ namespace lsp
     {
         class SimpleProperty: public Property
         {
-            private:
-                SimpleProperty & operator = (const SimpleProperty &);
-                SimpleProperty(const SimpleProperty &);
-
             protected:
                 atom_t              nAtom;
 
@@ -47,6 +43,11 @@ namespace lsp
 
             protected:
                 inline SimpleProperty(prop::Listener *listener = NULL): Property(listener) { nAtom = -1; };
+                SimpleProperty(const SimpleProperty &) = delete;
+                SimpleProperty(SimpleProperty &&) = delete;
+
+                SimpleProperty & operator = (const SimpleProperty &) = delete;
+                SimpleProperty & operator = (SimpleProperty &&) = delete;
         };
     
     } /* namespace tk */

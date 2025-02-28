@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 4 июн. 2020 г.
@@ -98,6 +98,14 @@ MTEST_BEGIN("tk.widgets.simple", knob)
     {
         handler_t *h = static_cast<handler_t *>(ptr);
         h->test->printf("MOUSE_CLICK: %s\n", h->label);
+
+        ws::event_t *ev = static_cast<ws::event_t *>(data);
+        if (ev->nCode == ws::MCB_MIDDLE)
+        {
+            tk::Knob *knob = tk::widget_cast<tk::Knob>(sender);
+            if (knob != NULL)
+                knob->active()->toggle();
+        }
 
         return STATUS_OK;
     }

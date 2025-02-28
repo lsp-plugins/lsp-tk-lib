@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 сент. 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class ColorRanges: public SimpleProperty
         {
-            private:
-                ColorRanges & operator = (const ColorRanges &);
-                ColorRanges(const ColorRanges &);
-
             protected:
                 class Changes: public prop::Listener
                 {
@@ -54,7 +50,7 @@ namespace lsp
                         }
 
                     public:
-                        virtual void        notify(Property *prop);
+                        virtual void        notify(Property *prop) override;
 
                         inline void         enable(bool enable) { bEnabled = enable; }
                 };
@@ -70,12 +66,17 @@ namespace lsp
                 bool                deploy_items(lltl::parray<ColorRange> *out);
                 status_t            build_ranges(LSPString *dst);
 
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit ColorRanges(prop::Listener *listener = NULL);
-                virtual ~ColorRanges();
+                ColorRanges(const ColorRanges &) = delete;
+                ColorRanges(ColorRanges &&) = delete;
+                virtual ~ColorRanges() override;
+
+                ColorRanges & operator = (const ColorRanges &) = delete;
+                ColorRanges & operator = (ColorRanges &&) = delete;
 
             public:
                 /**
@@ -154,12 +155,13 @@ namespace lsp
         {
             class ColorRanges: public tk::ColorRanges
             {
-                private:
-                    ColorRanges & operator = (const ColorRanges &);
-                    ColorRanges(const ColorRanges &);
-
                 public:
                     explicit ColorRanges(prop::Listener *listener = NULL): tk::ColorRanges(listener) {};
+                    ColorRanges(const ColorRanges &) = delete;
+                    ColorRanges(ColorRanges &&) = delete;
+
+                    ColorRanges & operator = (const ColorRanges &) = delete;
+                    ColorRanges & operator = (ColorRanges &&) = delete;
 
                 public:
                     /**
@@ -175,8 +177,9 @@ namespace lsp
                     inline status_t     unbind()                                        { return tk::ColorRanges::unbind(&sListener); };
 
             };
-        }
-    }
-}
+
+        } /* namespace prop */
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* LSP_PLUG_IN_TK_PROP_COLLECTION_COLORRANGES_H_ */

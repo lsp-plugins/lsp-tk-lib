@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2020 г.
@@ -31,10 +31,6 @@ namespace lsp
          */
         class Rectangle: public MultiProperty
         {
-            private:
-                Rectangle & operator = (const Rectangle &);
-                Rectangle(const Rectangle &);
-
             protected:
                 enum property_t
                 {
@@ -55,15 +51,20 @@ namespace lsp
                 ws::rectangle_t     sRect;
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 float               climited(float v) const;
                 float               change(float k, float step);
 
             protected:
                 explicit Rectangle(prop::Listener *listener = NULL);
-                virtual ~Rectangle();
+                Rectangle(const Rectangle &) = delete;
+                Rectangle(Rectangle &&) = delete;
+                virtual ~Rectangle() override;
+
+                Rectangle & operator = (const Rectangle &) = delete;
+                Rectangle & operator = (Rectangle &&) = delete;
 
             public:
                 inline ssize_t      left() const                    { return sRect.nLeft;           }
@@ -94,12 +95,13 @@ namespace lsp
              */
             class Rectangle: public tk::Rectangle
             {
-                private:
-                    Rectangle & operator = (const Rectangle &);
-                    Rectangle(const Rectangle &);
-
                 public:
                     explicit Rectangle(prop::Listener *listener = NULL): tk::Rectangle(listener) {};
+                    Rectangle(const Rectangle &) = delete;
+                    Rectangle(Rectangle &&) = delete;
+
+                    Rectangle & operator = (const Rectangle &) = delete;
+                    Rectangle & operator = (Rectangle &&) = delete;
 
                 public:
                     /**
@@ -114,10 +116,11 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Rectangle::unbind(vAtoms, DESC, &sListener); };
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 
 

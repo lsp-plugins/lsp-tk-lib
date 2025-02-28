@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 авг. 2017 г.
@@ -33,7 +33,37 @@ namespace lsp
         // Style definition
         namespace style
         {
+            typedef struct ScrollBarColors
+            {
+                prop::Color             sButtonColor;
+                prop::Color             sButtonActiveColor;
+                prop::Color             sIncColor;
+                prop::Color             sIncActiveColor;
+                prop::Color             sDecColor;
+                prop::Color             sDecActiveColor;
+                prop::Color             sBorderColor;
+                prop::Color             sBorderGapColor;
+                prop::Color             sSliderColor;
+                prop::Color             sSliderBorderColor;
+                prop::Color             sSliderActiveColor;
+                prop::Color             sTextColor;
+                prop::Color             sTextActiveColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } ScrollBarColors;
+
+            enum ScrollBarState
+            {
+                SCROLLBAR_NORMAL        = 0,
+                SCROLLBAR_INACTIVE      = 1 << 0,
+
+                SCROLLBAR_TOTAL         = 1 << 1
+            };
+
             LSP_TK_STYLE_DEF_BEGIN(ScrollBar, Widget)
+                ScrollBarColors         vColors[SCROLLBAR_TOTAL];
+
                 prop::RangeFloat        sValue;
                 prop::StepFloat         sStep;
                 prop::StepFloat         sAccelStep;
@@ -48,20 +78,7 @@ namespace lsp
                 prop::Integer           sSliderBorderSize;
                 prop::Boolean           sInvertMouseHScroll;
                 prop::Boolean           sInvertMouseVScroll;
-
-                prop::Color             sButtonColor;
-                prop::Color             sButtonActiveColor;
-                prop::Color             sIncColor;
-                prop::Color             sIncActiveColor;
-                prop::Color             sDecColor;
-                prop::Color             sDecActiveColor;
-                prop::Color             sBorderColor;
-                prop::Color             sBorderGapColor;
-                prop::Color             sSliderColor;
-                prop::Color             sSliderBorderColor;
-                prop::Color             sSliderActiveColor;
-                prop::Color             sTextColor;
-                prop::Color             sTextActiveColor;
+                prop::Boolean           sActive;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -99,6 +116,13 @@ namespace lsp
                     F_ALL_ACTIVITY_MASK     = F_ACTIVITY_MASK | F_TRG_ACTIVITY_MASK
                 };
 
+                enum scb_flags_t
+                {
+                    SCB_0                   = style::SCROLLBAR_NORMAL,
+                    SCB_1                   = style::SCROLLBAR_INACTIVE,
+                    SCB_TOTAL               = style::SCROLLBAR_TOTAL
+                };
+
             protected:
                 size_t                  nXFlags;
                 size_t                  nButtons;
@@ -110,6 +134,8 @@ namespace lsp
                 ws::rectangle_t         sDecButton;
                 ws::rectangle_t         sSpareSpace;
                 ws::rectangle_t         sSlider;
+
+                style::ScrollBarColors  vColors[style::SCROLLBAR_TOTAL];
 
                 prop::RangeFloat        sValue;
                 prop::StepFloat         sStep;
@@ -126,20 +152,7 @@ namespace lsp
                 prop::Integer           sSliderBorderSize;
                 prop::Boolean           sInvertMouseHScroll;
                 prop::Boolean           sInvertMouseVScroll;
-
-                prop::Color             sButtonColor;
-                prop::Color             sButtonActiveColor;
-                prop::Color             sIncColor;
-                prop::Color             sIncActiveColor;
-                prop::Color             sDecColor;
-                prop::Color             sDecActiveColor;
-                prop::Color             sBorderColor;
-                prop::Color             sBorderGapColor;
-                prop::Color             sSliderColor;
-                prop::Color             sSliderBorderColor;
-                prop::Color             sSliderActiveColor;
-                prop::Color             sTextColor;
-                prop::Color             sTextActiveColor;
+                prop::Boolean           sActive;
 
                 Timer                   sTimer;
 
@@ -150,6 +163,7 @@ namespace lsp
                 void                            update_slider();
                 void                            launch_timer();
                 void                            cancel_timer();
+                style::ScrollBarColors         *select_colors();
 
             protected:
                 static status_t                 slot_on_change(Widget *sender, void *ptr, void *data);
@@ -175,38 +189,53 @@ namespace lsp
                 virtual void                    destroy() override;
 
             public:
-                LSP_TK_PROPERTY(RangeFloat,         value,                  &sValue)
-                LSP_TK_PROPERTY(StepFloat,          step,                   &sStep)
-                LSP_TK_PROPERTY(StepFloat,          accel_step,             &sAccelStep)
+                LSP_TK_PROPERTY(Color,              button_color,                   &vColors[SCB_0].sButtonColor)
+                LSP_TK_PROPERTY(Color,              button_active_color,            &vColors[SCB_0].sButtonActiveColor)
+                LSP_TK_PROPERTY(Color,              inc_color,                      &vColors[SCB_0].sIncColor)
+                LSP_TK_PROPERTY(Color,              inc_active_color,               &vColors[SCB_0].sIncActiveColor)
+                LSP_TK_PROPERTY(Color,              dec_color,                      &vColors[SCB_0].sDecColor)
+                LSP_TK_PROPERTY(Color,              dec_active_color,               &vColors[SCB_0].sDecActiveColor)
+                LSP_TK_PROPERTY(Color,              slider_color,                   &vColors[SCB_0].sSliderColor)
+                LSP_TK_PROPERTY(Color,              slider_border_color,            &vColors[SCB_0].sSliderBorderColor)
+                LSP_TK_PROPERTY(Color,              slider_active_color,            &vColors[SCB_0].sSliderActiveColor)
+                LSP_TK_PROPERTY(Color,              border_color,                   &vColors[SCB_0].sBorderColor)
+                LSP_TK_PROPERTY(Color,              border_gap_color,               &vColors[SCB_0].sBorderGapColor)
+                LSP_TK_PROPERTY(Color,              text_color,                     &vColors[SCB_0].sTextColor)
+                LSP_TK_PROPERTY(Color,              text_active_color,              &vColors[SCB_0].sTextActiveColor)
 
-                LSP_TK_PROPERTY(SizeConstraints,    constraints,            &sConstraints)
-                LSP_TK_PROPERTY(Orientation,        orientation,            &sOrientation)
+                LSP_TK_PROPERTY(Color,              inactive_button_color,          &vColors[SCB_1].sButtonColor)
+                LSP_TK_PROPERTY(Color,              inactive_button_active_color,   &vColors[SCB_1].sButtonActiveColor)
+                LSP_TK_PROPERTY(Color,              inactive_inc_color,             &vColors[SCB_1].sIncColor)
+                LSP_TK_PROPERTY(Color,              inactive_inc_active_color,      &vColors[SCB_1].sIncActiveColor)
+                LSP_TK_PROPERTY(Color,              inactive_dec_color,             &vColors[SCB_1].sDecColor)
+                LSP_TK_PROPERTY(Color,              inactive_dec_active_color,      &vColors[SCB_1].sDecActiveColor)
+                LSP_TK_PROPERTY(Color,              inactive_slider_color,          &vColors[SCB_1].sSliderColor)
+                LSP_TK_PROPERTY(Color,              inactive_slider_border_color,   &vColors[SCB_1].sSliderBorderColor)
+                LSP_TK_PROPERTY(Color,              inactive_slider_active_color,   &vColors[SCB_1].sSliderActiveColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_color,          &vColors[SCB_1].sBorderColor)
+                LSP_TK_PROPERTY(Color,              inactive_border_gap_color,      &vColors[SCB_1].sBorderGapColor)
+                LSP_TK_PROPERTY(Color,              inactive_text_color,            &vColors[SCB_1].sTextColor)
+                LSP_TK_PROPERTY(Color,              inactive_text_active_color,     &vColors[SCB_1].sTextActiveColor)
 
-                LSP_TK_PROPERTY(Pointer,            slider_pointer,         &sSliderPointer)
-                LSP_TK_PROPERTY(Pointer,            inc_pointer,            &sIncPointer)
-                LSP_TK_PROPERTY(Pointer,            dec_pointer,            &sDecPointer)
+                LSP_TK_PROPERTY(RangeFloat,         value,                          &sValue)
+                LSP_TK_PROPERTY(StepFloat,          step,                           &sStep)
+                LSP_TK_PROPERTY(StepFloat,          accel_step,                     &sAccelStep)
 
-                LSP_TK_PROPERTY(Integer,            border_radius,          &sBorderRadius)
-                LSP_TK_PROPERTY(Integer,            border_size,            &sBorderSize)
-                LSP_TK_PROPERTY(Integer,            border_gap_size,        &sBorderGap)
-                LSP_TK_PROPERTY(Integer,            slider_border_size,     &sSliderBorderSize)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,                    &sConstraints)
+                LSP_TK_PROPERTY(Orientation,        orientation,                    &sOrientation)
 
-                LSP_TK_PROPERTY(Boolean,            invert_mouse_hscroll,   &sInvertMouseHScroll)
-                LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,   &sInvertMouseVScroll)
+                LSP_TK_PROPERTY(Pointer,            slider_pointer,                 &sSliderPointer)
+                LSP_TK_PROPERTY(Pointer,            inc_pointer,                    &sIncPointer)
+                LSP_TK_PROPERTY(Pointer,            dec_pointer,                    &sDecPointer)
 
-                LSP_TK_PROPERTY(Color,              button_color,           &sButtonColor)
-                LSP_TK_PROPERTY(Color,              button_active_color,    &sButtonActiveColor)
-                LSP_TK_PROPERTY(Color,              inc_color,              &sIncColor)
-                LSP_TK_PROPERTY(Color,              inc_active_color,       &sIncActiveColor)
-                LSP_TK_PROPERTY(Color,              dec_color,              &sDecColor)
-                LSP_TK_PROPERTY(Color,              dec_active_color,       &sDecActiveColor)
-                LSP_TK_PROPERTY(Color,              slider_color,           &sSliderColor)
-                LSP_TK_PROPERTY(Color,              slider_border_color,    &sSliderBorderColor)
-                LSP_TK_PROPERTY(Color,              slider_active_color,    &sSliderActiveColor)
-                LSP_TK_PROPERTY(Color,              border_color,           &sBorderColor)
-                LSP_TK_PROPERTY(Color,              border_gap_color,       &sBorderGapColor)
-                LSP_TK_PROPERTY(Color,              text_color,             &sTextColor)
-                LSP_TK_PROPERTY(Color,              text_active_color,      &sTextActiveColor)
+                LSP_TK_PROPERTY(Integer,            border_radius,                  &sBorderRadius)
+                LSP_TK_PROPERTY(Integer,            border_size,                    &sBorderSize)
+                LSP_TK_PROPERTY(Integer,            border_gap_size,                &sBorderGap)
+                LSP_TK_PROPERTY(Integer,            slider_border_size,             &sSliderBorderSize)
+
+                LSP_TK_PROPERTY(Boolean,            invert_mouse_hscroll,           &sInvertMouseHScroll)
+                LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,           &sInvertMouseVScroll)
+                LSP_TK_PROPERTY(Boolean,            active,                         &sActive)
 
             public:
                 virtual status_t                on_mouse_down(const ws::event_t *e) override;

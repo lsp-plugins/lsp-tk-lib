@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -315,8 +315,8 @@ namespace lsp
                 ws::IGradient *g = s->linear_gradient(x, y, nl[0], nl[1]);
                 if (g != NULL)
                 {
-                    g->add_color(0.0f, bcol_l);
-                    g->add_color(1.0f, bcol_l, 1.0f);
+                    g->set_start(bcol_l);
+                    g->set_stop(bcol_l, 1.0f);
 
                     s->parametric_bar(
                         g,
@@ -331,8 +331,8 @@ namespace lsp
                 ws::IGradient *g = s->linear_gradient(x, y, nr[0], nr[1]);
                 if (g != NULL)
                 {
-                    g->add_color(0.0f, bcol_r);
-                    g->add_color(1.0f, bcol_r, 1.0f);
+                    g->set_start(bcol_r);
+                    g->set_stop(bcol_r, 1.0f);
 
                     s->parametric_bar(
                         g,

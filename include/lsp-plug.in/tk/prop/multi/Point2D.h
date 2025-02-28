@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 июн. 2023 г.
@@ -37,10 +37,6 @@ namespace lsp
          */
         class Point2D: public MultiProperty
         {
-            private:
-                Point2D & operator = (const Point2D &);
-                Point2D(const Point2D &);
-
             protected:
                 enum property_t
                 {
@@ -60,14 +56,19 @@ namespace lsp
                 float               fY;                 // Y position
 
             protected:
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
                 static bool         parse(float *x, float *y, const LSPString *s);
 
             protected:
                 explicit Point2D(prop::Listener *listener = NULL);
-                virtual ~Point2D();
+                Point2D(const Point2D &) = delete;
+                Point2D(Point2D &&) = delete;
+                virtual ~Point2D() override;
+
+                Point2D & operator = (const Point2D &) = delete;
+                Point2D & operator = (Point2D &&) = delete;
 
             public:
                 inline float        x() const                   { return fX;                    }
@@ -87,12 +88,13 @@ namespace lsp
              */
             class Point2D: public tk::Point2D
             {
-                private:
-                    Point2D & operator = (const Point2D &);
-                    Point2D(const Point2D &);
-
                 public:
                     explicit Point2D(prop::Listener *listener = NULL): tk::Point2D(listener) {};
+                    Point2D(const Point2D &) = delete;
+                    Point2D(Point2D &&) = delete;
+
+                    Point2D & operator = (const Point2D &) = delete;
+                    Point2D & operator = (Point2D &&) = delete;
 
                 public:
                     /**
@@ -107,9 +109,10 @@ namespace lsp
                      */
                     inline status_t     unbind()                                        { return tk::Point2D::unbind(vAtoms, DESC, &sListener); };
             };
-        }
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
+
 
 #endif /* LSP_PLUG_IN_TK_PROP_MULTI_POINT2D_H_ */

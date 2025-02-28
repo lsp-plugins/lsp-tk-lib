@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 окт. 2019 г.
@@ -51,7 +51,7 @@ namespace lsp
                 explicit Float(prop::Listener *listener = NULL);
                 Float(const Float &) = delete;
                 Float(Float &&) = delete;
-                virtual ~Float();
+                virtual ~Float() override;
 
                 Float & operator = (const Float &) = delete;
                 Float & operator = (Float &&) = delete;
@@ -91,12 +91,13 @@ namespace lsp
              */
             class Float: public tk::Float
             {
-                private:
-                    Float & operator = (const Float &);
-                    Float(const Float &);
-
                 public:
                     explicit inline Float(prop::Listener *listener = NULL): tk::Float(listener) {};
+                    Float(const Float &) = delete;
+                    Float(Float &&) = delete;
+
+                    Float & operator = (const Float &) = delete;
+                    Float & operator = (Float &&) = delete;
 
                 public:
                     /**
@@ -119,8 +120,8 @@ namespace lsp
 
                     inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
-        } /* namespace prop */
 
+        } /* namespace prop */
     } /* namespace tk */
 } /* namespace lsp */
 

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 мая 2020 г.
@@ -35,10 +35,6 @@ namespace lsp
          */
         class BitEnum: public SimpleProperty
         {
-            private:
-                BitEnum & operator = (const BitEnum &);
-                BitEnum(const BitEnum &);
-
             protected:
                 size_t              nValue;
                 const prop::enum_t *pEnum;
@@ -54,16 +50,21 @@ namespace lsp
                 size_t              xtoggle(size_t v);
                 size_t              xset_all(size_t v);
 
-                virtual void        push();
-                virtual void        commit(atom_t property);
+                virtual void        push() override;
+                virtual void        commit(atom_t property) override;
 
             protected:
                 explicit BitEnum(const prop::enum_t *xenum, prop::Listener *listener = NULL);
-                virtual ~BitEnum();
+                BitEnum(const BitEnum &) = delete;
+                BitEnum(BitEnum &&) = delete;
+                virtual ~BitEnum() override;
+
+                BitEnum & operator = (const BitEnum &) = delete;
+                BitEnum & operator = (BitEnum &&) = delete;
 
         };
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

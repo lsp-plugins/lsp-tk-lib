@@ -101,7 +101,13 @@ MTEST_BEGIN("tk.widgets.simple", led)
 
         tk::Led *led = tk::widget_cast<tk::Led>(sender);
         if (led != NULL)
-            led->on()->toggle();
+        {
+            ws::event_t *ev = static_cast<ws::event_t *>(data);
+            if (ev->nCode == ws::MCB_LEFT)
+                led->on()->toggle();
+            else if (ev->nCode == ws::MCB_MIDDLE)
+                led->active()->toggle();
+        }
 
         return STATUS_OK;
     }
