@@ -80,6 +80,16 @@ LSP_DSP_LIB_URL_RO         := https://github.com/lsp-plugins/$(LSP_DSP_LIB_NAME)
 LSP_DSP_LIB_URL_RW         := git@github.com:lsp-plugins/$(LSP_DSP_LIB_NAME).git
 
 # System libraries
+LIBAUDIOTOOLBOX_VERSION    := system
+LIBAUDIOTOOLBOX_NAME       := libaudiotoolbox
+LIBAUDIOTOOLBOX_TYPE       := opt
+LIBAUDIOTOOLBOX_LDFLAGS    := -framework AudioToolbox
+
+LIBCOREFOUNDATION_VERSION  := system
+LIBCOREFOUNDATION_NAME     := libcorefoundation
+LIBCOREFOUNDATION_TYPE     := opt
+LIBCOREFOUNDATION_LDFLAGS  := -framework CoreFoundation
+
 LIBCAIRO_VERSION           := system
 LIBCAIRO_NAME              := cairo
 LIBCAIRO_TYPE              := pkg
