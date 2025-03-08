@@ -93,6 +93,7 @@ namespace lsp
                 static status_t                 slot_on_popup(Widget *sender, void *ptr, void *data);
 
             protected:
+                size_t                          destroy_text_estimations();
                 void                            estimate_string_size(estimation_t *e, tk::String *s);
                 void                            estimate_string_size(estimation_t *e, const LSPString *s);
                 static bool                     contains_digit(const LSPString *s);

@@ -171,6 +171,7 @@ namespace lsp
             protected:
                 void                update_mode(button_mode_t mode);
                 void                estimate_string_size(estimation_t *e, tk::String *s);
+                size_t              destroy_text_estimations();
                 style::ButtonColors *select_colors();
 
             protected:

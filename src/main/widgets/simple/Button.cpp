@@ -222,7 +222,7 @@ namespace lsp
         Button::~Button()
         {
             nFlags     |= FINALIZED;
-            clear_text_estimations();
+            destroy_text_estimations();
         }
 
         status_t Button::init()
@@ -431,7 +431,7 @@ namespace lsp
                 radius);
         }
 
-        void Button::clear_text_estimations()
+        size_t Button::destroy_text_estimations()
         {
             size_t removed = 0;
             for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
@@ -444,6 +444,13 @@ namespace lsp
                 }
             }
             vEstimations.clear();
+
+            return removed;
+        }
+
+        void Button::clear_text_estimations()
+        {
+            const size_t removed = destroy_text_estimations();
             if (removed > 0)
                 query_resize();
         }
