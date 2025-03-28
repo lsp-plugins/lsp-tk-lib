@@ -172,6 +172,7 @@
 #include <lsp-plug.in/tk/widgets/containers/Box.h>
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
+#include <lsp-plug.in/tk/widgets/containers/Overlay.h>
 #include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
 #include <lsp-plug.in/tk/widgets/containers/MultiLabel.h>
 #include <lsp-plug.in/tk/widgets/containers/Tab.h>
