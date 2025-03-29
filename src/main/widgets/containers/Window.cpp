@@ -362,18 +362,18 @@ namespace lsp
             if (!redraw_pending())
                 return STATUS_OK;
 
+            lsp_trace("redraw pending");
+
             // call rendering
             ws::ISurface *s = pWindow->get_surface();
             if (s == NULL)
                 return STATUS_OK;
 
-            size_t flags = nFlags;
-
 //        #ifdef LSP_TRACE
 //            system::time_millis_t time = system::get_time_millis();
 //        #endif /* LSP_TRACE */
 
-            draw_widgets(s, flags);
+            draw_widgets(s);
             commit_redraw();
 
 //        #ifdef LSP_TRACE
@@ -387,7 +387,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Window::draw_widgets(ws::ISurface *s, size_t flags)
+        void Window::draw_widgets(ws::ISurface *s)
         {
             s->begin();
             lsp_finally { s->end(); };
@@ -454,6 +454,8 @@ namespace lsp
             if (!bMapped)
                 return;
 
+            lsp_trace("draw force=%s", (force) ? "true" : "false");
+
             lsp::Color bg_color;
             get_actual_bg_color(bg_color);
 
@@ -462,6 +464,8 @@ namespace lsp
                 s->clear(bg_color);
                 return;
             }
+
+            lsp_trace("child.redraw_pending=%s", (pChild->redraw_pending()) ? "true" : "false");
 
             if (pChild->redraw_pending())
                 force = true;

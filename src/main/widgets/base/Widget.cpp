@@ -639,12 +639,12 @@ namespace lsp
                 return s;
 
             // Redraw surface if required
-            if ((redraw) || (nFlags & REDRAW_SURFACE))
+            if ((redraw) || (nFlags & (REDRAW_CHILD | REDRAW_SURFACE)))
             {
                 pSurface->begin();
-                    draw(pSurface, redraw);
+                    draw(pSurface, (redraw) || (nFlags & REDRAW_SURFACE));
                 pSurface->end();
-                nFlags         &= ~REDRAW_SURFACE;
+                nFlags         &= ~(REDRAW_CHILD | REDRAW_SURFACE);
             }
 
             return pSurface;

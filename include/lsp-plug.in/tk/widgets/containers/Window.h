@@ -139,7 +139,7 @@ namespace lsp
             protected:
                 status_t            do_render();
                 void                do_destroy();
-                void                draw_widgets(ws::ISurface *s, size_t flags);
+                void                draw_widgets(ws::ISurface *s);
                 virtual status_t    sync_size(bool force);
                 status_t            update_pointer();
 
