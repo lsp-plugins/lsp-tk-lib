@@ -44,6 +44,15 @@ namespace lsp
         }
 
         /**
+         * Function for estimating overlay position on realize() call
+         * @param position pointer to store position
+         * @param overlay overlay to estimate position
+         * @param data supplementary data
+         * @return true on success execution
+         */
+        typedef bool (*overlay_position_t)(ws::point_t *position, Overlay *overlay, void *data);
+
+        /**
          * Overlayment, implements a single widget container that Overlays the child widget
          * according to the layout settings. The container ignores allocation() property
          * of the child widget.
@@ -59,9 +68,12 @@ namespace lsp
                 prop::Float             sTransparency;      // The transparency of the overlay widget
                 prop::Integer           sPriority;          // The draw priority of the overlay widget
                 prop::Layout            sLayout;            // The layout of the overlay widget
-                prop::Position          sPosition;          // The position of the overlay widget
+                prop::Position          sPosition;          // The position of the overlay widget in pixels
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Boolean           sAutoClose;         // Automatically close when the pointer delivers event ouside of it's area
+
+                overlay_position_t      pPosFunc;           // Position calculation function
+                void                   *pPosData;           // Position data function
 
             protected:
                 void                    do_destroy();
@@ -96,6 +108,10 @@ namespace lsp
                 virtual void            draw(ws::ISurface *s, bool force) override;
                 virtual status_t        add(Widget *widget) override;
                 virtual status_t        remove(Widget *widget) override;
+
+            public:
+                void                    set_position_function(overlay_position_t func, void *data = NULL);
+                bool                    calculate_position(ws::point_t *position);
         };
 
     } /* namespace tk */

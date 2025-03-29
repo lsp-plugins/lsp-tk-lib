@@ -79,6 +79,13 @@ namespace lsp
                     Slot                sSlot;
                 } shortcut_t;
 
+                typedef struct overlay_t
+                {
+                    ws::rectangle_t     sArea;              // Allocation area
+                    ssize_t             nPriority;          // Sorting order by priority
+                    Overlay            *wWidget;            // Widget
+                } overlay_t;
+
             public:
                 static const w_class_t    metadata;
 
@@ -116,7 +123,7 @@ namespace lsp
                 prop::CollectionListener    sIListener;         // Listener to trigger vOverlays content change
 
                 lltl::parray<prop::Shortcut>    vShortcuts;
-                lltl::parray<Overlay>           vDrawOverlays;
+                lltl::darray<overlay_t>         vDrawOverlays;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -126,6 +133,8 @@ namespace lsp
 
                 static void         on_add_item(void *obj, Property *prop, void *w);
                 static void         on_remove_item(void *obj, Property *prop, void *w);
+
+                static ssize_t      overlay_compare_func(const overlay_t *a, const overlay_t *b);
 
             protected:
                 status_t            do_render();
@@ -232,6 +241,7 @@ namespace lsp
                 LSP_TK_PROPERTY(WindowPolicy,       policy,             &sPolicy)
                 LSP_TK_PROPERTY(Widget,             child,              pChild)
                 LSP_TK_PROPERTY(Position,           position,           &sPosition)
+                LSP_TK_PROPERTY(WidgetList<Overlay>,overlays,           &vOverlays)
 
             //---------------------------------------------------------------------------------
             // Manipulation

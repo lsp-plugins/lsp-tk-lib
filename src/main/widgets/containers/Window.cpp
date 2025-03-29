@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2017 г.
@@ -266,12 +266,29 @@ namespace lsp
             hMouse.pWidget      = NULL;
             hKeys.pWidget       = NULL;
 
+            // Clear list of visible overlays values
+            vDrawOverlays.flush();
+
+            // Unlink overlays
+            for (size_t i=0, n=vOverlays.size(); i<n; ++i)
+            {
+                // Get widget
+                Widget *w = vOverlays.get(i);
+                if (w != NULL)
+                    unlink_widget(w);
+            }
+
+            // Free list of overlays
+            vOverlays.flush();
+
+            // Cleanup child widget
             if (pChild != NULL)
             {
                 unlink_widget(pChild);
                 pChild = NULL;
             }
 
+            // Destroy window
             if (pWindow != NULL)
             {
                 pWindow->destroy();
@@ -499,6 +516,27 @@ namespace lsp
                 );
                 s->set_antialiasing(aa);
             }
+
+            // Draw overlays
+            for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
+            {
+                // Get overlay widget
+                overlay_t *ovd = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+                Overlay *ov = ovd->wWidget;
+                if (ov == NULL)
+                    continue;
+
+                // Get surface of the overlay widget
+                ws::ISurface *ovs = ov->get_surface(s);
+                if (ovs == NULL)
+                    continue;
+
+                // Draw the overlay with alpha blending applied
+                const float alpha = ov->transparency()->get();
+                s->draw(ovs, ovd->sArea.nLeft, ovd->sArea.nTop, 1.0f, 1.0f, alpha);
+            }
         }
 
         status_t Window::override_pointer(bool override)
@@ -705,11 +743,24 @@ namespace lsp
 
         status_t Window::add(Widget *widget)
         {
-            if (pChild != NULL)
-                return STATUS_ALREADY_EXISTS;
+            Overlay *ov = tk::widget_cast<Overlay>(widget);
+            if (ov != NULL)
+            {
+                if (vOverlays.contains(ov))
+                    return STATUS_ALREADY_EXISTS;
 
-            widget->set_parent(this);
-            pChild = widget;
+                status_t res = vOverlays.add(ov);
+                if (res != STATUS_OK)
+                    return res;
+            }
+            else
+            {
+                if (pChild != NULL)
+                    return STATUS_ALREADY_EXISTS;
+
+                widget->set_parent(this);
+                pChild = widget;
+            }
 
             query_resize();
 
@@ -718,17 +769,29 @@ namespace lsp
 
         status_t Window::remove(Widget *widget)
         {
-            if (pChild != widget)
-                return STATUS_NOT_FOUND;
+            Overlay *ov = tk::widget_cast<Overlay>(widget);
+            if (ov != NULL)
+            {
+                if (!vOverlays.premove(ov))
+                    return STATUS_NOT_FOUND;
+            }
+            else
+            {
+                if (pChild != widget)
+                    return STATUS_NOT_FOUND;
 
-            unlink_widget(pChild);
-            pChild  = NULL;
+                unlink_widget(pChild);
+                pChild  = NULL;
+            }
+
+            query_resize();
 
             return STATUS_OK;
         }
 
         status_t Window::remove_all()
         {
+            vOverlays.clear();
             return (pChild != NULL) ? remove(pChild) : STATUS_OK;
         }
 
@@ -1190,10 +1253,38 @@ namespace lsp
 
         Widget *Window::find_widget(ssize_t x, ssize_t y)
         {
-            if ((pChild == NULL) || (!pChild->valid()) || (!pChild->inside(x, y)))
+            Widget *curr;
+
+            // Lookup around visible overlays first
+            // Search should be performed in the reverse to draw order
+            for (ssize_t i=vDrawOverlays.size() - 1; i >= 0; --i)
+            {
+                overlay_t *ovd = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+
+                curr = ovd->wWidget;
+                if (curr == NULL)
+                    continue;
+
+                if ((!curr->valid()) || (!curr->inside(x, y)))
+                    continue;
+
+                // We found current widget, check if we have nested widget to look for
+                while (true)
+                {
+                    Widget *next = curr->find_widget(x, y);
+                    if (next == NULL)
+                        return curr;
+                    curr    = next;
+                }
+            }
+
+            // Now lookup around child widget if it is present
+            curr = pChild;
+            if ((curr == NULL) || (!curr->valid()) || (!curr->inside(x, y)))
                 return this;
 
-            Widget *curr = pChild;
             while (true)
             {
                 Widget *next = curr->find_widget(x, y);
@@ -1240,6 +1331,47 @@ namespace lsp
             // Call for realize
             pChild->padding()->enter(&rc, pChild->scaling()->get());
             pChild->realize_widget(&rc);
+
+            // Realize overlays
+            for (size_t i=0, n=vOverlays.size(); i<n; ++i)
+            {
+                Overlay *ov     = vOverlays.get(i);
+                if (!ov->is_visible_child_of(this))
+                    continue;
+
+                // Calculate position of the overlay
+                ws::point_t position;
+                if (!ov->calculate_position(&position))
+                {
+                    ov->visibility()->set(false);
+                    continue;
+                }
+
+                ov->get_size_limits(&sr);
+
+                // Add overlay to the list
+                overlay_t *ovd  = vDrawOverlays.add();
+                if (ovd == NULL)
+                    continue;
+
+                ovd->nPriority      = ov->priority()->get();
+                ovd->sArea.nLeft    = position.nLeft;
+                ovd->sArea.nTop     = position.nTop;
+                ovd->sArea.nWidth   = lsp_max(sr.nMinWidth, 1);
+                ovd->sArea.nHeight  = lsp_max(sr.nMinHeight, 1);
+                ovd->wWidget        = ov;
+
+                // Realize overlay
+                ov->realize_widget(&ovd->sArea);
+            }
+
+            // Sort overlays according to the drawing order (stack overlays)
+            vDrawOverlays.qsort(overlay_compare_func);
+        }
+
+        ssize_t Window::overlay_compare_func(const overlay_t *a, const overlay_t *b)
+        {
+            return b->nPriority - a->nPriority;
         }
 
         void Window::discard_widget(Widget *w)

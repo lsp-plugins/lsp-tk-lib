@@ -66,6 +66,8 @@ namespace lsp
             pClass          = &metadata;
 
             wWidget         = NULL;
+            pPosFunc        = NULL;
+            pPosData        = NULL;
         }
 
         Overlay::~Overlay()
@@ -227,6 +229,25 @@ namespace lsp
             return STATUS_OK;
         }
 
+        void Overlay::set_position_function(overlay_position_t func, void *data)
+        {
+            pPosFunc        = func;
+            pPosData        = data;
+
+            query_resize();
+        }
+
+        bool Overlay::calculate_position(ws::point_t *position)
+        {
+            if (position == NULL)
+                return false;
+
+            if (pPosFunc != NULL)
+                return pPosFunc(position, this, pPosData);
+
+            sPosition.get(position);
+            return true;
+        }
 
     } /* namespace tk */
 } /* namespace lsp */

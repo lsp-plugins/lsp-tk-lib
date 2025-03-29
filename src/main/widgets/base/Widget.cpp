@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 15 июн. 2017 г.
@@ -252,14 +252,14 @@ namespace lsp
         {
             if (w == NULL)
                 return;
+            if (w->pParent != this)
+                return;
 
             Window *wnd = widget_cast<Window>(w->toplevel());
-            if (w->pParent == this)
-            {
-                w->pParent  = NULL;         // First remove parent
-                if (wnd != NULL)
-                    wnd->discard_widget(w);     // Then discard widget
-            }
+
+            w->pParent  = NULL;         // First remove parent
+            if (wnd != NULL)
+                wnd->discard_widget(w);     // Then discard widget
         }
 
         status_t Widget::slot_mouse_move(Widget *sender, void *ptr, void *data)
