@@ -237,15 +237,15 @@ namespace lsp
             query_resize();
         }
 
-        bool Overlay::calculate_position(ws::point_t *position)
+        bool Overlay::calculate_position(ws::rectangle_t *rect)
         {
-            if (position == NULL)
+            if (rect == NULL)
                 return false;
 
             if (pPosFunc != NULL)
-                return pPosFunc(position, this, pPosData);
+                return pPosFunc(rect, this, pPosData);
 
-            sPosition.get(position);
+            sPosition.get(&rect->nLeft, &rect->nTop);
             return true;
         }
 

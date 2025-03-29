@@ -247,6 +247,7 @@ namespace lsp
             // Manipulation
             public:
                 virtual void            draw(ws::ISurface *s, bool force) override;
+                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
                 virtual status_t        override_pointer(bool override = true);
 

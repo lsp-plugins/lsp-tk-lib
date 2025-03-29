@@ -372,8 +372,13 @@ namespace lsp
 //        #ifdef LSP_TRACE
 //            system::time_millis_t time = system::get_time_millis();
 //        #endif /* LSP_TRACE */
+            ws::rectangle_t xr;
+            xr.nLeft        = 0;
+            xr.nTop         = 0;
+            xr.nWidth       = sSize.nWidth;
+            xr.nHeight      = sSize.nHeight;
 
-            draw_widgets(s);
+            render(s, &xr, false);
             commit_redraw();
 
 //        #ifdef LSP_TRACE
@@ -387,7 +392,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Window::draw_widgets(ws::ISurface *s)
+        void Window::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             s->begin();
             lsp_finally { s->end(); };
@@ -396,6 +401,27 @@ namespace lsp
             ws::ISurface *bs = get_surface(s);
             if (bs != NULL)
                 s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+
+            // Draw overlays
+            for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
+            {
+                // Get overlay widget
+                overlay_t *ovd = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+                Overlay *ov = ovd->wWidget;
+                if (ov == NULL)
+                    continue;
+
+                // Get surface of the overlay widget
+                ws::ISurface *ovs = ov->get_surface(s);
+                if (ovs == NULL)
+                    continue;
+
+                // Draw the overlay with alpha blending applied
+                const float alpha = ov->transparency()->get();
+                s->draw(ovs, ovd->sArea.nLeft, ovd->sArea.nTop, 1.0f, 1.0f, alpha);
+            }
         }
 
         status_t Window::get_screen_rectangle(ws::rectangle_t *r)
@@ -519,27 +545,6 @@ namespace lsp
                     border
                 );
                 s->set_antialiasing(aa);
-            }
-
-            // Draw overlays
-            for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
-            {
-                // Get overlay widget
-                overlay_t *ovd = vDrawOverlays.get(i);
-                if (ovd == NULL)
-                    continue;
-                Overlay *ov = ovd->wWidget;
-                if (ov == NULL)
-                    continue;
-
-                // Get surface of the overlay widget
-                ws::ISurface *ovs = ov->get_surface(s);
-                if (ovs == NULL)
-                    continue;
-
-                // Draw the overlay with alpha blending applied
-                const float alpha = ov->transparency()->get();
-                s->draw(ovs, ovd->sArea.nLeft, ovd->sArea.nTop, 1.0f, 1.0f, alpha);
             }
         }
 
@@ -1337,6 +1342,7 @@ namespace lsp
             pChild->realize_widget(&rc);
 
             // Realize overlays
+            vDrawOverlays.clear();
             for (size_t i=0, n=vOverlays.size(); i<n; ++i)
             {
                 Overlay *ov     = vOverlays.get(i);
@@ -1344,14 +1350,19 @@ namespace lsp
                     continue;
 
                 // Calculate position of the overlay
-                ws::point_t position;
-                if (!ov->calculate_position(&position))
+                ov->get_size_limits(&sr);
+                rc.nLeft        = 0;
+                rc.nTop         = 0;
+                rc.nWidth       = lsp_max(sr.nMinWidth, 1);
+                rc.nHeight      = lsp_max(sr.nMinHeight, 1);
+
+                ov->position()->get(&rc.nLeft, &rc.nTop);
+
+                if (!ov->calculate_position(&rc))
                 {
                     ov->visibility()->set(false);
                     continue;
                 }
-
-                ov->get_size_limits(&sr);
 
                 // Add overlay to the list
                 overlay_t *ovd  = vDrawOverlays.add();
@@ -1359,10 +1370,7 @@ namespace lsp
                     continue;
 
                 ovd->nPriority      = ov->priority()->get();
-                ovd->sArea.nLeft    = position.nLeft;
-                ovd->sArea.nTop     = position.nTop;
-                ovd->sArea.nWidth   = lsp_max(sr.nMinWidth, 1);
-                ovd->sArea.nHeight  = lsp_max(sr.nMinHeight, 1);
+                ovd->sArea          = rc;
                 ovd->wWidget        = ov;
 
                 // Realize overlay

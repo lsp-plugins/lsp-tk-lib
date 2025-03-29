@@ -45,12 +45,12 @@ namespace lsp
 
         /**
          * Function for estimating overlay position on realize() call
-         * @param position pointer to store position
+         * @param rect the window rectangle that will be used for overlay
          * @param overlay overlay to estimate position
          * @param data supplementary data
          * @return true on success execution
          */
-        typedef bool (*overlay_position_t)(ws::point_t *position, Overlay *overlay, void *data);
+        typedef bool (*overlay_position_t)(ws::rectangle_t *rect, Overlay *overlay, void *data);
 
         /**
          * Overlayment, implements a single widget container that Overlays the child widget
@@ -111,7 +111,7 @@ namespace lsp
 
             public:
                 void                    set_position_function(overlay_position_t func, void *data = NULL);
-                bool                    calculate_position(ws::point_t *position);
+                bool                    calculate_position(ws::rectangle_t *rect);
         };
 
     } /* namespace tk */
