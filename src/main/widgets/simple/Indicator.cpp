@@ -558,7 +558,7 @@ namespace lsp
             return uint8_t(ch);
         }
 
-        void Indicator::draw(ws::ISurface *s)
+        void Indicator::draw(ws::ISurface *s, bool force)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
             float bright    = sBrightness.get();

@@ -318,7 +318,7 @@ namespace lsp
             }
         }
     
-        void ProgressBar::draw(ws::ISurface *s)
+        void ProgressBar::draw(ws::ISurface *s, bool force)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
             float bright    = sBrightness.get();

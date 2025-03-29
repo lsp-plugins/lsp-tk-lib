@@ -131,7 +131,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            active,                     &sActive)
 
             public:
-                virtual void                    draw(ws::ISurface *s) override;
+                virtual void                    draw(ws::ISurface *s, bool force) override;
         };
     
     } /* namespace tk */

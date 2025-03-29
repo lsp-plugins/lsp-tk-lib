@@ -299,7 +299,7 @@ namespace lsp
             sButton.nTop            = r->nTop  + ((r->nHeight - sButton.nHeight) >> 1);
         }
 
-        void FileButton::draw(ws::ISurface *s)
+        void FileButton::draw(ws::ISurface *s, bool force)
         {
             float v                 = sValue.get_normalized();
             float bright            = sBrightness.get();

@@ -622,8 +622,8 @@ namespace lsp
 
             // Render to the main surface
             s->clip_begin(area);
-                s->draw(src, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
-            s->clip_end();
+            lsp_finally { s->clip_end(); };
+            s->draw(src, sSize.nLeft, sSize.nTop, 1.0f, 1.0f, 0.0f);
         }
 
         ws::ISurface *Widget::get_surface(ws::ISurface *s)
@@ -634,7 +634,7 @@ namespace lsp
         ws::ISurface *Widget::get_surface(ws::ISurface *s, ssize_t width, ssize_t height)
         {
             // Create new surface if needed
-            bool redraw = create_cached_surface(&pSurface, s, width, height);
+            const bool redraw = create_cached_surface(&pSurface, s, width, height);
             if (pSurface == NULL)
                 return s;
 
@@ -642,7 +642,7 @@ namespace lsp
             if ((redraw) || (nFlags & REDRAW_SURFACE))
             {
                 pSurface->begin();
-                    draw(pSurface);
+                    draw(pSurface, redraw);
                 pSurface->end();
                 nFlags         &= ~REDRAW_SURFACE;
             }
@@ -650,7 +650,7 @@ namespace lsp
             return pSurface;
         }
 
-        void Widget::draw(ws::ISurface *s)
+        void Widget::draw(ws::ISurface *s, bool force)
         {
         }
 

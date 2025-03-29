@@ -471,7 +471,7 @@ namespace lsp
             sTArea.nTop         = r->nTop;
         }
 
-        void ComboBox::draw(ws::ISurface *s)
+        void ComboBox::draw(ws::ISurface *s, bool force)
         {
             alloc_t a;
             bool aa;

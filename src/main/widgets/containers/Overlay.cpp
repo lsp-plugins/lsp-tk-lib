@@ -166,7 +166,7 @@ namespace lsp
             wWidget->realize_widget(&xr);
         }
 
-        void Overlay::draw(ws::ISurface *s)
+        void Overlay::draw(ws::ISurface *s, bool force)
         {
             // Initialize palette
             lsp::Color bg_color;
@@ -175,7 +175,8 @@ namespace lsp
             // Draw background if child is invisible or not present
             if ((wWidget == NULL) || (!wWidget->visibility()->get()))
             {
-                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
+                if (force)
+                    s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
                 return;
             }
 
@@ -189,13 +190,16 @@ namespace lsp
             wWidget->render(s, &xr, false);
             wWidget->commit_redraw();
 
-            // Draw rectangle around widget
-            ws::rectangle_t sr  = sSize;
-            sr.nLeft           -= xr.nLeft;
-            sr.nTop            -= xr.nTop;
+            if (force)
+            {
+                // Draw rectangle around widget
+                ws::rectangle_t sr  = sSize;
+                sr.nLeft           -= xr.nLeft;
+                sr.nTop            -= xr.nTop;
 
-            wWidget->get_actual_bg_color(bg_color);
-            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                wWidget->get_actual_bg_color(bg_color);
+                s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+            }
         }
 
         status_t Overlay::add(Widget *widget)

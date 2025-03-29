@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -428,7 +428,7 @@ namespace lsp
             s->line(wire, x, r->nTop, x, r->nTop + r->nHeight, border);
         }
 
-        void AudioChannel::draw(ws::ISurface *s)
+        void AudioChannel::draw(ws::ISurface *s, bool force)
         {
             float bright        = sBrightness.get();
             float scaling       = lsp_max(0.0f, sScaling.get());

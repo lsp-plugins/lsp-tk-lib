@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -129,9 +129,10 @@ namespace lsp
                 prop::SizeConstraints   sConstraints;       // Size constraints
 
             protected:
-                virtual void            size_request(ws::size_limit_t *r);
-                virtual void            property_changed(Property *prop);
+                virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            property_changed(Property *prop) override;
 
+            protected:
                 void                    draw_samples(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright, float max_amplitude);
                 void                    draw_fades(const ws::rectangle_t *r, ws::ISurface *s, size_t samples, float scaling, float bright);
                 void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, range_t *range, size_t samples, float scaling, float bright);
@@ -141,12 +142,12 @@ namespace lsp
                 explicit AudioChannel(Display *dpy);
                 AudioChannel(const AudioChannel &) = delete;
                 AudioChannel(AudioChannel &&) = delete;
-                virtual ~AudioChannel();
+                virtual ~AudioChannel() override;
 
                 AudioChannel & operator = (const AudioChannel &) = delete;
                 AudioChannel & operator = (AudioChannel &) = delete;
 
-                virtual status_t        init();
+                virtual status_t        init() override;
 
             public:
                 LSP_TK_PROPERTY(FloatArray,             samples,                &vSamples);
@@ -184,7 +185,7 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints);
 
             public:
-                virtual void            draw(ws::ISurface *s);
+                virtual void            draw(ws::ISurface *s, bool force) override;
         };
     } /* namespace tk */
 } /* namespace lsp */

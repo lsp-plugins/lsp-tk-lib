@@ -232,7 +232,7 @@ namespace lsp
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;
                 virtual status_t            on_mouse_up(const ws::event_t *e) override;
                 virtual status_t            on_mouse_scroll(const ws::event_t *e) override;
-                virtual void                draw(ws::ISurface *s) override;
+                virtual void                draw(ws::ISurface *s, bool force) override;
 
             public:
                 virtual status_t            on_change();

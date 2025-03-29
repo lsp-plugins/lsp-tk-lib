@@ -187,7 +187,7 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void Hyperlink::draw(ws::ISurface *s)
+        void Hyperlink::draw(ws::ISurface *s, bool force)
         {
             // Form the text string
             LSPString text;

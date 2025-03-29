@@ -519,7 +519,7 @@ namespace lsp
             Widget::realize(r);
         }
 
-        void Fraction::draw(ws::ISurface *s)
+        void Fraction::draw(ws::ISurface *s, bool force)
         {
             LSPString num, den;
 

@@ -93,7 +93,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            auto_close,         &sAutoClose)
 
             public:
-                virtual void            draw(ws::ISurface *s) override;
+                virtual void            draw(ws::ISurface *s, bool force) override;
                 virtual status_t        add(Widget *widget) override;
                 virtual status_t        remove(Widget *widget) override;
         };

@@ -512,7 +512,7 @@ namespace lsp
             }
         }
 
-        void Edit::draw(ws::ISurface *s)
+        void Edit::draw(ws::ISurface *s, bool force)
         {
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;

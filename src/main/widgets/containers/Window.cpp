@@ -79,7 +79,8 @@ namespace lsp
             sWindowSize(&sProperties),
             sSizeConstraints(&sProperties),
             sLayout(&sProperties),
-            sPolicy(&sProperties)
+            sPolicy(&sProperties),
+            vOverlays(&sProperties, &sIListener)
         {
             lsp_trace("native_handle = %p", handle);
 
@@ -115,6 +116,9 @@ namespace lsp
             // Initialize parent class
             if ((result = WidgetContainer::init()) != STATUS_OK)
                 return result;
+
+            // Init listener
+            sIListener.bind_all(this, on_add_item, on_remove_item);
 
             // Initialize display
             ws::IDisplay *dpy   = pDisplay->display();
@@ -301,6 +305,35 @@ namespace lsp
             return (_this != NULL) ? _this->on_close(static_cast<ws::event_t *>(data)) : STATUS_BAD_ARGUMENTS;
         }
 
+        void Window::on_add_item(void *obj, Property *prop, void *w)
+        {
+            Widget *widget = widget_ptrcast<Widget>(w);
+            if (widget == NULL)
+                return;
+
+            Window *self = widget_ptrcast<Window>(obj);
+            if (self == NULL)
+                return;
+
+            widget->set_parent(self);
+            self->query_resize();
+        }
+
+        void Window::on_remove_item(void *obj, Property *prop, void *w)
+        {
+            Widget *widget = widget_ptrcast<Widget>(w);
+            if (widget == NULL)
+                return;
+
+            Window *self = widget_ptrcast<Window>(obj);
+            if (self == NULL)
+                return;
+
+            self->vDrawOverlays.flush();
+            self->unlink_widget(widget);
+            self->query_resize();
+        }
+
         status_t Window::do_render()
         {
             if ((pWindow == NULL) || (!bMapped))
@@ -323,16 +356,7 @@ namespace lsp
 //            system::time_millis_t time = system::get_time_millis();
 //        #endif /* LSP_TRACE */
 
-            s->begin();
-            {
-                ws::rectangle_t xr;
-                xr.nLeft    = 0;
-                xr.nTop     = 0;
-                xr.nWidth   = sSize.nWidth;
-                xr.nHeight  = sSize.nHeight;
-                render(s, &xr, flags & REDRAW_SURFACE);
-            }
-            s->end();
+            draw_widgets(s, flags);
             commit_redraw();
 
 //        #ifdef LSP_TRACE
@@ -344,6 +368,17 @@ namespace lsp
             update_pointer();
 
             return STATUS_OK;
+        }
+
+        void Window::draw_widgets(ws::ISurface *s, size_t flags)
+        {
+            s->begin();
+            lsp_finally { s->end(); };
+
+            // Draw main contents
+            ws::ISurface *bs = get_surface(s);
+            if (bs != NULL)
+                s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
         }
 
         status_t Window::get_screen_rectangle(ws::rectangle_t *r)
@@ -397,7 +432,7 @@ namespace lsp
             return res;
         }
 
-        void Window::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
+        void Window::draw(ws::ISurface *s, bool force)
         {
             if (!bMapped)
                 return;
@@ -411,51 +446,58 @@ namespace lsp
                 return;
             }
 
-            if ((force) || (pChild->redraw_pending()))
+            if (pChild->redraw_pending())
+                force = true;
+
+            if (!force)
+                return;
+
+            // Draw the child only if it is visible in the area
+            ws::rectangle_t area, xr;
+            area.nLeft      = 0;
+            area.nTop       = 0;
+            area.nWidth     = sSize.nWidth;
+            area.nHeight    = sSize.nHeight;
+
+            pChild->get_padded_rectangle(&xr);
+            if (Size::intersection(&xr, &area))
+                pChild->render(s, &xr, force);
+
+            pChild->commit_redraw();
+
+            // Draw surrounding rectangle
+            ws::rectangle_t pr, cr;
+            pChild->get_padded_rectangle(&pr);
+            pChild->get_rectangle(&cr);
+
+            s->fill_frame(
+                bg_color, SURFMASK_NONE, 0.0f,
+                0, 0, sSize.nWidth, sSize.nHeight,
+                pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
+            );
+
+            pChild->get_actual_bg_color(bg_color);
+            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &pr, &cr);
+
+            // Draw border
+            const float scaling   = sScaling.get();
+            const float border    = sBorderSize.get() * scaling;
+
+            if (border > 0)
             {
-                // Draw the child only if it is visible in the area
-                ws::rectangle_t xr;
-                pChild->get_padded_rectangle(&xr);
-                if (Size::intersection(&xr, area))
-                    pChild->render(s, &xr, force);
+                float radius = sBorderRadius.get() * scaling;
+                bool aa = s->set_antialiasing(true);
+                float bw = border * 0.5f;
 
-                pChild->commit_redraw();
-            }
+                lsp::Color bc(sBorderColor);
+                bc.scale_lch_luminance(sBrightness.get());
 
-            if (force)
-            {
-                ws::rectangle_t pr, cr;
-                pChild->get_padded_rectangle(&pr);
-                pChild->get_rectangle(&cr);
-
-                s->fill_frame(
-                    bg_color, SURFMASK_NONE, 0.0f,
-                    0, 0, sSize.nWidth, sSize.nHeight,
-                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
+                s->wire_rect(
+                    bc, SURFMASK_ALL_CORNER, radius,
+                    bw, bw, sSize.nWidth, sSize.nHeight,
+                    border
                 );
-
-                pChild->get_actual_bg_color(bg_color);
-                s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &pr, &cr);
-
-                float scaling   = sScaling.get();
-                float border    = sBorderSize.get() * scaling;
-
-                if (border > 0)
-                {
-                    float radius = sBorderRadius.get() * scaling;
-                    bool aa = s->set_antialiasing(true);
-                    float bw = border * 0.5f;
-
-                    lsp::Color bc(sBorderColor);
-                    bc.scale_lch_luminance(sBrightness.get());
-
-                    s->wire_rect(
-                        bc, SURFMASK_ALL_CORNER, radius,
-                        bw, bw, sSize.nWidth, sSize.nHeight,
-                        border
-                    );
-                    s->set_antialiasing(aa);
-                }
+                s->set_antialiasing(aa);
             }
         }
 
@@ -510,15 +552,10 @@ namespace lsp
                     return;
                 pWindow->set_role(text.get_utf8());
             }
-            if (sPadding.is(prop))
-                query_resize();
-            if (sBorderColor.is(prop))
+            if (prop->one_of(sBorderColor))
                 query_draw();
-            if (sBorderSize.is(prop))
+            if (prop->one_of(sPadding, sBorderSize, sBorderRadius, vOverlays))
                 query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-
 
             if (sBorderStyle.is(prop))
                 pWindow->set_border_style(sBorderStyle.get());

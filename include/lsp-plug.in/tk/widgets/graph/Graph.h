@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -209,14 +209,10 @@ namespace lsp
 
             public:
                 virtual status_t            add(Widget *child) override;
-
                 virtual status_t            remove(Widget *child) override;
-
                 virtual status_t            remove_all() override;
-
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
-
-                virtual void                draw(ws::ISurface *s) override;
+                virtual void                draw(ws::ISurface *s, bool force) override;
         };
 
     } /* namespace tk */

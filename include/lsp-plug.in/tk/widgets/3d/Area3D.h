@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 окт. 2020 г.
@@ -53,10 +53,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                Area3D & operator    = (const Area3D &);
-                Area3D(const Area3D &);
-
             protected:
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Integer               sBorder;        // Border size
@@ -72,12 +68,14 @@ namespace lsp
                 ws::rectangle_t             sCanvas;        // Actual dimensions of the drawing area (with padding)
 
             protected:
-                virtual void                size_request(ws::size_limit_t *r);
-                virtual void                property_changed(Property *prop);
-                virtual void                realize(const ws::rectangle_t *r);
+                virtual void                size_request(ws::size_limit_t *r) override;
+                virtual void                property_changed(Property *prop) override;
+                virtual void                realize(const ws::rectangle_t *r) override;
 
+            protected:
                 static status_t             slot_draw3d(Widget *sender, void *ptr, void *data);
 
+            protected:
                 void                        do_destroy();
                 virtual void                hide_widget();
                 void                        drop_glass();
@@ -86,11 +84,16 @@ namespace lsp
 
             public:
                 explicit Area3D(Display *dpy);
-                virtual ~Area3D();
+                Area3D(const Area3D &) = delete;
+                Area3D(Area3D &&) = delete;
+                virtual ~Area3D() override;
+
+                Area3D & operator = (const Area3D &) = delete;
+                Area3D & operator = (Area3D &&) = delete;
 
             public:
-                virtual status_t            init();
-                virtual void                destroy();
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,        &sConstraints);
@@ -103,14 +106,15 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,                      glass_color,        &sGlassColor);
 
             public:
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
+                virtual void                draw(ws::ISurface *s, bool force) override;
 
-                virtual void                draw(ws::ISurface *s);
-
+            public:
                 virtual status_t            on_draw3d(ws::IR3DBackend *r3d);
         };
-    }
-}
+
+    } /* namespace tk */
+} /* namespace lsp */
 
 
 

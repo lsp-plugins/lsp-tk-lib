@@ -111,8 +111,12 @@ namespace lsp
                 prop::SizeConstraints   sSizeConstraints;
                 prop::Layout            sLayout;
                 prop::WindowPolicy      sPolicy;
+                prop::WidgetList<Overlay>    vOverlays;
+
+                prop::CollectionListener    sIListener;         // Listener to trigger vOverlays content change
 
                 lltl::parray<prop::Shortcut>    vShortcuts;
+                lltl::parray<Overlay>           vDrawOverlays;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
@@ -120,8 +124,13 @@ namespace lsp
                 static status_t     tmr_redraw_request(ws::timestamp_t sched, ws::timestamp_t ts, void *args);
                 static status_t     slot_window_close(Widget *sender, void *ptr, void *data);
 
+                static void         on_add_item(void *obj, Property *prop, void *w);
+                static void         on_remove_item(void *obj, Property *prop, void *w);
+
+            protected:
                 status_t            do_render();
                 void                do_destroy();
+                void                draw_widgets(ws::ISurface *s, size_t flags);
                 virtual status_t    sync_size(bool force);
                 status_t            update_pointer();
 
@@ -227,7 +236,7 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
-                virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
+                virtual void            draw(ws::ISurface *s, bool force) override;
 
                 virtual status_t        override_pointer(bool override = true);
 
@@ -244,15 +253,15 @@ namespace lsp
                 virtual void            show(tk::Widget *actor);
                 virtual void            show(ws::IWindow *actor);
 
-                virtual status_t        add(Widget *widget) override;
-                virtual status_t        remove(Widget *widget) override;
-                virtual status_t        remove_all() override;
-
                 virtual status_t        handle_event(const ws::event_t *e) override;
 
                 virtual bool            take_focus() override;
 
                 virtual bool            has_parent() const;
+
+                virtual status_t        add(Widget *child) override;
+                virtual status_t        remove(Widget *child) override;
+                virtual status_t        remove_all() override;
 
             public:
                 status_t                grab_events(ws::grab_t grab);
