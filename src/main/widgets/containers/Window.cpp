@@ -831,6 +831,35 @@ namespace lsp
             return hKeys.vKeys.size();
         }
 
+        void Window::auto_close_overlays(ssize_t x, ssize_t y)
+        {
+            Overlay *ov     = find_overlay(x, y);
+            size_t updates  = 0;
+
+            for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
+            {
+                overlay_t *ovd  = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+
+                // Ensure that overlay is valid and has 'auto_close' option
+                Overlay *xov    = ovd->wWidget;
+                if (xov == NULL)
+                    continue;
+                if (!xov->auto_close()->get())
+                    continue;
+
+                if (xov != ov)
+                {
+                    xov->visibility()->set(false);
+                    ++updates;
+                }
+            }
+
+            if (updates > 0)
+                query_resize();
+        }
+
         status_t Window::handle_event(const ws::event_t *e)
         {
             status_t result = STATUS_OK;
@@ -931,6 +960,8 @@ namespace lsp
 
                 case ws::UIE_MOUSE_DOWN:
                 {
+                    auto_close_overlays(e->nLeft, e->nTop);
+
                     Widget *h       = acquire_mouse_handler(e);
 //                    int old_state   = hMouse.nState;
                     hMouse.nState  |= (size_t(1) << e->nCode);
@@ -973,6 +1004,8 @@ namespace lsp
                 case ws::UIE_MOUSE_TRI_CLICK:
                 case ws::UIE_MOUSE_SCROLL:
                 {
+                    auto_close_overlays(e->nLeft, e->nTop);
+
                     Widget *h = acquire_mouse_handler(e);
                     if (h == this)
                         result          = WidgetContainer::handle_event(e);
@@ -1260,10 +1293,8 @@ namespace lsp
             return true;
         }
 
-        Widget *Window::find_widget(ssize_t x, ssize_t y)
+        Overlay *Window::find_overlay(ssize_t x, ssize_t y)
         {
-            Widget *curr;
-
             // Lookup around visible overlays first
             // Search should be performed in the reverse to draw order
             for (ssize_t i=vDrawOverlays.size() - 1; i >= 0; --i)
@@ -1272,14 +1303,24 @@ namespace lsp
                 if (ovd == NULL)
                     continue;
 
-                curr = ovd->wWidget;
-                if (curr == NULL)
+                Overlay *ov = ovd->wWidget;
+                if (ov == NULL)
                     continue;
 
-                if ((!curr->valid()) || (!curr->inside(x, y)))
-                    continue;
+                if ((ov->valid()) && (ov->inside(x, y)))
+                    return ov;
+            }
 
-                // We found current widget, check if we have nested widget to look for
+            return NULL;
+        }
+
+        Widget *Window::find_widget(ssize_t x, ssize_t y)
+        {
+            // First check if event is related to overlay
+            Widget *curr = find_overlay(x, y);
+            if (curr != NULL)
+            {
+                // We found overlay widget, check if we have nested widget to look for
                 while (true)
                 {
                     Widget *next = curr->find_widget(x, y);

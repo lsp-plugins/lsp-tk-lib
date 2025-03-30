@@ -140,6 +140,8 @@ namespace lsp
                 status_t            do_render();
                 void                do_destroy();
                 void                draw_widgets(ws::ISurface *s);
+                void                auto_close_overlays(ssize_t x, ssize_t y);
+                Overlay            *find_overlay(ssize_t x, ssize_t y);
                 virtual status_t    sync_size(bool force);
                 status_t            update_pointer();
 

@@ -262,8 +262,17 @@ MTEST_BEGIN("tk.widgets.containers", overlay)
 
         ov->set_position_function(overlay_position_func, const_cast<ov_position_t *>(position));
         ov->transparency()->set(0.1f);
+        ov->auto_close()->set(position->bHide);
 
         return ov;
+    }
+
+    static status_t show_overlay(tk::Widget *sender, void *ptr, void *data)
+    {
+        tk::Overlay *ov = static_cast<tk::Overlay *>(ptr);
+        ov->visibility()->set(true);
+
+        return STATUS_OK;
     }
 
     MTEST_MAIN
@@ -304,19 +313,38 @@ MTEST_BEGIN("tk.widgets.containers", overlay)
         grid->hspacing()->set(8);
         grid->vspacing()->set(4);
         grid->bg_color()->set_rgb(1.0, 0.75, 1.0);
-        grid->rows()->set(3);
+        grid->rows()->set(4);
         grid->columns()->set(3);
 
         // Create groups
         for (size_t i=0; i<9; ++i)
             MTEST_ASSERT(create_group(grid, widgets, vh, i) == STATUS_OK);
 
-        tk::Overlay *ov;
-        MTEST_ASSERT(ov = create_overlay(wnd, widgets, vh, 0, &ov_positions[0]));
-        MTEST_ASSERT(ov = create_overlay(wnd, widgets, vh, 1, &ov_positions[1]));
-        MTEST_ASSERT(ov = create_overlay(wnd, widgets, vh, 2, &ov_positions[2]));
-        MTEST_ASSERT(ov = create_overlay(wnd, widgets, vh, 3, &ov_positions[3]));
+        tk::Overlay *ov[4];
+        MTEST_ASSERT(ov[0] = create_overlay(wnd, widgets, vh, 0, &ov_positions[0]));
+        MTEST_ASSERT(ov[1] = create_overlay(wnd, widgets, vh, 1, &ov_positions[1]));
+        MTEST_ASSERT(ov[2] = create_overlay(wnd, widgets, vh, 2, &ov_positions[2]));
+        MTEST_ASSERT(ov[3] = create_overlay(wnd, widgets, vh, 3, &ov_positions[3]));
 
+        // Add two void widgets
+        tk::Void *v;
+        for (size_t i=0; i<2; ++i)
+        {
+            MTEST_ASSERT(v = new tk::Void(dpy));
+            MTEST_ASSERT(init_widget(v, vh, "void") == STATUS_OK);
+            MTEST_ASSERT(widgets.push(v));
+            MTEST_ASSERT(grid->add(v) == STATUS_OK);
+        }
+
+        // Add Button for activating overlay
+        tk::Button *btn;
+        MTEST_ASSERT(btn = new tk::Button(dpy));
+        MTEST_ASSERT(init_widget(btn, vh, "button") == STATUS_OK);
+        MTEST_ASSERT(widgets.push(btn));
+        MTEST_ASSERT(grid->add(btn) == STATUS_OK);
+
+        btn->text()->set_raw("Show overlay");
+        btn->slots()->bind(tk::SLOT_SUBMIT, show_overlay, ov[3]);
 
         // Show window
         wnd->visibility()->set(true);
