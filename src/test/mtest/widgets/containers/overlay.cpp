@@ -29,15 +29,14 @@ namespace
     {
         float           nLeft;
         float           nTop;
-        bool            bHide;
     } ov_position_t;
 
     static const ov_position_t ov_positions[] =
     {
-        { 0.25f, 0.25f, false },
-        { 0.25f, 0.75f, false },
-        { 0.75f, 0.25f, false },
-        { 0.75f, 0.75f, true  },
+        { 0.25f, 0.25f },
+        { 0.25f, 0.75f },
+        { 0.75f, 0.25f },
+        { 0.75f, 0.75f },
     };
 }
 
@@ -262,7 +261,6 @@ MTEST_BEGIN("tk.widgets.containers", overlay)
 
         ov->set_position_function(overlay_position_func, const_cast<ov_position_t *>(position));
         ov->transparency()->set(0.1f);
-        ov->auto_close()->set(position->bHide);
 
         return ov;
     }
@@ -291,8 +289,8 @@ MTEST_BEGIN("tk.widgets.containers", overlay)
 
         // Initialize window
         MTEST_ASSERT(init_widget(wnd, vh, "window") == STATUS_OK);
-        MTEST_ASSERT(wnd->title()->set_raw("Test group 4") == STATUS_OK);
-        MTEST_ASSERT(wnd->role()->set_raw("group_test") == STATUS_OK);
+        MTEST_ASSERT(wnd->title()->set_raw("Test overlay") == STATUS_OK);
+        MTEST_ASSERT(wnd->role()->set_raw("overlay_test") == STATUS_OK);
         wnd->bg_color()->set_rgb(0, 0.75, 1.0);
         wnd->actions()->set_actions(ws::WA_MOVE | ws::WA_RESIZE | ws::WA_CLOSE);
         wnd->border_style()->set(ws::BS_DIALOG);
@@ -320,11 +318,31 @@ MTEST_BEGIN("tk.widgets.containers", overlay)
         for (size_t i=0; i<9; ++i)
             MTEST_ASSERT(create_group(grid, widgets, vh, i) == STATUS_OK);
 
-        tk::Overlay *ov[4];
-        MTEST_ASSERT(ov[0] = create_overlay(wnd, widgets, vh, 0, &ov_positions[0]));
-        MTEST_ASSERT(ov[1] = create_overlay(wnd, widgets, vh, 1, &ov_positions[1]));
-        MTEST_ASSERT(ov[2] = create_overlay(wnd, widgets, vh, 2, &ov_positions[2]));
-        MTEST_ASSERT(ov[3] = create_overlay(wnd, widgets, vh, 3, &ov_positions[3]));
+        tk::Overlay *ovv[4], *ov;
+        MTEST_ASSERT(ovv[0] = create_overlay(wnd, widgets, vh, 0, &ov_positions[0]));
+        ov = ovv[0];
+        ov->auto_close()->set(false);
+        ov->border_color()->set_rgb24(0xff0000);
+
+        MTEST_ASSERT(ovv[1] = create_overlay(wnd, widgets, vh, 1, &ov_positions[1]));
+        ov = ovv[1];
+        ov->auto_close()->set(false);
+        ov->border_color()->set_rgb24(0x008800);
+        ov->border_size()->set(2);
+
+        MTEST_ASSERT(ovv[2] = create_overlay(wnd, widgets, vh, 2, &ov_positions[2]));
+        ov = ovv[2];
+        ov->auto_close()->set(false);
+        ov->border_color()->set_rgb24(0x0000ff);
+        ov->border_rounding()->set_corners(ws::CORNERS_RIGHT | ws::CORNERS_BOTTOM);
+        ov->border_size()->set(2);
+
+        MTEST_ASSERT(ovv[3] = create_overlay(wnd, widgets, vh, 3, &ov_positions[3]));
+        ov = ovv[3];
+        ov->auto_close()->set(true);
+        ov->border_rounding()->set_corners(ws::CORNERS_RIGHT | ws::CORNERS_BOTTOM);
+        ov->border_color()->set_rgb24(0xff0000);
+        ov->border_size()->set(2);
 
         // Add two void widgets
         tk::Void *v;
@@ -344,7 +362,7 @@ MTEST_BEGIN("tk.widgets.containers", overlay)
         MTEST_ASSERT(grid->add(btn) == STATUS_OK);
 
         btn->text()->set_raw("Show overlay");
-        btn->slots()->bind(tk::SLOT_SUBMIT, show_overlay, ov[3]);
+        btn->slots()->bind(tk::SLOT_SUBMIT, show_overlay, ovv[3]);
 
         // Show window
         wnd->visibility()->set(true);

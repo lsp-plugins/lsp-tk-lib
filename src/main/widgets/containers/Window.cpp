@@ -419,8 +419,16 @@ namespace lsp
                     continue;
 
                 // Draw the overlay with alpha blending applied
+                const size_t bround = ov->border_rounding()->corners();
                 const float alpha = ov->transparency()->get();
-                s->draw(ovs, ovd->sArea.nLeft, ovd->sArea.nTop, 1.0f, 1.0f, alpha);
+                if (bround != 0)
+                {
+                    const float scaling = lsp_max(0.0f, ov->scaling()->get());
+                    const size_t radius = lsp_max(0.0f, ov->border_radius()->get() * scaling);
+                    s->fill_rect(ovs, alpha, bround, radius, &ovd->sArea);
+                }
+                else
+                    s->draw(ovs, ovd->sArea.nLeft, ovd->sArea.nTop, 1.0f, 1.0f, alpha);
             }
         }
 

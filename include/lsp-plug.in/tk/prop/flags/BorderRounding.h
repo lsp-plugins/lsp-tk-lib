@@ -52,6 +52,7 @@ namespace lsp
                 inline bool     top() const                             { return (nValue & ws::CORNERS_TOP) == ws::CORNERS_TOP;         }
                 inline bool     bottom() const                          { return (nValue & ws::CORNERS_BOTTOM) == ws::CORNERS_BOTTOM;   }
                 inline bool     all() const                             { return nValue == ws::CORNERS_ALL;         }
+                inline size_t   corners() const                         { return nValue;                            }
 
             public:
                 inline void     set_corners(size_t flags)               { xset_all(flags & ws::CORNERS_ALL);                }
@@ -75,6 +76,7 @@ namespace lsp
 
                 inline void     set_all()                               { xset_all(ws::CORNERS_ALL);                }
                 inline void     remove_all()                            { xset_all(ws::CORNERS_NONE);               }
+                inline void     set_none()                              { xset_all(ws::CORNERS_NONE);               }
                 inline void     toggle_all()                            { xset_all(nValue ^ ws::CORNERS_ALL);       }
         };
 

@@ -40,6 +40,10 @@ namespace lsp
                 prop::Position          sPosition;          // The position of the overlay widget
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Boolean           sAutoClose;         // Automatically close when the pointer delivers event ouside of it's area
+                prop::BorderRounding    sBorderRounding;    // Border rounding
+                prop::Integer           sBorderRadius;      // Border radius
+                prop::Integer           sBorderSize;        // Border width
+                prop::Color             sBorderColor;       // Border color
             LSP_TK_STYLE_DEF_END
         }
 
@@ -71,6 +75,10 @@ namespace lsp
                 prop::Position          sPosition;          // The position of the overlay widget in pixels
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Boolean           sAutoClose;         // Automatically close when the pointer delivers event ouside of it's area
+                prop::BorderRounding    sBorderRounding;    // Border rounding
+                prop::Integer           sBorderRadius;      // Border radius
+                prop::Integer           sBorderSize;        // Border width
+                prop::Color             sBorderColor;       // Border color
 
                 overlay_position_t      pPosFunc;           // Position calculation function
                 void                   *pPosData;           // Position data function
@@ -103,6 +111,10 @@ namespace lsp
                 LSP_TK_PROPERTY(Position,           position,           &sPosition)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Boolean,            auto_close,         &sAutoClose)
+                LSP_TK_PROPERTY(BorderRounding,     border_rounding,    &sBorderRounding)
+                LSP_TK_PROPERTY(Integer,            border_radius,      &sBorderRadius)
+                LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
+                LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
 
             public:
                 virtual void            draw(ws::ISurface *s, bool force) override;
