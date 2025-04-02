@@ -70,6 +70,7 @@
 
 // Flags
 #include <lsp-plug.in/tk/prop/flags/Allocation.h>
+#include <lsp-plug.in/tk/prop/flags/BorderRounding.h>
 #include <lsp-plug.in/tk/prop/flags/WindowActions.h>
 
 // Single-value properties
