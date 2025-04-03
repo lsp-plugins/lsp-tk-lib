@@ -71,13 +71,13 @@ namespace lsp
                 virtual void                size_request(ws::size_limit_t *r) override;
                 virtual void                property_changed(Property *prop) override;
                 virtual void                realize(const ws::rectangle_t *r) override;
+                virtual void                hide_widget() override;
 
             protected:
                 static status_t             slot_draw3d(Widget *sender, void *ptr, void *data);
 
             protected:
                 void                        do_destroy();
-                virtual void                hide_widget();
                 void                        drop_glass();
                 void                        drop_backend();
                 ws::IR3DBackend            *get_backend();
