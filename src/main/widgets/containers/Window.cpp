@@ -362,8 +362,6 @@ namespace lsp
             if (!redraw_pending())
                 return STATUS_OK;
 
-            lsp_trace("redraw pending");
-
             // call rendering
             ws::ISurface *s = pWindow->get_surface();
             if (s == NULL)
@@ -488,8 +486,6 @@ namespace lsp
             if (!bMapped)
                 return;
 
-            lsp_trace("draw force=%s", (force) ? "true" : "false");
-
             lsp::Color bg_color;
             get_actual_bg_color(bg_color);
 
@@ -498,8 +494,6 @@ namespace lsp
                 s->clear(bg_color);
                 return;
             }
-
-            lsp_trace("child.redraw_pending=%s", (pChild->redraw_pending()) ? "true" : "false");
 
             if (pChild->redraw_pending())
                 force = true;
