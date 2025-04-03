@@ -261,6 +261,7 @@ MTEST_BEGIN("tk.widgets.containers", overlay)
 
         ov->set_position_function(overlay_position_func, const_cast<ov_position_t *>(position));
         ov->transparency()->set(0.1f);
+        ov->padding()->set_all(72);
 
         return ov;
     }

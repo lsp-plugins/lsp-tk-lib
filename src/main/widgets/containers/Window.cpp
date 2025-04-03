@@ -1407,6 +1407,19 @@ namespace lsp
                     continue;
                 }
 
+                // Apply window-related padding
+                tk::padding_t padding;
+                const float scaling     = lsp_max(0.0f, ov->scaling()->get());
+                ov->padding()->compute(&padding, scaling);
+
+                padding.nRight          = r->nWidth - padding.nRight;
+                padding.nBottom         = r->nHeight - padding.nBottom;
+
+                rc.nLeft                = lsp_max(rc.nLeft, ssize_t(padding.nLeft));
+                rc.nTop                 = lsp_max(rc.nTop, ssize_t(padding.nTop));
+                rc.nLeft               -= lsp_max(rc.nLeft + rc.nWidth - ssize_t(padding.nRight), 0);
+                rc.nTop                -= lsp_max(rc.nTop + rc.nHeight - ssize_t(padding.nBottom), 0);
+
                 // Add overlay to the list
                 overlay_t *ovd  = vDrawOverlays.add();
                 if (ovd == NULL)
