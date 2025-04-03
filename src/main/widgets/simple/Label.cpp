@@ -120,7 +120,7 @@ namespace lsp
                 query_resize();
         }
 
-        void Label::draw(ws::ISurface *s)
+        void Label::draw(ws::ISurface *s, bool force)
         {
             // Form the text string
             LSPString text;

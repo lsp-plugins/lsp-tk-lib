@@ -118,7 +118,7 @@ namespace lsp
                 status_t                        follow_url() const;
 
             public:
-                virtual void                    draw(ws::ISurface *s) override;
+                virtual void                    draw(ws::ISurface *s, bool force) override;
                 virtual status_t                on_mouse_in(const ws::event_t *e) override;
                 virtual status_t                on_mouse_out(const ws::event_t *e) override;
                 virtual status_t                on_mouse_move(const ws::event_t *e) override;

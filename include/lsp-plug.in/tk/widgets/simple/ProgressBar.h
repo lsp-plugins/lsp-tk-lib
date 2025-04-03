@@ -142,7 +142,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_radius,              &sBorderRadius)
 
             public:
-                virtual void                    draw(ws::ISurface *s) override;
+                virtual void                    draw(ws::ISurface *s, bool force) override;
         };
 
     } /* namespace tk */

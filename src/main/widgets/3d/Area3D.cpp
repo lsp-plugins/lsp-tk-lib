@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 окт. 2020 г.
@@ -257,7 +257,7 @@ namespace lsp
             return (_this != NULL) ? _this->on_draw3d(static_cast<ws::IR3DBackend *>(data)) : STATUS_BAD_ARGUMENTS;
         }
 
-        void Area3D::draw(ws::ISurface *s)
+        void Area3D::draw(ws::ISurface *s, bool force)
         {
             // Obtain a 3D backend and draw it if it is valid
             ws::IR3DBackend *r3d    = get_backend();
@@ -324,7 +324,7 @@ namespace lsp
                 s->fill_rect(color, SURFMASK_ALL_CORNER, xr, &sSize);
 
                 // Draw the contents
-                draw(s);
+                draw(s, force);
 
                 // Draw the glass and the border
                 color.copy(sGlassColor);

@@ -532,8 +532,9 @@ namespace lsp
                 /** Draw widget on the internal surface
                  *
                  * @param surface surface to perform drawing
+                 * @param force do full widget redraw
                  */
-                virtual void            draw(ws::ISurface *s);
+                virtual void            draw(ws::ISurface *s, bool force);
 
                 /**
                  * Realize widget by passing it's dimensions.

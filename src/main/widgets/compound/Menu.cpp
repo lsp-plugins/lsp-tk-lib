@@ -831,7 +831,7 @@ namespace lsp
             sIStats             = st;
         }
 
-        void Menu::draw(ws::ISurface *s)
+        void Menu::draw(ws::ISurface *s, bool force)
         {
             ws::rectangle_t xr, r;
             float scaling       = lsp_max(0.0f, sScaling.get());

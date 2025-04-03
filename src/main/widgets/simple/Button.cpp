@@ -485,7 +485,7 @@ namespace lsp
             e->min_height    = lsp_max(e->min_height, ceilf(lsp_max(e->tp.Height, e->fp.Height)));
         }
 
-        void Button::draw(ws::ISurface *s)
+        void Button::draw(ws::ISurface *s, bool force)
         {
             ws::IGradient *g    = NULL;
             size_t pressed      = nState;

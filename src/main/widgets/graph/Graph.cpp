@@ -334,7 +334,7 @@ namespace lsp
             return diff;
         }
 
-        void Graph::draw(ws::ISurface *s)
+        void Graph::draw(ws::ISurface *s, bool force)
         {
             // Clear canvas
             lsp::Color c(sColor);

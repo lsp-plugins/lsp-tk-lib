@@ -550,7 +550,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Fader::draw(ws::ISurface *s)
+        void Fader::draw(ws::ISurface *s, bool force)
         {
             ws::IGradient *g;
             float scaling       = lsp_max(0.0f, sScaling.get());

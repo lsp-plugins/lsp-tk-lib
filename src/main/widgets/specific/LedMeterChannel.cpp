@@ -702,7 +702,7 @@ namespace lsp
             s->clip_end();
         }
 
-        void LedMeterChannel::draw(ws::ISurface *s)
+        void LedMeterChannel::draw(ws::ISurface *s, bool force)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());

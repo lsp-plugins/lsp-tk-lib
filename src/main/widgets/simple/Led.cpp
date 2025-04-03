@@ -205,7 +205,7 @@ namespace lsp
             SizeConstraints::add(r, extra, extra);
         }
 
-        void Led::draw(ws::ISurface *s)
+        void Led::draw(ws::ISurface *s, bool force)
         {
             if (sRound.get())
                 draw_round(s);

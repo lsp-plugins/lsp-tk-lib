@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -160,7 +160,7 @@ namespace lsp
                 static status_t         slot_on_popup(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
-            public:
+            protected:
                 virtual void            size_request(ws::size_limit_t *r) override;
                 virtual void            realize(const ws::rectangle_t *r) override;
                 virtual void            property_changed(Property *prop) override;
@@ -244,7 +244,7 @@ namespace lsp
 
             public:
                 virtual void                query_draw(size_t flags = REDRAW_SURFACE) override;
-                virtual void                draw(ws::ISurface *s) override;
+                virtual void                draw(ws::ISurface *s, bool force) override;
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
                 virtual status_t            add(Widget *widget) override;
                 virtual status_t            remove(Widget *child) override;

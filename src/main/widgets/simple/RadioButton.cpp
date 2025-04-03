@@ -262,7 +262,7 @@ namespace lsp
             sArea.nTop          = r->nTop   + (r->nHeight - sArea.nHeight) / 2;
         }
 
-        void RadioButton::draw(ws::ISurface *s)
+        void RadioButton::draw(ws::ISurface *s, bool force)
         {
             lsp::Color c;
 
