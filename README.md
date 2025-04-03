@@ -7,9 +7,9 @@ Graphical toolkit library used by Linux Studio Plugins Project.
 ## Key features
 
 * Supported platforms:
-  * FreeBSD (X11/Cairo);
-  * GNU/Linux (X11/Cairo);
-  * Windows (WinAPI/D2D1).
+  * FreeBSD (X11/OpenGL, X11/Cairo);
+  * GNU/Linux (X11/OpenGL, X11/Cairo);
+  * Windows (WinAPI/Direct2D).
 * Pretty leightweight, only about 2 MB of compiled code.
 * Almost minimum global state (used only in case when underlying API requires global variables),
   all operations are performed on `tk::Display` main object and objects derived from `tk::Widget`.
@@ -43,6 +43,7 @@ The full list of provided widgets:
   * Grid - container for packaging widgets into table.
   * Group - container for surrounding widgets into a distinguishable group.
   * MultiLabel - widget that allows to implement overlay of multiple labels on the same area.
+  * Overlay - special container for displaying overlayed widgets on the window.
   * ScrollArea - container that allows to package widget into limited rectangular space.
   * TabControl - container that allows to organize widgets as a set of tabs.
   * TabGroup - container that behaves similar to ComboGroup but uses tabs insetad of combo box.
