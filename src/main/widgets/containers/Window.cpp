@@ -427,6 +427,9 @@ namespace lsp
                 }
                 else
                     s->draw(ovs, ovd->sArea.nLeft, ovd->sArea.nTop, 1.0f, 1.0f, alpha);
+
+                // Commit pending redraw of the overlay
+                ov->commit_redraw();
             }
         }
 
