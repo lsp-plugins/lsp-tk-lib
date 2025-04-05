@@ -193,6 +193,9 @@ namespace lsp
             if (id >= 0) id = sSlots.add(SLOT_REALIZED, slot_realized, self());
             if (id >= 0) id = sSlots.add(SLOT_MOUSE_POINTER, slot_mouse_pointer, self());
 
+            // Set visibility flag
+            nFlags      = lsp_setflag(nFlags, VISIBLE, sVisibility.get());
+
             return (id >= 0) ? STATUS_OK : -id;
         }
 
@@ -231,10 +234,20 @@ namespace lsp
 
             if (sVisibility.is(prop))
             {
-                if (sVisibility.get())
-                    show_widget();
-                else
-                    hide_widget();
+                const bool new_visibility = sVisibility.get();
+                const bool old_visibility = nFlags & VISIBLE;
+
+                if (old_visibility != new_visibility)
+                {
+                    // Update state first
+                    nFlags      = lsp_setflag(nFlags, VISIBLE, new_visibility);
+
+                    // Launch callbacks next
+                    if (new_visibility)
+                        show_widget();
+                    else
+                        hide_widget();
+                }
             }
         }
 

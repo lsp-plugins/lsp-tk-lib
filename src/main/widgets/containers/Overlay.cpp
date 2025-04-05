@@ -39,7 +39,7 @@ namespace lsp
                 sAutoClose.bind("close.auto", this);
                 sBorderRounding.bind("border.rounding", this);
                 sBorderRadius.bind("border.radius", this);
-                sBorderSize.bind("border.width", this);
+                sBorderSize.bind("border.size", this);
                 sBorderColor.bind("border.color", this);
 
                 // Configure
@@ -103,7 +103,7 @@ namespace lsp
             sAutoClose.bind("close.auto", &sStyle);
             sBorderRounding.bind("border.rounding", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
-            sBorderSize.bind("border.width", &sStyle);
+            sBorderSize.bind("border.size", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
 
             return STATUS_OK;

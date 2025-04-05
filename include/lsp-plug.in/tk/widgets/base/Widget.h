@@ -68,11 +68,12 @@ namespace lsp
                 {
                     INITIALIZED     = 1 << 0,       // Widget is initialized
                     FINALIZED       = 1 << 1,       // Widget is in destroy state
-                    REDRAW_SURFACE  = 1 << 2,       // Need to redraw surface
-                    REDRAW_CHILD    = 1 << 3,       // Need to redraw child only
-                    SIZE_INVALID    = 1 << 4,       // Size limit structure is valid
-                    RESIZE_PENDING  = 1 << 5,       // The resize request is pending
-                    REALIZE_ACTIVE  = 1 << 6        // Realize is active, no need to trigger for realize
+                    VISIBLE         = 1 << 2,       // Widget is currently visible
+                    REDRAW_SURFACE  = 1 << 3,       // Need to redraw surface
+                    REDRAW_CHILD    = 1 << 4,       // Need to redraw child only
+                    SIZE_INVALID    = 1 << 5,       // Size limit structure is valid
+                    RESIZE_PENDING  = 1 << 6,       // The resize request is pending
+                    REALIZE_ACTIVE  = 1 << 7        // Realize is active, no need to trigger for realize
                 };
 
             protected:
