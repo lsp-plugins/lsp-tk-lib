@@ -400,6 +400,27 @@ namespace lsp
             if (bs != NULL)
                 s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 
+            // Draw overlay shadows
+            size_t overlays = 0;
+
+            for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
+            {
+                // Get overlay widget
+                overlay_t *ovd = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+                Overlay *ov = ovd->wWidget;
+                if (ov == NULL)
+                    continue;
+
+                // Draw shadow
+                ov->draw_shadow(s);
+                ++overlays;
+            }
+
+            if (overlays <= 0)
+                return;
+
             // Draw overlays
             for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
             {

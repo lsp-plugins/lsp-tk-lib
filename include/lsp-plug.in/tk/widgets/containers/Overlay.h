@@ -44,6 +44,9 @@ namespace lsp
                 prop::Integer           sBorderRadius;      // Border radius
                 prop::Integer           sBorderSize;        // Border width
                 prop::Color             sBorderColor;       // Border color
+                prop::Integer           sShadowSize;        // Shadow size
+                prop::Color             sShadowStart;       // Shadow start color
+                prop::Color             sShadowEnd;         // Shadow end color
             LSP_TK_STYLE_DEF_END
         }
 
@@ -66,6 +69,8 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+                friend class Window;
+
             protected:
                 Widget                 *wWidget;
 
@@ -79,12 +84,30 @@ namespace lsp
                 prop::Integer           sBorderRadius;      // Border radius
                 prop::Integer           sBorderSize;        // Border width
                 prop::Color             sBorderColor;       // Border color
+                prop::Integer           sShadowSize;        // Shadow size
+                prop::Color             sShadowStart;       // Shadow start color
+                prop::Color             sShadowEnd;         // Shadow end color
 
                 overlay_position_t      pPosFunc;           // Position calculation function
                 void                   *pPosData;           // Position data function
 
             protected:
                 void                    do_destroy();
+                void                    draw_shadow_segment(
+                    ws::ISurface *s,
+                    float x1, float y1,
+                    float x2, float y2,
+                    bool start, bool end,
+                    float width, float radius);
+
+                void                    draw_shadow_ring(
+                    ws::ISurface *s,
+                    float xc, float yc,
+                    float x1, float y1,
+                    float x2, float y2,
+                    float angle);
+
+                void                    draw_shadow(ws::ISurface *s);
 
             protected:
                 virtual Widget         *find_widget(ssize_t x, ssize_t y) override;
@@ -115,6 +138,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_radius,      &sBorderRadius)
                 LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
                 LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor)
+                LSP_TK_PROPERTY(Integer,            shadow_size,        &sShadowSize)
+                LSP_TK_PROPERTY(Color,              shadow_start,       &sShadowStart)
+                LSP_TK_PROPERTY(Color,              shadow_end,         &sShadowEnd)
 
             public:
                 virtual void            draw(ws::ISurface *s, bool force) override;

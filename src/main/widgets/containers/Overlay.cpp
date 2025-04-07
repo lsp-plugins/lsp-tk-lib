@@ -41,6 +41,9 @@ namespace lsp
                 sBorderRadius.bind("border.radius", this);
                 sBorderSize.bind("border.size", this);
                 sBorderColor.bind("border.color", this);
+                sShadowSize.bind("shadow.size", this);
+                sShadowStart.bind("shadow.start", this);
+                sShadowEnd.bind("shadow.end", this);
 
                 // Configure
                 sTransparency.set(0.25f);
@@ -53,6 +56,9 @@ namespace lsp
                 sBorderRadius.set(12);
                 sBorderSize.set(0);
                 sBorderColor.set_rgb24(0x000000);
+                sShadowSize.set(0);
+                sShadowStart.set_rgba32(0x00000000);
+                sShadowEnd.set_rgba32(0xff000000);
 
                 // Override
                 sLayout.override();
@@ -74,7 +80,10 @@ namespace lsp
             sBorderRounding(&sProperties),
             sBorderRadius(&sProperties),
             sBorderSize(&sProperties),
-            sBorderColor(&sProperties)
+            sBorderColor(&sProperties),
+            sShadowSize(&sProperties),
+            sShadowStart(&sProperties),
+            sShadowEnd(&sProperties)
         {
             pClass          = &metadata;
 
@@ -105,6 +114,9 @@ namespace lsp
             sBorderRadius.bind("border.radius", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderColor.bind("border.color", &sStyle);
+            sShadowSize.bind("shadow.size", &sStyle);
+            sShadowStart.bind("shadow.start", &sStyle);
+            sShadowEnd.bind("shadow.end", &sStyle);
 
             return STATUS_OK;
         }
@@ -253,6 +265,168 @@ namespace lsp
 
                 s->wire_rect(bcolor, flags, radius, &br, bw);
             }
+        }
+
+        void Overlay::draw_shadow_ring(
+            ws::ISurface *s,
+            float xc, float yc,
+            float x1, float y1,
+            float x2, float y2,
+            float angle)
+        {
+            float vx1           = x1 - xc;
+            float vy1           = y1 - yc;
+            float vx2           = x2 - xc;
+            float vy2           = y2 - yc;
+            const float r1      = sqrtf(vx1*vx1 + vy1*vy1);
+
+            const size_t count  = lsp_max(fabsf(r1 * angle * 0.5f), 2.0f);
+            const float phi     = angle / float(count);
+
+            const float dx      = cosf(phi);
+            const float dy      = sinf(phi);
+
+            for (size_t i=0; i < count; ++i)
+            {
+                float nvx1          = vx1*dx - vy1*dy;
+                float nvy1          = vx1*dy + vy1*dx;
+                float nvx2          = vx2*dx - vy2*dy;
+                float nvy2          = vx2*dy + vy2*dx;
+                vx1                 = nvx1;
+                vy1                 = nvy1;
+                vx2                 = nvx2;
+                vy2                 = nvy2;
+
+                const float x3      = xc + vx1;
+                const float y3      = yc + vy1;
+                const float x4      = xc + vx2;
+                const float y4      = yc + vy2;
+
+                // Fill main part
+                ws::IGradient *g    = s->linear_gradient(x1, y1, x2, y2);
+                if (g == NULL)
+                    return;
+                lsp_finally { delete g; };
+
+                // Prepare colors
+                g->set_start(sShadowStart);
+                g->set_stop(sShadowEnd, 1.0f);
+
+                s->fill_triangle(g, x1, y1, x2, y2, x4, y4);
+                s->fill_triangle(g, x1, y1, x4, y4, x3, y3);
+
+                x1                  = x3;
+                y1                  = y3;
+                x2                  = x4;
+                y2                  = y4;
+            }
+        }
+
+        void Overlay::draw_shadow_segment(
+            ws::ISurface *s,
+            float x1, float y1,
+            float x2, float y2,
+            bool start, bool end,
+            float width, float radius)
+        {
+            // Compute direction
+            float dx            = (x2 - x1);
+            float dy            = (y2 - y1);
+            const float dw      = sqrtf(dx*dx + dy*dy);
+            if (dw <= 0.05f)
+                return;
+            const float rdw     = 1.0f / dw;
+
+            dx                 *= rdw;
+            dy                 *= rdw;
+            const float rdx     = radius * dx;
+            const float rdy     = radius * dy;
+
+            dx                 *= width;
+            dy                 *= width;
+
+            // Draw start segment
+            float x0, y0, x3, y3;
+
+            if ((start) && (radius >= 1.0f))
+            {
+                x1     += rdx;
+                y1     += rdy;
+                x0      = x1 + dy;
+                y0      = y1 - dx;
+
+                draw_shadow_ring(s, x1 - rdy, y1 + rdx, x1, y1, x0, y0, -0.25f * M_PI);
+            }
+            else
+            {
+                x0      = x1 + dy - dx;
+                y0      = y1 - dx - dy;
+            }
+
+            if ((end) && (radius >= 1.0f))
+            {
+                x2     -= rdx;
+                y2     -= rdy;
+                x3      = x2 + dy;
+                y3      = y2 - dx;
+
+                draw_shadow_ring(s, x2 - rdy, y2 + rdx, x2, y2, x3, y3, 0.25f * M_PI);
+            }
+            else
+            {
+                x3      = x2 + dy + dx;
+                y3      = y2 - dx + dy;
+            }
+
+            // Fill main part
+            ws::IGradient *g    = s->linear_gradient(x1, y1, x1 + dy, y1 - dx);
+            if (g != NULL)
+            {
+                lsp_finally { delete g; };
+
+                // Prepare colors
+                g->set_start(sShadowStart);
+                g->set_stop(sShadowEnd, 1.0f);
+
+                s->fill_triangle(g, x1, y1, x0, y0, x3, y3);
+                s->fill_triangle(g, x1, y1, x3, y3, x2, y2);
+            }
+        }
+
+        void Overlay::draw_shadow(ws::ISurface *s)
+        {
+            // Check that we need to draw shadow
+            const float scaling = lsp_max(0.0f, sScaling.get());
+            const size_t shsize = lsp_max(0.0f, sShadowSize.get() * scaling);
+            if (shsize < 1)
+                return;
+
+            // Compute shadow parameters
+            const size_t bround = sBorderRounding.corners();
+            const size_t bsize  = lsp_max(0, sBorderSize.get());
+            const size_t radius = lsp_max(0.0f, sBorderRadius.get() * scaling) + bsize;
+
+            const float xb      = sSize.nLeft;
+            const float xe      = sSize.nLeft + sSize.nWidth;
+            const float yb      = sSize.nTop;
+            const float ye      = sSize.nTop + sSize.nHeight;
+
+            draw_shadow_segment(
+                s, xb, yb, xe, yb,
+                bround & ws::CORNER_LEFT_TOP, bround & ws::CORNER_RIGHT_TOP,
+                shsize, radius);
+            draw_shadow_segment(
+                s, xe, yb, xe, ye,
+                bround & ws::CORNER_RIGHT_TOP, bround & ws::CORNER_RIGHT_BOTTOM,
+                shsize, radius);
+            draw_shadow_segment(
+                s, xe, ye, xb, ye,
+                bround & ws::CORNER_RIGHT_BOTTOM, bround & ws::CORNER_LEFT_BOTTOM,
+                shsize, radius);
+            draw_shadow_segment(
+                s, xb, ye, xb, yb,
+                bround & ws::CORNER_LEFT_BOTTOM, bround & ws::CORNER_LEFT_TOP,
+                shsize, radius);
         }
 
         status_t Overlay::add(Widget *widget)
