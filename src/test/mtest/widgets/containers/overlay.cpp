@@ -324,6 +324,7 @@ MTEST_BEGIN("tk.widgets.containers", overlay)
         ov = ovv[0];
         ov->auto_close()->set(false);
         ov->border_color()->set_rgb24(0xff0000);
+        ov->border_rounding()->set_all();
 
         MTEST_ASSERT(ovv[1] = create_overlay(wnd, widgets, vh, 1, &ov_positions[1]));
         ov = ovv[1];
