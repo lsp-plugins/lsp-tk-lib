@@ -64,7 +64,6 @@ namespace lsp
                 sScaleActive.bind("scale.active", this);
                 sMeterActive.bind("meter.active", this);
                 sEditable.bind("editable", this);
-                sActive.bind("active", this);
                 sHoleSize.bind("hole.size", this);
                 sGapSize.bind("gap.size", this);
                 sScaleBrightness.bind("scale.brightness", this);
@@ -105,7 +104,6 @@ namespace lsp
                 sScaleActive.set(true);
                 sMeterActive.set(false);
                 sEditable.set(true);
-                sActive.set(true);
                 sHoleSize.set(1);
                 sGapSize.set(1);
                 sScaleBrightness.set(0.75f);
@@ -151,7 +149,6 @@ namespace lsp
             sScaleActive(&sProperties),
             sMeterActive(&sProperties),
             sEditable(&sProperties),
-            sActive(&sProperties),
             sHoleSize(&sProperties),
             sGapSize(&sProperties),
             sScaleBrightness(&sProperties),
@@ -212,7 +209,6 @@ namespace lsp
             sScaleActive.bind("scale.active", &sStyle);
             sMeterActive.bind("meter.active", &sStyle);
             sEditable.bind("editable", &sStyle);
-            sActive.bind("active", &sStyle);
             sHoleSize.bind("hole.size", &sStyle);
             sGapSize.bind("gap.size", &sStyle);
             sScaleBrightness.bind("scale.brightness", &sStyle);
@@ -236,9 +232,6 @@ namespace lsp
             style::KnobColors *colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (prop->one_of(sSizeRange, sScale, sHoleSize, sGapSize))
                 query_resize();

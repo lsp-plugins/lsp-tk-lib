@@ -63,7 +63,6 @@ namespace lsp
                 sScaleBrightness.bind("scale.brightness", this);
                 sBalanceColorCustom.bind("balance.color.custom", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[FADER_NORMAL];
@@ -98,7 +97,6 @@ namespace lsp
                 sScaleBrightness.set(0.75f);
                 sBalanceColorCustom.set(false);
                 sInvertMouseVScroll.set(false);
-                sActive.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Fader, "Fader", "root");
 
@@ -138,8 +136,7 @@ namespace lsp
             sBalance(&sProperties),
             sScaleBrightness(&sProperties),
             sBalanceColorCustom(&sProperties),
-            sInvertMouseVScroll(&sProperties),
-            sActive(&sProperties)
+            sInvertMouseVScroll(&sProperties)
         {
             nLastV          = 0;
             nButtons        = 0;
@@ -207,7 +204,6 @@ namespace lsp
             sScaleBrightness.bind("scale.brightness", &sStyle);
             sBalanceColorCustom.bind("balance.color.custom", &sStyle);
             sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
-            sActive.bind("active", &sStyle);
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -233,9 +229,6 @@ namespace lsp
             style::FaderColors *cols = select_colors();
             if (cols->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (sValue.is(prop))
                 sync_button_pos();

@@ -57,7 +57,6 @@ namespace lsp
                 prop::Boolean           sTextVisible;
                 prop::Boolean           sHeaderVisible;
                 prop::Boolean           sReversive;
-                prop::Boolean           sActive;
                 prop::Integer           sMinSegments;
                 prop::SizeConstraints   sConstraints;
                 prop::Font              sFont;
@@ -99,7 +98,6 @@ namespace lsp
                 prop::Boolean           sTextVisible;
                 prop::Boolean           sHeaderVisible;
                 prop::Boolean           sReversive;
-                prop::Boolean           sActive;
                 prop::Integer           sMinSegments;
                 prop::SizeConstraints   sConstraints;
                 prop::Font              sFont;
@@ -162,7 +160,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            text_visible,       &sTextVisible)
                 LSP_TK_PROPERTY(Boolean,            header_visible,     &sHeaderVisible)
                 LSP_TK_PROPERTY(Boolean,            reversive,          &sReversive)
-                LSP_TK_PROPERTY(Boolean,            active,             &sActive)
                 LSP_TK_PROPERTY(Integer,            min_segments,       &sMinSegments)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)

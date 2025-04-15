@@ -66,7 +66,6 @@ namespace lsp
                 prop::Integer                   sBorderRadius;
                 prop::Integer                   sSpacing;
                 prop::Boolean                   sMultiSelect;
-                prop::Boolean                   sActive;
                 prop::Integer                   sHScrollSpacing;
                 prop::Integer                   sVScrollSpacing;
             LSP_TK_STYLE_DEF_END
@@ -174,7 +173,6 @@ namespace lsp
                 prop::Integer                   sBorderRadius;
                 prop::Integer                   sSpacing;
                 prop::Boolean                   sMultiSelect;
-                prop::Boolean                   sActive;
                 prop::Integer                   sHScrollSpacing;
                 prop::Integer                   sVScrollSpacing;
 
@@ -246,7 +244,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_gap,                 &sBorderGap)
                 LSP_TK_PROPERTY(Integer,            border_radius,              &sBorderRadius)
                 LSP_TK_PROPERTY(Boolean,            multi_select,               &sMultiSelect)
-                LSP_TK_PROPERTY(Boolean,            active,                     &sActive)
 
                 LSP_TK_PROPERTY(Integer,            hscroll_spacing,            &sHScrollSpacing)
                 LSP_TK_PROPERTY(Integer,            vscroll_spacing,            &sVScrollSpacing)

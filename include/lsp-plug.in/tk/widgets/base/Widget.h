@@ -56,6 +56,7 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(Widget, Style)
                 WidgetColors        vColors[WIDGET_TOTAL];  // Widget colors
 
+                prop::Boolean       sActive;                // Widget activity
                 prop::Allocation    sAllocation;            // Widget allocation
                 prop::Float         sScaling;               // UI scaling factor
                 prop::Float         sFontScaling;           // UI font scaling factor
@@ -86,15 +87,14 @@ namespace lsp
 
                 enum flags_t
                 {
-                    INACTIVE        = 1 << 0,       // Widget is inactive
-                    INITIALIZED     = 1 << 1,       // Widget is initialized
-                    FINALIZED       = 1 << 2,       // Widget is in destroy state
-                    VISIBLE         = 1 << 3,       // Widget is currently visible
-                    REDRAW_SURFACE  = 1 << 4,       // Need to redraw surface
-                    REDRAW_CHILD    = 1 << 5,       // Need to redraw child only
-                    SIZE_INVALID    = 1 << 6,       // Size limit structure is valid
-                    RESIZE_PENDING  = 1 << 7,       // The resize request is pending
-                    REALIZE_ACTIVE  = 1 << 8,       // Realize is active, no need to trigger for realize
+                    INITIALIZED     = 1 << 0,       // Widget is initialized
+                    FINALIZED       = 1 << 1,       // Widget is in destroy state
+                    VISIBLE         = 1 << 2,       // Widget is currently visible
+                    REDRAW_SURFACE  = 1 << 3,       // Need to redraw surface
+                    REDRAW_CHILD    = 1 << 4,       // Need to redraw child only
+                    SIZE_INVALID    = 1 << 5,       // Size limit structure is valid
+                    RESIZE_PENDING  = 1 << 6,       // The resize request is pending
+                    REALIZE_ACTIVE  = 1 << 7,       // Realize is active, no need to trigger for realize
 
                     REDRAW_DEFAULT  = REDRAW_SURFACE
                 };
@@ -125,6 +125,7 @@ namespace lsp
                 PropListener        sProperties;            // Properties listener
 
                 style::WidgetColors vColors[WIDGET_TOTAL];  // Widget colors
+                prop::Boolean       sActive;                // Widget activity
                 prop::Allocation    sAllocation;            // Widget allocation
                 prop::Float         sScaling;               // UI scaling factor
                 prop::Float         sFontScaling;           // UI font scaling factor
@@ -167,8 +168,6 @@ namespace lsp
             //---------------------------------------------------------------------------------
             // Interface for nested classes
             protected:
-                void                    set_active(bool active, size_t redraw = REDRAW_DEFAULT);
-
                 void                    do_destroy();
 
                 const style::WidgetColors   *select_colors() const;
@@ -437,6 +436,12 @@ namespace lsp
                 //---------------------------------------------------------------------------------
                 // Properties
             public:
+                /**
+                 * Widget activity
+                 * @return widget activity property
+                 */
+                LSP_TK_PROPERTY(Boolean,            active,             &sActive)
+
                 /**
                  * Return widget's style
                  * @return widget's style

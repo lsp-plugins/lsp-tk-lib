@@ -61,7 +61,6 @@ namespace lsp
                 prop::Boolean       sDarkText;      // Enables drawing of the dark text/dark segments
                 prop::String        sText;          // Actual text to display
                 prop::IndicatorType sType;          // Indicator type
-                prop::Boolean       sActive;        // Active/inactive state
                 prop::Font          sFont;          // Font properties
                 prop::Integer       sSpacing;       // Spacing between digits
                 prop::Padding       sIPadding;      // Internal padding
@@ -92,7 +91,6 @@ namespace lsp
                 prop::Boolean           sDarkText;      // Enables drawing of the dark text/dark segments
                 prop::String            sText;          // Actual text to display
                 prop::IndicatorType     sType;          // Indicator type
-                prop::Boolean           sActive;        // Active/inactive state
                 prop::Font              sFont;          // Font properties
                 prop::Integer           sSpacing;       // Spacing between digits
                 prop::Padding           sIPadding;      // Internal padding
@@ -137,7 +135,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            dark_text,              &sDarkText)
                 LSP_TK_PROPERTY(String,             text,                   &sText)
                 LSP_TK_PROPERTY(IndicatorType,      type,                   &sType)
-                LSP_TK_PROPERTY(Boolean,            active,                 &sActive)
                 LSP_TK_PROPERTY(Font,               font,                   &sFont)
                 LSP_TK_PROPERTY(Integer,            spacing,                &sSpacing)
                 LSP_TK_PROPERTY(Padding,            ipadding,               &sIPadding)

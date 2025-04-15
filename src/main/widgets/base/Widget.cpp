@@ -44,6 +44,7 @@ namespace lsp
                 c->sBrightness.bind("inactive.brightness", this);
                 c->sBgBrightness.bind("inactive.bg.brightness", this);
 
+                sActive.bind("active", this);
                 sAllocation.bind("allocation", this);
                 sScaling.bind("size.scaling", this);
                 sFontScaling.bind("font.scaling", this);
@@ -65,6 +66,7 @@ namespace lsp
                 c->sBgBrightness.set(1.0f);
                 c->sBgColor.set("#cccccc");
 
+                sActive.set(true);
                 sAllocation.set(true, false);
                 sScaling.set(1.0f);
                 sFontScaling.set(1.0f);
@@ -109,6 +111,7 @@ namespace lsp
         Widget::Widget(Display *dpy):
             sStyle(dpy->schema(), NULL, NULL),
             sProperties(this),
+            sActive(&sProperties),
             sAllocation(&sProperties),
             sScaling(&sProperties),
             sFontScaling(&sProperties),
@@ -190,6 +193,7 @@ namespace lsp
                 c->sBrightness.bind("inactive.brightness", &sStyle);
                 c->sBgBrightness.bind("inactive.bg.brightness", &sStyle);
 
+                sActive.bind("active", &sStyle);
                 sAllocation.bind("allocation", &sStyle);
                 sScaling.bind("size.scaling", &sStyle);
                 sFontScaling.bind("font.scaling", &sStyle);
@@ -271,6 +275,9 @@ namespace lsp
             if (redraw != 0)
                 query_draw(REDRAW_CHILD);
 
+            if (sActive.is(prop))
+                query_draw();
+
             if (prop->one_of(sScaling, sFontScaling, sPadding, sAllocation))
                 query_resize();
 
@@ -301,7 +308,7 @@ namespace lsp
 
         const style::WidgetColors *Widget::select_colors() const
         {
-            const size_t index  = (nFlags & INACTIVE) ? WIDGET_1 : WIDGET_0;
+            const size_t index  = (sActive.get()) ? WIDGET_0 : WIDGET_1;
             return &vColors[index];
         }
 
@@ -309,17 +316,6 @@ namespace lsp
         {
             const style::WidgetColors *colors = select_colors();
             return colors->sBrightness.get();
-        }
-
-        void Widget::set_active(bool active, size_t redraw)
-        {
-            const size_t flags  = lsp_setflag(nFlags, INACTIVE, !active);
-            if (flags == nFlags)
-                return;
-
-            nFlags              = flags;
-            if (redraw != 0)
-                query_draw(redraw);
         }
 
         bool Widget::is_visible_child_of(const Widget *parent) const

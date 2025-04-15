@@ -98,7 +98,7 @@ namespace lsp
                 prop::WidgetList<TabItem>   vItems;
                 prop::WidgetPtr<TabItem>    sSelected;
                 prop::WidgetList<Widget>    vWidgets;
-                prop::WidgetPtr<Widget>     sActive;
+                prop::WidgetPtr<Widget>     sActiveTab;
                 prop::CollectionListener    sIListener;
 
             protected:
@@ -156,7 +156,7 @@ namespace lsp
                 LSP_TK_PROPERTY(WidgetList<TabItem>,        items,                      &vItems)
                 LSP_TK_PROPERTY(WidgetList<Widget>,         widgets,                    &vWidgets)
                 LSP_TK_PROPERTY(WidgetPtr<TabItem>,         selected,                   &sSelected)
-                LSP_TK_PROPERTY(WidgetPtr<Widget>,          active,                     &sActive)
+                LSP_TK_PROPERTY(WidgetPtr<Widget>,          active_tab,                 &sActiveTab)
 
             public:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y) override;

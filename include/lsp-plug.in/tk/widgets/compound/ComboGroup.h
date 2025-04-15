@@ -141,7 +141,7 @@ namespace lsp
 
                 prop::WidgetList<Widget>    vWidgets;
                 prop::WidgetPtr<ListBoxItem> sSelected;
-                prop::WidgetPtr<Widget>     sActive;
+                prop::WidgetPtr<Widget>     sActiveGroup;
                 prop::CollectionListener    sIListener;
 
             protected:
@@ -193,7 +193,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Alignment,                  heading,                &sHeading)
                 LSP_TK_PROPERTY(Boolean,                    invert_mouse_vscroll,   &sInvertMouseVScroll);
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,               &sSelected)
-                LSP_TK_PROPERTY(WidgetPtr<Widget>,          active,                 &sActive)
+                LSP_TK_PROPERTY(WidgetPtr<Widget>,          active_group,           &sActiveGroup)
 
                 LSP_TK_PROPERTY(Font,                       list_font,              sLBox.font())
                 LSP_TK_PROPERTY(WidgetList<ListBoxItem>,    items,                  sLBox.items())

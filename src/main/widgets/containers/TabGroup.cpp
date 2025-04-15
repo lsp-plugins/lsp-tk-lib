@@ -62,7 +62,7 @@ namespace lsp
             vItems(&sProperties, &sIListener),
             sSelected(&sProperties),
             vWidgets(&sProperties, &sIListener),
-            sActive(&sProperties)
+            sActiveTab(&sProperties)
         {
             sArea.nLeft         = 0;
             sArea.nTop          = 0;
@@ -173,7 +173,7 @@ namespace lsp
                 query_resize();
             if (prop->one_of(sTabJoint, sHeadingFill, sHeadingSpacingFill))
                 query_draw();
-            if (prop->one_of(vWidgets, vItems, sActive, sSelected))
+            if (prop->one_of(vWidgets, vItems, sActiveTab, sSelected))
                 query_resize();
         }
 
@@ -784,7 +784,7 @@ namespace lsp
 
         tk::Widget *TabGroup::current_widget()
         {
-            tk::Widget *active  = sActive.get();
+            tk::Widget *active  = sActiveTab.get();
             if ((active != NULL) && (vWidgets.contains(active)))
                 return active;
 
@@ -1033,8 +1033,8 @@ namespace lsp
             // Reset active widget if present
             if (self->sSelected.get() == item)
                 self->sSelected.set(NULL);
-            if (self->sActive.get() == item)
-                self->sActive.set(NULL);
+            if (self->sActiveTab.get() == item)
+                self->sActiveTab.set(NULL);
             if (self->pEventTab == item)
                 self->pEventTab       = NULL;
 

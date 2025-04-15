@@ -50,7 +50,6 @@ namespace lsp
                 sRound.bind("round", this);
                 sBorderSize.bind("border.size", this);
                 sGradient.bind("gradient", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[LED_NORMAL];
@@ -73,7 +72,6 @@ namespace lsp
                 sLed.set(8);
                 sBorderSize.set(3);
                 sGradient.set(true);
-                sActive.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Led, "Led", "root");
 
@@ -102,8 +100,7 @@ namespace lsp
             sLed(&sProperties),
             sRound(&sProperties),
             sBorderSize(&sProperties),
-            sGradient(&sProperties),
-            sActive(&sProperties)
+            sGradient(&sProperties)
         {
             pClass      = &metadata;
 
@@ -143,7 +140,6 @@ namespace lsp
             sRound.bind("round", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sGradient.bind("gradient", &sStyle);
-            sActive.bind("active", &sStyle);
 
             return STATUS_OK;
         }
@@ -162,9 +158,6 @@ namespace lsp
             style::LedColors *colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (prop->one_of(sHoleColor, sOn))
                 query_draw();

@@ -59,7 +59,6 @@ namespace lsp
                 sBorderGapSize.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sConstraints.bind("size.constraints", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[EDIT_NORMAL];
@@ -89,7 +88,6 @@ namespace lsp
                 sBorderGapSize.set(1);
                 sBorderRadius.set(4);
                 sConstraints.set(-1, -1, -1, 8);
-                sActive.set(true);
 
                 // Override
                 sPointer.set(ws::MP_IBEAM);
@@ -220,7 +218,6 @@ namespace lsp
             sBorderGapSize(&sProperties),
             sBorderRadius(&sProperties),
             sConstraints(&sProperties),
-            sActive(&sProperties),
             sPopup(&sProperties)
         {
             sTextPos            = 0;
@@ -321,7 +318,6 @@ namespace lsp
             sBorderGapSize.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
-            sActive.bind("active", &sStyle);
             sPopup.bind(widget_ptrcast<Menu>(vMenu[0]));
 
             // Bind slots
@@ -393,9 +389,6 @@ namespace lsp
             style::EditColors *cols = select_colors();
             if (cols->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (sText.is(prop))
             {

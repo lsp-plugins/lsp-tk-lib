@@ -74,7 +74,6 @@ namespace lsp
                 prop::Float                     sScaleBrightness;
                 prop::Boolean                   sBalanceColorCustom;
                 prop::Boolean                   sInvertMouseVScroll;
-                prop::Boolean                   sActive;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -129,7 +128,6 @@ namespace lsp
                 prop::Float                     sScaleBrightness;
                 prop::Boolean                   sBalanceColorCustom;
                 prop::Boolean                   sInvertMouseVScroll;
-                prop::Boolean                   sActive;
 
             protected:
                 float                           limit_value(float value);
@@ -190,7 +188,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Float,          scale_brightness,               &sScaleBrightness);
                 LSP_TK_PROPERTY(Boolean,        balance_color_custom,           &sBalanceColorCustom);
                 LSP_TK_PROPERTY(Boolean,        invert_mouse_vscroll,           &sInvertMouseVScroll);
-                LSP_TK_PROPERTY(Boolean,        active,                         &sActive);
 
             public:
                 virtual status_t                on_mouse_down(const ws::event_t *e) override;

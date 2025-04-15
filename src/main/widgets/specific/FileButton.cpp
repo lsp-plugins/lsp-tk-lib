@@ -57,7 +57,6 @@ namespace lsp
                 sTextPadding.bind("text.padding", this);
                 sConstraints.bind("size.constraints", this);
                 sGradient.bind("gradient", this);
-                sActive.bind("active", this);
                 sBorderSize.bind("border.size", this);
                 sBorderPressedSize.bind("border.pressed.size", this);
 
@@ -88,7 +87,6 @@ namespace lsp
                 sTextPadding.set(2, 2, 2, 2);
                 sConstraints.set_all(-1);
                 sGradient.set(true);
-                sActive.set(true);
                 sBorderSize.set(4);
                 sBorderPressedSize.set(3);
 
@@ -133,7 +131,6 @@ namespace lsp
             sTextPadding(&sProperties),
             sConstraints(&sProperties),
             sGradient(&sProperties),
-            sActive(&sProperties),
             sBorderSize(&sProperties),
             sBorderPressedSize(&sProperties)
         {
@@ -190,7 +187,6 @@ namespace lsp
             sTextPadding.bind("text.padding", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sGradient.bind("gradient", &sStyle);
-            sActive.bind("active", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderPressedSize.bind("border.pressed.size", &sStyle);
 
@@ -215,9 +211,6 @@ namespace lsp
             style::FileButtonColors *colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (prop->one_of(sValue, sGradient))
                 query_draw();

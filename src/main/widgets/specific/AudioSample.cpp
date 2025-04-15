@@ -80,7 +80,6 @@ namespace lsp
                 sMaxAmplitude.bind("amplitude.max", this);
                 sLineColor.bind("line.color", this);
                 sConstraints.bind("size.constraints", this);
-                sActive.bind("active", this);
                 sSGroups.bind("stereo_groups", this);
                 sMainTextLayout.bind("main.text.layout", this);
                 sMainFont.bind("main.font", this);
@@ -155,7 +154,9 @@ namespace lsp
                     sLabelTextLayout[i].set(0.0f, 0.0f);
                     sLabelVisibility[i].set(false);
                 }
+
                 // Override
+                sActive.override();
                 sMainFont.override();
                 sLabelFont.override();
             LSP_TK_STYLE_IMPL_END
@@ -177,7 +178,6 @@ namespace lsp
             sMaxAmplitude(&sProperties),
             sLineColor(&sProperties),
             sConstraints(&sProperties),
-            sActive(&sProperties),
             sSGroups(&sProperties),
             sMainText(&sProperties),
             sMainTextLayout(&sProperties),
@@ -285,7 +285,6 @@ namespace lsp
             sMaxAmplitude.bind("amplitude.max", &sStyle);
             sLineColor.bind("line.color", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
-            sActive.bind("active", &sStyle);
             sSGroups.bind("stereo_groups", &sStyle);
             sMainText.bind(&sStyle, pDisplay->dictionary());
             sMainTextLayout.bind("main.text.layout", &sStyle);
@@ -332,9 +331,6 @@ namespace lsp
 
             if (vChannels.is(prop))
                 query_resize();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (sWaveBorder.is(prop))
                 query_resize();

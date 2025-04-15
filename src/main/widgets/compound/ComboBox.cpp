@@ -53,7 +53,6 @@ namespace lsp
                 sSpinSize.bind("spin.size", this);
                 sSpinSeparator.bind("spin.separator", this);
                 sOpened.bind("opened", this);
-                sActive.bind("active", this);
                 sTextFit.bind("text.fit", this);
                 sFont.bind("font", this);
                 sTextAdjust.bind("text.adjust", this);
@@ -84,7 +83,6 @@ namespace lsp
                 sSpinSize.set(10);
                 sSpinSeparator.set(1);
                 sOpened.set(false);
-                sActive.set(true);
                 sTextFit.set(1.0f, 1.0f);
                 sFont.set_size(12.0f);
                 sTextAdjust.set(TA_NONE);
@@ -194,7 +192,6 @@ namespace lsp
             sSpinSize(&sProperties),
             sSpinSeparator(&sProperties),
             sOpened(&sProperties),
-            sActive(&sProperties),
             sTextFit(&sProperties),
             sFont(&sProperties),
             sTextAdjust(&sProperties),
@@ -288,7 +285,6 @@ namespace lsp
             sSpinSize.bind("spin.size", &sStyle);
             sSpinSeparator.bind("spin.separator", &sStyle);
             sOpened.bind("opened", &sStyle);
-            sActive.bind("active", &sStyle);
             sTextFit.bind("text.fit", &sStyle);
             sFont.bind("font", &sStyle);
             sTextAdjust.bind("text.adjust", &sStyle);

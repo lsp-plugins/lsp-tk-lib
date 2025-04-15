@@ -65,7 +65,6 @@ namespace lsp
                 prop::Integer               sSpinSize;
                 prop::Integer               sSpinSeparator;
                 prop::Boolean               sOpened;
-                prop::Boolean               sActive;
                 prop::TextFitness           sTextFit;
                 prop::Font                  sFont;
                 prop::TextAdjust            sTextAdjust;
@@ -149,7 +148,6 @@ namespace lsp
                 prop::Integer               sSpinSize;
                 prop::Integer               sSpinSeparator;
                 prop::Boolean               sOpened;
-                prop::Boolean               sActive;
                 prop::TextFitness           sTextFit;
                 prop::Font                  sFont;
                 prop::TextAdjust            sTextAdjust;
@@ -211,7 +209,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                    spin_size,                  &sSpinSize)
                 LSP_TK_PROPERTY(Integer,                    spin_separator,             &sSpinSeparator)
                 LSP_TK_PROPERTY(Boolean,                    opened,                     &sOpened)
-                LSP_TK_PROPERTY(Boolean,                    active,                     &sActive)
                 LSP_TK_PROPERTY(TextFitness,                text_fit,                   &sTextFit)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sConstraints)
                 LSP_TK_PROPERTY(Font,                       font,                       &sFont)

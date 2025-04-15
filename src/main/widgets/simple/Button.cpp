@@ -85,7 +85,6 @@ namespace lsp
                 sBorderPressedSize.bind("border.pressed.size", this);
                 sBorderDownSize.bind("border.down.size", this);
                 sEditable.bind("editable", this);
-                sActive.bind("active", this);
                 sHole.bind("hole", this);
                 sFlat.bind("flat", this);
                 sTextClip.bind("text.clip", this);
@@ -150,7 +149,6 @@ namespace lsp
                 sBorderPressedSize.set(3);
                 sBorderDownSize.set(2);
                 sEditable.set(true);
-                sActive.set(true);
                 sHole.set(true);
                 sFlat.set(false);
                 sTextClip.set(false);
@@ -193,7 +191,6 @@ namespace lsp
             sBorderPressedSize(&sProperties),
             sBorderDownSize(&sProperties),
             sEditable(&sProperties),
-            sActive(&sProperties),
             sHole(&sProperties),
             sFlat(&sProperties),
             sTextClip(&sProperties),
@@ -286,7 +283,6 @@ namespace lsp
             sBorderPressedSize.bind("border.pressed.size", &sStyle);
             sBorderDownSize.bind("border.down.size", &sStyle);
             sEditable.bind("editable", &sStyle);
-            sActive.bind("active", &sStyle);
             sHole.bind("hole", &sStyle);
             sFlat.bind("flat", &sStyle);
             sTextClip.bind("text.clip", &sStyle);
@@ -312,9 +308,6 @@ namespace lsp
             style::ButtonColors *cols = select_colors();
             if (cols->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (prop->one_of(sHoleColor, sHover, sGradient))
                 query_draw();

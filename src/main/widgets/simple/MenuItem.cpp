@@ -50,7 +50,6 @@ namespace lsp
                 sTextAdjust.bind("text.adjust", this);
                 sType.bind("type", this);
                 sChecked.bind("checked", this);
-                sActive.bind("active", this);
                 sShortcut.bind("shortcut", this);
 
                 // Configure
@@ -73,7 +72,6 @@ namespace lsp
                 sTextAdjust.set(TA_NONE);
                 sType.set(MI_NORMAL);
                 sChecked.set(false);
-                sActive.set(true);
                 sShortcut.clear();
 
                 // Override
@@ -111,7 +109,6 @@ namespace lsp
             sTextAdjust(&sProperties),
             sType(&sProperties),
             sChecked(&sProperties),
-            sActive(&sProperties),
             sShortcut(&sProperties)
         {
             pClass      = &metadata;
@@ -163,7 +160,6 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sType.bind("type", &sStyle);
             sChecked.bind("checked", &sStyle);
-            sActive.bind("active", &sStyle);
             sShortcut.bind("shortcut", &sStyle);
             sMenu.bind(NULL);
 
@@ -194,7 +190,6 @@ namespace lsp
 
             if (sActive.is(prop))
             {
-                set_active(sActive.get());
                 tk::Menu *parent = widget_cast<tk::Menu>(this->parent());
                 if (parent != NULL)
                     parent->query_draw(REDRAW_CHILD | REDRAW_SURFACE);

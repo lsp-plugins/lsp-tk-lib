@@ -46,7 +46,6 @@ namespace lsp
                 sLoop.bind("text.loop", this);
                 sDarkText.bind("text.dark", this);
                 sType.bind("type", this);
-                sActive.bind("active", this);
                 sFont.bind("font", this);
                 sSpacing.bind("spacing", this);
                 sIPadding.bind("ipadding", this);
@@ -67,7 +66,6 @@ namespace lsp
                 sLoop.set(false);
                 sDarkText.set(true);
                 sType.set(INDICATOR_SEGMENT);
-                sActive.set(true);
                 sFont.set_size(16);
                 sFont.set_bold(true);
                 sSpacing.set(0);
@@ -316,7 +314,6 @@ namespace lsp
             sDarkText(&sProperties),
             sText(&sProperties),
             sType(&sProperties),
-            sActive(&sProperties),
             sFont(&sProperties),
             sSpacing(&sProperties),
             sIPadding(&sProperties)
@@ -357,7 +354,6 @@ namespace lsp
             sDarkText.bind("text.dark", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sType.bind("type", &sStyle);
-            sActive.bind("active", &sStyle);
             sFont.bind("font", &sStyle);
             sSpacing.bind("spacing", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
@@ -379,9 +375,6 @@ namespace lsp
             style::IndicatorColors *cols = select_colors();
             if (cols->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (prop->one_of(sRows, sColumns, sType, sFont, sSpacing, sIPadding))
                 query_resize();

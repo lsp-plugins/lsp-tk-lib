@@ -76,7 +76,6 @@ namespace lsp
                 sSliderBorderSize.bind("slider.border.size", this);
                 sInvertMouseHScroll.bind("mouse.hscroll.invert", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[style::SCROLLBAR_NORMAL];
@@ -123,7 +122,6 @@ namespace lsp
                 sSliderBorderSize.set(1);
                 sInvertMouseHScroll.set(false);
                 sInvertMouseVScroll.set(false);
-                sActive.set(true);
 
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ScrollBar, "ScrollBar", "root");
@@ -172,8 +170,7 @@ namespace lsp
             sBorderGap(&sProperties),
             sSliderBorderSize(&sProperties),
             sInvertMouseHScroll(&sProperties),
-            sInvertMouseVScroll(&sProperties),
-            sActive(&sProperties)
+            sInvertMouseVScroll(&sProperties)
         {
             pClass          = &metadata;
 
@@ -274,7 +271,6 @@ namespace lsp
             sSliderBorderSize.bind("slider.border.size", &sStyle);
             sInvertMouseHScroll.bind("mouse.hscroll.invert", &sStyle);
             sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
-            sActive.bind("active", &sStyle);
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -318,9 +314,6 @@ namespace lsp
             style::ScrollBarColors *colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (prop->one_of(sValue, sStep, sAccelStep))
                 update_slider();

@@ -52,7 +52,6 @@ namespace lsp
                 sAngle.bind("angle", this);
                 sTextPad.bind("text.pad", this);
                 sThick.bind("thick", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[style::FRACTION_NORMAL];
@@ -69,7 +68,6 @@ namespace lsp
                 sAngle.set(60.0f);
                 sTextPad.set(6);
                 sThick.set(1);
-                sActive.set(true);
 
                 // Override
                 sFont.override();
@@ -285,8 +283,7 @@ namespace lsp
             sFont(&sProperties),
             sAngle(&sProperties),
             sTextPad(&sProperties),
-            sThick(&sProperties),
-            sActive(&sProperties)
+            sThick(&sProperties)
         {
             pClass          = &metadata;
 
@@ -372,7 +369,6 @@ namespace lsp
             sAngle.bind("angle", &sStyle);
             sTextPad.bind("text.pad", &sStyle);
             sThick.bind("thick", &sStyle);
-            sActive.bind("active", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -400,9 +396,6 @@ namespace lsp
             style::FractionColors *colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (prop->one_of(sFont, sAngle, sTextPad, sThick))
                 query_resize();

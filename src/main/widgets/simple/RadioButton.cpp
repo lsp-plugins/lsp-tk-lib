@@ -60,7 +60,6 @@ namespace lsp
                 sCheckGapSize.bind("check.gap.size", this);
                 sCheckMinSize.bind("check.min.size", this);
                 sChecked.bind("checked", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[style::RADIOBUTTON_NORMAL];
@@ -93,7 +92,6 @@ namespace lsp
                 sCheckGapSize.set(2);
                 sCheckMinSize.set(4);
                 sChecked.set(false);
-                sActive.set(true);
 
                 // Commit
                 sConstraints.override();
@@ -123,8 +121,7 @@ namespace lsp
             sBorderGapSize(&sProperties),
             sCheckGapSize(&sProperties),
             sCheckMinSize(&sProperties),
-            sChecked(&sProperties),
-            sActive(&sProperties)
+            sChecked(&sProperties)
         {
             pClass          = &metadata;
 
@@ -181,7 +178,6 @@ namespace lsp
             sCheckGapSize.bind("check.gap.size", &sStyle);
             sCheckMinSize.bind("check.min.size", &sStyle);
             sChecked.bind("checked", &sStyle);
-            sActive.bind("active", &sStyle);
 
             sConstraints.bind("size.constraints", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
@@ -189,7 +185,6 @@ namespace lsp
             sCheckGapSize.bind("check.gap.size", &sStyle);
             sCheckMinSize.bind("check.min.size", &sStyle);
             sChecked.bind("checked", &sStyle);
-            sActive.bind("active", &sStyle);
 
             // Additional slots
             handler_id_t id = 0;
@@ -214,9 +209,6 @@ namespace lsp
             style::RadioButtonColors *colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (sChecked.is(prop))
             {

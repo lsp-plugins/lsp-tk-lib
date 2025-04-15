@@ -51,7 +51,6 @@ namespace lsp
                 sConstraints.bind("size", this);
                 sTextLayout.bind("text.layout", this);
                 sShowText.bind("text.show", this);
-                sActive.bind("active", this);
                 sFont.bind("font", this);
                 sBorderSize.bind("border.size", this);
                 sBorderGapSize.bind("border.gap.size", this);
@@ -78,7 +77,6 @@ namespace lsp
                 sConstraints.set(-1, -1, -1, -1);
                 sTextLayout.set(0.0f, 0.0f);
                 sShowText.set(true);
-                sActive.set(true);
                 sFont.set_size(12.0f);
                 sBorderSize.set(1);
                 sBorderGapSize.set(1);
@@ -117,7 +115,6 @@ namespace lsp
             sText(&sProperties),
             sTextLayout(&sProperties),
             sShowText(&sProperties),
-            sActive(&sProperties),
             sFont(&sProperties),
             sBorderSize(&sProperties),
             sBorderGapSize(&sProperties),
@@ -166,7 +163,6 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sTextLayout.bind("text.layout", &sStyle);
             sShowText.bind("text.show", &sStyle);
-            sActive.bind("active", &sStyle);
             sFont.bind("font", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderGapSize.bind("border.gap.size", &sStyle);
@@ -189,9 +185,6 @@ namespace lsp
             style::ProgressBarColors *colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
-
-            if (sActive.is(prop))
-                set_active(sActive.get());
 
             if (prop->one_of(sValue, sText, sTextLayout))
                 query_draw();
