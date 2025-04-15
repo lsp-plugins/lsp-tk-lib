@@ -63,7 +63,7 @@ namespace lsp
                 c->sColor.set_rgb24(0xff0000);
 
                 c = &vColors[LABEL_INACTIVE];
-                c->sColor.set_rgb24(0x000088);
+                c->sColor.set_rgb24(0x888888);
 
                 c = &vColors[LABEL_INACTIVE| LABEL_HOVER];
                 c->sColor.set_rgb24(0xcc0000);
