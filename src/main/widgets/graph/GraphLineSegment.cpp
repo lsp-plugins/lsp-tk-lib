@@ -262,7 +262,7 @@ namespace lsp
 
             // Prepare palette
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float brightness    = sBrightness.get();
+            float brightness    = select_brightness();
 
             lsp::Color  color, bcol_l, bcol_r;
             if (nXFlags & F_HIGHLIGHT)

@@ -203,7 +203,7 @@ namespace lsp
             bp.y       += xy;
 
             lsp::Color col(sColor), bcol(sBorderColor);
-            float brightness    = sBrightness.get();
+            float brightness    = select_brightness();
             col.scale_lch_luminance(brightness);
             bcol.scale_lch_luminance(brightness);
 

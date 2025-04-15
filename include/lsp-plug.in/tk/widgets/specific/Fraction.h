@@ -58,7 +58,6 @@ namespace lsp
                 prop::Float                 sAngle;         // Fraction angle
                 prop::Integer               sTextPad;       // Text padding
                 prop::Integer               sThick;         // Thickness
-                prop::Boolean               sActive;        // Activity flag
 
                 prop::String                sItemText[2];
                 prop::Boolean               sItemOpened[2];
@@ -170,7 +169,6 @@ namespace lsp
                 prop::Float                 sAngle;         // Fraction angle
                 prop::Integer               sTextPad;       // Text padding
                 prop::Integer               sThick;         // Thickness
-                prop::Boolean               sActive;        // Activity flag
 
                 size_t                      nMBState;       // Mouse button state
                 mstate_t                    enTrgState;     // Trigger state
@@ -216,7 +214,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Float,                      angle,                  &sAngle)
                 LSP_TK_PROPERTY(Integer,                    text_pad,               &sTextPad)
                 LSP_TK_PROPERTY(Integer,                    thickness,              &sThick)
-                LSP_TK_PROPERTY(Boolean,                    active,                 &sActive)
 
                 LSP_TK_PROPERTY(String,                     num_empty_text,         &sNum.sText)
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     num_selected,           &sNum.sSelected)

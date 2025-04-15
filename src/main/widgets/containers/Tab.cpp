@@ -77,7 +77,6 @@ namespace lsp
                 sFont.bind("font", this);
                 sBorderSize.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[style::TAB_NORMAL];
@@ -127,7 +126,6 @@ namespace lsp
                 sFont.set_size(12.0f);
                 sBorderSize.set(1);
                 sBorderRadius.set(4);
-                sActive.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Tab, "Tab", "root");
 
@@ -157,8 +155,7 @@ namespace lsp
             sTextPadding(&sProperties),
             sFont(&sProperties),
             sBorderSize(&sProperties),
-            sBorderRadius(&sProperties),
-            sActive(&sProperties)
+            sBorderRadius(&sProperties)
         {
             pClass      = &metadata;
 
@@ -244,7 +241,6 @@ namespace lsp
             sFont.bind("font", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
-            sActive.bind("active", &sStyle);
 
             return STATUS_OK;
         }

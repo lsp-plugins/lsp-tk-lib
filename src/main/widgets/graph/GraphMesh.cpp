@@ -207,7 +207,7 @@ namespace lsp
             // Prepare palette
             float scaling   = lsp_max(0.0f, sScaling.get());
             float width     = (sWidth.get() > 0) ? lsp_max(1.0f, sWidth.get() * scaling) : 0.0f;
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
             lsp::Color line(sColor), fill(sFillColor);
             line.scale_lch_luminance(bright);
             fill.scale_lch_luminance(bright);

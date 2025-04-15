@@ -230,7 +230,7 @@ namespace lsp
             {
                 lsp::Color bg_color, border_color;
                 float scaling   = lsp_max(0.0f, sScaling.get());
-                float bright    = sBrightness.get();
+                float bright    = select_brightness();
                 size_t border   = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
                 get_actual_bg_color(bg_color);
 

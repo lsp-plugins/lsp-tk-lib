@@ -245,7 +245,7 @@ namespace lsp
             WidgetContainer::property_changed(prop);
 
             if (prop->one_of(sFont, sTextAdjust, sBorder, sPadding, sTextPadding, sRadius, sEmbedding, sHeading,
-                    sEmptyText, sTextRadius, sSpinSize, sSpinSpacing, sLayout, sSizeConstraints, sActive, vWidgets))
+                    sEmptyText, sTextRadius, sSpinSize, sSpinSpacing, sLayout, sSizeConstraints, sActiveGroup, vWidgets))
                 query_resize();
 
             if (prop->one_of(sColor, sTextColor))
@@ -312,8 +312,8 @@ namespace lsp
                 return;
 
             // Reset active widget if present
-            if (_this->sActive.get() == item)
-                _this->sActive.set(NULL);
+            if (_this->sActiveGroup.get() == item)
+                _this->sActiveGroup.set(NULL);
 
             _this->unlink_widget(item);
             _this->query_resize();
@@ -456,7 +456,7 @@ namespace lsp
 
         Widget *ComboGroup::current_widget()
         {
-            Widget *active  = sActive.get();
+            Widget *active  = sActiveGroup.get();
             if ((active != NULL) && (vWidgets.contains(active)))
                 return active;
 
@@ -484,7 +484,7 @@ namespace lsp
             bool has_list   = sLBox.items()->size() > 1;
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright    = lsp_max(0.0f, sBrightness.get());
+            float bright    = lsp_max(0.0f, select_brightness());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
             bool bg         = false;

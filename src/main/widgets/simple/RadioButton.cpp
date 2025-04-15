@@ -60,7 +60,6 @@ namespace lsp
                 sCheckGapSize.bind("check.gap.size", this);
                 sCheckMinSize.bind("check.min.size", this);
                 sChecked.bind("checked", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[style::RADIOBUTTON_NORMAL];
@@ -93,7 +92,6 @@ namespace lsp
                 sCheckGapSize.set(2);
                 sCheckMinSize.set(4);
                 sChecked.set(false);
-                sActive.set(true);
 
                 // Commit
                 sConstraints.override();
@@ -123,8 +121,7 @@ namespace lsp
             sBorderGapSize(&sProperties),
             sCheckGapSize(&sProperties),
             sCheckMinSize(&sProperties),
-            sChecked(&sProperties),
-            sActive(&sProperties)
+            sChecked(&sProperties)
         {
             pClass          = &metadata;
 
@@ -181,7 +178,6 @@ namespace lsp
             sCheckGapSize.bind("check.gap.size", &sStyle);
             sCheckMinSize.bind("check.min.size", &sStyle);
             sChecked.bind("checked", &sStyle);
-            sActive.bind("active", &sStyle);
 
             sConstraints.bind("size.constraints", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
@@ -189,7 +185,6 @@ namespace lsp
             sCheckGapSize.bind("check.gap.size", &sStyle);
             sCheckMinSize.bind("check.min.size", &sStyle);
             sChecked.bind("checked", &sStyle);
-            sActive.bind("active", &sStyle);
 
             // Additional slots
             handler_id_t id = 0;
@@ -213,9 +208,6 @@ namespace lsp
 
             style::RadioButtonColors *colors = select_colors();
             if (colors->property_changed(prop))
-                query_draw();
-
-            if (prop->is(sActive))
                 query_draw();
 
             if (sChecked.is(prop))
@@ -267,7 +259,7 @@ namespace lsp
             lsp::Color c;
 
             float scaling       = sScaling.get();
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t bgap        = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
             ssize_t ckgap       = (sCheckGapSize.get() > 0) ? lsp_max(1.0f, sCheckGapSize.get() * scaling) : 0;

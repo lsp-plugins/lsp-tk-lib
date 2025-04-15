@@ -51,7 +51,6 @@ namespace lsp
                 sConstraints.bind("size", this);
                 sTextLayout.bind("text.layout", this);
                 sShowText.bind("text.show", this);
-                sActive.bind("active", this);
                 sFont.bind("font", this);
                 sBorderSize.bind("border.size", this);
                 sBorderGapSize.bind("border.gap.size", this);
@@ -78,7 +77,6 @@ namespace lsp
                 sConstraints.set(-1, -1, -1, -1);
                 sTextLayout.set(0.0f, 0.0f);
                 sShowText.set(true);
-                sActive.set(true);
                 sFont.set_size(12.0f);
                 sBorderSize.set(1);
                 sBorderGapSize.set(1);
@@ -117,7 +115,6 @@ namespace lsp
             sText(&sProperties),
             sTextLayout(&sProperties),
             sShowText(&sProperties),
-            sActive(&sProperties),
             sFont(&sProperties),
             sBorderSize(&sProperties),
             sBorderGapSize(&sProperties),
@@ -166,7 +163,6 @@ namespace lsp
             sText.bind(&sStyle, pDisplay->dictionary());
             sTextLayout.bind("text.layout", &sStyle);
             sShowText.bind("text.show", &sStyle);
-            sActive.bind("active", &sStyle);
             sFont.bind("font", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sBorderGapSize.bind("border.gap.size", &sStyle);
@@ -188,9 +184,6 @@ namespace lsp
             // Self properties
             style::ProgressBarColors *colors = select_colors();
             if (colors->property_changed(prop))
-                query_draw();
-
-            if (sActive.is(prop))
                 query_draw();
 
             if (prop->one_of(sValue, sText, sTextLayout))
@@ -321,7 +314,7 @@ namespace lsp
         void ProgressBar::draw(ws::ISurface *s, bool force)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t gap     = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;

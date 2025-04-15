@@ -35,12 +35,29 @@ namespace lsp
         // Style definition
         namespace style
         {
+            typedef struct HyperlinkColors
+            {
+                prop::Color             sColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop) const;
+            } HyperlinkColors;
+
+            enum HyperlinkColorState
+            {
+                HYPERLINK_NORMAL        = 0,
+                HYPERLINK_HOVER         = 1 << 0,
+                HYPERLINK_INACTIVE      = 1 << 1,
+
+                HYPERLINK_TOTAL         = 1 << 2
+            };
+
             LSP_TK_STYLE_DEF_BEGIN(Hyperlink, Widget)
+                HyperlinkColors             vColors[HYPERLINK_TOTAL];
+
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
-                prop::Color                 sColor;         // Font color
-                prop::Color                 sHoverColor;    // Hover font color
                 prop::String                sText;          // Text to display
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Boolean               sFollow;        // Follow hyperlink
@@ -61,16 +78,25 @@ namespace lsp
                     F_MOUSE_IGN     = 1 << 2,
                 };
 
+                enum hlink_flags_t
+                {
+                    HLNK_0      = style::HYPERLINK_NORMAL,
+                    HLNK_1      = style::HYPERLINK_HOVER,
+                    HLNK_2      = HLNK_0 | style::HYPERLINK_INACTIVE,
+                    HLNK_3      = HLNK_1 | style::HYPERLINK_INACTIVE,
+
+                    HLNK_TOTAL  = style::HYPERLINK_TOTAL
+                };
+
             protected:
                 size_t                      nMFlags;
                 size_t                      nState;
                 Widget                     *vMenus[3];
 
+                style::HyperlinkColors      vColors[HLNK_TOTAL];
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
-                prop::Color                 sColor;         // Font color
-                prop::Color                 sHoverColor;    // Hover font color
                 prop::String                sText;          // Text to display
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Boolean               sFollow;        // Follow hyperlink
@@ -83,8 +109,10 @@ namespace lsp
                 static status_t                 slot_on_popup(Widget *sender, void *ptr, void *data);
                 static status_t                 slot_copy_link_action(Widget *sender, void *ptr, void *data);
 
+            protected:
                 status_t                        create_default_menu();
                 void                            do_destroy();
+                const style::HyperlinkColors   *select_colors() const;
 
             protected:
                 virtual void                    size_request(ws::size_limit_t *r) override;
@@ -102,16 +130,18 @@ namespace lsp
                 virtual void                    destroy() override;
 
             public:
-                LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
-                LSP_TK_PROPERTY(TextAdjust,         text_adjust,        &sTextAdjust)
-                LSP_TK_PROPERTY(Font,               font,               &sFont)
-                LSP_TK_PROPERTY(Color,              color,              &sColor)
-                LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)
-                LSP_TK_PROPERTY(String,             text,               &sText)
-                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
-                LSP_TK_PROPERTY(Boolean,            follow,             &sFollow)
-                LSP_TK_PROPERTY(String,             url,                &sUrl)
-                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,              &sPopup)
+                LSP_TK_PROPERTY(TextLayout,         text_layout,            &sTextLayout)
+                LSP_TK_PROPERTY(TextAdjust,         text_adjust,            &sTextAdjust)
+                LSP_TK_PROPERTY(Font,               font,                   &sFont)
+                LSP_TK_PROPERTY(Color,              color,                  &vColors[HLNK_0].sColor)
+                LSP_TK_PROPERTY(Color,              hover_color,            &vColors[HLNK_1].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_color,         &vColors[HLNK_2].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_hover_color,   &vColors[HLNK_3].sColor)
+                LSP_TK_PROPERTY(String,             text,                   &sText)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,            &sConstraints)
+                LSP_TK_PROPERTY(Boolean,            follow,                 &sFollow)
+                LSP_TK_PROPERTY(String,             url,                    &sUrl)
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,                  &sPopup)
 
             public:
                 status_t                        copy_url(ws::clipboard_id_t cb);

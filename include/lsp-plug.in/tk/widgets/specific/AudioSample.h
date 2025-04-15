@@ -46,7 +46,6 @@ namespace lsp
                 prop::Float             sMaxAmplitude;              // Maximum amplitude
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
-                prop::Boolean           sActive;                    // Active, allow button press
                 prop::Boolean           sSGroups;                   // Stereo groups enable
 
                 prop::String            sMainText;                  // Main text
@@ -118,7 +117,6 @@ namespace lsp
                 prop::Float             sMaxAmplitude;              // Maximum amplitude
                 prop::Color             sLineColor;                 // Line color
                 prop::SizeConstraints   sConstraints;               // Size constraints
-                prop::Boolean           sActive;                    // Active, allow button press
                 prop::Boolean           sSGroups;                   // Stereo groups enable
 
                 prop::String            sMainText;                  // Main text
@@ -209,7 +207,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Float,                  max_amplitude,          &sMaxAmplitude)
                 LSP_TK_PROPERTY(Color,                  line_color,             &sLineColor)
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,            &sConstraints)
-                LSP_TK_PROPERTY(Boolean,                active,                 &sActive)
                 LSP_TK_PROPERTY(Boolean,                stereo_groups,          &sSGroups)
 
                 LSP_TK_PROPERTY(String,                 main_text,              &sMainText)

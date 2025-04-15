@@ -63,7 +63,6 @@ namespace lsp
                 c->sTextColor.bind("inactive.text.selected.hover.color", this);
 
                 sTextAdjust.bind("text.adjust", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[style::LISTBOXITEM_NORMAL];
@@ -98,15 +97,14 @@ namespace lsp
                 c->sTextColor.set("#444444");
 
                 sTextAdjust.set(TA_NONE);
-                sActive.set(true);
 
                 // Override
                 sPadding.set(2, 2, 0, 0);
-                sBgColor.set("#ffffff");
+                Widget::vColors[0].sBgColor.set("#ffffff");
 
                 // Commit
                 sPadding.override();
-                sBgColor.override();
+                Widget::vColors[0].sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ListBoxItem, "ListBoxItem", "root");
 
@@ -127,8 +125,7 @@ namespace lsp
         ListBoxItem::ListBoxItem(Display *dpy):
             Widget(dpy),
             sText(&sProperties),
-            sTextAdjust(&sProperties),
-            sActive(&sProperties)
+            sTextAdjust(&sProperties)
         {
             pClass = &metadata;
 
@@ -181,7 +178,6 @@ namespace lsp
 
             sTextAdjust.bind("text.adjust", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
-            sActive.bind("active", &sStyle);
 
             return res;
         }
@@ -215,7 +211,6 @@ namespace lsp
 
             if (sActive.is(prop))
             {
-                query_draw();
                 ListBox *list = widget_cast<ListBox>(parent());
                 if (list != NULL)
                     list->query_draw(REDRAW_CHILD | REDRAW_SURFACE);

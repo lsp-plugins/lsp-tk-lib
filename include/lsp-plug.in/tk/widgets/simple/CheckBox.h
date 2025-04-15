@@ -63,7 +63,6 @@ namespace lsp
                 prop::Integer           sCheckGapSize;          // Size of gap for check
                 prop::Integer           sCheckMinSize;          // Minimum size of check
                 prop::Boolean           sChecked;               // Checked flag
-                prop::Boolean           sActive;                // Active flag
             LSP_TK_STYLE_DEF_END
         }
 
@@ -109,7 +108,6 @@ namespace lsp
                 prop::Integer           sCheckGapSize;          // Size of gap for check
                 prop::Integer           sCheckMinSize;          // Minimum size of check
                 prop::Boolean           sChecked;               // Checked flag
-                prop::Boolean           sActive;                // Active flag
 
             protected:
                 static status_t     slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -158,7 +156,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                    check_gap_size,                     &sCheckGapSize);
                 LSP_TK_PROPERTY(Integer,                    check_min_size,                     &sCheckMinSize);
                 LSP_TK_PROPERTY(Boolean,                    checked,                            &sChecked);
-                LSP_TK_PROPERTY(Boolean,                    active,                             &sActive);
 
             public:
                 virtual void        draw(ws::ISurface *s, bool force) override;

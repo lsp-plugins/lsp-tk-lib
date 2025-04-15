@@ -3,6 +3,9 @@
 *******************************************************************************
 
 === 1.0.28 ===
+* Added support of background color, brightness and background brightness for
+  inactive widgets.
+* Activity property is now accessible for any widget.
 * Implemented Overlay widget.
 * Added MacOS dependencies.
 * Updated build scripts.

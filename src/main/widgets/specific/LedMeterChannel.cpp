@@ -50,7 +50,6 @@ namespace lsp
                 sTextVisible.bind("text.visible", this);
                 sHeaderVisible.bind("header.visible", this);
                 sReversive.bind("reversive", this);
-                sActive.bind("active", this);
                 sMinSegments.bind("segments.min", this);
                 sConstraints.bind("constraints", this);
                 sFont.bind("font", this);
@@ -78,7 +77,6 @@ namespace lsp
                 sTextVisible.set(false);
                 sHeaderVisible.set(false);
                 sReversive.set(false);
-                sActive.set(true);
                 sMinSegments.set(12);
                 sConstraints.set(20, -1, 20, -1);
                 sFont.set_size(9.0f);
@@ -117,7 +115,6 @@ namespace lsp
             sBalanceVisible(&sProperties),
             sTextVisible(&sProperties),
             sReversive(&sProperties),
-            sActive(&sProperties),
             sMinSegments(&sProperties),
             sConstraints(&sProperties),
             sFont(&sProperties),
@@ -182,7 +179,6 @@ namespace lsp
             sTextVisible.bind("text.visible", &sStyle);
             sHeaderVisible.bind("header.visible", &sStyle);
             sReversive.bind("reversive", &sStyle);
-            sActive.bind("active", &sStyle);
             sMinSegments.bind("segments.min", &sStyle);
             sConstraints.bind("constraints", &sStyle);
             sFont.bind("font", &sStyle);
@@ -237,8 +233,6 @@ namespace lsp
             if (sBalanceVisible.is(prop))
                 query_draw();
             if (sReversive.is(prop))
-                query_draw();
-            if (sActive.is(prop))
                 query_draw();
             if (sMinSegments.is(prop))
                 query_resize();
@@ -706,7 +700,7 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             lsp::Color col;
             get_actual_bg_color(col);

@@ -59,7 +59,6 @@ namespace lsp
                 sBorderGapSize.bind("border.gap.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sConstraints.bind("size.constraints", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[EDIT_NORMAL];
@@ -89,7 +88,6 @@ namespace lsp
                 sBorderGapSize.set(1);
                 sBorderRadius.set(4);
                 sConstraints.set(-1, -1, -1, 8);
-                sActive.set(true);
 
                 // Override
                 sPointer.set(ws::MP_IBEAM);
@@ -220,7 +218,6 @@ namespace lsp
             sBorderGapSize(&sProperties),
             sBorderRadius(&sProperties),
             sConstraints(&sProperties),
-            sActive(&sProperties),
             sPopup(&sProperties)
         {
             sTextPos            = 0;
@@ -321,7 +318,6 @@ namespace lsp
             sBorderGapSize.bind("border.gap.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
-            sActive.bind("active", &sStyle);
             sPopup.bind(widget_ptrcast<Menu>(vMenu[0]));
 
             // Bind slots
@@ -392,9 +388,6 @@ namespace lsp
             // Self properties
             style::EditColors *cols = select_colors();
             if (cols->property_changed(prop))
-                query_draw();
-
-            if (sActive.is(prop))
                 query_draw();
 
             if (sText.is(prop))
@@ -531,7 +524,7 @@ namespace lsp
             // Draw border
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            float lightness = sBrightness.get();
+            float lightness = select_brightness();
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             size_t cursize  = lsp_max(1.0f, scaling);

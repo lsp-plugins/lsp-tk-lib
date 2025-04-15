@@ -62,7 +62,6 @@ namespace lsp
                 prop::Boolean           sRound;
                 prop::Integer           sBorderSize;
                 prop::Boolean           sGradient;
-                prop::Boolean           sActive;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -89,7 +88,6 @@ namespace lsp
                 prop::Boolean           sRound;
                 prop::Integer           sBorderSize;
                 prop::Boolean           sGradient;
-                prop::Boolean           sActive;
 
             protected:
                 void                            draw_round(ws::ISurface *s);
@@ -128,7 +126,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            round,                      &sRound)
                 LSP_TK_PROPERTY(Integer,            border_size,                &sBorderSize)
                 LSP_TK_PROPERTY(Boolean,            gradient,                   &sGradient)
-                LSP_TK_PROPERTY(Boolean,            active,                     &sActive)
 
             public:
                 virtual void                    draw(ws::ISurface *s, bool force) override;

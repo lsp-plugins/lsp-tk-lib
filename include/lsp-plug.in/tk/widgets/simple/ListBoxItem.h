@@ -57,7 +57,6 @@ namespace lsp
 
                 prop::String                sText;
                 prop::TextAdjust            sTextAdjust;
-                prop::Boolean               sActive;
             LSP_TK_STYLE_DEF_END
         }
         
@@ -88,7 +87,6 @@ namespace lsp
                 style::ListBoxItemColors    vColors[style::LISTBOXITEM_TOTAL];
                 prop::String                sText;
                 prop::TextAdjust            sTextAdjust;
-                prop::Boolean               sActive;
 
             protected:
                 style::ListBoxItemColors   *select_colors(bool selected, bool hover, bool active);
@@ -126,7 +124,6 @@ namespace lsp
 
                 LSP_TK_PROPERTY(String,     text,                               &sText)
                 LSP_TK_PROPERTY(TextAdjust, text_adjust,                        &sTextAdjust)
-                LSP_TK_PROPERTY(Boolean,    active,                             &sActive)
 
         };
     
