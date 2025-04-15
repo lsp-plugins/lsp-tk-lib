@@ -168,11 +168,11 @@ namespace lsp
 
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Bookmark_selected, FileDialog__Bookmark)
                 // Override
-                sColor.set("#ffffff");
-                Widget::vColors[0].sBgColor.set("#888888");
+                Hyperlink::vColors[HYPERLINK_NORMAL].sColor.set("#ffffff");
+                Widget::vColors[WIDGET_NORMAL].sBgColor.set("#888888");
                 // Commit
-                sColor.override();
-                Widget::vColors[0].sBgColor.override();
+                Hyperlink::vColors[HYPERLINK_NORMAL].sColor.override();
+                Widget::vColors[WIDGET_NORMAL].sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark_selected, "FileDialog::Bookmark.selected", "FileDialog::Bookmark");
 
@@ -186,12 +186,12 @@ namespace lsp
                 sAllocation.set_fill(true, false);
                 sAllocation.set_vreduce(true);
                 sTextLayout.set(1.0f, 0.5f);
-                sColor.set("#ff0000");
+                Label::vColors[LABEL_NORMAL].sColor.set("#ff0000");
                 sAllocation.set_hexpand(true);
                 // Commit
                 sAllocation.override();
                 sTextLayout.override();
-                sColor.override();
+                Label::vColors[LABEL_NORMAL].sColor.override();
                 sAllocation.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__Warning, "FileDialog::Warning", "Label");
@@ -230,10 +230,10 @@ namespace lsp
 
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__ExtCheck, CheckBox)
                 // Override
-                vColors[CHECKBOX_NORMAL].sColor.set("#ffff00");
+                CheckBox::vColors[CHECKBOX_NORMAL].sColor.set("#ffff00");
                 sChecked.set(true);
                 // Commit
-                vColors[CHECKBOX_NORMAL].sColor.override();
+                CheckBox::vColors[CHECKBOX_NORMAL].sColor.override();
                 sChecked.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__ExtCheck, "FileDialog::ExtCheck", "CheckBox");

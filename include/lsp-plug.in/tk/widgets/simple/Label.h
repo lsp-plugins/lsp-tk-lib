@@ -33,12 +33,29 @@ namespace lsp
         // Style definition
         namespace style
         {
+            typedef struct LabelColors
+            {
+                prop::Color             sColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop) const;
+            } LabelColors;
+
+            enum LabelColorState
+            {
+                LABEL_NORMAL        = 0,
+                LABEL_HOVER         = 1 << 0,
+                LABEL_INACTIVE      = 1 << 1,
+
+                LABEL_TOTAL         = 1 << 2
+            };
+
             LSP_TK_STYLE_DEF_BEGIN(Label, Widget)
+                LabelColors                 vColors[LABEL_TOTAL];
+
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
-                prop::Color                 sColor;         // Font color
-                prop::Color                 sHoverColor;    // Hover color
                 prop::Boolean               sHover;         // Hover enable
                 prop::String                sText;          // Text to display
                 prop::SizeConstraints       sConstraints;   // Size constraints
@@ -62,6 +79,16 @@ namespace lsp
                     F_MOUSE_IGN     = 1 << 2,
                 };
 
+                enum lbl_flags_t
+                {
+                    LBL_0       = style::LABEL_NORMAL,
+                    LBL_1       = style::LABEL_HOVER,
+                    LBL_2       = LBL_0 | style::LABEL_INACTIVE,
+                    LBL_3       = LBL_1 | style::LABEL_INACTIVE,
+
+                    LBL_TOTAL   = style::HYPERLINK_TOTAL
+                };
+
                 typedef struct estimation_t
                 {
                     float scaling;
@@ -75,11 +102,10 @@ namespace lsp
                 size_t                      nMFlags;
                 size_t                      nState;
 
+                style::LabelColors          vColors[style::LABEL_TOTAL];
                 prop::TextLayout            sTextLayout;    // Text layout
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
-                prop::Color                 sColor;         // Font color
-                prop::Color                 sHoverColor;    // Hover color
                 prop::Boolean               sHover;         // Hover enable
                 prop::String                sText;          // Text to display
                 prop::SizeConstraints       sConstraints;   // Size constraints
@@ -96,9 +122,14 @@ namespace lsp
                 size_t                          destroy_text_estimations();
                 void                            estimate_string_size(estimation_t *e, tk::String *s);
                 void                            estimate_string_size(estimation_t *e, const LSPString *s);
+                const style::LabelColors       *select_colors() const;
+                const style::LabelColors       *select_colors(bool active, bool hover) const;
+
+            protected:
                 static bool                     contains_digit(const LSPString *s);
                 static void                     set_all_digits(LSPString *s, lsp_wchar_t new_ch);
 
+            protected:
                 virtual void                    size_request(ws::size_limit_t *r) override;
                 virtual void                    property_changed(Property *prop) override;
 
@@ -113,16 +144,18 @@ namespace lsp
                 virtual status_t                init() override;
 
             public:
-                LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
-                LSP_TK_PROPERTY(TextAdjust,         text_adjust,        &sTextAdjust)
-                LSP_TK_PROPERTY(Font,               font,               &sFont)
-                LSP_TK_PROPERTY(Color,              color,              &sColor)
-                LSP_TK_PROPERTY(Color,              hover_color,        &sHoverColor)
-                LSP_TK_PROPERTY(Boolean,            hover,              &sHover)
-                LSP_TK_PROPERTY(String,             text,               &sText)
-                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
-                LSP_TK_PROPERTY(Padding,            ipadding,           &sIPadding)
-                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,              &sPopup)
+                LSP_TK_PROPERTY(TextLayout,         text_layout,            &sTextLayout)
+                LSP_TK_PROPERTY(TextAdjust,         text_adjust,            &sTextAdjust)
+                LSP_TK_PROPERTY(Font,               font,                   &sFont)
+                LSP_TK_PROPERTY(Color,              color,                  &vColors[LBL_0].sColor)
+                LSP_TK_PROPERTY(Color,              hover_color,            &vColors[LBL_1].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_color,         &vColors[LBL_2].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_hover_color,   &vColors[LBL_3].sColor)
+                LSP_TK_PROPERTY(Boolean,            hover,                  &sHover)
+                LSP_TK_PROPERTY(String,             text,                   &sText)
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,            &sConstraints)
+                LSP_TK_PROPERTY(Padding,            ipadding,               &sIPadding)
+                LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,                  &sPopup)
 
             public:
                 void                            clear_text_estimations();

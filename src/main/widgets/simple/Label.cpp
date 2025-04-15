@@ -36,25 +36,56 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Label, Widget)
                 // Bind
+                LabelColors *c = &vColors[LABEL_NORMAL];
+                c->sColor.bind("text.color", this);
+
+                c = &vColors[LABEL_HOVER];
+                c->sColor.bind("text.hover.color", this);
+
+                c = &vColors[LABEL_INACTIVE];
+                c->sColor.bind("inactive.text.color", this);
+
+                c = &vColors[LABEL_INACTIVE| LABEL_HOVER];
+                c->sColor.bind("inactive.text.hover.color", this);
+
                 sTextLayout.bind("text.layout", this);
                 sTextAdjust.bind("text.adjust", this);
                 sFont.bind("font", this);
-                sColor.bind("text.color", this);
-                sHoverColor.bind("text.hover.color", this);
                 sHover.bind("text.hover", this);
                 sConstraints.bind("size.constraints", this);
                 sIPadding.bind("ipadding", this);
+
                 // Configure
+                c = &vColors[LABEL_NORMAL];
+                c->sColor.set_rgb24(0x000000);
+
+                c = &vColors[LABEL_HOVER];
+                c->sColor.set_rgb24(0xff0000);
+
+                c = &vColors[LABEL_INACTIVE];
+                c->sColor.set_rgb24(0x000088);
+
+                c = &vColors[LABEL_INACTIVE| LABEL_HOVER];
+                c->sColor.set_rgb24(0xcc0000);
+
                 sTextLayout.set(0.0f, 0.0f);
                 sTextAdjust.set(TA_NONE);
                 sFont.set_size(12.0f);
-                sColor.set("#000000");
-                sHoverColor.set("#ff0000");
                 sHover.set(false);
                 sConstraints.set(-1, -1, -1, -1);
                 sIPadding.set(0, 0, 0, 0);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Label, "Label", "root");
+
+            void LabelColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+            }
+
+            bool LabelColors::property_changed(Property *prop) const
+            {
+                return sColor.is(prop);
+            }
         }
 
         const w_class_t Label::metadata =       { "Label", &Widget::metadata };
@@ -64,8 +95,6 @@ namespace lsp
             sTextLayout(&sProperties),
             sTextAdjust(&sProperties),
             sFont(&sProperties),
-            sColor(&sProperties),
-            sHoverColor(&sProperties),
             sHover(&sProperties),
             sText(&sProperties),
             sConstraints(&sProperties),
@@ -89,11 +118,21 @@ namespace lsp
             if (result != STATUS_OK)
                 return result;
 
+            style::LabelColors *c = &vColors[style::LABEL_NORMAL];
+            c->sColor.bind("text.color", &sStyle);
+
+            c = &vColors[style::LABEL_HOVER];
+            c->sColor.bind("text.hover.color", &sStyle);
+
+            c = &vColors[style::LABEL_INACTIVE];
+            c->sColor.bind("inactive.text.color", &sStyle);
+
+            c = &vColors[style::LABEL_INACTIVE | style::LABEL_HOVER];
+            c->sColor.bind("inactive.text.hover.color", &sStyle);
+
             sTextLayout.bind("text.layout", &sStyle);
             sTextAdjust.bind("text.adjust", &sStyle);
             sFont.bind("font", &sStyle);
-            sColor.bind("text.color", &sStyle);
-            sHoverColor.bind("text.hover.color", &sStyle);
             sHover.bind("text.hover", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
@@ -113,7 +152,11 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (prop->one_of(sTextLayout, sColor, sHoverColor, sHover))
+            const style::LabelColors *colors = select_colors();
+            if (colors->property_changed(prop))
+                query_draw();
+
+            if (prop->one_of(sTextLayout, sHover))
                 query_draw();
 
             if (prop->one_of(sTextAdjust, sFont, sText, sConstraints, sIPadding))
@@ -130,7 +173,6 @@ namespace lsp
             // Estimate sizes
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            bool hover      = (nState & F_MOUSE_IN) && (sHover.get());
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
             ws::rectangle_t r, size;
@@ -164,8 +206,10 @@ namespace lsp
             }
 
             // Initialize palette
+            const style::LabelColors *colors = select_colors();
+
             lsp::Color bg_color;
-            lsp::Color f_color((hover) ? sHoverColor : sColor);
+            lsp::Color f_color(colors->sColor);
 
             get_actual_bg_color(bg_color);
             f_color.scale_lch_luminance(select_brightness());
@@ -177,6 +221,20 @@ namespace lsp
                 &sFont, &r, f_color, &fp, &tp,
                 sTextLayout.halign(), sTextLayout.valign(),
                 fscaling, &text);
+        }
+
+        const style::LabelColors *Label::select_colors(bool active, bool hover) const
+        {
+            size_t index = (active) ? style::LABEL_NORMAL : style::LABEL_INACTIVE;
+            index = lsp_setflag(index, style::LABEL_HOVER, hover);
+            return &vColors[index];
+        }
+
+        const style::LabelColors *Label::select_colors() const
+        {
+            return select_colors(
+                sActive.get(),
+                (nState & F_MOUSE_IN) && (sHover.get()));
         }
 
         size_t Label::destroy_text_estimations()
