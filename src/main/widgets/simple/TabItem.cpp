@@ -252,7 +252,7 @@ namespace lsp
                 }
 
             if (sActive.is(prop))
-                query_draw();
+                set_active(sActive.get());
 
             if (prop->one_of(sText, sTextAdjust, sTextLayout, sTextPadding, sFont, sBorderSize, sBorderRadius))
                 query_resize();

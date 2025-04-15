@@ -315,7 +315,7 @@ namespace lsp
             ws::rectangle_t xr;
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright    = lsp_max(0.0f, sBrightness.get());
+            float bright    = lsp_max(0.0f, select_brightness());
             ssize_t border  = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
             ssize_t radius  = lsp_max(0.0f, sRadius.get() * scaling);
             bool bg         = false;

@@ -237,8 +237,8 @@ namespace lsp
             if (colors->property_changed(prop))
                 query_draw();
 
-            if (prop->is(sActive))
-                query_draw();
+            if (sActive.is(prop))
+                set_active(sActive.get());
 
             if (prop->one_of(sSizeRange, sScale, sHoleSize, sGapSize))
                 query_resize();
@@ -490,7 +490,7 @@ namespace lsp
         void Knob::draw(ws::ISurface *s, bool force)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             float value         = sValue.get_normalized();
             float balance       = sValue.get_normalized(sBalance.get());
             float meter_min     = sValue.get_normalized(sMeterMin.get());

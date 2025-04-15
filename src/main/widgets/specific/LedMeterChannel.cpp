@@ -239,7 +239,7 @@ namespace lsp
             if (sReversive.is(prop))
                 query_draw();
             if (sActive.is(prop))
-                query_draw();
+                set_active(sActive.get());
             if (sMinSegments.is(prop))
                 query_resize();
             if (sConstraints.is(prop))
@@ -706,7 +706,7 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             lsp::Color col;
             get_actual_bg_color(col);

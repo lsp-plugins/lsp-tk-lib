@@ -176,6 +176,19 @@ namespace lsp
             TA_TOLOWER                  //!< Convert to lower case
         };
 
+        /**
+         * Widget draw flags
+         */
+        enum draw_flags_t
+        {
+            DRAW_NONE           = 0,
+            DRAW_SURFACE        = 1 << 0,
+            DRAW_CHILD          = 1 << 1,
+
+            DRAW_DEFAULT        = DRAW_SURFACE,
+            DRAW_ALL            = DRAW_SURFACE | DRAW_CHILD
+        };
+
         typedef struct w_class_t
         {
             const char         *name;

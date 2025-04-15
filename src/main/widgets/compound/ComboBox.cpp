@@ -478,7 +478,7 @@ namespace lsp
             ws::rectangle_t ta, sa, va; // text area, spin area
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             estimate_parameters(&a, scaling);
             const style::ComboBoxColors *colors = select_colors();
 

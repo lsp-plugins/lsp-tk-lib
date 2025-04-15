@@ -306,7 +306,7 @@ namespace lsp
             float scaling   = lsp_max(0.0f, sScaling.get());
             float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
             float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
 
             // Prepare palette
             ws::ISurface *cv;

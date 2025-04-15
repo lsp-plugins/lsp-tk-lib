@@ -381,7 +381,7 @@ namespace lsp
                 query_draw();
 
             if (sActive.is(prop))
-                query_draw();
+                set_active(sActive.get());
 
             if (prop->one_of(sRows, sColumns, sType, sFont, sSpacing, sIPadding))
                 query_resize();
@@ -561,7 +561,7 @@ namespace lsp
         void Indicator::draw(ws::ISurface *s, bool force)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
             size_t rows     = lsp_max(1, sRows.get());
             size_t cols     = lsp_max(1, sColumns.get());
             size_t last     = rows * cols;

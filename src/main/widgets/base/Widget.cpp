@@ -34,25 +34,41 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Widget, Style)
                 // Bind
+                WidgetColors *c = &vColors[WIDGET_NORMAL];
+                c->sBgColor.bind("bg.color", this);
+                c->sBrightness.bind("brightness", this);
+                c->sBgBrightness.bind("bg.brightness", this);
+
+                c = &vColors[WIDGET_INACTIVE];
+                c->sBgColor.bind("inactive.bg.color", this);
+                c->sBrightness.bind("inactive.brightness", this);
+                c->sBgBrightness.bind("inactive.bg.brightness", this);
+
                 sAllocation.bind("allocation", this);
                 sScaling.bind("size.scaling", this);
                 sFontScaling.bind("font.scaling", this);
-                sBrightness.bind("brightness", this);
-                sBgBrightness.bind("bg.brightness", this);
                 sPadding.bind("padding", this);
-                sBgColor.bind("bg.color", this);
+
                 sBgInherit.bind("bg.inherit", this);
                 sVisibility.bind("visible", this);
                 sPointer.bind("pointer", this);
                 sDrawMode.bind("draw.mode", this);
+
                 // Configure
+                c = &vColors[WIDGET_NORMAL];
+                c->sBrightness.set(1.0f);
+                c->sBgBrightness.set(1.0f);
+                c->sBgColor.set("#cccccc");
+
+                c = &vColors[WIDGET_INACTIVE];
+                c->sBrightness.set(1.0f);
+                c->sBgBrightness.set(1.0f);
+                c->sBgColor.set("#cccccc");
+
                 sAllocation.set(true, false);
                 sScaling.set(1.0f);
                 sFontScaling.set(1.0f);
-                sBrightness.set(1.0f);
-                sBgBrightness.set(1.0f);
                 sPadding.set_all(0);
-                sBgColor.set("#cccccc");
                 sBgInherit.set(false);
                 sVisibility.set(true);
                 sPointer.set(ws::MP_DEFAULT);
@@ -61,6 +77,23 @@ namespace lsp
                 sVisibility.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Widget, "Widget", "root");
+
+            void WidgetColors::listener(tk::prop::Listener * listener)
+            {
+                sBgColor.listener(listener);
+                sBrightness.listener(listener);
+                sBgBrightness.listener(listener);
+            }
+
+            size_t WidgetColors::property_changed(tk::Property * prop) const
+            {
+                if (sBrightness.is(prop))
+                    return DRAW_DEFAULT;
+                if (prop->one_of(sBgBrightness, sBgColor))
+                    return DRAW_ALL;
+
+                return DRAW_NONE;
+            }
         }
 
         //---------------------------------------------------------------------
@@ -79,17 +112,18 @@ namespace lsp
             sAllocation(&sProperties),
             sScaling(&sProperties),
             sFontScaling(&sProperties),
-            sBrightness(&sProperties),
-            sBgBrightness(&sProperties),
             sPadding(&sProperties),
-            sBgColor(&sProperties),
             sVisibility(&sProperties),
             sPointer(&sProperties),
             sTag(&sProperties),
             sDrawMode(&sProperties)
         {
-            nFlags                  = REDRAW_SURFACE | SIZE_INVALID | RESIZE_PENDING;
             pClass                  = &metadata;
+
+            for (size_t i=0; i<WIDGET_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
+            nFlags                  = REDRAW_SURFACE | SIZE_INVALID | RESIZE_PENDING;
             pDisplay                = dpy;
             pParent                 = NULL;
 
@@ -146,13 +180,20 @@ namespace lsp
             status_t res = sStyle.init();
             if (res == STATUS_OK)
             {
+                style::WidgetColors *c = &vColors[style::WIDGET_NORMAL];
+                c->sBgColor.bind("bg.color", &sStyle);
+                c->sBrightness.bind("brightness", &sStyle);
+                c->sBgBrightness.bind("bg.brightness", &sStyle);
+
+                c = &vColors[style::WIDGET_INACTIVE];
+                c->sBgColor.bind("inactive.bg.color", &sStyle);
+                c->sBrightness.bind("inactive.brightness", &sStyle);
+                c->sBgBrightness.bind("inactive.bg.brightness", &sStyle);
+
                 sAllocation.bind("allocation", &sStyle);
                 sScaling.bind("size.scaling", &sStyle);
                 sFontScaling.bind("font.scaling", &sStyle);
-                sBrightness.bind("brightness", &sStyle);
-                sBgBrightness.bind("bg.brightness", &sStyle);
                 sPadding.bind("padding", &sStyle);
-                sBgColor.bind("bg.color", &sStyle);
                 sBgInherit.bind("bg.inherit", &sStyle);
                 sVisibility.bind("visible", &sStyle);
                 sPointer.bind("pointer", &sStyle);
@@ -225,12 +266,13 @@ namespace lsp
 
         void Widget::property_changed(Property *prop)
         {
+            const style::WidgetColors *colors = select_colors();
+            const size_t redraw = redraw_flags(colors->property_changed(prop));
+            if (redraw != 0)
+                query_draw(REDRAW_CHILD);
+
             if (prop->one_of(sScaling, sFontScaling, sPadding, sAllocation))
                 query_resize();
-            if (sBrightness.is(prop))
-                query_draw();
-            if (prop->one_of(sBgBrightness, sBgColor, sBgInherit))
-                query_draw(REDRAW_CHILD | REDRAW_SURFACE);
 
             if (sVisibility.is(prop))
             {
@@ -249,6 +291,35 @@ namespace lsp
                         hide_widget();
                 }
             }
+        }
+
+        size_t Widget::redraw_flags(size_t draw_flags)
+        {
+            size_t result = (draw_flags & DRAW_SURFACE) ? REDRAW_SURFACE : 0;
+            return lsp_setflag(result, REDRAW_CHILD, draw_flags & DRAW_CHILD);
+        }
+
+        const style::WidgetColors *Widget::select_colors() const
+        {
+            const size_t index  = (nFlags & INACTIVE) ? WIDGET_1 : WIDGET_0;
+            return &vColors[index];
+        }
+
+        float Widget::select_brightness() const
+        {
+            const style::WidgetColors *colors = select_colors();
+            return colors->sBrightness.get();
+        }
+
+        void Widget::set_active(bool active, size_t redraw)
+        {
+            const size_t flags  = lsp_setflag(nFlags, INACTIVE, !active);
+            if (flags == nFlags)
+                return;
+
+            nFlags              = flags;
+            if (redraw != 0)
+                query_draw(redraw);
         }
 
         bool Widget::is_visible_child_of(const Widget *parent) const
@@ -858,12 +929,17 @@ namespace lsp
 
         void Widget::get_actual_bg_color(lsp::Color *color, float brightness) const
         {
+            const style::WidgetColors *colors = select_colors();
+
+//            if (sTag.get() == 42)
+//                lsp_trace("debug");
+
             if (brightness < 0.0f)
-                brightness = sBgBrightness.get();
+                brightness = colors->sBgBrightness.get();
 
             if ((!sBgInherit.get()) || (pParent == NULL))
             {
-                color->copy(sBgColor.color());
+                color->copy(colors->sBgColor.color());
                 color->scale_lch_luminance(brightness);
                 return;
             }
@@ -871,7 +947,7 @@ namespace lsp
             WidgetContainer *pw = widget_cast<WidgetContainer>(pParent);
             if (pw == NULL)
             {
-                color->copy(sBgColor.color());
+                color->copy(colors->sBgColor.color());
                 color->scale_lch_luminance(brightness);
                 return;
             }

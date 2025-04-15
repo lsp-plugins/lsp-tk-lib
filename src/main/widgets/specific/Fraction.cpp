@@ -402,7 +402,7 @@ namespace lsp
                 query_draw();
 
             if (sActive.is(prop))
-                query_draw();
+                set_active(sActive.get());
 
             if (prop->one_of(sFont, sAngle, sTextPad, sThick))
                 query_resize();
@@ -528,7 +528,7 @@ namespace lsp
 
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
             float angle     = sAngle.get() * M_PI / 180.0f;
             float lw        = lsp_max(1.0f, sThick.get() * scaling * ((sFont.bold()) ? 2.0f : 1.0f));
             const style::FractionColors *colors = select_colors();

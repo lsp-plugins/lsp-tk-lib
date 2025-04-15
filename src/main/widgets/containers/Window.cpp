@@ -563,7 +563,7 @@ namespace lsp
                 float bw = border * 0.5f;
 
                 lsp::Color bc(sBorderColor);
-                bc.scale_lch_luminance(sBrightness.get());
+                bc.scale_lch_luminance(select_brightness());
 
                 s->wire_rect(
                     bc, SURFMASK_ALL_CORNER, radius,

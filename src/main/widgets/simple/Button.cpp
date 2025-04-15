@@ -313,7 +313,10 @@ namespace lsp
             if (cols->property_changed(prop))
                 query_draw();
 
-            if (prop->one_of(sHoleColor, sHover, sGradient, sActive))
+            if (sActive.is(prop))
+                set_active(sActive.get());
+
+            if (prop->one_of(sHoleColor, sHover, sGradient))
                 query_draw();
 
             if (prop->one_of(sFont, sText, sTextAdjust, sConstraints, sBorderSize, sBorderPressedSize, sBorderDownSize))
@@ -489,7 +492,7 @@ namespace lsp
         {
             ws::IGradient *g    = NULL;
             size_t pressed      = nState;
-            float brightness    = sBrightness.get();
+            float brightness    = select_brightness();
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             ws::rectangle_t r   = sButton;

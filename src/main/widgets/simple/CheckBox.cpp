@@ -215,8 +215,8 @@ namespace lsp
             if (cols->property_changed(prop))
                 query_draw();
 
-            if (prop->is(sActive))
-                query_draw();
+            if (sActive.is(prop))
+                set_active(sActive.get());
 
             if (prop->one_of(sConstraints, sBorderSize, sBorderRadius,
                 sBorderGapSize, sCheckRadius, sCheckGapSize, sCheckMinSize))
@@ -274,7 +274,7 @@ namespace lsp
             lsp::Color c;
 
             float scaling       = sScaling.get();
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             ssize_t border      = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t bgap        = (sBorderGapSize.get() > 0) ? lsp_max(1.0f, sBorderGapSize.get() * scaling) : 0;
             ssize_t irad        = (sCheckRadius.get() > 0) ? lsp_max(1.0f, sCheckRadius.get() * scaling) : 0;

@@ -109,7 +109,7 @@ namespace lsp
             float scaling   = lsp_max(0.0f, sScaling.get());
             ssize_t radius  = (sRadius.get() > 0) ? lsp_max(1.0f, sRadius.get() * scaling) : 0;
             lsp::Color color(sColor);
-            color.scale_lch_luminance(sBrightness.get());
+            color.scale_lch_luminance(select_brightness());
 
             // Draw circle
             float x=0.0f, y=0.0f;

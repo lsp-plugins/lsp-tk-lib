@@ -194,7 +194,7 @@ namespace lsp
 
             if (sActive.is(prop))
             {
-                query_draw();
+                set_active(sActive.get());
                 tk::Menu *parent = widget_cast<tk::Menu>(this->parent());
                 if (parent != NULL)
                     parent->query_draw(REDRAW_CHILD | REDRAW_SURFACE);

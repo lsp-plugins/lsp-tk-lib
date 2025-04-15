@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 15 июн. 2017 г.
@@ -35,14 +35,31 @@ namespace lsp
         // Style definition
         namespace style
         {
+            typedef struct WidgetColors
+            {
+                prop::Color         sBgColor;               // Background color
+                prop::Float         sBrightness;            // Brightness
+                prop::Float         sBgBrightness;          // Brightness for background
+
+                void        listener(tk::prop::Listener *listener);
+                size_t      property_changed(Property *prop) const;
+            } WidgetColors;
+
+            enum WidgetColorState
+            {
+                WIDGET_NORMAL       = 0,
+                WIDGET_INACTIVE     = 1 << 0,
+
+                WIDGET_TOTAL        = 1 << 1
+            };
+
             LSP_TK_STYLE_DEF_BEGIN(Widget, Style)
+                WidgetColors        vColors[WIDGET_TOTAL];  // Widget colors
+
                 prop::Allocation    sAllocation;            // Widget allocation
                 prop::Float         sScaling;               // UI scaling factor
                 prop::Float         sFontScaling;           // UI font scaling factor
-                prop::Float         sBrightness;            // Brightness
-                prop::Float         sBgBrightness;          // Brightness for background
                 prop::Padding       sPadding;               // Widget padding
-                prop::Color         sBgColor;               // Color of the background of the widget
                 prop::Boolean       sBgInherit;             // Inhert background color from parent container
                 prop::Boolean       sVisibility;            // Visibility
                 prop::Pointer       sPointer;               // Mouse pointer
@@ -56,24 +73,30 @@ namespace lsp
          */
         class Widget: public ws::IEventHandler
         {
-            private:
-                Widget & operator = (const Widget &);
-                Widget(const Widget &);
-
             public:
                 static const w_class_t    metadata;
 
             protected:
+                enum knob_flags_t
+                {
+                    WIDGET_0        = style::WIDGET_NORMAL,
+                    WIDGET_1        = style::WIDGET_INACTIVE,
+                    WIDGET_TOTAL    = style::WIDGET_TOTAL
+                };
+
                 enum flags_t
                 {
-                    INITIALIZED     = 1 << 0,       // Widget is initialized
-                    FINALIZED       = 1 << 1,       // Widget is in destroy state
-                    VISIBLE         = 1 << 2,       // Widget is currently visible
-                    REDRAW_SURFACE  = 1 << 3,       // Need to redraw surface
-                    REDRAW_CHILD    = 1 << 4,       // Need to redraw child only
-                    SIZE_INVALID    = 1 << 5,       // Size limit structure is valid
-                    RESIZE_PENDING  = 1 << 6,       // The resize request is pending
-                    REALIZE_ACTIVE  = 1 << 7        // Realize is active, no need to trigger for realize
+                    INACTIVE        = 1 << 0,       // Widget is inactive
+                    INITIALIZED     = 1 << 1,       // Widget is initialized
+                    FINALIZED       = 1 << 2,       // Widget is in destroy state
+                    VISIBLE         = 1 << 3,       // Widget is currently visible
+                    REDRAW_SURFACE  = 1 << 4,       // Need to redraw surface
+                    REDRAW_CHILD    = 1 << 5,       // Need to redraw child only
+                    SIZE_INVALID    = 1 << 6,       // Size limit structure is valid
+                    RESIZE_PENDING  = 1 << 7,       // The resize request is pending
+                    REALIZE_ACTIVE  = 1 << 8,       // Realize is active, no need to trigger for realize
+
+                    REDRAW_DEFAULT  = REDRAW_SURFACE
                 };
 
             protected:
@@ -84,7 +107,7 @@ namespace lsp
 
                     public:
                         inline PropListener(Widget *w)  { pWidget = w; }
-                        virtual void notify(Property *prop);
+                        virtual void notify(Property *prop) override;
                 };
 
             protected:
@@ -101,13 +124,11 @@ namespace lsp
                 Style               sStyle;                 // Style
                 PropListener        sProperties;            // Properties listener
 
+                style::WidgetColors vColors[WIDGET_TOTAL];  // Widget colors
                 prop::Allocation    sAllocation;            // Widget allocation
                 prop::Float         sScaling;               // UI scaling factor
                 prop::Float         sFontScaling;           // UI font scaling factor
-                prop::Float         sBrightness;            // Brightness
-                prop::Float         sBgBrightness;          // Brightness for background
                 prop::Padding       sPadding;               // Widget padding
-                prop::Color         sBgColor;               // Color of the background of the widget
                 prop::Boolean       sBgInherit;             // Inhert background color from parent container
                 prop::Boolean       sBgApplyBrightness;     // Apply brightness settings to the background
                 prop::Boolean       sVisibility;            // Visibility
@@ -140,10 +161,19 @@ namespace lsp
                 static status_t     slot_realized(Widget *sender, void *ptr, void *data);
                 static status_t     slot_mouse_pointer(Widget *sender, void *ptr, void *data);
 
+            protected:
+                static size_t       redraw_flags(size_t draw_flags);
+
             //---------------------------------------------------------------------------------
             // Interface for nested classes
             protected:
+                void                    set_active(bool active, size_t redraw = REDRAW_DEFAULT);
+
                 void                    do_destroy();
+
+                const style::WidgetColors   *select_colors() const;
+
+                float                   select_brightness() const;
 
                 void                    unlink_widget(Widget *widget);
 
@@ -182,7 +212,12 @@ namespace lsp
             // Construction and destruction
             public:
                 explicit Widget(Display *dpy);
-                virtual ~Widget();
+                Widget(const Widget &);
+                Widget(Widget &&) = delete;
+                virtual ~Widget() override;
+
+                Widget & operator = (const Widget &) = delete;
+                Widget & operator = (Widget &&) = delete;
 
                 /** Initialize wiget
                  *
@@ -223,21 +258,21 @@ namespace lsp
                  * @return true if widget is instance of some class
                  */
                 template <class LSPTarget>
-                    inline bool instance_of() const { return instance_of(&LSPTarget::metadata); };
+                inline bool instance_of() const { return instance_of(&LSPTarget::metadata); };
 
                 /** Cast widget to another type
                  *
                  * @return pointer to widget or NULL if cast failed
                  */
                 template <class LSPTarget>
-                    inline LSPTarget *cast() { return instance_of(&LSPTarget::metadata) ? static_cast<LSPTarget *>(this) : NULL; }
+                inline LSPTarget *cast() { return instance_of(&LSPTarget::metadata) ? static_cast<LSPTarget *>(this) : NULL; }
 
                 /** Cast widget to another type
                  *
                  * @return pointer to widget or NULL if cast failed
                  */
                 template <class LSPTarget>
-                    inline const LSPTarget *cast() const { return instance_of(&LSPTarget::metadata) ? static_cast<const LSPTarget *>(this) : NULL; }
+                inline const LSPTarget *cast() const { return instance_of(&LSPTarget::metadata) ? static_cast<const LSPTarget *>(this) : NULL; }
 
                 /** Get pointer to self as pointer to Widget class
                  *
@@ -399,23 +434,32 @@ namespace lsp
                 virtual void            get_actual_bg_color(lsp::Color *color, float brightness = -1.0f) const;
                 void                    get_actual_bg_color(lsp::Color &color, float brightness = -1.0f) const;
 
+                //---------------------------------------------------------------------------------
+                // Properties
+            public:
                 /**
                  * Return widget's style
                  * @return widget's style
                  */
-                LSP_TK_PROPERTY(Style,              style,              &sStyle)
+                LSP_TK_PROPERTY(Style,              style,                      &sStyle)
 
                 /** Get widget padding. All widgets should properly handle this parameter
                  *
                  * @return widget padding
                  */
-                LSP_TK_PROPERTY(Padding,            padding,            &sPadding)
+                LSP_TK_PROPERTY(Padding,            padding,                    &sPadding)
 
                 /**
                  * Get background color of the widget
                  * @return background color of the widget
                  */
-                LSP_TK_PROPERTY(Color,              bg_color,           &sBgColor)
+                LSP_TK_PROPERTY(Color,              bg_color,                   &vColors[WIDGET_0].sBgColor)
+
+                /**
+                 * Get background color of the inactive widget
+                 * @return background color of the widget
+                 */
+                LSP_TK_PROPERTY(Color,              inactive_bg_color,          &vColors[WIDGET_1].sBgColor)
 
                 /**
                  * Get the inheritance flag of the background color.
@@ -424,59 +468,71 @@ namespace lsp
                  *
                  * @return inheritance flag of the background color
                  */
-                LSP_TK_PROPERTY(Boolean,            bg_inherit,         &sBgInherit)
+                LSP_TK_PROPERTY(Boolean,            bg_inherit,                 &sBgInherit)
 
                 /**
-                 * Get brightness property
-                 * @return brightness property
+                 * Get brightness property of active widget
+                 * @return brightness property of active widget
                  */
-                LSP_TK_PROPERTY(Float,              brightness,         &sBrightness)
+                LSP_TK_PROPERTY(Float,              brightness,                 &vColors[WIDGET_0].sBrightness)
 
                 /**
-                 * Get brightness property for background
-                 * @return brightness property for background
+                 * Get brightness property of inactive widget
+                 * @return brightness property of inactive widget
                  */
-                LSP_TK_PROPERTY(Float,              bg_brightness,      &sBgBrightness)
+                LSP_TK_PROPERTY(Float,              inactive_brightness,        &vColors[WIDGET_1].sBrightness)
+
+                /**
+                 * Get brightness property of active widget for background
+                 * @return brightness property of active widget for background
+                 */
+                LSP_TK_PROPERTY(Float,              bg_brightness,              &vColors[WIDGET_0].sBgBrightness)
+
+                /**
+                 * Get brightness property of inactive widget for background
+                 * @return brightness property of inactive widget for background
+                 */
+                LSP_TK_PROPERTY(Float,              inactive_bg_brightness,     &vColors[WIDGET_1].sBgBrightness)
 
                 /**
                  * Get widget scaling property
                  * @return widget scaling property
                  */
-                LSP_TK_PROPERTY(Float,              scaling,            &sScaling)
+                LSP_TK_PROPERTY(Float,              scaling,                    &sScaling)
 
                 /**
                  * Get font scaling property
                  * @return font scaling property
                  */
-                LSP_TK_PROPERTY(Float,              font_scaling,       &sFontScaling)
+                LSP_TK_PROPERTY(Float,              font_scaling,               &sFontScaling)
 
                 /**
                  * Widget allocation flags
                  * @return widget allocation flags
                  */
-                LSP_TK_PROPERTY(Allocation,         allocation,         &sAllocation)
+                LSP_TK_PROPERTY(Allocation,         allocation,                 &sAllocation)
 
                 /**
                  * Visibility of the widget
                  * @return visibility of the widget
                  */
-                LSP_TK_PROPERTY(Boolean,            visibility,         &sVisibility)
+                LSP_TK_PROPERTY(Boolean,            visibility,                 &sVisibility)
 
                 /**
                  * Style of mouse pointer
                  * @return mouse pointer style
                  */
-                LSP_TK_PROPERTY(Pointer,            pointer,            &sPointer)
+                LSP_TK_PROPERTY(Pointer,            pointer,                    &sPointer)
 
                 /**
                  * Some tag associated with widget, can be used as the user decides
                  */
-                LSP_TK_PROPERTY(Integer,            tag,                &sTag)
+                LSP_TK_PROPERTY(Integer,            tag,                        &sTag)
 
                 /**
                  * Drawing mode of the widget
                  */
-                LSP_TK_PROPERTY(DrawMode,           draw_mode,          &sDrawMode)
+                LSP_TK_PROPERTY(DrawMode,           draw_mode,                  &sDrawMode)
 
             //---------------------------------------------------------------------------------
             // Manipulation
@@ -493,7 +549,7 @@ namespace lsp
                  *
                  * @param flags redraw flags
                  */
-                virtual void            query_draw(size_t flags = REDRAW_SURFACE);
+                virtual void            query_draw(size_t flags = REDRAW_DEFAULT);
 
                 /**
                  * Put the widget to the destroy queue of the main loop
@@ -552,7 +608,7 @@ namespace lsp
                  * @param e UI event
                  * @return status of operation
                  */
-                virtual status_t        handle_event(const ws::event_t *e);
+                virtual status_t        handle_event(const ws::event_t *e) override;
 
                 /** Set parent widget of this widget
                  *

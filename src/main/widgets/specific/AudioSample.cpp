@@ -333,6 +333,9 @@ namespace lsp
             if (vChannels.is(prop))
                 query_resize();
 
+            if (sActive.is(prop))
+                set_active(sActive.get());
+
             if (sWaveBorder.is(prop))
                 query_resize();
             if (prop->one_of(sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sPlayBorder, sLineWidth, sMaxAmplitude))
@@ -474,7 +477,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             // Init decimation buffer
             ssize_t n_draw      = lsp_min(ssize_t(samples), r->nWidth);
@@ -528,7 +531,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             float x[6], y[6];
 
@@ -636,7 +639,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             float border        = (range->border->get() > 0) ? lsp_max(1.0f, range->border->get() * scaling) : 0.0f;
             float xb            = r->nLeft + float(begin * r->nWidth) / float(samples);
             float xe            = r->nLeft + float(end * r->nWidth) / float(samples);
@@ -669,7 +672,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             float x             = float(r->nLeft + (position * r->nWidth) / samples);
             float border        = lsp_max(1.0f, pborder * scaling);
 
@@ -689,7 +692,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             // Init decimation buffer
             ssize_t n_draw      = lsp_min(ssize_t(samples), r->nWidth);
@@ -742,7 +745,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             float x[4], y[4];
 
@@ -831,7 +834,7 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             LSPString text;
             ws::font_parameters_t fp;
@@ -864,7 +867,7 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
@@ -930,7 +933,7 @@ namespace lsp
         {
             // Main parameters
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             // Draw background
             lsp::Color color(sColor);
@@ -1129,7 +1132,7 @@ namespace lsp
             float scaling   = lsp_max(0.0f, sScaling.get());
             float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
             float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
             bool pressed    = nXFlags & XF_DOWN;
 
             // Prepare palette

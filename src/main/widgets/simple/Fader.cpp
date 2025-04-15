@@ -235,7 +235,7 @@ namespace lsp
                 query_draw();
 
             if (sActive.is(prop))
-                query_draw();
+                set_active(sActive.get());
 
             if (sValue.is(prop))
                 sync_button_pos();
@@ -559,7 +559,7 @@ namespace lsp
             ssize_t bchamfer    = (sBtnBorder.get() > 0) ? lsp_max(1, scaling * sBtnBorder.get()) : 0.0f;
             ssize_t bradius     = (sBtnRadius.get() > 0) ? lsp_max(1, scaling * sBtnRadius.get()) : 0.0f;
             size_t angle        = sAngle.get();
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             const style::FaderColors *colors = select_colors();
 
             // Prepare palette

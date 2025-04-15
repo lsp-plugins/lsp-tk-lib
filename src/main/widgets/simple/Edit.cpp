@@ -395,7 +395,7 @@ namespace lsp
                 query_draw();
 
             if (sActive.is(prop))
-                query_draw();
+                set_active(sActive.get());
 
             if (sText.is(prop))
             {
@@ -531,7 +531,7 @@ namespace lsp
             // Draw border
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            float lightness = sBrightness.get();
+            float lightness = select_brightness();
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             size_t cursize  = lsp_max(1.0f, scaling);

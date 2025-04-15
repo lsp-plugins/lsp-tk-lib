@@ -249,7 +249,7 @@ namespace lsp
 
             // Generate palette
             float scaling   = lsp_max(0.0f, sScaling.get());
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
 
             // Prepare arguments
             float left  = sHValue.sValue.get();

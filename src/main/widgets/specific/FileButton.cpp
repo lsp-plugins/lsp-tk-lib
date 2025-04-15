@@ -217,7 +217,7 @@ namespace lsp
                 query_draw();
 
             if (sActive.is(prop))
-                query_draw();
+                set_active(sActive.get());
 
             if (prop->one_of(sValue, sGradient))
                 query_draw();
@@ -302,7 +302,7 @@ namespace lsp
         void FileButton::draw(ws::ISurface *s, bool force)
         {
             float v                 = sValue.get_normalized();
-            float bright            = sBrightness.get();
+            float bright            = select_brightness();
             lsp::Color bg;
             const style::FileButtonColors *colors = select_colors();
 

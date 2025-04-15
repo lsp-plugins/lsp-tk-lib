@@ -92,7 +92,7 @@ namespace lsp
 
         void Separator::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
 
             // Prepare palette
             lsp::Color color(sColor);

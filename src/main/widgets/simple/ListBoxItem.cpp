@@ -102,11 +102,11 @@ namespace lsp
 
                 // Override
                 sPadding.set(2, 2, 0, 0);
-                sBgColor.set("#ffffff");
+                Widget::vColors[0].sBgColor.set("#ffffff");
 
                 // Commit
                 sPadding.override();
-                sBgColor.override();
+                Widget::vColors[0].sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ListBoxItem, "ListBoxItem", "root");
 
@@ -215,7 +215,7 @@ namespace lsp
 
             if (sActive.is(prop))
             {
-                query_draw();
+                set_active(sActive.get());
                 ListBox *list = widget_cast<ListBox>(parent());
                 if (list != NULL)
                     list->query_draw(REDRAW_CHILD | REDRAW_SURFACE);

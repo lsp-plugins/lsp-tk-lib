@@ -97,9 +97,9 @@ namespace lsp
                 sLoopBorderColor.set("#00ffff");
                 sConstraints.set(128, 32, -1, -1);
                 // Override
-                sBgColor.set("#000000");
+                Widget::vColors[0].sBgColor.set("#000000");
                 // Commit
-                sBgColor.override();
+                Widget::vColors[0].sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(AudioChannel, "AudioChannel", "root");
         }
@@ -430,7 +430,7 @@ namespace lsp
 
         void AudioChannel::draw(ws::ISurface *s, bool force)
         {
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t line_w      = (sLineWidth.get() > 0) ? lsp_max(1.0f, sLineWidth.get() * scaling) : 0.0f;
 

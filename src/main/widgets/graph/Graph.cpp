@@ -263,7 +263,7 @@ namespace lsp
             float scaling   = lsp_max(0.0f, sScaling.get());
             float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
             float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
 
             // Prepare palette
             ws::ISurface *cv;
@@ -339,7 +339,7 @@ namespace lsp
             // Clear canvas
             lsp::Color c(sColor);
             // c.set_rgb24(0x888888);
-            c.scale_lch_luminance(sBrightness.get());
+            c.scale_lch_luminance(select_brightness());
             s->clear(c);
 
             // Sync internal lists of axes and origins

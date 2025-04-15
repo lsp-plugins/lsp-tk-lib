@@ -169,10 +169,10 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(FileDialog__Bookmark_selected, FileDialog__Bookmark)
                 // Override
                 sColor.set("#ffffff");
-                sBgColor.set("#888888");
+                Widget::vColors[0].sBgColor.set("#888888");
                 // Commit
                 sColor.override();
-                sBgColor.override();
+                Widget::vColors[0].sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(FileDialog__Bookmark_selected, "FileDialog::Bookmark.selected", "FileDialog::Bookmark");
 
