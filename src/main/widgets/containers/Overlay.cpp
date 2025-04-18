@@ -235,7 +235,7 @@ namespace lsp
                 lsp_finally { s->set_origin(origin); };
 
                 // Draw the child widget
-                wWidget->render(s, &xr, false);
+                wWidget->render(s, &xr, force);
                 wWidget->commit_redraw();
 
                 if (force)
