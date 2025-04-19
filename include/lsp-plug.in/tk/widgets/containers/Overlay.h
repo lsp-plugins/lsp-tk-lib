@@ -47,6 +47,8 @@ namespace lsp
                 prop::Integer           sShadowSize;        // Shadow size
                 prop::Color             sShadowStart;       // Shadow start color
                 prop::Color             sShadowEnd;         // Shadow end color
+                prop::BorderRounding    sShadowRounding;    // Shadow rounding
+                prop::Integer           sShadowRadius;      // Shadow rounding radius
                 prop::Padding           sIPadding;          // Internal padding
             LSP_TK_STYLE_DEF_END
         }
@@ -97,6 +99,8 @@ namespace lsp
                 prop::Integer           sShadowSize;        // Shadow size
                 prop::Color             sShadowStart;       // Shadow start color
                 prop::Color             sShadowEnd;         // Shadow end color
+                prop::BorderRounding    sShadowRounding;    // Shadow rounding
+                prop::Integer           sShadowRadius;      // Shadow rounding radius
                 prop::Padding           sIPadding;          // Internal padding
 
                 overlay_position_t      pPosFunc;           // Position calculation function
@@ -111,13 +115,15 @@ namespace lsp
                     ws::ISurface *s,
                     float x1, float y1,
                     float x2, float y2,
-                    bool start, bool end,
-                    float width, float radius);
+                    float bradius_start, float bradius_end,
+                    float sradius_start, float sradius_end,
+                    float width);
 
                 void                    draw_shadow_ring(
                     ws::ISurface *s,
-                    float xc, float yc,
+                    float xc1, float yc1,
                     float x1, float y1,
+                    float xc2, float yc2,
                     float x2, float y2,
                     float angle);
 

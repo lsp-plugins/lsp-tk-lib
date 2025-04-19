@@ -44,6 +44,8 @@ namespace lsp
                 sShadowSize.bind("shadow.size", this);
                 sShadowStart.bind("shadow.start", this);
                 sShadowEnd.bind("shadow.end", this);
+                sShadowRounding.bind("shadow.rounding", this);
+                sShadowRadius.bind("shadow.radius", this);
                 sIPadding.bind("ipadding", this);
 
                 // Configure
@@ -86,6 +88,8 @@ namespace lsp
             sShadowSize(&sProperties),
             sShadowStart(&sProperties),
             sShadowEnd(&sProperties),
+            sShadowRounding(&sProperties),
+            sShadowRadius(&sProperties),
             sIPadding(&sProperties)
         {
             pClass          = &metadata;
@@ -122,6 +126,8 @@ namespace lsp
             sShadowSize.bind("shadow.size", &sStyle);
             sShadowStart.bind("shadow.start", &sStyle);
             sShadowEnd.bind("shadow.end", &sStyle);
+            sShadowRounding.bind("shadow.rounding", &sStyle);
+            sShadowRadius.bind("shadow.radius", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
 
             return STATUS_OK;
@@ -155,7 +161,7 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (prop->one_of(sTransparency, sPriority, sBorderColor))
+            if (prop->one_of(sTransparency, sPriority, sBorderColor, sShadowRounding, sShadowRadius))
                 query_draw();
             if (prop->one_of(sLayout, sConstraints, sPosition, sBorderRadius, sBorderRounding, sBorderSize, sIPadding))
                 query_resize();
@@ -275,18 +281,21 @@ namespace lsp
 
         void Overlay::draw_shadow_ring(
             ws::ISurface *s,
-            float xc, float yc,
+            float xc1, float yc1,
             float x1, float y1,
+            float xc2, float yc2,
             float x2, float y2,
             float angle)
         {
-            float vx1           = x1 - xc;
-            float vy1           = y1 - yc;
-            float vx2           = x2 - xc;
-            float vy2           = y2 - yc;
+            float vx1           = x1 - xc1;
+            float vy1           = y1 - yc1;
+            float vx2           = x2 - xc2;
+            float vy2           = y2 - yc2;
             const float r1      = sqrtf(vx1*vx1 + vy1*vy1);
+            const float r2      = sqrtf(vx2*vx2 + vy2*vy2);
+            const float r       = lsp_max(r1, r2);
 
-            const size_t count  = lsp_max(fabsf(r1 * angle * 0.5f), 2.0f);
+            const size_t count  = lsp_max(fabsf(r * angle * 0.5f), 2.0f);
             const float phi     = angle / float(count);
 
             const float dx      = cosf(phi);
@@ -303,10 +312,10 @@ namespace lsp
                 vx2                 = nvx2;
                 vy2                 = nvy2;
 
-                const float x3      = xc + vx1;
-                const float y3      = yc + vy1;
-                const float x4      = xc + vx2;
-                const float y4      = yc + vy2;
+                const float x3      = xc1 + vx1;
+                const float y3      = yc1 + vy1;
+                const float x4      = xc2 + vx2;
+                const float y4      = yc2 + vy2;
 
                 // Fill main part
                 ws::IGradient *g    = s->linear_gradient(x1, y1, x2, y2);
@@ -316,6 +325,7 @@ namespace lsp
 
                 // Prepare colors
                 g->set_start(sShadowStart);
+//                g->set_stop(sShadowStart);
                 g->set_stop(sShadowEnd, 1.0f);
 
                 s->fill_triangle(g, x1, y1, x2, y2, x4, y4);
@@ -332,56 +342,79 @@ namespace lsp
             ws::ISurface *s,
             float x1, float y1,
             float x2, float y2,
-            bool start, bool end,
-            float width, float radius)
+            float bradius_start, float bradius_end,
+            float sradius_start, float sradius_end,
+            float width)
         {
             // Compute direction
-            float dx            = (x2 - x1);
-            float dy            = (y2 - y1);
-            const float dw      = sqrtf(dx*dx + dy*dy);
+            const float pdx     = (x2 - x1);
+            const float pdy     = (y2 - y1);
+            const float dw      = sqrtf(pdx*pdx + pdy*pdy);
             if (dw <= 0.05f)
                 return;
             const float rdw     = 1.0f / dw;
 
-            dx                 *= rdw;
-            dy                 *= rdw;
-            const float rdx     = radius * dx;
-            const float rdy     = radius * dy;
+            const float ndx     = pdx * rdw;
+            const float ndy     = pdy * rdw;
+            const float dx      = ndx * width;
+            const float dy      = ndy * width;
 
-            dx                 *= width;
-            dy                 *= width;
+            [[maybe_unused]] const float bdx_start   = bradius_start * ndx;
+            [[maybe_unused]] const float bdy_start   = bradius_start * ndy;
+            [[maybe_unused]] const float bdx_end     = bradius_end * ndx;
+            [[maybe_unused]] const float bdy_end     = bradius_end * ndy;
+
+            [[maybe_unused]] const float sdx_start   = sradius_start * ndx;
+            [[maybe_unused]] const float sdy_start   = sradius_start * ndy;
+            [[maybe_unused]] const float sdx_end     = sradius_end * ndx;
+            [[maybe_unused]] const float sdy_end     = sradius_end * ndy;
 
             // Draw start segment
-            float x0, y0, x3, y3;
+            [[maybe_unused]] float x0, y0, x3, y3;
+            [[maybe_unused]] float cx0, cy0, cx1, cy1;
 
-            if ((start) && (radius >= 1.0f))
+            x0      = x1 + dy - dx;
+            y0      = y1 - dx - dy;
+
+            if ((bradius_start >= 1.0f) || (sradius_start >= 1.0f))
             {
-                x1     += rdx;
-                y1     += rdy;
-                x0      = x1 + dy;
-                y0      = y1 - dx;
+                x0     += sdx_start;
+                y0     += sdy_start;
+                x1     += bdx_start;
+                y1     += bdy_start;
 
-                draw_shadow_ring(s, x1 - rdy, y1 + rdx, x1, y1, x0, y0, -0.25f * M_PI);
+                cx0     = x0 - sdy_start;
+                cy0     = y0 + sdx_start;
+                cx1     = x1 - bdy_start;
+                cy1     = y1 + bdx_start;
+
+                draw_shadow_ring(
+                    s,
+                    cx1, cy1, x1, y1,
+                    cx0, cy0, x0, y0,
+                    -0.25f * M_PI);
             }
-            else
-            {
-                x0      = x1 + dy - dx;
-                y0      = y1 - dx - dy;
-            }
 
-            if ((end) && (radius >= 1.0f))
-            {
-                x2     -= rdx;
-                y2     -= rdy;
-                x3      = x2 + dy;
-                y3      = y2 - dx;
+            x3      = x2 + dy + dx;
+            y3      = y2 - dx + dy;
 
-                draw_shadow_ring(s, x2 - rdy, y2 + rdx, x2, y2, x3, y3, 0.25f * M_PI);
-            }
-            else
+            if ((bradius_end >= 1.0f) || (sradius_end >= 1.0f))
             {
-                x3      = x2 + dy + dx;
-                y3      = y2 - dx + dy;
+                x2     -= bdx_end;
+                y2     -= bdy_end;
+                x3     -= sdx_end;
+                y3     -= sdy_end;
+
+                cx0     = x2 - bdy_end;
+                cy0     = y2 + bdx_end;
+                cx1     = x3 - sdy_end;
+                cy1     = y3 + sdx_end;
+
+                draw_shadow_ring(
+                    s,
+                    cx0, cy0, x2, y2,
+                    cx1, cy1, x3, y3,
+                    0.25f * M_PI);
             }
 
             // Fill main part
@@ -392,6 +425,7 @@ namespace lsp
 
                 // Prepare colors
                 g->set_start(sShadowStart);
+//                g->set_stop(sShadowStart);
                 g->set_stop(sShadowEnd, 1.0f);
 
                 s->fill_triangle(g, x1, y1, x0, y0, x3, y3);
@@ -402,37 +436,62 @@ namespace lsp
         void Overlay::draw_shadow(ws::ISurface *s)
         {
             // Check that we need to draw shadow
-            const float scaling = lsp_max(0.0f, sScaling.get());
-            const size_t shsize = lsp_max(0.0f, sShadowSize.get() * scaling);
+            const float scaling     = lsp_max(0.0f, sScaling.get());
+            const size_t shsize     = lsp_max(0.0f, sShadowSize.get() * scaling);
             if (shsize < 1)
                 return;
 
             // Compute shadow parameters
-            const size_t bround = sBorderRounding.corners();
-            const size_t bsize  = lsp_max(0, sBorderSize.get());
-            const size_t radius = lsp_max(0.0f, sBorderRadius.get() * scaling) + bsize;
+            const size_t bround     = sBorderRounding.corners();
+            const size_t sround     = sShadowRounding.corners();
+            const size_t bsize      = lsp_max(0, sBorderSize.get());
+            const size_t bradius    = lsp_max(0.0f, sBorderRadius.get() * scaling) + bsize;
+            const size_t sradius    = lsp_max(0.0f, sShadowRadius.get() * scaling);
+            const size_t xradius    = bradius + shsize;
 
-            const float xb      = sSize.nLeft;
-            const float xe      = sSize.nLeft + sSize.nWidth;
-            const float yb      = sSize.nTop;
-            const float ye      = sSize.nTop + sSize.nHeight;
+            const float xb          = sSize.nLeft;
+            const float xe          = sSize.nLeft + sSize.nWidth;
+            const float yb          = sSize.nTop;
+            const float ye          = sSize.nTop + sSize.nHeight;
+
+            const float bradius_lt  = (bround & ws::CORNER_LEFT_TOP)        ? bradius : 0.0f;
+            const float bradius_rt  = (bround & ws::CORNER_RIGHT_TOP)       ? bradius : 0.0f;
+            const float bradius_lb  = (bround & ws::CORNER_LEFT_BOTTOM)     ? bradius : 0.0f;
+            const float bradius_rb  = (bround & ws::CORNER_RIGHT_BOTTOM)    ? bradius : 0.0f;
+
+            const float sradius_lt  =
+                (bround & ws::CORNER_LEFT_TOP) ? xradius :
+                (sround & ws::CORNER_LEFT_TOP) ? sradius : 0.0f;
+            const float sradius_rt  =
+                (bround & ws::CORNER_RIGHT_TOP) ? xradius :
+                (sround & ws::CORNER_RIGHT_TOP) ? sradius : 0.0f;
+            const float sradius_lb  =
+                (bround & ws::CORNER_LEFT_BOTTOM) ? xradius :
+                (sround & ws::CORNER_LEFT_BOTTOM) ? sradius : 0.0f;
+            const float sradius_rb  =
+                (bround & ws::CORNER_RIGHT_BOTTOM) ? xradius :
+                (sround & ws::CORNER_RIGHT_BOTTOM) ? sradius : 0.0f;
 
             draw_shadow_segment(
                 s, xb, yb, xe, yb,
-                bround & ws::CORNER_LEFT_TOP, bround & ws::CORNER_RIGHT_TOP,
-                shsize, radius);
+                bradius_lt, bradius_rt,
+                sradius_lt, sradius_rt,
+                shsize);
             draw_shadow_segment(
                 s, xe, yb, xe, ye,
-                bround & ws::CORNER_RIGHT_TOP, bround & ws::CORNER_RIGHT_BOTTOM,
-                shsize, radius);
+                bradius_rt, bradius_rb,
+                sradius_rt, sradius_rb,
+                shsize);
             draw_shadow_segment(
                 s, xe, ye, xb, ye,
-                bround & ws::CORNER_RIGHT_BOTTOM, bround & ws::CORNER_LEFT_BOTTOM,
-                shsize, radius);
+                bradius_rb, bradius_lb,
+                sradius_rb, sradius_lb,
+                shsize);
             draw_shadow_segment(
                 s, xb, ye, xb, yb,
-                bround & ws::CORNER_LEFT_BOTTOM, bround & ws::CORNER_LEFT_TOP,
-                shsize, radius);
+                bradius_lb, bradius_lt,
+                sradius_lb, sradius_lt,
+                shsize);
         }
 
         status_t Overlay::add(Widget *widget)
