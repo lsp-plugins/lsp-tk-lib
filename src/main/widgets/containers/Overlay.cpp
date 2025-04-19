@@ -44,6 +44,7 @@ namespace lsp
                 sShadowSize.bind("shadow.size", this);
                 sShadowStart.bind("shadow.start", this);
                 sShadowEnd.bind("shadow.end", this);
+                sIPadding.bind("ipadding", this);
 
                 // Configure
                 sTransparency.set(0.25f);
@@ -59,6 +60,7 @@ namespace lsp
                 sShadowSize.set(0);
                 sShadowStart.set_rgba32(0x00000000);
                 sShadowEnd.set_rgba32(0xff000000);
+                sIPadding.set_all(0);
 
                 // Override
                 sLayout.override();
@@ -83,7 +85,8 @@ namespace lsp
             sBorderColor(&sProperties),
             sShadowSize(&sProperties),
             sShadowStart(&sProperties),
-            sShadowEnd(&sProperties)
+            sShadowEnd(&sProperties),
+            sIPadding(&sProperties)
         {
             pClass          = &metadata;
 
@@ -117,6 +120,7 @@ namespace lsp
             sShadowSize.bind("shadow.size", &sStyle);
             sShadowStart.bind("shadow.start", &sStyle);
             sShadowEnd.bind("shadow.end", &sStyle);
+            sIPadding.bind("ipadding", &sStyle);
 
             return STATUS_OK;
         }
@@ -151,7 +155,7 @@ namespace lsp
 
             if (prop->one_of(sTransparency, sPriority, sBorderColor))
                 query_draw();
-            if (prop->one_of(sLayout, sConstraints, sPosition, sBorderRadius, sBorderRounding, sBorderSize))
+            if (prop->one_of(sLayout, sConstraints, sPosition, sBorderRadius, sBorderRounding, sBorderSize, sIPadding))
                 query_resize();
         }
 

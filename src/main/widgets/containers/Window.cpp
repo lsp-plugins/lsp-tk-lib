@@ -1387,16 +1387,15 @@ namespace lsp
 
             // Query for size
             ws::size_limit_t sr;
-            float scaling       = lsp_max(sScaling.get(), 0.0f);
-            size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
+            const float scaling = lsp_max(sScaling.get(), 0.0f);
+            const size_t border = lsp_max(0, sBorderSize.get()) * scaling;
 
             pChild->get_padded_size_limits(&sr);
 
             // Compute size of window without border
-            ws::rectangle_t rc  = *r;
+            ws::rectangle_t rc;
             rc.nLeft            = border;
             rc.nTop             = border;
-
             rc.nWidth           = lsp_max(0, ssize_t(r->nWidth  - border*2));
             rc.nHeight          = lsp_max(0, ssize_t(r->nHeight - border*2));
 
@@ -1417,24 +1416,33 @@ namespace lsp
                     continue;
 
                 // Calculate position of the overlay
+                const float ov_scaling  = lsp_max(0.0f, ov->scaling()->get());
                 ov->get_size_limits(&sr);
                 rc.nLeft        = 0;
                 rc.nTop         = 0;
-                rc.nWidth       = lsp_max(sr.nMinWidth, 1);
-                rc.nHeight      = lsp_max(sr.nMinHeight, 1);
+                rc.nWidth       = lsp_max((sr.nPreWidth > 0) ? sr.nPreWidth : sr.nMinWidth, 1);
+                rc.nHeight      = lsp_max((sr.nPreHeight > 0) ? sr.nPreHeight : sr.nMinHeight, 1);
 
                 ov->position()->get(&rc.nLeft, &rc.nTop);
+                ov->ipadding()->leave(&rc, ov_scaling);
 
-                if (!ov->calculate_position(&rc))
+                // Query position of the overlay widget. Use temporary rectangle to prevent of modifying size of the rectangle
+                ws::rectangle_t qrc     = rc;
+                if (!ov->calculate_position(&qrc))
                 {
                     ov->visibility()->set(false);
                     continue;
                 }
+                rc.nLeft        = qrc.nLeft;
+                rc.nTop         = qrc.nTop;
+
+                // Exclude internal padding now
+                ov->ipadding()->enter(&rc, ov_scaling);
 
                 // Apply window-related padding
                 tk::padding_t padding;
-                const float scaling     = lsp_max(0.0f, ov->scaling()->get());
-                ov->padding()->compute(&padding, scaling);
+
+                ov->padding()->compute(&padding, ov_scaling);
 
                 padding.nRight          = r->nWidth - padding.nRight;
                 padding.nBottom         = r->nHeight - padding.nBottom;

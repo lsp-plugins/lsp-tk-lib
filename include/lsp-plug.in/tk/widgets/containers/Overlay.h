@@ -47,6 +47,7 @@ namespace lsp
                 prop::Integer           sShadowSize;        // Shadow size
                 prop::Color             sShadowStart;       // Shadow start color
                 prop::Color             sShadowEnd;         // Shadow end color
+                prop::Padding           sIPadding;          // Internal padding
             LSP_TK_STYLE_DEF_END
         }
 
@@ -87,6 +88,7 @@ namespace lsp
                 prop::Integer           sShadowSize;        // Shadow size
                 prop::Color             sShadowStart;       // Shadow start color
                 prop::Color             sShadowEnd;         // Shadow end color
+                prop::Padding           sIPadding;          // Internal padding
 
                 overlay_position_t      pPosFunc;           // Position calculation function
                 void                   *pPosData;           // Position data function
@@ -141,6 +143,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            shadow_size,        &sShadowSize)
                 LSP_TK_PROPERTY(Color,              shadow_start,       &sShadowStart)
                 LSP_TK_PROPERTY(Color,              shadow_end,         &sShadowEnd)
+                LSP_TK_PROPERTY(Padding,            ipadding,           &sIPadding)
 
             public:
                 virtual void            draw(ws::ISurface *s, bool force) override;
