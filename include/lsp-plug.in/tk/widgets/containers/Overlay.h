@@ -61,6 +61,15 @@ namespace lsp
         typedef bool (*overlay_position_t)(ws::rectangle_t *rect, Overlay *overlay, void *data);
 
         /**
+         * Function for filtering events on automatic overlay hide
+         * @param ev the event for filtering
+         * @param overlay overlay that triggered the filtering
+         * @param data supplementary data
+         * @return true on success execution
+         */
+        typedef bool (*overlay_filter_t)(const ws::event_t *ev, Overlay *overlay, void *data);
+
+        /**
          * Overlayment, implements a single widget container that Overlays the child widget
          * according to the layout settings. The container ignores allocation() property
          * of the child widget.
@@ -91,7 +100,10 @@ namespace lsp
                 prop::Padding           sIPadding;          // Internal padding
 
                 overlay_position_t      pPosFunc;           // Position calculation function
-                void                   *pPosData;           // Position data function
+                void                   *pPosData;           // Position function data
+
+                overlay_filter_t        pFilterFunc;        // Event filter function
+                void                   *pFilterData;        // Event filter data
 
             protected:
                 void                    do_destroy();
@@ -152,7 +164,9 @@ namespace lsp
 
             public:
                 void                    set_position_function(overlay_position_t func, void *data = NULL);
+                void                    set_filter_function(overlay_filter_t func, void *data = NULL);
                 bool                    calculate_position(ws::rectangle_t *rect);
+                bool                    filter_event(const ws::event_t *ev);
         };
 
     } /* namespace tk */

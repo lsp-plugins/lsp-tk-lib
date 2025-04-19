@@ -93,6 +93,8 @@ namespace lsp
             wWidget         = NULL;
             pPosFunc        = NULL;
             pPosData        = NULL;
+            pFilterFunc     = NULL;
+            pFilterData     = NULL;
         }
 
         Overlay::~Overlay()
@@ -466,6 +468,12 @@ namespace lsp
             query_resize();
         }
 
+        void Overlay::set_filter_function(overlay_filter_t func, void *data)
+        {
+            pFilterFunc     = func;
+            pFilterData     = data;
+        }
+
         bool Overlay::calculate_position(ws::rectangle_t *rect)
         {
             if (rect == NULL)
@@ -476,6 +484,16 @@ namespace lsp
 
             sPosition.get(&rect->nLeft, &rect->nTop);
             return true;
+        }
+
+        bool Overlay::filter_event(const ws::event_t *ev)
+        {
+            if (ev == NULL)
+                return false;
+            if (!sAutoClose.get())
+                return false;
+
+            return (pFilterFunc != NULL) ? pFilterFunc(ev, this, pFilterData) : false;
         }
 
     } /* namespace tk */

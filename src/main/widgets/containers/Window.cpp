@@ -857,9 +857,9 @@ namespace lsp
             return hKeys.vKeys.size();
         }
 
-        void Window::auto_close_overlays(ssize_t x, ssize_t y)
+        void Window::auto_close_overlays(const ws::event_t *ev)
         {
-            Overlay *ov     = find_overlay(x, y);
+            Overlay *ov     = find_overlay(ev->nLeft, ev->nTop);
             size_t updates  = 0;
 
             for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
@@ -874,8 +874,11 @@ namespace lsp
                     continue;
                 if (!xov->auto_close()->get())
                     continue;
+                if (xov == ov)
+                    continue;
 
-                if (xov != ov)
+                // Hide the overlay if the event was not filtered
+                if (!xov->filter_event(ev))
                 {
                     xov->visibility()->set(false);
                     ++updates;
@@ -986,10 +989,9 @@ namespace lsp
 
                 case ws::UIE_MOUSE_DOWN:
                 {
-                    auto_close_overlays(e->nLeft, e->nTop);
+                    auto_close_overlays(e);
 
                     Widget *h       = acquire_mouse_handler(e);
-//                    int old_state   = hMouse.nState;
                     hMouse.nState  |= (size_t(1) << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
@@ -1030,7 +1032,7 @@ namespace lsp
                 case ws::UIE_MOUSE_TRI_CLICK:
                 case ws::UIE_MOUSE_SCROLL:
                 {
-                    auto_close_overlays(e->nLeft, e->nTop);
+                    auto_close_overlays(e);
 
                     Widget *h = acquire_mouse_handler(e);
                     if (h == this)
