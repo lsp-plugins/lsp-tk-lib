@@ -359,6 +359,8 @@ namespace lsp
             if (resize_pending())
                 sync_size(false);
 
+            update_pointer();
+
             if (!redraw_pending())
                 return STATUS_OK;
 
@@ -383,9 +385,6 @@ namespace lsp
 //            time = system::get_time_millis() - time;
 //            lsp_trace("Window %p render time: %ld ms", this, long(time));
 //        #endif /* LSP_TRACE */
-
-            // And also update pointer
-            update_pointer();
 
             return STATUS_OK;
         }
