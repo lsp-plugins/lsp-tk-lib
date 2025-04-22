@@ -376,7 +376,7 @@ namespace lsp
             xr.nWidth       = sSize.nWidth;
             xr.nHeight      = sSize.nHeight;
 
-            render(s, &xr, false);
+            render(s, &xr, nFlags & REDRAW_SURFACE);
             commit_redraw();
 
 //        #ifdef LSP_TRACE
@@ -507,9 +507,6 @@ namespace lsp
 
         void Window::draw(ws::ISurface *s, bool force)
         {
-            if (!bMapped)
-                return;
-
             lsp::Color bg_color;
             get_actual_bg_color(bg_color);
 
