@@ -90,6 +90,7 @@ namespace lsp
             pNativeHandle   = handle;
             bMapped         = false;
             bOverridePointer= false;
+            enSurfaceType   = ws::ST_UNKNOWN;
             fScaling        = 1.0f;
             pActor          = NULL;
 
@@ -368,6 +369,8 @@ namespace lsp
             ws::ISurface *s = pWindow->get_surface();
             if (s == NULL)
                 return STATUS_OK;
+
+            enSurfaceType   = s->type();
 
 //        #ifdef LSP_TRACE
 //            system::time_millis_t time = system::get_time_millis();
@@ -901,6 +904,11 @@ namespace lsp
                         bMapped     = true;
                         sRedraw.launch(-1, 40);
                         query_draw(REDRAW_SURFACE);
+
+                        // Remember surface type
+                        ws::ISurface *s = pWindow->get_surface();
+                        if (s != NULL)
+                            enSurfaceType   = s->type();
                     }
                     sShortcutTracker.reset();
                     sVisibility.commit_value(true);
@@ -1571,6 +1579,11 @@ namespace lsp
         bool Window::has_parent() const
         {
             return (pWindow != NULL) ? pWindow->has_parent() : false;
+        }
+
+        ws::surface_type_t Window::surface_type() const
+        {
+            return enSurfaceType;
         }
 
     } /* namespace tk */

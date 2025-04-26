@@ -96,6 +96,7 @@ namespace lsp
                 Widget                 *pFocused;           // Focused widget
                 bool                    bMapped;
                 bool                    bOverridePointer;
+                ws::surface_type_t      enSurfaceType;      // Surface type
                 float                   fScaling;           // Cached scaling factor
                 Shortcuts               sShortcuts;         // Shortcuts
                 ShortcutTracker         sShortcutTracker;   // Shortcut tracker
@@ -282,6 +283,9 @@ namespace lsp
 
                 status_t                set_class(const char *instance, const char *wclass);
                 status_t                set_class(const LSPString *instance, const LSPString *wclass);
+
+                // Get last surface type used
+                ws::surface_type_t      surface_type() const;
 
             //---------------------------------------------------------------------------------
             // Event handling
