@@ -62,6 +62,7 @@
 #include <lsp-plug.in/tk/prop/enum/IndicatorType.h>
 #include <lsp-plug.in/tk/prop/enum/MenuItemType.h>
 #include <lsp-plug.in/tk/prop/enum/WindowPolicy.h>
+#include <lsp-plug.in/tk/prop/enum/WindowState.h>
 #include <lsp-plug.in/tk/prop/enum/Pointer.h>
 #include <lsp-plug.in/tk/prop/enum/Orientation.h>
 #include <lsp-plug.in/tk/prop/enum/Scrolling.h>
