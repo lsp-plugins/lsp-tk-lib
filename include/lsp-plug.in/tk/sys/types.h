@@ -53,6 +53,7 @@ namespace lsp
             SLOT_MOUSE_POINTER,     //!< SLOT_MOUSE_POINTER called to resolve the current mouse pointer for the widget
             SLOT_SHOW,              //!< SLOT_SHOW Triggered when widget becomes visible
             SLOT_HIDE,              //!< SLOT_HIDE Triggered when widget becomes invisible
+            SLOT_STATE,             //!< SLOT_STATE Triggered when window state is changed
             SLOT_BEGIN_EDIT,        //!< SLOG_BEGIN_EDIT Triggered when the possible durable editing has started (for example, mouse click + drag)
             SLOT_END_EDIT,          //!< SLOG_END_EDIT Triggered when the possible durable editing has finished (for example, mouse click + drag)
             SLOT_SUBMIT,            //!< SLOT_SUBMIT Triggered when value(s) stored by the widget is submitted (but can be not changed)

@@ -38,6 +38,7 @@ namespace lsp
                 sBorderSize.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sActions.bind("actions", this);
+                sWindowState.bind("state", this);
                 sPosition.bind("position", this);
                 sWindowSize.bind("size", this);
                 sConstraints.bind("size.constraints", this);
@@ -49,6 +50,7 @@ namespace lsp
                 sBorderSize.set(0);
                 sBorderRadius.set(2);
                 sActions.set_actions(ws::WA_ALL);
+                sWindowState.set_normal();
                 sPosition.set(0, 0);
                 sWindowSize.set(160, 100);
                 sConstraints.set(-1, -1, -1, -1);
@@ -75,6 +77,7 @@ namespace lsp
             sBorderSize(&sProperties),
             sBorderRadius(&sProperties),
             sActions(&sProperties),
+            sWindowState(&sProperties),
             sPosition(&sProperties),
             sWindowSize(&sProperties),
             sSizeConstraints(&sProperties),
@@ -146,6 +149,7 @@ namespace lsp
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sActions.bind("actions", &sStyle);
+            sWindowState.bind("state", &sStyle);
             sPosition.bind("position", &sStyle);
             sWindowSize.bind("size", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -158,8 +162,9 @@ namespace lsp
             // Add slot(s)
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CLOSE, slot_window_close, self());
-            if (id < 0)
-                return - id;
+            if (id < 0) return -id;
+            id = sSlots.add(SLOT_STATE, slot_window_state, self());
+            if (id < 0) return -id;
 
             // Set self event handler
             if (pWindow != NULL)
@@ -321,6 +326,15 @@ namespace lsp
 
             Window *_this   = widget_ptrcast<Window>(ptr);
             return (_this != NULL) ? _this->on_close(static_cast<ws::event_t *>(data)) : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t Window::slot_window_state(Widget *sender, void *ptr, void *data)
+        {
+            if ((ptr == NULL) || (data == NULL))
+                return STATUS_BAD_ARGUMENTS;
+
+            Window *_this   = widget_ptrcast<Window>(ptr);
+            return (_this != NULL) ? _this->on_window_state(static_cast<ws::event_t *>(data)) : STATUS_BAD_ARGUMENTS;
         }
 
         void Window::on_add_item(void *obj, Property *prop, void *w)
@@ -633,10 +647,12 @@ namespace lsp
                 pWindow->set_border_style(sBorderStyle.get());
             if (sActions.is(prop))
                 pWindow->set_window_actions(sActions.actions());
+            if (sWindowState.is(prop))
+                pWindow->set_window_state(sWindowState.get());
             if (sPosition.is(prop))
                 pWindow->move(sPosition.left(), sPosition.top());
 
-            if (prop->one_of(sSizeConstraints, sScaling, sActions, sFontScaling, sWindowSize))
+            if (prop->one_of(sSizeConstraints, sScaling, sActions, sWindowState, sFontScaling, sWindowSize))
             {
 //                float scaling = lsp_max(0.0f, sScaling.get());
 //
@@ -928,6 +944,14 @@ namespace lsp
                         sRedraw.cancel();
                     }
                     sVisibility.commit_value(false);
+                    break;
+
+                case ws::UIE_STATE:
+                    if (sWindowState.get() == e->nCode)
+                        break;
+
+                    sWindowState.commit_value(ws::window_state_t(e->nCode));
+                    sSlots.execute(SLOT_STATE, this, &ev);
                     break;
 
                 case ws::UIE_REDRAW:
@@ -1377,6 +1401,11 @@ namespace lsp
         }
 
         status_t Window::on_close(const ws::event_t *e)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Window::on_window_state(const ws::event_t *e)
         {
             return STATUS_OK;
         }

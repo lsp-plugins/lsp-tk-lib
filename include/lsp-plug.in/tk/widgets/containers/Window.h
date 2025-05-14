@@ -43,6 +43,7 @@ namespace lsp
                 prop::Integer           sBorderSize;
                 prop::Float             sBorderRadius;
                 prop::WindowActions     sActions;
+                prop::WindowState       sWindowState;
                 prop::Position          sPosition;
                 prop::Size              sWindowSize;
                 prop::SizeConstraints   sConstraints;
@@ -114,6 +115,7 @@ namespace lsp
                 prop::Integer           sBorderSize;
                 prop::Float             sBorderRadius;
                 prop::WindowActions     sActions;
+                prop::WindowState       sWindowState;
                 prop::Position          sPosition;
                 prop::Size              sWindowSize;
                 prop::SizeConstraints   sSizeConstraints;
@@ -131,6 +133,7 @@ namespace lsp
             protected:
                 static status_t     tmr_redraw_request(ws::timestamp_t sched, ws::timestamp_t ts, void *args);
                 static status_t     slot_window_close(Widget *sender, void *ptr, void *data);
+                static status_t     slot_window_state(Widget *sender, void *ptr, void *data);
 
                 static void         on_add_item(void *obj, Property *prop, void *w);
                 static void         on_remove_item(void *obj, Property *prop, void *w);
@@ -238,6 +241,7 @@ namespace lsp
                 LSP_TK_PROPERTY(BorderStyle,        border_style,       &sBorderStyle)
                 LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
                 LSP_TK_PROPERTY(WindowActions,      actions,            &sActions)
+                LSP_TK_PROPERTY(WindowState,        state,              &sWindowState)
                 LSP_TK_PROPERTY(Size,               size,               &sWindowSize)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sSizeConstraints)
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
@@ -299,6 +303,13 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t        on_close(const ws::event_t *e);
+
+                /** State change event
+                 *
+                 * @param e close event
+                 * @return status of operation
+                 */
+                virtual status_t        on_window_state(const ws::event_t *e);
 
                 /** Set window icon
                  *
