@@ -77,6 +77,7 @@ namespace lsp
 
                 inline void get(ssize_t *left, ssize_t *top) const  { *left = nLeft; *top = nTop;                   }
                 inline void get(ssize_t &left, ssize_t &top) const  { left = nLeft; top = nTop;                     }
+                inline void get(ws::point_t *point) const           { point->nLeft = nLeft; point->nTop = nTop;     }
                 inline void get(ws::rectangle_t *rect) const        { rect->nLeft = nLeft; rect->nTop = nTop;       }
 
                 ssize_t         set_left(ssize_t value);

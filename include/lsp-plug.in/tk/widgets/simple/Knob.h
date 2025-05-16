@@ -72,7 +72,6 @@ namespace lsp
                 prop::Boolean       sScaleActive;
                 prop::Boolean       sMeterActive;
                 prop::Boolean       sEditable;
-                prop::Boolean       sActive;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
@@ -124,7 +123,6 @@ namespace lsp
                 prop::Boolean       sScaleActive;
                 prop::Boolean       sMeterActive;
                 prop::Boolean       sEditable;
-                prop::Boolean       sActive;
                 prop::Integer       sHoleSize;
                 prop::Integer       sGapSize;
                 prop::Float         sScaleBrightness;
@@ -189,7 +187,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            scale_active,               &sScaleActive)
                 LSP_TK_PROPERTY(Boolean,            meter_active,               &sMeterActive)
                 LSP_TK_PROPERTY(Boolean,            editable,                   &sEditable)
-                LSP_TK_PROPERTY(Boolean,            active,                     &sActive)
                 LSP_TK_PROPERTY(Integer,            hole_size,                  &sHoleSize)
                 LSP_TK_PROPERTY(Integer,            gap_size,                   &sGapSize)
                 LSP_TK_PROPERTY(Float,              scale_brightness,           &sScaleBrightness)
@@ -202,7 +199,7 @@ namespace lsp
                 virtual status_t                on_mouse_up(const ws::event_t *e) override;
                 virtual status_t                on_mouse_move(const ws::event_t *e) override;
                 virtual status_t                on_mouse_scroll(const ws::event_t *e) override;
-                virtual void                    draw(ws::ISurface *s) override;
+                virtual void                    draw(ws::ISurface *s, bool force) override;
 
                 virtual status_t                on_begin_edit();
                 virtual status_t                on_change();

@@ -50,7 +50,6 @@ namespace lsp
                 sRound.bind("round", this);
                 sBorderSize.bind("border.size", this);
                 sGradient.bind("gradient", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[LED_NORMAL];
@@ -73,7 +72,6 @@ namespace lsp
                 sLed.set(8);
                 sBorderSize.set(3);
                 sGradient.set(true);
-                sActive.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Led, "Led", "root");
 
@@ -102,8 +100,7 @@ namespace lsp
             sLed(&sProperties),
             sRound(&sProperties),
             sBorderSize(&sProperties),
-            sGradient(&sProperties),
-            sActive(&sProperties)
+            sGradient(&sProperties)
         {
             pClass      = &metadata;
 
@@ -143,7 +140,6 @@ namespace lsp
             sRound.bind("round", &sStyle);
             sBorderSize.bind("border.size", &sStyle);
             sGradient.bind("gradient", &sStyle);
-            sActive.bind("active", &sStyle);
 
             return STATUS_OK;
         }
@@ -161,9 +157,6 @@ namespace lsp
             // Self properties
             style::LedColors *colors = select_colors();
             if (colors->property_changed(prop))
-                query_draw();
-
-            if (sActive.is(prop))
                 query_draw();
 
             if (prop->one_of(sHoleColor, sOn))
@@ -205,7 +198,7 @@ namespace lsp
             SizeConstraints::add(r, extra, extra);
         }
 
-        void Led::draw(ws::ISurface *s)
+        void Led::draw(ws::ISurface *s, bool force)
         {
             if (sRound.get())
                 draw_round(s);
@@ -217,7 +210,7 @@ namespace lsp
         {
             ws::IGradient *g    = NULL;
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float brightness    = sBrightness.get();
+            float brightness    = select_brightness();
             ssize_t sz_hole     = (sHole.get()) ? lsp_max(1.0f, scaling) : 0;
             ssize_t sz_led      = lsp_max(0.0f, sLed.get() * scaling);
             bool gradient       = sGradient.get();
@@ -315,7 +308,7 @@ namespace lsp
         void Led::draw_rect(ws::ISurface *s)
         {
             ws::IGradient *g    = NULL;
-            float brightness    = sBrightness.get();
+            float brightness    = select_brightness();
             float scaling       = lsp_max(0.0f, sScaling.get());
             float border        = sBorderSize.get() * scaling;
             ssize_t chamfer     = lsp_max(0.0f, border);

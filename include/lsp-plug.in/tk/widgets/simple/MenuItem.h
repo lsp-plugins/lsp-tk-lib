@@ -63,7 +63,6 @@ namespace lsp
                 prop::TextAdjust            sTextAdjust;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
-                prop::Boolean               sActive;
                 prop::Shortcut              sShortcut;
             LSP_TK_STYLE_DEF_END
         }
@@ -90,7 +89,6 @@ namespace lsp
                 prop::TextAdjust            sTextAdjust;
                 prop::MenuItemType          sType;
                 prop::Boolean               sChecked;
-                prop::Boolean               sActive;
                 prop::Shortcut              sShortcut;
 
             protected:
@@ -132,7 +130,6 @@ namespace lsp
                 LSP_TK_PROPERTY(TextAdjust,             text_adjust,                    &sTextAdjust)
                 LSP_TK_PROPERTY(MenuItemType,           type,                           &sType)
                 LSP_TK_PROPERTY(Boolean,                checked,                        &sChecked)
-                LSP_TK_PROPERTY(Boolean,                active,                         &sActive)
                 LSP_TK_PROPERTY(Shortcut,               shortcut,                       &sShortcut)
 
             public:

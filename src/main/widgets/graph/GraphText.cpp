@@ -144,7 +144,7 @@ namespace lsp
             // Get palette
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
 
             lsp::Color font_color(sColor);
             font_color.scale_lch_luminance(bright);
@@ -209,7 +209,7 @@ namespace lsp
             // Get palette
             float scaling   = lsp_max(0.0f, sScaling.get());
             float fscaling  = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
 
             lsp::Color font_color(sColor);
             font_color.scale_lch_luminance(bright);
@@ -261,10 +261,12 @@ namespace lsp
                 sIPadding.leave(&bgr, &r, scaling);
 
 //                lsp_trace("bgr.left = %d, bgr.top = %d", int(bgr.nLeft), int(bgr.nTop));
+                lsp::Color bg;
+                get_actual_bg_color(&bg);
 
                 const ssize_t radius  = lsp_max(sBgRadius.get(), 0);
                 const ssize_t pad     = floorf(radius * scaling * M_SQRT1_2);
-                s->fill_rect(*sBgColor.color(), SURFMASK_ALL_CORNER, radius,
+                s->fill_rect(bg, SURFMASK_ALL_CORNER, radius,
                     bgr.nLeft - pad, bgr.nTop - pad, bgr.nWidth + pad * 2, bgr.nHeight + pad * 2);
             }
 

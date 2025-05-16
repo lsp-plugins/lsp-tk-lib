@@ -72,10 +72,10 @@ namespace lsp
                 sPadding.set_all(0);
                 // Override
                 sVisibility.set(false);
-                sBgColor.set("#cccccc");
+                Widget::vColors[0].sBgColor.set("#cccccc");
                 // Commit
                 sVisibility.override();
-                sBgColor.override();
+                Widget::vColors[0].sBgColor.override();
                 sIPadding.override();
                 sPadding.override();
             LSP_TK_STYLE_IMPL_END
@@ -831,12 +831,12 @@ namespace lsp
             sIStats             = st;
         }
 
-        void Menu::draw(ws::ISurface *s)
+        void Menu::draw(ws::ISurface *s, bool force)
         {
             ws::rectangle_t xr, r;
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             ssize_t border      = lsp_max(0, ceilf(sBorderSize.get() * scaling));
             ssize_t border_r    = lsp_max(0.0f, ceilf(scaling * sBorderRadius.get()));
             ssize_t border_w    = lsp_max(0.0f, ceilf(scaling * (sBorderSize.get() + sBorderRadius.get() * M_SQRT1_2)));

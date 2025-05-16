@@ -62,6 +62,7 @@
 #include <lsp-plug.in/tk/prop/enum/IndicatorType.h>
 #include <lsp-plug.in/tk/prop/enum/MenuItemType.h>
 #include <lsp-plug.in/tk/prop/enum/WindowPolicy.h>
+#include <lsp-plug.in/tk/prop/enum/WindowState.h>
 #include <lsp-plug.in/tk/prop/enum/Pointer.h>
 #include <lsp-plug.in/tk/prop/enum/Orientation.h>
 #include <lsp-plug.in/tk/prop/enum/Scrolling.h>
@@ -70,6 +71,7 @@
 
 // Flags
 #include <lsp-plug.in/tk/prop/flags/Allocation.h>
+#include <lsp-plug.in/tk/prop/flags/BorderRounding.h>
 #include <lsp-plug.in/tk/prop/flags/WindowActions.h>
 
 // Single-value properties
@@ -172,6 +174,7 @@
 #include <lsp-plug.in/tk/widgets/containers/Box.h>
 #include <lsp-plug.in/tk/widgets/containers/Grid.h>
 #include <lsp-plug.in/tk/widgets/containers/Group.h>
+#include <lsp-plug.in/tk/widgets/containers/Overlay.h>
 #include <lsp-plug.in/tk/widgets/containers/ScrollArea.h>
 #include <lsp-plug.in/tk/widgets/containers/MultiLabel.h>
 #include <lsp-plug.in/tk/widgets/containers/Tab.h>

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 окт. 2017 г.
@@ -34,19 +34,41 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Hyperlink, Widget)
                 // Bind
+                HyperlinkColors *c = &vColors[HYPERLINK_NORMAL];
+                c->sColor.bind("text.color", this);
+
+                c = &vColors[HYPERLINK_HOVER];
+                c->sColor.bind("text.hover.color", this);
+
+                c = &vColors[HYPERLINK_INACTIVE];
+                c->sColor.bind("inactive.text.color", this);
+
+                c = &vColors[HYPERLINK_INACTIVE| HYPERLINK_HOVER];
+                c->sColor.bind("inactive.text.hover.color", this);
+
                 sTextLayout.bind("text.layout", this);
                 sTextAdjust.bind("text.adjust", this);
                 sFont.bind("font", this);
-                sColor.bind("text.color", this);
-                sHoverColor.bind("text.hover.color", this);
+
                 sConstraints.bind("size.constraints", this);
                 sFollow.bind("follow", this);
+
                 // Configure
+                c = &vColors[HYPERLINK_NORMAL];
+                c->sColor.set_rgb24(0x0000cc);
+
+                c = &vColors[HYPERLINK_HOVER];
+                c->sColor.set_rgb24(0xff0000);
+
+                c = &vColors[HYPERLINK_INACTIVE];
+                c->sColor.set_rgb24(0x000088);
+
+                c = &vColors[HYPERLINK_INACTIVE| HYPERLINK_HOVER];
+                c->sColor.set_rgb24(0xcc0000);
+
                 sTextLayout.set(0.0f, 0.0f);
                 sTextAdjust.set(TA_NONE);
                 sFont.set_underline();
-                sColor.set("#0000cc");
-                sHoverColor.set("#ff0000");
                 sConstraints.set(-1, -1, -1, -1);
                 sFollow.set(true);
                 // Override
@@ -56,6 +78,16 @@ namespace lsp
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(Hyperlink, "Hyperlink", "root");
+
+            void HyperlinkColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);
+            }
+
+            bool HyperlinkColors::property_changed(Property *prop) const
+            {
+                return sColor.is(prop);
+            }
         }
 
         const w_class_t Hyperlink::metadata =        { "Hyperlink", &Widget::metadata };
@@ -65,8 +97,6 @@ namespace lsp
             sTextLayout(&sProperties),
             sTextAdjust(&sProperties),
             sFont(&sProperties),
-            sColor(&sProperties),
-            sHoverColor(&sProperties),
             sText(&sProperties),
             sConstraints(&sProperties),
             sFollow(&sProperties),
@@ -97,11 +127,21 @@ namespace lsp
             if ((res = create_default_menu()) != STATUS_OK)
                 return res;
 
+            style::HyperlinkColors *c = &vColors[style::HYPERLINK_NORMAL];
+            c->sColor.bind("text.color", &sStyle);
+
+            c = &vColors[style::HYPERLINK_HOVER];
+            c->sColor.bind("text.hover.color", &sStyle);
+
+            c = &vColors[style::HYPERLINK_INACTIVE];
+            c->sColor.bind("inactive.text.color", &sStyle);
+
+            c = &vColors[style::HYPERLINK_INACTIVE | style::HYPERLINK_HOVER];
+            c->sColor.bind("inactive.text.hover.color", &sStyle);
+
             sTextLayout.bind("text.layout", &sStyle);
             sTextAdjust.bind("text.adjust", &sStyle);
             sFont.bind("font", &sStyle);
-            sColor.bind("text.color", &sStyle);
-            sHoverColor.bind("text.hover.color", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
             sConstraints.bind("size.constraints", &sStyle);
             sFollow.bind("follow", &sStyle);
@@ -141,16 +181,17 @@ namespace lsp
         void Hyperlink::property_changed(Property *prop)
         {
             Widget::property_changed(prop);
+
+            const style::HyperlinkColors *colors = select_colors();
+            if (colors->property_changed(prop))
+                query_draw();
+
             if (sTextLayout.is(prop))
                 query_draw();
             if (sTextAdjust.is(prop))
                 query_resize();
             if (sFont.is(prop))
                 query_resize();
-            if (sColor.is(prop))
-                query_draw();
-            if (sHoverColor.is(prop))
-                query_draw();
             if (sText.is(prop))
                 query_resize();
             if (sConstraints.is(prop))
@@ -187,7 +228,14 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void Hyperlink::draw(ws::ISurface *s)
+        const style::HyperlinkColors *Hyperlink::select_colors() const
+        {
+            size_t index = (sActive.get()) ? style::HYPERLINK_NORMAL : style::HYPERLINK_INACTIVE;
+            index = lsp_setflag(index, style::HYPERLINK_HOVER, nState & F_MOUSE_IN);
+            return &vColors[index];
+        }
+
+        void Hyperlink::draw(ws::ISurface *s, bool force)
         {
             // Form the text string
             LSPString text;
@@ -229,11 +277,13 @@ namespace lsp
             }
 
             // Initialize palette
+            const style::HyperlinkColors *colors = select_colors();
+
             lsp::Color bg_color;
-            lsp::Color f_color((nState & F_MOUSE_IN) ? sHoverColor : sColor);
+            lsp::Color f_color(colors->sColor);
 
             get_actual_bg_color(bg_color);
-            f_color.scale_lch_luminance(sBrightness.get());
+            f_color.scale_lch_luminance(select_brightness());
 
             // Draw background
             s->clear(bg_color);

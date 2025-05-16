@@ -52,7 +52,6 @@ namespace lsp
                 sBorderRadius.bind("border.radius", this);
                 sSpacing.bind("spacing", this);
                 sMultiSelect.bind("selection.multiple", this);
-                sActive.bind("active", this);
                 sHScrollSpacing.bind("hscroll.spacing", this);
                 sVScrollSpacing.bind("vscroll.spacing", this);
 
@@ -76,7 +75,6 @@ namespace lsp
                 sBorderRadius.set(4);
                 sSpacing.set(0);
                 sMultiSelect.set(false);
-                sActive.set(true);
                 sHScrollSpacing.set(1);
                 sVScrollSpacing.set(1);
             LSP_TK_STYLE_IMPL_END
@@ -113,7 +111,6 @@ namespace lsp
             sBorderRadius(&sProperties),
             sSpacing(&sProperties),
             sMultiSelect(&sProperties),
-            sActive(&sProperties),
             sHScrollSpacing(&sProperties),
             sVScrollSpacing(&sProperties)
         {
@@ -232,7 +229,6 @@ namespace lsp
             sBorderRadius.bind("border.radius", &sStyle);
             sSpacing.bind("spacing", &sStyle);
             sMultiSelect.bind("selection.multiple", &sStyle);
-            sActive.bind("active", &sStyle);
             sHScrollSpacing.bind("hscroll.spacing", &sStyle);
             sVScrollSpacing.bind("vscroll.spacing", &sStyle);
 

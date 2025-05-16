@@ -71,7 +71,6 @@ namespace lsp
                 prop::Integer           sBorderPressedSize;
                 prop::Integer           sBorderDownSize;
                 prop::Boolean           sEditable;
-                prop::Boolean           sActive;
                 prop::Boolean           sHole;
                 prop::Boolean           sFlat;
                 prop::Boolean           sTextClip;
@@ -155,7 +154,6 @@ namespace lsp
                 prop::Integer           sBorderPressedSize;
                 prop::Integer           sBorderDownSize;
                 prop::Boolean           sEditable;
-                prop::Boolean           sActive;
                 prop::Boolean           sHole;
                 prop::Boolean           sFlat;
                 prop::Boolean           sTextClip;
@@ -171,6 +169,7 @@ namespace lsp
             protected:
                 void                update_mode(button_mode_t mode);
                 void                estimate_string_size(estimation_t *e, tk::String *s);
+                size_t              destroy_text_estimations();
                 style::ButtonColors *select_colors();
 
             protected:
@@ -237,7 +236,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_pressed_size,&sBorderPressedSize)
                 LSP_TK_PROPERTY(Integer,            border_down_size,   &sBorderDownSize)
                 LSP_TK_PROPERTY(Boolean,            editable,           &sEditable)
-                LSP_TK_PROPERTY(Boolean,            active,             &sActive)
                 LSP_TK_PROPERTY(Boolean,            hole,               &sHole)
                 LSP_TK_PROPERTY(Boolean,            flat,               &sFlat)
                 LSP_TK_PROPERTY(TextLayout,         text_layout,        &sTextLayout)
@@ -247,7 +245,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            gradient,           &sGradient)
 
             public:
-                virtual void        draw(ws::ISurface *s) override;
+                virtual void        draw(ws::ISurface *s, bool force) override;
                 virtual status_t    on_mouse_down(const ws::event_t *e) override;
                 virtual status_t    on_mouse_up(const ws::event_t *e) override;
                 virtual status_t    on_mouse_move(const ws::event_t *e) override;

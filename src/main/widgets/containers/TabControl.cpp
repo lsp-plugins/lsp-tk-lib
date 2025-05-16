@@ -477,7 +477,7 @@ namespace lsp
             ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
-            float bright            = lsp_max(0.0f, sBrightness.get());
+            float bright            = lsp_max(0.0f, select_brightness());
             bool top_align          = sHeading.valign() <= 0.0f;
             bool bg                 = false;
             tk::Tab *ct             = current_tab();
@@ -633,7 +633,7 @@ namespace lsp
             lsp::Color color;
             ws::rectangle_t clip, r;
 
-            float bright            = lsp_max(0.0f, sBrightness.get());
+            float bright            = lsp_max(0.0f, select_brightness());
             float scaling           = lsp_max(0.0f, sScaling.get());
             ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
@@ -748,7 +748,7 @@ namespace lsp
 
                 // Initialize palette
                 color.copy(colors->sTextColor);
-                color.scale_lch_luminance(sBrightness.get());
+                color.scale_lch_luminance(select_brightness());
 
                 // Draw background
                 float halign    = lsp_limit(w->text_layout()->halign() + 1.0f, 0.0f, 2.0f);

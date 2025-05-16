@@ -65,16 +65,17 @@ namespace lsp
 
         void WidgetContainer::get_child_bg_color(lsp::Color *color) const
         {
+            const style::WidgetColors *colors = Widget::select_colors();
             if ((!sBgInherit.get()) || (pParent == NULL))
             {
-                color->copy(sBgColor.color());
+                color->copy(colors->sBgColor.color());
                 return;
             }
 
             WidgetContainer *pw = widget_cast<WidgetContainer>(pParent);
             if (pw == NULL)
             {
-                color->copy(sBgColor.color());
+                color->copy(colors->sBgColor.color());
                 return;
             }
 

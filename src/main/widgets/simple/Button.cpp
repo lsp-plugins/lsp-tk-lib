@@ -85,7 +85,6 @@ namespace lsp
                 sBorderPressedSize.bind("border.pressed.size", this);
                 sBorderDownSize.bind("border.down.size", this);
                 sEditable.bind("editable", this);
-                sActive.bind("active", this);
                 sHole.bind("hole", this);
                 sFlat.bind("flat", this);
                 sTextClip.bind("text.clip", this);
@@ -150,7 +149,6 @@ namespace lsp
                 sBorderPressedSize.set(3);
                 sBorderDownSize.set(2);
                 sEditable.set(true);
-                sActive.set(true);
                 sHole.set(true);
                 sFlat.set(false);
                 sTextClip.set(false);
@@ -193,7 +191,6 @@ namespace lsp
             sBorderPressedSize(&sProperties),
             sBorderDownSize(&sProperties),
             sEditable(&sProperties),
-            sActive(&sProperties),
             sHole(&sProperties),
             sFlat(&sProperties),
             sTextClip(&sProperties),
@@ -222,7 +219,7 @@ namespace lsp
         Button::~Button()
         {
             nFlags     |= FINALIZED;
-            clear_text_estimations();
+            destroy_text_estimations();
         }
 
         status_t Button::init()
@@ -286,7 +283,6 @@ namespace lsp
             sBorderPressedSize.bind("border.pressed.size", &sStyle);
             sBorderDownSize.bind("border.down.size", &sStyle);
             sEditable.bind("editable", &sStyle);
-            sActive.bind("active", &sStyle);
             sHole.bind("hole", &sStyle);
             sFlat.bind("flat", &sStyle);
             sTextClip.bind("text.clip", &sStyle);
@@ -313,7 +309,7 @@ namespace lsp
             if (cols->property_changed(prop))
                 query_draw();
 
-            if (prop->one_of(sHoleColor, sHover, sGradient, sActive))
+            if (prop->one_of(sHoleColor, sHover, sGradient))
                 query_draw();
 
             if (prop->one_of(sFont, sText, sTextAdjust, sConstraints, sBorderSize, sBorderPressedSize, sBorderDownSize))
@@ -431,7 +427,7 @@ namespace lsp
                 radius);
         }
 
-        void Button::clear_text_estimations()
+        size_t Button::destroy_text_estimations()
         {
             size_t removed = 0;
             for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
@@ -444,6 +440,13 @@ namespace lsp
                 }
             }
             vEstimations.clear();
+
+            return removed;
+        }
+
+        void Button::clear_text_estimations()
+        {
+            const size_t removed = destroy_text_estimations();
             if (removed > 0)
                 query_resize();
         }
@@ -478,11 +481,11 @@ namespace lsp
             e->min_height    = lsp_max(e->min_height, ceilf(lsp_max(e->tp.Height, e->fp.Height)));
         }
 
-        void Button::draw(ws::ISurface *s)
+        void Button::draw(ws::ISurface *s, bool force)
         {
             ws::IGradient *g    = NULL;
             size_t pressed      = nState;
-            float brightness    = sBrightness.get();
+            float brightness    = select_brightness();
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             ws::rectangle_t r   = sButton;

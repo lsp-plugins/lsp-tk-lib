@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -249,49 +249,52 @@ namespace lsp
                         continue;
                     }
 
-                    // Fill unused space with background
-                    if (!force)
-                        continue;
-
-                    // Draw widget area
-                    if (Size::overlap(area, &w->a))
+                    // Fill unused space by child widget with background
+                    if ((force) || (w->pWidget->redraw_pending()))
                     {
-                        w->pWidget->get_actual_bg_color(bg_color);
-                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &w->a, &w->s);
+                        // Draw widget area
+                        if (Size::overlap(area, &w->a))
+                        {
+                            w->pWidget->get_actual_bg_color(bg_color);
+                            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &w->a, &w->s);
+                        }
                     }
 
                     // Need to draw spacing?
-                    get_actual_bg_color(bg_color);
-                    if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
+                    if (force)
                     {
-                        xr.nLeft    = w->a.nLeft + w->a.nWidth;
-                        xr.nTop     = w->a.nTop;
-                        xr.nWidth   = hspacing;
-                        xr.nHeight  = w->a.nHeight;
+                        get_actual_bg_color(bg_color);
+                        if ((hspacing > 0) && ((w->nLeft + w->nCols) < sAlloc.nCols))
+                        {
+                            xr.nLeft    = w->a.nLeft + w->a.nWidth;
+                            xr.nTop     = w->a.nTop;
+                            xr.nWidth   = hspacing;
+                            xr.nHeight  = w->a.nHeight;
 
-                        if (Size::overlap(area, &xr))
-                            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
+                            if (Size::overlap(area, &xr))
+                                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
 
-                        if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
+                            if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
+                            {
+                                xr.nLeft    = w->a.nLeft;
+                                xr.nTop     = w->a.nTop + w->a.nHeight;
+                                xr.nWidth   = w->a.nWidth + hspacing;
+                                xr.nHeight  = vspacing;
+
+                                if (Size::overlap(area, &xr))
+                                    s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
+                            }
+                        }
+                        else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
                         {
                             xr.nLeft    = w->a.nLeft;
                             xr.nTop     = w->a.nTop + w->a.nHeight;
-                            xr.nWidth   = w->a.nWidth + hspacing;
+                            xr.nWidth   = w->a.nWidth;
                             xr.nHeight  = vspacing;
 
                             if (Size::overlap(area, &xr))
                                 s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
                         }
-                    }
-                    else if ((vspacing > 0) && ((w->nTop + w->nRows) < sAlloc.nRows))
-                    {
-                        xr.nLeft    = w->a.nLeft;
-                        xr.nTop     = w->a.nTop + w->a.nHeight;
-                        xr.nWidth   = w->a.nWidth;
-                        xr.nHeight  = vspacing;
-
-                        if (Size::overlap(area, &xr))
-                            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
                     }
                 }
             } // clip_begin()

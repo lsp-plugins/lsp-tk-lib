@@ -65,7 +65,6 @@ namespace lsp
                 prop::Integer               sSpinSize;
                 prop::Integer               sSpinSeparator;
                 prop::Boolean               sOpened;
-                prop::Boolean               sActive;
                 prop::TextFitness           sTextFit;
                 prop::Font                  sFont;
                 prop::TextAdjust            sTextAdjust;
@@ -149,7 +148,6 @@ namespace lsp
                 prop::Integer               sSpinSize;
                 prop::Integer               sSpinSeparator;
                 prop::Boolean               sOpened;
-                prop::Boolean               sActive;
                 prop::TextFitness           sTextFit;
                 prop::Font                  sFont;
                 prop::TextAdjust            sTextAdjust;
@@ -211,7 +209,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,                    spin_size,                  &sSpinSize)
                 LSP_TK_PROPERTY(Integer,                    spin_separator,             &sSpinSeparator)
                 LSP_TK_PROPERTY(Boolean,                    opened,                     &sOpened)
-                LSP_TK_PROPERTY(Boolean,                    active,                     &sActive)
                 LSP_TK_PROPERTY(TextFitness,                text_fit,                   &sTextFit)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,                &sConstraints)
                 LSP_TK_PROPERTY(Font,                       font,                       &sFont)
@@ -228,7 +225,7 @@ namespace lsp
                 virtual status_t            add(Widget *child) override;
                 virtual status_t            remove(Widget *child) override;
                 virtual status_t            remove_all() override;
-                virtual void                draw(ws::ISurface *s) override;
+                virtual void                draw(ws::ISurface *s, bool force) override;
 
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;
                 virtual status_t            on_mouse_up(const ws::event_t *e) override;

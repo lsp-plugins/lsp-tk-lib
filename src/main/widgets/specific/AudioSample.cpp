@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -80,7 +80,6 @@ namespace lsp
                 sMaxAmplitude.bind("amplitude.max", this);
                 sLineColor.bind("line.color", this);
                 sConstraints.bind("size.constraints", this);
-                sActive.bind("active", this);
                 sSGroups.bind("stereo_groups", this);
                 sMainTextLayout.bind("main.text.layout", this);
                 sMainFont.bind("main.font", this);
@@ -155,7 +154,9 @@ namespace lsp
                     sLabelTextLayout[i].set(0.0f, 0.0f);
                     sLabelVisibility[i].set(false);
                 }
+
                 // Override
+                sActive.override();
                 sMainFont.override();
                 sLabelFont.override();
             LSP_TK_STYLE_IMPL_END
@@ -177,7 +178,6 @@ namespace lsp
             sMaxAmplitude(&sProperties),
             sLineColor(&sProperties),
             sConstraints(&sProperties),
-            sActive(&sProperties),
             sSGroups(&sProperties),
             sMainText(&sProperties),
             sMainTextLayout(&sProperties),
@@ -285,7 +285,6 @@ namespace lsp
             sMaxAmplitude.bind("amplitude.max", &sStyle);
             sLineColor.bind("line.color", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
-            sActive.bind("active", &sStyle);
             sSGroups.bind("stereo_groups", &sStyle);
             sMainText.bind(&sStyle, pDisplay->dictionary());
             sMainTextLayout.bind("main.text.layout", &sStyle);
@@ -474,7 +473,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             // Init decimation buffer
             ssize_t n_draw      = lsp_min(ssize_t(samples), r->nWidth);
@@ -528,7 +527,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             float x[6], y[6];
 
@@ -636,7 +635,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             float border        = (range->border->get() > 0) ? lsp_max(1.0f, range->border->get() * scaling) : 0.0f;
             float xb            = r->nLeft + float(begin * r->nWidth) / float(samples);
             float xe            = r->nLeft + float(end * r->nWidth) / float(samples);
@@ -669,7 +668,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             float x             = float(r->nLeft + (position * r->nWidth) / samples);
             float border        = lsp_max(1.0f, pborder * scaling);
 
@@ -689,7 +688,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             // Init decimation buffer
             ssize_t n_draw      = lsp_min(ssize_t(samples), r->nWidth);
@@ -742,7 +741,7 @@ namespace lsp
                 return;
 
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             float x[4], y[4];
 
@@ -831,7 +830,7 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             LSPString text;
             ws::font_parameters_t fp;
@@ -864,7 +863,7 @@ namespace lsp
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             ws::font_parameters_t fp;
             ws::text_parameters_t tp;
@@ -926,11 +925,11 @@ namespace lsp
             WidgetContainer::query_draw(flags);
         }
 
-        void AudioSample::draw(ws::ISurface *s)
+        void AudioSample::draw(ws::ISurface *s, bool force)
         {
             // Main parameters
             float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
 
             // Draw background
             lsp::Color color(sColor);
@@ -1129,7 +1128,7 @@ namespace lsp
             float scaling   = lsp_max(0.0f, sScaling.get());
             float xr        = lsp_max(0.0f, sBorderRadius.get() * scaling); // external radius
             float bw        = lsp_max(0.0f, sBorder.get() * scaling);       // border size
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
             bool pressed    = nXFlags & XF_DOWN;
 
             // Prepare palette

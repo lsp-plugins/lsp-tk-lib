@@ -63,7 +63,6 @@ namespace lsp
                 prop::Font                  sFont;                  // Heading tab font
                 prop::Integer               sBorderSize;            // Border size of the heading tab
                 prop::Integer               sBorderRadius;          // Border radius of the heading tab
-                prop::Boolean               sActive;                // Activity flag
             LSP_TK_STYLE_DEF_END
         } /* namespace style */
 
@@ -101,7 +100,6 @@ namespace lsp
                 prop::Font                  sFont;                  // Heading tab font
                 prop::Integer               sBorderSize;            // Border size of the heading tab
                 prop::Integer               sBorderRadius;          // Border radius of the heading tab
-                prop::Boolean               sActive;                // Activity flag
 
             protected:
                 style::TabItemColors   *select_colors(bool selected, bool hover);
@@ -153,7 +151,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Font,               font,                                   &sFont);
                 LSP_TK_PROPERTY(Integer,            border_size,                            &sBorderSize);
                 LSP_TK_PROPERTY(Integer,            border_radius,                          &sBorderRadius);
-                LSP_TK_PROPERTY(Boolean,            active,                                 &sActive);
         };
 
     } /* namespace tk */

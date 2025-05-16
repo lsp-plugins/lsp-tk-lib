@@ -62,7 +62,7 @@ namespace lsp
             vItems(&sProperties, &sIListener),
             sSelected(&sProperties),
             vWidgets(&sProperties, &sIListener),
-            sActive(&sProperties)
+            sActiveTab(&sProperties)
         {
             sArea.nLeft         = 0;
             sArea.nTop          = 0;
@@ -173,7 +173,7 @@ namespace lsp
                 query_resize();
             if (prop->one_of(sTabJoint, sHeadingFill, sHeadingSpacingFill))
                 query_draw();
-            if (prop->one_of(vWidgets, vItems, sActive, sSelected))
+            if (prop->one_of(vWidgets, vItems, sActiveTab, sSelected))
                 query_resize();
         }
 
@@ -410,7 +410,7 @@ namespace lsp
             ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius          = lsp_max(0.0f, sBorderRadius.get() * scaling);
             ssize_t xborder         = lsp_max(0.0f, (radius-border) * M_SQRT1_2);
-            float bright            = lsp_max(0.0f, sBrightness.get());
+            float bright            = lsp_max(0.0f, select_brightness());
             bool top_align          = sHeading.valign() <= 0.0f;
             bool bg                 = false;
 
@@ -567,7 +567,7 @@ namespace lsp
             lsp::Color color;
             ws::rectangle_t clip, r;
 
-            float bright            = lsp_max(0.0f, sBrightness.get());
+            float bright            = lsp_max(0.0f, select_brightness());
             float scaling           = lsp_max(0.0f, sScaling.get());
             ssize_t border          = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             size_t tab_radius       = (w->border_radius()->get() > 0) ? lsp_max(1.0f, w->border_radius()->get() * scaling) : 0;
@@ -681,7 +681,7 @@ namespace lsp
 
                 // Initialize palette
                 color.copy(colors->sTextColor);
-                color.scale_lch_luminance(sBrightness.get());
+                color.scale_lch_luminance(select_brightness());
 
                 // Draw background
                 float halign    = lsp_limit(w->text_layout()->halign() + 1.0f, 0.0f, 2.0f);
@@ -784,7 +784,7 @@ namespace lsp
 
         tk::Widget *TabGroup::current_widget()
         {
-            tk::Widget *active  = sActive.get();
+            tk::Widget *active  = sActiveTab.get();
             if ((active != NULL) && (vWidgets.contains(active)))
                 return active;
 
@@ -1033,8 +1033,8 @@ namespace lsp
             // Reset active widget if present
             if (self->sSelected.get() == item)
                 self->sSelected.set(NULL);
-            if (self->sActive.get() == item)
-                self->sActive.set(NULL);
+            if (self->sActiveTab.get() == item)
+                self->sActiveTab.set(NULL);
             if (self->pEventTab == item)
                 self->pEventTab       = NULL;
 

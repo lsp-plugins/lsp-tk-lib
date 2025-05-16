@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -97,9 +97,9 @@ namespace lsp
                 sLoopBorderColor.set("#00ffff");
                 sConstraints.set(128, 32, -1, -1);
                 // Override
-                sBgColor.set("#000000");
+                Widget::vColors[0].sBgColor.set("#000000");
                 // Commit
-                sBgColor.override();
+                Widget::vColors[0].sBgColor.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(AudioChannel, "AudioChannel", "root");
         }
@@ -428,9 +428,9 @@ namespace lsp
             s->line(wire, x, r->nTop, x, r->nTop + r->nHeight, border);
         }
 
-        void AudioChannel::draw(ws::ISurface *s)
+        void AudioChannel::draw(ws::ISurface *s, bool force)
         {
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t line_w      = (sLineWidth.get() > 0) ? lsp_max(1.0f, sLineWidth.get() * scaling) : 0.0f;
 

@@ -618,11 +618,11 @@ namespace lsp
             vVisible.swap(&list);
         }
 
-        void LedMeter::draw(ws::ISurface *s)
+        void LedMeter::draw(ws::ISurface *s, bool force)
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
-            float bright        = sBrightness.get();
+            float bright        = select_brightness();
             bool has_text       = sTextVisible.get();
             bool has_header     = sHeaderVisible.get();
             ssize_t angle       = sAngle.get();

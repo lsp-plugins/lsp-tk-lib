@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 сент. 2020 г.
@@ -57,7 +57,6 @@ namespace lsp
                 prop::Boolean           sTextVisible;
                 prop::Boolean           sHeaderVisible;
                 prop::Boolean           sReversive;
-                prop::Boolean           sActive;
                 prop::Integer           sMinSegments;
                 prop::SizeConstraints   sConstraints;
                 prop::Font              sFont;
@@ -99,7 +98,6 @@ namespace lsp
                 prop::Boolean           sTextVisible;
                 prop::Boolean           sHeaderVisible;
                 prop::Boolean           sReversive;
-                prop::Boolean           sActive;
                 prop::Integer           sMinSegments;
                 prop::SizeConstraints   sConstraints;
                 prop::Font              sFont;
@@ -162,7 +160,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            text_visible,       &sTextVisible)
                 LSP_TK_PROPERTY(Boolean,            header_visible,     &sHeaderVisible)
                 LSP_TK_PROPERTY(Boolean,            reversive,          &sReversive)
-                LSP_TK_PROPERTY(Boolean,            active,             &sActive)
                 LSP_TK_PROPERTY(Integer,            min_segments,       &sMinSegments)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
                 LSP_TK_PROPERTY(Font,               font,               &sFont)
@@ -171,7 +168,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Pointer,            header_pointer,     &sHeaderPointer)
 
             public:
-                virtual void                draw(ws::ISurface *s) override;
+                virtual void                draw(ws::ISurface *s, bool force) override;
                 virtual status_t            on_mouse_pointer(pointer_event_t *e) override;
         };
     } /* namespace tk */

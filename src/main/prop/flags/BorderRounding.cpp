@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 5 мая 2020 г.
+ * Created on: 2 апр. 2025 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,19 +19,24 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef LSP_PLUG_IN_TK_VERSION_H_
-#define LSP_PLUG_IN_TK_VERSION_H_
+#include <lsp-plug.in/tk/tk.h>
 
-#define LSP_TK_LIB_MAJOR            1
-#define LSP_TK_LIB_MINOR            0
-#define LSP_TK_LIB_MICRO            28
+namespace lsp
+{
+    namespace tk
+    {
+        const prop::enum_t BorderRounding::ENUM[] =
+        {
+            { "lt",             ws::CORNER_LEFT_TOP         },
+            { "rt",             ws::CORNER_RIGHT_TOP        },
+            { "lb",             ws::CORNER_LEFT_BOTTOM      },
+            { "rb",             ws::CORNER_RIGHT_BOTTOM     },
 
-#if defined(LSP_TK_LIB_PUBLISHER)
-    #define LSP_TK_LIB_PUBLIC               LSP_EXPORT_MODIFIER
-#elif defined(LSP_TK_LIB_BUILTIN) || defined(LSP_IDE_DEBUG)
-    #define LSP_TK_LIB_PUBLIC
-#else
-    #define LSP_TK_LIB_PUBLIC               LSP_IMPORT_MODIFIER
-#endif
+            { NULL,             -1                          }
+        };
 
-#endif /* LSP_PLUG_IN_TK_VERSION_H_ */
+    } /* namespace tk */
+} /* namespace lsp */
+
+
+

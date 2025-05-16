@@ -76,7 +76,6 @@ namespace lsp
                 sSliderBorderSize.bind("slider.border.size", this);
                 sInvertMouseHScroll.bind("mouse.hscroll.invert", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
-                sActive.bind("active", this);
 
                 // Configure
                 c = &vColors[style::SCROLLBAR_NORMAL];
@@ -123,7 +122,6 @@ namespace lsp
                 sSliderBorderSize.set(1);
                 sInvertMouseHScroll.set(false);
                 sInvertMouseVScroll.set(false);
-                sActive.set(true);
 
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ScrollBar, "ScrollBar", "root");
@@ -172,8 +170,7 @@ namespace lsp
             sBorderGap(&sProperties),
             sSliderBorderSize(&sProperties),
             sInvertMouseHScroll(&sProperties),
-            sInvertMouseVScroll(&sProperties),
-            sActive(&sProperties)
+            sInvertMouseVScroll(&sProperties)
         {
             pClass          = &metadata;
 
@@ -274,7 +271,6 @@ namespace lsp
             sSliderBorderSize.bind("slider.border.size", &sStyle);
             sInvertMouseHScroll.bind("mouse.hscroll.invert", &sStyle);
             sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
-            sActive.bind("active", &sStyle);
 
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
@@ -317,9 +313,6 @@ namespace lsp
             // Self properties
             style::ScrollBarColors *colors = select_colors();
             if (colors->property_changed(prop))
-                query_draw();
-
-            if (sActive.is(prop))
                 query_draw();
 
             if (prop->one_of(sValue, sStep, sAccelStep))
@@ -933,10 +926,10 @@ namespace lsp
             }
         }
 
-        void ScrollBar::draw(ws::ISurface *s)
+        void ScrollBar::draw(ws::ISurface *s, bool force)
         {
             float scaling   = lsp_max(0.0f, sScaling.get());
-            float bright    = sBrightness.get();
+            float bright    = select_brightness();
             ssize_t border  = (sBorderSize.get() > 0) ? lsp_max(1.0f, sBorderSize.get() * scaling) : 0;
             ssize_t radius  = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
             ssize_t gap     = (sBorderGap.get() > 0) ? lsp_max(1.0f, sBorderGap.get() * scaling) : 0;

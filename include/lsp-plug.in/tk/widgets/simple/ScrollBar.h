@@ -78,7 +78,6 @@ namespace lsp
                 prop::Integer           sSliderBorderSize;
                 prop::Boolean           sInvertMouseHScroll;
                 prop::Boolean           sInvertMouseVScroll;
-                prop::Boolean           sActive;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -152,7 +151,6 @@ namespace lsp
                 prop::Integer           sSliderBorderSize;
                 prop::Boolean           sInvertMouseHScroll;
                 prop::Boolean           sInvertMouseVScroll;
-                prop::Boolean           sActive;
 
                 Timer                   sTimer;
 
@@ -235,7 +233,6 @@ namespace lsp
 
                 LSP_TK_PROPERTY(Boolean,            invert_mouse_hscroll,           &sInvertMouseHScroll)
                 LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,           &sInvertMouseVScroll)
-                LSP_TK_PROPERTY(Boolean,            active,                         &sActive)
 
             public:
                 virtual status_t                on_mouse_down(const ws::event_t *e) override;
@@ -245,7 +242,7 @@ namespace lsp
                 virtual status_t                on_mouse_move(const ws::event_t *e) override;
                 virtual status_t                on_mouse_scroll(const ws::event_t *e) override;
                 virtual status_t                on_mouse_pointer(pointer_event_t *e) override;
-                virtual void                    draw(ws::ISurface *s) override;
+                virtual void                    draw(ws::ISurface *s, bool force) override;
 
             public:
                 virtual status_t                on_begin_edit();

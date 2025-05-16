@@ -268,7 +268,7 @@ namespace lsp
                 virtual status_t            remove(Widget *child) override;
                 virtual void                show() override;
 
-                virtual void                draw(ws::ISurface *s) override;
+                virtual void                draw(ws::ISurface *s, bool force) override;
                 virtual status_t            on_key_down(const ws::event_t *e) override;
                 virtual status_t            on_key_up(const ws::event_t *e) override;
 

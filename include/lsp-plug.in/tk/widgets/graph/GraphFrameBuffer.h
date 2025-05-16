@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -51,10 +51,6 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
-            private:
-                GraphFrameBuffer & operator = (const GraphFrameBuffer &);
-                GraphFrameBuffer(const GraphFrameBuffer &);
-
             protected:
                 typedef void (GraphFrameBuffer::*calc_color_t)(float *rgba, const float *value, size_t n);
 
@@ -89,14 +85,19 @@ namespace lsp
 
                 void                        destroy_data();
 
-                virtual void                property_changed(Property *prop);
+                virtual void                property_changed(Property *prop) override;
 
             public:
                 explicit GraphFrameBuffer(Display *dpy);
-                virtual ~GraphFrameBuffer();
+                GraphFrameBuffer(const GraphFrameBuffer &) = delete;
+                GraphFrameBuffer(GraphFrameBuffer &&) = delete;
+                virtual ~GraphFrameBuffer() override;
 
-                virtual status_t            init();
-                virtual void                destroy();
+                GraphFrameBuffer & operator = (const GraphFrameBuffer &) = delete;
+                GraphFrameBuffer & operator = (GraphFrameBuffer &&) = delete;
+
+                virtual status_t            init() override;
+                virtual void                destroy() override;
 
             public:
                 LSP_TK_PROPERTY(GraphFrameData,         data,               &sData)
@@ -110,12 +111,12 @@ namespace lsp
                 LSP_TK_PROPERTY(GraphFrameFunction,     function,           &sFunction)
 
             public:
-                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
-
-                virtual void                draw(ws::ISurface *s);
+                virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
+                virtual void                draw(ws::ISurface *s, bool force) override;
         };
-    }
-}
+
+    } /* namespace lsp */
+} /* namespace tk */
 
 
 #endif /* LSP_PLUG_IN_TK_WIDGETS_GRAPH_GRAPHFRAMEBUFFER_H_ */

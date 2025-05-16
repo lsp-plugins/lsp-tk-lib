@@ -68,7 +68,6 @@ namespace lsp
                 prop::Integer           sBorderGapSize;
                 prop::Integer           sBorderRadius;
                 prop::SizeConstraints   sConstraints;
-                prop::Boolean           sActive;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -155,7 +154,6 @@ namespace lsp
                 prop::Integer           sBorderGapSize;
                 prop::Integer           sBorderRadius;
                 prop::SizeConstraints   sConstraints;
-                prop::Boolean           sActive;
                 prop::WidgetPtr<Menu>   sPopup;
 
             protected:
@@ -224,11 +222,10 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            border_gap_size,                    &sBorderGapSize)
                 LSP_TK_PROPERTY(Integer,            border_radius,                      &sBorderRadius)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,                        &sConstraints)
-                LSP_TK_PROPERTY(Boolean,            active,                             &sActive);
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,                              &sPopup)
 
             public:
-                virtual void                    draw(ws::ISurface *s) override;
+                virtual void                    draw(ws::ISurface *s, bool force) override;
                 virtual status_t                on_mouse_down(const ws::event_t *e) override;
                 virtual status_t                on_mouse_up(const ws::event_t *e) override;
                 virtual status_t                on_mouse_move(const ws::event_t *e) override;

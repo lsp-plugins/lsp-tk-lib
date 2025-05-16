@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2017 г.
@@ -38,6 +38,7 @@ namespace lsp
                 sBorderSize.bind("border.size", this);
                 sBorderRadius.bind("border.radius", this);
                 sActions.bind("actions", this);
+                sWindowState.bind("state", this);
                 sPosition.bind("position", this);
                 sWindowSize.bind("size", this);
                 sConstraints.bind("size.constraints", this);
@@ -49,6 +50,7 @@ namespace lsp
                 sBorderSize.set(0);
                 sBorderRadius.set(2);
                 sActions.set_actions(ws::WA_ALL);
+                sWindowState.set_normal();
                 sPosition.set(0, 0);
                 sWindowSize.set(160, 100);
                 sConstraints.set(-1, -1, -1, -1);
@@ -75,11 +77,13 @@ namespace lsp
             sBorderSize(&sProperties),
             sBorderRadius(&sProperties),
             sActions(&sProperties),
+            sWindowState(&sProperties),
             sPosition(&sProperties),
             sWindowSize(&sProperties),
             sSizeConstraints(&sProperties),
             sLayout(&sProperties),
-            sPolicy(&sProperties)
+            sPolicy(&sProperties),
+            vOverlays(&sProperties, &sIListener)
         {
             lsp_trace("native_handle = %p", handle);
 
@@ -89,6 +93,7 @@ namespace lsp
             pNativeHandle   = handle;
             bMapped         = false;
             bOverridePointer= false;
+            enSurfaceType   = ws::ST_UNKNOWN;
             fScaling        = 1.0f;
             pActor          = NULL;
 
@@ -116,6 +121,9 @@ namespace lsp
             if ((result = WidgetContainer::init()) != STATUS_OK)
                 return result;
 
+            // Init listener
+            sIListener.bind_all(this, on_add_item, on_remove_item);
+
             // Initialize display
             ws::IDisplay *dpy   = pDisplay->display();
             if (dpy == NULL)
@@ -141,6 +149,7 @@ namespace lsp
             sBorderSize.bind("border.size", &sStyle);
             sBorderRadius.bind("border.radius", &sStyle);
             sActions.bind("actions", &sStyle);
+            sWindowState.bind("state", &sStyle);
             sPosition.bind("position", &sStyle);
             sWindowSize.bind("size", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
@@ -153,8 +162,9 @@ namespace lsp
             // Add slot(s)
             handler_id_t id = 0;
             id = sSlots.add(SLOT_CLOSE, slot_window_close, self());
-            if (id < 0)
-                return - id;
+            if (id < 0) return -id;
+            id = sSlots.add(SLOT_STATE, slot_window_state, self());
+            if (id < 0) return -id;
 
             // Set self event handler
             if (pWindow != NULL)
@@ -262,12 +272,29 @@ namespace lsp
             hMouse.pWidget      = NULL;
             hKeys.pWidget       = NULL;
 
+            // Clear list of visible overlays values
+            vDrawOverlays.flush();
+
+            // Unlink overlays
+            for (size_t i=0, n=vOverlays.size(); i<n; ++i)
+            {
+                // Get widget
+                Widget *w = vOverlays.get(i);
+                if (w != NULL)
+                    unlink_widget(w);
+            }
+
+            // Free list of overlays
+            vOverlays.flush();
+
+            // Cleanup child widget
             if (pChild != NULL)
             {
                 unlink_widget(pChild);
                 pChild = NULL;
             }
 
+            // Destroy window
             if (pWindow != NULL)
             {
                 pWindow->destroy();
@@ -301,6 +328,44 @@ namespace lsp
             return (_this != NULL) ? _this->on_close(static_cast<ws::event_t *>(data)) : STATUS_BAD_ARGUMENTS;
         }
 
+        status_t Window::slot_window_state(Widget *sender, void *ptr, void *data)
+        {
+            if ((ptr == NULL) || (data == NULL))
+                return STATUS_BAD_ARGUMENTS;
+
+            Window *_this   = widget_ptrcast<Window>(ptr);
+            return (_this != NULL) ? _this->on_window_state(static_cast<ws::event_t *>(data)) : STATUS_BAD_ARGUMENTS;
+        }
+
+        void Window::on_add_item(void *obj, Property *prop, void *w)
+        {
+            Widget *widget = widget_ptrcast<Widget>(w);
+            if (widget == NULL)
+                return;
+
+            Window *self = widget_ptrcast<Window>(obj);
+            if (self == NULL)
+                return;
+
+            widget->set_parent(self);
+            self->query_resize();
+        }
+
+        void Window::on_remove_item(void *obj, Property *prop, void *w)
+        {
+            Widget *widget = widget_ptrcast<Widget>(w);
+            if (widget == NULL)
+                return;
+
+            Window *self = widget_ptrcast<Window>(obj);
+            if (self == NULL)
+                return;
+
+            self->vDrawOverlays.flush();
+            self->unlink_widget(widget);
+            self->query_resize();
+        }
+
         status_t Window::do_render()
         {
             if ((pWindow == NULL) || (!bMapped))
@@ -308,6 +373,8 @@ namespace lsp
 
             if (resize_pending())
                 sync_size(false);
+
+            update_pointer();
 
             if (!redraw_pending())
                 return STATUS_OK;
@@ -317,22 +384,18 @@ namespace lsp
             if (s == NULL)
                 return STATUS_OK;
 
-            size_t flags = nFlags;
+            enSurfaceType   = s->type();
 
 //        #ifdef LSP_TRACE
 //            system::time_millis_t time = system::get_time_millis();
 //        #endif /* LSP_TRACE */
+            ws::rectangle_t xr;
+            xr.nLeft        = 0;
+            xr.nTop         = 0;
+            xr.nWidth       = sSize.nWidth;
+            xr.nHeight      = sSize.nHeight;
 
-            s->begin();
-            {
-                ws::rectangle_t xr;
-                xr.nLeft    = 0;
-                xr.nTop     = 0;
-                xr.nWidth   = sSize.nWidth;
-                xr.nHeight  = sSize.nHeight;
-                render(s, &xr, flags & REDRAW_SURFACE);
-            }
-            s->end();
+            render(s, &xr, nFlags & REDRAW_SURFACE);
             commit_redraw();
 
 //        #ifdef LSP_TRACE
@@ -340,10 +403,71 @@ namespace lsp
 //            lsp_trace("Window %p render time: %ld ms", this, long(time));
 //        #endif /* LSP_TRACE */
 
-            // And also update pointer
-            update_pointer();
-
             return STATUS_OK;
+        }
+
+        void Window::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
+        {
+            s->begin();
+            lsp_finally { s->end(); };
+
+            // Draw main contents
+            ws::ISurface *bs = get_surface(s);
+            if (bs != NULL)
+                s->draw(bs, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+
+            // Draw overlay shadows
+            size_t overlays = 0;
+
+            for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
+            {
+                // Get overlay widget
+                overlay_t *ovd = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+                Overlay *ov = ovd->wWidget;
+                if (ov == NULL)
+                    continue;
+
+                // Draw shadow
+                ov->draw_shadow(s);
+                ++overlays;
+            }
+
+            if (overlays <= 0)
+                return;
+
+            // Draw overlays
+            for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
+            {
+                // Get overlay widget
+                overlay_t *ovd = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+                Overlay *ov = ovd->wWidget;
+                if (ov == NULL)
+                    continue;
+
+                // Get surface of the overlay widget
+                ws::ISurface *ovs = ov->get_surface(s);
+                if (ovs == NULL)
+                    continue;
+
+                // Draw the overlay with alpha blending applied
+                const size_t bround = ov->border_rounding()->corners();
+                const float alpha = ov->transparency()->get();
+                if (bround != 0)
+                {
+                    const float scaling = lsp_max(0.0f, ov->scaling()->get());
+                    const size_t radius = lsp_max(0.0f, ov->border_radius()->get() * scaling);
+                    s->fill_rect(ovs, alpha, bround, radius, &ovd->sArea);
+                }
+                else
+                    s->draw(ovs, ovd->sArea.nLeft, ovd->sArea.nTop, 1.0f, 1.0f, alpha);
+
+                // Commit pending redraw of the overlay
+                ov->commit_redraw();
+            }
         }
 
         status_t Window::get_screen_rectangle(ws::rectangle_t *r)
@@ -397,11 +521,8 @@ namespace lsp
             return res;
         }
 
-        void Window::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
+        void Window::draw(ws::ISurface *s, bool force)
         {
-            if (!bMapped)
-                return;
-
             lsp::Color bg_color;
             get_actual_bg_color(bg_color);
 
@@ -411,51 +532,58 @@ namespace lsp
                 return;
             }
 
-            if ((force) || (pChild->redraw_pending()))
+            if (pChild->redraw_pending())
+                force = true;
+
+            if (!force)
+                return;
+
+            // Draw the child only if it is visible in the area
+            ws::rectangle_t area, xr;
+            area.nLeft      = 0;
+            area.nTop       = 0;
+            area.nWidth     = sSize.nWidth;
+            area.nHeight    = sSize.nHeight;
+
+            pChild->get_padded_rectangle(&xr);
+            if (Size::intersection(&xr, &area))
+                pChild->render(s, &xr, force);
+
+            pChild->commit_redraw();
+
+            // Draw surrounding rectangle
+            ws::rectangle_t pr, cr;
+            pChild->get_padded_rectangle(&pr);
+            pChild->get_rectangle(&cr);
+
+            s->fill_frame(
+                bg_color, SURFMASK_NONE, 0.0f,
+                0, 0, sSize.nWidth, sSize.nHeight,
+                pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
+            );
+
+            pChild->get_actual_bg_color(bg_color);
+            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &pr, &cr);
+
+            // Draw border
+            const float scaling   = sScaling.get();
+            const float border    = sBorderSize.get() * scaling;
+
+            if (border > 0)
             {
-                // Draw the child only if it is visible in the area
-                ws::rectangle_t xr;
-                pChild->get_padded_rectangle(&xr);
-                if (Size::intersection(&xr, area))
-                    pChild->render(s, &xr, force);
+                float radius = sBorderRadius.get() * scaling;
+                bool aa = s->set_antialiasing(true);
+                float bw = border * 0.5f;
 
-                pChild->commit_redraw();
-            }
+                lsp::Color bc(sBorderColor);
+                bc.scale_lch_luminance(select_brightness());
 
-            if (force)
-            {
-                ws::rectangle_t pr, cr;
-                pChild->get_padded_rectangle(&pr);
-                pChild->get_rectangle(&cr);
-
-                s->fill_frame(
-                    bg_color, SURFMASK_NONE, 0.0f,
-                    0, 0, sSize.nWidth, sSize.nHeight,
-                    pr.nLeft, pr.nTop, pr.nWidth, pr.nHeight
+                s->wire_rect(
+                    bc, SURFMASK_ALL_CORNER, radius,
+                    bw, bw, sSize.nWidth, sSize.nHeight,
+                    border
                 );
-
-                pChild->get_actual_bg_color(bg_color);
-                s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &pr, &cr);
-
-                float scaling   = sScaling.get();
-                float border    = sBorderSize.get() * scaling;
-
-                if (border > 0)
-                {
-                    float radius = sBorderRadius.get() * scaling;
-                    bool aa = s->set_antialiasing(true);
-                    float bw = border * 0.5f;
-
-                    lsp::Color bc(sBorderColor);
-                    bc.scale_lch_luminance(sBrightness.get());
-
-                    s->wire_rect(
-                        bc, SURFMASK_ALL_CORNER, radius,
-                        bw, bw, sSize.nWidth, sSize.nHeight,
-                        border
-                    );
-                    s->set_antialiasing(aa);
-                }
+                s->set_antialiasing(aa);
             }
         }
 
@@ -510,24 +638,21 @@ namespace lsp
                     return;
                 pWindow->set_role(text.get_utf8());
             }
-            if (sPadding.is(prop))
-                query_resize();
-            if (sBorderColor.is(prop))
+            if (prop->one_of(sBorderColor))
                 query_draw();
-            if (sBorderSize.is(prop))
+            if (prop->one_of(sPadding, sBorderSize, sBorderRadius, vOverlays))
                 query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-
 
             if (sBorderStyle.is(prop))
                 pWindow->set_border_style(sBorderStyle.get());
             if (sActions.is(prop))
                 pWindow->set_window_actions(sActions.actions());
+            if (sWindowState.is(prop))
+                pWindow->set_window_state(sWindowState.get());
             if (sPosition.is(prop))
                 pWindow->move(sPosition.left(), sPosition.top());
 
-            if (prop->one_of(sSizeConstraints, sScaling, sActions, sFontScaling, sWindowSize))
+            if (prop->one_of(sSizeConstraints, sScaling, sActions, sWindowState, sFontScaling, sWindowSize))
             {
 //                float scaling = lsp_max(0.0f, sScaling.get());
 //
@@ -668,11 +793,24 @@ namespace lsp
 
         status_t Window::add(Widget *widget)
         {
-            if (pChild != NULL)
-                return STATUS_ALREADY_EXISTS;
+            Overlay *ov = tk::widget_cast<Overlay>(widget);
+            if (ov != NULL)
+            {
+                if (vOverlays.contains(ov))
+                    return STATUS_ALREADY_EXISTS;
 
-            widget->set_parent(this);
-            pChild = widget;
+                status_t res = vOverlays.add(ov);
+                if (res != STATUS_OK)
+                    return res;
+            }
+            else
+            {
+                if (pChild != NULL)
+                    return STATUS_ALREADY_EXISTS;
+
+                widget->set_parent(this);
+                pChild = widget;
+            }
 
             query_resize();
 
@@ -681,17 +819,29 @@ namespace lsp
 
         status_t Window::remove(Widget *widget)
         {
-            if (pChild != widget)
-                return STATUS_NOT_FOUND;
+            Overlay *ov = tk::widget_cast<Overlay>(widget);
+            if (ov != NULL)
+            {
+                if (!vOverlays.premove(ov))
+                    return STATUS_NOT_FOUND;
+            }
+            else
+            {
+                if (pChild != widget)
+                    return STATUS_NOT_FOUND;
 
-            unlink_widget(pChild);
-            pChild  = NULL;
+                unlink_widget(pChild);
+                pChild  = NULL;
+            }
+
+            query_resize();
 
             return STATUS_OK;
         }
 
         status_t Window::remove_all()
         {
+            vOverlays.clear();
             return (pChild != NULL) ? remove(pChild) : STATUS_OK;
         }
 
@@ -722,6 +872,38 @@ namespace lsp
             return hKeys.vKeys.size();
         }
 
+        void Window::auto_close_overlays(const ws::event_t *ev)
+        {
+            Overlay *ov     = find_overlay(ev->nLeft, ev->nTop);
+            size_t updates  = 0;
+
+            for (size_t i=0, n=vDrawOverlays.size(); i<n; ++i)
+            {
+                overlay_t *ovd  = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+
+                // Ensure that overlay is valid and has 'auto_close' option
+                Overlay *xov    = ovd->wWidget;
+                if (xov == NULL)
+                    continue;
+                if (!xov->auto_close()->get())
+                    continue;
+                if (xov == ov)
+                    continue;
+
+                // Hide the overlay if the event was not filtered
+                if (!xov->filter_event(ev))
+                {
+                    xov->visibility()->set(false);
+                    ++updates;
+                }
+            }
+
+            if (updates > 0)
+                query_resize();
+        }
+
         status_t Window::handle_event(const ws::event_t *e)
         {
             status_t result = STATUS_OK;
@@ -738,6 +920,11 @@ namespace lsp
                         bMapped     = true;
                         sRedraw.launch(-1, 40);
                         query_draw(REDRAW_SURFACE);
+
+                        // Remember surface type
+                        ws::ISurface *s = pWindow->get_surface();
+                        if (s != NULL)
+                            enSurfaceType   = s->type();
                     }
                     sShortcutTracker.reset();
                     sVisibility.commit_value(true);
@@ -757,6 +944,14 @@ namespace lsp
                         sRedraw.cancel();
                     }
                     sVisibility.commit_value(false);
+                    break;
+
+                case ws::UIE_STATE:
+                    if (sWindowState.get() == e->nCode)
+                        break;
+
+                    sWindowState.commit_value(ws::window_state_t(e->nCode));
+                    sSlots.execute(SLOT_STATE, this, &ev);
                     break;
 
                 case ws::UIE_REDRAW:
@@ -822,8 +1017,9 @@ namespace lsp
 
                 case ws::UIE_MOUSE_DOWN:
                 {
+                    auto_close_overlays(e);
+
                     Widget *h       = acquire_mouse_handler(e);
-//                    int old_state   = hMouse.nState;
                     hMouse.nState  |= (size_t(1) << e->nCode);
                     hMouse.nLeft    = e->nLeft;
                     hMouse.nTop     = e->nTop;
@@ -864,6 +1060,8 @@ namespace lsp
                 case ws::UIE_MOUSE_TRI_CLICK:
                 case ws::UIE_MOUSE_SCROLL:
                 {
+                    auto_close_overlays(e);
+
                     Widget *h = acquire_mouse_handler(e);
                     if (h == this)
                         result          = WidgetContainer::handle_event(e);
@@ -1151,12 +1349,48 @@ namespace lsp
             return true;
         }
 
+        Overlay *Window::find_overlay(ssize_t x, ssize_t y)
+        {
+            // Lookup around visible overlays first
+            // Search should be performed in the reverse to draw order
+            for (ssize_t i=vDrawOverlays.size() - 1; i >= 0; --i)
+            {
+                overlay_t *ovd = vDrawOverlays.get(i);
+                if (ovd == NULL)
+                    continue;
+
+                Overlay *ov = ovd->wWidget;
+                if (ov == NULL)
+                    continue;
+
+                if ((ov->valid()) && (ov->inside(x, y)))
+                    return ov;
+            }
+
+            return NULL;
+        }
+
         Widget *Window::find_widget(ssize_t x, ssize_t y)
         {
-            if ((pChild == NULL) || (!pChild->valid()) || (!pChild->inside(x, y)))
+            // First check if event is related to overlay
+            Widget *curr = find_overlay(x, y);
+            if (curr != NULL)
+            {
+                // We found overlay widget, check if we have nested widget to look for
+                while (true)
+                {
+                    Widget *next = curr->find_widget(x, y);
+                    if (next == NULL)
+                        return curr;
+                    curr    = next;
+                }
+            }
+
+            // Now lookup around child widget if it is present
+            curr = pChild;
+            if ((curr == NULL) || (!curr->valid()) || (!curr->inside(x, y)))
                 return this;
 
-            Widget *curr = pChild;
             while (true)
             {
                 Widget *next = curr->find_widget(x, y);
@@ -1167,6 +1401,11 @@ namespace lsp
         }
 
         status_t Window::on_close(const ws::event_t *e)
+        {
+            return STATUS_OK;
+        }
+
+        status_t Window::on_window_state(const ws::event_t *e)
         {
             return STATUS_OK;
         }
@@ -1183,16 +1422,15 @@ namespace lsp
 
             // Query for size
             ws::size_limit_t sr;
-            float scaling       = lsp_max(sScaling.get(), 0.0f);
-            size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
+            const float scaling = lsp_max(sScaling.get(), 0.0f);
+            const size_t border = lsp_max(0, sBorderSize.get()) * scaling;
 
             pChild->get_padded_size_limits(&sr);
 
             // Compute size of window without border
-            ws::rectangle_t rc  = *r;
+            ws::rectangle_t rc;
             rc.nLeft            = border;
             rc.nTop             = border;
-
             rc.nWidth           = lsp_max(0, ssize_t(r->nWidth  - border*2));
             rc.nHeight          = lsp_max(0, ssize_t(r->nHeight - border*2));
 
@@ -1203,6 +1441,72 @@ namespace lsp
             // Call for realize
             pChild->padding()->enter(&rc, pChild->scaling()->get());
             pChild->realize_widget(&rc);
+
+            // Realize overlays
+            vDrawOverlays.clear();
+            for (size_t i=0, n=vOverlays.size(); i<n; ++i)
+            {
+                Overlay *ov     = vOverlays.get(i);
+                if (!ov->is_visible_child_of(this))
+                    continue;
+
+                // Calculate position of the overlay
+                const float ov_scaling  = lsp_max(0.0f, ov->scaling()->get());
+                ov->get_size_limits(&sr);
+                rc.nLeft        = 0;
+                rc.nTop         = 0;
+                rc.nWidth       = lsp_max((sr.nPreWidth > 0) ? sr.nPreWidth : sr.nMinWidth, 1);
+                rc.nHeight      = lsp_max((sr.nPreHeight > 0) ? sr.nPreHeight : sr.nMinHeight, 1);
+
+                ov->position()->get(&rc.nLeft, &rc.nTop);
+                ov->ipadding()->leave(&rc, ov_scaling);
+
+                // Query position of the overlay widget. Use temporary rectangle to prevent of modifying size of the rectangle
+                ws::rectangle_t qrc     = rc;
+                if (!ov->calculate_position(&qrc))
+                {
+                    ov->visibility()->set(false);
+                    continue;
+                }
+                rc.nLeft        = qrc.nLeft;
+                rc.nTop         = qrc.nTop;
+
+                // Exclude internal padding now
+                ov->ipadding()->enter(&rc, ov_scaling);
+
+                // Apply window-related padding
+                tk::padding_t padding;
+
+                ov->padding()->compute(&padding, ov_scaling);
+
+                padding.nRight          = r->nWidth - padding.nRight;
+                padding.nBottom         = r->nHeight - padding.nBottom;
+
+                rc.nLeft                = lsp_max(rc.nLeft, ssize_t(padding.nLeft));
+                rc.nTop                 = lsp_max(rc.nTop, ssize_t(padding.nTop));
+                rc.nLeft               -= lsp_max(rc.nLeft + rc.nWidth - ssize_t(padding.nRight), 0);
+                rc.nTop                -= lsp_max(rc.nTop + rc.nHeight - ssize_t(padding.nBottom), 0);
+
+                // Add overlay to the list
+                overlay_t *ovd  = vDrawOverlays.add();
+                if (ovd == NULL)
+                    continue;
+
+                ovd->nPriority      = ov->priority()->get();
+                ovd->sArea          = rc;
+                ovd->wWidget        = ov;
+
+                // Realize overlay
+                ov->realize_widget(&ovd->sArea);
+            }
+
+            // Sort overlays according to the drawing order (stack overlays)
+            vDrawOverlays.qsort(overlay_compare_func);
+        }
+
+        ssize_t Window::overlay_compare_func(const overlay_t *a, const overlay_t *b)
+        {
+            return b->nPriority - a->nPriority;
         }
 
         void Window::discard_widget(Widget *w)
@@ -1304,6 +1608,11 @@ namespace lsp
         bool Window::has_parent() const
         {
             return (pWindow != NULL) ? pWindow->has_parent() : false;
+        }
+
+        ws::surface_type_t Window::surface_type() const
+        {
+            return enSurfaceType;
         }
 
     } /* namespace tk */

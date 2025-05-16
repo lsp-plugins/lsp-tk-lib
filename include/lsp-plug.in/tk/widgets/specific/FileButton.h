@@ -67,7 +67,6 @@ namespace lsp
                 prop::Padding           sTextPadding;       // Text padding
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Boolean           sGradient;          // Use gradient when drawing
-                prop::Boolean           sActive;            // Active state
                 prop::Integer           sBorderSize;        // Border size
                 prop::Integer           sBorderPressedSize; // Border size when pressed
             LSP_TK_STYLE_DEF_END
@@ -106,7 +105,6 @@ namespace lsp
                 prop::Padding           sTextPadding;       // Text padding
                 prop::SizeConstraints   sConstraints;       // Size constraints
                 prop::Boolean           sGradient;          // Use gradient when drawing
-                prop::Boolean           sActive;            // Active state
                 prop::Integer           sBorderSize;        // Border size
                 prop::Integer           sBorderPressedSize; // Border size when pressed
                 prop::WidgetPtr<Menu>   sPopup;             // Popup Menu
@@ -165,13 +163,12 @@ namespace lsp
                 LSP_TK_PROPERTY(Padding,                text_padding,               &sTextPadding);
                 LSP_TK_PROPERTY(SizeConstraints,        constraints,                &sConstraints);
                 LSP_TK_PROPERTY(Boolean,                gradient,                   &sGradient)
-                LSP_TK_PROPERTY(Boolean,                active,                     &sActive)
                 LSP_TK_PROPERTY(Integer,                border_size,                &sBorderSize)
                 LSP_TK_PROPERTY(Integer,                border_pressed_size,        &sBorderPressedSize)
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,        popup,                      &sPopup);
 
             public:
-                virtual void        draw(ws::ISurface *s) override;
+                virtual void        draw(ws::ISurface *s, bool force) override;
                 virtual status_t    on_mouse_down(const ws::event_t *e) override;
                 virtual status_t    on_mouse_up(const ws::event_t *e) override;
                 virtual status_t    on_mouse_move(const ws::event_t *e) override;

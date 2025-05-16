@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2017 г.
@@ -43,6 +43,7 @@ namespace lsp
                 prop::Integer           sBorderSize;
                 prop::Float             sBorderRadius;
                 prop::WindowActions     sActions;
+                prop::WindowState       sWindowState;
                 prop::Position          sPosition;
                 prop::Size              sWindowSize;
                 prop::SizeConstraints   sConstraints;
@@ -50,6 +51,8 @@ namespace lsp
                 prop::WindowPolicy      sPolicy;
             LSP_TK_STYLE_DEF_END
         }
+
+        class Overlay;
 
         class Window: public WidgetContainer
         {
@@ -77,6 +80,13 @@ namespace lsp
                     Slot                sSlot;
                 } shortcut_t;
 
+                typedef struct overlay_t
+                {
+                    ws::rectangle_t     sArea;              // Allocation area
+                    ssize_t             nPriority;          // Sorting order by priority
+                    Overlay            *wWidget;            // Widget
+                } overlay_t;
+
             public:
                 static const w_class_t    metadata;
 
@@ -87,6 +97,7 @@ namespace lsp
                 Widget                 *pFocused;           // Focused widget
                 bool                    bMapped;
                 bool                    bOverridePointer;
+                ws::surface_type_t      enSurfaceType;      // Surface type
                 float                   fScaling;           // Cached scaling factor
                 Shortcuts               sShortcuts;         // Shortcuts
                 ShortcutTracker         sShortcutTracker;   // Shortcut tracker
@@ -104,22 +115,37 @@ namespace lsp
                 prop::Integer           sBorderSize;
                 prop::Float             sBorderRadius;
                 prop::WindowActions     sActions;
+                prop::WindowState       sWindowState;
                 prop::Position          sPosition;
                 prop::Size              sWindowSize;
                 prop::SizeConstraints   sSizeConstraints;
                 prop::Layout            sLayout;
                 prop::WindowPolicy      sPolicy;
+                prop::WidgetList<Overlay>    vOverlays;
+
+                prop::CollectionListener    sIListener;         // Listener to trigger vOverlays content change
 
                 lltl::parray<prop::Shortcut>    vShortcuts;
+                lltl::darray<overlay_t>         vDrawOverlays;
 
             //---------------------------------------------------------------------------------
             // Slot handlers
             protected:
                 static status_t     tmr_redraw_request(ws::timestamp_t sched, ws::timestamp_t ts, void *args);
                 static status_t     slot_window_close(Widget *sender, void *ptr, void *data);
+                static status_t     slot_window_state(Widget *sender, void *ptr, void *data);
 
+                static void         on_add_item(void *obj, Property *prop, void *w);
+                static void         on_remove_item(void *obj, Property *prop, void *w);
+
+                static ssize_t      overlay_compare_func(const overlay_t *a, const overlay_t *b);
+
+            protected:
                 status_t            do_render();
                 void                do_destroy();
+                void                draw_widgets(ws::ISurface *s);
+                void                auto_close_overlays(const ws::event_t *ev);
+                Overlay            *find_overlay(ssize_t x, ssize_t y);
                 virtual status_t    sync_size(bool force);
                 status_t            update_pointer();
 
@@ -215,16 +241,19 @@ namespace lsp
                 LSP_TK_PROPERTY(BorderStyle,        border_style,       &sBorderStyle)
                 LSP_TK_PROPERTY(Integer,            border_size,        &sBorderSize)
                 LSP_TK_PROPERTY(WindowActions,      actions,            &sActions)
+                LSP_TK_PROPERTY(WindowState,        state,              &sWindowState)
                 LSP_TK_PROPERTY(Size,               size,               &sWindowSize)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sSizeConstraints)
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(WindowPolicy,       policy,             &sPolicy)
                 LSP_TK_PROPERTY(Widget,             child,              pChild)
                 LSP_TK_PROPERTY(Position,           position,           &sPosition)
+                LSP_TK_PROPERTY(WidgetList<Overlay>,overlays,           &vOverlays)
 
             //---------------------------------------------------------------------------------
             // Manipulation
             public:
+                virtual void            draw(ws::ISurface *s, bool force) override;
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
 
                 virtual status_t        override_pointer(bool override = true);
@@ -242,15 +271,15 @@ namespace lsp
                 virtual void            show(tk::Widget *actor);
                 virtual void            show(ws::IWindow *actor);
 
-                virtual status_t        add(Widget *widget) override;
-                virtual status_t        remove(Widget *widget) override;
-                virtual status_t        remove_all() override;
-
                 virtual status_t        handle_event(const ws::event_t *e) override;
 
                 virtual bool            take_focus() override;
 
                 virtual bool            has_parent() const;
+
+                virtual status_t        add(Widget *child) override;
+                virtual status_t        remove(Widget *child) override;
+                virtual status_t        remove_all() override;
 
             public:
                 status_t                grab_events(ws::grab_t grab);
@@ -258,6 +287,9 @@ namespace lsp
 
                 status_t                set_class(const char *instance, const char *wclass);
                 status_t                set_class(const LSPString *instance, const LSPString *wclass);
+
+                // Get last surface type used
+                ws::surface_type_t      surface_type() const;
 
             //---------------------------------------------------------------------------------
             // Event handling
@@ -271,6 +303,13 @@ namespace lsp
                  * @return status of operation
                  */
                 virtual status_t        on_close(const ws::event_t *e);
+
+                /** State change event
+                 *
+                 * @param e close event
+                 * @return status of operation
+                 */
+                virtual status_t        on_window_state(const ws::event_t *e);
 
                 /** Set window icon
                  *

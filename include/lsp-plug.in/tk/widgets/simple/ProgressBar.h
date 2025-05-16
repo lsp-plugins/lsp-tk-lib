@@ -61,7 +61,6 @@ namespace lsp
                 prop::String                    sText;              // Text to display
                 prop::TextLayout                sTextLayout;        // Text layout
                 prop::Boolean                   sShowText;          // Show text
-                prop::Boolean                   sActive;            // Activity flag
                 prop::Font                      sFont;              // Font of the text
                 prop::Integer                   sBorderSize;        // Size of the border
                 prop::Integer                   sBorderGapSize;     // Size of the border gap
@@ -91,7 +90,6 @@ namespace lsp
                 prop::String                    sText;              // Text to display
                 prop::TextLayout                sTextLayout;        // Text layout
                 prop::Boolean                   sShowText;          // Show text
-                prop::Boolean                   sActive;            // Activity flag
                 prop::Font                      sFont;              // Font of the text
                 prop::Integer                   sBorderSize;        // Size of the border
                 prop::Integer                   sBorderGapSize;     // Size of the border gap
@@ -135,14 +133,13 @@ namespace lsp
                 LSP_TK_PROPERTY(String,             text,                       &sText)
                 LSP_TK_PROPERTY(TextLayout,         text_layout,                &sTextLayout)
                 LSP_TK_PROPERTY(Boolean,            show_text,                  &sShowText)
-                LSP_TK_PROPERTY(Boolean,            active,                     &sActive)
                 LSP_TK_PROPERTY(Font,               font,                       &sFont)
                 LSP_TK_PROPERTY(Integer,            border_size,                &sBorderSize)
                 LSP_TK_PROPERTY(Integer,            border_gap_size,            &sBorderGapSize)
                 LSP_TK_PROPERTY(Integer,            border_radius,              &sBorderRadius)
 
             public:
-                virtual void                    draw(ws::ISurface *s) override;
+                virtual void                    draw(ws::ISurface *s, bool force) override;
         };
 
     } /* namespace tk */

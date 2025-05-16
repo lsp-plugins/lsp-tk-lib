@@ -107,10 +107,8 @@ namespace lsp
                             if (scut == NULL)
                                 continue;
 
-                            ws::event_t xev;
-                            if (ev != NULL)
-                                xev         = *ev;
-                            res    = scut->slot()->execute(widget, (ev != NULL) ? &xev : NULL);
+                            ws::event_t xev = *ev;
+                            res    = scut->slot()->execute(widget, &xev);
                             if (res != STATUS_OK)
                                 break;
                         }
