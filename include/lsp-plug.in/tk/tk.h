@@ -189,6 +189,7 @@
 
 // Specific widgets
 #include <lsp-plug.in/tk/widgets/specific/AudioChannel.h>
+#include <lsp-plug.in/tk/widgets/specific/AudioEnvelope.h>
 #include <lsp-plug.in/tk/widgets/specific/AudioSample.h>
 #include <lsp-plug.in/tk/widgets/specific/FileButton.h>
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
