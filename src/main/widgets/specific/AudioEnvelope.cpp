@@ -35,9 +35,9 @@ namespace lsp
                 sHoldTime.bind("hold.time", this);
                 sDecayTime.bind("decay.time", this);
                 sDecaySlope.bind("decay.slope", this);
+                sBreakTime.bind("break.time", this);
+                sBreakLevel.bind("break.level", this);
                 sSlopeTime.bind("slope.time", this);
-                sSlopeLevel.bind("slope.level", this);
-                sSlopeSlope.bind("slope.slope", this);
                 sSustainLevel.bind("sustain.level", this);
                 sReleaseTime.bind("release.time", this);
                 sReleaseSlope.bind("relese.slope", this);
@@ -65,9 +65,9 @@ namespace lsp
                 sHoldTime.set(0.2f);
                 sDecayTime.set(0.4f);
                 sDecaySlope.set(0.5f);
+                sBreakLevel.set(0.4f);
+                sBreakTime.set(0.5f);
                 sSlopeTime.set(0.5f);
-                sSlopeLevel.set(0.5f);
-                sSlopeSlope.set(0.5f);
                 sSustainLevel.set(0.5f);
                 sReleaseTime.set(0.8f);
                 sReleaseSlope.set(0.5f);
@@ -102,9 +102,9 @@ namespace lsp
             sHoldTime(&sProperties),
             sDecayTime(&sProperties),
             sDecaySlope(&sProperties),
+            sBreakTime(&sProperties),
+            sBreakLevel(&sProperties),
             sSlopeTime(&sProperties),
-            sSlopeLevel(&sProperties),
-            sSlopeSlope(&sProperties),
             sSustainLevel(&sProperties),
             sReleaseTime(&sProperties),
             sReleaseSlope(&sProperties),
@@ -144,9 +144,9 @@ namespace lsp
             sHoldTime.bind("hold.time", &sStyle);
             sDecayTime.bind("decay.time", &sStyle);
             sDecaySlope.bind("decay.slope", &sStyle);
+            sBreakTime.bind("break.time", &sStyle);
+            sBreakLevel.bind("break.level", &sStyle);
             sSlopeTime.bind("slope.time", &sStyle);
-            sSlopeLevel.bind("slope.level", &sStyle);
-            sSlopeSlope.bind("slope.slope", &sStyle);
             sSustainLevel.bind("sustain.level", &sStyle);
             sReleaseTime.bind("release.time", &sStyle);
             sReleaseSlope.bind("relese.slope", &sStyle);
@@ -178,8 +178,8 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (prop->one_of(sAttackTime, sAttackSlope, sHoldTime, sDecayTime, sDecaySlope, sSlopeTime, sSlopeLevel,
-                sSlopeSlope, sSustainLevel, sReleaseTime, sReleaseSlope, sHold, sSlope))
+            if (prop->one_of(sAttackTime, sAttackSlope, sHoldTime, sDecayTime, sDecaySlope,
+                sBreakTime, sBreakLevel, sSlopeTime, sSustainLevel, sReleaseTime, sReleaseSlope, sHold, sSlope))
                 query_draw();
 
             if (prop->one_of(sLineWidth, sLineColor, sFillColor, sPointSize, sPointColor, sBorderColor, sGlass, sGlassColor))

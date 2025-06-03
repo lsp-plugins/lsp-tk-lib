@@ -41,9 +41,9 @@ namespace lsp
                 prop::Float             sHoldTime;              // Normalized Hold time point [0..1]
                 prop::Float             sDecayTime;             // Normalized Decay time point [0..1]
                 prop::Float             sDecaySlope;            // Normalized Decay slope [0..1]
+                prop::Float             sBreakTime;             // Normalized Break time point [0..1]
+                prop::Float             sBreakLevel;            // Normalized Break level point [0..1]
                 prop::Float             sSlopeTime;             // Normalized Slope time point [0..1]
-                prop::Float             sSlopeLevel;            // Normalized Slope level point [0..1]
-                prop::Float             sSlopeSlope;            // Normalized Slope slope [0..1]
                 prop::Float             sSustainLevel;          // Normalized Sustain level [0..1]
                 prop::Float             sReleaseTime;           // Normalized Release time [0..1]
                 prop::Float             sReleaseSlope;          // Normalized Release slope [0..1]
@@ -85,9 +85,9 @@ namespace lsp
                 prop::Float             sHoldTime;              // Normalized Hold time point [0..1]
                 prop::Float             sDecayTime;             // Normalized Decay time point [0..1]
                 prop::Float             sDecaySlope;            // Normalized Decay slope [0..1]
+                prop::Float             sBreakTime;             // Normalized Break time point [0..1]
+                prop::Float             sBreakLevel;            // Normalized Break level point [0..1]
                 prop::Float             sSlopeTime;             // Normalized Slope time point [0..1]
-                prop::Float             sSlopeLevel;            // Normalized Slope level point [0..1]
-                prop::Float             sSlopeSlope;            // Normalized Slope slope [0..1]
                 prop::Float             sSustainLevel;          // Normalized Sustain level [0..1]
                 prop::Float             sReleaseTime;           // Normalized Release time [0..1]
                 prop::Float             sReleaseSlope;          // Normalized Release slope [0..1]
@@ -136,9 +136,9 @@ namespace lsp
                 LSP_TK_PROPERTY(Float,              hold_time,          &sHoldTime);
                 LSP_TK_PROPERTY(Float,              decay_time,         &sDecayTime);
                 LSP_TK_PROPERTY(Float,              decay_slope,        &sDecaySlope);
+                LSP_TK_PROPERTY(Float,              break_time,         &sBreakTime);
+                LSP_TK_PROPERTY(Float,              break_level,        &sBreakLevel);
                 LSP_TK_PROPERTY(Float,              slope_time,         &sSlopeTime);
-                LSP_TK_PROPERTY(Float,              slope_level,        &sSlopeLevel);
-                LSP_TK_PROPERTY(Float,              slope_slope,        &sSlopeSlope);
                 LSP_TK_PROPERTY(Float,              sustain_level,      &sSustainLevel);
                 LSP_TK_PROPERTY(Float,              release_time,       &sReleaseTime);
                 LSP_TK_PROPERTY(Float,              release_slope,      &sReleaseSlope);
