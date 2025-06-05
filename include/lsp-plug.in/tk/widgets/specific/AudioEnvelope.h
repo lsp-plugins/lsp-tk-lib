@@ -37,18 +37,19 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(AudioEnvelope, Widget)
                 prop::Float             sAttackTime;            // Normalized attack time [0..1]
-                prop::Float             sAttackSlope;           // Normalized attack slope [0..1]
+                prop::Float             sAttackCurvature;       // Normalized attack curvature [0..1]
                 prop::Float             sHoldTime;              // Normalized Hold time point [0..1]
                 prop::Float             sDecayTime;             // Normalized Decay time point [0..1]
-                prop::Float             sDecaySlope;            // Normalized Decay slope [0..1]
+                prop::Float             sDecayCurvature;        // Normalized Decay curvature [0..1]
                 prop::Float             sBreakTime;             // Normalized Break time point [0..1]
                 prop::Float             sBreakLevel;            // Normalized Break level point [0..1]
                 prop::Float             sSlopeTime;             // Normalized Slope time point [0..1]
+                prop::Float             sSlopeCurvature;        // Normalized Slope curvature [0..1]
                 prop::Float             sSustainLevel;          // Normalized Sustain level [0..1]
                 prop::Float             sReleaseTime;           // Normalized Release time [0..1]
-                prop::Float             sReleaseSlope;          // Normalized Release slope [0..1]
+                prop::Float             sReleaseCurvature;      // Normalized Release slope [0..1]
                 prop::Boolean           sHold;                  // Enable hold time point
-                prop::Boolean           sSlope;                 // Enable slope time point
+                prop::Boolean           sCurvature;             // Enable slope time point
 
                 prop::Integer           sLineWidth;             // Line width
                 prop::Color             sLineColor;             // Line color
@@ -80,19 +81,22 @@ namespace lsp
                 friend class AudioSample;
 
             protected:
+                ws::rectangle_t         sArea;                  // The area where the main contents is drawn
+
                 prop::Float             sAttackTime;            // Normalized attack time [0..1]
-                prop::Float             sAttackSlope;           // Normalized attack slope [0..1]
+                prop::Float             sAttackCurvature;           // Normalized attack slope [0..1]
                 prop::Float             sHoldTime;              // Normalized Hold time point [0..1]
                 prop::Float             sDecayTime;             // Normalized Decay time point [0..1]
-                prop::Float             sDecaySlope;            // Normalized Decay slope [0..1]
+                prop::Float             sDecayCurvature;            // Normalized Decay slope [0..1]
                 prop::Float             sBreakTime;             // Normalized Break time point [0..1]
                 prop::Float             sBreakLevel;            // Normalized Break level point [0..1]
                 prop::Float             sSlopeTime;             // Normalized Slope time point [0..1]
+                prop::Float             sSlopeCurvature;            // Normalized Slope slope point [0..1]
                 prop::Float             sSustainLevel;          // Normalized Sustain level [0..1]
                 prop::Float             sReleaseTime;           // Normalized Release time [0..1]
-                prop::Float             sReleaseSlope;          // Normalized Release slope [0..1]
+                prop::Float             sReleaseCurvature;          // Normalized Release slope [0..1]
                 prop::Boolean           sHold;                  // Enable hold time point
-                prop::Boolean           sSlope;                 // Enable slope time point
+                prop::Boolean           sBreak;                 // Enable slope time point
 
                 prop::Integer           sLineWidth;             // Line width
                 prop::Color             sLineColor;             // Line color
@@ -101,6 +105,7 @@ namespace lsp
                 prop::Color             sPointColor;            // Point color
 
                 prop::SizeConstraints   sConstraints;           // Size constraints
+                prop::Color             sColor;                 // Main color of the widget
                 prop::Integer           sBorder;                // Border size
                 prop::Integer           sBorderRadius;          // Border radius
                 prop::Boolean           sBorderFlat;            // Border is flat
@@ -109,14 +114,19 @@ namespace lsp
                 prop::Color             sGlassColor;            // Color of the glass
                 prop::Padding           sIPadding;              // Internal padding
 
+                ws::ISurface           *pGlass;                     // Surface to draw glass
+
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
-                void                    draw_curve(ws::ISurface *surface, const ws::rectangle_t *rect);
+                void                    do_destroy();
+                void                    drop_glass();
+                void                    draw_curve(ws::ISurface *surface, float bright, const ws::rectangle_t *rect);
 
             protected:
                 virtual void            size_request(ws::size_limit_t *r) override;
+                virtual void            realize(const ws::rectangle_t *r) override;
                 virtual void            property_changed(Property *prop) override;
 
             public:
@@ -129,21 +139,23 @@ namespace lsp
                 AudioEnvelope & operator = (AudioEnvelope &) = delete;
 
                 virtual status_t        init() override;
+                virtual void            destroy() override;
 
             public:
                 LSP_TK_PROPERTY(Float,              attack_time,        &sAttackTime);
-                LSP_TK_PROPERTY(Float,              attack_slope,       &sAttackSlope);
+                LSP_TK_PROPERTY(Float,              attack_curvature,   &sAttackCurvature);
                 LSP_TK_PROPERTY(Float,              hold_time,          &sHoldTime);
                 LSP_TK_PROPERTY(Float,              decay_time,         &sDecayTime);
-                LSP_TK_PROPERTY(Float,              decay_slope,        &sDecaySlope);
+                LSP_TK_PROPERTY(Float,              decay_curvature,    &sDecayCurvature);
                 LSP_TK_PROPERTY(Float,              break_time,         &sBreakTime);
                 LSP_TK_PROPERTY(Float,              break_level,        &sBreakLevel);
                 LSP_TK_PROPERTY(Float,              slope_time,         &sSlopeTime);
+                LSP_TK_PROPERTY(Float,              slope_curvature,    &sSlopeCurvature);
                 LSP_TK_PROPERTY(Float,              sustain_level,      &sSustainLevel);
                 LSP_TK_PROPERTY(Float,              release_time,       &sReleaseTime);
-                LSP_TK_PROPERTY(Float,              release_slope,      &sReleaseSlope);
+                LSP_TK_PROPERTY(Float,              release_curvature,  &sReleaseCurvature);
                 LSP_TK_PROPERTY(Boolean,            hold_enabled,       &sHold);
-                LSP_TK_PROPERTY(Boolean,            slope_enabled,      &sSlope);
+                LSP_TK_PROPERTY(Boolean,            break_enabled,      &sBreak);
 
                 LSP_TK_PROPERTY(Integer,            line_width,         &sLineWidth);
                 LSP_TK_PROPERTY(Color,              line_color,         &sLineColor);
@@ -152,6 +164,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              point_color,        &sPointColor);
 
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints);
+                LSP_TK_PROPERTY(Color,              color,              &sColor);
                 LSP_TK_PROPERTY(Integer,            border_size,        &sBorder);
                 LSP_TK_PROPERTY(Integer,            border_radius,      &sBorderRadius);
                 LSP_TK_PROPERTY(Boolean,            border_flat,        &sBorderFlat);
