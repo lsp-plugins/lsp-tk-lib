@@ -41,7 +41,6 @@ namespace lsp
                 prop::Float             sHoldTime;              // Normalized Hold time point [0..1]
                 prop::Float             sDecayTime;             // Normalized Decay time point [0..1]
                 prop::Float             sDecayCurvature;        // Normalized Decay curvature [0..1]
-                prop::Float             sBreakTime;             // Normalized Break time point [0..1]
                 prop::Float             sBreakLevel;            // Normalized Break level point [0..1]
                 prop::Float             sSlopeTime;             // Normalized Slope time point [0..1]
                 prop::Float             sSlopeCurvature;        // Normalized Slope curvature [0..1]
@@ -56,6 +55,7 @@ namespace lsp
                 prop::Color             sFillColor;             // Fill color
                 prop::Integer           sPointSize;             // Point size
                 prop::Color             sPointColor;            // Point color
+                prop::Color             sPointHoverColor;       // Point hover color
 
                 prop::SizeConstraints   sConstraints;           // Size constraints
                 prop::Integer           sBorder;                // Border size
@@ -80,21 +80,48 @@ namespace lsp
             private:
                 friend class AudioSample;
 
+                enum point_role_t
+                {
+                    PR_ATTACK,
+                    PR_HOLD,
+                    PR_DECAY_BREAK,
+                    PR_SLOPE_SUSTAIN,
+                    PR_RELEASE,
+
+                    PR_TOTAL
+                };
+
+                typedef struct point_t
+                {
+                    prop::Float            *pX;
+                    prop::Float            *pY;
+                    prop::Float            *pZ;
+                    ssize_t                 nX;
+                    ssize_t                 nY;
+                    size_t                  nSize;
+                    bool                    bVisible;
+                } point_t;
+
             protected:
                 ws::rectangle_t         sArea;                  // The area where the main contents is drawn
+                ws::rectangle_t         sDrawArea;              // The actual draw area used
+                point_t                 vPoints[PR_TOTAL];      // Edit points
+                point_t                *pHandler;               // Current event handler
+                size_t                  nBMask;                 // Mouse button mask
+                ssize_t                 nLastX;                 // Last position X
+                ssize_t                 nLastY;                 // Last position Y
 
                 prop::Float             sAttackTime;            // Normalized attack time [0..1]
-                prop::Float             sAttackCurvature;           // Normalized attack slope [0..1]
+                prop::Float             sAttackCurvature;       // Normalized attack slope [0..1]
                 prop::Float             sHoldTime;              // Normalized Hold time point [0..1]
                 prop::Float             sDecayTime;             // Normalized Decay time point [0..1]
-                prop::Float             sDecayCurvature;            // Normalized Decay slope [0..1]
-                prop::Float             sBreakTime;             // Normalized Break time point [0..1]
+                prop::Float             sDecayCurvature;        // Normalized Decay slope [0..1]
                 prop::Float             sBreakLevel;            // Normalized Break level point [0..1]
                 prop::Float             sSlopeTime;             // Normalized Slope time point [0..1]
-                prop::Float             sSlopeCurvature;            // Normalized Slope slope point [0..1]
+                prop::Float             sSlopeCurvature;        // Normalized Slope slope point [0..1]
                 prop::Float             sSustainLevel;          // Normalized Sustain level [0..1]
                 prop::Float             sReleaseTime;           // Normalized Release time [0..1]
-                prop::Float             sReleaseCurvature;          // Normalized Release slope [0..1]
+                prop::Float             sReleaseCurvature;      // Normalized Release slope [0..1]
                 prop::Boolean           sHold;                  // Enable hold time point
                 prop::Boolean           sBreak;                 // Enable slope time point
 
@@ -103,6 +130,7 @@ namespace lsp
                 prop::Color             sFillColor;             // Fill color
                 prop::Integer           sPointSize;             // Point size
                 prop::Color             sPointColor;            // Point color
+                prop::Color             sPointHoverColor;       // Point hover color
 
                 prop::SizeConstraints   sConstraints;           // Size constraints
                 prop::Color             sColor;                 // Main color of the widget
@@ -114,7 +142,7 @@ namespace lsp
                 prop::Color             sGlassColor;            // Color of the glass
                 prop::Padding           sIPadding;              // Internal padding
 
-                ws::ISurface           *pGlass;                     // Surface to draw glass
+                ws::ISurface           *pGlass;                 // Surface to draw glass
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -122,7 +150,9 @@ namespace lsp
             protected:
                 void                    do_destroy();
                 void                    drop_glass();
-                void                    draw_curve(ws::ISurface *surface, float bright, const ws::rectangle_t *rect);
+                void                    draw_curve(ws::ISurface *surface, float bright, float scaling, const ws::rectangle_t *rect);
+                void                    sync_handler(const ws::event_t *e);
+                point_t                *find_point(ssize_t x, ssize_t y);
 
             protected:
                 virtual void            size_request(ws::size_limit_t *r) override;
@@ -147,7 +177,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Float,              hold_time,          &sHoldTime);
                 LSP_TK_PROPERTY(Float,              decay_time,         &sDecayTime);
                 LSP_TK_PROPERTY(Float,              decay_curvature,    &sDecayCurvature);
-                LSP_TK_PROPERTY(Float,              break_time,         &sBreakTime);
                 LSP_TK_PROPERTY(Float,              break_level,        &sBreakLevel);
                 LSP_TK_PROPERTY(Float,              slope_time,         &sSlopeTime);
                 LSP_TK_PROPERTY(Float,              slope_curvature,    &sSlopeCurvature);
@@ -162,6 +191,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              fill_color,         &sFillColor);
                 LSP_TK_PROPERTY(Integer,            point_size,         &sPointSize);
                 LSP_TK_PROPERTY(Color,              point_color,        &sPointColor);
+                LSP_TK_PROPERTY(Color,              point_hover,        &sPointHoverColor);
 
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints);
                 LSP_TK_PROPERTY(Color,              color,              &sColor);
@@ -173,9 +203,15 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              glass_color,        &sGlassColor);
                 LSP_TK_PROPERTY(Padding,            ipadding,           &sIPadding);
 
-            public:
+            public: // ui::IWidget
                 virtual void            draw(ws::ISurface *s, bool force) override;
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
+                virtual status_t        on_mouse_in(const ws::event_t *e) override;
+                virtual status_t        on_mouse_out(const ws::event_t *e) override;
+                virtual status_t        on_mouse_down(const ws::event_t *e) override;
+                virtual status_t        on_mouse_up(const ws::event_t *e) override;
+                virtual status_t        on_mouse_move(const ws::event_t *e) override;
+                virtual status_t        on_mouse_scroll(const ws::event_t *e) override;
 
             public:
                 virtual status_t        on_submit();

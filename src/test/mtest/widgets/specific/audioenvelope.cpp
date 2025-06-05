@@ -327,6 +327,7 @@ MTEST_BEGIN("tk.widgets.specific", audioenvelope)
             ae->border_flat()->set(i & 1);
             ae->border_radius()->set((i & 2) ? 0 : 12);
             ae->constraints()->set_min(160, 100);
+            ae->ipadding()->set(ae->point_size()->get());
         }
 
         // Show window
