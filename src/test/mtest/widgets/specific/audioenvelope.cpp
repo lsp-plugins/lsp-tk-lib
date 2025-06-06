@@ -263,6 +263,89 @@ MTEST_BEGIN("tk.widgets.specific", audioenvelope)
         }
     }
 
+    static float make_line(float x, float x0, float y0, float x1, float y1, float curvature)
+    {
+        const float cx  = 0.5f * (x1 + x0);
+        const float cy  = y0 + curvature * (y1 - y0);
+
+        if (x <= cx)
+        {
+            const float k   = (cy - y0) / (cx - x0);
+            return y0 + k * (x - x0);
+        }
+
+        const float k   = (y1 - cy) / (x1 - cx);
+        return cy + k * (x - cx);
+    }
+
+    static void curve_function(float *vy, const float *vx, size_t count, const tk::AudioEnvelope *w, void *data)
+    {
+        for (size_t i=0; i<count; ++i)
+        {
+            const float x = vx[i];
+            if (x <= 0.0f)
+            {
+                vy[i]   = 0.0f;
+                continue;
+            }
+
+            const float attack = w->attack_time()->get();
+            if (x <= attack)
+            {
+                vy[i]   = make_line(x, 0.0f, 0.0f, attack, 1.0f, w->attack_curvature()->get());
+                continue;
+            }
+
+            const float hold = (w->hold_enabled()->get()) ? w->hold_time()->get() : attack;
+            if (x <= hold)
+            {
+                vy[i]   = 1.0f;
+                continue;
+            }
+
+            const float decay = w->decay_time()->get();
+            const float sustain_lvl = w->sustain_level()->get();
+            if (w->break_enabled()->get())
+            {
+                const float break_lvl = w->break_level()->get();
+                const float slope = w->slope_time()->get();
+                if (x <= decay)
+                {
+                    vy[i]   = make_line(x, hold, 1.0f, decay, break_lvl, w->decay_curvature()->get());
+                    continue;
+                }
+                if (x <= slope)
+                {
+                    vy[i]   = make_line(x, decay, break_lvl, slope, sustain_lvl, w->slope_curvature()->get());
+                    continue;
+                }
+            }
+            else
+            {
+                if (x <= decay)
+                {
+                    vy[i]   = make_line(x, hold, 1.0f, decay, sustain_lvl, w->decay_curvature()->get());
+                    continue;
+                }
+            }
+
+            const float release = w->release_time()->get();
+            if (x <= release)
+            {
+                vy[i]   = sustain_lvl;
+                continue;
+            }
+
+            if (x <= 1.0f)
+            {
+                vy[i]   = make_line(x, release, sustain_lvl, 1.0f, 0.0f, w->release_curvature()->get());
+                continue;
+            }
+            else
+                vy[i]   = 0.0f;
+        }
+    }
+
     MTEST_MAIN
     {
         lltl::parray<handler_t> vh;
@@ -328,6 +411,8 @@ MTEST_BEGIN("tk.widgets.specific", audioenvelope)
             ae->border_radius()->set((i & 2) ? 0 : 12);
             ae->constraints()->set_min(160, 100);
             ae->ipadding()->set(ae->point_size()->get());
+            ae->quad_point()->set(i >= 2);
+            ae->set_curve_function(curve_function, this);
         }
 
         // Show window

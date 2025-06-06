@@ -38,17 +38,23 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(AudioEnvelope, Widget)
                 prop::Float             sAttackTime;            // Normalized attack time [0..1]
                 prop::Float             sAttackCurvature;       // Normalized attack curvature [0..1]
+                prop::StepFloat         sAttackStep;            // Attack curvature step
                 prop::Float             sHoldTime;              // Normalized Hold time point [0..1]
                 prop::Float             sDecayTime;             // Normalized Decay time point [0..1]
                 prop::Float             sDecayCurvature;        // Normalized Decay curvature [0..1]
+                prop::StepFloat         sDecayStep;             // Decay curvature step
                 prop::Float             sBreakLevel;            // Normalized Break level point [0..1]
                 prop::Float             sSlopeTime;             // Normalized Slope time point [0..1]
                 prop::Float             sSlopeCurvature;        // Normalized Slope curvature [0..1]
+                prop::StepFloat         sSlopeStep;             // Slope curvature step
                 prop::Float             sSustainLevel;          // Normalized Sustain level [0..1]
                 prop::Float             sReleaseTime;           // Normalized Release time [0..1]
                 prop::Float             sReleaseCurvature;      // Normalized Release slope [0..1]
+                prop::StepFloat         sReleaseStep;           // Release slope step
                 prop::Boolean           sHold;                  // Enable hold time point
-                prop::Boolean           sCurvature;             // Enable slope time point
+                prop::Boolean           sBreak;                 // Enable slope time point
+                prop::Boolean           sQuadPoint;             // Use quad point instead of circle
+                prop::Boolean           sInvertMouseVScroll;    // Invert mouse vertical scroll
 
                 prop::Integer           sLineWidth;             // Line width
                 prop::Color             sLineColor;             // Line color
@@ -77,6 +83,9 @@ namespace lsp
             public:
                 static const w_class_t    metadata;
 
+            public:
+                typedef void (*curve_function_t)(float *y, const float *x, size_t count, const AudioEnvelope *sender, void *data);
+
             private:
                 friend class AudioSample;
 
@@ -96,9 +105,9 @@ namespace lsp
                     prop::Float            *pX;
                     prop::Float            *pY;
                     prop::Float            *pZ;
+                    prop::StepFloat        *pStep;
                     ssize_t                 nX;
                     ssize_t                 nY;
-                    size_t                  nSize;
                     bool                    bVisible;
                 } point_t;
 
@@ -110,20 +119,28 @@ namespace lsp
                 size_t                  nBMask;                 // Mouse button mask
                 ssize_t                 nLastX;                 // Last position X
                 ssize_t                 nLastY;                 // Last position Y
+                size_t                  nPointSize;             // Size of point
+                bool                    bQuadPoint;             // Quadratic point
 
                 prop::Float             sAttackTime;            // Normalized attack time [0..1]
                 prop::Float             sAttackCurvature;       // Normalized attack slope [0..1]
+                prop::StepFloat         sAttackStep;            // Attack curvature step
                 prop::Float             sHoldTime;              // Normalized Hold time point [0..1]
                 prop::Float             sDecayTime;             // Normalized Decay time point [0..1]
                 prop::Float             sDecayCurvature;        // Normalized Decay slope [0..1]
+                prop::StepFloat         sDecayStep;             // Decay curvature step
                 prop::Float             sBreakLevel;            // Normalized Break level point [0..1]
                 prop::Float             sSlopeTime;             // Normalized Slope time point [0..1]
                 prop::Float             sSlopeCurvature;        // Normalized Slope slope point [0..1]
+                prop::StepFloat         sSlopeStep;             // Slope curvature step
                 prop::Float             sSustainLevel;          // Normalized Sustain level [0..1]
                 prop::Float             sReleaseTime;           // Normalized Release time [0..1]
                 prop::Float             sReleaseCurvature;      // Normalized Release slope [0..1]
+                prop::StepFloat         sReleaseStep;           // Release slope step
                 prop::Boolean           sHold;                  // Enable hold time point
                 prop::Boolean           sBreak;                 // Enable slope time point
+                prop::Boolean           sQuadPoint;             // Use quad point instead of circle
+                prop::Boolean           sInvertMouseVScroll;    // Invert mouse vertical scroll
 
                 prop::Integer           sLineWidth;             // Line width
                 prop::Color             sLineColor;             // Line color
@@ -144,6 +161,11 @@ namespace lsp
 
                 ws::ISurface           *pGlass;                 // Surface to draw glass
 
+                curve_function_t        pFunction;              // Curve function
+                void                   *pFuncData;              // Curve function supplementary data
+                float                  *vBuffer;                // Drawing buffer
+                size_t                  nBufCapacity;           // Drawing buffer capacity in floats
+
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
@@ -151,8 +173,10 @@ namespace lsp
                 void                    do_destroy();
                 void                    drop_glass();
                 void                    draw_curve(ws::ISurface *surface, float bright, float scaling, const ws::rectangle_t *rect);
+                void                    draw_point(ws::ISurface *s, const lsp::Color & color, const point_t *p);
                 void                    sync_handler(const ws::event_t *e);
                 point_t                *find_point(ssize_t x, ssize_t y);
+                float                  *reserve_buffer(size_t count);
 
             protected:
                 virtual void            size_request(ws::size_limit_t *r) override;
@@ -172,36 +196,45 @@ namespace lsp
                 virtual void            destroy() override;
 
             public:
-                LSP_TK_PROPERTY(Float,              attack_time,        &sAttackTime);
-                LSP_TK_PROPERTY(Float,              attack_curvature,   &sAttackCurvature);
-                LSP_TK_PROPERTY(Float,              hold_time,          &sHoldTime);
-                LSP_TK_PROPERTY(Float,              decay_time,         &sDecayTime);
-                LSP_TK_PROPERTY(Float,              decay_curvature,    &sDecayCurvature);
-                LSP_TK_PROPERTY(Float,              break_level,        &sBreakLevel);
-                LSP_TK_PROPERTY(Float,              slope_time,         &sSlopeTime);
-                LSP_TK_PROPERTY(Float,              slope_curvature,    &sSlopeCurvature);
-                LSP_TK_PROPERTY(Float,              sustain_level,      &sSustainLevel);
-                LSP_TK_PROPERTY(Float,              release_time,       &sReleaseTime);
-                LSP_TK_PROPERTY(Float,              release_curvature,  &sReleaseCurvature);
-                LSP_TK_PROPERTY(Boolean,            hold_enabled,       &sHold);
-                LSP_TK_PROPERTY(Boolean,            break_enabled,      &sBreak);
+                LSP_TK_PROPERTY(Float,              attack_time,            &sAttackTime);
+                LSP_TK_PROPERTY(Float,              attack_curvature,       &sAttackCurvature);
+                LSP_TK_PROPERTY(StepFloat,          attack_step,            &sAttackStep);
+                LSP_TK_PROPERTY(Float,              hold_time,              &sHoldTime);
+                LSP_TK_PROPERTY(Float,              decay_time,             &sDecayTime);
+                LSP_TK_PROPERTY(Float,              decay_curvature,        &sDecayCurvature);
+                LSP_TK_PROPERTY(StepFloat,          decay_step,             &sDecayStep);
+                LSP_TK_PROPERTY(Float,              break_level,            &sBreakLevel);
+                LSP_TK_PROPERTY(Float,              slope_time,             &sSlopeTime);
+                LSP_TK_PROPERTY(Float,              slope_curvature,        &sSlopeCurvature);
+                LSP_TK_PROPERTY(StepFloat,          slope_step,             &sSlopeStep);
+                LSP_TK_PROPERTY(Float,              sustain_level,          &sSustainLevel);
+                LSP_TK_PROPERTY(Float,              release_time,           &sReleaseTime);
+                LSP_TK_PROPERTY(Float,              release_curvature,      &sReleaseCurvature);
+                LSP_TK_PROPERTY(StepFloat,          release_step,           &sReleaseStep);
+                LSP_TK_PROPERTY(Boolean,            hold_enabled,           &sHold);
+                LSP_TK_PROPERTY(Boolean,            break_enabled,          &sBreak);
+                LSP_TK_PROPERTY(Boolean,            quad_point,             &sQuadPoint);
+                LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,   &sInvertMouseVScroll)
 
-                LSP_TK_PROPERTY(Integer,            line_width,         &sLineWidth);
-                LSP_TK_PROPERTY(Color,              line_color,         &sLineColor);
-                LSP_TK_PROPERTY(Color,              fill_color,         &sFillColor);
-                LSP_TK_PROPERTY(Integer,            point_size,         &sPointSize);
-                LSP_TK_PROPERTY(Color,              point_color,        &sPointColor);
-                LSP_TK_PROPERTY(Color,              point_hover,        &sPointHoverColor);
+                LSP_TK_PROPERTY(Integer,            line_width,             &sLineWidth);
+                LSP_TK_PROPERTY(Color,              line_color,             &sLineColor);
+                LSP_TK_PROPERTY(Color,              fill_color,             &sFillColor);
+                LSP_TK_PROPERTY(Integer,            point_size,             &sPointSize);
+                LSP_TK_PROPERTY(Color,              point_color,            &sPointColor);
+                LSP_TK_PROPERTY(Color,              point_hover,            &sPointHoverColor);
 
-                LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints);
-                LSP_TK_PROPERTY(Color,              color,              &sColor);
-                LSP_TK_PROPERTY(Integer,            border_size,        &sBorder);
-                LSP_TK_PROPERTY(Integer,            border_radius,      &sBorderRadius);
-                LSP_TK_PROPERTY(Boolean,            border_flat,        &sBorderFlat);
-                LSP_TK_PROPERTY(Color,              border_color,       &sBorderColor);
-                LSP_TK_PROPERTY(Boolean,            glass,              &sGlass);
-                LSP_TK_PROPERTY(Color,              glass_color,        &sGlassColor);
-                LSP_TK_PROPERTY(Padding,            ipadding,           &sIPadding);
+                LSP_TK_PROPERTY(SizeConstraints,    constraints,            &sConstraints);
+                LSP_TK_PROPERTY(Color,              color,                  &sColor);
+                LSP_TK_PROPERTY(Integer,            border_size,            &sBorder);
+                LSP_TK_PROPERTY(Integer,            border_radius,          &sBorderRadius);
+                LSP_TK_PROPERTY(Boolean,            border_flat,            &sBorderFlat);
+                LSP_TK_PROPERTY(Color,              border_color,           &sBorderColor);
+                LSP_TK_PROPERTY(Boolean,            glass,                  &sGlass);
+                LSP_TK_PROPERTY(Color,              glass_color,            &sGlassColor);
+                LSP_TK_PROPERTY(Padding,            ipadding,               &sIPadding);
+
+            public:
+                void set_curve_function(curve_function_t function, void *data = NULL);
 
             public: // ui::IWidget
                 virtual void            draw(ws::ISurface *s, bool force) override;

@@ -23,6 +23,7 @@
 #include <lsp-plug.in/tk/helpers/draw.h>
 #include <lsp-plug.in/common/alloc.h>
 #include <lsp-plug.in/common/debug.h>
+#include <lsp-plug.in/dsp/dsp.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -34,17 +35,22 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(AudioEnvelope, Widget)
                 sAttackTime.bind("attack.time", this);
                 sAttackCurvature.bind("attack.curvature", this);
+                sAttackStep.bind("attack.step", this);
                 sHoldTime.bind("hold.time", this);
                 sDecayTime.bind("decay.time", this);
                 sDecayCurvature.bind("decay.curvature", this);
+                sDecayStep.bind("decay.step", this);
                 sBreakLevel.bind("break.level", this);
                 sSlopeTime.bind("slope.time", this);
                 sSlopeCurvature.bind("slope.curvature", this);
+                sSlopeStep.bind("slope.step", this);
                 sSustainLevel.bind("sustain.level", this);
                 sReleaseTime.bind("release.time", this);
                 sReleaseCurvature.bind("relese.curvature", this);
+                sReleaseStep.bind("release.step", this);
                 sHold.bind("hold.enabled", this);
-                sCurvature.bind("break.enabled", this);
+                sBreak.bind("break.enabled", this);
+                sQuadPoint.bind("point.quadratic", this);
 
                 sLineWidth.bind("line.width", this);
                 sLineColor.bind("line.color", this);
@@ -65,17 +71,22 @@ namespace lsp
                 // Configure
                 sAttackTime.set(0.1f);
                 sAttackCurvature.set(0.5f);
+                sAttackStep.set(0.01f);
                 sHoldTime.set(0.2f);
                 sDecayTime.set(0.4f);
                 sDecayCurvature.set(0.5f);
+                sDecayStep.set(0.01f);
                 sBreakLevel.set(0.4f);
                 sSlopeTime.set(0.7f);
                 sSlopeCurvature.set(0.5f);
+                sSlopeStep.set(0.01f);
                 sSustainLevel.set(0.5f);
                 sReleaseTime.set(0.8f);
                 sReleaseCurvature.set(0.5f);
+                sReleaseStep.set(0.01f);
                 sHold.set(false);
-                sCurvature.set(false);
+                sBreak.set(false);
+                sQuadPoint.set(false);
 
                 sLineWidth.set(1);
                 sLineColor.set_rgb24(0xffff00);
@@ -102,17 +113,22 @@ namespace lsp
             Widget(dpy),
             sAttackTime(&sProperties),
             sAttackCurvature(&sProperties),
+            sAttackStep(&sProperties),
             sHoldTime(&sProperties),
             sDecayTime(&sProperties),
             sDecayCurvature(&sProperties),
+            sDecayStep(&sProperties),
             sBreakLevel(&sProperties),
             sSlopeTime(&sProperties),
             sSlopeCurvature(&sProperties),
+            sSlopeStep(&sProperties),
             sSustainLevel(&sProperties),
             sReleaseTime(&sProperties),
             sReleaseCurvature(&sProperties),
+            sReleaseStep(&sProperties),
             sHold(&sProperties),
             sBreak(&sProperties),
+            sQuadPoint(&sProperties),
             sLineWidth(&sProperties),
             sLineColor(&sProperties),
             sFillColor(&sProperties),
@@ -147,6 +163,7 @@ namespace lsp
                 p->pX               = NULL;
                 p->pY               = NULL;
                 p->pZ               = NULL;
+                p->pStep            = NULL;
                 p->nX               = 0;
                 p->nY               = 0;
                 p->bVisible         = true;
@@ -154,20 +171,32 @@ namespace lsp
 
             vPoints[PR_ATTACK].pX           = &sAttackTime;
             vPoints[PR_ATTACK].pZ           = &sAttackCurvature;
+            vPoints[PR_ATTACK].pStep        = &sAttackStep;
             vPoints[PR_HOLD].pX             = &sHoldTime;
+            vPoints[PR_HOLD].pZ             = &sDecayCurvature;
+            vPoints[PR_HOLD].pStep          = &sDecayStep;
             vPoints[PR_DECAY_BREAK].pX      = &sDecayTime;
             vPoints[PR_DECAY_BREAK].pZ      = &sDecayCurvature;
+            vPoints[PR_DECAY_BREAK].pStep   = &sDecayStep;
             vPoints[PR_SLOPE_SUSTAIN].pX    = &sSlopeTime;
             vPoints[PR_SLOPE_SUSTAIN].pZ    = &sSlopeCurvature;
+            vPoints[PR_SLOPE_SUSTAIN].pStep = &sSlopeStep;
             vPoints[PR_RELEASE].pX          = &sReleaseTime;
             vPoints[PR_RELEASE].pZ          = &sReleaseCurvature;
+            vPoints[PR_RELEASE].pStep       = &sReleaseStep;
 
             pHandler            = NULL;
             nBMask              = 0;
             nLastX              = 0;
             nLastY              = 0;
+            nPointSize          = 0;
+            bQuadPoint          = false;
 
             pGlass              = NULL;
+            pFunction           = NULL;
+            pFuncData           = NULL;
+            vBuffer             = NULL;
+            nBufCapacity        = 0;
         }
 
         AudioEnvelope::~AudioEnvelope()
@@ -186,6 +215,11 @@ namespace lsp
         void AudioEnvelope::do_destroy()
         {
             drop_glass();
+            if (vBuffer != NULL)
+            {
+                free(vBuffer);
+                vBuffer     = NULL;
+            }
         }
 
         void AudioEnvelope::drop_glass()
@@ -207,17 +241,22 @@ namespace lsp
             // Bind properties
             sAttackTime.bind("attack.time", &sStyle);
             sAttackCurvature.bind("attack.curvature", &sStyle);
+            sAttackStep.bind("attack.step", &sStyle);
             sHoldTime.bind("hold.time", &sStyle);
             sDecayTime.bind("decay.time", &sStyle);
             sDecayCurvature.bind("decay.curvature", &sStyle);
+            sDecayStep.bind("decay.step", &sStyle);
             sBreakLevel.bind("break.level", &sStyle);
             sSlopeTime.bind("slope.time", &sStyle);
             sSlopeCurvature.bind("slope.curvature", &sStyle);
+            sSlopeStep.bind("slope.step", &sStyle);
             sSustainLevel.bind("sustain.level", &sStyle);
             sReleaseTime.bind("release.time", &sStyle);
             sReleaseCurvature.bind("relese.curvature", &sStyle);
+            sReleaseStep.bind("release.step", &sStyle);
             sHold.bind("hold.enabled", &sStyle);
-            sBreak.bind("Curvature.enabled", &sStyle);
+            sBreak.bind("break.enabled", &sStyle);
+            sQuadPoint.bind("point.quadratic", &sStyle);
 
             sLineWidth.bind("line.width", &sStyle);
             sLineColor.bind("line.color", &sStyle);
@@ -260,7 +299,9 @@ namespace lsp
                 if (sBreak.get())
                 {
                     vPoints[PR_DECAY_BREAK].pY          = &sBreakLevel;
+                    vPoints[PR_DECAY_BREAK].pStep       = &sDecayStep;
                     vPoints[PR_SLOPE_SUSTAIN].pY        = &sSustainLevel;
+                    vPoints[PR_SLOPE_SUSTAIN].pStep     = &sSlopeStep;
                     vPoints[PR_RELEASE].pY              = &sSustainLevel;
                     vPoints[PR_SLOPE_SUSTAIN].bVisible  = true;
                 }
@@ -268,11 +309,15 @@ namespace lsp
                 {
                     vPoints[PR_DECAY_BREAK].pY          = &sSustainLevel;
                     vPoints[PR_SLOPE_SUSTAIN].pY        = NULL;
+                    vPoints[PR_SLOPE_SUSTAIN].pStep     = &sDecayStep;
                     vPoints[PR_RELEASE].pY              = &sSustainLevel;
                     vPoints[PR_SLOPE_SUSTAIN].bVisible  = false;
                 }
                 query_draw();
             }
+
+            if (prop->is(sQuadPoint))
+                query_draw();
 
             if (prop->one_of(sLineWidth, sLineColor, sFillColor, sPointSize, sPointColor, sPointHoverColor,
                 sBorderColor, sGlass, sGlassColor))
@@ -316,21 +361,34 @@ namespace lsp
 
         AudioEnvelope::point_t *AudioEnvelope::find_point(ssize_t x, ssize_t y)
         {
-            lsp_trace("x=%d, y=%d", int(x), int(y));
-
-            for (size_t i=0; i<PR_TOTAL; ++i)
+            const ssize_t r     = nPointSize;
+            if (bQuadPoint)
             {
-                point_t *p          = &vPoints[i];
-                if (!p->bVisible)
-                    continue;
-
-                const ssize_t dx    = x - p->nX;
-                const ssize_t dy    = y - p->nY;
-                const ssize_t r     = p->nSize;
-                if ((dx*dx + dy*dy) <= r*r)
+                for (size_t i=0; i<PR_TOTAL; ++i)
                 {
-                    lsp_trace("dx=%d, dy=%d, r=%d", int(dx), int(dy), int(r));
-                    return p;
+                    point_t *p          = &vPoints[i];
+                    if (!p->bVisible)
+                        continue;
+
+                    const ssize_t dx    = x - p->nX;
+                    const ssize_t dy    = y - p->nY;
+                    if ((dx >= -r) && (dx <= r) &&
+                        (dy >= -r) && (dy <= r))
+                        return p;
+                }
+            }
+            else
+            {
+                for (size_t i=0; i<PR_TOTAL; ++i)
+                {
+                    point_t *p          = &vPoints[i];
+                    if (!p->bVisible)
+                        continue;
+
+                    const ssize_t dx    = x - p->nX;
+                    const ssize_t dy    = y - p->nY;
+                    if ((dx*dx + dy*dy) <= r*r)
+                        return p;
                 }
             }
 
@@ -355,22 +413,112 @@ namespace lsp
             sArea.nHeight   = r->nHeight - padding*2;
         }
 
+        float *AudioEnvelope::reserve_buffer(size_t count)
+        {
+            if ((vBuffer == NULL) || (nBufCapacity < count))
+            {
+                const size_t capacity = align_size(count, 32);
+                float *buf      = static_cast<float *>(realloc(vBuffer, capacity * sizeof(float) * 2));
+                if (buf == NULL)
+                    return NULL;
+
+                vBuffer     = buf;
+            }
+
+            return vBuffer;
+        }
+
+        void AudioEnvelope::draw_point(ws::ISurface *s, const lsp::Color & color, const point_t *p)
+        {
+            if (bQuadPoint)
+            {
+                const float p_size = nPointSize * 2;
+                s->fill_rect(color,
+                    SURFMASK_NO_CORNER, 0.0f,
+                    p->nX - nPointSize, p->nY - nPointSize,
+                    p_size, p_size);
+                return;
+            }
+
+            s->fill_circle(color, p->nX, p->nY, nPointSize);
+        }
+
         void AudioEnvelope::draw_curve(ws::ISurface *surface, float bright, float scaling, const ws::rectangle_t *rect)
         {
-            const size_t p_size     = lsp_max(1.0f, sPointSize.get() * scaling);
-
             sDrawArea       = *rect;
+
             const float ox  = rect->nLeft;
             const float oy  = rect->nTop + rect->nHeight;
             const float dx  = rect->nWidth - 1.0f;      // Inteval 0..1 includes 1
             const float dy  = 1.0f - rect->nHeight;     // Inteval 0..1 includes 1
 
-            lsp::Color pcolor(sPointColor);
-            lsp::Color ph_color(sPointHoverColor);
-            pcolor.scale_lch_luminance(bright);
-            ph_color.scale_hsl_lightness(bright);
+            // Generate curve
+            float *x        = NULL;
+            float *y        = NULL;
+            size_t points   = 0;
+            if (pFunction != NULL)
+            {
+                points          = rect->nWidth;
+                float *buf      = reserve_buffer(points);
+                if (buf == NULL)
+                    return;
 
-            // Release and draw points
+                x               = &buf[0];
+                y               = &buf[points];
+
+                dsp::lramp_set1(x, 0.0f, 1.0f, points - 1);
+                x[points-1]     = 1.0f;
+
+                pFunction(y, x, points, this, pFuncData);
+            }
+            else
+            {
+                float *buf      = reserve_buffer(PR_TOTAL + 2);
+                if (buf == NULL)
+                    return;
+
+                x               = &buf[0];
+                y               = &buf[PR_TOTAL + 2];
+
+                x[points]       = 0.0f;
+                y[points]       = 0.0f;
+                ++points;
+
+                for (size_t i=0; i<PR_TOTAL; ++i)
+                {
+                    point_t *p      = &vPoints[i];
+                    if (!p->bVisible)
+                        continue;
+
+                    x[points]       = (p->pX != NULL) ? p->pX->get() : 0.0f;
+                    y[points]       = (p->pY != NULL) ? p->pY->get() : 1.0f;
+                    ++points;
+                }
+
+                x[points]       = 1.0f;
+                y[points]       = 0.0f;
+                ++points;
+            }
+
+            // Draw curve
+            if ((x != NULL) && (y != NULL) && (points > 0))
+            {
+                const float l_width     = lsp_max(1.0f, sLineWidth.get() * scaling);
+
+                lsp::Color fill(sFillColor);
+                lsp::Color wire(sLineColor);
+                fill.scale_lch_luminance(bright);
+                wire.scale_hsl_lightness(bright);
+
+                dsp::mul_k2(x, dx, points);
+                dsp::add_k2(x, ox, points);
+                dsp::mul_k2(y, dy, points);
+                dsp::add_k2(y, oy, points);
+
+                surface->draw_poly(fill, wire, l_width, x, y, points);
+            }
+
+            // Realize points
             for (size_t i=0; i<PR_TOTAL; ++i)
             {
                 point_t *p      = &vPoints[i];
@@ -379,20 +527,24 @@ namespace lsp
 
                 p->nX           = ox + dx * x;
                 p->nY           = oy + dy * y;
-                p->nSize        = p_size;
 
                 lsp_trace("this=%p point[%d] = {%d, %d}", this, int(i), int(p->nX), int(p->nY));
             }
 
             // Draw points
+            lsp::Color pcolor(sPointColor);
+            lsp::Color ph_color(sPointHoverColor);
+            pcolor.scale_lch_luminance(bright);
+            ph_color.scale_hsl_lightness(bright);
+
             for (size_t i=0; i<PR_TOTAL; ++i)
             {
-                point_t *p      = &vPoints[i];
+                const point_t *p    = &vPoints[i];
                 if ((p->bVisible) && (p != pHandler))
-                    surface->fill_circle(pcolor, p->nX, p->nY, p->nSize);
+                    draw_point(surface, pcolor, p);
             }
             if ((pHandler != NULL) && (pHandler->bVisible))
-                surface->fill_circle(ph_color, pHandler->nX, pHandler->nY, pHandler->nSize);
+                draw_point(surface, ph_color, pHandler);
         }
 
         void AudioEnvelope::draw(ws::ISurface *s, bool force)
@@ -408,6 +560,9 @@ namespace lsp
 
             // Draw curve and points
             ws::rectangle_t cr = sArea;
+
+            nPointSize      = lsp_max(1.0f, sPointSize.get() * scaling);
+            bQuadPoint      = sQuadPoint.get();
 
             sIPadding.enter(&cr, scaling);
             const ws::point_t origin = s->set_origin(-sArea.nLeft, -sArea.nTop);
@@ -589,6 +744,31 @@ namespace lsp
 
         status_t AudioEnvelope::on_mouse_scroll(const ws::event_t *e)
         {
+            if (nBMask == 0)
+                sync_handler(e);
+
+            if ((pHandler == NULL) || (pHandler->pZ == NULL) || (pHandler->pStep == NULL))
+                return STATUS_OK;
+
+            float step      = pHandler->pStep->get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
+            if (sInvertMouseVScroll.get())
+                step                = -step;
+
+            // Compute the delta value
+            float delta     = 0.0f;
+            if (e->nCode == ws::MCD_UP)
+                delta   = step;
+            else if (e->nCode == ws::MCD_DOWN)
+                delta   = -step;
+            else
+                return STATUS_OK;
+
+            // Commit the value
+            const float old     = pHandler->pZ->get();
+            pHandler->pZ->add(delta);
+            if (old != pHandler->pZ->get())
+                sSlots.execute(SLOT_CHANGE, this);
+
             return STATUS_OK;
         }
 
@@ -597,6 +777,15 @@ namespace lsp
             AudioEnvelope *self = widget_ptrcast<AudioEnvelope>(ptr);
             return (self != NULL) ? self->on_submit() : STATUS_BAD_ARGUMENTS;
         }
+
+        void AudioEnvelope::set_curve_function(curve_function_t function, void *data)
+        {
+            pFunction       = function;
+            pFuncData       = data;
+
+            query_draw();
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 
