@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.29 ===
-
+* Implemented AudioEnvelope widget and it's integration into AudioSample.
 
 === 1.0.28 ===
 * Added support of background color, brightness and background brightness for

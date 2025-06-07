@@ -78,6 +78,8 @@ namespace lsp
             LSP_TK_STYLE_DEF_END
         }
 
+        class AudioEnvelope;
+
         class AudioSample: public WidgetContainer
         {
             public:
@@ -104,7 +106,9 @@ namespace lsp
 
             protected:
                 prop::WidgetList<AudioChannel>  vChannels;          // List of audio channels
-                lltl::parray<AudioChannel>      vVisible;           // List of visible audio channels
+                prop::WidgetList<AudioEnvelope> vEnvelopes;         // List of audio envelopes
+                lltl::parray<AudioChannel>      vVisibleChannels;   // List of visible audio channels
+                lltl::parray<AudioEnvelope>     vVisibleEnvelopes;  // List of visible audio envelopes
                 prop::CollectionListener        sIListener;         // Listener to trigger vItems content change
 
                 prop::Integer           sWaveBorder;                // Wave border
@@ -159,11 +163,16 @@ namespace lsp
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
+                static void             on_add_item(void *obj, Property *prop, void *w);
+                static void             on_remove_item(void *obj, Property *prop, void *w);
+
+            protected: // tk::Widget
                 virtual void            size_request(ws::size_limit_t *r) override;
                 virtual void            realize(const ws::rectangle_t *r) override;
                 virtual void            property_changed(Property *prop) override;
                 virtual void            hide_widget() override;
 
+            protected:
                 void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, range_t *range, size_t samples);
                 void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float max_amplitude);
                 void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
@@ -173,12 +182,10 @@ namespace lsp
                 void                    draw_main_text(ws::ISurface *s);
                 void                    draw_label(ws::ISurface *s, size_t idx);
 
-                static void             on_add_item(void *obj, Property *prop, void *w);
-                static void             on_remove_item(void *obj, Property *prop, void *w);
-
                 void                    do_destroy();
 
-                void                    get_visible_items(lltl::parray<AudioChannel> *dst);
+                void                    get_visible_channels(lltl::parray<AudioChannel> *dst);
+                void                    get_visible_envelopes(lltl::parray<AudioEnvelope> *dst);
                 status_t                handle_mouse_move(const ws::event_t *ev);
                 void                    drop_glass();
 
@@ -196,6 +203,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(WidgetList<AudioChannel>,   channels,           &vChannels)
+                LSP_TK_PROPERTY(WidgetList<AudioEnvelope>,  envelopes,          &vEnvelopes)
 
                 LSP_TK_PROPERTY(Integer,                wave_border,            &sWaveBorder)
                 LSP_TK_PROPERTY(Integer,                fade_in_border,         &sFadeInBorder)
@@ -239,18 +247,19 @@ namespace lsp
 
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,        popup,                  &sPopup);
 
-            public:
+            public: // tk::Widget
                 virtual void                query_draw(size_t flags = REDRAW_SURFACE) override;
                 virtual void                draw(ws::ISurface *s, bool force) override;
                 virtual void                render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
                 virtual status_t            add(Widget *widget) override;
                 virtual status_t            remove(Widget *child) override;
                 virtual status_t            remove_all() override;
-
-            public:
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;
                 virtual status_t            on_mouse_up(const ws::event_t *e) override;
                 virtual status_t            on_mouse_move(const ws::event_t *e) override;
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
+
+            public:
                 virtual status_t            on_before_popup(Menu *menu);
                 virtual status_t            on_popup(Menu *menu);
                 virtual status_t            on_submit();
