@@ -327,19 +327,31 @@ namespace lsp
                 query_resize();
         }
 
+        void AudioEnvelope::get_min_area_size(ssize_t *width, ssize_t *height, float scaling)
+        {
+            const size_t p_size     = lsp_max(1.0f, sPointSize.get() * scaling);
+            const size_t a_size     = lsp_min(p_size, 4u);
+
+            if (width != NULL)
+                *width                  = a_size * 16;
+            if (height != NULL)
+                *height                 = a_size * 9;
+        }
+
         void AudioEnvelope::size_request(ws::size_limit_t *r)
         {
             const float scaling     = lsp_max(0.0f, sScaling.get());
-            const size_t p_size     = lsp_max(1.0f, sPointSize.get() * scaling);
-            const size_t a_size     = lsp_min(p_size, 4u) * 8;
 
             // Estimate the size of area for drawing samples
-            r->nMinWidth        = a_size;
-            r->nMinHeight       = a_size;
+            r->nMinWidth        = 0;
+            r->nMinHeight       = 0;
             r->nMaxWidth        = -1;
             r->nMaxHeight       = -1;
             r->nPreWidth        = -1;
             r->nPreHeight       = -1;
+
+            // Get minimum area size
+            get_min_area_size(&r->nMinWidth, &r->nMinHeight, scaling);
 
             // Add padding to the rectangle
             sIPadding.add(r, scaling);
@@ -445,6 +457,8 @@ namespace lsp
 
         void AudioEnvelope::draw_curve(ws::ISurface *surface, float bright, float scaling, const ws::rectangle_t *rect)
         {
+            nPointSize      = lsp_max(1.0f, sPointSize.get() * scaling);
+            bQuadPoint      = sQuadPoint.get();
             sDrawArea       = *rect;
 
             const float ox  = rect->nLeft;
@@ -561,15 +575,11 @@ namespace lsp
             // Draw curve and points
             ws::rectangle_t cr = sArea;
 
-            nPointSize      = lsp_max(1.0f, sPointSize.get() * scaling);
-            bQuadPoint      = sQuadPoint.get();
-
             sIPadding.enter(&cr, scaling);
             const ws::point_t origin = s->set_origin(-sArea.nLeft, -sArea.nTop);
             lsp_finally { s->set_origin(origin); };
 
             draw_curve(s, bright, scaling, &cr);
-
         }
 
         void AudioEnvelope::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

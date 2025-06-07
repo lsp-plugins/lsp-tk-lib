@@ -175,6 +175,7 @@ namespace lsp
                 void                    draw_curve(ws::ISurface *surface, float bright, float scaling, const ws::rectangle_t *rect);
                 void                    draw_point(ws::ISurface *s, const lsp::Color & color, const point_t *p);
                 void                    sync_handler(const ws::event_t *e);
+                void                    get_min_area_size(ssize_t *width, ssize_t *height, float scaling);
                 point_t                *find_point(ssize_t x, ssize_t y);
                 float                  *reserve_buffer(size_t count);
 
