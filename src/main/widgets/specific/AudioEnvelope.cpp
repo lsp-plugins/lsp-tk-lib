@@ -51,6 +51,8 @@ namespace lsp
                 sHold.bind("hold.enabled", this);
                 sBreak.bind("break.enabled", this);
                 sQuadPoint.bind("point.quadratic", this);
+                sFill.bind("fill", this);
+                sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
 
                 sLineWidth.bind("line.width", this);
                 sLineColor.bind("line.color", this);
@@ -87,6 +89,8 @@ namespace lsp
                 sHold.set(false);
                 sBreak.set(false);
                 sQuadPoint.set(false);
+                sFill.set(true);
+                sInvertMouseVScroll.set(false);
 
                 sLineWidth.set(1);
                 sLineColor.set_rgb24(0xffff00);
@@ -129,6 +133,8 @@ namespace lsp
             sHold(&sProperties),
             sBreak(&sProperties),
             sQuadPoint(&sProperties),
+            sFill(&sProperties),
+            sInvertMouseVScroll(&sProperties),
             sLineWidth(&sProperties),
             sLineColor(&sProperties),
             sFillColor(&sProperties),
@@ -257,6 +263,8 @@ namespace lsp
             sHold.bind("hold.enabled", &sStyle);
             sBreak.bind("break.enabled", &sStyle);
             sQuadPoint.bind("point.quadratic", &sStyle);
+            sFill.bind("fill", &sStyle);
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
 
             sLineWidth.bind("line.width", &sStyle);
             sLineColor.bind("line.color", &sStyle);
@@ -316,7 +324,7 @@ namespace lsp
                 query_draw();
             }
 
-            if (prop->is(sQuadPoint))
+            if (prop->one_of(sQuadPoint, sFill))
                 query_draw();
 
             if (prop->one_of(sLineWidth, sLineColor, sFillColor, sPointSize, sPointColor, sPointHoverColor,
