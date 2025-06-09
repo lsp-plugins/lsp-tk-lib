@@ -284,7 +284,7 @@ namespace lsp
             sIPadding.bind("ipadding", &sStyle);
 
             // Add slots
-            handler_id_t id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }
@@ -551,7 +551,7 @@ namespace lsp
                 p->nX           = ox + dx * x;
                 p->nY           = oy + dy * y;
 
-                lsp_trace("this=%p point[%d] = {%d, %d}", this, int(i), int(p->nX), int(p->nY));
+//                lsp_trace("this=%p point[%d] = {%d, %d}", this, int(i), int(p->nX), int(p->nY));
             }
 
             // Draw points
@@ -646,7 +646,7 @@ namespace lsp
             s->clip_end();
         }
 
-        status_t AudioEnvelope::on_submit()
+        status_t AudioEnvelope::on_change()
         {
             return STATUS_OK;
         }
@@ -659,7 +659,7 @@ namespace lsp
 
             pHandler    = point;
             query_draw();
-            lsp_trace("this=%p handler set to %p", this, pHandler);
+//            lsp_trace("this=%p handler set to %p", this, pHandler);
         }
 
         status_t AudioEnvelope::on_mouse_in(const ws::event_t *e)
@@ -674,7 +674,7 @@ namespace lsp
             {
                 pHandler    = NULL;
                 query_draw();
-                lsp_trace("this=%p handler set to %p", this, pHandler);
+//                lsp_trace("this=%p handler set to %p", this, pHandler);
             }
             return STATUS_OK;
         }
@@ -703,7 +703,7 @@ namespace lsp
 
         status_t AudioEnvelope::on_mouse_move(const ws::event_t *e)
         {
-            lsp_trace("x=%d, y=%d", int(e->nLeft), int(e->nTop));
+//            lsp_trace("x=%d, y=%d", int(e->nLeft), int(e->nTop));
 
             if (nBMask == 0)
             {
@@ -754,7 +754,7 @@ namespace lsp
 
             if (changed)
             {
-                sSlots.slot(SLOT_SUBMIT)->execute(this, NULL);
+                sSlots.slot(SLOT_CHANGE)->execute(this, NULL);
                 query_draw();
             }
 
@@ -791,10 +791,10 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t AudioEnvelope::slot_on_submit(Widget *sender, void *ptr, void *data)
+        status_t AudioEnvelope::slot_on_change(Widget *sender, void *ptr, void *data)
         {
             AudioEnvelope *self = widget_ptrcast<AudioEnvelope>(ptr);
-            return (self != NULL) ? self->on_submit() : STATUS_BAD_ARGUMENTS;
+            return (self != NULL) ? self->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
         void AudioEnvelope::set_curve_function(curve_function_t function, void *data)
