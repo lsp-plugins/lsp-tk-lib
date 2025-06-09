@@ -225,7 +225,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              fill_color,             &sFillColor);
                 LSP_TK_PROPERTY(Integer,            point_size,             &sPointSize);
                 LSP_TK_PROPERTY(Color,              point_color,            &sPointColor);
-                LSP_TK_PROPERTY(Color,              point_hover,            &sPointHoverColor);
+                LSP_TK_PROPERTY(Color,              point_hover_color,      &sPointHoverColor);
 
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,            &sConstraints);
                 LSP_TK_PROPERTY(Color,              color,                  &sColor);
