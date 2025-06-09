@@ -214,8 +214,9 @@ namespace lsp
         void AudioEnvelope::destroy()
         {
             nFlags     |= FINALIZED;
-            Widget::destroy();
             do_destroy();
+
+            Widget::destroy();
         }
 
         void AudioEnvelope::do_destroy()

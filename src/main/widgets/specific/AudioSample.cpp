@@ -1332,7 +1332,7 @@ namespace lsp
 
             AudioEnvelope *envelope = widget_cast<AudioEnvelope>(child);
             if (envelope != NULL)
-                return vChannels.premove(envelope);
+                return vEnvelopes.premove(envelope);
 
             return STATUS_BAD_TYPE;
         }
