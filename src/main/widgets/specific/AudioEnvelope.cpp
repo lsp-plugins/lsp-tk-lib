@@ -481,7 +481,7 @@ namespace lsp
             size_t points   = 0;
             if (pFunction != NULL)
             {
-                points          = rect->nWidth;
+                points          = rect->nWidth + 2;
                 float *buf      = reserve_buffer(points);
                 if (buf == NULL)
                     return;
@@ -489,10 +489,20 @@ namespace lsp
                 x               = &buf[0];
                 y               = &buf[points];
 
-                dsp::lramp_set1(x, 0.0f, 1.0f, points - 1);
+                x[0]            = 0.0f;
+                dsp::lramp_set1(&x[1], 0.0f, 1.0f, points - 3);
+                x[points-2]     = 1.0f;
                 x[points-1]     = 1.0f;
 
                 pFunction(y, x, points, this, pFuncData);
+                y[0]            = 0.0f;
+                y[points-1]     = 0.0f;
+
+                for (size_t i=0; i<points; ++i)
+                {
+                    if (isnan(y[i]))
+                        lsp_trace("debug");
+                }
             }
             else
             {
