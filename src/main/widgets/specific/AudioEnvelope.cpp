@@ -53,6 +53,7 @@ namespace lsp
                 sQuadPoint.bind("point.quadratic", this);
                 sFill.bind("fill", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
+                sEditable.bind("editable", this);
 
                 sLineWidth.bind("line.width", this);
                 sLineColor.bind("line.color", this);
@@ -91,6 +92,7 @@ namespace lsp
                 sQuadPoint.set(false);
                 sFill.set(true);
                 sInvertMouseVScroll.set(false);
+                sEditable.set(true);
 
                 sLineWidth.set(1);
                 sLineColor.set_rgb24(0xffff00);
@@ -135,6 +137,7 @@ namespace lsp
             sQuadPoint(&sProperties),
             sFill(&sProperties),
             sInvertMouseVScroll(&sProperties),
+            sEditable(&sProperties),
             sLineWidth(&sProperties),
             sLineColor(&sProperties),
             sFillColor(&sProperties),
@@ -172,6 +175,7 @@ namespace lsp
                 p->pStep            = NULL;
                 p->nX               = 0;
                 p->nY               = 0;
+                p->bEnabled         = true;
                 p->bVisible         = true;
             }
 
@@ -266,6 +270,7 @@ namespace lsp
             sQuadPoint.bind("point.quadratic", &sStyle);
             sFill.bind("fill", &sStyle);
             sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
+            sEditable.bind("editable", &sStyle);
 
             sLineWidth.bind("line.width", &sStyle);
             sLineColor.bind("line.color", &sStyle);
@@ -299,7 +304,7 @@ namespace lsp
 
             if (prop->is(sHold))
             {
-                vPoints[PR_HOLD].bVisible = sHold.get();
+                vPoints[PR_HOLD].bEnabled = sHold.get();
                 query_draw();
             }
 
@@ -312,7 +317,7 @@ namespace lsp
                     vPoints[PR_SLOPE_SUSTAIN].pY        = &sSustainLevel;
                     vPoints[PR_SLOPE_SUSTAIN].pStep     = &sSlopeStep;
                     vPoints[PR_RELEASE].pY              = &sSustainLevel;
-                    vPoints[PR_SLOPE_SUSTAIN].bVisible  = true;
+                    vPoints[PR_SLOPE_SUSTAIN].bEnabled  = true;
                 }
                 else
                 {
@@ -320,12 +325,12 @@ namespace lsp
                     vPoints[PR_SLOPE_SUSTAIN].pY        = NULL;
                     vPoints[PR_SLOPE_SUSTAIN].pStep     = &sDecayStep;
                     vPoints[PR_RELEASE].pY              = &sSustainLevel;
-                    vPoints[PR_SLOPE_SUSTAIN].bVisible  = false;
+                    vPoints[PR_SLOPE_SUSTAIN].bEnabled  = false;
                 }
                 query_draw();
             }
 
-            if (prop->one_of(sQuadPoint, sFill))
+            if (prop->one_of(sQuadPoint, sFill, sEditable))
                 query_draw();
 
             if (prop->one_of(sLineWidth, sLineColor, sFillColor, sPointSize, sPointColor, sPointHoverColor,
@@ -470,10 +475,33 @@ namespace lsp
             bQuadPoint      = sQuadPoint.get();
             sDrawArea       = *rect;
 
+            if ((rect->nWidth <= 1) || (rect->nHeight <= 1))
+            {
+                for (size_t i=0; i<PR_TOTAL; ++i)
+                {
+                    point_t *p      = &vPoints[i];
+                    p->bVisible     = false;
+                }
+                return;
+            }
+
+            const bool editable = sEditable.get();
             const float ox  = rect->nLeft;
             const float oy  = rect->nTop + rect->nHeight;
             const float dx  = rect->nWidth - 1.0f;      // Inteval 0..1 includes 1
             const float dy  = 1.0f - rect->nHeight;     // Inteval 0..1 includes 1
+
+            // Realize points
+            for (size_t i=0; i<PR_TOTAL; ++i)
+            {
+                point_t *p      = &vPoints[i];
+                const float x   = (p->pX != NULL) ? p->pX->get() : 0.0f;
+                const float y   = (p->pY != NULL) ? p->pY->get() : 1.0f;
+
+                p->nX           = ox + dx * x;
+                p->nY           = oy + dy * y;
+                p->bVisible     = editable && p->bEnabled;
+            }
 
             // Generate curve
             float *x        = NULL;
@@ -497,12 +525,6 @@ namespace lsp
                 pFunction(y, x, points, this, pFuncData);
                 y[0]            = 0.0f;
                 y[points-1]     = 0.0f;
-
-                for (size_t i=0; i<points; ++i)
-                {
-                    if (isnan(y[i]))
-                        lsp_trace("debug");
-                }
             }
             else
             {
@@ -520,7 +542,7 @@ namespace lsp
                 for (size_t i=0; i<PR_TOTAL; ++i)
                 {
                     point_t *p      = &vPoints[i];
-                    if (!p->bVisible)
+                    if (!p->bEnabled)
                         continue;
 
                     x[points]       = (p->pX != NULL) ? p->pX->get() : 0.0f;
@@ -549,19 +571,6 @@ namespace lsp
                 dsp::add_k2(y, oy, points);
 
                 surface->draw_poly(fill, wire, l_width, x, y, points);
-            }
-
-            // Realize points
-            for (size_t i=0; i<PR_TOTAL; ++i)
-            {
-                point_t *p      = &vPoints[i];
-                const float x   = (p->pX != NULL) ? p->pX->get() : 0.0f;
-                const float y   = (p->pY != NULL) ? p->pY->get() : 1.0f;
-
-                p->nX           = ox + dx * x;
-                p->nY           = oy + dy * y;
-
-//                lsp_trace("this=%p point[%d] = {%d, %d}", this, int(i), int(p->nX), int(p->nY));
             }
 
             // Draw points

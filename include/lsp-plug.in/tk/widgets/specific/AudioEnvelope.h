@@ -56,6 +56,7 @@ namespace lsp
                 prop::Boolean           sQuadPoint;             // Use quad point instead of circle
                 prop::Boolean           sFill;                  // Use fill color for drawing
                 prop::Boolean           sInvertMouseVScroll;    // Invert mouse vertical scroll
+                prop::Boolean           sEditable;              // Editable flag
 
                 prop::Integer           sLineWidth;             // Line width
                 prop::Color             sLineColor;             // Line color
@@ -109,6 +110,7 @@ namespace lsp
                     prop::StepFloat        *pStep;
                     ssize_t                 nX;
                     ssize_t                 nY;
+                    bool                    bEnabled;
                     bool                    bVisible;
                 } point_t;
 
@@ -143,6 +145,7 @@ namespace lsp
                 prop::Boolean           sQuadPoint;             // Use quad point instead of circle
                 prop::Boolean           sFill;                  // Use fill color for drawing
                 prop::Boolean           sInvertMouseVScroll;    // Invert mouse vertical scroll
+                prop::Boolean           sEditable;              // Editable flag
 
                 prop::Integer           sLineWidth;             // Line width
                 prop::Color             sLineColor;             // Line color
@@ -219,6 +222,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            quad_point,             &sQuadPoint);
                 LSP_TK_PROPERTY(Boolean,            fill,                   &sFill);
                 LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,   &sInvertMouseVScroll)
+                LSP_TK_PROPERTY(Boolean,            editable,               &sEditable)
 
                 LSP_TK_PROPERTY(Integer,            line_width,             &sLineWidth);
                 LSP_TK_PROPERTY(Color,              line_color,             &sLineColor);

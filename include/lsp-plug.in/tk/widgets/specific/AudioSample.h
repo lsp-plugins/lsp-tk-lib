@@ -175,9 +175,9 @@ namespace lsp
             protected:
                 void                    draw_range(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, range_t *range, size_t samples);
                 void                    draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float max_amplitude);
-                void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
+                void                    draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, ssize_t *head_cut, ssize_t *tail_cut, size_t samples);
                 void                    draw_channel2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down, float max_amplitude);
-                void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, size_t samples, bool down);
+                void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, ssize_t *head_cut, ssize_t *tail_cut, size_t samples, bool down);
                 void                    draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_main_text(ws::ISurface *s);
                 void                    draw_label(ws::ISurface *s, size_t idx);

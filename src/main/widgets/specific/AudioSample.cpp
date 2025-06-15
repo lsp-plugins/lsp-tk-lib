@@ -554,7 +554,7 @@ namespace lsp
             s->draw_poly(fill, wire, border, x, y, n_points);
         }
 
-        void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples)
+        void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, ssize_t *head_cut, ssize_t *tail_cut, size_t samples)
         {
             // Check limits
             if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
@@ -598,6 +598,7 @@ namespace lsp
                     cut.scale_lch_luminance(bright);
 
                     float dx            = float(c->sHeadCut.get() * r->nWidth) / float(samples);
+                    *head_cut           = lsp_max(*head_cut, ssize_t(dx));
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft, r->nTop, dx, r->nHeight);
                     for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               += dx;
@@ -639,6 +640,7 @@ namespace lsp
                     cut.scale_lch_luminance(bright);
 
                     float dx            = float(c->sTailCut.get() * r->nWidth) / float(samples);
+                    *tail_cut           = lsp_max(*tail_cut, ssize_t(dx));
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft + r->nWidth - dx, r->nTop, dx, r->nHeight);
                     for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               -= dx;
@@ -768,7 +770,7 @@ namespace lsp
             s->draw_poly(fill, wire, border, x, y, n_points);
         }
 
-        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down)
+        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, ssize_t *head_cut, ssize_t *tail_cut, size_t samples, bool down)
         {
             // Check limits
             if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
@@ -808,6 +810,7 @@ namespace lsp
                     cut.scale_lch_luminance(bright);
 
                     float dx            = float(c->sHeadCut.get() * r->nWidth) / float(samples);
+                    *head_cut           = lsp_max(*head_cut, ssize_t(dx));
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft, r->nTop, dx, r->nHeight);
                     for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               += dx;
@@ -845,6 +848,7 @@ namespace lsp
                     cut.scale_lch_luminance(bright);
 
                     float dx            = float(c->sTailCut.get() * r->nWidth) / float(samples);
+                    *tail_cut           = lsp_max(*tail_cut, ssize_t(dx));
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft + r->nWidth - dx, r->nTop, dx, r->nHeight);
                     for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               -= dx;
@@ -978,6 +982,8 @@ namespace lsp
             }
 
             // Draw all samples
+            ssize_t head_cut = 0;
+            ssize_t tail_cut = 0;
             size_t items = vVisibleChannels.size();
             if (items > 0)
             {
@@ -1042,7 +1048,7 @@ namespace lsp
                     for (size_t i=0; i<items; ++i)
                     {
                         AudioChannel *c     = vVisibleChannels.uget(i);
-                        draw_fades2(&xr, s, c, samples, i & 1);
+                        draw_fades2(&xr, s, c, &head_cut, &tail_cut, samples, i & 1);
                         xr.nTop            += xr.nHeight;
                     }
 
@@ -1110,7 +1116,7 @@ namespace lsp
                     for (size_t i=0; i<items; ++i)
                     {
                         AudioChannel *c     = vVisibleChannels.uget(i);
-                        draw_fades1(&xr, s, c, samples);
+                        draw_fades1(&xr, s, c, &head_cut, &tail_cut, samples);
                         xr.nTop            += xr.nHeight;
                     }
 
@@ -1149,6 +1155,8 @@ namespace lsp
 
                     tk::AudioEnvelope *envelope = vEnvelopes.get(i);
                     envelope->ipadding()->enter(&cr, scaling);
+                    cr.nLeft       += head_cut;
+                    cr.nWidth      -= head_cut + tail_cut;
                     envelope->draw_curve(s, bright, scaling, &cr);
                     envelope->commit_redraw();
                 }
