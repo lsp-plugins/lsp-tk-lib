@@ -52,6 +52,7 @@ namespace lsp
                 sBreak.bind("break.enabled", this);
                 sQuadPoint.bind("point.quadratic", this);
                 sFill.bind("fill", this);
+                sWire.bind("wire", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
                 sEditable.bind("editable", this);
 
@@ -136,6 +137,7 @@ namespace lsp
             sBreak(&sProperties),
             sQuadPoint(&sProperties),
             sFill(&sProperties),
+            sWire(&sProperties),
             sInvertMouseVScroll(&sProperties),
             sEditable(&sProperties),
             sLineWidth(&sProperties),
@@ -269,6 +271,7 @@ namespace lsp
             sBreak.bind("break.enabled", &sStyle);
             sQuadPoint.bind("point.quadratic", &sStyle);
             sFill.bind("fill", &sStyle);
+            sWire.bind("wire", &sStyle);
             sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
             sEditable.bind("editable", &sStyle);
 
@@ -330,7 +333,7 @@ namespace lsp
                 query_draw();
             }
 
-            if (prop->one_of(sQuadPoint, sFill, sEditable))
+            if (prop->one_of(sQuadPoint, sFill, sWire, sEditable))
                 query_draw();
 
             if (prop->one_of(sLineWidth, sLineColor, sFillColor, sPointSize, sPointColor, sPointHoverColor,
@@ -558,19 +561,27 @@ namespace lsp
             // Draw curve
             if ((x != NULL) && (y != NULL) && (points > 0))
             {
-                const float l_width     = lsp_max(1.0f, sLineWidth.get() * scaling);
+                const bool use_fill     = sFill.get();
+                const bool use_wire     = sWire.get();
 
-                lsp::Color fill(sFillColor);
-                lsp::Color wire(sLineColor);
-                fill.scale_lch_luminance(bright);
-                wire.scale_hsl_lightness(bright);
+                if (use_fill || use_wire)
+                {
+                    const float l_width     = lsp_max(1.0f, sLineWidth.get() * scaling);
+                    lsp::Color fill(sFillColor);
+                    lsp::Color wire(sLineColor);
+                    fill.scale_lch_luminance(bright);
+                    wire.scale_hsl_lightness(bright);
 
-                dsp::mul_k2(x, dx, points);
-                dsp::add_k2(x, ox, points);
-                dsp::mul_k2(y, dy, points);
-                dsp::add_k2(y, oy, points);
+                    dsp::mul_k2(x, dx, points);
+                    dsp::add_k2(x, ox, points);
+                    dsp::mul_k2(y, dy, points);
+                    dsp::add_k2(y, oy, points);
 
-                surface->draw_poly(fill, wire, l_width, x, y, points);
+                    if (use_fill)
+                        surface->draw_poly(fill, wire, (use_wire) ? l_width : 0.0f, x, y, points);
+                    else if (use_wire)
+                        surface->wire_poly(wire, l_width, x, y, points);
+                }
             }
 
             // Draw points

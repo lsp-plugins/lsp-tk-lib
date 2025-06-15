@@ -55,6 +55,7 @@ namespace lsp
                 prop::Boolean           sBreak;                 // Enable slope time point
                 prop::Boolean           sQuadPoint;             // Use quad point instead of circle
                 prop::Boolean           sFill;                  // Use fill color for drawing
+                prop::Boolean           sWire;                  // Draw line
                 prop::Boolean           sInvertMouseVScroll;    // Invert mouse vertical scroll
                 prop::Boolean           sEditable;              // Editable flag
 
@@ -144,6 +145,7 @@ namespace lsp
                 prop::Boolean           sBreak;                 // Enable slope time point
                 prop::Boolean           sQuadPoint;             // Use quad point instead of circle
                 prop::Boolean           sFill;                  // Use fill color for drawing
+                prop::Boolean           sWire;                  // Draw line
                 prop::Boolean           sInvertMouseVScroll;    // Invert mouse vertical scroll
                 prop::Boolean           sEditable;              // Editable flag
 
@@ -221,6 +223,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,            break_enabled,          &sBreak);
                 LSP_TK_PROPERTY(Boolean,            quad_point,             &sQuadPoint);
                 LSP_TK_PROPERTY(Boolean,            fill,                   &sFill);
+                LSP_TK_PROPERTY(Boolean,            wire,                   &sWire);
                 LSP_TK_PROPERTY(Boolean,            invert_mouse_vscroll,   &sInvertMouseVScroll)
                 LSP_TK_PROPERTY(Boolean,            editable,               &sEditable)
 
