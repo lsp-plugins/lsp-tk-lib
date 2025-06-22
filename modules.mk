@@ -90,6 +90,11 @@ LIBCOREFOUNDATION_NAME     := libcorefoundation
 LIBCOREFOUNDATION_TYPE     := opt
 LIBCOREFOUNDATION_LDFLAGS  := -framework CoreFoundation
 
+LIBCOCOA_VERSION           := system
+LIBCOCOA_NAME              := libcocoa
+LIBCOCOA_TYPE              := opt
+LIBCOCOA_LDFLAGS           := -framework Cocoa
+
 LIBCAIRO_VERSION           := system
 LIBCAIRO_NAME              := cairo
 LIBCAIRO_TYPE              := pkg
