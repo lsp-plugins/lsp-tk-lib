@@ -701,7 +701,10 @@ namespace lsp
         void Window::hide_widget()
         {
             if (pWindow != NULL)
+            {
+                pWindow->ungrab_events();
                 pWindow->hide();
+            }
 
             WidgetContainer::hide_widget();
         }
