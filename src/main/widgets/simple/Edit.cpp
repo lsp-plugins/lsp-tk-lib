@@ -533,8 +533,7 @@ namespace lsp
             bool use_empty_text =
                 (sText.is_empty()) &&
                 (!sEmptyText.is_empty()) &&
-                (!sCursor.visible()) &&
-                (!sCursor.shining());
+                (!sCursor.visible());
             prop::String *src_text = (use_empty_text) ? &sEmptyText : &sText;
 
             const style::EditColors *colors = select_colors();
