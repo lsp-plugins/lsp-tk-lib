@@ -707,6 +707,7 @@ namespace lsp
                 pWindow->hide();
             }
 
+            discard_widget(pFocused);
             WidgetContainer::hide_widget();
         }
 
@@ -1530,6 +1531,7 @@ namespace lsp
                 ev.nType            = ws::UIE_MOUSE_OUT;
                 ev.nLeft            = hMouse.nLeft;
                 ev.nTop             = hMouse.nTop;
+                hMouse.nState       = 0;
                 hMouse.pWidget      = NULL;
 
                 old->handle_event(&ev);
