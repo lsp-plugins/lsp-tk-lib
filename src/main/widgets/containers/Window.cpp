@@ -254,6 +254,7 @@ namespace lsp
 //            lsp_trace("size constraints: w={%d, %d}, h={%d, %d}",
 //                int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
 //            );
+//            lsp_trace("computed size: w=%d, h=%d", int(r.nWidth), int(r.nHeight));
             pWindow->set_size_constraints(&sr);
             if ((sSize.nWidth != r.nWidth) || (sSize.nHeight != r.nHeight))
             {
