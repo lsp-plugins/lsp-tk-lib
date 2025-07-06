@@ -4,6 +4,8 @@
 
 === 1.0.29 ===
 * Implemented AudioEnvelope widget and it's integration into AudioSample.
+* Implemented ws::IDisplay::get_file_descriptor method for obtaining event loop
+  descriptor for Unix-based systems that use X11 protocol
 
 === 1.0.28 ===
 * Added support of background color, brightness and background brightness for

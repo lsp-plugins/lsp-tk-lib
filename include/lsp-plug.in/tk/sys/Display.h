@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 июн. 2017 г.
@@ -47,9 +47,6 @@ namespace lsp
         class Display: public Atoms
         {
             private:
-                Display & operator = (const Display &);
-                Display(const Display &);
-
                 friend class Schema;
 
             protected:
@@ -88,6 +85,10 @@ namespace lsp
                  * @param settings additional display settings
                  */
                 explicit Display(display_settings_t *settings = NULL);
+                Display(const Display &) = delete;
+                Display(Display &&) = delete;
+                Display & operator = (const Display &) = delete;
+                Display & operator = (Display &&) = delete;
 
                 /** Destructor
                  *
@@ -363,6 +364,16 @@ namespace lsp
                  * @return previous value of the idle interval
                  */
                 size_t set_idle_interval(size_t interval);
+
+                /**
+                 * Obtain the file descriptor of the connection associated with the event loop
+                 * if it is supported (usually Unix-based systems with X11 protocol).
+                 *
+                 * @param fd pointer to store file descriptor
+                 * @return status of operation, STATUS_NOT_SUPPORTED if platform does
+                 * not support file desciptors for event loops
+                 */
+                status_t get_file_descriptor(int *fd);
         };
 
     } /* namespace tk */

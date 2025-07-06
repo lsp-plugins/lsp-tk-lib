@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 июн. 2017 г.
@@ -467,6 +467,11 @@ namespace lsp
         size_t Display::set_idle_interval(size_t interval)
         {
             return pDisplay->set_idle_interval(interval);
+        }
+
+        status_t Display::get_file_descriptor(int *fd)
+        {
+            return pDisplay->get_file_descriptor(fd);
         }
 
     } /* namespace tk */
