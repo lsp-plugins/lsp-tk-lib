@@ -1407,24 +1407,22 @@ namespace lsp
 
             if (Position::rinside(&sSize, e->nLeft, e->nTop, xr))
             {
-                if (sActive.get())
+                if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
                 {
-                    if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
-                    {
+                    if (sActive.get())
                         sSlots.execute(SLOT_SUBMIT, this, NULL);
-                    }
-                    else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
+                }
+                else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
+                {
+                    Menu *popup = sPopup.get();
+                    if (popup != NULL)
                     {
-                        Menu *popup = sPopup.get();
-                        if (popup != NULL)
-                        {
-                            ws::rectangle_t sr;
-                            Window *wnd = widget_cast<Window>(this->toplevel());
-                            wnd->get_screen_rectangle(&sr);
-                            sr.nLeft       += e->nLeft;
-                            sr.nTop        += e->nTop;
-                            popup->show(this, sr.nLeft, sr.nTop);
-                        }
+                        ws::rectangle_t sr;
+                        Window *wnd = widget_cast<Window>(this->toplevel());
+                        wnd->get_screen_rectangle(&sr);
+                        sr.nLeft       += e->nLeft;
+                        sr.nTop        += e->nTop;
+                        popup->show(this, sr.nLeft, sr.nTop);
                     }
                 }
             }
