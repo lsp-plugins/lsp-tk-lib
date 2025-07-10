@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.29 ===
+* Added text clipping function for tk::Label.
 * Implemented AudioEnvelope widget and it's integration into AudioSample.
 * Implemented ws::IDisplay::get_file_descriptor method for obtaining event loop
   descriptor for Unix-based systems that use X11 protocol
