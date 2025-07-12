@@ -183,12 +183,14 @@ namespace lsp
 
             sFont.get_parameters(s, fscaling, &fp);
             sFont.get_multitext_parameters(s, &tp, fscaling, &text);
+            tp.Height       = lsp_max(tp.Height, fp.Height);
             sIPadding.sub(&size, &sSize, scaling);
 
-            // Apply text clipping
+            // Estimate drawing area
             const bool clip = sTextClip.get();
             if (clip)
             {
+                // Apply text clipping
                 r.nLeft     = 0;
                 r.nTop      = 0;
                 r.nWidth    = sSize.nWidth;
@@ -196,34 +198,34 @@ namespace lsp
                 sIPadding.enter(&r, scaling);
                 s->clip_begin(&r);
             }
+            else
+            {
+                if (tp.Width <= size.nWidth)
+                {
+                    r.nLeft         = 0;
+                    r.nWidth        = size.nWidth;
+                }
+                else
+                {
+                    r.nLeft         = -0.5f * (tp.Width - size.nWidth);
+                    r.nWidth        = ceil(tp.Width);
+                }
+
+                if (tp.Height <= size.nHeight)
+                {
+                    r.nTop          = 0;
+                    r.nHeight       = size.nHeight;
+                }
+                else
+                {
+                    r.nTop          = -0.5f * (tp.Height - size.nHeight);
+                    r.nHeight       = ceil(tp.Height);
+                }
+            }
             lsp_finally {
                 if (clip)
                     s->clip_end();
             };
-
-            // Estimate drawing area
-            tp.Height       = lsp_max(tp.Height, fp.Height);
-            if (tp.Width <= size.nWidth)
-            {
-                r.nLeft         = 0;
-                r.nWidth        = size.nWidth;
-            }
-            else
-            {
-                r.nLeft         = -0.5f * (tp.Width - size.nWidth);
-                r.nWidth        = ceil(tp.Width);
-            }
-
-            if (tp.Height <= size.nHeight)
-            {
-                r.nTop          = 0;
-                r.nHeight       = size.nHeight;
-            }
-            else
-            {
-                r.nTop          = -0.5f * (tp.Height - size.nHeight);
-                r.nHeight       = ceil(tp.Height);
-            }
 
             // Initialize palette
             const style::LabelColors *colors = select_colors();
