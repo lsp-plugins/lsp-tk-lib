@@ -54,6 +54,7 @@ namespace lsp
                 LabelColors                 vColors[LABEL_TOTAL];
 
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextLayout            sClipTextLayout;// Text layout when clipping
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Boolean               sHover;         // Hover enable
@@ -105,6 +106,7 @@ namespace lsp
 
                 style::LabelColors          vColors[style::LABEL_TOTAL];
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextLayout            sClipTextLayout;// Text layout when clipping
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Boolean               sHover;         // Hover enable
@@ -147,6 +149,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(TextLayout,         text_layout,            &sTextLayout)
+                LSP_TK_PROPERTY(TextLayout,         clip_text_layout,       &sClipTextLayout)
                 LSP_TK_PROPERTY(TextAdjust,         text_adjust,            &sTextAdjust)
                 LSP_TK_PROPERTY(Font,               font,                   &sFont)
                 LSP_TK_PROPERTY(Color,              color,                  &vColors[LBL_0].sColor)

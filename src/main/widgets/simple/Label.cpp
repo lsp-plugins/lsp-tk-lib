@@ -49,6 +49,7 @@ namespace lsp
                 c->sColor.bind("inactive.text.hover.color", this);
 
                 sTextLayout.bind("text.layout", this);
+                sClipTextLayout.bind("text.clip.layout", this);
                 sTextAdjust.bind("text.adjust", this);
                 sTextClip.bind("text.clip", this);
                 sFont.bind("font", this);
@@ -70,6 +71,7 @@ namespace lsp
                 c->sColor.set_rgb24(0xcc0000);
 
                 sTextLayout.set(0.0f, 0.0f);
+                sClipTextLayout.set(0.0f, 0.0f);
                 sTextAdjust.set(TA_NONE);
                 sTextClip.set(false);
                 sFont.set_size(12.0f);
@@ -95,6 +97,7 @@ namespace lsp
         Label::Label(Display *dpy):
             Widget(dpy),
             sTextLayout(&sProperties),
+            sClipTextLayout(&sProperties),
             sTextAdjust(&sProperties),
             sFont(&sProperties),
             sHover(&sProperties),
@@ -134,6 +137,7 @@ namespace lsp
             c->sColor.bind("inactive.text.hover.color", &sStyle);
 
             sTextLayout.bind("text.layout", &sStyle);
+            sClipTextLayout.bind("text.clip.layout", &sStyle);
             sTextAdjust.bind("text.adjust", &sStyle);
             sFont.bind("font", &sStyle);
             sHover.bind("text.hover", &sStyle);
@@ -160,7 +164,7 @@ namespace lsp
             if (colors->property_changed(prop))
                 query_draw();
 
-            if (prop->one_of(sTextLayout, sHover))
+            if (prop->one_of(sTextLayout, sClipTextLayout, sHover))
                 query_draw();
 
             if (prop->one_of(sTextAdjust, sTextClip, sFont, sText, sConstraints, sIPadding))
@@ -239,9 +243,12 @@ namespace lsp
             // Draw background
             s->clear(bg_color);
 
+            const bool exceeds = (tp.Width > r.nWidth) || (tp.Height > r.nHeight);
+            const TextLayout *layout = (exceeds) ? &sClipTextLayout : &sTextLayout;
+
             draw_multiline_text(s,
                 &sFont, &r, f_color, &fp, &tp,
-                sTextLayout.halign(), sTextLayout.valign(),
+                layout->halign(), layout->valign(),
                 fscaling, &text);
         }
 
