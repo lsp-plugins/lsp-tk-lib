@@ -291,6 +291,9 @@ namespace lsp
                 // Get last surface type used
                 ws::surface_type_t      surface_type() const;
 
+                // Get active keys
+                const lltl::darray<ws::code_t> *active_keys() const;
+
             //---------------------------------------------------------------------------------
             // Event handling
             public:

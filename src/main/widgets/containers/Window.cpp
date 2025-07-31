@@ -1621,5 +1621,10 @@ namespace lsp
             return enSurfaceType;
         }
 
+        const lltl::darray<ws::code_t> *Window::active_keys() const
+        {
+            return &hKeys.vKeys;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
