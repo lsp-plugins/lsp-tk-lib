@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2021 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2021 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 13 июн. 2021 г.
@@ -48,10 +48,6 @@ namespace lsp
          */
         class Bevel: public Widget
         {
-            private:
-                Bevel & operator = (const Bevel &);
-                Bevel(const Bevel &);
-
             public:
                 static const w_class_t    metadata;
 
@@ -75,7 +71,12 @@ namespace lsp
 
             public:
                 explicit Bevel(Display *dpy);
-                virtual ~Bevel();
+                Bevel(const Bevel &) = delete;
+                Bevel(Bevel &&) = delete;
+                virtual ~Bevel() override;
+
+                Bevel & operator = (const Bevel &) = delete;
+                Bevel & operator = (Bevel &&) = delete;
 
             public:
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
@@ -86,13 +87,13 @@ namespace lsp
                 LSP_TK_PROPERTY(Arrangement,        arrangement,        &sArrangement)
 
             protected:
-                virtual void        size_request(ws::size_limit_t *r);
-                virtual void        property_changed(Property *prop);
+                virtual void        size_request(ws::size_limit_t *r) override;
+                virtual void        property_changed(Property *prop) override;
 
             public:
-                virtual status_t    init();
+                virtual status_t    init() override;
 
-                virtual void        render(ws::ISurface *s, const ws::rectangle_t *area, bool force);
+                virtual void        render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;
         };
 
     } /* namespace tk */
