@@ -54,10 +54,12 @@ namespace lsp
                 LabelColors                 vColors[LABEL_TOTAL];
 
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextLayout            sClipTextLayout;// Text layout when clipping
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Boolean               sHover;         // Hover enable
                 prop::String                sText;          // Text to display
+                prop::Boolean               sTextClip;      // Clip text
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Padding               sIPadding;      // Internal padding
             LSP_TK_STYLE_DEF_END
@@ -104,10 +106,12 @@ namespace lsp
 
                 style::LabelColors          vColors[style::LABEL_TOTAL];
                 prop::TextLayout            sTextLayout;    // Text layout
+                prop::TextLayout            sClipTextLayout;// Text layout when clipping
                 prop::TextAdjust            sTextAdjust;    // Text adjustment
                 prop::Font                  sFont;          // Font parameters
                 prop::Boolean               sHover;         // Hover enable
                 prop::String                sText;          // Text to display
+                prop::Boolean               sTextClip;      // Clip text
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Padding               sIPadding;      // Internal padding
                 prop::WidgetPtr<Menu>       sPopup;         // Popup menu
@@ -145,6 +149,7 @@ namespace lsp
 
             public:
                 LSP_TK_PROPERTY(TextLayout,         text_layout,            &sTextLayout)
+                LSP_TK_PROPERTY(TextLayout,         clip_text_layout,       &sClipTextLayout)
                 LSP_TK_PROPERTY(TextAdjust,         text_adjust,            &sTextAdjust)
                 LSP_TK_PROPERTY(Font,               font,                   &sFont)
                 LSP_TK_PROPERTY(Color,              color,                  &vColors[LBL_0].sColor)
@@ -153,6 +158,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              inactive_hover_color,   &vColors[LBL_3].sColor)
                 LSP_TK_PROPERTY(Boolean,            hover,                  &sHover)
                 LSP_TK_PROPERTY(String,             text,                   &sText)
+                LSP_TK_PROPERTY(Boolean,            text_clip,              &sTextClip)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,            &sConstraints)
                 LSP_TK_PROPERTY(Padding,            ipadding,               &sIPadding)
                 LSP_TK_PROPERTY(WidgetPtr<Menu>,    popup,                  &sPopup)

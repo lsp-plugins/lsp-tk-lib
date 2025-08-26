@@ -179,7 +179,7 @@ namespace lsp
             // Bind slots
             handler_id_t id;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
-            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
             if (id < 0)
                 return -id;
 

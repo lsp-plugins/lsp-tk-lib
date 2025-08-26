@@ -942,6 +942,9 @@ namespace lsp
 
         status_t ListBox::on_mouse_out(const ws::event_t *e)
         {
+            nBMask          = 0;
+            nXFlags        &= ~(F_SUBMIT | F_CHANGED);
+
             if (pHoverItem != NULL)
             {
                 pHoverItem      = NULL;

@@ -49,7 +49,9 @@ namespace lsp
                 c->sColor.bind("inactive.text.hover.color", this);
 
                 sTextLayout.bind("text.layout", this);
+                sClipTextLayout.bind("text.clip.layout", this);
                 sTextAdjust.bind("text.adjust", this);
+                sTextClip.bind("text.clip", this);
                 sFont.bind("font", this);
                 sHover.bind("text.hover", this);
                 sConstraints.bind("size.constraints", this);
@@ -69,7 +71,9 @@ namespace lsp
                 c->sColor.set_rgb24(0xcc0000);
 
                 sTextLayout.set(0.0f, 0.0f);
+                sClipTextLayout.set(0.0f, 0.0f);
                 sTextAdjust.set(TA_NONE);
+                sTextClip.set(false);
                 sFont.set_size(12.0f);
                 sHover.set(false);
                 sConstraints.set(-1, -1, -1, -1);
@@ -93,10 +97,12 @@ namespace lsp
         Label::Label(Display *dpy):
             Widget(dpy),
             sTextLayout(&sProperties),
+            sClipTextLayout(&sProperties),
             sTextAdjust(&sProperties),
             sFont(&sProperties),
             sHover(&sProperties),
             sText(&sProperties),
+            sTextClip(&sProperties),
             sConstraints(&sProperties),
             sPopup(&sProperties)
         {
@@ -131,10 +137,12 @@ namespace lsp
             c->sColor.bind("inactive.text.hover.color", &sStyle);
 
             sTextLayout.bind("text.layout", &sStyle);
+            sClipTextLayout.bind("text.clip.layout", &sStyle);
             sTextAdjust.bind("text.adjust", &sStyle);
             sFont.bind("font", &sStyle);
             sHover.bind("text.hover", &sStyle);
             sText.bind(&sStyle, pDisplay->dictionary());
+            sTextClip.bind("text.clip", &sStyle);
             sConstraints.bind("size.constraints", &sStyle);
             sIPadding.bind("ipadding", &sStyle);
             sPopup.bind(NULL);
@@ -156,10 +164,10 @@ namespace lsp
             if (colors->property_changed(prop))
                 query_draw();
 
-            if (prop->one_of(sTextLayout, sHover))
+            if (prop->one_of(sTextLayout, sClipTextLayout, sHover))
                 query_draw();
 
-            if (prop->one_of(sTextAdjust, sFont, sText, sConstraints, sIPadding))
+            if (prop->one_of(sTextAdjust, sTextClip, sFont, sText, sConstraints, sIPadding))
                 query_resize();
         }
 
@@ -179,31 +187,49 @@ namespace lsp
 
             sFont.get_parameters(s, fscaling, &fp);
             sFont.get_multitext_parameters(s, &tp, fscaling, &text);
+            tp.Height       = lsp_max(tp.Height, fp.Height);
             sIPadding.sub(&size, &sSize, scaling);
 
             // Estimate drawing area
-            tp.Height       = lsp_max(tp.Height, fp.Height);
-            if (tp.Width <= size.nWidth)
+            const bool clip = sTextClip.get();
+            if (clip)
             {
-                r.nLeft         = 0;
-                r.nWidth        = size.nWidth;
+                // Apply text clipping
+                r.nLeft     = 0;
+                r.nTop      = 0;
+                r.nWidth    = sSize.nWidth;
+                r.nHeight   = sSize.nHeight;
+                sIPadding.enter(&r, scaling);
+                s->clip_begin(&r);
             }
             else
             {
-                r.nLeft         = -0.5f * (tp.Width - size.nWidth);
-                r.nWidth        = ceil(tp.Width);
-            }
+                if (tp.Width <= size.nWidth)
+                {
+                    r.nLeft         = 0;
+                    r.nWidth        = size.nWidth;
+                }
+                else
+                {
+                    r.nLeft         = -0.5f * (tp.Width - size.nWidth);
+                    r.nWidth        = ceil(tp.Width);
+                }
 
-            if (tp.Height <= size.nHeight)
-            {
-                r.nTop          = 0;
-                r.nHeight       = size.nHeight;
+                if (tp.Height <= size.nHeight)
+                {
+                    r.nTop          = 0;
+                    r.nHeight       = size.nHeight;
+                }
+                else
+                {
+                    r.nTop          = -0.5f * (tp.Height - size.nHeight);
+                    r.nHeight       = ceil(tp.Height);
+                }
             }
-            else
-            {
-                r.nTop          = -0.5f * (tp.Height - size.nHeight);
-                r.nHeight       = ceil(tp.Height);
-            }
+            lsp_finally {
+                if (clip)
+                    s->clip_end();
+            };
 
             // Initialize palette
             const style::LabelColors *colors = select_colors();
@@ -217,9 +243,12 @@ namespace lsp
             // Draw background
             s->clear(bg_color);
 
+            const bool exceeds = (tp.Width > r.nWidth) || (tp.Height > r.nHeight);
+            const TextLayout *layout = (exceeds) ? &sClipTextLayout : &sTextLayout;
+
             draw_multiline_text(s,
                 &sFont, &r, f_color, &fp, &tp,
-                sTextLayout.halign(), sTextLayout.valign(),
+                layout->halign(), layout->valign(),
                 fscaling, &text);
         }
 
@@ -347,10 +376,15 @@ namespace lsp
             e.r             = r;
             sFont.get_parameters(pDisplay, e.fscaling, &e.fp);
 
-            // Estimate the size of the label
-            for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
-                estimate_string_size(&e, it.get());
-            estimate_string_size(&e, &sText);
+            if (!sTextClip.get())
+            {
+                // Estimate the size of the label
+                for (lltl::iterator<prop::String> it = vEstimations.values(); it; ++it)
+                    estimate_string_size(&e, it.get());
+                estimate_string_size(&e, &sText);
+            }
+            else
+                r->nMinHeight   = e.fp.Height;
             
             // Apply size constraints
             sConstraints.apply(r, e.scaling);

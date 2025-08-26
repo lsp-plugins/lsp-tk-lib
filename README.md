@@ -80,6 +80,9 @@ The full list of provided widgets:
   * Void - void widget which can be used for filling empty area.
 * Specifific widgets
   * AudioChannel - single audio channel oscillogram.
+  * AudioEnvelope - widget that allows to build and control parameters of AHDBSSR (Attack,
+    Hold, Decay, Break, Slope, Sustain, Release) audio envelope and integrate into
+    AudioSample widget.
   * AudioSample - oscillogram of audio sample with multiple audio channels.
   * FileButton - button of 1.44" disk form for loading/saving files.
   * Fraction - music fraction with numerator and denominator.

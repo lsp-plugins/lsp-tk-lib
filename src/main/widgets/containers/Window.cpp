@@ -254,6 +254,7 @@ namespace lsp
 //            lsp_trace("size constraints: w={%d, %d}, h={%d, %d}",
 //                int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
 //            );
+//            lsp_trace("computed size: w=%d, h=%d", int(r.nWidth), int(r.nHeight));
             pWindow->set_size_constraints(&sr);
             if ((sSize.nWidth != r.nWidth) || (sSize.nHeight != r.nHeight))
             {
@@ -701,8 +702,12 @@ namespace lsp
         void Window::hide_widget()
         {
             if (pWindow != NULL)
+            {
+                pWindow->ungrab_events();
                 pWindow->hide();
+            }
 
+            discard_widget(pFocused);
             WidgetContainer::hide_widget();
         }
 
@@ -725,43 +730,43 @@ namespace lsp
                 return;
 
             // There is no actor - simple show
+            const bool is_dialog    = sBorderStyle.get() == ws::BS_DIALOG;
             if (wnd == NULL)
             {
                 pWindow->show();
+                if (is_dialog)
+                    pWindow->take_focus();
                 return;
             }
 
             // Correct window location
-            switch (sBorderStyle.get())
+            if (is_dialog)
             {
-                case ws::BS_DIALOG:
-                {
-                    ws::rectangle_t r, rw;
-                    r.nLeft         = 0;
-                    r.nTop          = 0;
-                    r.nWidth        = 0;
-                    r.nHeight       = 0;
+                ws::rectangle_t r, rw;
+                r.nLeft         = 0;
+                r.nTop          = 0;
+                r.nWidth        = 0;
+                r.nHeight       = 0;
 
-                    rw.nLeft        = 0;
-                    rw.nTop         = 0;
-                    rw.nWidth       = 0;
-                    rw.nHeight      = 0;
+                rw.nLeft        = 0;
+                rw.nTop         = 0;
+                rw.nWidth       = 0;
+                rw.nHeight      = 0;
 
-                    wnd->get_absolute_geometry(&r);
-                    pWindow->get_geometry(&rw);
+                wnd->get_absolute_geometry(&r);
+                pWindow->get_geometry(&rw);
 
-                    ssize_t left    = r.nLeft + ((r.nWidth - rw.nWidth) / 2);
-                    ssize_t top     = r.nTop  + ((r.nHeight - rw.nHeight) / 2);
+                ssize_t left    = r.nLeft + ((r.nWidth - rw.nWidth) / 2);
+                ssize_t top     = r.nTop  + ((r.nHeight - rw.nHeight) / 2);
 
-                    sPosition.set(left, top);
-                    break;
-                }
-                default:
-                    break;
+                sPosition.set(left, top);
             }
 
             // Show over the actor window
+            sync_size(false);
             pWindow->show(wnd);
+            if (is_dialog)
+                pWindow->take_focus();
         }
 
         void Window::show()
@@ -1526,6 +1531,7 @@ namespace lsp
                 ev.nType            = ws::UIE_MOUSE_OUT;
                 ev.nLeft            = hMouse.nLeft;
                 ev.nTop             = hMouse.nTop;
+                hMouse.nState       = 0;
                 hMouse.pWidget      = NULL;
 
                 old->handle_event(&ev);
@@ -1613,6 +1619,11 @@ namespace lsp
         ws::surface_type_t Window::surface_type() const
         {
             return enSurfaceType;
+        }
+
+        const lltl::darray<ws::code_t> *Window::active_keys() const
+        {
+            return &hKeys.vKeys;
         }
 
     } /* namespace tk */

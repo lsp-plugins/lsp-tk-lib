@@ -168,6 +168,7 @@ namespace lsp
         AudioSample::AudioSample(Display *dpy):
             WidgetContainer(dpy),
             vChannels(&sProperties, &sIListener),
+            vEnvelopes(&sProperties, &sIListener),
             sWaveBorder(&sProperties),
             sFadeInBorder(&sProperties),
             sFadeOutBorder(&sProperties),
@@ -257,12 +258,21 @@ namespace lsp
                     unlink_widget(item);
             }
 
+            for (size_t i=0, n=vEnvelopes.size(); i<n; ++i)
+            {
+                AudioEnvelope *item  = vEnvelopes.get(i);
+                if (item != NULL)
+                    unlink_widget(item);
+            }
+
             // Drop glass
             drop_glass();
 
             // Flush containers
             vChannels.flush();
-            vVisible.flush();
+            vEnvelopes.flush();
+            vVisibleChannels.flush();
+            vVisibleEnvelopes.flush();
         }
 
         status_t AudioSample::init()
@@ -329,7 +339,7 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (vChannels.is(prop))
+            if (prop->one_of(vChannels, vEnvelopes))
                 query_resize();
 
             if (sWaveBorder.is(prop))
@@ -392,9 +402,6 @@ namespace lsp
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
             bool sgroups        = sSGroups.get();
 
-            lltl::parray<AudioChannel> channels;
-            get_visible_items(&channels);
-
             // Estimate the size of area for drawing samples
             ws::size_limit_t sl;
             r->nMinWidth        = 0;
@@ -415,6 +422,10 @@ namespace lsp
             }
             else
             {
+                // Estimate minimum width and height among samples
+                lltl::parray<AudioChannel> channels;
+                get_visible_channels(&channels);
+
                 for (size_t i=0, n=channels.size(); i<n; ++i)
                 {
                     AudioChannel *c     = channels.uget(i);
@@ -422,6 +433,25 @@ namespace lsp
                     ssize_t h           = lsp_max(0, sl.nMinHeight);
                     r->nMinWidth        = lsp_max(r->nMinWidth, sl.nMinWidth);
                     r->nMinHeight      += (sgroups) ? (h >> 1) : h;
+                }
+
+                // Estimate minimum width and height among envelopes
+                lltl::parray<AudioEnvelope> envelopes;
+                get_visible_envelopes(&envelopes);
+
+                for (size_t i=0, n=envelopes.size(); i<n; ++i)
+                {
+                    AudioEnvelope *e    = envelopes.uget(i);
+
+                    padding_t padding;
+                    ssize_t width       = 0;
+                    ssize_t height      = 0;
+
+                    e->ipadding()->compute(&padding, scaling);
+                    e->get_min_area_size(&width, &height, scaling);
+
+                    r->nMinWidth        = lsp_max(r->nMinWidth, width + ssize_t(padding.nLeft + padding.nRight));
+                    r->nMinHeight       = lsp_max(r->nMinHeight, height + ssize_t(padding.nTop + padding.nBottom));
                 }
             }
 
@@ -447,8 +477,11 @@ namespace lsp
         {
             // Call parent class to realize
             WidgetContainer::realize(r);
+
             lltl::parray<AudioChannel> channels;
-            get_visible_items(&channels);
+            lltl::parray<AudioEnvelope> envelopes;
+            get_visible_channels(&channels);
+            get_visible_envelopes(&envelopes);
 
             // Compute the size of area
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -463,7 +496,8 @@ namespace lsp
             sGraph.nHeight  = r->nHeight - padding*2;
 
             sIPadding.enter(&sGraph, scaling);
-            vVisible.swap(&channels);
+            vVisibleChannels.swap(&channels);
+            vVisibleEnvelopes.swap(&envelopes);
         }
 
         void AudioSample::draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float max_amplitude)
@@ -520,7 +554,7 @@ namespace lsp
             s->draw_poly(fill, wire, border, x, y, n_points);
         }
 
-        void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples)
+        void AudioSample::draw_fades1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, ssize_t *head_cut, ssize_t *tail_cut, size_t samples)
         {
             // Check limits
             if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
@@ -564,6 +598,7 @@ namespace lsp
                     cut.scale_lch_luminance(bright);
 
                     float dx            = float(c->sHeadCut.get() * r->nWidth) / float(samples);
+                    *head_cut           = lsp_max(*head_cut, ssize_t(dx));
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft, r->nTop, dx, r->nHeight);
                     for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               += dx;
@@ -605,6 +640,7 @@ namespace lsp
                     cut.scale_lch_luminance(bright);
 
                     float dx            = float(c->sTailCut.get() * r->nWidth) / float(samples);
+                    *tail_cut           = lsp_max(*tail_cut, ssize_t(dx));
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft + r->nWidth - dx, r->nTop, dx, r->nHeight);
                     for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               -= dx;
@@ -734,7 +770,7 @@ namespace lsp
             s->draw_poly(fill, wire, border, x, y, n_points);
         }
 
-        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, bool down)
+        void AudioSample::draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, ssize_t *head_cut, ssize_t *tail_cut, size_t samples, bool down)
         {
             // Check limits
             if ((samples <= 0) || (r->nWidth <= 1) || (r->nHeight <= 1))
@@ -774,6 +810,7 @@ namespace lsp
                     cut.scale_lch_luminance(bright);
 
                     float dx            = float(c->sHeadCut.get() * r->nWidth) / float(samples);
+                    *head_cut           = lsp_max(*head_cut, ssize_t(dx));
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft, r->nTop, dx, r->nHeight);
                     for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               += dx;
@@ -811,6 +848,7 @@ namespace lsp
                     cut.scale_lch_luminance(bright);
 
                     float dx            = float(c->sTailCut.get() * r->nWidth) / float(samples);
+                    *tail_cut           = lsp_max(*tail_cut, ssize_t(dx));
                     s->fill_rect(cut, SURFMASK_NONE, 0.0f, r->nLeft + r->nWidth - dx, r->nTop, dx, r->nHeight);
                     for (size_t i=0,n=sizeof(x)/sizeof(x[0]); i<n; ++i)
                         x[i]               -= dx;
@@ -944,7 +982,9 @@ namespace lsp
             }
 
             // Draw all samples
-            size_t items = vVisible.size();
+            ssize_t head_cut = 0;
+            ssize_t tail_cut = 0;
+            size_t items = vVisibleChannels.size();
             if (items > 0)
             {
                 ws::rectangle_t xr;
@@ -956,7 +996,7 @@ namespace lsp
                 size_t samples  = 0;
                 for (size_t i=0; i<items; ++i)
                 {
-                    AudioChannel *c = vVisible.uget(i);
+                    AudioChannel *c = vVisibleChannels.uget(i);
                     samples         = lsp_max(samples, c->samples()->size());
                 }
 
@@ -971,7 +1011,7 @@ namespace lsp
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)
                     {
-                        AudioChannel *c     = vVisible.uget(i);
+                        AudioChannel *c     = vVisibleChannels.uget(i);
                         draw_channel2(&xr, s, c, samples, i & 1, sMaxAmplitude.get());
                         xr.nTop            += xr.nHeight;
                     }
@@ -980,7 +1020,7 @@ namespace lsp
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)
                     {
-                        AudioChannel *c     = vVisible.uget(i);
+                        AudioChannel *c     = vVisibleChannels.uget(i);
 
                         // Define ranges
                         range_t stretch = {
@@ -1007,8 +1047,8 @@ namespace lsp
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)
                     {
-                        AudioChannel *c     = vVisible.uget(i);
-                        draw_fades2(&xr, s, c, samples, i & 1);
+                        AudioChannel *c     = vVisibleChannels.uget(i);
+                        draw_fades2(&xr, s, c, &head_cut, &tail_cut, samples, i & 1);
                         xr.nTop            += xr.nHeight;
                     }
 
@@ -1028,7 +1068,7 @@ namespace lsp
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)
                     {
-                        AudioChannel *c     = vVisible.uget(i);
+                        AudioChannel *c     = vVisibleChannels.uget(i);
                         draw_play_position(&xr, s, c, samples);
                         xr.nTop            += xr.nHeight;
                     }
@@ -1039,7 +1079,7 @@ namespace lsp
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)
                     {
-                        AudioChannel *c     = vVisible.uget(i);
+                        AudioChannel *c     = vVisibleChannels.uget(i);
                         draw_channel1(&xr, s, c, samples, sMaxAmplitude.get());
                         xr.nTop            += xr.nHeight;
                     }
@@ -1048,7 +1088,7 @@ namespace lsp
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)
                     {
-                        AudioChannel *c     = vVisible.uget(i);
+                        AudioChannel *c     = vVisibleChannels.uget(i);
 
                         // Define ranges
                         range_t stretch = {
@@ -1075,8 +1115,8 @@ namespace lsp
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)
                     {
-                        AudioChannel *c     = vVisible.uget(i);
-                        draw_fades1(&xr, s, c, samples);
+                        AudioChannel *c     = vVisibleChannels.uget(i);
+                        draw_fades1(&xr, s, c, &head_cut, &tail_cut, samples);
                         xr.nTop            += xr.nHeight;
                     }
 
@@ -1097,10 +1137,28 @@ namespace lsp
                     xr.nTop             = y;
                     for (size_t i=0; i<items; ++i)
                     {
-                        AudioChannel *c     = vVisible.uget(i);
+                        AudioChannel *c     = vVisibleChannels.uget(i);
                         draw_play_position(&xr, s, c, samples);
                         xr.nTop            += xr.nHeight;
                     }
+                }
+            }
+
+            // Draw envelopes
+            {
+                const ws::point_t origin = s->set_origin(-sGraph.nLeft, -sGraph.nTop);
+                lsp_finally { s->set_origin(origin); };
+
+                for (size_t i=0; i<vVisibleEnvelopes.size(); ++i)
+                {
+                    ws::rectangle_t cr = sGraph;
+
+                    tk::AudioEnvelope *envelope = vEnvelopes.get(i);
+                    envelope->ipadding()->enter(&cr, scaling);
+                    cr.nLeft       += head_cut;
+                    cr.nWidth      -= head_cut + tail_cut;
+                    envelope->draw_curve(s, bright, scaling, &cr);
+                    envelope->commit_redraw();
                 }
             }
 
@@ -1115,7 +1173,7 @@ namespace lsp
             // Commit redraw for children
             for (size_t i=0; i<items; ++i)
             {
-                AudioChannel *c     = vVisible.uget(i);
+                AudioChannel *c     = vVisibleChannels.uget(i);
                 c->commit_redraw();
             }
         }
@@ -1208,7 +1266,7 @@ namespace lsp
             drop_glass();
         }
 
-        void AudioSample::get_visible_items(lltl::parray<AudioChannel> *dst)
+        void AudioSample::get_visible_channels(lltl::parray<AudioChannel> *dst)
         {
             for (size_t i=0, n=vChannels.size(); i<n; ++i)
             {
@@ -1220,51 +1278,94 @@ namespace lsp
             }
         }
 
+        void AudioSample::get_visible_envelopes(lltl::parray<AudioEnvelope> *dst)
+        {
+            for (size_t i=0, n=vEnvelopes.size(); i<n; ++i)
+            {
+                AudioEnvelope *e = vEnvelopes.get(i);
+                if ((e == NULL) || (!e->visibility()->get()))
+                    continue;
+                if (!dst->add(e))
+                    return;
+            }
+        }
+
         void AudioSample::on_add_item(void *obj, Property *prop, void *w)
         {
-            AudioChannel *item = widget_ptrcast<AudioChannel>(w);
+            Widget *item = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
-            AudioSample *_this = widget_ptrcast<AudioSample>(obj);
-            if (_this == NULL)
+            AudioSample *self = widget_ptrcast<AudioSample>(obj);
+            if (self == NULL)
                 return;
 
-            item->set_parent(_this);
-            _this->query_resize();
+            item->set_parent(self);
+            self->query_resize();
         }
 
         void AudioSample::on_remove_item(void *obj, Property *prop, void *w)
         {
-            AudioChannel *item = widget_ptrcast<AudioChannel>(w);
+            Widget *item = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
-            AudioSample *_this = widget_ptrcast<AudioSample>(obj);
-            if (_this == NULL)
+            AudioSample *self = widget_ptrcast<AudioSample>(obj);
+            if (self == NULL)
                 return;
 
             // Remove widget from supplementary structures
-            _this->unlink_widget(item);
-            _this->query_resize();
+            self->unlink_widget(item);
+            self->query_resize();
         }
 
         status_t AudioSample::add(Widget *widget)
         {
-            AudioChannel *item  = widget_cast<AudioChannel>(widget);
-            return (item != NULL) ? vChannels.add(item) : STATUS_BAD_TYPE;
+            AudioChannel *channel = widget_cast<AudioChannel>(widget);
+            if (channel != NULL)
+                return vChannels.add(channel);
+
+            AudioEnvelope *envelope = widget_cast<AudioEnvelope>(widget);
+            if (envelope != NULL)
+                return vEnvelopes.add(envelope);
+
+            return STATUS_BAD_TYPE;
         }
 
         status_t AudioSample::remove(Widget *child)
         {
-            AudioChannel *item  = widget_cast<AudioChannel>(child);
-            return (item != NULL) ? vChannels.premove(item) : STATUS_BAD_TYPE;
+            AudioChannel *channel = widget_cast<AudioChannel>(child);
+            if (channel != NULL)
+                return vChannels.premove(channel);
+
+            AudioEnvelope *envelope = widget_cast<AudioEnvelope>(child);
+            if (envelope != NULL)
+                return vEnvelopes.premove(envelope);
+
+            return STATUS_BAD_TYPE;
         }
 
         status_t AudioSample::remove_all()
         {
             vChannels.clear();
+            vEnvelopes.clear();
             return STATUS_OK;
+        }
+
+        Widget *AudioSample::find_widget(ssize_t x, ssize_t y)
+        {
+            for (size_t i=0; i<vEnvelopes.size(); ++i)
+            {
+                tk::AudioEnvelope *envelope = vEnvelopes.get(i);
+                if ((envelope == NULL) || (!envelope->visibility()->get()))
+                    continue;
+
+                tk::AudioEnvelope::point_t *point = envelope->find_point(x, y);
+                if (point != NULL)
+                    return envelope;
+            }
+
+            return NULL;
         }
 
         status_t AudioSample::on_mouse_down(const ws::event_t *e)
@@ -1306,24 +1407,22 @@ namespace lsp
 
             if (Position::rinside(&sSize, e->nLeft, e->nTop, xr))
             {
-                if (sActive.get())
+                if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
                 {
-                    if ((e->nCode == ws::MCB_LEFT) && (flags & XF_LBUTTON))
-                    {
+                    if (sActive.get())
                         sSlots.execute(SLOT_SUBMIT, this, NULL);
-                    }
-                    else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
+                }
+                else if ((e->nCode == ws::MCB_RIGHT) && (flags & XF_RBUTTON))
+                {
+                    Menu *popup = sPopup.get();
+                    if (popup != NULL)
                     {
-                        Menu *popup = sPopup.get();
-                        if (popup != NULL)
-                        {
-                            ws::rectangle_t sr;
-                            Window *wnd = widget_cast<Window>(this->toplevel());
-                            wnd->get_screen_rectangle(&sr);
-                            sr.nLeft       += e->nLeft;
-                            sr.nTop        += e->nTop;
-                            popup->show(this, sr.nLeft, sr.nTop);
-                        }
+                        ws::rectangle_t sr;
+                        Window *wnd = widget_cast<Window>(this->toplevel());
+                        wnd->get_screen_rectangle(&sr);
+                        sr.nLeft       += e->nLeft;
+                        sr.nTop        += e->nTop;
+                        popup->show(this, sr.nLeft, sr.nTop);
                     }
                 }
             }
