@@ -136,6 +136,8 @@ namespace lsp
                 Schema(Schema &&) = delete;
                 virtual ~Schema();
 
+                void                destroy();
+
                 Schema & operator = (const Schema &) = delete;
                 Schema & operator = (Schema &&) = delete;
 
