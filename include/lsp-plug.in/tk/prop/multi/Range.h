@@ -87,6 +87,7 @@ namespace lsp
                 inline float        range() const           { return fMax - fMin;           }
                 inline float        abs_range() const       { return (fMax > fMin) ? fMax - fMin : fMin - fMax; }
                 inline bool         range_locked() const    { return nFlags & F_RANGE_LOCK; }
+                inline bool         inversed() const        { return fMin > fMax;           }
 
                 float               set_min(float v);
                 float               set_max(float v);

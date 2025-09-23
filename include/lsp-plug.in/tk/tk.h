@@ -163,6 +163,7 @@
 #include <lsp-plug.in/tk/widgets/simple/MenuItem.h>
 #include <lsp-plug.in/tk/widgets/simple/ProgressBar.h>
 #include <lsp-plug.in/tk/widgets/simple/RadioButton.h>
+#include <lsp-plug.in/tk/widgets/simple/RangeSlider.h>
 #include <lsp-plug.in/tk/widgets/simple/ScrollBar.h>
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/TabItem.h>
