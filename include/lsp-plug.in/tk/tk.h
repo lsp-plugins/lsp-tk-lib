@@ -93,6 +93,7 @@
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
 #include <lsp-plug.in/tk/prop/multi/Point2D.h>
 #include <lsp-plug.in/tk/prop/multi/Position.h>
+#include <lsp-plug.in/tk/prop/multi/Range.h>
 #include <lsp-plug.in/tk/prop/multi/RangeFloat.h>
 #include <lsp-plug.in/tk/prop/multi/Rectangle.h>
 #include <lsp-plug.in/tk/prop/multi/Shortcut.h>

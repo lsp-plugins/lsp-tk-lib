@@ -283,7 +283,7 @@ namespace lsp
             bool RangeFloat::lock_range(bool lock)
             {
                 bool prev       = nFlags & F_RANGE_LOCK;
-                nFlags          = lsp_setflag(nFlags, F_AUTO_LIMIT, lock);
+                nFlags          = lsp_setflag(nFlags, F_RANGE_LOCK, lock);
                 return prev;
             }
 
