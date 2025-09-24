@@ -3,6 +3,7 @@
 *******************************************************************************
 
 === 1.0.30 ===
+* Implemented new tk::RangeSlider widget.
 * Fixed use after free for several scenarios when destroying the display.
 
 === 1.0.29 ===

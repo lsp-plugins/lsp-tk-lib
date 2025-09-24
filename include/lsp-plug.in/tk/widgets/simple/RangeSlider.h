@@ -97,10 +97,8 @@ namespace lsp
             protected:
                 enum flags_t
                 {
-                    F_BUTTON_MAX        = 1 << 0,
-                    F_IGNORE            = 1 << 1,
-                    F_PRECISION         = 1 << 2,
-                    F_MOVER             = 1 << 3
+                    F_IGNORE            = 1 << 0,
+                    F_PRECISION         = 1 << 1
                 };
 
                 enum rslider_flags_t
@@ -118,6 +116,7 @@ namespace lsp
                 float                           fLastValue;
                 float                           fCurrValue;
                 ws::rectangle_t                 vButtons[2];
+                ws::rectangle_t                *pCurrButton;
                 ws::rectangle_t                 sHole;
 
                 style::RangeSliderColors        vColors[RSLIDER_TOTAL];

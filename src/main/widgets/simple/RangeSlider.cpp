@@ -158,6 +158,7 @@ namespace lsp
                 btn->nWidth     = 0;
                 btn->nHeight    = 0;
             }
+            pCurrButton     = NULL;
 
             sHole.nLeft     = -1;
             sHole.nTop      = -1;
@@ -266,6 +267,8 @@ namespace lsp
                 lsp::swap(bmin, bmax);
             }
 
+            lsp_trace("min = %f, max = %f", min, max);
+
             switch (angle & 3)
             {
                 case 0: // horizontal left -> right
@@ -282,7 +285,7 @@ namespace lsp
                     bmin->nLeft         = sSize.nLeft;
                     bmax->nLeft         = sSize.nLeft;
                     bmax->nTop          = sSize.nTop + (1.0f - max) * fButtonRange;
-                    bmin->nTop          = sSize.nTop + bmax->nHeight + (1.0f - max) * fButtonRange;
+                    bmin->nTop          = sSize.nTop + bmax->nHeight + (1.0f - min) * fButtonRange;
                     break;
                 }
 
@@ -468,13 +471,13 @@ namespace lsp
                 max         = sLimits.limit(max);
             }
 
-            lsp_trace("out: min=%f, max=%f", min, max);
-
             flags       = 0;
             if (old_min != min)
                 flags      |= CHANGE_MIN;
             if (old_max != max)
                 flags      |= CHANGE_MAX;
+
+            lsp_trace("out: min=%f, max=%f, flags=0x%x", min, max, flags);
 
             sValues.set(min, max);
             if (flags != 0)
@@ -545,16 +548,13 @@ namespace lsp
         {
             if (nButtons == 0)
             {
-                const ws::rectangle_t *btn = find_button(e);
+                pCurrButton = find_button(e);
 
-                if (btn != NULL)
+                if (pCurrButton != NULL)
                 {
-                    const size_t flags = (btn == &vButtons[1]) ? F_BUTTON_MAX | F_MOVER : F_MOVER;
                     if (e->nCode == ws::MCB_RIGHT)
-                        nXFlags        |= flags | F_PRECISION;
-                    else if (e->nCode == ws::MCB_LEFT)
-                        nXFlags        |= flags;
-                    else
+                        nXFlags        |= F_PRECISION;
+                    else if (e->nCode != ws::MCB_LEFT)
                         nXFlags        |= F_IGNORE;
                 }
                 else
@@ -563,8 +563,11 @@ namespace lsp
                 if (!(nXFlags & F_IGNORE))
                 {
                     nLastV      = (sAngle.get() & 1) ? e->nTop : e->nLeft;
-                    fLastValue  = (nXFlags & F_BUTTON_MAX) ? sValues.max() : sValues.min();
+                    fLastValue  = (pCurrButton == &vButtons[0]) ? sValues.min() : sValues.max();
                     fCurrValue  = fLastValue;
+
+                    lsp_trace("curr button is %s, last_value=%f",
+                        (pCurrButton == &vButtons[0]) ? "MIN" : "MAX", fLastValue);
 
                     sSlots.execute(SLOT_BEGIN_EDIT, this);
                 }
@@ -578,7 +581,7 @@ namespace lsp
 
             // Update value
             const float value   = (nButtons == size_t(size_t(1) << key)) ? fCurrValue : fLastValue;
-            update_value(value, value, (nXFlags & F_BUTTON_MAX) ? CHANGE_MAX : CHANGE_MIN);
+            update_value(value, value, (pCurrButton == &vButtons[0]) ? CHANGE_MIN : CHANGE_MAX);
 
             return STATUS_OK;
         }
@@ -590,11 +593,8 @@ namespace lsp
             {
                 if (nButtons == 0)
                 {
-                    const ws::rectangle_t *btn = find_button(e);
-                    if (btn != NULL)
-                        nXFlags         = (btn == &vButtons[1]) ? F_BUTTON_MAX | F_MOVER : F_MOVER;
-                    else
-                        nXFlags     = 0;
+                    pCurrButton = find_button(e);
+                    nXFlags     = 0;
                 }
                 return STATUS_OK;
             }
@@ -602,9 +602,10 @@ namespace lsp
             size_t key      = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
             float value;
 
-            const bool btn_max = (nXFlags & F_BUTTON_MAX);
+            const size_t flags = (pCurrButton == &vButtons[0]) ? CHANGE_MIN : CHANGE_MAX;
             if (nButtons == 0) // All mouse buttons are released now
             {
+                pCurrButton = find_button(e);
                 nXFlags     = 0;
                 value       = (e->nCode == key) ? fCurrValue : fLastValue;
             }
@@ -614,7 +615,7 @@ namespace lsp
                 value       = fLastValue;
 
             // Update value
-            update_value(value, value, (btn_max) ? CHANGE_MAX : CHANGE_MIN);
+            update_value(value, value, flags);
 
             if (nButtons == 0)
                 sSlots.execute(SLOT_END_EDIT, this);
@@ -630,26 +631,21 @@ namespace lsp
             size_t key = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
             if (nButtons != (size_t(1) << key))
             {
-                const ws::rectangle_t *btn = find_button(e);
-                nXFlags    &= ~(F_MOVER | F_BUTTON_MAX);
-                if ((nButtons == 0) && (btn != NULL))
-                    nXFlags    |= (btn == &vButtons[1]) ? F_BUTTON_MAX | F_MOVER : F_MOVER;
+                pCurrButton     = find_button(e);
                 return STATUS_OK;
             }
+            else if (pCurrButton == NULL)
+                return STATUS_OK;
 
             // Different behaviour for slider
-            const bool btn_max = (nXFlags & F_BUTTON_MAX);
-
-            nXFlags        |= F_MOVER;
-            ssize_t angle   = sAngle.get() & 3;
+            const size_t flags  = (pCurrButton == &vButtons[0]) ? CHANGE_MIN : CHANGE_MAX;
+            const ssize_t angle = sAngle.get() & 3;
 
             ssize_t value   = (angle & 1) ? e->nTop : e->nLeft;
             float result    = fLastValue;
             if (value != nLastV)
             {
                 float delta     = sLimits.range() * float(value - nLastV) / fButtonRange; // normalized
-                if (angle >= 2)
-                    delta           = -delta;
                 float accel     = 1.0f;
 
                 if (nXFlags & F_PRECISION)
@@ -665,23 +661,22 @@ namespace lsp
                             1.0f;
                 }
 
+                lsp_trace("last_value = %f, delta = %f, accel = %f", fLastValue, delta, accel);
+
                 result        = ((angle == 1) || (angle == 2)) ? result - delta*accel : result + delta*accel;
             }
 
             // Update value
             fCurrValue      = result;
             lsp_trace("fCurrValue=%f, fLastValue=%f", fCurrValue, fLastValue);
-            update_value(result, result, (btn_max) ? CHANGE_MAX : CHANGE_MIN);
+            update_value(result, result, flags);
 
             return STATUS_OK;
         }
 
         status_t RangeSlider::on_mouse_scroll(const ws::event_t *e)
         {
-//            ssize_t angle   = sAngle.get();
             float step      = sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
-//            if (((angle & 3) == 2) || ((angle & 3) == 3))
-//                step            = -step;
             if (sInvertMouseVScroll.get())
                 step            = -step;
 
@@ -880,7 +875,7 @@ namespace lsp
 
         status_t RangeSlider::on_mouse_pointer(pointer_event_t *e)
         {
-            if ((nXFlags & (F_MOVER | F_IGNORE)) == F_MOVER)
+            if ((!(nXFlags & F_IGNORE)) && (pCurrButton != NULL))
             {
                 ws::mouse_pointer_t dfl_pointer = (sAngle.get() & 1) ? ws::MP_VSIZE : ws::MP_HSIZE;
                 e->enPointer    = sBtnPointer.get(dfl_pointer);

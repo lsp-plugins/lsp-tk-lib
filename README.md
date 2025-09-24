@@ -75,6 +75,7 @@ The full list of provided widgets:
   * MenuItem - menu item widget used by Menu widget.
   * ProgressBar - widget for displaying progress of some long lasting process.
   * RadioButton - rounded single on/off toggle.
+  * RangeSlider - the slider with two tips that allows to set the range of values.
   * ScrollBar - single scroll bar.
   * Separator - separator widget to visually separate space allocated in widget containers.
   * Void - void widget which can be used for filling empty area.
