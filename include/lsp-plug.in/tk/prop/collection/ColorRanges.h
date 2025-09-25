@@ -175,7 +175,7 @@ namespace lsp
                      * Unbind property
                      */
                     inline status_t     unbind()                                        { return tk::ColorRanges::unbind(&sListener); };
-
+                    inline void         listener(prop::Listener *listener)              { pListener = listener;                     }
             };
 
         } /* namespace prop */
