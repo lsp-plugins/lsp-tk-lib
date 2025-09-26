@@ -144,6 +144,9 @@ namespace lsp
                 static void scale(ws::size_limit_t *dst, float scale);
 
                 static bool match(const ws::rectangle_t *r, const ws::size_limit_t *sr);
+
+                static void transpose(ws::size_limit_t *r);
+                static void transpose(ws::size_limit_t *dst, const ws::size_limit_t *src);
         };
 
         namespace prop

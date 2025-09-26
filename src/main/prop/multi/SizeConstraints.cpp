@@ -499,6 +499,33 @@ namespace lsp
             return true;
         }
 
+        void SizeConstraints::transpose(ws::size_limit_t *r)
+        {
+            lsp::swap(r->nMinWidth, r->nMinHeight);
+            lsp::swap(r->nMaxWidth, r->nMaxHeight);
+            lsp::swap(r->nPreWidth, r->nPreHeight);
+        }
+
+        void SizeConstraints::transpose(ws::size_limit_t *dst, const ws::size_limit_t *src)
+        {
+            ssize_t a, b;
+
+            a = src->nMinWidth;
+            b = src->nMinHeight;
+            dst->nMinWidth  = b;
+            dst->nMinHeight = a;
+
+            a = src->nMaxWidth;
+            b = src->nMaxHeight;
+            dst->nMaxWidth  = b;
+            dst->nMaxHeight = a;
+
+            a = src->nPreWidth;
+            b = src->nPreHeight;
+            dst->nPreWidth  = b;
+            dst->nPreHeight = a;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

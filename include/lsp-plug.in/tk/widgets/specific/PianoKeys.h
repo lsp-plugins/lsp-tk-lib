@@ -75,11 +75,13 @@ namespace lsp
                 PianoKeyColors              vKeyColors[PIANOKEY_TOTAL];
                 PianoColors                 vColors[PIANO_TOTAL];
 
-                prop::Integer               sBorderSize;    // Border size
+                prop::Padding               sBorder;        // Border
                 prop::Integer               sSplitSize;     // Split size
                 prop::Integer               sMinNote;       // Minimal note code
                 prop::Integer               sMaxNote;       // Maximum note code
                 prop::Integer               sAngle;         // Rotation angle
+                prop::SizeConstraints       sConstraints;   // Size constraints
+                prop::Float                 sKeyAspect;     // The relative size of black key to white key
 
                 // TODO: add note selection bitmask
             LSP_TK_STYLE_DEF_END
@@ -124,21 +126,48 @@ namespace lsp
                     PC_1            = style::PIANO_INACTIVE,
                 };
 
+                typedef struct layout_t
+                {
+                    ssize_t         nFirst;                 // First note
+                    ssize_t         nLast;                  // Last note
+                    size_t          nLength;                // Overall length of the keypad
+                    size_t          nWhite;                 // Number of white keys
+                    size_t          nBlack;                 // Number of black keys
+                } layout_t;
+
+                typedef struct key_t
+                {
+                    float                   fLeft;          // Left
+                    float                   fTop;           // Top
+                    float                   fWidth;         // Width
+                    float                   fHeight;        // Height
+                    uint32_t                nKey;           // Key
+                } key_t;
+
             protected:
+                lltl::darray<key_t>         vKeys;
+
                 style::PianoKeyColors       vKeyColors[style::PIANOKEY_TOTAL];
                 style::PianoColors          vColors[style::PIANO_TOTAL];
 
-                prop::Integer               sBorderSize;    // Border size
+                prop::Padding               sBorder;        // Border
                 prop::Integer               sSplitSize;     // Split size
                 prop::Integer               sMinNote;       // Minimal note code
                 prop::Integer               sMaxNote;       // Maximum note code
                 prop::Integer               sAngle;         // Rotation angle
+                prop::SizeConstraints       sConstraints;   // Size constraints
+                prop::Float                 sKeyAspect;     // The relative size of black key to white key
 
             protected:
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
+                static inline bool          is_black_key(size_t note);
+                static inline size_t        key_width(size_t note);
+                static inline size_t        key_offset(size_t note);
 
             protected:
                 void                        do_destroy();
+                style::PianoColors         *get_piano_colors();
+                void                        compute_layout(layout_t * layout);
 
             protected:
                 virtual void                property_changed(Property *prop) override;
@@ -198,11 +227,13 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,              inactive_border_color,                      &vColors[PC_1].sBorderColor)
                 LSP_TK_PROPERTY(Color,              inactive_split_color,                       &vColors[PC_1].sSplitColor)
 
-                LSP_TK_PROPERTY(Integer,            border_size,                                &sBorderSize)
+                LSP_TK_PROPERTY(Padding,            border,                                     &sBorder)
                 LSP_TK_PROPERTY(Integer,            split_size,                                 &sSplitSize)
                 LSP_TK_PROPERTY(Integer,            min_note,                                   &sMinNote)
                 LSP_TK_PROPERTY(Integer,            max_note,                                   &sMaxNote)
                 LSP_TK_PROPERTY(Integer,            angle,                                      &sAngle)
+                LSP_TK_PROPERTY(SizeConstraints,    size_constraints,                           &sConstraints)
+                LSP_TK_PROPERTY(Float,              key_aspect,                                 &sKeyAspect)
 
             public:
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;

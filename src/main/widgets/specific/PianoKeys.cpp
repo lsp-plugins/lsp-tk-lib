@@ -19,6 +19,7 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/tk/tk.h>
 #include <private/tk/style/BuiltinStyle.h>
 
@@ -106,11 +107,12 @@ namespace lsp
                 pc->sSplitColor.bind("inactive.split.color", this);
 
                 // Bind other properties
-                sBorderSize.bind("border.size", this);
+                sBorder.bind("border", this);
                 sSplitSize.bind("split.size", this);
                 sMinNote.bind("note.min", this);
                 sMaxNote.bind("note.max", this);
                 sAngle.bind("angle", this);
+                sConstraints.bind("size.contstraints", this);
 
                 // Init values
                 for (size_t i=0; i<style::PIANOKEY_TOTAL; ++i)
@@ -136,11 +138,12 @@ namespace lsp
                 pc->sBorderColor.set_rgb24(0x444444);
                 pc->sSplitColor.set_rgb24(0x888888);
 
-                sBorderSize.set(1);
+                sBorder.set_all(1);
                 sSplitSize.set(1);
                 sMinNote.set(36);               // C2
                 sMaxNote.set(36 + 4*12 - 1);    // H5
                 sAngle.set(0);
+                sConstraints.set_min_height(32);
 
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(PianoKeys, "PianoKeys", "root");
@@ -170,15 +173,24 @@ namespace lsp
 
         //-----------------------------------------------------------------------------
         // PianoKeys implementation
+
+        // Width of keys on a keypad
+        // note:        B #  A #  G #  F E  # D  # C
+        // width:       3 2  4 2  4 2  3 3  2 4  2 3
+        // modified:    1 0  2 0  2 0  1 1  0 2  0 1
+        // encoded:    0100 1000 1000 0101 0010 0001
+        static constexpr uint32_t piano_key_widths = 0x488521;
+
         const w_class_t PianoKeys::metadata             = { "PianoKeys", &Widget::metadata };
 
         PianoKeys::PianoKeys(Display *dpy):
             tk::Widget(dpy),
-            sBorderSize(&sProperties),
+            sBorder(&sProperties),
             sSplitSize(&sProperties),
             sMinNote(&sProperties),
             sMaxNote(&sProperties),
-            sAngle(&sProperties)
+            sAngle(&sProperties),
+            sConstraints(&sProperties)
         {
             pClass          = &metadata;
 
@@ -285,11 +297,12 @@ namespace lsp
             pc->sSplitColor.bind("inactive.split.color", &sStyle);
 
             // Bind other properties
-            sBorderSize.bind("border.size", &sStyle);
+            sBorder.bind("border", &sStyle);
             sSplitSize.bind("split.size", &sStyle);
             sMinNote.bind("note.min", &sStyle);
             sMaxNote.bind("note.max", &sStyle);
             sAngle.bind("angle", &sStyle);
+            sConstraints.bind("size.contstraints", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -319,18 +332,182 @@ namespace lsp
             }
 
             // Check that keyboard color has changed
+            style::PianoColors *c = get_piano_colors();
+            if (c->property_changed(prop))
+                query_draw();
+
+            if (prop->one_of(sBorder, sSplitSize, sMinNote, sMaxNote, sAngle, sConstraints))
+                query_resize();
         }
 
         void PianoKeys::size_request(ws::size_limit_t *r)
         {
+            const float scaling     = lsp_max(0.0f, sScaling.get());
+            const ssize_t angle     = sAngle.get() & 0x3;
+            const float split       = scaling * lsp_max(0.0f, sSplitSize.get());
+            const float key_unit    = lsp_max(split, 1.0f);
+
+            // Compute the keyboard layout
+            layout_t layout;
+            compute_layout(&layout);
+
+            // Now compute the size
+            size_t height           = (layout.nWhite > 0) ? 4 : (layout.nBlack > 0) ? 2 : 0;
+            const size_t min_width  = floorf(layout.nLength * key_unit);
+            const size_t min_height = floorf(height * key_unit);
+
+            r->nMaxWidth    = -1;
+            r->nMaxHeight   = -1;
+            r->nPreWidth    = -1;
+            r->nPreHeight   = -1;
+            r->nMinWidth    = min_height;
+            r->nMinHeight   = min_width;
+            if (angle & 1)
+            {
+                SizeConstraints::transpose(r);
+                sBorder.add(r, scaling);
+                SizeConstraints::transpose(r);
+            }
+            else
+                sBorder.add(r, scaling);
+
+            sConstraints.apply(r, scaling);
+
+            // Swap role of width and height for vertical orientation
+            if (angle & 1)
+                SizeConstraints::transpose(r);
         }
 
         void PianoKeys::realize(const ws::rectangle_t *r)
         {
+            const float scaling     = lsp_max(0.0f, sScaling.get());
+            const ssize_t angle     = sAngle.get() & 0x3;
+            const float aspect      = lsp_limit(sKeyAspect.get(), 0.0f, 1.0f);
+
+            ws::rectangle_t kr;
+            sBorder.enter(&kr, r, scaling);
+
+            // Compute the keyboard layout
+            layout_t layout;
+            compute_layout(&layout);
+
+            const float step = float(kr.nWidth) / float(layout.nLength);
+
+            // Allocate array of keys
+            vKeys.clear();
+            key_t *k = vKeys.append_n(layout.nLast - layout.nFirst + 1);
+            if (k == NULL)
+                return;
+
+            // Fill array of keys
+            // TODO: fill for other angles
+            switch (angle)
+            {
+                case 0:
+                default:
+                {
+                    size_t x = 0;
+                    const float left = kr.nLeft;
+                    const float top = kr.nTop;
+
+                    for (ssize_t key = layout.nFirst; key <= layout.nLast; ++key, ++k)
+                    {
+                        const size_t k_offset   = key_offset(key);
+                        const size_t k_width    = key_width(key);
+
+                        k->fLeft            = left + x * step;
+                        k->fTop             = top;
+                        k->fWidth           = k_width * step;
+                        k->fHeight          = kr.nHeight;
+                        k->nKey             = key;
+
+                        if (is_black_key(key))
+                            k->fHeight         *= aspect;
+
+                        x                  += 2;
+                        if (key == layout.nFirst)
+                            x                      += k_offset;
+                    }
+                    break;
+                }
+
+//                case 1:
+//                    // TODO
+//                    break;
+//
+//                case 2:
+//                    // TODO
+//                    break;
+//
+//                case 3:
+//                    // TODO
+//                    break;
+            }
         }
 
         void PianoKeys::draw(ws::ISurface *s, bool force)
         {
+        }
+
+        void PianoKeys::compute_layout(layout_t * layout)
+        {
+            ssize_t first = lsp_max(sMinNote.get(), 0);
+            ssize_t last  = lsp_max(sMaxNote.get(), 0);
+            if (first > last)
+                lsp::swap(first, last);
+
+            layout->nFirst  = first;
+            layout->nLast   = last;
+            layout->nLength = 0;
+            layout->nWhite  = 0;
+            layout->nBlack  = 0;
+
+            // Analyze first note key
+            if (is_black_key(first))
+            {
+                layout->nLength    += key_width(first) / 2;
+                ++layout->nBlack;
+                ++first;
+            }
+
+            // Analyze last note key
+            if ((first <= last) && (is_black_key(last)))
+            {
+                layout->nLength    += key_width(first) / 2;
+                ++layout->nBlack;
+                --last;
+            }
+
+            // Compute the rest stuff
+            for (; first <= last; ++first)
+            {
+                layout->nLength    += key_width(first);
+                if (is_black_key(first))
+                    ++layout->nBlack;
+                else
+                    ++layout->nWhite;
+            }
+        }
+
+        style::PianoColors *PianoKeys::get_piano_colors()
+        {
+            const size_t index = (sActive.get()) ? style::PIANO_NORMAL : style::PIANO_INACTIVE;
+            return &vColors[index];
+        }
+
+        inline bool PianoKeys::is_black_key(size_t note)
+        {
+            return ((piano_key_widths >> ((note % 12) * 2)) & 0x3) == 0;
+        }
+
+        inline size_t PianoKeys::key_width(size_t note)
+        {
+            return ((piano_key_widths >> ((note % 12) * 2)) & 0x3) + 2;
+        }
+
+        inline size_t PianoKeys::key_offset(size_t note)
+        {
+            return (piano_key_widths >> ((note % 12) * 2 + 1)) & 1;
         }
 
         status_t PianoKeys::on_mouse_down(const ws::event_t *e)
