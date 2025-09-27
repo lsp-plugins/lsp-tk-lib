@@ -113,6 +113,8 @@ namespace lsp
                 sMaxNote.bind("note.max", this);
                 sAngle.bind("angle", this);
                 sConstraints.bind("size.contstraints", this);
+                sKeyAspect.bind("key.aspect", this);
+                sNatural.bind("natural", this);
 
                 // Init values
                 for (size_t i=0; i<style::PIANOKEY_TOTAL; ++i)
@@ -144,6 +146,7 @@ namespace lsp
                 sMaxNote.set(36 + 4*12 - 1);    // H5
                 sAngle.set(0);
                 sConstraints.set_min_height(32);
+                sKeyAspect.set(0.66f);
 
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(PianoKeys, "PianoKeys", "root");
@@ -173,13 +176,74 @@ namespace lsp
 
         //-----------------------------------------------------------------------------
         // PianoKeys implementation
+        enum key_type_t
+        {
+            KT_BLACK = 0,
+            KT_LEFT = 1,
+            KT_RIGHT = 2,
+            KT_MIDDLE = 3
+        };
 
-        // Width of keys on a keypad
-        // note:        B #  A #  G #  F E  # D  # C
-        // width:       3 2  4 2  4 2  3 3  2 4  2 3
-        // modified:    1 0  2 0  2 0  1 1  0 2  0 1
-        // encoded:    0100 1000 1000 0101 0010 0001
-        static constexpr uint32_t piano_key_widths = 0x488521;
+        // Types of keys on a keypad within an octave
+        static constexpr uint32_t piano_key_types =
+            (KT_LEFT << 0) |            // C
+            (KT_BLACK << 2) |           // C#
+            (KT_MIDDLE << 4) |          // D
+            (KT_BLACK << 6) |           // D#
+            (KT_RIGHT << 8) |           // E
+            (KT_LEFT << 10) |           // F
+            (KT_BLACK << 12) |          // F#
+            (KT_MIDDLE << 14) |         // G
+            (KT_BLACK << 16) |          // G#
+            (KT_MIDDLE << 18) |         // A
+            (KT_BLACK << 20) |          // A#
+            (KT_RIGHT << 22);           // B
+
+        inline size_t key_type(size_t note)
+        {
+            const size_t shift = (note % 12) << 1;
+            return (piano_key_types >> shift) & 0x3;
+        }
+
+        inline bool is_black_key(size_t note)
+        {
+            return key_type(note) == KT_BLACK;
+        }
+
+        inline size_t key_width(size_t note, bool natural)
+        {
+            switch (key_type(note))
+            {
+                case KT_LEFT:
+                    return 3;
+                case KT_BLACK:
+                    return 2;
+                case KT_RIGHT:
+                    return 3;
+                default:
+                case KT_MIDDLE:
+                    break;
+            }
+            return (natural) ? 3 : 4;
+        }
+
+        inline size_t key_advance(size_t note, bool natural)
+        {
+            switch (key_type(note))
+            {
+                case KT_LEFT:
+                    return 2;
+                case KT_BLACK:
+                    return 1;
+                case KT_RIGHT:
+                    return 3;
+                default:
+                case KT_MIDDLE:
+                    break;
+            }
+            return (natural) ? 2 : 3;
+        }
+
 
         const w_class_t PianoKeys::metadata             = { "PianoKeys", &Widget::metadata };
 
@@ -190,9 +254,22 @@ namespace lsp
             sMinNote(&sProperties),
             sMaxNote(&sProperties),
             sAngle(&sProperties),
-            sConstraints(&sProperties)
+            sConstraints(&sProperties),
+            sKeyAspect(&sProperties),
+            sNatural(&sProperties)
         {
             pClass          = &metadata;
+
+            for (size_t i=0; i<2; ++i)
+            {
+                key_t *sp       = &vSplit[i];
+
+                sp->fLeft       = 0.0f;
+                sp->fTop        = 0.0f;
+                sp->fWidth      = 0.0f;
+                sp->fHeight     = 0.0f;
+                sp->nKey        = 0;
+            }
 
             for (size_t i=0; i<style::PIANOKEY_TOTAL; ++i)
                 vKeyColors[i].listener(&sProperties);
@@ -303,6 +380,8 @@ namespace lsp
             sMaxNote.bind("note.max", &sStyle);
             sAngle.bind("angle", &sStyle);
             sConstraints.bind("size.contstraints", &sStyle);
+            sKeyAspect.bind("key.aspect", &sStyle);
+            sNatural.bind("natural", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -338,6 +417,8 @@ namespace lsp
 
             if (prop->one_of(sBorder, sSplitSize, sMinNote, sMaxNote, sAngle, sConstraints))
                 query_resize();
+            if (prop->one_of(sKeyAspect, sNatural))
+                query_resize();
         }
 
         void PianoKeys::size_request(ws::size_limit_t *r)
@@ -346,10 +427,11 @@ namespace lsp
             const ssize_t angle     = sAngle.get() & 0x3;
             const float split       = scaling * lsp_max(0.0f, sSplitSize.get());
             const float key_unit    = lsp_max(split, 1.0f);
+            const bool natural      = sNatural.get();
 
             // Compute the keyboard layout
             layout_t layout;
-            compute_layout(&layout);
+            compute_layout(&layout, natural);
 
             // Now compute the size
             size_t height           = (layout.nWhite > 0) ? 4 : (layout.nBlack > 0) ? 2 : 0;
@@ -360,8 +442,8 @@ namespace lsp
             r->nMaxHeight   = -1;
             r->nPreWidth    = -1;
             r->nPreHeight   = -1;
-            r->nMinWidth    = min_height;
-            r->nMinHeight   = min_width;
+            r->nMinWidth    = min_width;
+            r->nMinHeight   = min_height;
             if (angle & 1)
             {
                 SizeConstraints::transpose(r);
@@ -380,18 +462,31 @@ namespace lsp
 
         void PianoKeys::realize(const ws::rectangle_t *r)
         {
+            Widget::realize(r);
+
             const float scaling     = lsp_max(0.0f, sScaling.get());
             const ssize_t angle     = sAngle.get() & 0x3;
             const float aspect      = lsp_limit(sKeyAspect.get(), 0.0f, 1.0f);
+            const bool natural      = sNatural.get();
 
             ws::rectangle_t kr;
             sBorder.enter(&kr, r, scaling);
 
             // Compute the keyboard layout
             layout_t layout;
-            compute_layout(&layout);
+            compute_layout(&layout, natural);
 
-            const float step = float(kr.nWidth) / float(layout.nLength);
+            const float step = float((angle & 1) ? kr.nHeight : kr.nWidth) / float(layout.nLength);
+
+            // Reset state of splits
+            for (size_t i=0; i<2; ++i)
+            {
+                key_t *sp = &vSplit[i];
+                sp->fLeft       = 0.0f;
+                sp->fTop        = 0.0f;
+                sp->fWidth      = 0.0f;
+                sp->fHeight     = 0.0f;
+            }
 
             // Allocate array of keys
             vKeys.clear();
@@ -400,56 +495,352 @@ namespace lsp
                 return;
 
             // Fill array of keys
-            // TODO: fill for other angles
             switch (angle)
             {
                 case 0:
                 default:
                 {
-                    size_t x = 0;
-                    const float left = kr.nLeft;
-                    const float top = kr.nTop;
+                    size_t x                = 0;
+                    const float left        = kr.nLeft;
+                    const float top         = kr.nTop;
+                    const float w_length    = kr.nHeight;
+                    const float b_length    = w_length * aspect;
 
                     for (ssize_t key = layout.nFirst; key <= layout.nLast; ++key, ++k)
                     {
-                        const size_t k_offset   = key_offset(key);
-                        const size_t k_width    = key_width(key);
+                        const float k_width     = key_width(key, natural) * step;
+                        const bool is_black     = is_black_key(key);
 
-                        k->fLeft            = left + x * step;
-                        k->fTop             = top;
-                        k->fWidth           = k_width * step;
-                        k->fHeight          = kr.nHeight;
-                        k->nKey             = key;
+                        k->fWidth               = k_width;
+                        k->fHeight              = (is_black) ? b_length : w_length;
+                        k->fLeft                = left + x * step;
+                        k->fTop                 = top;
+                        k->nKey                 = key;
 
-                        if (is_black_key(key))
-                            k->fHeight         *= aspect;
-
-                        x                  += 2;
-                        if (key == layout.nFirst)
-                            x                      += k_offset;
+                        x                      += key_advance(key, natural);
                     }
+
+                    // Analyze first key
+                    k = vKeys.first();
+                    if (is_black_key(k->nKey)) // Current key is black?
+                    {
+                        vSplit[0].fWidth    = step;
+                        vSplit[0].fHeight   = w_length;
+                        vSplit[0].fLeft     = left;
+                        vSplit[0].fTop      = top;
+                    }
+                    else if (is_black_key(k->nKey + 11)) // Previous key is black?
+                    {
+                        vSplit[0].fWidth    = step;
+                        vSplit[0].fHeight   = b_length;
+                        vSplit[0].fLeft     = left;
+                        vSplit[0].fTop      = top;
+                    }
+
+                    // Analyze last key
+                    k = vKeys.last();
+                    if (is_black_key(k->nKey)) // Current key is black?
+                    {
+                        vSplit[1].fWidth    = step;
+                        vSplit[1].fHeight   = w_length;
+                        vSplit[1].fLeft     = k->fLeft + k->fWidth - step;
+                        vSplit[1].fTop      = top;
+                    }
+                    else if (is_black_key(k->nKey + 1)) // Next key is black?
+                    {
+                        vSplit[1].fWidth    = step;
+                        vSplit[1].fHeight   = b_length;
+                        vSplit[1].fLeft     = k->fLeft + k->fWidth - step;
+                        vSplit[1].fTop      = top;
+                    }
+
                     break;
                 }
 
-//                case 1:
-//                    // TODO
-//                    break;
-//
-//                case 2:
-//                    // TODO
-//                    break;
-//
-//                case 3:
-//                    // TODO
-//                    break;
+                case 1:
+                {
+                    size_t y                = 0;
+                    const float left        = kr.nLeft;
+                    const float bottom      = kr.nTop + kr.nHeight;
+                    const float w_length    = kr.nWidth;
+                    const float b_length    = w_length * aspect;
+
+                    for (ssize_t key = layout.nFirst; key <= layout.nLast; ++key, ++k)
+                    {
+                        const float k_width     = key_width(key, natural) * step;
+                        const bool is_black     = is_black_key(key);
+
+                        k->fWidth               = (is_black) ? b_length : w_length;
+                        k->fHeight              = k_width;
+                        k->fLeft                = left;
+                        k->fTop                 = bottom - y * step - k->fHeight;
+                        k->nKey                 = key;
+
+                        y                      += key_advance(key, natural);
+                    }
+
+                    // Analyze first key
+                    k = vKeys.first();
+                    if (is_black_key(k->nKey)) // Current key is black?
+                    {
+                        vSplit[0].fWidth    = w_length;
+                        vSplit[0].fHeight   = step;
+                        vSplit[0].fLeft     = left;
+                        vSplit[0].fTop      = k->fTop + k->fHeight - step;
+                    }
+                    else if (is_black_key(k->nKey + 11)) // Previous key is black?
+                    {
+                        vSplit[0].fWidth    = b_length;
+                        vSplit[0].fHeight   = step;
+                        vSplit[0].fLeft     = left;
+                        vSplit[0].fTop      = k->fTop + k->fHeight - step;
+                    }
+
+                    // Analyze last key
+                    k = vKeys.last();
+                    if (is_black_key(k->nKey)) // Current key is black?
+                    {
+                        vSplit[1].fWidth    = w_length;
+                        vSplit[1].fHeight   = step;
+                        vSplit[1].fLeft     = left;
+                        vSplit[1].fTop      = k->fTop;
+                    }
+                    else if (is_black_key(k->nKey + 1)) // Next key is black?
+                    {
+                        vSplit[1].fWidth    = b_length;
+                        vSplit[1].fHeight   = step;
+                        vSplit[1].fLeft     = left;
+                        vSplit[1].fTop      = k->fTop;
+                    }
+
+                    break;
+                }
+
+                case 2:
+                {
+                    size_t x                = 0;
+                    const float right       = kr.nLeft + kr.nWidth;
+                    const float bottom      = kr.nTop + kr.nHeight;
+                    const float w_length    = kr.nHeight;
+                    const float b_length    = w_length * aspect;
+
+                    for (ssize_t key = layout.nFirst; key <= layout.nLast; ++key, ++k)
+                    {
+                        const float k_width     = key_width(key, natural) * step;
+                        const bool is_black     = is_black_key(key);
+
+                        k->fWidth               = k_width;
+                        k->fHeight              = (is_black) ? b_length : w_length;
+                        k->fLeft                = right - x * step - k_width;
+                        k->fTop                 = bottom - k->fHeight;
+                        k->nKey                 = key;
+
+                        x                      += key_advance(key, natural);
+                    }
+
+                    // Analyze first key
+                    k = vKeys.first();
+                    if (is_black_key(k->nKey)) // Current key is black?
+                    {
+                        vSplit[0].fWidth    = step;
+                        vSplit[0].fHeight   = w_length;
+                        vSplit[0].fLeft     = k->fLeft + k->fWidth - step;
+                        vSplit[0].fTop      = bottom - w_length;
+                    }
+                    else if (is_black_key(k->nKey + 11)) // Previous key is black?
+                    {
+                        vSplit[0].fWidth    = step;
+                        vSplit[0].fHeight   = b_length;
+                        vSplit[0].fLeft     = k->fLeft + k->fWidth - step;
+                        vSplit[0].fTop      = bottom - b_length;
+                    }
+
+                    // Analyze last key
+                    k = vKeys.last();
+                    if (is_black_key(k->nKey)) // Current key is black?
+                    {
+                        vSplit[1].fWidth    = step;
+                        vSplit[1].fHeight   = w_length;
+                        vSplit[1].fLeft     = k->fLeft;
+                        vSplit[1].fTop      = bottom - w_length;
+                    }
+                    else if (is_black_key(k->nKey + 1)) // Next key is black?
+                    {
+                        vSplit[1].fWidth    = step;
+                        vSplit[1].fHeight   = b_length;
+                        vSplit[1].fLeft     = k->fLeft;
+                        vSplit[1].fTop      = bottom - b_length;
+                    }
+
+                    break;
+                }
+
+                case 3:
+                {
+                    size_t y                = 0;
+                    const float right       = kr.nLeft + kr.nWidth;
+                    const float top         = kr.nTop;
+                    const float w_length    = kr.nWidth;
+                    const float b_length    = w_length * aspect;
+
+                    for (ssize_t key = layout.nFirst; key <= layout.nLast; ++key, ++k)
+                    {
+                        const float k_width     = key_width(key, natural) * step;
+                        const bool is_black     = is_black_key(key);
+
+                        k->fWidth               = (is_black) ? b_length : w_length;
+                        k->fHeight              = k_width;
+                        k->fLeft                = right - k->fWidth;
+                        k->fTop                 = top + y * step;
+                        k->nKey                 = key;
+
+                        y                      += key_advance(key, natural);
+                    }
+
+                    // Analyze first key
+                    k = vKeys.first();
+                    if (is_black_key(k->nKey)) // Current key is black?
+                    {
+                        vSplit[0].fWidth    = w_length;
+                        vSplit[0].fHeight   = step;
+                        vSplit[0].fLeft     = right - w_length;
+                        vSplit[0].fTop      = k->fTop;
+                    }
+                    else if (is_black_key(k->nKey + 11)) // Previous key is black?
+                    {
+                        vSplit[0].fWidth    = b_length;
+                        vSplit[0].fHeight   = step;
+                        vSplit[0].fLeft     = right - b_length;
+                        vSplit[0].fTop      = k->fTop;
+                    }
+
+                    // Analyze last key
+                    k = vKeys.last();
+                    if (is_black_key(k->nKey)) // Current key is black?
+                    {
+                        vSplit[1].fWidth    = w_length;
+                        vSplit[1].fHeight   = step;
+                        vSplit[1].fLeft     = right - w_length;
+                        vSplit[1].fTop      = k->fTop + k->fHeight - step;
+                    }
+                    else if (is_black_key(k->nKey + 1)) // Next key is black?
+                    {
+                        vSplit[1].fWidth    = b_length;
+                        vSplit[1].fHeight   = step;
+                        vSplit[1].fLeft     = right - b_length;
+                        vSplit[1].fTop      = k->fTop + k->fHeight - step;
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        void PianoKeys::draw_key(ws::ISurface *s, const key_t * key, bool black)
+        {
+            const bool is_black = is_black_key(key->nKey);
+            if (is_black != black)
+                return;
+
+            lsp::Color col;
+            const style::PianoKeyColors *c = get_key_colors(false, false, false); // TODO: compute flags
+
+            col.copy((is_black) ? c->sBlackColor : c->sWhiteColor);
+            s->fill_rect(col, SURFMASK_NO_CORNER, 0.0f,
+                key->fLeft - sSize.nLeft,
+                key->fTop - sSize.nTop,
+                key->fWidth,
+                key->fHeight);
+        }
+
+        void PianoKeys::draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, size_t angle, float split)
+        {
+            if (is_black_key(key->nKey))
+                return;
+
+            switch (angle)
+            {
+                case 0:
+                default:
+                    s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f,
+                        key->fLeft - sSize.nLeft + key->fWidth - split,
+                        key->fTop - sSize.nTop,
+                        split,
+                        key->fHeight);
+                    break;
+                case 1:
+                    s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f,
+                        key->fLeft - sSize.nLeft,
+                        key->fTop - sSize.nTop,
+                        key->fWidth,
+                        split);
+                    break;
+                case 2:
+                    s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f,
+                        key->fLeft - sSize.nLeft,
+                        key->fTop - sSize.nTop,
+                        split,
+                        key->fHeight);
+                    break;
+                case 3:
+                    s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f,
+                        key->fLeft - sSize.nLeft,
+                        key->fTop  - sSize.nTop + key->fHeight - split,
+                        key->fWidth,
+                        split);
+                    break;
             }
         }
 
         void PianoKeys::draw(ws::ISurface *s, bool force)
         {
+            const float scaling     = lsp_max(0.0f, sScaling.get());
+            const ssize_t angle     = sAngle.get() & 0x3;
+            const style::PianoColors *c = get_piano_colors();
+            const float split       = scaling * lsp_max(0.0f, sSplitSize.get());
+
+            ws::rectangle_t kr;
+            kr.nLeft    = 0;
+            kr.nTop     = 0;
+            kr.nWidth   = sSize.nWidth;
+            kr.nHeight  = sSize.nHeight;
+
+            // Draw the border
+            lsp::Color col;
+            col.copy(c->sBorderColor);
+            s->fill_rect(col, SURFMASK_NO_CORNER, 0.0f, &kr);
+
+            // Draw the keys
+            ssize_t first = lsp_max(sMinNote.get(), 0);
+            ssize_t last  = lsp_max(sMaxNote.get(), 0);
+            if (first > last)
+                lsp::swap(first, last);
+
+            // Draw white keys first
+            for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
+                draw_key(s, *it, false);
+            // Draw key splits
+            col.copy(c->sSplitColor);
+            for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
+                draw_split(s, *it, col, angle, split);
+            for (size_t i=0; i<2; ++i)
+            {
+                const key_t *sp = &vSplit[i];
+                if ((sp->fWidth > 0.0f) && (sp->fHeight > 0.0f))
+                {
+                    s->fill_rect(col, SURFMASK_NO_CORNER, 0.0f,
+                        sp->fLeft - sSize.nLeft,
+                        sp->fTop - sSize.nTop,
+                        sp->fWidth,
+                        sp->fHeight);
+                }
+            }
+            // Then black keys
+            for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
+                draw_key(s, *it, true);
         }
 
-        void PianoKeys::compute_layout(layout_t * layout)
+        void PianoKeys::compute_layout(layout_t * layout, bool natural)
         {
             ssize_t first = lsp_max(sMinNote.get(), 0);
             ssize_t last  = lsp_max(sMaxNote.get(), 0);
@@ -459,34 +850,24 @@ namespace lsp
             layout->nFirst  = first;
             layout->nLast   = last;
             layout->nLength = 0;
-            layout->nWhite  = 0;
             layout->nBlack  = 0;
+            layout->nWhite  = 0;
 
-            // Analyze first note key
-            if (is_black_key(first))
+            // Compute the width of the keyboard
+            for (; first < last; ++first)
             {
-                layout->nLength    += key_width(first) / 2;
-                ++layout->nBlack;
-                ++first;
-            }
-
-            // Analyze last note key
-            if ((first <= last) && (is_black_key(last)))
-            {
-                layout->nLength    += key_width(first) / 2;
-                ++layout->nBlack;
-                --last;
-            }
-
-            // Compute the rest stuff
-            for (; first <= last; ++first)
-            {
-                layout->nLength    += key_width(first);
+                layout->nLength    += key_advance(first, natural);
                 if (is_black_key(first))
                     ++layout->nBlack;
                 else
                     ++layout->nWhite;
             }
+
+            layout->nLength    += key_width(first, natural);
+            if (is_black_key(first))
+                ++layout->nBlack;
+            else
+                ++layout->nWhite;
         }
 
         style::PianoColors *PianoKeys::get_piano_colors()
@@ -495,19 +876,14 @@ namespace lsp
             return &vColors[index];
         }
 
-        inline bool PianoKeys::is_black_key(size_t note)
+        style::PianoKeyColors *PianoKeys::get_key_colors(bool down, bool selected, bool hover)
         {
-            return ((piano_key_widths >> ((note % 12) * 2)) & 0x3) == 0;
-        }
+            size_t index = (down) ? style::PIANOKEY_DOWN : style::PIANOKEY_NORMAL;
+            index = lsp_setflag(index, style::PIANOKEY_SELECTED, selected);
+            index = lsp_setflag(index, style::PIANOKEY_INACTIVE, !sActive.get());
+            index = lsp_setflag(index, style::PIANOKEY_HOVER, hover);
 
-        inline size_t PianoKeys::key_width(size_t note)
-        {
-            return ((piano_key_widths >> ((note % 12) * 2)) & 0x3) + 2;
-        }
-
-        inline size_t PianoKeys::key_offset(size_t note)
-        {
-            return (piano_key_widths >> ((note % 12) * 2 + 1)) & 1;
+            return &vKeyColors[index];
         }
 
         status_t PianoKeys::on_mouse_down(const ws::event_t *e)

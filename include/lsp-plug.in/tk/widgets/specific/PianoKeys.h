@@ -82,6 +82,7 @@ namespace lsp
                 prop::Integer               sAngle;         // Rotation angle
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Float                 sKeyAspect;     // The relative size of black key to white key
+                prop::Boolean               sNatural;       // Natural/constant width flag
 
                 // TODO: add note selection bitmask
             LSP_TK_STYLE_DEF_END
@@ -146,6 +147,7 @@ namespace lsp
 
             protected:
                 lltl::darray<key_t>         vKeys;
+                key_t                       vSplit[2];
 
                 style::PianoKeyColors       vKeyColors[style::PIANOKEY_TOTAL];
                 style::PianoColors          vColors[style::PIANO_TOTAL];
@@ -157,17 +159,18 @@ namespace lsp
                 prop::Integer               sAngle;         // Rotation angle
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Float                 sKeyAspect;     // The relative size of black key to white key
+                prop::Boolean               sNatural;       // Natural/constant width flag
 
             protected:
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
-                static inline bool          is_black_key(size_t note);
-                static inline size_t        key_width(size_t note);
-                static inline size_t        key_offset(size_t note);
 
             protected:
                 void                        do_destroy();
                 style::PianoColors         *get_piano_colors();
-                void                        compute_layout(layout_t * layout);
+                style::PianoKeyColors      *get_key_colors(bool down, bool selected, bool hover);
+                void                        compute_layout(layout_t * layout, bool natural);
+                void                        draw_key(ws::ISurface *s, const key_t * key, bool black);
+                void                        draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, size_t angle, float split);
 
             protected:
                 virtual void                property_changed(Property *prop) override;
@@ -234,6 +237,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            angle,                                      &sAngle)
                 LSP_TK_PROPERTY(SizeConstraints,    size_constraints,                           &sConstraints)
                 LSP_TK_PROPERTY(Float,              key_aspect,                                 &sKeyAspect)
+                LSP_TK_PROPERTY(Boolean,            natrual,                                    &sNatural);
 
             public:
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;

@@ -526,6 +526,26 @@ namespace lsp
             dst->nPreHeight = a;
         }
 
+        void SizeConstraints::transpose(ws::rectangle_t *r)
+        {
+            lsp::swap(r->nLeft, r->nTop);
+            lsp::swap(r->nWidth, r->nHeight);
+        }
+
+        void SizeConstraints::transpose(ws::rectangle_t *dst, const ws::rectangle_t *src)
+        {
+            ssize_t a, b;
+            a = src->nLeft;
+            b = src->nTop;
+            dst->nLeft      = b;
+            dst->nTop       = a;
+
+            a = src->nWidth;
+            b = src->nHeight;
+            dst->nWidth     = b;
+            dst->nHeight    = a;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

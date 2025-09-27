@@ -147,6 +147,8 @@ namespace lsp
 
                 static void transpose(ws::size_limit_t *r);
                 static void transpose(ws::size_limit_t *dst, const ws::size_limit_t *src);
+                static void transpose(ws::rectangle_t *r);
+                static void transpose(ws::rectangle_t *dst, const ws::rectangle_t *src);
         };
 
         namespace prop
