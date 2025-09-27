@@ -83,8 +83,11 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Float                 sKeyAspect;     // The relative size of black key to white key
                 prop::Boolean               sNatural;       // Natural/constant width flag
+                prop::NoteState             sPressed;       // Pressed notes
+                prop::Integer               sMousePressed;  // Note pressed with mouse
+                prop::Integer               sSelectionStart;// First note in selection range
+                prop::Integer               sSelectionEnd;  // Last note in selection range
 
-                // TODO: add note selection bitmask
             LSP_TK_STYLE_DEF_END
         }
 
@@ -148,6 +151,7 @@ namespace lsp
             protected:
                 lltl::darray<key_t>         vKeys;
                 key_t                       vSplit[2];
+                ssize_t                     nCurrNote;      // Currently selected note
 
                 style::PianoKeyColors       vKeyColors[style::PIANOKEY_TOTAL];
                 style::PianoColors          vColors[style::PIANO_TOTAL];
@@ -160,6 +164,10 @@ namespace lsp
                 prop::SizeConstraints       sConstraints;   // Size constraints
                 prop::Float                 sKeyAspect;     // The relative size of black key to white key
                 prop::Boolean               sNatural;       // Natural/constant width flag
+                prop::NoteState             sPressed;       // Pressed notes
+                prop::Integer               sMousePressed;  // Note pressed with mouse
+                prop::Integer               sSelectionStart;// First note in selection range
+                prop::Integer               sSelectionEnd;  // Last note in selection range
 
             protected:
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -169,7 +177,7 @@ namespace lsp
                 style::PianoColors         *get_piano_colors();
                 style::PianoKeyColors      *get_key_colors(bool down, bool selected, bool hover);
                 void                        compute_layout(layout_t * layout, bool natural);
-                void                        draw_key(ws::ISurface *s, const key_t * key, bool black);
+                void                        draw_key(ws::ISurface *s, const key_t * key, bool black, ssize_t sel_first, ssize_t sel_last);
                 void                        draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, size_t angle, float split);
 
             protected:
@@ -238,6 +246,10 @@ namespace lsp
                 LSP_TK_PROPERTY(SizeConstraints,    size_constraints,                           &sConstraints)
                 LSP_TK_PROPERTY(Float,              key_aspect,                                 &sKeyAspect)
                 LSP_TK_PROPERTY(Boolean,            natrual,                                    &sNatural);
+                LSP_TK_PROPERTY(NoteState,          pressed,                                    &sPressed);
+                LSP_TK_PROPERTY(Integer,            mouse_pressed,                              &sMousePressed);
+                LSP_TK_PROPERTY(Integer,            selection_start,                            &sSelectionStart);
+                LSP_TK_PROPERTY(Integer,            selection_end,                              &sSelectionEnd);
 
             public:
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;

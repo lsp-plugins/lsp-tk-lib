@@ -115,6 +115,10 @@ namespace lsp
                 sConstraints.bind("size.contstraints", this);
                 sKeyAspect.bind("key.aspect", this);
                 sNatural.bind("natural", this);
+                sPressed.bind("note.pressed", this);
+                sMousePressed.bind("note.mouse.pressed", this);
+                sSelectionStart.bind("note.selection.start", this);
+                sSelectionEnd.bind("note.selection.end", this);
 
                 // Init values
                 for (size_t i=0; i<style::PIANOKEY_TOTAL; ++i)
@@ -147,6 +151,9 @@ namespace lsp
                 sAngle.set(0);
                 sConstraints.set_min_height(32);
                 sKeyAspect.set(0.66f);
+                sMousePressed.set(-1);
+                sSelectionStart.set(-1);
+                sSelectionEnd.set(-1);
 
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(PianoKeys, "PianoKeys", "root");
@@ -256,9 +263,15 @@ namespace lsp
             sAngle(&sProperties),
             sConstraints(&sProperties),
             sKeyAspect(&sProperties),
-            sNatural(&sProperties)
+            sNatural(&sProperties),
+            sPressed(&sProperties),
+            sMousePressed(&sProperties),
+            sSelectionStart(&sProperties),
+            sSelectionEnd(&sProperties)
         {
             pClass          = &metadata;
+
+            nCurrNote       = -1;
 
             for (size_t i=0; i<2; ++i)
             {
@@ -382,6 +395,10 @@ namespace lsp
             sConstraints.bind("size.contstraints", &sStyle);
             sKeyAspect.bind("key.aspect", &sStyle);
             sNatural.bind("natural", &sStyle);
+            sPressed.bind("note.pressed", &sStyle);
+            sMousePressed.bind("note.mouse.pressed", &sStyle);
+            sSelectionStart.bind("note.selection.start", &sStyle);
+            sSelectionEnd.bind("note.selection.end", &sStyle);
 
             // Bind slots
             handler_id_t id;
@@ -419,6 +436,8 @@ namespace lsp
                 query_resize();
             if (prop->one_of(sKeyAspect, sNatural))
                 query_resize();
+            if (prop->one_of(sSelectionStart, sSelectionEnd, sMousePressed, sPressed))
+                query_draw();
         }
 
         void PianoKeys::size_request(ws::size_limit_t *r)
@@ -736,14 +755,19 @@ namespace lsp
             }
         }
 
-        void PianoKeys::draw_key(ws::ISurface *s, const key_t * key, bool black)
+        void PianoKeys::draw_key(ws::ISurface *s, const key_t * key, bool black, ssize_t sel_first, ssize_t sel_last)
         {
             const bool is_black = is_black_key(key->nKey);
             if (is_black != black)
                 return;
 
+            const ssize_t code = key->nKey;
+            const bool selected = (code >= sel_first) && (code <= sel_last);
+            const bool pressed = (sMousePressed.get() == code) || (sPressed.get(code));
+            const bool hover = (code == nCurrNote);
+
             lsp::Color col;
-            const style::PianoKeyColors *c = get_key_colors(false, false, false); // TODO: compute flags
+            const style::PianoKeyColors *c = get_key_colors(pressed, selected, hover);
 
             col.copy((is_black) ? c->sBlackColor : c->sWhiteColor);
             s->fill_rect(col, SURFMASK_NO_CORNER, 0.0f,
@@ -816,9 +840,20 @@ namespace lsp
             if (first > last)
                 lsp::swap(first, last);
 
+            ssize_t sel_first = sSelectionStart.get();
+            ssize_t sel_last = sSelectionEnd.get();
+            if ((sel_first < 0) || (sel_last < 0))
+            {
+                sel_first   = -1;
+                sel_last    = -1;
+            }
+            else if (sel_first > sel_last)
+                lsp::swap(sel_first, sel_last);
+
             // Draw white keys first
             for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
-                draw_key(s, *it, false);
+                draw_key(s, *it, false, sel_first, sel_last);
+
             // Draw key splits
             col.copy(c->sSplitColor);
             for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
@@ -835,9 +870,10 @@ namespace lsp
                         sp->fHeight);
                 }
             }
+
             // Then black keys
             for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
-                draw_key(s, *it, true);
+                draw_key(s, *it, true, sel_first, sel_last);
         }
 
         void PianoKeys::compute_layout(layout_t * layout, bool natural)

@@ -194,6 +194,33 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
         }
     }
 
+    static void init_colors(tk::PianoKeys *pk)
+    {
+        pk->white_color()->set_rgb24(0xffffff);
+        pk->black_color()->set_rgb24(0x000000);
+
+        pk->white_down_color()->set_rgb24(0xffffc0);
+        pk->black_down_color()->set_rgb24(0xffc0ff);
+
+        pk->white_selected_color()->set_rgb24(0x004080);
+        pk->black_selected_color()->set_rgb24(0x00c0ff);
+
+        pk->white_down_selected_color()->set_rgb24(0x4080c0);
+        pk->black_down_selected_color()->set_rgb24(0x80e0ff);
+
+        pk->white_hover_color()->set_rgb24(0xff0000);
+        pk->black_hover_color()->set_rgb24(0xff0000);
+
+        pk->white_hover_down_color()->set_rgb24(0x880000);
+        pk->white_hover_down_color()->set_rgb24(0x880000);
+
+        pk->white_hover_selected_color()->set_rgb24(0xff0000);
+        pk->black_hover_selected_color()->set_rgb24(0xff0000);
+
+        pk->white_hover_down_selected_color()->set_rgb24(0xcc0000);
+        pk->white_hover_down_selected_color()->set_rgb24(0xcc0000);
+    }
+
     MTEST_MAIN
     {
         lltl::parray<handler_t> vh;
@@ -249,6 +276,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             MTEST_ASSERT(id.fmt_ascii("pianokeys-%d", int(vid++)));
             MTEST_ASSERT(pk = new tk::PianoKeys(dpy));
             MTEST_ASSERT(init_widget(pk, vh, id.get_ascii()) == STATUS_OK);
+            init_colors(pk);
             MTEST_ASSERT(widgets.push(pk));
             MTEST_ASSERT(grid->add(pk, 3, 1) == STATUS_OK);
 
@@ -256,11 +284,14 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->max_note()->set(71); // midi: B4
             pk->angle()->set(1);
             pk->natrual()->set(true);
+            pk->selection_start()->set(38);
+            pk->selection_end()->set(47);
 
             // Second one
             MTEST_ASSERT(id.fmt_ascii("pianokeys-%d", int(vid++)));
             MTEST_ASSERT(pk = new tk::PianoKeys(dpy));
             MTEST_ASSERT(init_widget(pk, vh, id.get_ascii()) == STATUS_OK);
+            init_colors(pk);
             MTEST_ASSERT(widgets.push(pk));
             MTEST_ASSERT(grid->add(pk) == STATUS_OK);
 
@@ -269,10 +300,21 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->angle()->set(0);
             pk->natrual()->set(true);
 
+            pk->pressed()->set(36);
+            pk->pressed()->set(40);
+            pk->pressed()->set(43);
+            pk->pressed()->set(48);
+
+            pk->pressed()->set(60);
+            pk->pressed()->set(63);
+            pk->pressed()->set(67);
+            pk->pressed()->set(72);
+
             // Third one
             MTEST_ASSERT(id.fmt_ascii("pianokeys-%d", int(vid++)));
             MTEST_ASSERT(pk = new tk::PianoKeys(dpy));
             MTEST_ASSERT(init_widget(pk, vh, id.get_ascii()) == STATUS_OK);
+            init_colors(pk);
             MTEST_ASSERT(widgets.push(pk));
             MTEST_ASSERT(grid->add(pk, 3, 1) == STATUS_OK);
 
@@ -285,6 +327,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             MTEST_ASSERT(id.fmt_ascii("pianokeys-%d", int(vid++)));
             MTEST_ASSERT(pk = new tk::PianoKeys(dpy));
             MTEST_ASSERT(init_widget(pk, vh, id.get_ascii()) == STATUS_OK);
+            init_colors(pk);
             MTEST_ASSERT(widgets.push(pk));
             MTEST_ASSERT(grid->add(pk) == STATUS_OK);
 
@@ -297,6 +340,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             MTEST_ASSERT(id.fmt_ascii("pianokeys-%d", int(vid++)));
             MTEST_ASSERT(pk = new tk::PianoKeys(dpy));
             MTEST_ASSERT(init_widget(pk, vh, id.get_ascii()) == STATUS_OK);
+            init_colors(pk);
             MTEST_ASSERT(widgets.push(pk));
             MTEST_ASSERT(grid->add(pk) == STATUS_OK);
 
