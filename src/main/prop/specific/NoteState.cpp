@@ -107,6 +107,7 @@ namespace lsp
                     bin    >>= 4;
                 }
             }
+            *dst = '\0';
         }
 
         void NoteState::commit(atom_t property)
