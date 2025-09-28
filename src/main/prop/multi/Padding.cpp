@@ -395,6 +395,7 @@ namespace lsp
             dst->nTop           = src->nTop  - sValue.nTop  * scale;
             dst->nWidth         = lsp_max(0, src->nWidth  + hor );
             dst->nHeight        = lsp_max(0, src->nHeight + vert);
+            dst->nHeight        = lsp_max(0, src->nHeight + vert);
         }
 
         void Padding::add(ws::rectangle_t *dst, const ws::rectangle_t *src, const padding_t *pad)

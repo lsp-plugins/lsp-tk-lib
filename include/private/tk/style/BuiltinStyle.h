@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2020 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2020 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 нояб. 2020 г.
@@ -54,7 +54,7 @@ namespace lsp
             static ::lsp::tk::BuiltinStyle Style ## Builtin(& Style ## Factory);
 
 
-    }
-}
+    } /* namespace tk */
+} /* namespace lsp */
 
 #endif /* PRIVATE_TK_STYLE_BUILTINSTYLE_H_ */

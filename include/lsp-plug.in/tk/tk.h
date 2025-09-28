@@ -118,6 +118,7 @@
 // Specific properties
 #include <lsp-plug.in/tk/prop/specific/GraphMeshData.h>
 #include <lsp-plug.in/tk/prop/specific/GraphFrameData.h>
+#include <lsp-plug.in/tk/prop/specific/NoteState.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/StyleSheet.h>
@@ -197,6 +198,7 @@
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeter.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeterChannel.h>
+#include <lsp-plug.in/tk/widgets/specific/PianoKeys.h>
 
 // 3D rendering
 #include <lsp-plug.in/tk/widgets/3d/Area3D.h>
