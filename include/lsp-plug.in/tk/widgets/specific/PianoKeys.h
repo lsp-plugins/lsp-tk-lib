@@ -87,6 +87,9 @@ namespace lsp
                 prop::Integer               sMousePressed;  // Note pressed with mouse
                 prop::Integer               sSelectionStart;// First note in selection range
                 prop::Integer               sSelectionEnd;  // Last note in selection range
+                prop::Boolean               sEditable;      // Editable (allows key press by mouse)
+                prop::Boolean               sSelectable;    // Selectable (allows selections)
+                prop::Boolean               sClearSelection;// Clear selection on mouse key press
 
             LSP_TK_STYLE_DEF_END
         }
@@ -130,6 +133,14 @@ namespace lsp
                     PC_1            = style::PIANO_INACTIVE,
                 };
 
+                enum work_mode_t
+                {
+                    WMODE_OFF,
+                    WMODE_PRESS,
+                    WMODE_SELECT,
+                    WMODE_IGNORE
+                };
+
                 typedef struct layout_t
                 {
                     ssize_t         nFirst;                 // First note
@@ -145,13 +156,15 @@ namespace lsp
                     float                   fTop;           // Top
                     float                   fWidth;         // Width
                     float                   fHeight;        // Height
-                    uint32_t                nKey;           // Key
+                    int32_t                 nKey;           // Key
                 } key_t;
 
             protected:
                 lltl::darray<key_t>         vKeys;
                 key_t                       vSplit[2];
                 ssize_t                     nCurrNote;      // Currently selected note
+                size_t                      nMBState;       // Mouse button state
+                work_mode_t                 enWorkMode;     // Current work mode
 
                 style::PianoKeyColors       vKeyColors[style::PIANOKEY_TOTAL];
                 style::PianoColors          vColors[style::PIANO_TOTAL];
@@ -168,9 +181,13 @@ namespace lsp
                 prop::Integer               sMousePressed;  // Note pressed with mouse
                 prop::Integer               sSelectionStart;// First note in selection range
                 prop::Integer               sSelectionEnd;  // Last note in selection range
+                prop::Boolean               sEditable;      // Editable (allows key press by mouse)
+                prop::Boolean               sSelectable;    // Selectable (allows selections)
+                prop::Boolean               sClearSelection;// Clear selection on mouse key press
 
             protected:
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
+                static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
 
             protected:
                 void                        do_destroy();
@@ -179,6 +196,8 @@ namespace lsp
                 void                        compute_layout(layout_t * layout, bool natural);
                 void                        draw_key(ws::ISurface *s, const key_t * key, bool black, ssize_t sel_first, ssize_t sel_last);
                 void                        draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, size_t angle, float split);
+                key_t                      *find_key(ssize_t x, ssize_t y);
+                void                        handle_note_press(ssize_t note);
 
             protected:
                 virtual void                property_changed(Property *prop) override;
@@ -250,14 +269,19 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            mouse_pressed,                              &sMousePressed);
                 LSP_TK_PROPERTY(Integer,            selection_start,                            &sSelectionStart);
                 LSP_TK_PROPERTY(Integer,            selection_end,                              &sSelectionEnd);
+                LSP_TK_PROPERTY(Boolean,            editable,                                   &sEditable);
+                LSP_TK_PROPERTY(Boolean,            selectable,                                 &sSelectable);
+                LSP_TK_PROPERTY(Boolean,            clear_selection,                            &sClearSelection);
 
             public:
                 virtual status_t            on_mouse_down(const ws::event_t *e) override;
+                virtual status_t            on_mouse_move(const ws::event_t *e) override;
                 virtual status_t            on_mouse_up(const ws::event_t *e) override;
                 virtual void                draw(ws::ISurface *s, bool force) override;
 
             public:
                 virtual status_t            on_submit();
+                virtual status_t            on_change();
         };
 
     } /* namespace tk */

@@ -199,8 +199,8 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
         pk->white_color()->set_rgb24(0xffffff);
         pk->black_color()->set_rgb24(0x000000);
 
-        pk->white_down_color()->set_rgb24(0xffffc0);
-        pk->black_down_color()->set_rgb24(0xffc0ff);
+        pk->white_down_color()->set_rgb24(0xffc0ff);
+        pk->black_down_color()->set_rgb24(0xff80ff);
 
         pk->white_selected_color()->set_rgb24(0x004080);
         pk->black_selected_color()->set_rgb24(0x00c0ff);
@@ -284,6 +284,9 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->max_note()->set(71); // midi: B4
             pk->angle()->set(1);
             pk->natrual()->set(true);
+            pk->selectable()->set(true);
+            pk->editable()->set(true);
+            pk->clear_selection()->set(false);
             pk->selection_start()->set(38);
             pk->selection_end()->set(47);
 
@@ -299,6 +302,9 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->max_note()->set(83); // midi: B5
             pk->angle()->set(0);
             pk->natrual()->set(true);
+            pk->selectable()->set(true);
+            pk->editable()->set(true);
+            pk->clear_selection()->set(true);
 
             pk->pressed()->set(36);
             pk->pressed()->set(40);
@@ -322,6 +328,9 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->max_note()->set(71); // midi: B4
             pk->angle()->set(3);
             pk->natrual()->set(false);
+            pk->selectable()->set(true);
+            pk->editable()->set(false);
+            pk->clear_selection()->set(false);
 
             // Fourth one
             MTEST_ASSERT(id.fmt_ascii("pianokeys-%d", int(vid++)));
@@ -335,6 +344,9 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->max_note()->set(83); // midi: B5
             pk->angle()->set(0);
             pk->natrual()->set(false);
+            pk->selectable()->set(false);
+            pk->editable()->set(true);
+            pk->clear_selection()->set(true);
 
             // Fifth one
             MTEST_ASSERT(id.fmt_ascii("pianokeys-%d", int(vid++)));
@@ -348,7 +360,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->max_note()->set(83); // midi: B5
             pk->angle()->set(2);
             pk->natrual()->set(true);
-            pk->active()->set(true);
+            pk->active()->set(false);
         }
 
         // Show window

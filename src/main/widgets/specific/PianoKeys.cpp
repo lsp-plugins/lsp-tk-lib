@@ -19,6 +19,7 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/stdlib/math.h>
 #include <lsp-plug.in/tk/tk.h>
 #include <private/tk/style/BuiltinStyle.h>
@@ -119,6 +120,9 @@ namespace lsp
                 sMousePressed.bind("note.mouse.pressed", this);
                 sSelectionStart.bind("note.selection.start", this);
                 sSelectionEnd.bind("note.selection.end", this);
+                sEditable.bind("editable", this);
+                sSelectable.bind("selectable", this);
+                sClearSelection.bind("note.selection.clear", this);
 
                 // Init values
                 for (size_t i=0; i<style::PIANOKEY_TOTAL; ++i)
@@ -154,6 +158,9 @@ namespace lsp
                 sMousePressed.set(-1);
                 sSelectionStart.set(-1);
                 sSelectionEnd.set(-1);
+                sEditable.set(false);
+                sSelectable.set(false);
+                sClearSelection.set(true);
 
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(PianoKeys, "PianoKeys", "root");
@@ -267,11 +274,16 @@ namespace lsp
             sPressed(&sProperties),
             sMousePressed(&sProperties),
             sSelectionStart(&sProperties),
-            sSelectionEnd(&sProperties)
+            sSelectionEnd(&sProperties),
+            sEditable(&sProperties),
+            sSelectable(&sProperties),
+            sClearSelection(&sProperties)
         {
             pClass          = &metadata;
 
             nCurrNote       = -1;
+            nMBState        = 0;
+            enWorkMode      = WMODE_OFF;
 
             for (size_t i=0; i<2; ++i)
             {
@@ -399,10 +411,14 @@ namespace lsp
             sMousePressed.bind("note.mouse.pressed", &sStyle);
             sSelectionStart.bind("note.selection.start", &sStyle);
             sSelectionEnd.bind("note.selection.end", &sStyle);
+            sEditable.bind("editable", &sStyle);
+            sSelectable.bind("selectable", &sStyle);
+            sClearSelection.bind("note.selection.clear", &sStyle);
 
             // Bind slots
             handler_id_t id;
             id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            if (id >= 0) id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id < 0)
                 return -id;
 
@@ -822,6 +838,7 @@ namespace lsp
             const ssize_t angle     = sAngle.get() & 0x3;
             const style::PianoColors *c = get_piano_colors();
             const float split       = scaling * lsp_max(0.0f, sSplitSize.get());
+            const bool selectable   = sSelectable.get();
 
             ws::rectangle_t kr;
             kr.nLeft    = 0;
@@ -840,8 +857,8 @@ namespace lsp
             if (first > last)
                 lsp::swap(first, last);
 
-            ssize_t sel_first = sSelectionStart.get();
-            ssize_t sel_last = sSelectionEnd.get();
+            ssize_t sel_first   = (selectable) ? sSelectionStart.get() : -1;
+            ssize_t sel_last    = (selectable) ? sSelectionEnd.get() : -1;
             if ((sel_first < 0) || (sel_last < 0))
             {
                 sel_first   = -1;
@@ -922,15 +939,201 @@ namespace lsp
             return &vKeyColors[index];
         }
 
+        PianoKeys::key_t *PianoKeys::find_key(ssize_t x, ssize_t y)
+        {
+            const float fx = x, fy = y;
+
+            // First search among black keys
+            for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
+            {
+                key_t *key = it.get();
+                if (!is_black_key(key->nKey))
+                    continue;
+
+                if ((fx >= key->fLeft) && (fy >= key->fTop) &&
+                    (fx < (key->fLeft + key->fWidth)) && (fy < (key->fTop + key->fHeight)))
+                    return key;
+            }
+
+            // Now search among splits
+            for (size_t i=0; i<2; ++i)
+            {
+                key_t *key = &vSplit[i];
+                if ((fx >= key->fLeft) && (fy >= key->fTop) &&
+                    (fx < (key->fLeft + key->fWidth)) && (fy < (key->fTop + key->fHeight)))
+                    return NULL;
+            }
+
+            // Now search among white keys
+            for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
+            {
+                key_t *key = it.get();
+                if (is_black_key(key->nKey))
+                    continue;
+
+                if ((fx >= key->fLeft) && (fy >= key->fTop) &&
+                    (fx < (key->fLeft + key->fWidth)) && (fy < (key->fTop + key->fHeight)))
+                    return key;
+            }
+
+            return NULL;
+        }
+
+        void PianoKeys::handle_note_press(ssize_t note)
+        {
+            ssize_t old = sMousePressed.get();
+            if (old == note)
+                return;
+
+            // Clear selection if automatic clear is enabled
+            if (sClearSelection.get())
+            {
+                bool notify = false;
+                if (sSelectionStart.get() >= 0)
+                {
+                    sSelectionStart.set(-1);
+                    notify = true;
+                }
+                if (sSelectionEnd.get() >= 0)
+                {
+                    sSelectionEnd.set(-1);
+                    notify = true;
+                }
+                if (notify)
+                    sSlots.execute(SLOT_CHANGE, this);
+            }
+
+            // Notify that previous note has been un-pressed
+            if (old >= 0)
+            {
+                sMousePressed.set(-1);
+                sSlots.execute(SLOT_SUBMIT, this);
+            }
+
+            // Notify that new note has been pressed
+            if (note >= 0)
+            {
+                sMousePressed.set(note);
+                sSlots.execute(SLOT_SUBMIT, this);
+            }
+        }
+
         status_t PianoKeys::on_mouse_down(const ws::event_t *e)
         {
-            // TODO
+            const size_t mb_state = nMBState;
+            nMBState |= 1 << e->nCode;
+
+            key_t *key          = find_key(e->nLeft, e->nTop);
+            const ssize_t note  = (key != NULL) ? key->nKey : -1;
+
+            lsp_trace("note = %d", int(note));
+
+            if (mb_state == 0)
+            {
+                if (e->nCode != ws::MCB_LEFT)
+                {
+                    enWorkMode = WMODE_IGNORE;
+                    return STATUS_OK;
+                }
+
+                if ((sEditable.get()) && ((e->nState & ws::MCF_SHIFT) == 0))
+                {
+                    enWorkMode      = WMODE_PRESS;
+                    handle_note_press(note);
+                }
+                else if (sSelectable.get())
+                {
+                    if (note >= 0)
+                    {
+                        enWorkMode      = WMODE_SELECT;
+
+                        bool notify = false;
+                        if (sSelectionStart.get() != note)
+                        {
+                            sSelectionStart.set(note);
+                            notify = true;
+                        }
+                        if (sSelectionEnd.get() != note)
+                        {
+                            sSelectionEnd.set(note);
+                            notify = true;
+                        }
+
+                        lsp_trace("selection = [%d, %d]", int(sSelectionStart.get()), int(sSelectionEnd.get()));
+                        if (notify)
+                            sSlots.execute(SLOT_CHANGE, this);
+                    }
+                    else
+                        enWorkMode      = WMODE_IGNORE;
+                }
+                else
+                    enWorkMode      = WMODE_IGNORE;
+
+                return STATUS_OK;
+            }
+
+            // Proceed note press
+            if (enWorkMode == WMODE_PRESS)
+            {
+                if (mb_state != ws::MCF_LEFT)
+                    handle_note_press(-1);
+                else
+                    handle_note_press(note);
+            }
+
+            return STATUS_OK;
+        }
+
+        status_t PianoKeys::on_mouse_move(const ws::event_t *e)
+        {
+            key_t *key          = find_key(e->nLeft, e->nTop);
+            ssize_t note        = (key != NULL) ? key->nKey : -1;
+
+            lsp_trace("note = %d", int(note));
+
+            if (nMBState != ws::MCF_LEFT)
+                return STATUS_OK;
+
+            if (enWorkMode == WMODE_PRESS)
+            {
+                handle_note_press(note);
+            }
+            else if (enWorkMode == WMODE_SELECT)
+            {
+                if (note < 0)
+                    return STATUS_OK;
+
+                bool notify = false;
+                if ((sSelectionStart.get() < 0) && (sSelectionStart.get() != note))
+                {
+                    sSelectionStart.set(note);
+                    notify = true;
+                }
+                if (sSelectionEnd.get() != note)
+                {
+                    sSelectionEnd.set(note);
+                    notify = true;
+                }
+
+                lsp_trace("selection = [%d, %d]", int(sSelectionStart.get()), int(sSelectionEnd.get()));
+
+                if (notify)
+                    sSlots.execute(SLOT_CHANGE, this);
+            }
+
             return STATUS_OK;
         }
 
         status_t PianoKeys::on_mouse_up(const ws::event_t *e)
         {
-            // TODO
+            nMBState &= ~(1 << e->nCode);
+
+            if (nMBState == 0)
+            {
+                enWorkMode          = WMODE_OFF;
+                handle_note_press(-1);
+            }
+
             return STATUS_OK;
         }
 
@@ -939,10 +1142,21 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t PianoKeys::on_change()
+        {
+            return STATUS_OK;
+        }
+
         status_t PianoKeys::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
             PianoKeys *self = widget_ptrcast<PianoKeys>(ptr);
             return (self != NULL) ? self->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t PianoKeys::slot_on_change(Widget *sender, void *ptr, void *data)
+        {
+            PianoKeys *self = widget_ptrcast<PianoKeys>(ptr);
+            return (self != NULL) ? self->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
     } /* namespace tk */
