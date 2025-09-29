@@ -711,6 +711,30 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             ga->direction()->set_dangle(90);
             ga->origin()->set(0);
             ga->color()->set_rgb24(0xcccccc);
+
+            // Embedded widget
+            tk::GraphEmbed *ge;
+            MTEST_ASSERT(ge = new tk::GraphEmbed(dpy));
+            MTEST_ASSERT(id.fmt_ascii("embed_%d", wid++));
+            MTEST_ASSERT(init_widget(ge, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(ge));
+            MTEST_ASSERT(gr->add(ge) == STATUS_OK);
+
+            ge->hvalue_start()->set(2000.0f);
+            ge->hvalue_end()->set(20000.0f);
+            ge->vvalue_start()->set(36.0f); // -60 dB
+            ge->vvalue_end()->set(12.0f); // -84 dB
+            ge->origin()->set(0);
+            ge->transparency()->set(0.25f);
+
+            tk::Button *btn;
+            MTEST_ASSERT(btn = new tk::Button(dpy));
+            MTEST_ASSERT(id.fmt_ascii("button_%d", wid++));
+            MTEST_ASSERT(init_widget(btn, vh, id.get_ascii()) == STATUS_OK);
+            MTEST_ASSERT(widgets.push(btn));
+            MTEST_ASSERT(ge->add(btn) == STATUS_OK);
+
+            btn->text()->set_raw("EMBEDDED");
         }
 
         // Init and run osillator
