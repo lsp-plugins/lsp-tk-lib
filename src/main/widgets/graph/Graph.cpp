@@ -105,7 +105,7 @@ namespace lsp
             // Unlink all items
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                GraphItem *item     = vItems.get(i);
+                Widget *item        = vItems.get(i);
                 if (item == NULL)
                     continue;
 
@@ -237,10 +237,10 @@ namespace lsp
 
             for (size_t i=0, n = vItems.size(); i<n; ++i)
             {
-                tk::GraphItem *gi = vItems.get(i);
-                if (gi == NULL)
+                tk::Widget *w       = vItems.get(i);
+                if (w == NULL)
                     continue;
-                tk::Slot *slot = gi->slot(SLOT_RESIZE_PARENT);
+                tk::Slot *slot = w->slot(SLOT_RESIZE_PARENT);
                 if (slot != NULL)
                 {
                     ws::rectangle_t xr = *r;
@@ -346,14 +346,14 @@ namespace lsp
             sync_lists();
 
             // Compute list of discarded widgets
-            lltl::ptrset<GraphItem> discarded;
+            lltl::ptrset<tk::Widget> discarded;
             {
                 lltl::darray<w_alloc_t> grouped;
 
                 // Fill all grouped widgets
                 for (size_t i=0, n=vItems.size(); i<n; ++i)
                 {
-                    GraphItem *gi = vItems.get(i);
+                    tk::GraphItem *gi = tk::widget_cast<tk::GraphItem>(vItems.get(i));
                     if ((gi == NULL) || (!gi->visibility()->get()))
                         continue;
 
@@ -397,14 +397,14 @@ namespace lsp
             // Draw all objects
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                GraphItem *gi = vItems.get(i);
-                if ((gi == NULL) || (!gi->visibility()->get()))
+                tk::Widget *w = vItems.get(i);
+                if ((w == NULL) || (!w->visibility()->get()))
                     continue;
-                if (discarded.contains(gi))
+                if (discarded.contains(w))
                     continue;
 
-                gi->render(s, &sICanvas, true);
-                gi->commit_redraw();
+                w->render(s, &sICanvas, true);
+                w->commit_redraw();
             }
         }
 
@@ -416,14 +416,14 @@ namespace lsp
 
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                GraphItem *gi = vItems.get(i);
-                if (gi == NULL)
+                tk::Widget *w = vItems.get(i);
+                if (w == NULL)
                     continue;
 
-                GraphOrigin *go = widget_cast<GraphOrigin>(gi);
+                tk::GraphOrigin *go = widget_cast<tk::GraphOrigin>(w);
                 if (go != NULL)
                     vOrigins.add(go);
-                GraphAxis *ga = widget_cast<GraphAxis>(gi);
+                tk::GraphAxis *ga = widget_cast<tk::GraphAxis>(w);
                 if (ga != NULL)
                 {
                     vAxis.add(ga);
@@ -449,43 +449,46 @@ namespace lsp
             // Lookup widgets
             for (size_t i=0, n=vItems.size(); i<n; ++i)
             {
-                GraphItem *gi = vItems.get(i);
-                if ((gi == NULL) || (!gi->is_visible_child_of(this)))
+                tk::Widget *w = vItems.get(i);
+                if (!w->is_visible_child_of(this))
                     continue;
 
-                if (gi->inside(x, y))
-                    return gi;
+                if ((w != NULL) && (w->inside(x, y)))
+                {
+                    Widget *child = w->find_widget(x, y);
+                    return (child != NULL) ? child : w;
+                }
             }
             return NULL;
         }
 
         void Graph::on_add_item(void *obj, Property *prop, void *w)
         {
-            GraphItem *item = widget_ptrcast<GraphItem>(w);
+            Widget *item    = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
-            Graph *_this = widget_ptrcast<Graph>(obj);
-            if (_this == NULL)
+            Graph *self = widget_ptrcast<Graph>(obj);
+            if (self == NULL)
                 return;
 
-            item->set_parent(_this);
-            _this->query_draw();
+            item->set_parent(self);
+            self->query_draw();
         }
 
         void Graph::on_remove_item(void *obj, Property *prop, void *w)
         {
-            GraphItem *item = widget_ptrcast<GraphItem>(w);
+            Widget *item    = widget_ptrcast<Widget>(w);
             if (item == NULL)
                 return;
 
-            Graph *_this = widget_ptrcast<Graph>(obj);
-            if (_this == NULL)
+            Graph *self = widget_ptrcast<Graph>(obj);
+            if (self == NULL)
                 return;
 
             // Remove widget from supplementary structures
-            _this->unlink_widget(item);
-            _this->query_draw();
+            self->unlink_widget(item);
+            self->query_draw();
         }
 
         bool Graph::origin(size_t index, float *x, float *y)
@@ -512,22 +515,27 @@ namespace lsp
         {
             GraphItem *item     = widget_cast<GraphItem>(child);
             if (item == NULL)
-                return STATUS_BAD_TYPE;
-
-            status_t res = vItems.add(item);
-            if (res == STATUS_OK)
             {
-                GraphOrigin *go     = widget_cast<GraphOrigin>(child);
-                if (go != NULL)
-                    vOrigins.add(go);
-                GraphAxis *ga       = widget_cast<GraphAxis>(child);
-                if (ga != NULL)
-                {
-                    vAxis.add(ga);
-                    if (ga->basis()->get())
-                        vBasis.add(ga);
-                }
+                GraphEmbed *embed = widget_cast<GraphEmbed>(child);
+                if (embed == NULL)
+                    return STATUS_BAD_TYPE;
             }
+
+            status_t res = vItems.add(child);
+            if (res != STATUS_OK)
+                return res;
+
+            GraphOrigin *go     = widget_cast<GraphOrigin>(child);
+            if (go != NULL)
+                vOrigins.add(go);
+            GraphAxis *ga       = widget_cast<GraphAxis>(child);
+            if (ga != NULL)
+            {
+                vAxis.add(ga);
+                if (ga->basis()->get())
+                    vBasis.add(ga);
+            }
+
             return res;
         }
 
@@ -608,9 +616,9 @@ namespace lsp
 
             // Return success
             if (x != NULL)
-                *x  = xx;
+                *x  = xx + canvas_aleft();
             if (y != NULL)
-                *y  = yy;
+                *y  = yy + canvas_atop();
 
             return STATUS_OK;
         }

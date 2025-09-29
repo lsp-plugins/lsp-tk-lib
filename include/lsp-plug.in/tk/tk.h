@@ -208,6 +208,7 @@
 #include <lsp-plug.in/tk/widgets/graph/Graph.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphAxis.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphDot.h>
+#include <lsp-plug.in/tk/widgets/graph/GraphEmbed.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphFrameBuffer.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphLineSegment.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphMarker.h>
