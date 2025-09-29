@@ -283,7 +283,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->min_note()->set(36); // midi: C2
             pk->max_note()->set(71); // midi: B4
             pk->angle()->set(1);
-            pk->natrual()->set(true);
+            pk->natural()->set(true);
             pk->selectable()->set(true);
             pk->editable()->set(true);
             pk->clear_selection()->set(false);
@@ -301,7 +301,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->min_note()->set(36); // midi: C2
             pk->max_note()->set(83); // midi: B5
             pk->angle()->set(0);
-            pk->natrual()->set(true);
+            pk->natural()->set(true);
             pk->selectable()->set(true);
             pk->editable()->set(true);
             pk->clear_selection()->set(true);
@@ -327,7 +327,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->min_note()->set(36); // midi: C2
             pk->max_note()->set(71); // midi: B4
             pk->angle()->set(3);
-            pk->natrual()->set(false);
+            pk->natural()->set(false);
             pk->selectable()->set(true);
             pk->editable()->set(false);
             pk->clear_selection()->set(false);
@@ -343,7 +343,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->min_note()->set(36); // midi: C2
             pk->max_note()->set(83); // midi: B5
             pk->angle()->set(0);
-            pk->natrual()->set(false);
+            pk->natural()->set(false);
             pk->selectable()->set(false);
             pk->editable()->set(true);
             pk->clear_selection()->set(true);
@@ -359,7 +359,7 @@ MTEST_BEGIN("tk.widgets.specific", pianokeys)
             pk->min_note()->set(36); // midi: C2
             pk->max_note()->set(83); // midi: B5
             pk->angle()->set(2);
-            pk->natrual()->set(true);
+            pk->natural()->set(true);
             pk->active()->set(false);
         }
 

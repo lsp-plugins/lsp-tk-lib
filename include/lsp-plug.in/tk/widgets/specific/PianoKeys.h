@@ -264,7 +264,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,            angle,                                      &sAngle)
                 LSP_TK_PROPERTY(SizeConstraints,    size_constraints,                           &sConstraints)
                 LSP_TK_PROPERTY(Float,              key_aspect,                                 &sKeyAspect)
-                LSP_TK_PROPERTY(Boolean,            natrual,                                    &sNatural);
+                LSP_TK_PROPERTY(Boolean,            natural,                                    &sNatural);
                 LSP_TK_PROPERTY(NoteState,          pressed,                                    &sPressed);
                 LSP_TK_PROPERTY(Integer,            mouse_pressed,                              &sMousePressed);
                 LSP_TK_PROPERTY(Integer,            selection_start,                            &sSelectionStart);
