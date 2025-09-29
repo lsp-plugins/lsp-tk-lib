@@ -19,6 +19,7 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/tk/tk.h>
 #include <private/tk/style/BuiltinStyle.h>
 
@@ -195,6 +196,8 @@ namespace lsp
             rect.nHeight           -= rect.nTop;
 
             realize_child(cv, &wrect, &rect);
+//            lsp_trace("wrect: x=%d, y=%d, w=%d, h=%d", int(wrect.nLeft), int(wrect.nTop), int(wrect.nWidth), int(wrect.nHeight));
+
             ws::ISurface *ws        = get_surface(s, wrect.nWidth, wrect.nHeight);
             if (ws == NULL)
                 return;

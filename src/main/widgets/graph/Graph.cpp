@@ -513,12 +513,14 @@ namespace lsp
 
         status_t Graph::add(Widget *child)
         {
-            GraphItem *item     = widget_cast<GraphItem>(child);
-            if (item == NULL)
             {
-                GraphEmbed *embed = widget_cast<GraphEmbed>(child);
-                if (embed == NULL)
-                    return STATUS_BAD_TYPE;
+                GraphItem *item     = widget_cast<GraphItem>(child);
+                if (item == NULL)
+                {
+                    GraphEmbed *embed = widget_cast<GraphEmbed>(child);
+                    if (embed == NULL)
+                        return STATUS_BAD_TYPE;
+                }
             }
 
             status_t res = vItems.add(child);
@@ -541,11 +543,17 @@ namespace lsp
 
         status_t Graph::remove(Widget *child)
         {
-            GraphItem *item     = widget_cast<GraphItem>(child);
-            if (item == NULL)
-                return STATUS_BAD_TYPE;
+            {
+                GraphItem *item     = widget_cast<GraphItem>(child);
+                if (item == NULL)
+                {
+                    GraphEmbed *embed = widget_cast<GraphEmbed>(child);
+                    if (embed == NULL)
+                        return STATUS_BAD_TYPE;
+                }
+            }
 
-            status_t res        = vItems.premove(item);
+            status_t res        = vItems.premove(child);
             if (res == STATUS_OK)
             {
                 GraphOrigin *go     = widget_cast<GraphOrigin>(child);
