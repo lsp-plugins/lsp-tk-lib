@@ -55,6 +55,7 @@ The full list of provided widgets:
   * Graph - widget for rendering 2D graphical data (graphs and plots).
   * GraphAxis - axis on a graph widget.
   * GraphDot - dot on a graph widget.
+  * GraphEmbed - special widget to embed widgets into graph widget, acts like Align but uses axis coordinates.
   * GraphFrameBuffer - frame buffer for drawing on the graph widget.
   * GraphLineSegment - grap line segment defined by two points.
   * GraphMarker - marker on the graph widget.
