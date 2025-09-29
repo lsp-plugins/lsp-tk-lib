@@ -71,7 +71,7 @@ namespace lsp
         {
             pClass              = &metadata;
 
-            pWidget             = NULL;
+            wWidget             = NULL;
             sLocation.nLeft     = -1;
             sLocation.nTop      = -1;
             sLocation.nWidth    = -1;
@@ -109,10 +109,10 @@ namespace lsp
 
         void GraphEmbed::do_destroy()
         {
-            if (pWidget != NULL)
+            if (wWidget != NULL)
             {
-                unlink_widget(pWidget);
-                pWidget = NULL;
+                unlink_widget(wWidget);
+                wWidget = NULL;
             }
         }
 
@@ -165,7 +165,7 @@ namespace lsp
         void GraphEmbed::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
         {
             // Check visibility of nested widget
-            if ((pWidget == NULL) || (!pWidget->visibility()->get()))
+            if ((wWidget == NULL) || (!wWidget->visibility()->get()))
                 return;
 
             // Get graph
@@ -215,14 +215,14 @@ namespace lsp
 
             // Set up draw translation from window coordinates to surface coordinates
             ws::rectangle_t xr;
-            pWidget->get_rectangle(&xr);
+            wWidget->get_rectangle(&xr);
 
             const ws::point_t origin = s->set_origin(-xr.nLeft, -xr.nTop);
             lsp_finally { s->set_origin(origin); };
 
             // Draw the child widget
-            pWidget->render(s, &xr, force);
-            pWidget->commit_redraw();
+            wWidget->render(s, &xr, force);
+            wWidget->commit_redraw();
         }
 
         void GraphEmbed::realize_child(Graph *cv, ws::rectangle_t *widget, const ws::rectangle_t *location)
@@ -237,7 +237,7 @@ namespace lsp
             }
 
             ws::size_limit_t sr;
-            pWidget->get_size_limits(&sr);
+            wWidget->get_size_limits(&sr);
             sLayout.apply(widget, location, &sr);
 
             widget->nLeft  += cv->canvas_aleft();
@@ -245,7 +245,7 @@ namespace lsp
             sSize           = *widget;
             sLocation       = *location;
 
-            pWidget->realize_widget(widget);
+            wWidget->realize_widget(widget);
         }
 
         Graph *GraphEmbed::graph()
@@ -257,25 +257,33 @@ namespace lsp
         {
             if ((widget == NULL) || (widget == this))
                 return STATUS_BAD_ARGUMENTS;
-            if (pWidget != NULL)
+            if (wWidget != NULL)
                 return STATUS_ALREADY_EXISTS;
 
             widget->set_parent(this);
-            pWidget = widget;
+            wWidget = widget;
             query_resize();
             return STATUS_OK;
         }
 
         status_t GraphEmbed::remove(Widget *widget)
         {
-            if (pWidget != widget)
+            if (wWidget != widget)
                 return STATUS_NOT_FOUND;
 
-            unlink_widget(pWidget);
-            pWidget  = NULL;
+            unlink_widget(wWidget);
+            wWidget  = NULL;
             query_resize();
 
             return STATUS_OK;
+        }
+
+        Widget *GraphEmbed::find_widget(ssize_t x, ssize_t y)
+        {
+            if ((wWidget == NULL) || (!wWidget->is_visible_child_of(this)))
+                return NULL;
+
+            return (wWidget->inside(x, y)) ? wWidget : NULL;
         }
 
     } /* namespace tk */

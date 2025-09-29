@@ -62,7 +62,7 @@ namespace lsp
                 prop::Layout                sLayout;                // Layout
                 prop::Float                 sTransparency;          // Transparency
                 ws::rectangle_t             sLocation;              // Old widget location
-                tk::Widget                 *pWidget;                // Widget
+                tk::Widget                 *wWidget;                // Widget
 
             protected:
                 status_t                    calc_point(ssize_t *x, ssize_t *y, Graph *cv, float hvalue, float vvalue);
@@ -104,6 +104,7 @@ namespace lsp
                 virtual void                draw(ws::ISurface *s, bool force) override;
                 virtual status_t            add(Widget *widget) override;
                 virtual status_t            remove(Widget *widget) override;
+                virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
         };
 
     } /* namespace tk */

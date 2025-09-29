@@ -724,7 +724,8 @@ MTEST_BEGIN("tk.widgets.graph", graph)
             ge->hvalue_end()->set(20000.0f);
             ge->vvalue_start()->set(36.0f); // -60 dB
             ge->vvalue_end()->set(12.0f); // -84 dB
-            ga->origin()->set(0);
+            ge->origin()->set(0);
+            ge->transparency()->set(0.25f);
 
             tk::Button *btn;
             MTEST_ASSERT(btn = new tk::Button(dpy));
