@@ -102,10 +102,12 @@ namespace lsp
                 style::PianoColors *pc = &vColors[style::PIANO_NORMAL];
                 pc->sBorderColor.bind("border.color", this);
                 pc->sSplitColor.bind("split.color", this);
+                pc->sOctaveSplitColor.bind("octave.split.color", this);
 
                 pc = &vColors[style::PIANO_INACTIVE];
                 pc->sBorderColor.bind("inactive.border.color", this);
                 pc->sSplitColor.bind("inactive.split.color", this);
+                pc->sOctaveSplitColor.bind("inactive.octave.split.color", this);
 
                 // Bind other properties
                 sBorder.bind("border", this);
@@ -143,10 +145,12 @@ namespace lsp
                 pc = &vColors[style::PIANO_NORMAL];
                 pc->sBorderColor.set_rgb24(0x000000);
                 pc->sSplitColor.set_rgb24(0xcccccc);
+                pc->sOctaveSplitColor.set_rgb24(0x888888);
 
                 pc = &vColors[style::PIANO_INACTIVE];
                 pc->sBorderColor.set_rgb24(0x444444);
                 pc->sSplitColor.set_rgb24(0x888888);
+                pc->sOctaveSplitColor.set_rgb24(0x444444);
 
                 sBorder.set_all(1);
                 sSplitSize.set(1);
@@ -180,11 +184,12 @@ namespace lsp
             {
                 sBorderColor.listener(listener);
                 sSplitColor.listener(listener);
+                sOctaveSplitColor.listener(listener);
             }
 
             bool PianoColors::property_changed(Property *prop)
             {
-                return prop->one_of(sBorderColor, sSplitColor);
+                return prop->one_of(sBorderColor, sSplitColor, sOctaveSplitColor);
             }
         }
 
@@ -393,10 +398,12 @@ namespace lsp
             style::PianoColors *pc = &vColors[style::PIANO_NORMAL];
             pc->sBorderColor.bind("border.color", &sStyle);
             pc->sSplitColor.bind("split.color", &sStyle);
+            pc->sOctaveSplitColor.bind("octave.split.color", &sStyle);
 
             pc = &vColors[style::PIANO_INACTIVE];
             pc->sBorderColor.bind("inactive.border.color", &sStyle);
             pc->sSplitColor.bind("inactive.split.color", &sStyle);
+            pc->sOctaveSplitColor.bind("inactive.octave.split.color", &sStyle);
 
             // Bind other properties
             sBorder.bind("border", &sStyle);
@@ -793,37 +800,43 @@ namespace lsp
                 key->fHeight);
         }
 
-        void PianoKeys::draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, size_t angle, float split)
+        void PianoKeys::draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, const lsp::Color & oc, size_t angle, float split)
         {
             if (is_black_key(key->nKey))
                 return;
+
+            const lsp::Color *sc = ((key->nKey % 12) == 11) ? &oc : &c;
 
             switch (angle)
             {
                 case 0:
                 default:
-                    s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f,
+                    s->fill_rect(
+                        *sc, SURFMASK_NO_CORNER, 0.0f,
                         key->fLeft - sSize.nLeft + key->fWidth - split,
                         key->fTop - sSize.nTop,
                         split,
                         key->fHeight);
                     break;
                 case 1:
-                    s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f,
+                    s->fill_rect(
+                        *sc, SURFMASK_NO_CORNER, 0.0f,
                         key->fLeft - sSize.nLeft,
                         key->fTop - sSize.nTop,
                         key->fWidth,
                         split);
                     break;
                 case 2:
-                    s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f,
+                    s->fill_rect(
+                        *sc, SURFMASK_NO_CORNER, 0.0f,
                         key->fLeft - sSize.nLeft,
                         key->fTop - sSize.nTop,
                         split,
                         key->fHeight);
                     break;
                 case 3:
-                    s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f,
+                    s->fill_rect(
+                        *sc, SURFMASK_NO_CORNER, 0.0f,
                         key->fLeft - sSize.nLeft,
                         key->fTop  - sSize.nTop + key->fHeight - split,
                         key->fWidth,
@@ -847,7 +860,7 @@ namespace lsp
             kr.nHeight  = sSize.nHeight;
 
             // Draw the border
-            lsp::Color col;
+            lsp::Color col, ocol;
             col.copy(c->sBorderColor);
             s->fill_rect(col, SURFMASK_NO_CORNER, 0.0f, &kr);
 
@@ -873,8 +886,9 @@ namespace lsp
 
             // Draw key splits
             col.copy(c->sSplitColor);
+            ocol.copy(c->sOctaveSplitColor);
             for (lltl::iterator<key_t> it=vKeys.values(); it; ++it)
-                draw_split(s, *it, col, angle, split);
+                draw_split(s, *it, col, ocol, angle, split);
             for (size_t i=0; i<2; ++i)
             {
                 const key_t *sp = &vSplit[i];

@@ -55,8 +55,9 @@ namespace lsp
 
             typedef struct PianoColors
             {
-                prop::Color                 sBorderColor;   // Border color
-                prop::Color                 sSplitColor;    // Split color
+                prop::Color                 sBorderColor;       // Border color
+                prop::Color                 sSplitColor;        // Split color
+                prop::Color                 sOctaveSplitColor;  // Split color for octave
 
                 void listener(tk::prop::Listener *listener);
                 bool property_changed(Property *prop);
@@ -195,7 +196,7 @@ namespace lsp
                 style::PianoKeyColors      *get_key_colors(bool down, bool selected, bool hover);
                 void                        compute_layout(layout_t * layout, bool natural);
                 void                        draw_key(ws::ISurface *s, const key_t * key, bool black, ssize_t sel_first, ssize_t sel_last);
-                void                        draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, size_t angle, float split);
+                void                        draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, const lsp::Color & oc, size_t angle, float split);
                 key_t                      *find_key(ssize_t x, ssize_t y);
                 void                        handle_note_press(ssize_t note);
 
