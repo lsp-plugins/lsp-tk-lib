@@ -163,7 +163,7 @@ namespace lsp
             protected:
                 lltl::darray<key_t>         vKeys;
                 key_t                       vSplit[2];
-                ssize_t                     nCurrNote;      // Currently selected note
+                ssize_t                     nHoverNote;     // Hover note
                 size_t                      nMBState;       // Mouse button state
                 work_mode_t                 enWorkMode;     // Current work mode
 
@@ -199,6 +199,7 @@ namespace lsp
                 void                        draw_split(ws::ISurface *s, const key_t * key, const lsp::Color & c, const lsp::Color & oc, size_t angle, float split);
                 key_t                      *find_key(ssize_t x, ssize_t y);
                 void                        handle_note_press(ssize_t note);
+                void                        set_hover_note(ssize_t note);
 
             protected:
                 virtual void                property_changed(Property *prop) override;

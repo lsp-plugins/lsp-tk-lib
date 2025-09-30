@@ -286,7 +286,7 @@ namespace lsp
         {
             pClass          = &metadata;
 
-            nCurrNote       = -1;
+            nHoverNote      = -1;
             nMBState        = 0;
             enWorkMode      = WMODE_OFF;
 
@@ -787,7 +787,7 @@ namespace lsp
             const ssize_t code = key->nKey;
             const bool selected = (code >= sel_first) && (code <= sel_last);
             const bool pressed = (sMousePressed.get() == code) || (sPressed.get(code));
-            const bool hover = (code == nCurrNote);
+            const bool hover = (code == nHoverNote);
 
             lsp::Color col;
             const style::PianoKeyColors *c = get_key_colors(pressed, selected, hover);
@@ -1032,10 +1032,26 @@ namespace lsp
             }
         }
 
+        void PianoKeys::set_hover_note(ssize_t note)
+        {
+            if (((sEditable.get()) || (sSelectable.get())) && (note != nHoverNote))
+            {
+                nHoverNote      = note;
+                query_draw();
+            }
+            else if ((note < 0) && (note != nHoverNote))
+            {
+                nHoverNote      = note;
+                query_draw();
+            }
+        }
+
         status_t PianoKeys::on_mouse_down(const ws::event_t *e)
         {
             const size_t mb_state = nMBState;
             nMBState |= 1 << e->nCode;
+            if (nMBState != 0)
+                set_hover_note(-1);
 
             key_t *key          = find_key(e->nLeft, e->nTop);
             const ssize_t note  = (key != NULL) ? key->nKey : -1;
@@ -1105,6 +1121,8 @@ namespace lsp
 
             lsp_trace("note = %d", int(note));
 
+            set_hover_note((enWorkMode == WMODE_OFF) ? note : -1);
+
             if (nMBState != ws::MCF_LEFT)
                 return STATUS_OK;
 
@@ -1146,6 +1164,10 @@ namespace lsp
             {
                 enWorkMode          = WMODE_OFF;
                 handle_note_press(-1);
+
+                // Set hover note
+                key_t *key          = find_key(e->nLeft, e->nTop);
+                set_hover_note((key != NULL) ? key->nKey : -1);
             }
 
             return STATUS_OK;
