@@ -468,7 +468,7 @@ namespace lsp
             const float scaling     = lsp_max(0.0f, sScaling.get());
             const ssize_t angle     = sAngle.get() & 0x3;
             const float split       = scaling * lsp_max(0.0f, sSplitSize.get());
-            const float key_unit    = lsp_max(split, 1.0f);
+            const float key_unit    = lsp_max(split * 0.5f, 1.0f);
             const bool natural      = sNatural.get();
 
             // Compute the keyboard layout
