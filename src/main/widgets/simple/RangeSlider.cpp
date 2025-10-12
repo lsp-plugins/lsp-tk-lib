@@ -267,7 +267,7 @@ namespace lsp
                 lsp::swap(bmin, bmax);
             }
 
-            lsp_trace("min = %f, max = %f", min, max);
+//            lsp_trace("min = %f, max = %f", min, max);
 
             switch (angle & 3)
             {
@@ -451,8 +451,8 @@ namespace lsp
             const float old_max = sValues.max();
             const float dist    = sDistance.get();
 
-            lsp_trace("in: old_min=%f, old_max=%f, dist=%f, min=%f, max=%f, flags=0x%x",
-                old_min, old_max, dist, min, max, int(flags));
+//            lsp_trace("in: old_min=%f, old_max=%f, dist=%f, min=%f, max=%f, flags=0x%x",
+//                old_min, old_max, dist, min, max, int(flags));
 
             if (flags & CHANGE_MIN)
             {
@@ -477,7 +477,7 @@ namespace lsp
             if (old_max != max)
                 flags      |= CHANGE_MAX;
 
-            lsp_trace("out: min=%f, max=%f, flags=0x%x", min, max, flags);
+//            lsp_trace("out: min=%f, max=%f, flags=0x%x", min, max, flags);
 
             sValues.set(min, max);
             if (flags != 0)
@@ -566,8 +566,8 @@ namespace lsp
                     fLastValue  = (pCurrButton == &vButtons[0]) ? sValues.min() : sValues.max();
                     fCurrValue  = fLastValue;
 
-                    lsp_trace("curr button is %s, last_value=%f",
-                        (pCurrButton == &vButtons[0]) ? "MIN" : "MAX", fLastValue);
+//                    lsp_trace("curr button is %s, last_value=%f",
+//                        (pCurrButton == &vButtons[0]) ? "MIN" : "MAX", fLastValue);
 
                     sSlots.execute(SLOT_BEGIN_EDIT, this);
                 }
@@ -661,14 +661,14 @@ namespace lsp
                             1.0f;
                 }
 
-                lsp_trace("last_value = %f, delta = %f, accel = %f", fLastValue, delta, accel);
+//                lsp_trace("last_value = %f, delta = %f, accel = %f", fLastValue, delta, accel);
 
                 result        = ((angle == 1) || (angle == 2)) ? result - delta*accel : result + delta*accel;
             }
 
             // Update value
             fCurrValue      = result;
-            lsp_trace("fCurrValue=%f, fLastValue=%f", fCurrValue, fLastValue);
+//            lsp_trace("fCurrValue=%f, fLastValue=%f", fCurrValue, fLastValue);
             update_value(result, result, flags);
 
             return STATUS_OK;
