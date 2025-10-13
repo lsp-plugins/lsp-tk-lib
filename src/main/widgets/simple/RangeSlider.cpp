@@ -146,10 +146,12 @@ namespace lsp
             nButtons        = 0;
             nXFlags         = 0;
             fButtonRange    = 1.0f;
-            fCurrValue      = 0.0f;
-            fLastValue      = 0.0f;
+            fCurrValue[0]   = 0.0f;
+            fCurrValue[1]   = 0.0f;
+            fLastValue[0]   = 0.0f;
+            fLastValue[1]   = 0.0f;
 
-            for (size_t i=0; i<2; ++i)
+            for (size_t i=0; i<BTN_TOTAL; ++i)
             {
                 ws::rectangle_t *btn = &vButtons[i];
 
@@ -158,7 +160,7 @@ namespace lsp
                 btn->nWidth     = 0;
                 btn->nHeight    = 0;
             }
-            pCurrButton     = NULL;
+            nCurrButton     = -1;
 
             sHole.nLeft     = -1;
             sHole.nTop      = -1;
@@ -259,8 +261,9 @@ namespace lsp
             float min               = sLimits.get_normalized(sValues.min());
             float max               = sLimits.get_normalized(sValues.max());
 
-            ws::rectangle_t *bmin   = &vButtons[0];
-            ws::rectangle_t *bmax   = &vButtons[1];
+            ws::rectangle_t *bmin   = &vButtons[BTN_MIN];
+            ws::rectangle_t *bmax   = &vButtons[BTN_MAX];
+            ws::rectangle_t *brange = &vButtons[BTN_RANGE];
             if (sLimits.inversed())
             {
                 lsp::swap(min, max);
@@ -308,6 +311,10 @@ namespace lsp
                     break;
                 }
             }
+            brange->nLeft           = lsp_min(bmin->nLeft, bmax->nLeft);
+            brange->nTop            = lsp_min(bmin->nTop, bmax->nTop);
+            brange->nWidth          = lsp_max(bmin->nLeft + bmin->nWidth, bmax->nLeft + bmax->nWidth) - brange->nLeft;
+            brange->nHeight         = lsp_max(bmin->nTop + bmin->nHeight, bmax->nTop + bmax->nHeight) - brange->nTop;
 
             query_draw();
         }
@@ -374,7 +381,7 @@ namespace lsp
             ssize_t sradius     = (sScaleRadius.get() > 0) ? lsp_max(1, scaling * sScaleRadius.get()) : 0.0f;
             ssize_t range       = lsp_max(schamfer*2 + hole_width, sradius * 2);
 
-            ws::rectangle_t *bt = &vButtons[0];
+            ws::rectangle_t *bt = &vButtons[BTN_MIN];
             bt->nLeft           = r->nLeft;
             bt->nTop            = r->nTop;
 
@@ -397,7 +404,8 @@ namespace lsp
                 fButtonRange        = float(r->nWidth - bt->nWidth * 2);
             }
 
-            vButtons[1]         = *bt;
+            vButtons[BTN_MAX]   = *bt;
+            vButtons[BTN_RANGE] = *bt;
 
             // Locate hole at center
             sHole.nLeft         = r->nLeft + ((r->nWidth  - sHole.nWidth) >> 1);
@@ -441,41 +449,90 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void RangeSlider::update_value(float min, float max, size_t flags)
+        void RangeSlider::update_values(const float *values, ssize_t button_id)
         {
-            if (!(flags & CHANGE_BOTH))
+            if (button_id < 0)
                 return;
 
             const bool inversed = sLimits.inversed();
             const float old_min = sValues.min();
             const float old_max = sValues.max();
-            const float dist    = sDistance.get();
 
 //            lsp_trace("in: old_min=%f, old_max=%f, dist=%f, min=%f, max=%f, flags=0x%x",
 //                old_min, old_max, dist, min, max, int(flags));
+            float min       = values[0];
+            float max       = values[1];
+            size_t flags    = 0;
 
-            if (flags & CHANGE_MIN)
+            switch (button_id)
             {
-                min         = sLimits.limit(min);
-                max         = (inversed) ? lsp_min(min - dist, old_max) : lsp_max(min + dist, old_max);
-                max         = sLimits.limit(max);
-                min         = (inversed) ? lsp_max(max + dist, min) : lsp_min(max - dist, min);
-                min         = sLimits.limit(min);
-            }
-            else if (flags & CHANGE_MAX)
-            {
-                max         = sLimits.limit(max);
-                min         = (inversed) ? lsp_max(max + dist, old_min) : lsp_min(max - dist, old_min);
-                min         = sLimits.limit(min);
-                max         = (inversed) ? lsp_min(min - dist, max) : lsp_max(min + dist, max);
-                max         = sLimits.limit(max);
-            }
+                case BTN_MIN:
+                {
+                    const float dist    = sDistance.get();
+                    min                 = sLimits.limit(min);
+                    max                 = (inversed) ? lsp_min(min - dist, old_max) : lsp_max(min + dist, old_max);
+                    max                 = sLimits.limit(max);
+                    min                 = (inversed) ? lsp_max(max + dist, min) : lsp_min(max - dist, min);
+                    min                 = sLimits.limit(min);
+                    flags               = CHANGE_MIN;
+                    break;
+                }
 
-            flags       = 0;
-            if (old_min != min)
-                flags      |= CHANGE_MIN;
-            if (old_max != max)
-                flags      |= CHANGE_MAX;
+                case BTN_MAX:
+                {
+                    const float dist    = sDistance.get();
+                    max                 = sLimits.limit(max);
+                    min                 = (inversed) ? lsp_max(max + dist, old_min) : lsp_min(max - dist, old_min);
+                    min                 = sLimits.limit(min);
+                    max                 = (inversed) ? lsp_min(min - dist, max) : lsp_max(min + dist, max);
+                    max                 = sLimits.limit(max);
+                    flags               = CHANGE_MAX;
+                    break;
+                }
+
+                case BTN_RANGE:
+                default:
+                {
+                    float delta         = max - old_max;
+                    if (delta == 0.0f)
+                        delta               = min - old_min;
+
+                    if (sLimits.inversed())
+                    {
+                        const float dist    = old_min - old_max;
+                        if (delta < 0.0f)
+                        {
+                            max                 = sLimits.limit(max);
+                            min                 = sLimits.limit(lsp_max(min, max + dist));
+                        }
+                        else
+                        {
+                            min                 = sLimits.limit(min);
+                            max                 = sLimits.limit(lsp_min(max, min - dist));
+                        }
+                    }
+                    else
+                    {
+                        const float dist    = old_max - old_min;
+                        if (delta < 0.0f)
+                        {
+                            min                 = sLimits.limit(min);
+                            max                 = sLimits.limit(lsp_max(max, min + dist));
+                        }
+                        else
+                        {
+                            max                 = sLimits.limit(max);
+                            min                 = sLimits.limit(lsp_min(min, max - dist));
+                        }
+                    }
+
+                    if (old_min != min)
+                        flags              |= CHANGE_MIN;
+                    if (old_max != max)
+                        flags              |= CHANGE_MAX;
+                    break;
+                }
+            }
 
 //            lsp_trace("out: min=%f, max=%f, flags=0x%x", min, max, flags);
 
@@ -493,7 +550,7 @@ namespace lsp
 
             if (sLimits.inversed())
             {
-                if (delta < 0)
+                if (delta < 0.0f)
                 {
                     max     = sLimits.limit(old_max - delta);
                     delta   = old_max - max;
@@ -508,7 +565,7 @@ namespace lsp
             }
             else
             {
-                if (delta < 0)
+                if (delta < 0.0f)
                 {
                     min     = sLimits.limit(old_min + delta);
                     delta   = min - old_min;
@@ -533,24 +590,23 @@ namespace lsp
                 sSlots.execute(SLOT_CHANGE, this, &flags);
         }
 
-        ws::rectangle_t *RangeSlider::find_button(const ws::event_t *e)
+        ssize_t RangeSlider::find_button(const ws::event_t *e)
         {
-            for (size_t i=0; i<2; ++i)
+            for (size_t i=0; i<BTN_TOTAL; ++i)
             {
                 if (Position::inside(&vButtons[i], e->nLeft, e->nTop))
-                    return &vButtons[i];
+                    return i;
             }
 
-            return NULL;
+            return -1;
         }
 
         status_t RangeSlider::on_mouse_down(const ws::event_t *e)
         {
             if (nButtons == 0)
             {
-                pCurrButton = find_button(e);
-
-                if (pCurrButton != NULL)
+                nCurrButton = find_button(e);
+                if (nCurrButton >= 0)
                 {
                     if (e->nCode == ws::MCB_RIGHT)
                         nXFlags        |= F_PRECISION;
@@ -562,9 +618,11 @@ namespace lsp
 
                 if (!(nXFlags & F_IGNORE))
                 {
-                    nLastV      = (sAngle.get() & 1) ? e->nTop : e->nLeft;
-                    fLastValue  = (pCurrButton == &vButtons[0]) ? sValues.min() : sValues.max();
-                    fCurrValue  = fLastValue;
+                    nLastV          = (sAngle.get() & 1) ? e->nTop : e->nLeft;
+                    fLastValue[0]   = sValues.min();
+                    fLastValue[1]   = sValues.max();
+                    fCurrValue[0]   = fLastValue[0];
+                    fCurrValue[1]   = fLastValue[1];
 
 //                    lsp_trace("curr button is %s, last_value=%f",
 //                        (pCurrButton == &vButtons[0]) ? "MIN" : "MAX", fLastValue);
@@ -580,8 +638,8 @@ namespace lsp
             const size_t key    = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
 
             // Update value
-            const float value   = (nButtons == size_t(size_t(1) << key)) ? fCurrValue : fLastValue;
-            update_value(value, value, (pCurrButton == &vButtons[0]) ? CHANGE_MIN : CHANGE_MAX);
+            const float *values = (nButtons == size_t(size_t(1) << key)) ? fCurrValue : fLastValue;
+            update_values(values, nCurrButton);
 
             return STATUS_OK;
         }
@@ -593,29 +651,26 @@ namespace lsp
             {
                 if (nButtons == 0)
                 {
-                    pCurrButton = find_button(e);
+                    nCurrButton = find_button(e);
                     nXFlags     = 0;
                 }
                 return STATUS_OK;
             }
 
-            size_t key      = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
-            float value;
+            size_t key          = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
+            const float *values = fLastValue;
 
-            const size_t flags = (pCurrButton == &vButtons[0]) ? CHANGE_MIN : CHANGE_MAX;
             if (nButtons == 0) // All mouse buttons are released now
             {
-                pCurrButton = find_button(e);
+                nCurrButton = find_button(e);
                 nXFlags     = 0;
-                value       = (e->nCode == key) ? fCurrValue : fLastValue;
+                values      = (e->nCode == key) ? fCurrValue : fLastValue;
             }
             else if (nButtons == (size_t(1) << key)) // Currently pressed initially selected button
-                value       = fCurrValue;
-            else
-                value       = fLastValue;
+                values      = fCurrValue;
 
             // Update value
-            update_value(value, value, flags);
+            update_values(values, nCurrButton);
 
             if (nButtons == 0)
                 sSlots.execute(SLOT_END_EDIT, this);
@@ -631,45 +686,46 @@ namespace lsp
             size_t key = (nXFlags & F_PRECISION) ? ws::MCB_RIGHT : ws::MCB_LEFT;
             if (nButtons != (size_t(1) << key))
             {
-                pCurrButton     = find_button(e);
+                nCurrButton     = find_button(e);
                 return STATUS_OK;
             }
-            else if (pCurrButton == NULL)
+            else if (nCurrButton < 0)
                 return STATUS_OK;
 
             // Different behaviour for slider
-            const size_t flags  = (pCurrButton == &vButtons[0]) ? CHANGE_MIN : CHANGE_MAX;
             const ssize_t angle = sAngle.get() & 3;
 
             ssize_t value   = (angle & 1) ? e->nTop : e->nLeft;
-            float result    = fLastValue;
-            if (value != nLastV)
-            {
-                float delta     = sLimits.range() * float(value - nLastV) / fButtonRange; // normalized
-                float accel     = 1.0f;
-
-                if (nXFlags & F_PRECISION)
-                {
-                    accel = (e->nState & ws::MCF_SHIFT)   ? 1.0f :
-                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
-                            sStep.decel();
-                }
-                else
-                {
-                    accel = (e->nState & ws::MCF_SHIFT)   ? sStep.decel() :
-                            (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
-                            1.0f;
-                }
-
-//                lsp_trace("last_value = %f, delta = %f, accel = %f", fLastValue, delta, accel);
-
-                result        = ((angle == 1) || (angle == 2)) ? result - delta*accel : result + delta*accel;
-            }
 
             // Update value
-            fCurrValue      = result;
+            for (size_t i=0; i<2; ++i)
+            {
+                if (value != nLastV)
+                {
+                    float delta     = sLimits.range() * float(value - nLastV) / fButtonRange; // normalized
+                    float accel     = 1.0f;
+
+                    if (nXFlags & F_PRECISION)
+                    {
+                        accel = (e->nState & ws::MCF_SHIFT)   ? 1.0f :
+                                (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                                sStep.decel();
+                    }
+                    else
+                    {
+                        accel = (e->nState & ws::MCF_SHIFT)   ? sStep.decel() :
+                                (e->nState & ws::MCF_CONTROL) ? sStep.accel() :
+                                1.0f;
+                    }
+
+    //                lsp_trace("last_value = %f, delta = %f, accel = %f", fLastValue, delta, accel);
+
+                    fCurrValue[i]   = ((angle == 1) || (angle == 2)) ? fLastValue[i] - delta*accel : fLastValue[i] + delta*accel;
+                }
+            }
+
 //            lsp_trace("fCurrValue=%f, fLastValue=%f", fCurrValue, fLastValue);
-            update_value(result, result, flags);
+            update_values(fCurrValue, nCurrButton);
 
             return STATUS_OK;
         }
@@ -792,16 +848,16 @@ namespace lsp
                 {
                     case 0:
                     case 2:
-                        minv            = vButtons[0].nLeft - sSize.nLeft + vButtons[0].nWidth / 2;
-                        maxv            = vButtons[1].nLeft - sSize.nLeft + vButtons[1].nWidth / 2;
+                        minv            = vButtons[BTN_MIN].nLeft - sSize.nLeft + vButtons[BTN_MIN].nWidth / 2;
+                        maxv            = vButtons[BTN_MAX].nLeft - sSize.nLeft + vButtons[BTN_MAX].nWidth / 2;
                         c.nLeft         = lsp_min(minv, maxv);
                         c.nWidth        = lsp_max(minv, maxv) - c.nLeft;
                         break;
                     case 1:
                     case 3:
                     default:
-                        minv            = vButtons[0].nTop - sSize.nTop + vButtons[0].nHeight / 2;
-                        maxv            = vButtons[1].nTop - sSize.nTop + vButtons[1].nHeight / 2;
+                        minv            = vButtons[BTN_MIN].nTop - sSize.nTop + vButtons[BTN_MIN].nHeight / 2;
+                        maxv            = vButtons[BTN_MAX].nTop - sSize.nTop + vButtons[BTN_MAX].nHeight / 2;
                         c.nTop          = lsp_min(minv, maxv);
                         c.nHeight       = lsp_max(minv, maxv) - c.nTop;
                         break;
@@ -814,7 +870,7 @@ namespace lsp
 
 
             // Draw buttons
-            for (size_t i=0; i<2; ++i)
+            for (size_t i=BTN_MIN; i<=BTN_MAX; ++i)
             {
                 h               = vButtons[i];
                 h.nLeft        -= sSize.nLeft;
@@ -875,7 +931,7 @@ namespace lsp
 
         status_t RangeSlider::on_mouse_pointer(pointer_event_t *e)
         {
-            if ((!(nXFlags & F_IGNORE)) && (pCurrButton != NULL))
+            if ((!(nXFlags & F_IGNORE)) && (nCurrButton >= 0))
             {
                 ws::mouse_pointer_t dfl_pointer = (sAngle.get() & 1) ? ws::MP_VSIZE : ws::MP_HSIZE;
                 e->enPointer    = sBtnPointer.get(dfl_pointer);

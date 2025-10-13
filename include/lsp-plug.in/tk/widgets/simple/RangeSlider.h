@@ -94,6 +94,14 @@ namespace lsp
                     CHANGE_BOTH     = CHANGE_MIN | CHANGE_MAX
                 };
 
+                enum button_t
+                {
+                    BTN_MIN,
+                    BTN_MAX,
+                    BTN_RANGE,
+                    BTN_TOTAL
+                };
+
             protected:
                 enum flags_t
                 {
@@ -113,10 +121,10 @@ namespace lsp
                 uint32_t                        nButtons;
                 uint32_t                        nXFlags;
                 float                           fButtonRange;
-                float                           fLastValue;
-                float                           fCurrValue;
-                ws::rectangle_t                 vButtons[2];
-                ws::rectangle_t                *pCurrButton;
+                float                           fLastValue[2];
+                float                           fCurrValue[2];
+                ws::rectangle_t                 vButtons[BTN_TOTAL];
+                ssize_t                         nCurrButton;
                 ws::rectangle_t                 sHole;
 
                 style::RangeSliderColors        vColors[RSLIDER_TOTAL];
@@ -141,11 +149,11 @@ namespace lsp
                 prop::Boolean                   sInvertMouseVScroll;
 
             protected:
-                void                            update_value(float min, float max, size_t flags);
+                void                            update_values(const float *values, ssize_t button_id);
                 void                            add_values(float delta);
                 void                            sync_button_pos();
                 style::RangeSliderColors       *select_colors();
-                ws::rectangle_t                *find_button(const ws::event_t *e);
+                ssize_t                         find_button(const ws::event_t *e);
 
             protected:
                 static status_t                 slot_begin_edit(Widget *sender, void *ptr, void *data);
