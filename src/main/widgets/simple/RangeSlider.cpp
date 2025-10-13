@@ -462,7 +462,6 @@ namespace lsp
 //                old_min, old_max, dist, min, max, int(flags));
             float min       = values[0];
             float max       = values[1];
-            size_t flags    = 0;
 
             switch (button_id)
             {
@@ -474,7 +473,6 @@ namespace lsp
                     max                 = sLimits.limit(max);
                     min                 = (inversed) ? lsp_max(max + dist, min) : lsp_min(max - dist, min);
                     min                 = sLimits.limit(min);
-                    flags               = CHANGE_MIN;
                     break;
                 }
 
@@ -486,7 +484,6 @@ namespace lsp
                     min                 = sLimits.limit(min);
                     max                 = (inversed) ? lsp_min(min - dist, max) : lsp_max(min + dist, max);
                     max                 = sLimits.limit(max);
-                    flags               = CHANGE_MAX;
                     break;
                 }
 
@@ -526,13 +523,15 @@ namespace lsp
                         }
                     }
 
-                    if (old_min != min)
-                        flags              |= CHANGE_MIN;
-                    if (old_max != max)
-                        flags              |= CHANGE_MAX;
                     break;
                 }
             }
+
+            size_t flags    = 0;
+            if (old_min != min)
+                flags              |= CHANGE_MIN;
+            if (old_max != max)
+                flags              |= CHANGE_MAX;
 
 //            lsp_trace("out: min=%f, max=%f, flags=0x%x", min, max, flags);
 
