@@ -460,7 +460,7 @@ namespace lsp
             if (sInvertMouseVScroll.get())
                 step            = -step;
 
-            // Update value
+            // Compute delta
             float delta = 0.0;
             if (e->nCode == ws::MCD_UP)
                 delta   = step;
@@ -469,7 +469,10 @@ namespace lsp
             else
                 return STATUS_OK;
 
+            // Update value
+            sSlots.execute(SLOT_BEGIN_EDIT, this);
             update_value(delta);
+            sSlots.execute(SLOT_END_EDIT, this);
 
             return STATUS_OK;
         }

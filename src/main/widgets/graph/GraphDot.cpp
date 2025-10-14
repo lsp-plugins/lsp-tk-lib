@@ -582,7 +582,11 @@ namespace lsp
             float old       = sZValue.sValue.get();
             sZValue.sValue.add(delta);
             if (old != sZValue.sValue.get())
+            {
+                sSlots.execute(SLOT_BEGIN_EDIT, this);
                 sSlots.execute(SLOT_CHANGE, this);
+                sSlots.execute(SLOT_END_EDIT, this);
+            }
 
             return STATUS_OK;
         }

@@ -584,9 +584,13 @@ namespace lsp
             if (old_max != max)
                 flags      |= CHANGE_MAX;
 
-            sValues.set(min, max);
             if (flags != 0)
+            {
+                sValues.set(min, max);
+                sSlots.execute(SLOT_BEGIN_EDIT, this, &flags);
                 sSlots.execute(SLOT_CHANGE, this, &flags);
+                sSlots.execute(SLOT_END_EDIT, this, &flags);
+            }
         }
 
         ssize_t RangeSlider::find_button(const ws::event_t *e)
