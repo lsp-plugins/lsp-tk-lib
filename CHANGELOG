@@ -7,6 +7,7 @@
 * Implemented new tk::PianoKeys widget.
 * Implemented new tk::Embed widget for embedding into graph widget.
 * Fixed use after free for several scenarios when destroying the display.
+* Updated module versions in dependencies.
 
 === 1.0.29 ===
 * Added text clipping function for tk::Label.
