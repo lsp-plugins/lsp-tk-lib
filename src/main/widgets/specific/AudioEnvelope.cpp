@@ -293,6 +293,8 @@ namespace lsp
 
             // Add slots
             handler_id_t id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_BEGIN_EDIT, slot_begin_edit, self());
+            if (id >= 0) id = sSlots.add(SLOT_END_EDIT, slot_end_edit, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }
@@ -681,6 +683,16 @@ namespace lsp
             return STATUS_OK;
         }
 
+        status_t AudioEnvelope::on_begin_edit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t AudioEnvelope::on_end_edit()
+        {
+            return STATUS_OK;
+        }
+
         void AudioEnvelope::sync_handler(const ws::event_t *e)
         {
             point_t *point = find_point(e->nLeft, e->nTop);
@@ -717,6 +729,9 @@ namespace lsp
 
                 nLastX      = e->nLeft;
                 nLastY      = e->nTop;
+
+                if (pHandler != NULL)
+                    sSlots.execute(SLOT_BEGIN_EDIT, this);
             }
 
             nBMask         |= size_t(1) << e->nCode;
@@ -727,6 +742,11 @@ namespace lsp
         status_t AudioEnvelope::on_mouse_up(const ws::event_t *e)
         {
             nBMask         &= ~(size_t(1) << e->nCode);
+            if (nBMask == 0)
+            {
+                if (pHandler != NULL)
+                    sSlots.execute(SLOT_END_EDIT, this);
+            }
 
             return STATUS_OK;
         }
@@ -816,7 +836,11 @@ namespace lsp
             const float old     = pHandler->pZ->get();
             pHandler->pZ->add(delta);
             if (old != pHandler->pZ->get())
+            {
+                sSlots.execute(SLOT_BEGIN_EDIT, this);
                 sSlots.execute(SLOT_CHANGE, this);
+                sSlots.execute(SLOT_END_EDIT, this);
+            }
 
             return STATUS_OK;
         }
@@ -825,6 +849,18 @@ namespace lsp
         {
             AudioEnvelope *self = widget_ptrcast<AudioEnvelope>(ptr);
             return (self != NULL) ? self->on_change() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t AudioEnvelope::slot_begin_edit(Widget *sender, void *ptr, void *data)
+        {
+            AudioEnvelope *self = widget_ptrcast<AudioEnvelope>(ptr);
+            return (self != NULL) ? self->on_begin_edit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t AudioEnvelope::slot_end_edit(Widget *sender, void *ptr, void *data)
+        {
+            AudioEnvelope *self = widget_ptrcast<AudioEnvelope>(ptr);
+            return (self != NULL) ? self->on_end_edit() : STATUS_BAD_ARGUMENTS;
         }
 
         void AudioEnvelope::set_curve_function(curve_function_t function, void *data)

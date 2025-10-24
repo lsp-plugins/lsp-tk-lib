@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2024 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2024 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 22 сент. 2020 г.
@@ -30,21 +30,36 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_IMPL_BEGIN(LedMeterChannel, Widget)
+                style::LedMeterChannelColors *c = &vColors[style::LEDMETERCH_NORMAL];
+                c->sColor.bind("color", this);
+                c->sValueColor.bind("value.color", this);
+                c->sValueRanges.bind("value.ranges", this);
+                c->sPeakColor.bind("peak.color", this);
+                c->sPeakRanges.bind("peak.ranges", this);
+                c->sTextColor.bind("text.color", this);
+                c->sHeaderColor.bind("header.color", this);
+                c->sTextRanges.bind("text.ranges", this);
+                c->sHeaderRanges.bind("header.ranges", this);
+                c->sBalanceColor.bind("balance.color", this);
+
+                c = &vColors[style::LEDMETERCH_INACTIVE];
+                c->sColor.bind("inactive.color", this);
+                c->sValueColor.bind("inactive.value.color", this);
+                c->sValueRanges.bind("inactive.value.ranges", this);
+                c->sPeakColor.bind("inactive.peak.color", this);
+                c->sPeakRanges.bind("inactive.peak.ranges", this);
+                c->sTextColor.bind("inactive.text.color", this);
+                c->sHeaderColor.bind("inactive.header.color", this);
+                c->sTextRanges.bind("inactive.text.ranges", this);
+                c->sHeaderRanges.bind("inactive.header.ranges", this);
+                c->sBalanceColor.bind("inactive.balance.color", this);
+
                 // Bind
                 sValue.bind("value", this);
                 sPeak.bind("peak", this);
                 sHeaderValue.bind("header.value", this);
                 sBalance.bind("balance", this);
-                sColor.bind("color", this);
-                sValueColor.bind("value.color", this);
-                sValueRanges.bind("value.ranges", this);
-                sPeakColor.bind("peak.color", this);
-                sPeakRanges.bind("peak.ranges", this);
-                sTextColor.bind("text.color", this);
-                sHeaderColor.bind("header.color", this);
-                sTextRanges.bind("text.ranges", this);
-                sHeaderRanges.bind("header.ranges", this);
-                sBalanceColor.bind("balance.color", this);
+
                 sPeakVisible.bind("peak.visible", this);
                 sBalanceVisible.bind("balance.visible", this);
                 sTextVisible.bind("text.visible", this);
@@ -56,22 +71,38 @@ namespace lsp
                 sBorder.bind("border", this);
                 sAngle.bind("angle", this);
                 sHeaderPointer.bind("header.pointer", this);
+
                 // Configure
+                c = &vColors[style::LEDMETERCH_NORMAL];
+                c->sColor.set("#000000");
+                c->sValueColor.set("#00ff00");
+                c->sValueRanges.set_all("");
+                c->sPeakColor.set("#ff0000");
+                c->sPeakRanges.set_all("");
+                c->sBalanceColor.set("#ffff00");
+                c->sTextColor.set("#00ff00");
+                c->sHeaderColor.set("#00ff00");
+                c->sTextRanges.set_all("");
+                c->sHeaderRanges.set_all("");
+                c->sBalanceColor.set("#ffff00");
+
+                c = &vColors[style::LEDMETERCH_INACTIVE];
+                c->sColor.set("#000000");
+                c->sValueColor.set("#cccccc");
+                c->sValueRanges.set_all("");
+                c->sPeakColor.set("#ff0000");
+                c->sPeakRanges.set_all("");
+                c->sBalanceColor.set("#ffff00");
+                c->sTextColor.set("#00ff00");
+                c->sHeaderColor.set("#00ff00");
+                c->sTextRanges.set_all("");
+                c->sHeaderRanges.set_all("");
+                c->sBalanceColor.set("#ffff00");
+
                 sValue.set_all(0.0f, 0.0f, 1.0f);
                 sPeak.set(0.0f);
                 sHeaderValue.set(0.0f);
                 sBalance.set(0.5f);
-                sColor.set("#000000");
-                sValueColor.set("#00ff00");
-                sValueRanges.set_all("");
-                sPeakColor.set("#ff0000");
-                sPeakRanges.set_all("");
-                sBalanceColor.set("#ffff00");
-                sTextColor.set("#00ff00");
-                sHeaderColor.set("#00ff00");
-                sTextRanges.set_all("");
-                sHeaderRanges.set_all("");
-                sBalanceColor.set("#ffff00");
                 sPeakVisible.set(false);
                 sBalanceVisible.set(false);
                 sTextVisible.set(false);
@@ -87,6 +118,27 @@ namespace lsp
                 sFont.override();
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(LedMeterChannel, "LedMeterChannel", "root");
+
+            void LedMeterChannelColors::listener(tk::prop::Listener *listener)
+            {
+                sColor.listener(listener);;
+                sValueColor.listener(listener);
+                sValueRanges.listener(listener);
+                sPeakColor.listener(listener);
+                sPeakRanges.listener(listener);
+                sTextColor.listener(listener);
+                sHeaderColor.listener(listener);
+                sTextRanges.listener(listener);
+                sHeaderRanges.listener(listener);
+                sBalanceColor.listener(listener);
+            }
+
+            bool LedMeterChannelColors::property_changed(Property *prop)
+            {
+                return prop->one_of(sColor, sValueColor, sValueRanges,
+                    sPeakColor, sPeakRanges, sTextColor, sHeaderColor, sTextRanges,
+                    sHeaderRanges, sBalanceColor);
+            }
         }
 
         const w_class_t LedMeterChannel::metadata           = { "LedMeterChannel", &Widget::metadata };
@@ -97,16 +149,6 @@ namespace lsp
             sPeak(&sProperties),
             sHeaderValue(&sProperties),
             sBalance(&sProperties),
-            sColor(&sProperties),
-            sValueColor(&sProperties),
-            sValueRanges(&sProperties),
-            sPeakColor(&sProperties),
-            sPeakRanges(&sProperties),
-            sTextColor(&sProperties),
-            sHeaderColor(&sProperties),
-            sTextRanges(&sProperties),
-            sHeaderRanges(&sProperties),
-            sBalanceColor(&sProperties),
             sText(&sProperties),
             sHeader(&sProperties),
             sEstText(&sProperties),
@@ -142,6 +184,9 @@ namespace lsp
             sAAll.nWidth    = 0;
             sAAll.nHeight   = 0;
 
+            for (size_t i=0; i<LMC_TOTAL; ++i)
+                vColors[i].listener(&sProperties);
+
             pClass          = &metadata;
         }
 
@@ -160,16 +205,31 @@ namespace lsp
             sPeak.bind("peak", &sStyle);
             sHeaderValue.bind("header.value", &sStyle);
             sBalance.bind("balance", &sStyle);
-            sColor.bind("color", &sStyle);
-            sValueColor.bind("value.color", &sStyle);
-            sValueRanges.bind("value.ranges", &sStyle);
-            sPeakColor.bind("peak.color", &sStyle);
-            sPeakRanges.bind("peak.ranges", &sStyle);
-            sTextColor.bind("text.color", &sStyle);
-            sHeaderColor.bind("header.color", &sStyle);
-            sTextRanges.bind("text.ranges", &sStyle);
-            sHeaderRanges.bind("header.ranges", &sStyle);
-            sBalanceColor.bind("balance.color", &sStyle);
+
+            style::LedMeterChannelColors *c = &vColors[style::LEDMETERCH_NORMAL];
+            c->sColor.bind("color", &sStyle);
+            c->sValueColor.bind("value.color", &sStyle);
+            c->sValueRanges.bind("value.ranges", &sStyle);
+            c->sPeakColor.bind("peak.color", &sStyle);
+            c->sPeakRanges.bind("peak.ranges", &sStyle);
+            c->sTextColor.bind("text.color", &sStyle);
+            c->sHeaderColor.bind("header.color", &sStyle);
+            c->sTextRanges.bind("text.ranges", &sStyle);
+            c->sHeaderRanges.bind("header.ranges", &sStyle);
+            c->sBalanceColor.bind("balance.color", &sStyle);
+
+            c = &vColors[style::LEDMETERCH_INACTIVE];
+            c->sColor.bind("inactive.color", &sStyle);
+            c->sValueColor.bind("inactive.value.color", &sStyle);
+            c->sValueRanges.bind("inactive.value.ranges", &sStyle);
+            c->sPeakColor.bind("inactive.peak.color", &sStyle);
+            c->sPeakRanges.bind("inactive.peak.ranges", &sStyle);
+            c->sTextColor.bind("inactive.text.color", &sStyle);
+            c->sHeaderColor.bind("inactive.header.color", &sStyle);
+            c->sTextRanges.bind("inactive.text.ranges", &sStyle);
+            c->sHeaderRanges.bind("inactive.header.ranges", &sStyle);
+            c->sBalanceColor.bind("inactive.balance.color", &sStyle);
+
             sText.bind(&sStyle, pDisplay->dictionary());
             sHeader.bind(&sStyle, pDisplay->dictionary());
             sEstText.bind(&sStyle, pDisplay->dictionary());
@@ -210,28 +270,21 @@ namespace lsp
                     query_draw();
             }
 
+            style::LedMeterChannelColors *c = select_colors();
+            if (c->property_changed(prop))
+                query_draw();
+
             if (sBalance.is(prop) && (sBalanceVisible.get()))
                 query_draw();
-            if (sColor.is(prop))
-                query_draw();
-            if (sValueColor.is(prop))
-                query_draw();
-            if (sValueRanges.is(prop))
-                query_draw();
-            if (sPeakColor.is(prop) && (sPeakVisible.get()))
-                query_draw();
-            if (sPeakRanges.is(prop) && (sPeakVisible.get()))
-                query_draw();
-            if (sBalanceColor.is(prop) && (sBalanceVisible.get()))
-                query_draw();
-            if ((sTextVisible.get()) && (prop->one_of(sText, sEstText, sTextColor, sTextRanges)))
-                query_draw();
-            if ((sHeaderVisible.get()) && (prop->one_of(sHeader, sEstHeader, sHeaderColor, sHeaderRanges)))
-                query_draw();
+
+            if ((sTextVisible.get()) && (prop->one_of(sText, sEstText)))
+                query_resize();
+            if ((sHeaderVisible.get()) && (prop->one_of(sHeader, sEstHeader)))
+                query_resize();
             if (prop->one_of(sTextVisible, sHeaderVisible))
                 query_draw();
             if (sBalanceVisible.is(prop))
-                query_draw();
+                query_resize();
             if (sReversive.is(prop))
                 query_draw();
             if (sMinSegments.is(prop))
@@ -511,6 +564,12 @@ namespace lsp
             }
         }
 
+        style::LedMeterChannelColors *LedMeterChannel::select_colors()
+        {
+            size_t flags = (sActive.get()) ? style::LEDMETERCH_NORMAL : style::LEDMETERCH_INACTIVE;
+            return &vColors[flags];
+        }
+
         bool LedMeterChannel::is_text(ssize_t x, ssize_t y) const
         {
             x -= sSize.nLeft;
@@ -563,6 +622,8 @@ namespace lsp
             bool aa             = s->set_antialiasing(true);
             lsp_finally { s->set_antialiasing(aa); };
 
+            style::LedMeterChannelColors *lmc = select_colors();
+
             s->clip_begin(&sAMeter);
             {
                 lsp_finally { s->clip_end(); };
@@ -572,11 +633,11 @@ namespace lsp
 
                     // Estimate the segment color (special values for peak and balance
                     if ((has_balance) && (vmin <= balance) && (balance < vmax))
-                        lc                  = sBalanceColor.color();
+                        lc                  = lmc->sBalanceColor.color();
                     else if ((has_peak) && (vmin <= peak) && (peak < vmax))
-                        lc                  = get_color(peak,  &sPeakRanges, &sPeakColor);
+                        lc                  = get_color(peak,  &lmc->sPeakRanges, &lmc->sPeakColor);
                     else
-                        lc                  = get_color(vmin, &sValueRanges, &sValueColor);
+                        lc                  = get_color(vmin, &lmc->sValueRanges, &lmc->sValueColor);
 
                     // Now determine if we need to darken the color
                     bool matched = false;
@@ -661,7 +722,8 @@ namespace lsp
             ssize_t fy  = sAText.nTop  + ((sAText.nHeight - fp.Height) * 0.5f) + fp.Ascent;
             float value = (sPeakVisible.get()) ? sValue.limit(sPeak.get()) : sValue.get();
 
-            const lsp::Color *col   = get_color(value, &sTextRanges, &sTextColor);
+            style::LedMeterChannelColors *lmc = select_colors();
+            const lsp::Color *col   = get_color(value, &lmc->sTextRanges, &lmc->sTextColor);
             lsp::Color xcol(*col);
             xcol.scale_lch_luminance(bright);
 
@@ -687,7 +749,8 @@ namespace lsp
             ssize_t fy  = sAHeader.nTop  + ((sAHeader.nHeight - fp.Height) * 0.5f) + fp.Ascent;
 
             float value             = sHeaderValue.get();
-            const lsp::Color *col   = get_color(value, &sHeaderRanges, &sHeaderColor);
+            style::LedMeterChannelColors *lmc = select_colors();
+            const lsp::Color *col   = get_color(value, &lmc->sHeaderRanges, &lmc->sHeaderColor);
             lsp::Color xcol(*col);
             xcol.scale_lch_luminance(bright);
 
@@ -703,9 +766,11 @@ namespace lsp
             float bright        = select_brightness();
 
             lsp::Color col;
+            style::LedMeterChannelColors *lmc = select_colors();
+
             get_actual_bg_color(col);
             s->clear(col);
-            col.copy(sColor);
+            col.copy(lmc->sColor);
             s->fill_rect(col, SURFMASK_NONE, 0.0f, &sAAll);
 
             draw_meter(s, sAngle.get(), scaling, bright);

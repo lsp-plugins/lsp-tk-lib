@@ -174,7 +174,9 @@ namespace lsp
                 size_t                  nBufCapacity;           // Drawing buffer capacity in floats
 
             protected:
+                static status_t         slot_begin_edit(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
+                static status_t         slot_end_edit(Widget *sender, void *ptr, void *data);
 
             protected:
                 void                    do_destroy();
@@ -258,7 +260,9 @@ namespace lsp
                 virtual status_t        on_mouse_scroll(const ws::event_t *e) override;
 
             public:
+                virtual status_t        on_begin_edit();
                 virtual status_t        on_change();
+                virtual status_t        on_end_edit();
         };
     } /* namespace tk */
 } /* namespace lsp */

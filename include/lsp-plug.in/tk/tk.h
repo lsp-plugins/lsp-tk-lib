@@ -93,6 +93,7 @@
 #include <lsp-plug.in/tk/prop/multi/Padding.h>
 #include <lsp-plug.in/tk/prop/multi/Point2D.h>
 #include <lsp-plug.in/tk/prop/multi/Position.h>
+#include <lsp-plug.in/tk/prop/multi/Range.h>
 #include <lsp-plug.in/tk/prop/multi/RangeFloat.h>
 #include <lsp-plug.in/tk/prop/multi/Rectangle.h>
 #include <lsp-plug.in/tk/prop/multi/Shortcut.h>
@@ -117,6 +118,7 @@
 // Specific properties
 #include <lsp-plug.in/tk/prop/specific/GraphMeshData.h>
 #include <lsp-plug.in/tk/prop/specific/GraphFrameData.h>
+#include <lsp-plug.in/tk/prop/specific/NoteState.h>
 
 // Styles and schemas
 #include <lsp-plug.in/tk/style/StyleSheet.h>
@@ -162,6 +164,7 @@
 #include <lsp-plug.in/tk/widgets/simple/MenuItem.h>
 #include <lsp-plug.in/tk/widgets/simple/ProgressBar.h>
 #include <lsp-plug.in/tk/widgets/simple/RadioButton.h>
+#include <lsp-plug.in/tk/widgets/simple/RangeSlider.h>
 #include <lsp-plug.in/tk/widgets/simple/ScrollBar.h>
 #include <lsp-plug.in/tk/widgets/simple/Separator.h>
 #include <lsp-plug.in/tk/widgets/simple/TabItem.h>
@@ -195,6 +198,7 @@
 #include <lsp-plug.in/tk/widgets/specific/Fraction.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeter.h>
 #include <lsp-plug.in/tk/widgets/specific/LedMeterChannel.h>
+#include <lsp-plug.in/tk/widgets/specific/PianoKeys.h>
 
 // 3D rendering
 #include <lsp-plug.in/tk/widgets/3d/Area3D.h>
@@ -204,6 +208,7 @@
 #include <lsp-plug.in/tk/widgets/graph/Graph.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphAxis.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphDot.h>
+#include <lsp-plug.in/tk/widgets/graph/GraphEmbed.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphFrameBuffer.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphLineSegment.h>
 #include <lsp-plug.in/tk/widgets/graph/GraphMarker.h>

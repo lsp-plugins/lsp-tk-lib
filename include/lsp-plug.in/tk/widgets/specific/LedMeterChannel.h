@@ -33,11 +33,8 @@ namespace lsp
         // Style definition
         namespace style
         {
-            LSP_TK_STYLE_DEF_BEGIN(LedMeterChannel, Widget)
-                prop::RangeFloat        sValue;
-                prop::Float             sPeak;
-                prop::Float             sHeaderValue;
-                prop::Float             sBalance;
+            typedef struct LedMeterChannelColors
+            {
                 prop::Color             sColor;
                 prop::Color             sValueColor;
                 prop::ColorRanges       sValueRanges;
@@ -48,6 +45,26 @@ namespace lsp
                 prop::ColorRanges       sTextRanges;
                 prop::ColorRanges       sHeaderRanges;
                 prop::Color             sBalanceColor;
+
+                void listener(tk::prop::Listener *listener);
+                bool property_changed(Property *prop);
+            } LedMeterChannelColors;
+
+            enum LedMeterChannelColorState
+            {
+                LEDMETERCH_NORMAL       = 0,
+                LEDMETERCH_INACTIVE     = 1 << 0,
+
+                LEDMETERCH_TOTAL        = 1 << 1
+            };
+
+            LSP_TK_STYLE_DEF_BEGIN(LedMeterChannel, Widget)
+                LedMeterChannelColors   vColors[LEDMETERCH_TOTAL];
+
+                prop::RangeFloat        sValue;
+                prop::Float             sPeak;
+                prop::Float             sHeaderValue;
+                prop::Float             sBalance;
                 prop::String            sText;
                 prop::String            sHeader;
                 prop::String            sEstText;
@@ -75,20 +92,20 @@ namespace lsp
                 friend class LedMeter;
 
             protected:
+                enum lmc_flags_t
+                {
+                    LMC_0           = style::LEDMETERCH_NORMAL,
+                    LMC_1           = style::LEDMETERCH_INACTIVE,
+                    LMC_TOTAL       = style::LEDMETERCH_TOTAL
+                };
+
+            protected:
+                style::LedMeterChannelColors    vColors[LMC_TOTAL];
+
                 prop::RangeFloat        sValue;
                 prop::Float             sPeak;
                 prop::Float             sHeaderValue;
                 prop::Float             sBalance;
-                prop::Color             sColor;
-                prop::Color             sValueColor;
-                prop::ColorRanges       sValueRanges;
-                prop::Color             sPeakColor;
-                prop::ColorRanges       sPeakRanges;
-                prop::Color             sTextColor;
-                prop::Color             sHeaderColor;
-                prop::ColorRanges       sTextRanges;
-                prop::ColorRanges       sHeaderRanges;
-                prop::Color             sBalanceColor;
                 prop::String            sText;
                 prop::String            sHeader;
                 prop::String            sEstText;
@@ -111,10 +128,11 @@ namespace lsp
                 ws::rectangle_t         sAHeader;           // Header drawing area
 
             protected:
-                void                        draw_meter(ws::ISurface *s, ssize_t angle, float scaling, float bright);
-                void                        draw_label(ws::ISurface *s, const Font *f, float fscaling, float bright);
-                void                        draw_header(ws::ISurface *s, const Font *f, float fscaling, float bright);
-                const lsp::Color           *get_color(float value, const ColorRanges *ranges, const Color *dfl);
+                void                            draw_meter(ws::ISurface *s, ssize_t angle, float scaling, float bright);
+                void                            draw_label(ws::ISurface *s, const Font *f, float fscaling, float bright);
+                void                            draw_header(ws::ISurface *s, const Font *f, float fscaling, float bright);
+                const lsp::Color               *get_color(float value, const ColorRanges *ranges, const Color *dfl);
+                style::LedMeterChannelColors   *select_colors();
 
             public:
                 explicit LedMeterChannel(Display *dpy);
@@ -137,20 +155,32 @@ namespace lsp
                 virtual void                realize(const ws::rectangle_t *r) override;
 
             public:
+                LSP_TK_PROPERTY(Color,              color,                      &vColors[LMC_0].sColor)
+                LSP_TK_PROPERTY(Color,              value_color,                &vColors[LMC_0].sValueColor)
+                LSP_TK_PROPERTY(ColorRanges,        value_ranges,               &vColors[LMC_0].sValueRanges)
+                LSP_TK_PROPERTY(Color,              peak_color,                 &vColors[LMC_0].sPeakColor)
+                LSP_TK_PROPERTY(ColorRanges,        peak_ranges,                &vColors[LMC_0].sPeakRanges)
+                LSP_TK_PROPERTY(Color,              text_color,                 &vColors[LMC_0].sTextColor)
+                LSP_TK_PROPERTY(Color,              header_color,               &vColors[LMC_0].sHeaderColor)
+                LSP_TK_PROPERTY(ColorRanges,        text_ranges,                &vColors[LMC_0].sTextRanges)
+                LSP_TK_PROPERTY(ColorRanges,        header_ranges,              &vColors[LMC_0].sHeaderRanges)
+                LSP_TK_PROPERTY(Color,              balance_color,              &vColors[LMC_0].sBalanceColor)
+
+                LSP_TK_PROPERTY(Color,              inactive_color,             &vColors[LMC_1].sColor)
+                LSP_TK_PROPERTY(Color,              inactive_value_color,       &vColors[LMC_1].sValueColor)
+                LSP_TK_PROPERTY(ColorRanges,        inactive_value_ranges,      &vColors[LMC_1].sValueRanges)
+                LSP_TK_PROPERTY(Color,              inactive_peak_color,        &vColors[LMC_1].sPeakColor)
+                LSP_TK_PROPERTY(ColorRanges,        inactive_peak_ranges,       &vColors[LMC_1].sPeakRanges)
+                LSP_TK_PROPERTY(Color,              inactive_text_color,        &vColors[LMC_1].sTextColor)
+                LSP_TK_PROPERTY(Color,              inactive_header_color,      &vColors[LMC_1].sHeaderColor)
+                LSP_TK_PROPERTY(ColorRanges,        inactive_text_ranges,       &vColors[LMC_1].sTextRanges)
+                LSP_TK_PROPERTY(ColorRanges,        inactive_header_ranges,     &vColors[LMC_1].sHeaderRanges)
+                LSP_TK_PROPERTY(Color,              inactive_balance_color,     &vColors[LMC_1].sBalanceColor)
+
                 LSP_TK_PROPERTY(RangeFloat,         value,              &sValue)
                 LSP_TK_PROPERTY(Float,              peak,               &sPeak)
                 LSP_TK_PROPERTY(Float,              header_value,       &sHeaderValue)
                 LSP_TK_PROPERTY(Float,              balance,            &sBalance)
-                LSP_TK_PROPERTY(Color,              color,              &sColor)
-                LSP_TK_PROPERTY(Color,              value_color,        &sValueColor)
-                LSP_TK_PROPERTY(ColorRanges,        value_ranges,       &sValueRanges)
-                LSP_TK_PROPERTY(Color,              peak_color,         &sPeakColor)
-                LSP_TK_PROPERTY(ColorRanges,        peak_ranges,        &sPeakRanges)
-                LSP_TK_PROPERTY(Color,              text_color,         &sTextColor)
-                LSP_TK_PROPERTY(Color,              header_color,       &sHeaderColor)
-                LSP_TK_PROPERTY(ColorRanges,        text_ranges,        &sTextRanges)
-                LSP_TK_PROPERTY(ColorRanges,        header_ranges,      &sHeaderRanges)
-                LSP_TK_PROPERTY(Color,              balance_color,      &sBalanceColor)
                 LSP_TK_PROPERTY(String,             text,               &sText)
                 LSP_TK_PROPERTY(String,             header,             &sHeader)
                 LSP_TK_PROPERTY(String,             estimation_text,    &sEstText)

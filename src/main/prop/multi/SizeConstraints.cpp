@@ -499,6 +499,53 @@ namespace lsp
             return true;
         }
 
+        void SizeConstraints::transpose(ws::size_limit_t *r)
+        {
+            lsp::swap(r->nMinWidth, r->nMinHeight);
+            lsp::swap(r->nMaxWidth, r->nMaxHeight);
+            lsp::swap(r->nPreWidth, r->nPreHeight);
+        }
+
+        void SizeConstraints::transpose(ws::size_limit_t *dst, const ws::size_limit_t *src)
+        {
+            ssize_t a, b;
+
+            a = src->nMinWidth;
+            b = src->nMinHeight;
+            dst->nMinWidth  = b;
+            dst->nMinHeight = a;
+
+            a = src->nMaxWidth;
+            b = src->nMaxHeight;
+            dst->nMaxWidth  = b;
+            dst->nMaxHeight = a;
+
+            a = src->nPreWidth;
+            b = src->nPreHeight;
+            dst->nPreWidth  = b;
+            dst->nPreHeight = a;
+        }
+
+        void SizeConstraints::transpose(ws::rectangle_t *r)
+        {
+            lsp::swap(r->nLeft, r->nTop);
+            lsp::swap(r->nWidth, r->nHeight);
+        }
+
+        void SizeConstraints::transpose(ws::rectangle_t *dst, const ws::rectangle_t *src)
+        {
+            ssize_t a, b;
+            a = src->nLeft;
+            b = src->nTop;
+            dst->nLeft      = b;
+            dst->nTop       = a;
+
+            a = src->nWidth;
+            b = src->nHeight;
+            dst->nWidth     = b;
+            dst->nHeight    = a;
+        }
+
     } /* namespace tk */
 } /* namespace lsp */
 

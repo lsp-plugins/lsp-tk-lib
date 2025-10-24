@@ -55,6 +55,7 @@ The full list of provided widgets:
   * Graph - widget for rendering 2D graphical data (graphs and plots).
   * GraphAxis - axis on a graph widget.
   * GraphDot - dot on a graph widget.
+  * GraphEmbed - special widget to embed widgets into graph widget, acts like Align but uses axis coordinates.
   * GraphFrameBuffer - frame buffer for drawing on the graph widget.
   * GraphLineSegment - grap line segment defined by two points.
   * GraphMarker - marker on the graph widget.
@@ -75,6 +76,7 @@ The full list of provided widgets:
   * MenuItem - menu item widget used by Menu widget.
   * ProgressBar - widget for displaying progress of some long lasting process.
   * RadioButton - rounded single on/off toggle.
+  * RangeSlider - the slider with two tips that allows to set the range of values.
   * ScrollBar - single scroll bar.
   * Separator - separator widget to visually separate space allocated in widget containers.
   * Void - void widget which can be used for filling empty area.
@@ -88,6 +90,7 @@ The full list of provided widgets:
   * Fraction - music fraction with numerator and denominator.
   * LedMeter - led level/peak meter with multiple channels.
   * LedMeterChannel - single-channel level/peak meter.
+  * PianoKeys - a piano key layout with ability to press keys and select key range.
 
 ## Styling system
 

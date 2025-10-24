@@ -68,7 +68,7 @@ namespace lsp
                 } w_alloc_t;
 
             protected:
-                prop::WidgetList<GraphItem>     vItems;         // Overall list of graph items
+                prop::WidgetList<Widget>        vItems;         // Overall list of graph items
                 lltl::parray<GraphAxis>         vAxis;          // List of all axes
                 lltl::parray<GraphAxis>         vBasis;         // List of basises
                 lltl::parray<GraphOrigin>       vOrigins;       // List of origins
@@ -121,7 +121,7 @@ namespace lsp
                 virtual void                destroy() override;
 
             public:
-                LSP_TK_PROPERTY(WidgetList<GraphItem>,      items,              &vItems);
+                LSP_TK_PROPERTY(WidgetList<Widget>,         items,              &vItems);
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,        &sConstraints);
                 LSP_TK_PROPERTY(Integer,                    border_size,        &sBorder);
                 LSP_TK_PROPERTY(Integer,                    border_radius,      &sBorderRadius);

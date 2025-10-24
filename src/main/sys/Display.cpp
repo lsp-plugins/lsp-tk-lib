@@ -81,6 +81,9 @@ namespace lsp
             sSlots.execute(SLOT_DESTROY, NULL);
             sSlots.destroy();
 
+            // Destroy schema
+            sSchema.destroy();
+
             // Destroy display
             if (pDisplay != NULL)
             {

@@ -61,6 +61,11 @@ namespace lsp
     
         Schema::~Schema()
         {
+            destroy();
+        }
+
+        void Schema::destroy()
+        {
             // Manually unbind all properties before destroying context
             sScaling.unbind();
             sFontScaling.unbind();

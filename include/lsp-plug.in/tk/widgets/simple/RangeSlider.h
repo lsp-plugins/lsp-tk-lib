@@ -3,7 +3,7 @@
  *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
- * Created on: 19 нояб. 2017 г.
+ * Created on: 23 сент. 2025 г.
  *
  * lsp-tk-lib is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -19,12 +19,12 @@
  * along with lsp-tk-lib. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef UI_TK_WIDGETS_LSPFADER_H_
-#define UI_TK_WIDGETS_LSPFADER_H_
+#ifndef LSP_PLUG_IN_TK_WIDGETS_SIMPLE_RANGESLIDER_H_
+#define LSP_PLUG_IN_TK_WIDGETS_SIMPLE_RANGESLIDER_H_
 
 #ifndef LSP_PLUG_IN_TK_IMPL
     #error "use <lsp-plug.in/tk/tk.h>"
-#endif
+#endif /* LSP_PLUG_IN_TK_IMPL */
 
 namespace lsp
 {
@@ -33,7 +33,7 @@ namespace lsp
         // Style definition
         namespace style
         {
-            typedef struct FaderColors
+            typedef struct RangeSliderColors
             {
                 prop::Color                     sBtnColor;
                 prop::Color                     sBtnBorderColor;
@@ -43,21 +43,23 @@ namespace lsp
 
                 void listener(tk::prop::Listener *listener);
                 bool property_changed(Property *prop);
-            } FaderColors;
+            } RangeSliderColors;
 
-            enum FaderColorState
+            enum RangeSliderColorState
             {
-                FADER_NORMAL        = 0,
-                FADER_INACTIVE      = 1 << 0,
+                RSLIDER_NORMAL      = 0,
+                RSLIDER_INACTIVE    = 1 << 0,
 
-                FADER_TOTAL         = 1 << 1
+                RSLIDER_TOTAL       = 1 << 1
             };
 
-            LSP_TK_STYLE_DEF_BEGIN(Fader, Widget)
-                FaderColors                     vColors[FADER_TOTAL];
+            LSP_TK_STYLE_DEF_BEGIN(RangeSlider, Widget)
+                RangeSliderColors               vColors[RSLIDER_TOTAL];
 
                 prop::SizeRange                 sSizeRange;
-                prop::RangeFloat                sValue;
+                prop::Range                     sLimits;
+                prop::Range                     sValues;
+                prop::Float                     sDistance;
                 prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;
                 prop::Float                     sBtnAspect;
@@ -70,7 +72,6 @@ namespace lsp
                 prop::Integer                   sBtnRadius;
                 prop::Boolean                   sBtnGradient;
                 prop::Pointer                   sBtnPointer;
-                prop::Float                     sBalance;
                 prop::Float                     sScaleBrightness;
                 prop::Boolean                   sBalanceColorCustom;
                 prop::Boolean                   sInvertMouseVScroll;
@@ -78,40 +79,59 @@ namespace lsp
         }
 
         /**
-         * Fader widget
+         * RangeSlider widget: a slider with two handles
          */
-        class Fader: public Widget
+        class RangeSlider: public Widget
         {
             public:
                 static const w_class_t    metadata;
 
+            public:
+                enum change_flags_t
+                {
+                    CHANGE_MIN      = 1 << 0,
+                    CHANGE_MAX      = 1 << 1,
+                    CHANGE_BOTH     = CHANGE_MIN | CHANGE_MAX
+                };
+
+                enum button_t
+                {
+                    BTN_MIN,
+                    BTN_MAX,
+                    BTN_RANGE,
+                    BTN_TOTAL
+                };
+
             protected:
                 enum flags_t
                 {
-                    F_IGNORE        = 1 << 0,
-                    F_PRECISION     = 1 << 1,
-                    F_MOVER         = 1 << 2
+                    F_IGNORE            = 1 << 0,
+                    F_PRECISION         = 1 << 1
                 };
 
-                enum fader_flags_t
+                enum rslider_flags_t
                 {
-                    FADER_0         = style::FADER_NORMAL,
-                    FADER_1         = style::FADER_INACTIVE,
-                    FADER_TOTAL     = style::FADER_TOTAL
+                    RSLIDER_0           = style::RSLIDER_NORMAL,
+                    RSLIDER_1           = style::RSLIDER_INACTIVE,
+                    RSLIDER_TOTAL       = style::RSLIDER_TOTAL
                 };
 
             protected:
                 ssize_t                         nLastV;
-                size_t                          nButtons;
-                size_t                          nXFlags;
-                float                           fLastValue;
-                float                           fCurrValue;
-                ws::rectangle_t                 sButton;
+                uint32_t                        nButtons;
+                uint32_t                        nXFlags;
+                float                           fButtonRange;
+                float                           fLastValue[2];
+                float                           fCurrValue[2];
+                ws::rectangle_t                 vButtons[BTN_TOTAL];
+                ssize_t                         nCurrButton;
                 ws::rectangle_t                 sHole;
 
-                style::FaderColors              vColors[FADER_TOTAL];
+                style::RangeSliderColors        vColors[RSLIDER_TOTAL];
                 prop::SizeRange                 sSizeRange;
-                prop::RangeFloat                sValue;
+                prop::Range                     sLimits;
+                prop::Range                     sValues;
+                prop::Float                     sDistance;
                 prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;
                 prop::Float                     sBtnAspect;
@@ -124,15 +144,16 @@ namespace lsp
                 prop::Integer                   sBtnRadius;
                 prop::Boolean                   sBtnGradient;
                 prop::Pointer                   sBtnPointer;
-                prop::Float                     sBalance;
                 prop::Float                     sScaleBrightness;
                 prop::Boolean                   sBalanceColorCustom;
                 prop::Boolean                   sInvertMouseVScroll;
 
             protected:
-                float                           update_value(float value);
+                void                            update_values(const float *values, ssize_t button_id);
+                void                            add_values(float delta);
                 void                            sync_button_pos();
-                style::FaderColors             *select_colors();
+                style::RangeSliderColors       *select_colors();
+                ssize_t                         find_button(const ws::event_t *e);
 
             protected:
                 static status_t                 slot_begin_edit(Widget *sender, void *ptr, void *data);
@@ -145,29 +166,31 @@ namespace lsp
                 virtual void                    realize(const ws::rectangle_t *r) override;
 
             public:
-                explicit Fader(Display *dpy);
-                Fader(const Fader &) = delete;
-                Fader(Fader &&) = delete;
-                virtual ~Fader() override;
-                Fader & operator = (const Fader &) = delete;
-                Fader & operator = (Fader &&) = delete;
+                explicit RangeSlider(Display *dpy);
+                RangeSlider(const RangeSlider &) = delete;
+                RangeSlider(RangeSlider &&) = delete;
+                virtual ~RangeSlider() override;
+                RangeSlider & operator = (const RangeSlider &) = delete;
+                RangeSlider & operator = (RangeSlider &&) = delete;
 
                 virtual status_t                init() override;
 
             public:
-                LSP_TK_PROPERTY(Color,          button_color,                   &vColors[FADER_0].sBtnColor);
-                LSP_TK_PROPERTY(Color,          button_border_color,            &vColors[FADER_0].sBtnBorderColor);
-                LSP_TK_PROPERTY(Color,          scale_color,                    &vColors[FADER_0].sScaleColor);
-                LSP_TK_PROPERTY(Color,          scale_border_color,             &vColors[FADER_0].sScaleBorderColor);
-                LSP_TK_PROPERTY(Color,          balance_color,                  &vColors[FADER_0].sBalanceColor);
-                LSP_TK_PROPERTY(Color,          inactive_button_color,          &vColors[FADER_1].sBtnColor);
-                LSP_TK_PROPERTY(Color,          inactive_button_border_color,   &vColors[FADER_1].sBtnBorderColor);
-                LSP_TK_PROPERTY(Color,          inactive_scale_color,           &vColors[FADER_1].sScaleColor);
-                LSP_TK_PROPERTY(Color,          inactive_scale_border_color,    &vColors[FADER_1].sScaleBorderColor);
-                LSP_TK_PROPERTY(Color,          inactive_balance_color,         &vColors[FADER_1].sBalanceColor);
+                LSP_TK_PROPERTY(Color,          button_color,                   &vColors[RSLIDER_0].sBtnColor);
+                LSP_TK_PROPERTY(Color,          button_border_color,            &vColors[RSLIDER_0].sBtnBorderColor);
+                LSP_TK_PROPERTY(Color,          scale_color,                    &vColors[RSLIDER_0].sScaleColor);
+                LSP_TK_PROPERTY(Color,          scale_border_color,             &vColors[RSLIDER_0].sScaleBorderColor);
+                LSP_TK_PROPERTY(Color,          balance_color,                  &vColors[RSLIDER_0].sBalanceColor);
+                LSP_TK_PROPERTY(Color,          inactive_button_color,          &vColors[RSLIDER_1].sBtnColor);
+                LSP_TK_PROPERTY(Color,          inactive_button_border_color,   &vColors[RSLIDER_1].sBtnBorderColor);
+                LSP_TK_PROPERTY(Color,          inactive_scale_color,           &vColors[RSLIDER_1].sScaleColor);
+                LSP_TK_PROPERTY(Color,          inactive_scale_border_color,    &vColors[RSLIDER_1].sScaleBorderColor);
+                LSP_TK_PROPERTY(Color,          inactive_balance_color,         &vColors[RSLIDER_1].sBalanceColor);
 
                 LSP_TK_PROPERTY(SizeRange,      size,                           &sSizeRange);
-                LSP_TK_PROPERTY(RangeFloat,     value,                          &sValue);
+                LSP_TK_PROPERTY(Range,          limits,                         &sLimits);
+                LSP_TK_PROPERTY(Range,          values,                         &sValues);
+                LSP_TK_PROPERTY(Float,          distance,                       &sDistance);
                 LSP_TK_PROPERTY(StepFloat,      step,                           &sStep);
                 LSP_TK_PROPERTY(SizeRange,      button_width,                   &sBtnWidth);
                 LSP_TK_PROPERTY(Float,          button_aspect,                  &sBtnAspect);
@@ -180,7 +203,6 @@ namespace lsp
                 LSP_TK_PROPERTY(Integer,        button_border,                  &sBtnBorder);
                 LSP_TK_PROPERTY(Integer,        button_radius,                  &sBtnRadius);
                 LSP_TK_PROPERTY(Boolean,        button_gradient,                &sBtnGradient);
-                LSP_TK_PROPERTY(Float,          balance,                        &sBalance);
                 LSP_TK_PROPERTY(Float,          scale_brightness,               &sScaleBrightness);
                 LSP_TK_PROPERTY(Boolean,        balance_color_custom,           &sBalanceColorCustom);
                 LSP_TK_PROPERTY(Boolean,        invert_mouse_vscroll,           &sInvertMouseVScroll);
@@ -195,7 +217,7 @@ namespace lsp
 
             public:
                 virtual status_t                on_begin_edit();
-                virtual status_t                on_change();
+                virtual status_t                on_change(size_t flags);
                 virtual status_t                on_end_edit();
 
         };
@@ -203,4 +225,4 @@ namespace lsp
     } /* namespace tk */
 } /* namespace lsp */
 
-#endif /* UI_TK_WIDGETS_LSPFADER_H_ */
+#endif /* LSP_PLUG_IN_TK_WIDGETS_SIMPLE_RANGESLIDER_H_ */
