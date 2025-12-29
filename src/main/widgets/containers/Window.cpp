@@ -659,34 +659,10 @@ namespace lsp
             if (sPosition.is(prop))
                 pWindow->move(sPosition.left(), sPosition.top());
 
-            if (prop->one_of(sSizeConstraints, sScaling, sActions, sWindowState, sFontScaling, sWindowSize))
+            if (prop->one_of(sScaling, sActions, sWindowState, sFontScaling, sWindowSize, sSizeConstraints))
             {
-//                float scaling = lsp_max(0.0f, sScaling.get());
-//
-//                ws::size_limit_t l;
-//                sSizeConstraints.compute(&l, scaling);
-//                pWindow->set_size_constraints(&l);
-//
-//                if ((scaling != fScaling) && (bMapped))
-//                {
-//                    ws::rectangle_t rect;
-//                    ws::size_limit_t l;
-//                    sWindowSize.compute(&rect, scaling);
-//                    sSizeConstraints.compute(&l, scaling);
-//
-//                    fScaling    = scaling;
-//                    pWindow->set_size_constraints(-1, -1, -1, -1);
-//                    pWindow->resize(rect.nWidth, rect.nHeight);
-//                    pWindow->set_size_constraints(&l);
-////                    lsp_trace("Setting size constraints: w={%d, %d}, h={%d, %d}",
-////                            int(l.nMinWidth), int(l.nMaxWidth),
-////                            int(l.nMinHeight), int(l.nMaxHeight)
-////                        );
-//                }
-
                 bForceSizeCheck = true;
                 query_resize();
-//                sync_size(true);
             }
             if (sLayout.is(prop))
             {
@@ -990,8 +966,7 @@ namespace lsp
                     sSize.nWidth    = e->nWidth;
                     sSize.nHeight   = e->nHeight;
 
-
-                    bForceSizeCheck = true;
+                    bForceSizeCheck = false;
                     query_resize();
 
                     sSlots.execute(SLOT_RESIZE, this, &ev);
