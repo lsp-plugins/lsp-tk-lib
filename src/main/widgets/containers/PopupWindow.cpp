@@ -123,7 +123,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        status_t PopupWindow::sync_size(bool force)
+        status_t PopupWindow::sync_size()
         {
             ws::size_limit_t sr;
             ws::rectangle_t xr;

@@ -97,6 +97,7 @@ namespace lsp
                 Widget                 *pFocused;           // Focused widget
                 bool                    bMapped;
                 bool                    bOverridePointer;
+                bool                    bForceSizeCheck;    // Force size check
                 ws::surface_type_t      enSurfaceType;      // Surface type
                 float                   fScaling;           // Cached scaling factor
                 Shortcuts               sShortcuts;         // Shortcuts
@@ -146,7 +147,7 @@ namespace lsp
                 void                draw_widgets(ws::ISurface *s);
                 void                auto_close_overlays(const ws::event_t *ev);
                 Overlay            *find_overlay(ssize_t x, ssize_t y);
-                virtual status_t    sync_size(bool force);
+                virtual status_t    sync_size();
                 status_t            update_pointer();
 
                 // Mouse operations
