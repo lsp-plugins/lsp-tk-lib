@@ -87,6 +87,11 @@ namespace lsp
                     Overlay            *wWidget;            // Widget
                 } overlay_t;
 
+                enum size_hints_t
+                {
+                    HSIZE_MINIMIZE_SIZE = 1 << 0,       // Minimize the size of the window
+                };
+
             public:
                 static const w_class_t    metadata;
 
@@ -97,7 +102,7 @@ namespace lsp
                 Widget                 *pFocused;           // Focused widget
                 bool                    bMapped;
                 bool                    bOverridePointer;
-                bool                    bForceSizeCheck;    // Force size check
+                uint32_t                nSizeHints;         // Size hints
                 ws::surface_type_t      enSurfaceType;      // Surface type
                 float                   fScaling;           // Cached scaling factor
                 Shortcuts               sShortcuts;         // Shortcuts

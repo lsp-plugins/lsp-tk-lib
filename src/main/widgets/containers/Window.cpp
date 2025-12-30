@@ -93,7 +93,8 @@ namespace lsp
             pNativeHandle   = handle;
             bMapped         = false;
             bOverridePointer= false;
-            bForceSizeCheck = true;
+            nSizeHints      = 0;
+
             enSurfaceType   = ws::ST_UNKNOWN;
             fScaling        = 1.0f;
             pActor          = NULL;
@@ -190,10 +191,7 @@ namespace lsp
 
         status_t Window::sync_size()
         {
-            lsp_finally {
-                bForceSizeCheck     = false;
-            };
-
+            lsp_finally { nSizeHints = 0; };
             // Request size limits of the window
             ws::size_limit_t sr;
             ws::rectangle_t r, wsr;
@@ -238,8 +236,8 @@ namespace lsp
                 xr.nWidth           = lsp_max(0, sr.nMinWidth)  + border*2;
                 xr.nHeight          = lsp_max(0, sr.nMinHeight) + border*2;
 
-                // Maximize the width
-                if (bForceSizeCheck)
+                // Need to maximize the size?
+                if (nSizeHints & HSIZE_MINIMIZE_SIZE)
                 {
                     r.nWidth            = lsp_max(xr.nWidth,  r.nWidth);
                     r.nHeight           = lsp_max(xr.nHeight, r.nHeight);
@@ -256,14 +254,18 @@ namespace lsp
             r.nHeight           = lsp_max(r.nHeight, 1);
 
             // Check if we need to resize window
-//            lsp_trace("size constraints: w={%d, %d}, h={%d, %d}",
-//                int(sr.nMinWidth), int(sr.nMinHeight), int(sr.nMaxWidth), int(sr.nMaxHeight)
-//            );
-//            lsp_trace("computed size: w=%d, h=%d", int(r.nWidth), int(r.nHeight));
-            pWindow->set_size_constraints(&sr);
             if ((wsr.nWidth != r.nWidth) || (wsr.nHeight != r.nHeight))
             {
-                pWindow->resize(r.nWidth, r.nHeight);
+                if (nSizeHints & HSIZE_MINIMIZE_SIZE)
+                {
+//                    lsp_trace("forcing window resize constraints: w=(%d, %d), h=(%d, %d), size: (%d, %d) -> (%d, %d)",
+//                        int(sr.nMinWidth), int(sr.nMaxWidth), int(sr.nMinHeight), int(sr.nMaxHeight),
+//                        int(wsr.nWidth), int(wsr.nHeight),
+//                        int(r.nWidth), int(r.nHeight));
+                    pWindow->set_size_constraints(&sr);
+                    pWindow->resize(r.nWidth, r.nHeight);
+                }
+
                 sWindowSize.commit_value(r.nWidth, r.nHeight, scaling);
             }
 
@@ -661,7 +663,7 @@ namespace lsp
 
             if (prop->one_of(sScaling, sActions, sWindowState, sFontScaling, sWindowSize, sSizeConstraints))
             {
-                bForceSizeCheck = true;
+                nSizeHints      = HSIZE_MINIMIZE_SIZE;
                 query_resize();
             }
             if (sLayout.is(prop))
@@ -961,15 +963,13 @@ namespace lsp
                     sPosition.commit_value(e->nLeft, e->nTop);
                     sWindowSize.commit_value(e->nWidth, e->nHeight, sScaling.get());
 
-                    sSize.nLeft     = e->nLeft;
-                    sSize.nTop      = e->nTop;
-                    sSize.nWidth    = e->nWidth;
-                    sSize.nHeight   = e->nHeight;
-
-                    bForceSizeCheck = false;
-                    query_resize();
+                    sSize.nLeft         = e->nLeft;
+                    sSize.nTop          = e->nTop;
+                    sSize.nWidth        = e->nWidth;
+                    sSize.nHeight       = e->nHeight;
 
                     sSlots.execute(SLOT_RESIZE, this, &ev);
+                    query_resize();
 
                     break;
 
@@ -1195,27 +1195,17 @@ namespace lsp
 
         status_t Window::resize_window(const ws::rectangle_t *size)
         {
-            sPosition.set(size->nLeft, size->nTop);
-            sWindowSize.set(size->nWidth, size->nHeight, sScaling.get());
-
-            sSize = *size;
-            bForceSizeCheck = true;
-
-            query_resize();
-//            sync_size(true);
+            if (pWindow != NULL)
+                pWindow->set_geometry(size);
 
             return STATUS_OK;
         }
 
         status_t Window::resize_window(ssize_t width, ssize_t height)
         {
-            sWindowSize.set(width, height, sScaling.get());
-            sSize.nWidth = width;
-            sSize.nHeight = height;
-            bForceSizeCheck = true;
+            if (pWindow != NULL)
+                pWindow->resize(width, height);
 
-            query_resize();
-//            sync_size(true);
             return STATUS_OK;
         }
 
