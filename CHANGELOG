@@ -3,7 +3,8 @@
 *******************************************************************************
 
 === 1.0.32 ===
-
+* Added frame skipping if surface is not ready for rendering. This may be useful
+  when we don't want to make the main UI thread to wait for a long time.
 
 === 1.0.31 ===
 * Updated module versions in dependencies.

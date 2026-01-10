@@ -387,12 +387,16 @@ namespace lsp
             if (!redraw_pending())
                 return STATUS_OK;
 
-            // call rendering
+            // Get surface for rendering
             ws::ISurface *s = pWindow->get_surface();
             if (s == NULL)
                 return STATUS_OK;
 
             enSurfaceType   = s->type();
+
+            // Skip this frame if surface is still not ready for rendering
+            if (!s->ready())
+                return STATUS_OK;
 
 //        #ifdef LSP_TRACE
 //            const system::time_millis_t start = system::get_time_millis();
