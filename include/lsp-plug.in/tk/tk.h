@@ -58,6 +58,7 @@
 #include <lsp-plug.in/tk/prop/enum/ButtonMode.h>
 #include <lsp-plug.in/tk/prop/enum/BorderStyle.h>
 #include <lsp-plug.in/tk/prop/enum/FileDialogMode.h>
+#include <lsp-plug.in/tk/prop/enum/Fitting.h>
 #include <lsp-plug.in/tk/prop/enum/GraphFrameFunction.h>
 #include <lsp-plug.in/tk/prop/enum/IndicatorType.h>
 #include <lsp-plug.in/tk/prop/enum/MenuItemType.h>
@@ -75,6 +76,7 @@
 #include <lsp-plug.in/tk/prop/flags/WindowActions.h>
 
 // Single-value properties
+#include <lsp-plug.in/tk/prop/simple/Bitmap.h>
 #include <lsp-plug.in/tk/prop/simple/Boolean.h>
 #include <lsp-plug.in/tk/prop/simple/Integer.h>
 #include <lsp-plug.in/tk/prop/simple/Float.h>

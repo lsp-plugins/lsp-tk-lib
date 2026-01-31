@@ -106,6 +106,18 @@ namespace lsp
             WA_VALIGN   = 1 << 3
         };
 
+        enum fitting_t
+        {
+            FIT_NONE,
+            FIT_WIDTH,
+            FIT_HEIGHT,
+            FIT_COVER,
+            FIT_CONTAIN,
+            FIT_HSTRETCH,
+            FIT_VSTRETCH,
+            FIT_STRETCH
+        };
+
         /**
          * Widget draw mode
          */
