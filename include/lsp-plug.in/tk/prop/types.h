@@ -60,8 +60,8 @@ namespace lsp
         class Widget;
 
         // Value transformation functions
-        typedef float (* float_transform_t)(float value, void *arg);
-        typedef ssize_t (* int_transform_t)(ssize_t value, void *arg);
+        typedef float (* float_transform_t)(float value, bool write, void *arg);
+        typedef ssize_t (* int_transform_t)(ssize_t value, bool write, void *arg);
 
         namespace prop
         {

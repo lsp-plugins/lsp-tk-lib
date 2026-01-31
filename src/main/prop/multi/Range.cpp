@@ -104,6 +104,7 @@ namespace lsp
         float Range::set_min(float value)
         {
             float old = fMin;
+            value               = do_limit(value, true);
             if ((nFlags & F_RANGE_LOCK) || (value == old))
                 return old;
 
@@ -115,6 +116,7 @@ namespace lsp
         float Range::set_max(float value)
         {
             float old = fMax;
+            value               = do_limit(value, true);
             if ((nFlags & F_RANGE_LOCK) || (value == old))
                 return old;
 
@@ -127,6 +129,8 @@ namespace lsp
         {
             if (nFlags & F_RANGE_LOCK)
                 return;
+            min                 = do_limit(min, true);
+            max                 = do_limit(max, true);
             if ((min == fMin) &&
                 (max == fMax))
                 return;
@@ -136,14 +140,14 @@ namespace lsp
             sync();
         }
 
-        float Range::transform(float v) const
+        float Range::transform(float v, bool write) const
         {
-            return (pTransform != NULL) ? pTransform(v, pTransformArg) : v;
+            return (pTransform != NULL) ? pTransform(v, write, pTransformArg) : v;
         }
 
-        float Range::do_limit(float value) const
+        float Range::do_limit(float value, bool write) const
         {
-            value = transform(value);
+            value = transform(value, write);
             return Property::limit(value, fMin, fMax);
         }
 
@@ -156,7 +160,7 @@ namespace lsp
                 return prev;
             }
 
-            float Range::set_min(float value)
+            float Range::commit_min(float value)
             {
                 float old = fMin;
                 if (value == old)
@@ -167,7 +171,7 @@ namespace lsp
                 return old;
             }
 
-            float Range::set_max(float value)
+            float Range::commit_max(float value)
             {
                 float old = fMax;
                 if (value == old)
@@ -178,7 +182,7 @@ namespace lsp
                 return old;
             }
 
-            void Range::set(float min, float max)
+            void Range::commit_range(float min, float max)
             {
                 if ((min == fMin) &&
                     (max == fMax))
