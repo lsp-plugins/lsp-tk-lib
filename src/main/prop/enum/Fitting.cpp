@@ -36,6 +36,7 @@ namespace lsp
             { "hstretch",       FIT_HSTRETCH        },
             { "vstretch",       FIT_VSTRETCH        },
             { "stretch",        FIT_STRETCH         },
+            { "full",           FIT_FULL            },
             { NULL,             -1                  }
         };
 

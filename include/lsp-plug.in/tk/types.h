@@ -115,7 +115,8 @@ namespace lsp
             FIT_CONTAIN,
             FIT_HSTRETCH,
             FIT_VSTRETCH,
-            FIT_STRETCH
+            FIT_STRETCH,
+            FIT_FULL
         };
 
         /**

@@ -52,8 +52,9 @@ namespace lsp
                 inline bool             cover() const               { return nValue == FIT_COVER;   }
                 inline bool             contain() const             { return nValue == FIT_CONTAIN; }
                 inline bool             hstretch() const            { return nValue == FIT_HSTRETCH;}
-                inline bool             vstretch() const            { return nValue == FIT_VSTRETCH; }
+                inline bool             vstretch() const            { return nValue == FIT_VSTRETCH;}
                 inline bool             stretch() const             { return nValue == FIT_STRETCH; }
+                inline bool             full() const                { return nValue == FIT_FULL;    }
 
                 inline fitting_t        set_none()                  { return set(FIT_NONE);         }
                 inline fitting_t        set_width()                 { return set(FIT_WIDTH);        }
@@ -63,6 +64,7 @@ namespace lsp
                 inline fitting_t        set_hstretch()              { return set(FIT_HSTRETCH);     }
                 inline fitting_t        set_vstretch()              { return set(FIT_VSTRETCH);     }
                 inline fitting_t        set_stretch()               { return set(FIT_STRETCH);      }
+                inline fitting_t        set_full()                  { return set(FIT_FULL);         }
         };
 
         namespace prop

@@ -63,6 +63,7 @@ namespace lsp
                 inline const uint8_t *row(size_t index) const noexcept  { return sBitmap.row(index);        }
                 inline uint8_t *data() noexcept                         { return sBitmap.data();            }
                 inline const uint8_t *data() const noexcept             { return sBitmap.data();            }
+                inline bool is_empty() const noexcept                   { return sBitmap.is_empty();        }
 
             public: // mm::Bitmap interface
                 status_t set(const mm::Bitmap & src);
@@ -99,6 +100,11 @@ namespace lsp
 
                     Bitmap & operator = (const Bitmap &) = delete;
                     Bitmap & operator = (Bitmap &&) = delete;
+
+                public:
+                    inline status_t     bind(atom_t property, Style *style)             { return STATUS_OK; }
+                    inline status_t     bind(const char *property, Style *style)        { return STATUS_OK; }
+                    inline status_t     bind(const LSPString *property, Style *style)   { return STATUS_OK; }
             };
 
         } /* namespace prop */
