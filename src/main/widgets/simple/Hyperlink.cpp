@@ -400,7 +400,7 @@ namespace lsp
 
         status_t Hyperlink::on_mouse_in(const ws::event_t *e)
         {
-            Widget::on_mouse_in(e);
+            LSP_STATUS_ASSERT(Widget::on_mouse_in(e));
 
             if (nState & F_MOUSE_IGN)
                 return STATUS_OK;
@@ -418,7 +418,7 @@ namespace lsp
 
         status_t Hyperlink::on_mouse_out(const ws::event_t *e)
         {
-            Widget::on_mouse_out(e);
+            LSP_STATUS_ASSERT(Widget::on_mouse_out(e));
 
             if (nState & F_MOUSE_IGN)
                 return STATUS_OK;
@@ -434,6 +434,8 @@ namespace lsp
 
         status_t Hyperlink::on_mouse_move(const ws::event_t *e)
         {
+            LSP_STATUS_ASSERT(Widget::on_mouse_move(e));
+
             if (nState & F_MOUSE_IGN)
                 return STATUS_OK;
             size_t flags = nState;
@@ -450,6 +452,8 @@ namespace lsp
 
         status_t Hyperlink::on_mouse_down(const ws::event_t *e)
         {
+            LSP_STATUS_ASSERT(Widget::on_mouse_down(e));
+
             size_t flags = nState;
 
             if (nMFlags == 0)
@@ -476,6 +480,8 @@ namespace lsp
 
         status_t Hyperlink::on_mouse_up(const ws::event_t *e)
         {
+            LSP_STATUS_ASSERT(Widget::on_mouse_up(e));
+
             size_t flags = nMFlags;
             nMFlags &= ~ (size_t(1) << e->nCode);
             if (nMFlags == 0)

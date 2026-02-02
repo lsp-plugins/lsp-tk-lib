@@ -72,12 +72,19 @@ namespace lsp
                 static const w_class_t    metadata;
 
             protected:
+                enum state_t
+                {
+                    F_MOUSE_OVER    = 1 << 0,
+                    F_MOUSE_DOWN    = 1 << 1,
+                    F_MOUSE_IGN     = 1 << 2,
+                };
+
                 enum img_flags_t
                 {
                     IMG_0       = style::IMAGE_NORMAL,
                     IMG_1       = style::IMAGE_INACTIVE,
-                    IMG_2       = IMG_0 | style::IMAGE_NORMAL,
-                    IMG_3       = IMG_1 | style::IMAGE_INACTIVE,
+                    IMG_2       = style::IMAGE_NORMAL | style::IMAGE_HOVER,
+                    IMG_3       = style::IMAGE_INACTIVE | style::IMAGE_HOVER,
 
                     IMG_TOTAL   = style::IMAGE_TOTAL
                 };
@@ -85,7 +92,8 @@ namespace lsp
             protected:
                 ws::rectangle_t         sArea;              // Image area
                 ws::rectangle_t         sBorder;            // Border area
-                bool                    bMouseIn;           // Mouse in flag
+                size_t                  nMFlags;            // Mouse button flags
+                size_t                  nState;             // Mouse state
 
                 style::ImageColors      vColors[IMG_TOTAL];
 
@@ -101,12 +109,16 @@ namespace lsp
                 static status_t                     slot_on_submit(Widget *sender, void *ptr, void *data);
 
             protected:
+                bool                            check_mouse_over(ssize_t x, ssize_t y);
+
+            protected:
                 style::ImageColors             *select_colors();
 
             protected:
                 virtual void                    size_request(ws::size_limit_t *r) override;
                 virtual void                    property_changed(Property *prop) override;
                 virtual void                    realize(const ws::rectangle_t *r) override;
+                virtual ws::mouse_pointer_t     current_pointer(ssize_t x, ssize_t y) override;
 
             public:
                 explicit Image(Display *dpy);

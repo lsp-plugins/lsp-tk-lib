@@ -73,10 +73,10 @@ namespace lsp
                 c->sBorderColor.set_rgb24(0x000000);
 
                 sConstraints.set(10, 10, -1, -1);
-                sLayout.set(0.0f, 0.0f, 1.0f, 1.0f);
+                sLayout.set(-1.0f, -1.0f, 1.0f, 1.0f);
                 sFitting.set(FIT_STRETCH);
                 sBorderWidth.set(0);
-                sTransparency.set(0);
+                sTransparency.set(0.0f);
                 sProportion.set(-1.0f);
 
             LSP_TK_STYLE_IMPL_END
@@ -116,7 +116,10 @@ namespace lsp
             sBorder.nWidth  = -1;
             sBorder.nHeight = -1;
 
-            bMouseIn        = false;
+            nMFlags         = 0;
+            nState          = 0;
+
+            pClass          = &metadata;
         }
 
         Image::~Image()
@@ -127,7 +130,7 @@ namespace lsp
         status_t Image::init()
         {
             status_t res = Widget::init();
-            if (res != STATUS_SUCCESS)
+            if (res != STATUS_OK)
                 return res;
 
             style::ImageColors *c = &vColors[style::IMAGE_NORMAL];
@@ -223,8 +226,8 @@ namespace lsp
                     sArea.nHeight           = sArea.nWidth / proportion;
 
                 // Align area
-                sArea.nLeft                += (sSize.nWidth  - sArea.nWidth ) / 2;
-                sArea.nTop                 += (sSize.nHeight - sArea.nHeight) / 2;
+                sArea.nLeft                 = sSize.nLeft + (sSize.nWidth  - sArea.nWidth ) / 2;
+                sArea.nTop                  = sSize.nTop  + (sSize.nHeight - sArea.nHeight) / 2;
 
                 sBorder.nLeft               = sArea.nLeft - border_size;
                 sBorder.nTop                = sArea.nTop - border_size;
@@ -237,8 +240,8 @@ namespace lsp
                 sArea.nHeight               = floorf(scaling * sBitmap.height());
 
                 // Align area
-                sArea.nLeft                += (sSize.nWidth  - sArea.nWidth ) / 2;
-                sArea.nTop                 += (sSize.nHeight - sArea.nHeight) / 2;
+                sArea.nLeft                 = sSize.nLeft + (sSize.nWidth  - sArea.nWidth ) / 2;
+                sArea.nTop                  = sSize.nTop  + (sSize.nHeight - sArea.nHeight) / 2;
 
                 sBorder.nLeft               = sArea.nLeft - border_size;
                 sBorder.nTop                = sArea.nTop - border_size;
@@ -259,9 +262,14 @@ namespace lsp
             const float vscale          = sLayout.vscale() * scaling;
             const float halign          = lsp_limit(sLayout.halign(), -1.0f, 1.0f);
             const float valign          = lsp_limit(sLayout.valign(), -1.0f, 1.0f);
+            const size_t border_size    = lsp_max(sBorderWidth.get() * scaling, 0);
+
+            lsp::Color c;
+            get_actual_bg_color(c);
+            s->clear(c);
 
             style::ImageColors * const colors = select_colors();
-            lsp::Color c(colors->sColor);
+            c.copy(colors->sColor);
             c.scale_lch_luminance(bright);
 
             ws::rectangle_t a_in = sArea, a_out = sBorder;
@@ -271,7 +279,6 @@ namespace lsp
             a_out.nLeft    -= sSize.nLeft;
             a_out.nTop     -= sSize.nTop;
 
-            s->clear(c);
             if (!sBitmap.is_empty())
             {
                 // Compute position of image
@@ -288,7 +295,6 @@ namespace lsp
                         img.nHeight     = floorf(sBitmap.height() * k);
                         break;
                     }
-
                     case FIT_HEIGHT:
                     {
                         const float k   = float(a_in.nHeight) / float(sBitmap.height());
@@ -298,15 +304,15 @@ namespace lsp
                     }
                     case FIT_COVER:
                     {
-                        const float k   = lsp_min(float(a_in.nWidth) / float(sBitmap.width()), float(a_in.nHeight) / float(sBitmap.height()));
-                        img.nWidth      = floorf(sBitmap.width() * k);
+                        const float k   = lsp_max(float(a_in.nWidth) / float(sBitmap.width()), float(a_in.nHeight) / float(sBitmap.height()));
+                        img.nWidth      = floorf(sBitmap.width()  * k);
                         img.nHeight     = floorf(sBitmap.height() * k);
                         break;
                     }
                     case FIT_CONTAIN:
                     {
-                        const float k   = lsp_max(float(a_in.nWidth) / float(sBitmap.width()), float(a_in.nHeight) / float(sBitmap.height()));
-                        img.nWidth      = floorf(sBitmap.width() * k);
+                        const float k   = lsp_min(float(a_in.nWidth) / float(sBitmap.width()), float(a_in.nHeight) / float(sBitmap.height()));
+                        img.nWidth      = floorf(sBitmap.width()  * k);
                         img.nHeight     = floorf(sBitmap.height() * k);
                         break;
                     }
@@ -336,10 +342,11 @@ namespace lsp
                 // Apply layout
                 img.nWidth     *= hscale;
                 img.nHeight    *= vscale;
-                img.nLeft      += floorf((img.nWidth  - a_in.nWidth ) * (halign + 1.0f) * 0.5f);
-                img.nTop       += floorf((img.nHeight - a_in.nHeight) * (valign + 1.0f) * 0.5f);
+                img.nLeft      += floorf((a_in.nWidth -  img.nWidth ) * (halign + 1.0f) * 0.5f);
+                img.nTop       += floorf((a_in.nHeight - img.nHeight) * (valign + 1.0f) * 0.5f);
 
                 // Draw clipped image
+                s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f, &a_in);
                 s->clip_begin(&a_in);
                 lsp_finally { s->clip_end(); };
                 s->draw_raw(
@@ -349,44 +356,124 @@ namespace lsp
                     float(img.nHeight) / float(sBitmap.height()),
                     sTransparency.get());
             }
+            else
+                s->fill_rect(c, SURFMASK_NO_CORNER, 0.0f, &a_in);
+
 
             // Draw border
-            c.copy(colors->sBorderColor.color());
-            c.scale_lch_luminance(bright);
-            s->fill_frame(c, SURFMASK_NO_CORNER, 0.0f, &a_out, &a_in);
+            if (border_size > 0)
+            {
+                c.copy(colors->sBorderColor.color());
+                c.scale_lch_luminance(bright);
+                s->fill_frame(c, SURFMASK_NO_CORNER, 0.0f, &a_out, &a_in);
+            }
         }
 
         style::ImageColors *Image::select_colors()
         {
             size_t flags = (sActive.get()) ? style::IMAGE_NORMAL : style::IMAGE_INACTIVE;
-            flags = lsp_setflag(flags, style::IMAGE_HOVER, bMouseIn);
+            flags = lsp_setflag(flags, style::IMAGE_HOVER, nState & F_MOUSE_OVER);
 
             return &vColors[flags];
         }
 
+        bool Image::check_mouse_over(ssize_t x, ssize_t y)
+        {
+            return Position::inside(&sBorder, x, y);
+        }
+
         status_t Image::on_mouse_in(const ws::event_t *e)
         {
+            LSP_STATUS_ASSERT(Widget::on_mouse_in(e));
+
+            const size_t old_flags = nState;
+            nState      = lsp_setflag(nState, F_MOUSE_OVER, check_mouse_over(e->nLeft, e->nTop));
+            if (old_flags != nState)
+                query_draw();
             return STATUS_OK;
         }
 
         status_t Image::on_mouse_out(const ws::event_t *e)
         {
+            LSP_STATUS_ASSERT(Widget::on_mouse_out(e));
+
+            const size_t old_flags = nState;
+            nState      = lsp_setflag(nState, F_MOUSE_OVER, false);
+            if (old_flags != nState)
+                query_draw();
             return STATUS_OK;
         }
 
         status_t Image::on_mouse_move(const ws::event_t *e)
         {
+            LSP_STATUS_ASSERT(Widget::on_mouse_move(e));
+
+            const size_t old_flags = nState;
+            nState      = lsp_setflag(nState, F_MOUSE_OVER, check_mouse_over(e->nLeft, e->nTop));
+            if (old_flags != nState)
+                query_draw();
+
             return STATUS_OK;
         }
 
         status_t Image::on_mouse_down(const ws::event_t *e)
         {
+            LSP_STATUS_ASSERT(Widget::on_mouse_down(e));
+
+            const size_t flags = nState;
+            const bool over = check_mouse_over(e->nLeft, e->nTop);
+
+            if (nMFlags == 0)
+            {
+                if ((e->nCode == ws::MCB_LEFT) && (over))
+                    nState     |= F_MOUSE_DOWN;
+                else
+                    nState     |= F_MOUSE_IGN;
+            }
+
+            nState      = lsp_setflag(nState, F_MOUSE_OVER, over);
+            nMFlags |= size_t(1) << e->nCode;
+
+            if (flags != nState)
+                query_draw();
+
             return STATUS_OK;
         }
 
         status_t Image::on_mouse_up(const ws::event_t *e)
         {
+            LSP_STATUS_ASSERT(Widget::on_mouse_up(e));
+
+            const size_t flags = nMFlags;
+            const size_t state = nState;
+            nMFlags &= ~ (size_t(1) << e->nCode);
+            if (nMFlags == 0)
+                nState      = 0;
+
+            const bool over = check_mouse_over(e->nLeft, e->nTop);
+            nState      = lsp_setflag(nState, F_MOUSE_OVER, over);
+
+            if (flags != nState)
+                query_draw();
+
+            // Trigger submit action
+            if ((over) && (nMFlags == 0))
+            {
+                if ((state & F_MOUSE_DOWN) && (flags == (size_t(1) << ws::MCB_LEFT)) && (e->nCode == ws::MCB_LEFT))
+                    sSlots.execute(SLOT_SUBMIT, this);
+            }
+
             return STATUS_OK;
+        }
+
+        ws::mouse_pointer_t Image::current_pointer(ssize_t x, ssize_t y)
+        {
+            const bool over = check_mouse_over(x, y);
+            Widget * const parent = this->parent();
+            if ((parent != NULL) && (!over))
+                return parent->current_pointer(x, y);
+
+            return Widget::current_pointer(x, y);
         }
 
         status_t Image::on_submit()
