@@ -352,8 +352,8 @@ namespace lsp
                 s->draw_raw(
                     sBitmap.data(), sBitmap.width(), sBitmap.height(), sBitmap.stride(),
                     img.nLeft, img.nTop,
-                    float(img.nWidth) / float(sBitmap.width()),
-                    float(img.nHeight) / float(sBitmap.height()),
+                    float(img.nWidth) / (sBitmap.width() * scaling),
+                    float(img.nHeight) / (sBitmap.height() * scaling),
                     sTransparency.get());
             }
             else
