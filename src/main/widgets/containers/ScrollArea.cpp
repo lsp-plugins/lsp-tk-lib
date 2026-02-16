@@ -283,15 +283,27 @@ namespace lsp
 
             if (a.bHBar)
             {
+                const size_t max_hscroll    = lsp_max(0, a.wMinW - a.sArea.nWidth);
+                const size_t hstep          = lsp_max((a.sArea.nWidth / 10), 1);
+                const size_t hastep         = lsp_max((a.sArea.nWidth / 4), 1);
+
                 sHBar.realize_widget(&a.sHBar);
-                sHScroll.set_range(0, lsp_max(0, a.wMinW - a.sArea.nWidth));
-                sHBar.value()->set_range(sHScroll.min(), sHScroll.max());
+                sHScroll.set_range(0, max_hscroll);
+                sHBar.value()->set_range(0, max_hscroll);
+                sHBar.step()->set(hstep);
+                sHBar.accel_step()->set(hastep);
             }
             if (a.bVBar)
             {
+                const size_t max_vscroll    = lsp_max(0, a.wMinH - a.sArea.nHeight);
+                const size_t vstep          = lsp_max((a.sArea.nHeight / 10), 1);
+                const size_t vastep         = lsp_max((a.sArea.nWidth / 4), 1);
+
                 sVBar.realize_widget(&a.sVBar);
-                sVScroll.set_range(0, lsp_max(0, a.wMinH - a.sArea.nHeight));
-                sVBar.value()->set_range(sVScroll.min(), sVScroll.max());
+                sVScroll.set_range(0, max_vscroll);
+                sVBar.value()->set_range(0, max_vscroll);
+                sVBar.step()->set(vstep);
+                sVBar.accel_step()->set(vastep);
             }
 
             // Realize child widget if present
