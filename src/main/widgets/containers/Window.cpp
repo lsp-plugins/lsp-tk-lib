@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2017 г.
@@ -34,6 +34,7 @@ namespace lsp
             LSP_TK_STYLE_IMPL_BEGIN(Window, WidgetContainer)
                 // Bind
                 sLanguage.bind(LSP_TK_ENV_LANG, this);
+                sSchemaVersion.bind("schema.version", this);
                 sBorderColor.bind("border.color", this);
                 sBorderStyle.bind("border.style", this);
                 sBorderSize.bind("border.size", this);
@@ -73,6 +74,7 @@ namespace lsp
             sShortcuts(NULL),
             sShortcutTracker(&sShortcuts),
             sLanguage(&sProperties),
+            sSchemaVersion(&sProperties),
             sTitle(&sProperties),
             sRole(&sProperties),
             sBorderColor(&sProperties),
@@ -148,6 +150,7 @@ namespace lsp
 
             // Bind properties
             sLanguage.bind(LSP_TK_ENV_LANG, &sStyle);
+            sSchemaVersion.bind("schema.version", &sStyle);
             sTitle.bind(&sStyle, pDisplay->dictionary());
             sRole.bind(&sStyle, pDisplay->dictionary());
             sBorderColor.bind("border.color", &sStyle);
@@ -676,7 +679,7 @@ namespace lsp
             if (sPosition.is(prop))
                 pWindow->move(sPosition.left(), sPosition.top());
 
-            if (prop->one_of(sScaling, sActions, sWindowState, sFontScaling, sWindowSize, sSizeConstraints))
+            if (prop->one_of(sScaling, sActions, sWindowState, sFontScaling, sWindowSize, sSizeConstraints, sSchemaVersion))
             {
                 nSizeHints     |= HSIZE_MINIMIZE_SIZE;
                 query_resize();

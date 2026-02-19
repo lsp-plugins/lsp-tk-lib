@@ -56,7 +56,7 @@ namespace lsp
                  * Get value of the string property
                  * @return value of the string property
                  */
-                inline const LSPString &get() const         { return sValue;                }
+                inline const LSPString *get() const         { return &sValue;   }
 
                 /**
                  * Set value of the float property

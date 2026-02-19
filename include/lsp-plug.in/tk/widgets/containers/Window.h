@@ -37,6 +37,7 @@ namespace lsp
         {
             LSP_TK_STYLE_DEF_BEGIN(Window, WidgetContainer)
                 prop::RawString         sLanguage;
+                prop::Integer           sSchemaVersion;
                 prop::String            sTitle;
                 prop::String            sRole;
                 prop::Color             sBorderColor;
@@ -117,6 +118,7 @@ namespace lsp
                 Timer                   sRedraw;
 
                 prop::RawString         sLanguage;
+                prop::Integer           sSchemaVersion;
                 prop::String            sTitle;
                 prop::String            sRole;
                 prop::Color             sBorderColor;

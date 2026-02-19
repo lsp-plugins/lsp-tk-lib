@@ -51,6 +51,7 @@ namespace lsp
                 prop::Float                         sFontScaling;
                 prop::Font                          sFont;
                 prop::RawString                     sLanguage;
+                prop::Integer                       sSchemaVersion;
                 prop::DrawMode                      sDrawMode;
                 prop::Boolean                       sInvertMouseHScroll;
                 prop::Boolean                       sInvertMouseVScroll;
@@ -102,6 +103,8 @@ namespace lsp
                 prop::Float                         sScaling;
                 prop::Float                         sFontScaling;
                 prop::Font                          sFont;
+                prop::RawString                     sLanguage;
+                prop::Integer                       sSchemaVersion;
                 prop::DrawMode                      sDrawMode;
                 prop::Boolean                       sInvertMouseHScroll;
                 prop::Boolean                       sInvertMouseVScroll;

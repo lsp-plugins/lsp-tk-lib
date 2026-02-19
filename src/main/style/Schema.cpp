@@ -37,6 +37,7 @@ namespace lsp
                 sFont.bind("font", this);
                 sDrawMode.bind("draw.mode", this);
                 sLanguage.bind(LSP_TK_ENV_LANG, this);
+                sSchemaVersion.bind("schema.version", this);
                 sInvertMouseHScroll.bind("mouse.hscroll.invert", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
                 // Configure
@@ -45,6 +46,7 @@ namespace lsp
                 sFontScaling.set(1.0f);
                 sScaling.set(1.0f);
                 sLanguage.set(LSP_TK_ENV_LANG_DFL);
+                sSchemaVersion.set(0);
                 sDrawMode.set(DM_CLASSIC);
                 sInvertMouseHScroll.set(false);
                 sInvertMouseVScroll.set(false);
@@ -72,6 +74,8 @@ namespace lsp
             sScaling.unbind();
             sFontScaling.unbind();
             sFont.unbind();
+            sLanguage.unbind();
+            sSchemaVersion.unbind();
             sDrawMode.unbind();
             sInvertMouseHScroll.unbind();
             sInvertMouseVScroll.unbind();
@@ -501,6 +505,9 @@ namespace lsp
             if ((res = configure_styles(sheet)) != STATUS_OK)
                 return res;
 
+            // Update schema version
+            sSchemaVersion.add(1);
+
             return STATUS_OK;
         }
 
@@ -718,6 +725,8 @@ namespace lsp
             sScaling.bind("size.scaling", root);
             sFontScaling.bind("font.scaling", root);
             sFont.bind("font", root);
+            sLanguage.bind(LSP_TK_ENV_LANG, root);
+            sSchemaVersion.bind("schema.version", root);
             sDrawMode.bind("draw.mode", root);
             sInvertMouseHScroll.bind("mouse.hscroll.invert", root);
             sInvertMouseVScroll.bind("mouse.vscroll.invert", root);
@@ -879,13 +888,10 @@ namespace lsp
             if (pRoot == NULL)
                 return STATUS_BAD_STATE;
 
-            // Get atom
-            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
-            if (atom < 0)
-                return -atom;
+            if (dst == NULL)
+                return STATUS_BAD_ARGUMENTS;
 
-            // Get the string value
-            return pRoot->get_string(atom, dst);
+            return (dst->set(sLanguage.get())) ? STATUS_OK : STATUS_NO_MEM;
         }
 
         status_t Schema::set_lanugage(const LSPString *lang)
@@ -894,17 +900,7 @@ namespace lsp
             if (lang == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            // Check state
-            if (pRoot == NULL)
-                return STATUS_BAD_STATE;
-
-            // Get atom
-            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
-            if (atom < 0)
-                return -atom;
-
-            // Get the string value
-            return pRoot->set_string(atom, lang);
+            return (sLanguage.set(lang)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
         status_t Schema::set_lanugage(const char *lang)
@@ -913,17 +909,7 @@ namespace lsp
             if (lang == NULL)
                 return STATUS_BAD_ARGUMENTS;
 
-            // Check state
-            if (pRoot == NULL)
-                return STATUS_BAD_STATE;
-
-            // Get atom
-            atom_t atom = pAtoms->atom_id(LSP_TK_PROP_LANGUAGE);
-            if (atom < 0)
-                return -atom;
-
-            // Get the string value
-            return pRoot->set_string(atom, lang);
+            return (sLanguage.set(lang)) ? STATUS_OK : STATUS_NO_MEM;
         }
 
         status_t Schema::add_font(const char *name, const char *path)
