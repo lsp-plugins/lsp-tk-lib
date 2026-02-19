@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 мая 2020 г.
@@ -53,14 +53,14 @@ namespace lsp
 
             public:
                 /**
-                 * Get value of the float property
-                 * @return value of the float property
+                 * Get value of the integer property
+                 * @return value of the integer property
                  */
                 inline ssize_t      get() const             { return nValue;                }
 
                 /**
-                 * Set value of the float property
-                 * @param v value of the float property
+                 * Set value of the integer property
+                 * @param v value of the integer property
                  * @return
                  */
                 ssize_t             set(ssize_t v);
@@ -79,7 +79,7 @@ namespace lsp
         namespace prop
         {
             /**
-             * Integering property implementation
+             * Integer property implementation
              */
             class Integer: public tk::Integer
             {

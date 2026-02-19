@@ -33,6 +33,7 @@ namespace lsp
         {
             LSP_TK_STYLE_IMPL_BEGIN(Window, WidgetContainer)
                 // Bind
+                sLanguage.bind(LSP_TK_ENV_LANG, this);
                 sBorderColor.bind("border.color", this);
                 sBorderStyle.bind("border.style", this);
                 sBorderSize.bind("border.size", this);
@@ -45,7 +46,8 @@ namespace lsp
                 sLayout.bind("layout", this);
                 sPolicy.bind("policy", this);
                 // Configure
-                sBorderColor.set("#000000");
+                sLanguage.set(LSP_TK_ENV_LANG_DFL);
+                sBorderColor.set_rgb24(0x000000);
                 sBorderStyle.set(ws::BS_SIZEABLE);
                 sBorderSize.set(0);
                 sBorderRadius.set(2);
@@ -70,6 +72,7 @@ namespace lsp
             WidgetContainer(dpy),
             sShortcuts(NULL),
             sShortcutTracker(&sShortcuts),
+            sLanguage(&sProperties),
             sTitle(&sProperties),
             sRole(&sProperties),
             sBorderColor(&sProperties),
@@ -144,6 +147,7 @@ namespace lsp
             }
 
             // Bind properties
+            sLanguage.bind(LSP_TK_ENV_LANG, &sStyle);
             sTitle.bind(&sStyle, pDisplay->dictionary());
             sRole.bind(&sStyle, pDisplay->dictionary());
             sBorderColor.bind("border.color", &sStyle);
@@ -197,6 +201,7 @@ namespace lsp
             ws::rectangle_t r, wsr;
 
             get_padded_size_limits(&sr);
+
             float scaling       = lsp_max(0.0f, sScaling.get());
             size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
             sWindowSize.compute(&r, scaling);
@@ -207,6 +212,9 @@ namespace lsp
 //                int(r.nLeft), int(r.nTop), int(r.nWidth), int(r.nHeight));
 //            lsp_trace("Window subsystem geometry: x=%d, y=%d, w=%d, h=%d",
 //                int(wsr.nLeft), int(wsr.nTop), int(wsr.nWidth), int(wsr.nHeight));
+//            lsp_trace("Window size_constraints: width=[%d..%d], height=[%d..%d]",
+//                int(sr.nMinWidth), int(sr.nMaxWidth),
+//                int(sr.nMinHeight), int(sr.nMaxHeight));
 
             // Set window's size constraints and update geometry
             if (sPolicy.get() == WP_GREEDY)
@@ -254,20 +262,23 @@ namespace lsp
             r.nHeight           = lsp_max(r.nHeight, 1);
 
             // Check if we need to resize window
-            if ((wsr.nWidth != r.nWidth) || (wsr.nHeight != r.nHeight))
+            const bool size_changed = (wsr.nWidth != r.nWidth) || (wsr.nHeight != r.nHeight);
+            if (nSizeHints & (HSIZE_MINIMIZE_SIZE | HSIZE_FIT_SIZE))
             {
-                if (nSizeHints & HSIZE_MINIMIZE_SIZE)
+                pWindow->set_size_constraints(&sr);
+                if (size_changed)
                 {
 //                    lsp_trace("forcing window resize constraints: w=(%d, %d), h=(%d, %d), size: (%d, %d) -> (%d, %d)",
 //                        int(sr.nMinWidth), int(sr.nMaxWidth), int(sr.nMinHeight), int(sr.nMaxHeight),
 //                        int(wsr.nWidth), int(wsr.nHeight),
 //                        int(r.nWidth), int(r.nHeight));
-                    pWindow->set_size_constraints(&sr);
+
                     pWindow->resize(r.nWidth, r.nHeight);
                 }
-
-                sWindowSize.commit_value(r.nWidth, r.nHeight, scaling);
             }
+
+            if (size_changed)
+                sWindowSize.commit_value(r.nWidth, r.nHeight, scaling);
 
             // Realize widget container
             WidgetContainer::realize_widget(&r);
@@ -667,7 +678,12 @@ namespace lsp
 
             if (prop->one_of(sScaling, sActions, sWindowState, sFontScaling, sWindowSize, sSizeConstraints))
             {
-                nSizeHints      = HSIZE_MINIMIZE_SIZE;
+                nSizeHints     |= HSIZE_MINIMIZE_SIZE;
+                query_resize();
+            }
+            if (prop->one_of(sLanguage))
+            {
+                nSizeHints     |= HSIZE_FIT_SIZE;
                 query_resize();
             }
             if (sLayout.is(prop))

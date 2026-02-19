@@ -36,6 +36,7 @@ namespace lsp
                 sFontScaling.bind("font.scaling", this);
                 sFont.bind("font", this);
                 sDrawMode.bind("draw.mode", this);
+                sLanguage.bind(LSP_TK_ENV_LANG, this);
                 sInvertMouseHScroll.bind("mouse.hscroll.invert", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
                 // Configure
@@ -43,6 +44,7 @@ namespace lsp
                 sFont.set_size(12.0f);
                 sFontScaling.set(1.0f);
                 sScaling.set(1.0f);
+                sLanguage.set(LSP_TK_ENV_LANG_DFL);
                 sDrawMode.set(DM_CLASSIC);
                 sInvertMouseHScroll.set(false);
                 sInvertMouseVScroll.set(false);

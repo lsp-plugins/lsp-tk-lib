@@ -81,6 +81,7 @@
 #include <lsp-plug.in/tk/prop/simple/Integer.h>
 #include <lsp-plug.in/tk/prop/simple/Float.h>
 #include <lsp-plug.in/tk/prop/simple/PathPattern.h>
+#include <lsp-plug.in/tk/prop/simple/RawString.h>
 #include <lsp-plug.in/tk/prop/simple/String.h>
 
 // Compound properties

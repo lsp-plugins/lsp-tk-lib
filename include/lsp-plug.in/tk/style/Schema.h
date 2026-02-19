@@ -50,6 +50,7 @@ namespace lsp
                 prop::Float                         sScaling;
                 prop::Float                         sFontScaling;
                 prop::Font                          sFont;
+                prop::RawString                     sLanguage;
                 prop::DrawMode                      sDrawMode;
                 prop::Boolean                       sInvertMouseHScroll;
                 prop::Boolean                       sInvertMouseVScroll;

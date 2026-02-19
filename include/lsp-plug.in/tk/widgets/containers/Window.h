@@ -36,6 +36,7 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(Window, WidgetContainer)
+                prop::RawString         sLanguage;
                 prop::String            sTitle;
                 prop::String            sRole;
                 prop::Color             sBorderColor;
@@ -90,6 +91,7 @@ namespace lsp
                 enum size_hints_t
                 {
                     HSIZE_MINIMIZE_SIZE = 1 << 0,       // Minimize the size of the window
+                    HSIZE_FIT_SIZE      = 1 << 1,       // Try to fit size of the window
                 };
 
             public:
@@ -114,6 +116,7 @@ namespace lsp
                 ws::IWindow            *pActor;
                 Timer                   sRedraw;
 
+                prop::RawString         sLanguage;
                 prop::String            sTitle;
                 prop::String            sRole;
                 prop::Color             sBorderColor;
