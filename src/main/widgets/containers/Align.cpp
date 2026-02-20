@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 июл. 2017 г.
@@ -201,13 +201,13 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void Align::realize(const ws::rectangle_t *r)
+        bool Align::realize(const ws::rectangle_t *r)
         {
 //            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
-            WidgetContainer::realize(r);
+            bool needs_redraw = WidgetContainer::realize(r);
 
             if ((pWidget == NULL) || (!pWidget->is_visible_child_of(this)))
-                return;
+                return needs_redraw;
 
             // Realize child widget
             ws::rectangle_t xr;
@@ -216,7 +216,10 @@ namespace lsp
             pWidget->get_padded_size_limits(&sr);
             sLayout.apply(&xr, r, &sr);
             pWidget->padding()->enter(&xr, pWidget->scaling()->get());
-            pWidget->realize_widget(&xr);
+            if (pWidget->realize_widget(&xr))
+                needs_redraw    = true;
+
+            return needs_redraw;
         }
     } /* namespace tk */
 } /* namespace lsp */

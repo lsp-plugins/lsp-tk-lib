@@ -172,7 +172,7 @@ namespace lsp
             if (colors->property_changed(prop))
                 query_draw();
 
-            if (prop->one_of(sBitmap, sLayout, sFitting, sTransparency))
+            if (prop->one_of(sBitmap, sLayout, sTransparency))
                 query_draw();
 
             if (prop->one_of(sConstraints, sBorderWidth, sFitting, sProportion))
@@ -201,9 +201,9 @@ namespace lsp
             SizeConstraints::add(r, border_size * 2, border_size * 2);
         }
 
-        void Image::realize(const ws::rectangle_t *r)
+        bool Image::realize(const ws::rectangle_t *r)
         {
-            Widget::realize(r);
+            bool needs_redraw           = Widget::realize(r);
 
             const float scaling         = lsp_max(0.0f, sScaling.get());
             const size_t border_size    = lsp_max(sBorderWidth.get() * scaling, 0);
@@ -251,6 +251,7 @@ namespace lsp
             else
                 sBorder                 = sSize;
 
+            return needs_redraw;
         }
 
         void Image::draw(ws::ISurface *s, bool force)

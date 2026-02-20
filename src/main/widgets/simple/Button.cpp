@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 21 июн. 2017 г.
@@ -309,16 +309,11 @@ namespace lsp
             if (cols->property_changed(prop))
                 query_draw();
 
-            if (prop->one_of(sHoleColor, sHover, sGradient))
+            if (prop->one_of(sHoleColor, sHover, sGradient, sTextLayout, sTextClip))
                 query_draw();
 
             if (prop->one_of(sFont, sText, sTextAdjust, sConstraints, sBorderSize, sBorderPressedSize, sBorderDownSize))
                 query_resize();
-
-            if (sTextLayout.is(prop))
-                query_draw();
-            if (sTextClip.is(prop))
-                query_draw();
 
             if (sMode.is(prop))
                 update_mode(sMode.get());
@@ -773,9 +768,9 @@ namespace lsp
             SizeConstraints::add(r, outer, outer);
         }
 
-        void Button::realize(const ws::rectangle_t *r)
+        bool Button::realize(const ws::rectangle_t *r)
         {
-            Widget::realize(r);
+            bool needs_redraw   = Widget::realize(r);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
 
@@ -787,6 +782,8 @@ namespace lsp
             sButton.nTop        = r->nTop    + outer;
             sButton.nWidth      = r->nWidth  - outer*2;
             sButton.nHeight     = r->nHeight - outer*2;
+
+            return needs_redraw;
         }
 
         status_t Button::on_mouse_down(const ws::event_t *e)

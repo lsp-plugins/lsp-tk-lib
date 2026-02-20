@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 сент. 2025 г.
@@ -368,9 +368,9 @@ namespace lsp
             r->nPreHeight       = -1;
         }
 
-        void RangeSlider::realize(const ws::rectangle_t *r)
+        bool RangeSlider::realize(const ws::rectangle_t *r)
         {
-            Widget::realize(r);
+            const bool needs_redraw = Widget::realize(r);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
             float aspect        = lsp_max(0.0f, sBtnAspect.get());
@@ -413,6 +413,8 @@ namespace lsp
 
             // Sync position of the slider buttons
             sync_button_pos();
+
+            return needs_redraw;
         }
 
         status_t RangeSlider::slot_on_change(Widget *sender, void *ptr, void *data)

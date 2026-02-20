@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 окт. 2020 г.
@@ -146,19 +146,9 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            if (sBorder.is(prop))
+            if (prop->one_of(sBorder, sBorderRadius))
                 query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sBorderFlat.is(prop))
-                query_draw();
-            if (sGlass.is(prop))
-                query_draw();
-            if (sColor.is(prop))
-                query_draw();
-            if (sBorderColor.is(prop))
-                query_draw();
-            if (sGlassColor.is(prop))
+            if (prop->one_of(sBorderFlat, sGlass, sColor, sBorderColor, sGlassColor))
                 query_draw();
         }
 
@@ -191,10 +181,10 @@ namespace lsp
                 r->nMaxHeight   = r->nMinHeight;
         }
 
-        void Area3D::realize(const ws::rectangle_t *r)
+        bool Area3D::realize(const ws::rectangle_t *r)
         {
             // Call parent class to realize
-            Widget::realize(r);
+            const bool needs_redraw = Widget::realize(r);
 
             // Compute the size of area
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -207,6 +197,8 @@ namespace lsp
             sCanvas.nTop    = r->nTop    + padding;
             sCanvas.nWidth  = r->nWidth  - padding*2;
             sCanvas.nHeight = r->nHeight - padding*2;
+
+            return needs_redraw;
         }
 
         void Area3D::hide_widget()

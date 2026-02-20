@@ -243,15 +243,17 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void RadioButton::realize(const ws::rectangle_t *r)
+        bool RadioButton::realize(const ws::rectangle_t *r)
         {
             // Call parent widget for realize
-            Widget::realize(r);
+            bool needs_redraw   = Widget::realize(r);
 
             sArea.nWidth        = lsp_min(r->nWidth, r->nHeight);
             sArea.nHeight       = sArea.nWidth;
             sArea.nLeft         = r->nLeft  + (r->nWidth  - sArea.nWidth ) / 2;
             sArea.nTop          = r->nTop   + (r->nHeight - sArea.nHeight) / 2;
+
+            return needs_redraw;
         }
 
         void RadioButton::draw(ws::ISurface *s, bool force)

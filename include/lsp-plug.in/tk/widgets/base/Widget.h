@@ -90,11 +90,12 @@ namespace lsp
                     INITIALIZED     = 1 << 0,       // Widget is initialized
                     FINALIZED       = 1 << 1,       // Widget is in destroy state
                     VISIBLE         = 1 << 2,       // Widget is currently visible
-                    REDRAW_SURFACE  = 1 << 3,       // Need to redraw surface
-                    REDRAW_CHILD    = 1 << 4,       // Need to redraw child only
-                    SIZE_INVALID    = 1 << 5,       // Size limit structure is valid
-                    RESIZE_PENDING  = 1 << 6,       // The resize request is pending
-                    REALIZE_ACTIVE  = 1 << 7,       // Realize is active, no need to trigger for realize
+                    REALIZED        = 1 << 3,       // Widget has been at least once realized
+                    REDRAW_SURFACE  = 1 << 4,       // Need to redraw surface
+                    REDRAW_CHILD    = 1 << 5,       // Need to redraw child only
+                    SIZE_INVALID    = 1 << 6,       // Size limit structure is valid
+                    RESIZE_PENDING  = 1 << 7,       // The resize request is pending
+                    REALIZE_ACTIVE  = 1 << 8,       // Realize is active, no need to trigger for realize
 
                     REDRAW_DEFAULT  = REDRAW_SURFACE
                 };
@@ -194,8 +195,9 @@ namespace lsp
                 /**
                  * Realize widget internally
                  * @param r real area allocated to the widget
+                 * @return true if widget has changed position/size and needs to be redrawn
                  */
-                virtual void            realize(const ws::rectangle_t *r);
+                virtual bool            realize(const ws::rectangle_t *r);
 
                 /** Hide widget
                  *
@@ -605,8 +607,9 @@ namespace lsp
                  *
                  * @param r real area allocated to the widget
                  * @param redraw query for redraw
+                 * @return true if widget has changed position/size and needs to be redrawn
                  */
-                void                    realize_widget(const ws::rectangle_t *r);
+                bool                    realize_widget(const ws::rectangle_t *r);
 
                 /** Handle UI event from the display
                  *

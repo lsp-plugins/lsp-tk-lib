@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 29 авг. 2017 г.
@@ -435,9 +435,9 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void Edit::realize(const ws::rectangle_t *r)
+        bool Edit::realize(const ws::rectangle_t *r)
         {
-            Widget::realize(r);
+            bool needs_redraw   = Widget::realize(r);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t radius      = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
@@ -450,6 +450,8 @@ namespace lsp
             sTextArea.nTop      = r->nTop   + border;
             sTextArea.nWidth    = r->nWidth - border*2;
             sTextArea.nHeight   = r->nHeight- border*2;
+
+            return needs_redraw;
         }
 
         status_t Edit::timer_handler(ws::timestamp_t sched, ws::timestamp_t time, void *arg)

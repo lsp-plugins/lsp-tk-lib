@@ -694,7 +694,7 @@ namespace lsp
                 if (pChild != NULL)
                     pChild->query_resize();
             }
-            if (sPolicy.is(prop) || sScaling.is(prop))
+            if (prop->one_of(sPolicy, sScaling))
                 query_resize();
         }
 
@@ -1413,15 +1413,15 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Window::realize(const ws::rectangle_t *r)
+        bool Window::realize(const ws::rectangle_t *r)
         {
 //            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
             sPosition.commit_value(r->nLeft, r->nTop);
             sWindowSize.commit_value(r->nWidth, r->nHeight, sScaling.get());
 
-            WidgetContainer::realize(r);
+            bool needs_redraw = WidgetContainer::realize(r);
             if ((pChild == NULL) || (!pChild->visibility()->get()))
-                return;
+                return needs_redraw;
 
             // Query for size
             ws::size_limit_t sr;
@@ -1443,7 +1443,8 @@ namespace lsp
 
             // Call for realize
             pChild->padding()->enter(&rc, pChild->scaling()->get());
-            pChild->realize_widget(&rc);
+            if (pChild->realize_widget(&rc))
+                needs_redraw = true;
 
             // Realize overlays
             vDrawOverlays.clear();
@@ -1500,11 +1501,14 @@ namespace lsp
                 ovd->wWidget        = ov;
 
                 // Realize overlay
-                ov->realize_widget(&ovd->sArea);
+                if (ov->realize_widget(&ovd->sArea))
+                    needs_redraw = true;
             }
 
             // Sort overlays according to the drawing order (stack overlays)
             vDrawOverlays.qsort(overlay_compare_func);
+
+            return needs_redraw;
         }
 
         ssize_t Window::overlay_compare_func(const overlay_t *a, const overlay_t *b)

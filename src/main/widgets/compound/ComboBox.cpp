@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 авг. 2020 г.
@@ -439,14 +439,14 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void ComboBox::realize(const ws::rectangle_t *r)
+        bool ComboBox::realize(const ws::rectangle_t *r)
         {
             alloc_t a;
             float scaling       = lsp_max(0.0f, sScaling.get());
             estimate_parameters(&a, scaling);
 
             // Realize widget
-            Widget::realize(r);
+            const bool needs_redraw = Widget::realize(r);
 
             // Estimate size of spin
             sSArea.nWidth       = (a.swidth > 0) ? a.swidth + a.spad : 0;
@@ -465,6 +465,8 @@ namespace lsp
             sTArea.nHeight      = r->nHeight;
             sTArea.nLeft        = r->nLeft;
             sTArea.nTop         = r->nTop;
+
+            return needs_redraw;
         }
 
         void ComboBox::draw(ws::ISurface *s, bool force)

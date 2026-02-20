@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 сент. 2020 г.
@@ -162,6 +162,17 @@ namespace lsp
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(AudioSample, "AudioSample", "root");
         } /* namespace style */
+
+        template <class T>
+        static inline bool arrays_differ(const lltl::parray<T> & a, const lltl::parray<T> & b)
+        {
+            if (a.size() != b.size())
+                return true;
+            for (size_t i=0, n=a.size(); i<n; ++i)
+                if (a.uget(i) != b.uget(i))
+                    return true;
+            return false;
+        }
 
         const w_class_t AudioSample::metadata           = { "AudioSample", &WidgetContainer::metadata };
 
@@ -342,17 +353,8 @@ namespace lsp
             if (prop->one_of(vChannels, vEnvelopes))
                 query_resize();
 
-            if (sWaveBorder.is(prop))
-                query_resize();
             if (prop->one_of(sFadeInBorder, sFadeOutBorder, sStretchBorder, sLoopBorder, sPlayBorder, sLineWidth, sMaxAmplitude))
                 query_draw();
-
-            if (sLineColor.is(prop))
-                query_draw();
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sSGroups.is(prop))
-                query_resize();
 
             if ((sMainText.is(prop)) && (sMainVisibility.get()))
                 query_draw();
@@ -360,38 +362,21 @@ namespace lsp
                 query_draw();
             if ((sMainFont.is(prop)) && (sMainVisibility.get()))
                 query_draw();
-            if (sMainVisibility.is(prop))
-                query_draw();
-            if (sLabelFont.is(prop))
-                query_draw();
-            if (sLabelBgColor.is(prop))
-                query_draw();
-            if (sLabelRadius.is(prop))
+
+            if (prop->one_of(sWaveBorder, sConstraints, sSGroups, sBorder, sBorderRadius, sIPadding))
+                query_resize();
+
+            if (prop->one_of(sMainVisibility, sLabelFont, sLabelRadius, sBorderFlat))
                 query_draw();
 
-            if (sBorder.is(prop))
-                query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sBorderFlat.is(prop))
+            if (prop->one_of(
+                sColor, sBorderColor, sGlassColor, sStretchColor, sLoopColor, sPlayColor,
+                sStretchBorderColor, sLoopBorderColor, sLineColor, sLabelBgColor))
                 query_draw();
-
-            if (prop->one_of(sColor, sBorderColor, sGlassColor, sStretchColor, sLoopColor, sPlayColor,
-                sStretchBorderColor, sLoopBorderColor))
-                query_draw();
-
-            if (sIPadding.is(prop))
-                query_resize();
 
             for (size_t i=0; i<LABELS; ++i)
             {
-                if (sLabelColor[i].is(prop))
-                    query_draw();
-                if (sLabelLayout[i].is(prop))
-                    query_draw();
-                if (sLabelTextLayout[i].is(prop))
-                    query_draw();
-                if (sLabelVisibility[i].is(prop))
+                if (prop->one_of(sLabelColor[i], sLabelLayout[i], sLabelTextLayout[i], sLabelVisibility[i]))
                     query_draw();
             }
         }
@@ -473,10 +458,10 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void AudioSample::realize(const ws::rectangle_t *r)
+        bool AudioSample::realize(const ws::rectangle_t *r)
         {
             // Call parent class to realize
-            WidgetContainer::realize(r);
+            bool needs_redraw = WidgetContainer::realize(r);
 
             lltl::parray<AudioChannel> channels;
             lltl::parray<AudioEnvelope> envelopes;
@@ -496,8 +481,18 @@ namespace lsp
             sGraph.nHeight  = r->nHeight - padding*2;
 
             sIPadding.enter(&sGraph, scaling);
-            vVisibleChannels.swap(&channels);
-            vVisibleEnvelopes.swap(&envelopes);
+            if (arrays_differ(vVisibleChannels, channels))
+            {
+                vVisibleChannels.swap(&channels);
+                needs_redraw    = true;
+            }
+            if (arrays_differ(vVisibleEnvelopes, envelopes))
+            {
+                vVisibleEnvelopes.swap(&envelopes);
+                needs_redraw    = true;
+            }
+
+            return needs_redraw;
         }
 
         void AudioSample::draw_channel1(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples, float max_amplitude)

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -660,10 +660,12 @@ namespace lsp
             }
         }
 
-        void Box::realize_children(lltl::darray<cell_t> &visible)
+        bool Box::realize_children(lltl::darray<cell_t> &visible)
         {
             ws::size_limit_t sr;
             ws::rectangle_t r;
+
+            bool needs_redraw = false;
 
             for (size_t i=0, n=visible.size(); i<n; ++i)
             {
@@ -688,17 +690,20 @@ namespace lsp
                 // Realize the widget
 //                lsp_trace("realize child=%p, id=%d, parameters = {%d, %d, %d, %d}",
 //                        w->pWidget, int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
-                w->pWidget->realize_widget(&w->s);
+                if (w->pWidget->realize_widget(&w->s))
+                    needs_redraw    = true;
             }
+
+            return needs_redraw;
         }
 
-        void Box::realize(const ws::rectangle_t *r)
+        bool Box::realize(const ws::rectangle_t *r)
         {
             // Flush previously visible widgets
             vVisible.flush();
 
             // Call parent method to realize
-            WidgetContainer::realize(r);
+            bool needs_redraw   = WidgetContainer::realize(r);
 
             // Add border
             ws::rectangle_t xr;
@@ -710,7 +715,7 @@ namespace lsp
             lltl::darray<cell_t>    visible;
             status_t res    = visible_items(&visible);
             if (res != STATUS_OK)
-                return;
+                return needs_redraw;
 
             // Allocate space for child widgets
             if (visible.size() > 0)
@@ -723,9 +728,11 @@ namespace lsp
             // Update list of visible items
             if (res == STATUS_OK)
             {
-                realize_children(visible);
+                if (realize_children(visible))
+                    needs_redraw = true;
                 vVisible.swap(&visible);
             }
+            return needs_redraw;
         }
 
         void Box::size_request(ws::size_limit_t *r)

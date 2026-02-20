@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 июл. 2019 г.
@@ -98,7 +98,7 @@ namespace lsp
             protected:
                 virtual void                    size_request(ws::size_limit_t *r) override;
                 virtual void                    property_changed(Property *prop) override;
-                virtual void                    realize(const ws::rectangle_t *r) override;
+                virtual bool                    realize(const ws::rectangle_t *r) override;
 
             protected:
                 void                            out_text(ws::ISurface *s, const LSPString *text, lsp::Color &color);

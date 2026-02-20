@@ -179,7 +179,7 @@ namespace lsp
                 virtual void        hide_widget() override;
                 virtual void        show_widget() override;
                 virtual void        size_request(ws::size_limit_t *r) override;
-                virtual void        realize(const ws::rectangle_t *r) override;
+                virtual bool        realize(const ws::rectangle_t *r) override;
 
                 /**
                  * Discard widget: notify window that widget has been removed from the widget tree

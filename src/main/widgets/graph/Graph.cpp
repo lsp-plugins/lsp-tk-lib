@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 авг. 2020 г.
@@ -157,28 +157,17 @@ namespace lsp
         void Graph::property_changed(Property *prop)
         {
             WidgetContainer::property_changed(prop);
-            if (vItems.is(prop))
-                query_draw();
 
-            if (sBorder.is(prop))
+            if (prop->one_of(vItems, sBorderFlat, sGlass, sColor, sGlassColor))
+                query_draw();
+            if (prop->one_of(sBorder, sBorderRadius, sIPadding))
                 query_resize();
-            if (sBorderRadius.is(prop))
-                query_resize();
-            if (sBorderFlat.is(prop))
-                query_draw();
-            if (sGlass.is(prop))
-                query_draw();
-            if (sColor.is(prop))
-                query_draw();
+
             if (sBorderColor.is(prop))
             {
                 drop_glass();
                 query_draw();
             }
-            if (sGlassColor.is(prop))
-                query_draw();
-            if (sIPadding.is(prop))
-                query_resize();
         }
 
         void Graph::size_request(ws::size_limit_t *r)
@@ -211,10 +200,10 @@ namespace lsp
                 r->nMaxHeight   = r->nMinHeight;
         }
 
-        void Graph::realize(const ws::rectangle_t *r)
+        bool Graph::realize(const ws::rectangle_t *r)
         {
             // Call parent class to realize
-            WidgetContainer::realize(r);
+            const bool need_redraw = WidgetContainer::realize(r);
 
             // Compute the size of area
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -247,6 +236,8 @@ namespace lsp
                     slot->execute(this, &xr);
                 }
             }
+
+            return need_redraw;
         }
 
         void Graph::hide_widget()

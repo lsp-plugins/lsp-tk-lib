@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 2 июл. 2019 г.
@@ -233,9 +233,9 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void ProgressBar::realize(const ws::rectangle_t *r)
+        bool ProgressBar::realize(const ws::rectangle_t *r)
         {
-            Widget::realize(r);
+            const bool needs_redraw = Widget::realize(r);
 
             if (sShowText.get())
             {
@@ -259,6 +259,8 @@ namespace lsp
                 sTextArea.nWidth    = 0;
                 sTextArea.nHeight   = 0;
             }
+
+            return needs_redraw;
         }
 
         void ProgressBar::out_text(ws::ISurface *s, const LSPString *text, lsp::Color &color)

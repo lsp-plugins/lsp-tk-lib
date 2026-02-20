@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 нояб. 2020 г.
@@ -248,10 +248,10 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void CheckBox::realize(const ws::rectangle_t *r)
+        bool CheckBox::realize(const ws::rectangle_t *r)
         {
             // Call parent widget for realize
-            Widget::realize(r);
+            const bool needs_redraw = Widget::realize(r);
 
             float scaling       = sScaling.get();
             nRadius             = (sBorderRadius.get() > 0) ? lsp_max(1.0f, sBorderRadius.get() * scaling) : 0;
@@ -260,6 +260,8 @@ namespace lsp
             sArea.nHeight       = sArea.nWidth;
             sArea.nLeft         = r->nLeft  + (r->nWidth  - sArea.nWidth ) / 2;
             sArea.nTop          = r->nTop   + (r->nHeight - sArea.nHeight) / 2;
+
+            return needs_redraw;
         }
 
         void CheckBox::draw(ws::ISurface *s, bool force)

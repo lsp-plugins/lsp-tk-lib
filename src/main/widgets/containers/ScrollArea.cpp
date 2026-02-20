@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 июл. 2020 г.
@@ -140,13 +140,7 @@ namespace lsp
         void ScrollArea::property_changed(Property *prop)
         {
             WidgetContainer::property_changed(prop);
-            if (sLayout.is(prop))
-                query_resize();
-            if (sSizeConstraints.is(prop))
-                query_resize();
-            if (sHScrollMode.is(prop))
-                query_resize();
-            if (sVScrollMode.is(prop))
+            if (prop->one_of(sLayout, sSizeConstraints, sHScrollMode, sVScrollMode))
                 query_resize();
             if (sHScroll.is(prop))
                 sHBar.value()->set(sHScroll.get());
@@ -272,10 +266,12 @@ namespace lsp
             *r          = a.sSize;
         }
 
-        void ScrollArea::realize(const ws::rectangle_t *r)
+        bool ScrollArea::realize(const ws::rectangle_t *r)
         {
             alloc_t a;
             estimate_size(&a, r);
+
+            bool needs_redraw = false;
 
             // Tune scroll bars
             sHBar.visibility()->set(a.bHBar);
@@ -287,7 +283,9 @@ namespace lsp
                 const size_t hstep          = lsp_max((a.sArea.nWidth / 10), 1);
                 const size_t hastep         = lsp_max((a.sArea.nWidth / 4), 1);
 
-                sHBar.realize_widget(&a.sHBar);
+                if (sHBar.realize_widget(&a.sHBar))
+                    needs_redraw    = true;
+
                 sHScroll.set_range(0, max_hscroll);
                 sHBar.value()->set_range(0, max_hscroll);
                 sHBar.step()->set(hstep);
@@ -299,7 +297,9 @@ namespace lsp
                 const size_t vstep          = lsp_max((a.sArea.nHeight / 10), 1);
                 const size_t vastep         = lsp_max((a.sArea.nWidth / 4), 1);
 
-                sVBar.realize_widget(&a.sVBar);
+                if (sVBar.realize_widget(&a.sVBar))
+                    needs_redraw    = true;
+
                 sVScroll.set_range(0, max_vscroll);
                 sVBar.value()->set_range(0, max_vscroll);
                 sVBar.step()->set(vstep);
@@ -328,11 +328,15 @@ namespace lsp
                     xr.nTop    -= sVBar.value()->get();
 
                 pWidget->padding()->enter(&xr, pWidget->scaling()->get());
-                pWidget->realize_widget(&xr);
+                if (pWidget->realize_widget(&xr))
+                    needs_redraw    = true;
             }
 
             // Call parent for realize
-            WidgetContainer::realize(r);
+            if (WidgetContainer::realize(r))
+                needs_redraw    = true;
+
+            return needs_redraw;
         }
 
         void ScrollArea::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

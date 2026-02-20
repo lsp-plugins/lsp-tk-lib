@@ -683,6 +683,9 @@ namespace lsp
             if (nFlags & REALIZE_ACTIVE)
                 return;
 
+            // Query for redraw
+            query_draw();
+
             // Update flags
             nFlags     |= (RESIZE_PENDING | SIZE_INVALID);
 
@@ -734,35 +737,42 @@ namespace lsp
         {
         }
 
-        void Widget::realize(const ws::rectangle_t *r)
+        bool Widget::realize(const ws::rectangle_t *r)
         {
             // Do not report size request on size change
-            if ((sSize.nLeft == r->nLeft) &&
+            if ((nFlags & REALIZED) &&
+                (sSize.nLeft == r->nLeft) &&
                 (sSize.nTop  == r->nTop) &&
                 (sSize.nWidth == r->nWidth) &&
                 (sSize.nHeight == r->nHeight))
-                return;
+                return false;
 
             // Execute slot and commit size
             ws::rectangle_t xr = *r;
             sSlots.execute(SLOT_RESIZE, this, &xr);
-            sSize        = *r;
+            sSize           = *r;
+            nFlags         |= REALIZED;
+
+            return true;
         }
 
-        void Widget::realize_widget(const ws::rectangle_t *r)
+        bool Widget::realize_widget(const ws::rectangle_t *r)
         {
             nFlags     |= REALIZE_ACTIVE;
 
             // Call for realize
-            realize(r);
+            const bool need_redraw = realize(r);
 
             // Reset size pending flags
             nFlags     &= ~(SIZE_INVALID | RESIZE_PENDING | REALIZE_ACTIVE);
-            query_draw();   // Always query redraw after realize()
+            if (need_redraw)
+                query_draw();   // Query redraw after realize() if needed
 
             // Send Realized() event
             ws::rectangle_t rm = *r;
             sSlots.execute(SLOT_REALIZED, this, &rm);
+
+            return need_redraw;
         }
 
         void Widget::get_size_limits(ws::size_limit_t *l)

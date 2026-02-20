@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 10 июл. 2017 г.
@@ -229,7 +229,7 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            style::KnobColors *colors = select_colors();
+            style::KnobColors * const colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
 
@@ -247,20 +247,20 @@ namespace lsp
 
         status_t Knob::slot_on_change(Widget *sender, void *ptr, void *data)
         {
-            Knob *_this = widget_ptrcast<Knob>(ptr);
-            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+            Knob *self = widget_ptrcast<Knob>(ptr);
+            return (self != NULL) ? self->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
         status_t Knob::slot_begin_edit(Widget *sender, void *ptr, void *data)
         {
-            Knob *_this = widget_ptrcast<Knob>(ptr);
-            return (_this != NULL) ? _this->on_begin_edit() : STATUS_BAD_ARGUMENTS;
+            Knob *self = widget_ptrcast<Knob>(ptr);
+            return (self != NULL) ? self->on_begin_edit() : STATUS_BAD_ARGUMENTS;
         }
 
         status_t Knob::slot_end_edit(Widget *sender, void *ptr, void *data)
         {
-            Knob *_this = widget_ptrcast<Knob>(ptr);
-            return (_this != NULL) ? _this->on_end_edit() : STATUS_BAD_ARGUMENTS;
+            Knob *self = widget_ptrcast<Knob>(ptr);
+            return (self != NULL) ? self->on_end_edit() : STATUS_BAD_ARGUMENTS;
         }
 
         void Knob::update_value(float delta)

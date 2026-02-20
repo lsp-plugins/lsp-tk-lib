@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -180,7 +180,7 @@ namespace lsp
                 void                    do_destroy();
                 void                    allocate_items(alloc_t *alloc);
                 void                    estimate_size(alloc_t *a, const ws::rectangle_t *xr);
-                void                    realize_children();
+                bool                    realize_children();
                 void                    keep_single_selection();
                 item_t                 *find_item(ssize_t x, ssize_t y);
                 item_t                 *find_by_index(ssize_t index);
@@ -204,7 +204,7 @@ namespace lsp
             protected:
                 virtual void            property_changed(Property *prop) override;
                 virtual void            size_request(ws::size_limit_t *r) override;
-                virtual void            realize(const ws::rectangle_t *r) override;
+                virtual bool            realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit ListBox(Display *dpy);

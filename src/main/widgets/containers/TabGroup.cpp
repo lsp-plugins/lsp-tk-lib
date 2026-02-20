@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 дек. 2024 г.
@@ -305,9 +305,9 @@ namespace lsp
             sSizeConstraints.apply(r, scaling);
         }
 
-        void TabGroup::realize(const ws::rectangle_t *r)
+        bool TabGroup::realize(const ws::rectangle_t *r)
         {
-            WidgetContainer::realize(r);
+            bool needs_redraw       = WidgetContainer::realize(r);
 
             // Compute text and widget area
             lltl::darray<tab_t> tabs;
@@ -390,11 +390,16 @@ namespace lsp
             {
                 Padding::enter(&sArea, &sBounds, &padding);
                 if (w->is_visible_child_of(this))
-                    w->realize_widget(&sArea);
+                {
+                    if (w->realize_widget(&sArea))
+                        needs_redraw    = true;
+                }
             }
 
             // Commit allocation parameters
             vVisible.swap(&tabs);
+
+            return needs_redraw;
         }
 
         void TabGroup::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

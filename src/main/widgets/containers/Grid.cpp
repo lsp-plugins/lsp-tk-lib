@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -406,7 +406,7 @@ namespace lsp
             return STATUS_OK;
         }
 
-        void Grid::realize(const ws::rectangle_t *r)
+        bool Grid::realize(const ws::rectangle_t *r)
         {
             free_cells(&sAlloc);
 
@@ -419,7 +419,7 @@ namespace lsp
             if (res != STATUS_OK)
             {
                 free_cells(&a);
-                return;
+                return false;
             }
 
             // Distribute the size between rows and columns
@@ -430,7 +430,7 @@ namespace lsp
             assign_coords(&a, r);
 
             // Realize widgets
-            realize_children(&a);
+            bool needs_redraw = realize_children(&a);
 
             // Swap the actual data
             sAlloc.vCells.swap(&a.vCells);
@@ -441,10 +441,13 @@ namespace lsp
             sAlloc.nCols    = a.nCols;
 
             // Call parent method to realize
-            WidgetContainer::realize(r);
+            if (WidgetContainer::realize(r))
+                needs_redraw = true;
 
             // Destroy the previously used data
             free_cells(&a);
+
+            return needs_redraw;
         }
 
         void Grid::size_request(ws::size_limit_t *r)
@@ -1111,10 +1114,12 @@ namespace lsp
             }
         }
 
-        void Grid::realize_children(alloc_t *a)
+        bool Grid::realize_children(alloc_t *a)
         {
             ws::size_limit_t sr;
             ws::rectangle_t r;
+
+            bool needs_redraw = false;
 
             for (size_t i=0, n=a->vTable.size(); i<n; ++i)
             {
@@ -1144,8 +1149,10 @@ namespace lsp
 //                        int(w->a.nLeft), int(w->a.nTop), int(w->a.nWidth), int(w->a.nHeight),
 //                        int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight)
 //                );
-                w->pWidget->realize_widget(&w->s);
+                needs_redraw = w->pWidget->realize_widget(&w->s);
             }
+
+            return needs_redraw;
         }
     
     } /* namespace tk */
