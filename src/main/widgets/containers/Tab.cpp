@@ -341,6 +341,22 @@ namespace lsp
                 return;
             }
 
+            if ((force) || (pWidget->redraw_bg_pending()))
+            {
+                ws::rectangle_t xr;
+                pWidget->get_rectangle(&xr);
+
+                if (Size::overlap(area, &sSize))
+                {
+                    s->clip_begin(area);
+                    {
+                        pWidget->get_actual_bg_color(bg_color);
+                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                    }
+                    s->clip_end();
+                }
+            }
+
             if ((force) || (pWidget->redraw_pending()))
             {
                 // Draw the child only if it is visible in the area
@@ -350,22 +366,6 @@ namespace lsp
                     pWidget->render(s, &xr, force);
 
                 pWidget->commit_redraw();
-            }
-
-            if (force)
-            {
-                ws::rectangle_t cr;
-
-                pWidget->get_rectangle(&cr);
-                if (Size::overlap(area, &sSize))
-                {
-                    s->clip_begin(area);
-                    {
-                        pWidget->get_actual_bg_color(bg_color);
-                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &cr);
-                    }
-                    s->clip_end();
-                }
             }
         }
 

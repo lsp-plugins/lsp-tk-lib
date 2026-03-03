@@ -250,7 +250,7 @@ namespace lsp
                     }
 
                     // Fill unused space by child widget with background
-                    if ((force) || (w->pWidget->redraw_pending()))
+                    if ((force) || (w->pWidget->redraw_bg_pending()))
                     {
                         // Draw widget area
                         if (Size::overlap(area, &w->a))

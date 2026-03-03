@@ -494,17 +494,9 @@ namespace lsp
             {
                 ct->get_rectangle(&xr);
 
-                // Draw the nested widget
-                if ((force) || (ct->redraw_pending()))
+                // Render the child background
+                if ((force) || (ct->redraw_bg_pending()))
                 {
-                    if (Size::intersection(&xr, &sArea))
-                        ct->render(s, &xr, force);
-                    ct->commit_redraw();
-                }
-
-                if (force)
-                {
-                    // Render the child background
                     if (Size::overlap(area, &sSize))
                     {
                         s->clip_begin(area);
@@ -513,7 +505,17 @@ namespace lsp
                         ct->get_actual_bg_color(color);
                         s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                     }
+                    bg                  = true;
                 }
+
+                // Draw the nested widget
+                if ((force) || (ct->redraw_pending()))
+                {
+                    if (Size::intersection(&xr, &sArea))
+                        ct->render(s, &xr, force);
+                    ct->commit_redraw();
+                }
+
             }
             else
             {
@@ -526,7 +528,7 @@ namespace lsp
             }
 
             // Render frame
-            if (!force)
+            if ((!force) && (!bg))
                 return;
 
             ssize_t ir, xg;

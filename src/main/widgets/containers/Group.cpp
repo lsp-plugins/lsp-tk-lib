@@ -330,9 +330,9 @@ namespace lsp
             {
                 pWidget->get_rectangle(&xr);
 
-                if (force)
+                // Render the child background
+                if ((force) || (pWidget->redraw_bg_pending()))
                 {
-                    // Render the child background
                     if (Size::overlap(area, &sSize))
                     {
                         s->clip_begin(area);
@@ -341,6 +341,7 @@ namespace lsp
                             s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                         }
                         s->clip_end();
+                        bg  = true;
                     }
                 }
 
@@ -364,7 +365,7 @@ namespace lsp
             }
 
             // Render frame
-            if (!force)
+            if ((!force) && (!bg))
                 return;
 
             ssize_t ir, xg;

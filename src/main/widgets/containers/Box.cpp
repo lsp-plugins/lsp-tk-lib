@@ -225,21 +225,20 @@ namespace lsp
 
             // Estimate palette
             ws::rectangle_t xr;
+            lsp::Color bg_color, border_color;
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float bright    = select_brightness();
+            size_t border   = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+            get_actual_bg_color(bg_color);
 
-            if (force)
+            // Draw backround of the widget if needed
             {
-                lsp::Color bg_color, border_color;
-                float scaling   = lsp_max(0.0f, sScaling.get());
-                float bright    = select_brightness();
-                size_t border   = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
-                get_actual_bg_color(bg_color);
-
                 // Enable clipping
                 s->clip_begin(area);
                 lsp_finally { s->clip_end(); };
 
                 // Draw background if no child widget is present
-                if (vVisible.is_empty())
+                if ((vVisible.is_empty()) && (force))
                 {
                     s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
                     if (border > 0)
@@ -262,40 +261,44 @@ namespace lsp
                     cell_t *wc = vVisible.uget(i);
                     Widget *w = wc->pWidget;
 
-                    w->get_actual_bg_color(bg_color);
-                    if (Size::overlap(area, &wc->a))
-                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &wc->a, &wc->s);
-
-                    // Draw spacing
-                    if (((i + 1) < n) && (spacing > 0))
+                    // Render the frame around child widget
+                    if ((force) || (w->redraw_bg_pending()))
                     {
-                        get_actual_bg_color(bg_color);
-                        if (horizontal)
+                        w->get_actual_bg_color(bg_color);
+                        if (Size::overlap(area, &wc->a))
+                            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &wc->a, &wc->s);
+
+                        // Draw spacing
+                        if (((i + 1) < n) && (spacing > 0))
                         {
-                            xr.nLeft    = wc->a.nLeft + wc->a.nWidth;
-                            xr.nTop     = wc->a.nTop;
-                            xr.nWidth   = spacing;
-                            xr.nHeight  = wc->a.nHeight;
-                        }
-                        else
-                        {
-                            xr.nLeft    = wc->a.nLeft;
-                            xr.nTop     = wc->a.nTop + wc->a.nHeight;
-                            xr.nWidth   = wc->a.nWidth;
-                            xr.nHeight  = spacing;
+                            get_actual_bg_color(bg_color);
+                            if (horizontal)
+                            {
+                                xr.nLeft    = wc->a.nLeft + wc->a.nWidth;
+                                xr.nTop     = wc->a.nTop;
+                                xr.nWidth   = spacing;
+                                xr.nHeight  = wc->a.nHeight;
+                            }
+                            else
+                            {
+                                xr.nLeft    = wc->a.nLeft;
+                                xr.nTop     = wc->a.nTop + wc->a.nHeight;
+                                xr.nWidth   = wc->a.nWidth;
+                                xr.nHeight  = spacing;
+                            }
+
+                            if (Size::overlap(area, &xr))
+                                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
                         }
 
-                        if (Size::overlap(area, &xr))
-                            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
-                    }
-
-                    // Draw border
-                    if (border > 0)
-                    {
-                        border_color.copy(sBorderColor);
-                        border_color.scale_lch_luminance(bright);
-                        Rectangle::enter_border(&xr, &sSize, border);
-                        s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                        // Draw border
+                        if (border > 0)
+                        {
+                            border_color.copy(sBorderColor);
+                            border_color.scale_lch_luminance(bright);
+                            Rectangle::enter_border(&xr, &sSize, border);
+                            s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                        }
                     }
                 }
             }

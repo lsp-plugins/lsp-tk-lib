@@ -93,9 +93,10 @@ namespace lsp
                     REALIZED        = 1 << 3,       // Widget has been at least once realized
                     REDRAW_SURFACE  = 1 << 4,       // Need to redraw surface
                     REDRAW_CHILD    = 1 << 5,       // Need to redraw child only
-                    SIZE_INVALID    = 1 << 6,       // Size limit structure is valid
-                    RESIZE_PENDING  = 1 << 7,       // The resize request is pending
-                    REALIZE_ACTIVE  = 1 << 8,       // Realize is active, no need to trigger for realize
+                    REDRAW_BG       = 1 << 6,       // Need to redraw surface
+                    SIZE_INVALID    = 1 << 7,       // Size limit structure is valid
+                    RESIZE_PENDING  = 1 << 8,       // The resize request is pending
+                    REALIZE_ACTIVE  = 1 << 9,       // Realize is active, no need to trigger for realize
 
                     REDRAW_DEFAULT  = REDRAW_SURFACE
                 };
@@ -371,7 +372,13 @@ namespace lsp
                  *
                  * @return true if there is redraw request pending
                  */
-                inline bool             redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); }
+                inline bool             redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD | REDRAW_BG); }
+
+                /** Check if there is backround redraw request pending
+                 *
+                 * @return true if there is redraw request pending
+                 */
+                inline bool             redraw_bg_pending() const           { return nFlags & REDRAW_BG; }
 
                 /** Check if there is resize request pending
                  *

@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 15 июн. 2017 г.
@@ -273,7 +273,7 @@ namespace lsp
             const style::WidgetColors *colors = select_colors();
             const size_t redraw = redraw_flags(colors->property_changed(prop));
             if (redraw != 0)
-                query_draw(REDRAW_CHILD);
+                query_draw(redraw & (REDRAW_CHILD | REDRAW_BG));
 
             if (sActive.is(prop))
                 query_draw();
@@ -302,8 +302,12 @@ namespace lsp
 
         size_t Widget::redraw_flags(size_t draw_flags)
         {
-            size_t result = (draw_flags & DRAW_SURFACE) ? REDRAW_SURFACE : 0;
-            return lsp_setflag(result, REDRAW_CHILD, draw_flags & DRAW_CHILD);
+            size_t result   = (draw_flags & DRAW_SURFACE) ? REDRAW_SURFACE : 0;
+            if (draw_flags & DRAW_CHILD)
+                result         |= REDRAW_CHILD;
+            if (draw_flags & DRAW_BG)
+                result         |= REDRAW_BG;
+            return result;
         }
 
         const style::WidgetColors *Widget::select_colors() const
@@ -595,7 +599,7 @@ namespace lsp
         void Widget::show_widget()
         {
             query_resize();
-            query_draw(REDRAW_CHILD | REDRAW_SURFACE);
+            query_draw(REDRAW_CHILD | REDRAW_SURFACE | REDRAW_BG);
             sSlots.execute(SLOT_SHOW, this);
         }
 
@@ -646,7 +650,7 @@ namespace lsp
                 return;
 
             // Check that flags have been changed
-            flags       = nFlags | (flags & (REDRAW_CHILD | REDRAW_SURFACE));
+            flags       = nFlags | (flags & (REDRAW_CHILD | REDRAW_SURFACE | REDRAW_BG));
             if (flags == nFlags)
                 return;
 
@@ -658,7 +662,7 @@ namespace lsp
 
         void Widget::commit_redraw()
         {
-            nFlags &= ~(REDRAW_SURFACE | REDRAW_CHILD);
+            nFlags &= ~(REDRAW_SURFACE | REDRAW_CHILD | REDRAW_BG);
         }
 
         void Widget::show()

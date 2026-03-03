@@ -405,17 +405,8 @@ namespace lsp
             if (!Size::intersection(&xa, area))
                 return;
 
-            if ((force) || (pWidget->redraw_pending()))
-            {
-                // Draw the child only if it is visible in the area
-                pWidget->get_rectangle(&xr);
-                if (Size::intersection(&xr, &xa))
-                    pWidget->render(s, &xr, force);
-
-                pWidget->commit_redraw();
-            }
-
-            if (force)
+            // Draw backround around the widget
+            if ((force) || (pWidget->redraw_bg_pending()))
             {
                 pWidget->get_rectangle(&xr);
                 if ((Size::is_empty(&xr)) || (Size::overlap(&xr, &xa)))
@@ -427,6 +418,17 @@ namespace lsp
                     }
                     s->clip_end();
                 }
+            }
+
+            // Draw the widget
+            if ((force) || (pWidget->redraw_pending()))
+            {
+                // Draw the child only if it is visible in the area
+                pWidget->get_rectangle(&xr);
+                if (Size::intersection(&xr, &xa))
+                    pWidget->render(s, &xr, force);
+
+                pWidget->commit_redraw();
             }
         }
 

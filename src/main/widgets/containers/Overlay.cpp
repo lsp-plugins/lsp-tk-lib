@@ -249,13 +249,9 @@ namespace lsp
                 const ws::point_t origin = s->set_origin(bw - xr.nLeft, bw - xr.nTop);
                 lsp_finally { s->set_origin(origin); };
 
-                // Draw the child widget
-                wWidget->render(s, &xr, force);
-                wWidget->commit_redraw();
-
-                if (force)
+                // Draw rectangle around widget
+                if ((force) || (wWidget->redraw_bg_pending()))
                 {
-                    // Draw rectangle around widget
                     ws::rectangle_t sr  = sSize;
                     sr.nLeft           -= xr.nLeft;
                     sr.nTop            -= xr.nTop;
@@ -263,6 +259,10 @@ namespace lsp
                     wWidget->get_actual_bg_color(bg_color);
                     s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                 }
+
+                // Draw the child widget
+                wWidget->render(s, &xr, force);
+                wWidget->commit_redraw();
             }
 
             // Draw border
