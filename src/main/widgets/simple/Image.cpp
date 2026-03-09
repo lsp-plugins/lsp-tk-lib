@@ -172,10 +172,10 @@ namespace lsp
             if (colors->property_changed(prop))
                 query_draw();
 
-            if (prop->one_of(sBitmap, sLayout, sTransparency))
+            if (prop->one_of(sLayout, sTransparency))
                 query_draw();
 
-            if (prop->one_of(sConstraints, sBorderWidth, sFitting, sProportion))
+            if (prop->one_of(sBitmap, sConstraints, sBorderWidth, sFitting, sProportion))
                 query_resize();
         }
 
