@@ -106,6 +106,19 @@ namespace lsp
             WA_VALIGN   = 1 << 3
         };
 
+        enum fitting_t
+        {
+            FIT_NONE,
+            FIT_WIDTH,
+            FIT_HEIGHT,
+            FIT_COVER,
+            FIT_CONTAIN,
+            FIT_HSTRETCH,
+            FIT_VSTRETCH,
+            FIT_STRETCH,
+            FIT_FULL
+        };
+
         /**
          * Widget draw mode
          */
@@ -184,9 +197,10 @@ namespace lsp
             DRAW_NONE           = 0,
             DRAW_SURFACE        = 1 << 0,
             DRAW_CHILD          = 1 << 1,
+            DRAW_BG             = 1 << 2,
 
             DRAW_DEFAULT        = DRAW_SURFACE,
-            DRAW_ALL            = DRAW_SURFACE | DRAW_CHILD
+            DRAW_ALL            = DRAW_SURFACE | DRAW_CHILD | DRAW_BG
         };
 
         typedef struct w_class_t

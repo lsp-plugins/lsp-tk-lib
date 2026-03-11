@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 22 сент. 2020 г.
@@ -260,13 +260,11 @@ namespace lsp
             Widget::property_changed(prop);
             if (sActive.get())
             {
-                if (sValue.is(prop))
+                if (prop->one_of(sValue, sPeakVisible))
                     query_draw();
                 if ((sHeaderValue.is(prop)) && (sHeaderVisible.get()))
                     query_draw();
                 if (sPeak.is(prop) && (sPeakVisible.get()))
-                    query_draw();
-                if (sPeakVisible.is(prop))
                     query_draw();
             }
 
@@ -276,26 +274,17 @@ namespace lsp
 
             if (sBalance.is(prop) && (sBalanceVisible.get()))
                 query_draw();
-
             if ((sTextVisible.get()) && (prop->one_of(sText, sEstText)))
                 query_resize();
             if ((sHeaderVisible.get()) && (prop->one_of(sHeader, sEstHeader)))
                 query_resize();
-            if (prop->one_of(sTextVisible, sHeaderVisible))
-                query_draw();
-            if (sBalanceVisible.is(prop))
-                query_resize();
-            if (sReversive.is(prop))
-                query_draw();
-            if (sMinSegments.is(prop))
-                query_resize();
-            if (sConstraints.is(prop))
-                query_resize();
             if (sFont.is(prop) && (sTextVisible.get() || sHeaderVisible.get()))
                 query_resize();
-            if (sBorder.is(prop))
-                query_resize();
-            if (sAngle.is(prop))
+
+            if (prop->one_of(sTextVisible, sHeaderVisible, sReversive))
+                query_draw();
+
+            if (prop->one_of(sBalanceVisible, sMinSegments, sConstraints, sBorder, sAngle))
                 query_resize();
         }
 
@@ -379,9 +368,9 @@ namespace lsp
                 sConstraints.tapply(r, scaling); // Apply transposed size constraints
         }
 
-        void LedMeterChannel::realize(const ws::rectangle_t *r)
+        bool LedMeterChannel::realize(const ws::rectangle_t *r)
         {
-            Widget::realize(r);
+            const bool needs_redraw = Widget::realize(r);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
             float fscaling      = lsp_max(0.0f, scaling * sFontScaling.get());
@@ -562,6 +551,8 @@ namespace lsp
                     break;
                 }
             }
+
+            return needs_redraw;
         }
 
         style::LedMeterChannelColors *LedMeterChannel::select_colors()

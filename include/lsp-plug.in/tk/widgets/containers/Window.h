@@ -36,6 +36,8 @@ namespace lsp
         namespace style
         {
             LSP_TK_STYLE_DEF_BEGIN(Window, WidgetContainer)
+                prop::RawString         sLanguage;
+                prop::Integer           sSchemaVersion;
                 prop::String            sTitle;
                 prop::String            sRole;
                 prop::Color             sBorderColor;
@@ -87,6 +89,12 @@ namespace lsp
                     Overlay            *wWidget;            // Widget
                 } overlay_t;
 
+                enum size_hints_t
+                {
+                    HSIZE_MINIMIZE_SIZE = 1 << 0,       // Minimize the size of the window
+                    HSIZE_FIT_SIZE      = 1 << 1,       // Try to fit size of the window
+                };
+
             public:
                 static const w_class_t    metadata;
 
@@ -97,6 +105,7 @@ namespace lsp
                 Widget                 *pFocused;           // Focused widget
                 bool                    bMapped;
                 bool                    bOverridePointer;
+                uint32_t                nSizeHints;         // Size hints
                 ws::surface_type_t      enSurfaceType;      // Surface type
                 float                   fScaling;           // Cached scaling factor
                 Shortcuts               sShortcuts;         // Shortcuts
@@ -108,6 +117,8 @@ namespace lsp
                 ws::IWindow            *pActor;
                 Timer                   sRedraw;
 
+                prop::RawString         sLanguage;
+                prop::Integer           sSchemaVersion;
                 prop::String            sTitle;
                 prop::String            sRole;
                 prop::Color             sBorderColor;
@@ -146,7 +157,7 @@ namespace lsp
                 void                draw_widgets(ws::ISurface *s);
                 void                auto_close_overlays(const ws::event_t *ev);
                 Overlay            *find_overlay(ssize_t x, ssize_t y);
-                virtual status_t    sync_size(bool force);
+                virtual status_t    sync_size();
                 status_t            update_pointer();
 
                 // Mouse operations
@@ -168,7 +179,7 @@ namespace lsp
                 virtual void        hide_widget() override;
                 virtual void        show_widget() override;
                 virtual void        size_request(ws::size_limit_t *r) override;
-                virtual void        realize(const ws::rectangle_t *r) override;
+                virtual bool        realize(const ws::rectangle_t *r) override;
 
                 /**
                  * Discard widget: notify window that widget has been removed from the widget tree

@@ -70,8 +70,8 @@ namespace lsp
 
                 float               climited(float v) const;
                 float               change(float k, float step);
-                float               do_limit(float v) const;
-                float               transform(float v) const;
+                float               do_limit(float v, bool write) const;
+                float               transform(float v, bool write) const;
 
             protected:
                 explicit RangeFloat(prop::Listener *listener = NULL);
@@ -87,13 +87,13 @@ namespace lsp
                 inline void         clear_transform()       { set_transform(NULL, NULL);    }
 
             public:
-                inline float        get() const             { return do_limit(fValue);      }
-                inline float        min() const             { return fMin;                  }
-                inline float        max() const             { return fMax;                  }
-                inline float        range() const           { return fMax - fMin;           }
+                inline float        get() const             { return do_limit(fValue, false);   }
+                inline float        min() const             { return fMin;                      }
+                inline float        max() const             { return fMax;                      }
+                inline float        range() const           { return fMax - fMin;               }
                 inline float        abs_range() const       { return (fMax > fMin) ? fMax - fMin : fMin - fMax; }
-                inline bool         range_locked() const    { return nFlags & F_RANGE_LOCK; }
-                inline bool         auto_limit() const      { return nFlags & F_AUTO_LIMIT; }
+                inline bool         range_locked() const    { return nFlags & F_RANGE_LOCK;     }
+                inline bool         auto_limit() const      { return nFlags & F_AUTO_LIMIT;     }
 
                 float               set(float v);
                 float               set_all(float v, float min, float max);

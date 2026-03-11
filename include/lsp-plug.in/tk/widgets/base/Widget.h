@@ -90,11 +90,13 @@ namespace lsp
                     INITIALIZED     = 1 << 0,       // Widget is initialized
                     FINALIZED       = 1 << 1,       // Widget is in destroy state
                     VISIBLE         = 1 << 2,       // Widget is currently visible
-                    REDRAW_SURFACE  = 1 << 3,       // Need to redraw surface
-                    REDRAW_CHILD    = 1 << 4,       // Need to redraw child only
-                    SIZE_INVALID    = 1 << 5,       // Size limit structure is valid
-                    RESIZE_PENDING  = 1 << 6,       // The resize request is pending
-                    REALIZE_ACTIVE  = 1 << 7,       // Realize is active, no need to trigger for realize
+                    REALIZED        = 1 << 3,       // Widget has been at least once realized
+                    REDRAW_SURFACE  = 1 << 4,       // Need to redraw surface
+                    REDRAW_CHILD    = 1 << 5,       // Need to redraw child only
+                    REDRAW_BG       = 1 << 6,       // Need to redraw surface
+                    SIZE_INVALID    = 1 << 7,       // Size limit structure is valid
+                    RESIZE_PENDING  = 1 << 8,       // The resize request is pending
+                    REALIZE_ACTIVE  = 1 << 9,       // Realize is active, no need to trigger for realize
 
                     REDRAW_DEFAULT  = REDRAW_SURFACE
                 };
@@ -194,8 +196,9 @@ namespace lsp
                 /**
                  * Realize widget internally
                  * @param r real area allocated to the widget
+                 * @return true if widget has changed position/size and needs to be redrawn
                  */
-                virtual void            realize(const ws::rectangle_t *r);
+                virtual bool            realize(const ws::rectangle_t *r);
 
                 /** Hide widget
                  *
@@ -369,7 +372,13 @@ namespace lsp
                  *
                  * @return true if there is redraw request pending
                  */
-                inline bool             redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD); }
+                inline bool             redraw_pending() const              { return nFlags & (REDRAW_SURFACE | REDRAW_CHILD | REDRAW_BG); }
+
+                /** Check if there is backround redraw request pending
+                 *
+                 * @return true if there is redraw request pending
+                 */
+                inline bool             redraw_bg_pending() const           { return nFlags & REDRAW_BG; }
 
                 /** Check if there is resize request pending
                  *
@@ -605,8 +614,9 @@ namespace lsp
                  *
                  * @param r real area allocated to the widget
                  * @param redraw query for redraw
+                 * @return true if widget has changed position/size and needs to be redrawn
                  */
-                void                    realize_widget(const ws::rectangle_t *r);
+                bool                    realize_widget(const ws::rectangle_t *r);
 
                 /** Handle UI event from the display
                  *

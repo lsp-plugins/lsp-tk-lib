@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 15 июн. 2017 г.
@@ -273,7 +273,7 @@ namespace lsp
             const style::WidgetColors *colors = select_colors();
             const size_t redraw = redraw_flags(colors->property_changed(prop));
             if (redraw != 0)
-                query_draw(REDRAW_CHILD);
+                query_draw(redraw & (REDRAW_CHILD | REDRAW_BG));
 
             if (sActive.is(prop))
                 query_draw();
@@ -302,8 +302,12 @@ namespace lsp
 
         size_t Widget::redraw_flags(size_t draw_flags)
         {
-            size_t result = (draw_flags & DRAW_SURFACE) ? REDRAW_SURFACE : 0;
-            return lsp_setflag(result, REDRAW_CHILD, draw_flags & DRAW_CHILD);
+            size_t result   = (draw_flags & DRAW_SURFACE) ? REDRAW_SURFACE : 0;
+            if (draw_flags & DRAW_CHILD)
+                result         |= REDRAW_CHILD;
+            if (draw_flags & DRAW_BG)
+                result         |= REDRAW_BG;
+            return result;
         }
 
         const style::WidgetColors *Widget::select_colors() const
@@ -595,7 +599,7 @@ namespace lsp
         void Widget::show_widget()
         {
             query_resize();
-            query_draw(REDRAW_CHILD | REDRAW_SURFACE);
+            query_draw(REDRAW_CHILD | REDRAW_SURFACE | REDRAW_BG);
             sSlots.execute(SLOT_SHOW, this);
         }
 
@@ -646,7 +650,7 @@ namespace lsp
                 return;
 
             // Check that flags have been changed
-            flags       = nFlags | (flags & (REDRAW_CHILD | REDRAW_SURFACE));
+            flags       = nFlags | (flags & (REDRAW_CHILD | REDRAW_SURFACE | REDRAW_BG));
             if (flags == nFlags)
                 return;
 
@@ -658,7 +662,7 @@ namespace lsp
 
         void Widget::commit_redraw()
         {
-            nFlags &= ~(REDRAW_SURFACE | REDRAW_CHILD);
+            nFlags &= ~(REDRAW_SURFACE | REDRAW_CHILD | REDRAW_BG);
         }
 
         void Widget::show()
@@ -682,6 +686,9 @@ namespace lsp
         {
             if (nFlags & REALIZE_ACTIVE)
                 return;
+
+            // Query for redraw
+            query_draw();
 
             // Update flags
             nFlags     |= (RESIZE_PENDING | SIZE_INVALID);
@@ -734,35 +741,42 @@ namespace lsp
         {
         }
 
-        void Widget::realize(const ws::rectangle_t *r)
+        bool Widget::realize(const ws::rectangle_t *r)
         {
             // Do not report size request on size change
-            if ((sSize.nLeft == r->nLeft) &&
+            if ((nFlags & REALIZED) &&
+                (sSize.nLeft == r->nLeft) &&
                 (sSize.nTop  == r->nTop) &&
                 (sSize.nWidth == r->nWidth) &&
                 (sSize.nHeight == r->nHeight))
-                return;
+                return false;
 
             // Execute slot and commit size
             ws::rectangle_t xr = *r;
             sSlots.execute(SLOT_RESIZE, this, &xr);
-            sSize        = *r;
+            sSize           = *r;
+            nFlags         |= REALIZED;
+
+            return true;
         }
 
-        void Widget::realize_widget(const ws::rectangle_t *r)
+        bool Widget::realize_widget(const ws::rectangle_t *r)
         {
             nFlags     |= REALIZE_ACTIVE;
 
             // Call for realize
-            realize(r);
+            const bool need_redraw = realize(r);
 
             // Reset size pending flags
             nFlags     &= ~(SIZE_INVALID | RESIZE_PENDING | REALIZE_ACTIVE);
-            query_draw();   // Always query redraw after realize()
+            if (need_redraw)
+                query_draw();   // Query redraw after realize() if needed
 
             // Send Realized() event
             ws::rectangle_t rm = *r;
             sSlots.execute(SLOT_REALIZED, this, &rm);
+
+            return need_redraw;
         }
 
         void Widget::get_size_limits(ws::size_limit_t *l)

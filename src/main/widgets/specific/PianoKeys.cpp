@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 25 сент. 2025 г.
@@ -502,9 +502,9 @@ namespace lsp
                 SizeConstraints::transpose(r);
         }
 
-        void PianoKeys::realize(const ws::rectangle_t *r)
+        bool PianoKeys::realize(const ws::rectangle_t *r)
         {
-            Widget::realize(r);
+            bool needs_redraw = Widget::realize(r);
 
             const float scaling     = lsp_max(0.0f, sScaling.get());
             const ssize_t angle     = sAngle.get() & 0x3;
@@ -534,7 +534,7 @@ namespace lsp
             vKeys.clear();
             key_t *k = vKeys.append_n(layout.nLast - layout.nFirst + 1);
             if (k == NULL)
-                return;
+                return needs_redraw;
 
             // Fill array of keys
             switch (angle)
@@ -776,6 +776,8 @@ namespace lsp
                     break;
                 }
             }
+
+            return needs_redraw;
         }
 
         void PianoKeys::draw_key(ws::ISurface *s, const key_t * key, bool black, ssize_t sel_first, ssize_t sel_last)

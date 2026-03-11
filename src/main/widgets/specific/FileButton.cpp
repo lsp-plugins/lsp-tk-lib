@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 сент. 2020 г.
@@ -280,16 +280,18 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void FileButton::realize(const ws::rectangle_t *r)
+        bool FileButton::realize(const ws::rectangle_t *r)
         {
             // Realize
-            Widget::realize(r);
+            const bool needs_redraw = Widget::realize(r);
 
             // Button is always of the squared form
             sButton.nWidth          = lsp_min(r->nWidth, r->nHeight);
             sButton.nHeight         = sButton.nWidth;
             sButton.nLeft           = r->nLeft + ((r->nWidth  - sButton.nWidth ) >> 1);
             sButton.nTop            = r->nTop  + ((r->nHeight - sButton.nHeight) >> 1);
+
+            return needs_redraw;
         }
 
         void FileButton::draw(ws::ISurface *s, bool force)

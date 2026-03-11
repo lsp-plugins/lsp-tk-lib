@@ -61,7 +61,7 @@ namespace lsp
             protected:
                 virtual void                    hide_widget() override;
                 virtual void                    show_widget() override;
-                virtual status_t                sync_size(bool force) override;
+                virtual status_t                sync_size() override;
                 virtual void                    size_request(ws::size_limit_t *r) override;
 
                 virtual status_t                post_init();

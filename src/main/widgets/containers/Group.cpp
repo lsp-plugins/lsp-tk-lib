@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 26 июн. 2020 г.
@@ -259,9 +259,9 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void Group::realize(const ws::rectangle_t *r)
+        bool Group::realize(const ws::rectangle_t *r)
         {
-            WidgetContainer::realize(r);
+            bool needs_redraw = WidgetContainer::realize(r);
 
             // Compute text and widget area
             alloc_t alloc;
@@ -282,8 +282,10 @@ namespace lsp
                 pWidget->get_padded_size_limits(&sr);
                 sLayout.apply(&xr, &sArea, &sr);
                 pWidget->padding()->enter(&xr, pWidget->scaling()->get());
-                pWidget->realize_widget(&xr);
+                if (pWidget->realize_widget(&xr))
+                    needs_redraw = true;
             }
+            return needs_redraw;
         }
 
         void Group::get_child_bg_color(lsp::Color *color) const
@@ -328,9 +330,9 @@ namespace lsp
             {
                 pWidget->get_rectangle(&xr);
 
-                if (force)
+                // Render the child background
+                if ((force) || (pWidget->redraw_bg_pending()))
                 {
-                    // Render the child background
                     if (Size::overlap(area, &sSize))
                     {
                         s->clip_begin(area);
@@ -339,6 +341,7 @@ namespace lsp
                             s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                         }
                         s->clip_end();
+                        bg  = true;
                     }
                 }
 
@@ -362,7 +365,7 @@ namespace lsp
             }
 
             // Render frame
-            if (!force)
+            if ((!force) && (!bg))
                 return;
 
             ssize_t ir, xg;

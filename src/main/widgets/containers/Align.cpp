@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 июл. 2017 г.
@@ -124,31 +124,28 @@ namespace lsp
                 return;
             }
 
-            if ((force) || (pWidget->redraw_pending()))
+            ws::rectangle_t xr;
+            pWidget->get_rectangle(&xr);
+
+            if ((force) || (pWidget->redraw_bg_pending()))
             {
-                // Draw the child only if it is visible in the area
-                ws::rectangle_t xr;
-                pWidget->get_rectangle(&xr);
-                if (Size::intersection(&xr, area))
-                    pWidget->render(s, &xr, force);
-
-                pWidget->commit_redraw();
-            }
-
-            if (force)
-            {
-                ws::rectangle_t cr;
-
-                pWidget->get_rectangle(&cr);
                 if (Size::overlap(area, &sSize))
                 {
                     s->clip_begin(area);
                     {
                         pWidget->get_actual_bg_color(bg_color);
-                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &cr);
+                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                     }
                     s->clip_end();
                 }
+            }
+
+            if ((force) || (pWidget->redraw_pending()))
+            {
+                // Draw the child only if it is visible in the area
+                if (Size::intersection(&xr, area))
+                    pWidget->render(s, &xr, force);
+                pWidget->commit_redraw();
             }
         }
 
@@ -201,13 +198,13 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void Align::realize(const ws::rectangle_t *r)
+        bool Align::realize(const ws::rectangle_t *r)
         {
 //            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
-            WidgetContainer::realize(r);
+            bool needs_redraw = WidgetContainer::realize(r);
 
             if ((pWidget == NULL) || (!pWidget->is_visible_child_of(this)))
-                return;
+                return needs_redraw;
 
             // Realize child widget
             ws::rectangle_t xr;
@@ -216,7 +213,10 @@ namespace lsp
             pWidget->get_padded_size_limits(&sr);
             sLayout.apply(&xr, r, &sr);
             pWidget->padding()->enter(&xr, pWidget->scaling()->get());
-            pWidget->realize_widget(&xr);
+            if (pWidget->realize_widget(&xr))
+                needs_redraw    = true;
+
+            return needs_redraw;
         }
     } /* namespace tk */
 } /* namespace lsp */

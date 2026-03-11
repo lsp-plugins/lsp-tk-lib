@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 6 июл. 2017 г.
@@ -160,7 +160,7 @@ namespace lsp
         {
             Widget::property_changed(prop);
 
-            const style::LabelColors *colors = select_colors();
+            const style::LabelColors * const colors = select_colors();
             if (colors->property_changed(prop))
                 query_draw();
 

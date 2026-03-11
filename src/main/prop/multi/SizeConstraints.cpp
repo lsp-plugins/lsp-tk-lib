@@ -304,6 +304,26 @@ namespace lsp
             limit->nPreHeight   = -1;
         }
 
+        void SizeConstraints::merge(ws::size_limit_t *limit, const ws::rectangle_t * r, float scale)
+        {
+            compute(limit, scale);
+
+            if (limit->nMinWidth < r->nWidth)
+                limit->nMinWidth    = r->nWidth;
+            if (limit->nMinHeight < r->nHeight)
+                limit->nMinHeight   = r->nHeight;
+
+            if ((limit->nMaxWidth >= 0) && (limit->nMaxWidth < r->nWidth))
+                limit->nMaxWidth    = r->nWidth;
+            if ((limit->nMaxHeight >= 0) && (limit->nMaxHeight < r->nHeight))
+                limit->nMaxHeight   = r->nHeight;
+
+            if ((limit->nPreWidth >= 0) && (limit->nPreWidth < r->nWidth))
+                limit->nPreWidth    = r->nWidth;
+            if ((limit->nPreHeight >= 0) && (limit->nPreHeight < r->nHeight))
+                limit->nPreHeight   = r->nHeight;
+        }
+
         void SizeConstraints::apply(ws::size_limit_t *dst, const ws::size_limit_t *src, const ws::size_limit_t *rule)
         {
             // Compute maximum width & height

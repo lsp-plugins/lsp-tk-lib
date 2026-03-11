@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 7 июл. 2017 г.
@@ -372,7 +372,7 @@ namespace lsp
             Widget::property_changed(prop);
 
             // Self properties
-            style::IndicatorColors *cols = select_colors();
+            style::IndicatorColors * const cols = select_colors();
             if (cols->property_changed(prop))
                 query_draw();
 
@@ -522,10 +522,10 @@ namespace lsp
             sIPadding.add(r, scaling);
         }
 
-        void Indicator::realize(const ws::rectangle_t *r)
+        bool Indicator::realize(const ws::rectangle_t *r)
         {
             calc_digit_size(&nDWidth, &nDHeight);
-            Widget::realize(r);
+            return Widget::realize(r);
         }
 
         uint8_t Indicator::get_char(const LSPString *str, size_t index)

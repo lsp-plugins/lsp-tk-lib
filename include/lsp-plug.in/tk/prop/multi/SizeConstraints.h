@@ -116,6 +116,7 @@ namespace lsp
                 inline void set_all(ssize_t size)                           { set(size, size, size, size);          }
 
                 void        compute(ws::size_limit_t *limit, float scale);
+                void        merge(ws::size_limit_t *limit, const ws::rectangle_t * r, float scale);
 
 
                 static void apply(ws::size_limit_t *dst, const ws::size_limit_t *src, const ws::size_limit_t *rule);

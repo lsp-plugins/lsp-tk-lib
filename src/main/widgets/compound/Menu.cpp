@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 18 сент. 2017 г.
@@ -712,9 +712,9 @@ namespace lsp
             return NULL;
         }
 
-        void Menu::realize(const ws::rectangle_t *r)
+        bool Menu::realize(const ws::rectangle_t *r)
         {
-            WidgetContainer::realize(r);
+            bool needs_redraw = WidgetContainer::realize(r);
 
             ws::rectangle_t rr, xr;
             istats_t st;
@@ -749,14 +749,16 @@ namespace lsp
             xr.nWidth           = rr.nWidth;
             xr.nHeight          = lsp_max(4, st.item_h >> 1) + border_w;
             sUp.visibility()->set(scroll > 0);
-            sUp.realize_widget(&xr);
+            if (sUp.realize_widget(&xr))
+                needs_redraw        = true;
 
             // xr.nWidth           = rr.nWidth;
             xr.nHeight          = lsp_max(4, st.item_h >> 1) + border_w;
             // xr.nLeft            = rr.nLeft;
             xr.nTop             = rr.nTop + rr.nHeight - xr.nHeight + border_w;
             sDown.visibility()->set(scroll < st.max_scroll);
-            sDown.realize_widget(&xr);
+            if (sDown.realize_widget(&xr))
+                needs_redraw        = true;
 
             // Now allocate position of each visible widget
             rr.nTop            -= scroll;
@@ -777,7 +779,8 @@ namespace lsp
 
                 // Realize menu item
                 xr                  = pi->area;
-                pi->item->realize_widget(&xr);
+                if (pi->item->realize_widget(&xr))
+                    needs_redraw        = true;
 
                 // Apply padding
                 xr.nLeft           += pi->pad.nLeft;
@@ -829,6 +832,8 @@ namespace lsp
             // Remember drawing parameters
             vVisible.swap(items);
             sIStats             = st;
+
+            return needs_redraw;
         }
 
         void Menu::draw(ws::ISurface *s, bool force)

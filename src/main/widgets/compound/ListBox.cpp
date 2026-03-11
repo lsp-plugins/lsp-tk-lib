@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 30 июл. 2020 г.
@@ -460,7 +460,7 @@ namespace lsp
             a->sList.nHeight    = a->sArea.nHeight  - rgap * 2;
         }
 
-        void ListBox::realize(const ws::rectangle_t *r)
+        bool ListBox::realize(const ws::rectangle_t *r)
         {
             alloc_t a;
             allocate_items(&a);
@@ -499,7 +499,7 @@ namespace lsp
             }
 
             // Realize children
-            realize_children();
+            bool needs_redraw = realize_children();
 
             // Check if there is pending scroll_to_item
             if (nPendingIndex >= 0)
@@ -508,7 +508,8 @@ namespace lsp
                 ssize_t start   = (curr != NULL) ? vVisible.index_of(curr) : -1;
                 if ((start >= 0) && (scroll_to_item(start)))
                 {
-                    realize_children();
+                    if (realize_children())
+                        needs_redraw        = true;
                     nCurrIndex          = nPendingIndex;
                 }
 
@@ -517,7 +518,10 @@ namespace lsp
             }
 
             // Call parent for realize
-            WidgetContainer::realize(r);
+            if (WidgetContainer::realize(r))
+                needs_redraw = true;
+
+            return needs_redraw;
         }
 
         void ListBox::scroll_to(size_t index)
@@ -545,11 +549,12 @@ namespace lsp
             scroll_to(nCurrIndex);
         }
 
-        void ListBox::realize_children()
+        bool ListBox::realize_children()
         {
             float scaling       = lsp_max(0.0f, sScaling.get());
             ssize_t spacing     = lsp_max(0.0f, scaling * sSpacing.get());
             ssize_t max_w       = sList.nWidth;
+            bool needs_redraw   = false;
 
             ws::rectangle_t xr  = sList;
             if (sHBar.visibility()->get())
@@ -574,14 +579,18 @@ namespace lsp
                 it->r.nLeft         = xr.nLeft;
                 it->r.nTop          = xr.nTop + (spacing >> 1);
 
-                it->item->realize_widget(&it->r);
+                if (it->item->realize_widget(&it->r))
+                    needs_redraw        = true;
 
                 // Update position
                 xr.nTop            += it->a.nHeight + spacing;
             }
 
             // Mark for redraw
-            query_draw();
+            if (needs_redraw)
+                query_draw();
+
+            return needs_redraw;
         }
 
         void ListBox::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

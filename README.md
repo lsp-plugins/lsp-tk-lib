@@ -68,6 +68,7 @@ The full list of provided widgets:
   * Edit - single line text edit widget.
   * Fader - fader widget.
   * Hyperlink - hyperlink widget.
+  * Image - raster image, generated or loaded from file.
   * Indicator - 7-segment LED indicator.
   * Knob - single rotating knob.
   * Label - single/multiline text.

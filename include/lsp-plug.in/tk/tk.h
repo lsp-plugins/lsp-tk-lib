@@ -58,6 +58,7 @@
 #include <lsp-plug.in/tk/prop/enum/ButtonMode.h>
 #include <lsp-plug.in/tk/prop/enum/BorderStyle.h>
 #include <lsp-plug.in/tk/prop/enum/FileDialogMode.h>
+#include <lsp-plug.in/tk/prop/enum/Fitting.h>
 #include <lsp-plug.in/tk/prop/enum/GraphFrameFunction.h>
 #include <lsp-plug.in/tk/prop/enum/IndicatorType.h>
 #include <lsp-plug.in/tk/prop/enum/MenuItemType.h>
@@ -75,10 +76,12 @@
 #include <lsp-plug.in/tk/prop/flags/WindowActions.h>
 
 // Single-value properties
+#include <lsp-plug.in/tk/prop/simple/Bitmap.h>
 #include <lsp-plug.in/tk/prop/simple/Boolean.h>
 #include <lsp-plug.in/tk/prop/simple/Integer.h>
 #include <lsp-plug.in/tk/prop/simple/Float.h>
 #include <lsp-plug.in/tk/prop/simple/PathPattern.h>
+#include <lsp-plug.in/tk/prop/simple/RawString.h>
 #include <lsp-plug.in/tk/prop/simple/String.h>
 
 // Compound properties
@@ -156,6 +159,7 @@
 #include <lsp-plug.in/tk/widgets/simple/Edit.h>
 #include <lsp-plug.in/tk/widgets/simple/Fader.h>
 #include <lsp-plug.in/tk/widgets/simple/Hyperlink.h>
+#include <lsp-plug.in/tk/widgets/simple/Image.h>
 #include <lsp-plug.in/tk/widgets/simple/Indicator.h>
 #include <lsp-plug.in/tk/widgets/simple/Knob.h>
 #include <lsp-plug.in/tk/widgets/simple/Label.h>

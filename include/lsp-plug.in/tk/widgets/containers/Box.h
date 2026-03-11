@@ -94,7 +94,7 @@ namespace lsp
                 status_t                    allocate_homogeneous(const ws::rectangle_t *r, lltl::darray<cell_t> &visible);
                 status_t                    allocate_proportional(const ws::rectangle_t *r, lltl::darray<cell_t> &visible);
                 void                        allocate_widget_space(const ws::rectangle_t *r, lltl::darray<cell_t> &visible, ssize_t spacing);
-                void                        realize_children(lltl::darray<cell_t> &visible);
+                bool                        realize_children(lltl::darray<cell_t> &visible);
 
             protected:
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
@@ -102,7 +102,7 @@ namespace lsp
             protected:
                 virtual void                size_request(ws::size_limit_t *r) override;
                 virtual void                property_changed(Property *prop) override;
-                virtual void                realize(const ws::rectangle_t *r) override;
+                virtual bool                realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit Box(Display *dpy);

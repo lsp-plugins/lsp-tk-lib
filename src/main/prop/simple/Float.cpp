@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 окт. 2019 г.
@@ -50,15 +50,15 @@ namespace lsp
             pStyle->set_float(nAtom, fValue);
         }
 
-        float Float::transform(float v) const
+        float Float::transform(float v, bool write) const
         {
-            return (pTransform != NULL) ? pTransform(v, pTransformArg) : v;
+            return (pTransform != NULL) ? pTransform(v, write, pTransformArg) : v;
         }
 
         float Float::set(float v)
         {
             float prev = fValue;
-            fValue  = transform(v);
+            fValue  = transform(v, true);
 
             sync();
             return prev;

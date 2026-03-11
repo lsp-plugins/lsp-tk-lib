@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 25 сент. 2020 г.
@@ -143,25 +143,17 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (vItems.is(prop))
+            if (prop->one_of(vItems))
                 query_draw();
-            if (sConstraints.is(prop))
+
+            if (prop->one_of(sConstraints, sBorder, sAngle, sTextVisible, sHeaderVisible, sMinChannelWidth))
                 query_resize();
+
             if (sFont.is(prop) && (sTextVisible.get()))
-                query_resize();
-            if (sBorder.is(prop))
-                query_resize();
-            if (sAngle.is(prop))
                 query_resize();
             if (sEstText.is(prop) && (sTextVisible.get()))
                 query_resize();
             if (sEstHeader.is(prop) && (sHeaderVisible.get()))
-                query_resize();
-            if (sTextVisible.is(prop))
-                query_resize();
-            if (sHeaderVisible.is(prop))
-                query_resize();
-            if (sMinChannelWidth.is(prop))
                 query_resize();
         }
 
@@ -316,10 +308,10 @@ namespace lsp
                 sConstraints.tapply(r, scaling); // Apply transposed size constraints
         }
 
-        void LedMeter::realize(const ws::rectangle_t *r)
+        bool LedMeter::realize(const ws::rectangle_t *r)
         {
             // Realize the parent class
-            WidgetContainer::realize(r);
+            const bool needs_redraw = WidgetContainer::realize(r);
 
             // Get list of visible items
             lltl::parray<LedMeterChannel> list;
@@ -616,6 +608,8 @@ namespace lsp
 
             // Update visible items
             vVisible.swap(&list);
+
+            return needs_redraw;
         }
 
         void LedMeter::draw(ws::ISurface *s, bool force)

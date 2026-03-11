@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2023 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2023 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 16 июн. 2021 г.
@@ -110,14 +110,10 @@ namespace lsp
         {
             WidgetContainer::property_changed(prop);
 
-            if (sConstraints.is(prop))
-                query_resize();
-            if (sBearing.is(prop))
+            if (prop->one_of(sConstraints, sBearing, vItems))
                 query_resize();
             if (sHover.is(prop))
                 query_draw();
-            if (vItems.is(prop))
-                query_resize();
         }
 
         void MultiLabel::size_request(ws::size_limit_t *r)
@@ -162,9 +158,9 @@ namespace lsp
             sConstraints.apply(r, scaling);
         }
 
-        void MultiLabel::realize(const ws::rectangle_t *r)
+        bool MultiLabel::realize(const ws::rectangle_t *r)
         {
-            WidgetContainer::realize(r);
+            bool needs_redraw = WidgetContainer::realize(r);
 
             // Just realize all child widgets as of the same size
             for (size_t i=0, n=vItems.size(); i<n; ++i)
@@ -173,8 +169,11 @@ namespace lsp
                 if ((l == NULL) || (!l->visibility()->get()))
                     continue;
 
-                l->realize(r);
+                if (l->realize(r))
+                    needs_redraw    = true;
             }
+
+            return needs_redraw;
         }
 
         void MultiLabel::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

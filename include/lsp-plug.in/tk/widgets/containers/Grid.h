@@ -127,7 +127,7 @@ namespace lsp
                 status_t                    estimate_sizes(alloc_t *a);
                 status_t                    create_row_col_descriptors(alloc_t *a);
                 static void                 assign_coords(alloc_t *a, const ws::rectangle_t *r);
-                static void                 realize_children(alloc_t *a);
+                static bool                 realize_children(alloc_t *a);
                 status_t                    attach_internal(ssize_t left, ssize_t top, Widget *widget, size_t rows, size_t cols);
                 static cell_t              *alloc_cell(lltl::parray<cell_t> *list);
                 static void                 free_cells(alloc_t *a);
@@ -137,7 +137,7 @@ namespace lsp
                 virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
                 virtual void                size_request(ws::size_limit_t *r) override;
                 virtual void                property_changed(Property *prop) override;
-                virtual void                realize(const ws::rectangle_t *r) override;
+                virtual bool                realize(const ws::rectangle_t *r) override;
 
             public:
                 explicit Grid(Display *dpy);

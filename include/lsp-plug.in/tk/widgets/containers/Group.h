@@ -99,7 +99,7 @@ namespace lsp
             protected:
                 virtual void            property_changed(Property *prop) override;
                 virtual void            size_request(ws::size_limit_t *r) override;
-                virtual void            realize(const ws::rectangle_t *r) override;
+                virtual bool            realize(const ws::rectangle_t *r) override;
 
                 virtual void            get_child_bg_color(lsp::Color *color) const override;
                 virtual void            get_child_bg_color(lsp::Color &color) const override;

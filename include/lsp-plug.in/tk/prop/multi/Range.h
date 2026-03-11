@@ -65,8 +65,8 @@ namespace lsp
                 virtual void        push() override;
                 virtual void        commit(atom_t property) override;
 
-                float               do_limit(float v) const;
-                float               transform(float v) const;
+                float               do_limit(float v, bool write) const;
+                float               transform(float v, bool write) const;
 
             protected:
                 explicit Range(prop::Listener *listener = NULL);
@@ -82,12 +82,12 @@ namespace lsp
                 inline void         clear_transform()       { set_transform(NULL, NULL);    }
 
             public:
-                inline float        min() const             { return fMin;                  }
-                inline float        max() const             { return fMax;                  }
-                inline float        range() const           { return fMax - fMin;           }
+                inline float        min() const             { return do_limit(fMin, false);     }
+                inline float        max() const             { return do_limit(fMax, false);     }
+                inline float        range() const           { return fMax - fMin;               }
                 inline float        abs_range() const       { return (fMax > fMin) ? fMax - fMin : fMin - fMax; }
-                inline bool         range_locked() const    { return nFlags & F_RANGE_LOCK; }
-                inline bool         inversed() const        { return fMin > fMax;           }
+                inline bool         range_locked() const    { return nFlags & F_RANGE_LOCK;     }
+                inline bool         inversed() const        { return fMin > fMax;               }
 
                 float               set_min(float v);
                 float               set_max(float v);
@@ -118,9 +118,9 @@ namespace lsp
                 public:
                     bool                lock_range(bool lock = true);
                     inline bool         unlock_range()                                  { return lock_range(false);     }
-                    float               set_min(float v);
-                    float               set_max(float v);
-                    void                set(float min, float max);
+                    float               commit_min(float v);
+                    float               commit_max(float v);
+                    void                commit_range(float min, float max);
 
                     /**
                      * Bind property with specified name to the style of linked widget

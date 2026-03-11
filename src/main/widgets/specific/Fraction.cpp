@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 17 авг. 2020 г.
@@ -501,15 +501,20 @@ namespace lsp
             r->nPreHeight   = r->nMinHeight;
         }
 
-        void Fraction::realize(const ws::rectangle_t *r)
+        bool Fraction::realize(const ws::rectangle_t *r)
         {
             alloc_t a;
             allocate(&a);
 
+            bool needs_redraw   = false;
+
             sNum.sArea      = a.sNum;
             sDen.sArea      = a.sDen;
 
-            Widget::realize(r);
+            if (Widget::realize(r))
+                needs_redraw        = true;
+
+            return needs_redraw;
         }
 
         void Fraction::draw(ws::ISurface *s, bool force)

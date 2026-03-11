@@ -88,7 +88,7 @@ namespace lsp
                     LBL_2       = LBL_0 | style::LABEL_INACTIVE,
                     LBL_3       = LBL_1 | style::LABEL_INACTIVE,
 
-                    LBL_TOTAL   = style::HYPERLINK_TOTAL
+                    LBL_TOTAL   = style::LABEL_TOTAL
                 };
 
                 typedef struct estimation_t

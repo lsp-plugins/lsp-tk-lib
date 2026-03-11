@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 9 окт. 2019 г.
@@ -45,7 +45,7 @@ namespace lsp
                 virtual void        push() override;
 
             protected:
-                float               transform(float v) const;
+                float               transform(float v, bool write) const;
 
             protected:
                 explicit Float(prop::Listener *listener = NULL);
@@ -58,14 +58,14 @@ namespace lsp
 
             public:
                 inline void         set_transform(float_transform_t func, void *arg = NULL) { pTransform = func; pTransformArg = arg; }
-                inline void         clear_transform()       { set_transform(NULL, NULL);    }
+                inline void         clear_transform()       { set_transform(NULL, NULL);        }
 
             public:
                 /**
                  * Get value of the float property
                  * @return value of the float property
                  */
-                inline float        get() const             { return fValue;                }
+                inline float        get() const             { return transform(fValue, false);  }
 
                 /**
                  * Set value of the float property
@@ -80,8 +80,8 @@ namespace lsp
                  */
                 void                swap(Float *dst);
 
-                inline float        add(float value)        { return set(fValue + value);   }
-                inline float        sub(float value)        { return set(fValue - value);   }
+                inline float        add(float value)        { return set(fValue + value);       }
+                inline float        sub(float value)        { return set(fValue - value);       }
         };
 
         namespace prop

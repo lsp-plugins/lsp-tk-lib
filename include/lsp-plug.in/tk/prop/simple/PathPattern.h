@@ -47,7 +47,7 @@ namespace lsp
                 virtual ~PathPattern() override;
 
                 PathPattern & operator = (const PathPattern &) = delete;
-                PathPattern & operator = (PathPattern &&);
+                PathPattern & operator = (PathPattern &&) = delete;
 
             public:
                 const io::PathPattern          *pattern() const     { return &sPattern;             }
@@ -80,12 +80,12 @@ namespace lsp
             class PathPattern: public tk::PathPattern
             {
                 public:
-                    explicit PathPattern(prop::Listener *listener = NULL): tk::PathPattern(listener) {};
+                    explicit inline PathPattern(prop::Listener *listener = NULL): tk::PathPattern(listener) {};
                     PathPattern(const PathPattern &) = delete;
                     PathPattern(PathPattern &&) = delete;
 
                     PathPattern & operator = (const PathPattern &) = delete;
-                    PathPattern & operator = (PathPattern &&);
+                    PathPattern & operator = (PathPattern &&) = delete;
             };
 
         } /* namespace prop */

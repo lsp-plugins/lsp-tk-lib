@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 28 мар. 2025 г.
@@ -196,16 +196,16 @@ namespace lsp
             r->nPreHeight   = r->nMinHeight;
         }
 
-        void Overlay::realize(const ws::rectangle_t *r)
+        bool Overlay::realize(const ws::rectangle_t *r)
         {
             const float scaling = lsp_max(0.0f, sScaling.get());
             const size_t bw     = lsp_max(0.0f, sBorderSize.get() * scaling);
 
 //            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
-            WidgetContainer::realize(r);
+            bool needs_redraw = WidgetContainer::realize(r);
 
             if ((wWidget == NULL) || (!wWidget->is_visible_child_of(this)))
-                return;
+                return needs_redraw;
 
             // Realize child widget
             ws::rectangle_t wr;
@@ -220,7 +220,10 @@ namespace lsp
             wWidget->get_padded_size_limits(&sr);
             sLayout.apply(&xr, &wr, &sr);
             wWidget->padding()->enter(&xr, wWidget->scaling()->get());
-            wWidget->realize_widget(&xr);
+            if (wWidget->realize_widget(&xr))
+                needs_redraw    = true;
+
+            return needs_redraw;
         }
 
         void Overlay::draw(ws::ISurface *s, bool force)
@@ -246,13 +249,9 @@ namespace lsp
                 const ws::point_t origin = s->set_origin(bw - xr.nLeft, bw - xr.nTop);
                 lsp_finally { s->set_origin(origin); };
 
-                // Draw the child widget
-                wWidget->render(s, &xr, force);
-                wWidget->commit_redraw();
-
-                if (force)
+                // Draw rectangle around widget
+                if ((force) || (wWidget->redraw_bg_pending()))
                 {
-                    // Draw rectangle around widget
                     ws::rectangle_t sr  = sSize;
                     sr.nLeft           -= xr.nLeft;
                     sr.nTop            -= xr.nTop;
@@ -260,6 +259,10 @@ namespace lsp
                     wWidget->get_actual_bg_color(bg_color);
                     s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                 }
+
+                // Draw the child widget
+                wWidget->render(s, &xr, force);
+                wWidget->commit_redraw();
             }
 
             // Draw border

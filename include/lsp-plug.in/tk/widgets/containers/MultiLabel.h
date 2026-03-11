@@ -76,7 +76,7 @@ namespace lsp
             protected:
                 virtual void            property_changed(Property *prop) override;
                 virtual void            size_request(ws::size_limit_t *r) override;
-                virtual void            realize(const ws::rectangle_t *r) override;
+                virtual bool            realize(const ws::rectangle_t *r) override;
 
             protected:
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);

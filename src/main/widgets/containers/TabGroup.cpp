@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 дек. 2024 г.
@@ -305,9 +305,9 @@ namespace lsp
             sSizeConstraints.apply(r, scaling);
         }
 
-        void TabGroup::realize(const ws::rectangle_t *r)
+        bool TabGroup::realize(const ws::rectangle_t *r)
         {
-            WidgetContainer::realize(r);
+            bool needs_redraw       = WidgetContainer::realize(r);
 
             // Compute text and widget area
             lltl::darray<tab_t> tabs;
@@ -390,11 +390,16 @@ namespace lsp
             {
                 Padding::enter(&sArea, &sBounds, &padding);
                 if (w->is_visible_child_of(this))
-                    w->realize_widget(&sArea);
+                {
+                    if (w->realize_widget(&sArea))
+                        needs_redraw    = true;
+                }
             }
 
             // Commit allocation parameters
             vVisible.swap(&tabs);
+
+            return needs_redraw;
         }
 
         void TabGroup::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)
@@ -424,15 +429,8 @@ namespace lsp
             {
                 w->get_rectangle(&xr);
 
-                // Draw the nested widget
-                if ((force) || (w->redraw_pending()))
-                {
-                    if (Size::intersection(&xr, &sArea))
-                        w->render(s, &xr, force);
-                    w->commit_redraw();
-                }
-
-                if (force)
+                // Draw the background
+                if ((force) || (w->redraw_bg_pending()))
                 {
                     // Render the child background
                     if (Size::overlap(area, &sSize))
@@ -443,6 +441,14 @@ namespace lsp
                         w->get_actual_bg_color(color);
                         s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                     }
+                }
+
+                // Draw the nested widget
+                if ((force) || (w->redraw_pending()))
+                {
+                    if (Size::intersection(&xr, &sArea))
+                        w->render(s, &xr, force);
+                    w->commit_redraw();
                 }
             }
             else
@@ -456,7 +462,7 @@ namespace lsp
             }
 
             // Render frame
-            if (!force)
+            if ((!force) && (!bg))
                 return;
 
             ssize_t ir, xg;

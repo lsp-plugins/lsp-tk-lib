@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 20 июн. 2017 г.
@@ -225,21 +225,20 @@ namespace lsp
 
             // Estimate palette
             ws::rectangle_t xr;
+            lsp::Color bg_color, border_color;
+            float scaling   = lsp_max(0.0f, sScaling.get());
+            float bright    = select_brightness();
+            size_t border   = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
+            get_actual_bg_color(bg_color);
 
-            if (force)
+            // Draw backround of the widget if needed
             {
-                lsp::Color bg_color, border_color;
-                float scaling   = lsp_max(0.0f, sScaling.get());
-                float bright    = select_brightness();
-                size_t border   = (sBorder.get() > 0) ? lsp_max(1.0f, sBorder.get() * scaling) : 0;
-                get_actual_bg_color(bg_color);
-
                 // Enable clipping
                 s->clip_begin(area);
                 lsp_finally { s->clip_end(); };
 
                 // Draw background if no child widget is present
-                if (vVisible.is_empty())
+                if ((vVisible.is_empty()) && (force))
                 {
                     s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &sSize);
                     if (border > 0)
@@ -262,40 +261,44 @@ namespace lsp
                     cell_t *wc = vVisible.uget(i);
                     Widget *w = wc->pWidget;
 
-                    w->get_actual_bg_color(bg_color);
-                    if (Size::overlap(area, &wc->a))
-                        s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &wc->a, &wc->s);
-
-                    // Draw spacing
-                    if (((i + 1) < n) && (spacing > 0))
+                    // Render the frame around child widget
+                    if ((force) || (w->redraw_bg_pending()))
                     {
-                        get_actual_bg_color(bg_color);
-                        if (horizontal)
+                        w->get_actual_bg_color(bg_color);
+                        if (Size::overlap(area, &wc->a))
+                            s->fill_frame(bg_color, SURFMASK_NONE, 0.0f, &wc->a, &wc->s);
+
+                        // Draw spacing
+                        if (((i + 1) < n) && (spacing > 0))
                         {
-                            xr.nLeft    = wc->a.nLeft + wc->a.nWidth;
-                            xr.nTop     = wc->a.nTop;
-                            xr.nWidth   = spacing;
-                            xr.nHeight  = wc->a.nHeight;
-                        }
-                        else
-                        {
-                            xr.nLeft    = wc->a.nLeft;
-                            xr.nTop     = wc->a.nTop + wc->a.nHeight;
-                            xr.nWidth   = wc->a.nWidth;
-                            xr.nHeight  = spacing;
+                            get_actual_bg_color(bg_color);
+                            if (horizontal)
+                            {
+                                xr.nLeft    = wc->a.nLeft + wc->a.nWidth;
+                                xr.nTop     = wc->a.nTop;
+                                xr.nWidth   = spacing;
+                                xr.nHeight  = wc->a.nHeight;
+                            }
+                            else
+                            {
+                                xr.nLeft    = wc->a.nLeft;
+                                xr.nTop     = wc->a.nTop + wc->a.nHeight;
+                                xr.nWidth   = wc->a.nWidth;
+                                xr.nHeight  = spacing;
+                            }
+
+                            if (Size::overlap(area, &xr))
+                                s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
                         }
 
-                        if (Size::overlap(area, &xr))
-                            s->fill_rect(bg_color, SURFMASK_NONE, 0.0f, &xr);
-                    }
-
-                    // Draw border
-                    if (border > 0)
-                    {
-                        border_color.copy(sBorderColor);
-                        border_color.scale_lch_luminance(bright);
-                        Rectangle::enter_border(&xr, &sSize, border);
-                        s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                        // Draw border
+                        if (border > 0)
+                        {
+                            border_color.copy(sBorderColor);
+                            border_color.scale_lch_luminance(bright);
+                            Rectangle::enter_border(&xr, &sSize, border);
+                            s->fill_frame(border_color, SURFMASK_NONE, 0.0f, &sSize, &xr);
+                        }
                     }
                 }
             }
@@ -660,10 +663,12 @@ namespace lsp
             }
         }
 
-        void Box::realize_children(lltl::darray<cell_t> &visible)
+        bool Box::realize_children(lltl::darray<cell_t> &visible)
         {
             ws::size_limit_t sr;
             ws::rectangle_t r;
+
+            bool needs_redraw = false;
 
             for (size_t i=0, n=visible.size(); i<n; ++i)
             {
@@ -688,17 +693,20 @@ namespace lsp
                 // Realize the widget
 //                lsp_trace("realize child=%p, id=%d, parameters = {%d, %d, %d, %d}",
 //                        w->pWidget, int(i), int(w->s.nLeft), int(w->s.nTop), int(w->s.nWidth), int(w->s.nHeight));
-                w->pWidget->realize_widget(&w->s);
+                if (w->pWidget->realize_widget(&w->s))
+                    needs_redraw    = true;
             }
+
+            return needs_redraw;
         }
 
-        void Box::realize(const ws::rectangle_t *r)
+        bool Box::realize(const ws::rectangle_t *r)
         {
             // Flush previously visible widgets
             vVisible.flush();
 
             // Call parent method to realize
-            WidgetContainer::realize(r);
+            bool needs_redraw   = WidgetContainer::realize(r);
 
             // Add border
             ws::rectangle_t xr;
@@ -710,7 +718,7 @@ namespace lsp
             lltl::darray<cell_t>    visible;
             status_t res    = visible_items(&visible);
             if (res != STATUS_OK)
-                return;
+                return needs_redraw;
 
             // Allocate space for child widgets
             if (visible.size() > 0)
@@ -723,9 +731,11 @@ namespace lsp
             // Update list of visible items
             if (res == STATUS_OK)
             {
-                realize_children(visible);
+                if (realize_children(visible))
+                    needs_redraw = true;
                 vVisible.swap(&visible);
             }
+            return needs_redraw;
         }
 
         void Box::size_request(ws::size_limit_t *r)

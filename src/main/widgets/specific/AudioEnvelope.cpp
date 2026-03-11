@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 3 июн. 2025 г.
@@ -426,10 +426,10 @@ namespace lsp
             return NULL;
         }
 
-        void AudioEnvelope::realize(const ws::rectangle_t *r)
+        bool AudioEnvelope::realize(const ws::rectangle_t *r)
         {
             // Call parent class to realize
-            Widget::realize(r);
+            const bool needs_redraw = Widget::realize(r);
 
             // Compute the size of area
             float scaling   = lsp_max(0.0f, sScaling.get());
@@ -442,6 +442,8 @@ namespace lsp
             sArea.nTop      = r->nTop    + padding;
             sArea.nWidth    = r->nWidth  - padding*2;
             sArea.nHeight   = r->nHeight - padding*2;
+
+            return needs_redraw;
         }
 
         float *AudioEnvelope::reserve_buffer(size_t count)
