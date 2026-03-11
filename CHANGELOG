@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.33 ===
+
+
 === 1.0.32 ===
 * Implemented tk::Image widget that can load and hold raster images.
 * Added frame skipping if surface is not ready for rendering. This may be useful
