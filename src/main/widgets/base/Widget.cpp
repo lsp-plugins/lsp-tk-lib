@@ -273,7 +273,7 @@ namespace lsp
             const style::WidgetColors *colors = select_colors();
             const size_t redraw = redraw_flags(colors->property_changed(prop));
             if (redraw != 0)
-                query_draw(redraw & (REDRAW_CHILD | REDRAW_BG));
+                query_draw(redraw);
 
             if (sActive.is(prop))
                 query_draw();
@@ -940,9 +940,6 @@ namespace lsp
         void Widget::get_actual_bg_color(lsp::Color *color, float brightness) const
         {
             const style::WidgetColors *colors = select_colors();
-
-//            if (sTag.get() == 42)
-//                lsp_trace("debug");
 
             if (brightness < 0.0f)
                 brightness = colors->sBgBrightness.get();

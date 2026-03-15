@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.33 ===
-
+* Fixed widget redrawing atrifacts for some use cases.
 
 === 1.0.32 ===
 * Implemented tk::Image widget that can load and hold raster images.
