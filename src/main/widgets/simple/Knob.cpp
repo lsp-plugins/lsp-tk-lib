@@ -157,6 +157,8 @@ namespace lsp
             sInvertMouseVScroll(&sProperties)
         {
             nLastY      = -1;
+            fLastValue  = 0.0f;
+            fDelta      = 0.0f;
             nState      = 0;
             nButtons    = 0;
 
@@ -261,16 +263,6 @@ namespace lsp
         {
             Knob *self = widget_ptrcast<Knob>(ptr);
             return (self != NULL) ? self->on_end_edit() : STATUS_BAD_ARGUMENTS;
-        }
-
-        void Knob::update_value(float delta)
-        {
-//            lsp_trace("value=%f, delta=%f", sValue.get(), delta);
-
-            // Check that value is in range
-            float old = sValue.add(delta, sCycling.get());
-            if (old != sValue.get())
-                sSlots.execute(SLOT_CHANGE, this);
         }
 
         void Knob::on_click(ssize_t x, ssize_t y)
@@ -397,10 +389,11 @@ namespace lsp
                     if (nState != S_NONE)
                         sSlots.execute(SLOT_BEGIN_EDIT, this);
                 }
+                nLastY      = e->nTop;
+                fLastValue  = sValue.get();
             }
 
             nButtons   |= (size_t(1) << e->nCode);
-            nLastY      = e->nTop;
 
             return STATUS_OK;
         }
@@ -417,6 +410,8 @@ namespace lsp
                 if (nState != S_NONE)
                     sSlots.execute(SLOT_END_EDIT, this);
                 nState      = S_NONE;
+
+                fDelta      = 0.0f;
             }
 
             return STATUS_OK;
@@ -431,13 +426,15 @@ namespace lsp
                     return STATUS_OK;
 
                 // Update value
-                float scaling   = lsp_max(0.0f, sScaling.get());
-                bool accel      = (e->nState & ws::MCF_CONTROL);
-                bool decel      = bool(e->nState & ws::MCF_SHIFT) != bool(nButtons & ws::MCF_RIGHT);
+                const float scaling = lsp_max(0.0f, sScaling.get());
+                const bool accel    = (e->nState & ws::MCF_CONTROL);
+                const bool decel    = bool(e->nState & ws::MCF_SHIFT) != bool(nButtons & ws::MCF_RIGHT);
+                const float step    = sStep.get(accel, decel);
 
-                float step      = sStep.get(accel, decel);
-                update_value(step * (nLastY - e->nTop) / scaling);
-                nLastY = e->nTop;
+                // Update value
+                const float old     = sValue.set(fLastValue + step * (nLastY - e->nTop) / scaling, sCycling.get());
+                if (old != sValue.get())
+                    sSlots.execute(SLOT_CHANGE, this);
             }
             else if (nState == S_CLICK)
             {
@@ -455,13 +452,15 @@ namespace lsp
 //            lsp_trace("x=%d, y=%d, state=%x, code=%x", int(e->nLeft), int(e->nTop), int(e->nState), int(e->nCode));
             if (!sEditable.get())
                 return STATUS_OK;
+            if (nButtons != 0)
+                return STATUS_OK;
 
             float step = sStep.get(e->nState & ws::MCF_CONTROL, e->nState & ws::MCF_SHIFT);
             if (sInvertMouseVScroll.get())
                 step            = -step;
 
             // Compute delta
-            float delta = 0.0;
+            float delta = 0.0f;
             if (e->nCode == ws::MCD_UP)
                 delta   = step;
             else if (e->nCode == ws::MCD_DOWN)
@@ -470,9 +469,20 @@ namespace lsp
                 return STATUS_OK;
 
             // Update value
-            sSlots.execute(SLOT_BEGIN_EDIT, this);
-            update_value(delta);
-            sSlots.execute(SLOT_END_EDIT, this);
+            if (fDelta == 0.0f)
+                fLastValue      = sValue.get();
+            fDelta     += delta;
+
+            const float old = sValue.set(fLastValue + fDelta, sCycling.get());
+            if (old != sValue.get())
+            {
+                fLastValue      = sValue.get();
+                fDelta          = 0.0f;
+
+                sSlots.execute(SLOT_BEGIN_EDIT, this);
+                sSlots.execute(SLOT_CHANGE, this);
+                sSlots.execute(SLOT_END_EDIT, this);
+            }
 
             return STATUS_OK;
         }

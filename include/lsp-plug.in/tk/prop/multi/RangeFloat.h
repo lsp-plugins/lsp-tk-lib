@@ -68,7 +68,7 @@ namespace lsp
                 virtual void        push() override;
                 virtual void        commit(atom_t property) override;
 
-                float               climited(float v) const;
+                float               climited(float v, bool write) const;
                 float               change(float k, float step);
                 float               do_limit(float v, bool write) const;
                 float               transform(float v, bool write) const;
@@ -95,7 +95,7 @@ namespace lsp
                 inline bool         range_locked() const    { return nFlags & F_RANGE_LOCK;     }
                 inline bool         auto_limit() const      { return nFlags & F_AUTO_LIMIT;     }
 
-                float               set(float v);
+                float               set(float v, bool cyclic = false);
                 float               set_all(float v, float min, float max);
                 float               set_min(float v);
                 float               set_max(float v);
