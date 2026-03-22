@@ -752,8 +752,17 @@ namespace lsp
                 return false;
 
             // Execute slot and commit size
-            ws::rectangle_t xr = *r;
-            sSlots.execute(SLOT_RESIZE, this, &xr);
+            ws::event_t ev;
+            ws::init_event(&ev);
+
+            ev.nType        = ws::UIE_RESIZE;
+            ev.nTime        = system::get_time_millis();
+            ev.nLeft        = r->nLeft;
+            ev.nTop         = r->nTop;
+            ev.nWidth       = r->nWidth;
+            ev.nHeight      = r->nHeight;
+
+            sSlots.execute(SLOT_RESIZE, this, &ev);
             sSize           = *r;
             nFlags         |= REALIZED;
 
