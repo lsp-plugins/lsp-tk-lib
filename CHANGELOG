@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.34 ===
+
+
 === 1.0.33 ===
 * Fixed widget redrawing atrifacts for some use cases.
 * Updated behaviour of the Knob for better quantization support.
