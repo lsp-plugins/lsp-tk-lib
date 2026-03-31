@@ -2,6 +2,11 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.33 ===
+* Fixed widget redrawing atrifacts for some use cases.
+* Updated behaviour of the Knob for better quantization support.
+* Updated module versions in dependencies.
+
 === 1.0.32 ===
 * Implemented tk::Image widget that can load and hold raster images.
 * Added frame skipping if surface is not ready for rendering. This may be useful

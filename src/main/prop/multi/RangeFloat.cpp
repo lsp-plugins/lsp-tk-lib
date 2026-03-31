@@ -177,10 +177,10 @@ namespace lsp
             return old;
         }
 
-        float RangeFloat::set(float value)
+        float RangeFloat::set(float value, bool cyclic)
         {
             float old   = fValue;
-            value       = do_limit(value, true);
+            value       = (cyclic) ? climited(value, true) : do_limit(value, true);
             if (value == old)
                 return old;
 
@@ -218,7 +218,7 @@ namespace lsp
                 value;
         }
 
-        float RangeFloat::climited(float value) const
+        float RangeFloat::climited(float value, bool write) const
         {
             if (!(nFlags & F_AUTO_LIMIT))
                 return value;
@@ -239,7 +239,7 @@ namespace lsp
                     value  += delta;
             }
 
-            return do_limit(value, false);
+            return do_limit(value, write);
         }
 
         float RangeFloat::change(float k, float step)
@@ -257,7 +257,7 @@ namespace lsp
         float RangeFloat::add(float v, bool cyclic)
         {
             float old   = fValue;
-            v           = (cyclic) ? climited(old + v) : do_limit(old + v, true);
+            v           = (cyclic) ? climited(old + v, true) : do_limit(old + v, true);
             if (old == v)
                 return old;
 
@@ -269,7 +269,7 @@ namespace lsp
         float RangeFloat::sub(float v, bool cyclic)
         {
             float old   = fValue;
-            v           = (cyclic) ? climited(old - v) : do_limit(old - v, true);
+            v           = (cyclic) ? climited(old - v, true) : do_limit(old - v, true);
             if (old == v)
                 return old;
 

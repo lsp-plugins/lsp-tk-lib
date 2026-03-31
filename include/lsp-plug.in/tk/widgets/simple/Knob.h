@@ -103,6 +103,8 @@ namespace lsp
 
             protected:
                 ssize_t             nLastY;
+                float               fLastValue;
+                float               fDelta;
                 size_t              nState;
                 size_t              nButtons;
 
@@ -132,7 +134,6 @@ namespace lsp
 
             protected:
                 size_t                          check_mouse_over(ssize_t x, ssize_t y);
-                void                            update_value(float delta);
                 void                            on_click(ssize_t x, ssize_t y);
                 style::KnobColors              *select_colors();
 
