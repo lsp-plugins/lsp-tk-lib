@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 19 июн. 2017 г.
@@ -278,16 +278,28 @@ namespace lsp
             return (pDisplay != NULL) ? pDisplay->wait_events(millis) : STATUS_BAD_STATE;
         }
 
+        status_t Display::process_pending_events()
+        {
+            if (pDisplay == NULL)
+                return STATUS_BAD_STATE;
+
+            if (!sLock.lock())
+                return STATUS_UNKNOWN_ERR;
+            lsp_finally { sLock.unlock(); };
+
+            return pDisplay->process_pending_events();
+        }
+
         status_t Display::main_iteration()
         {
             if (pDisplay == NULL)
                 return STATUS_BAD_STATE;
+
             if (!sLock.lock())
                 return STATUS_UNKNOWN_ERR;
-            status_t res = pDisplay->main_iteration();
-            if (!sLock.unlock())
-                return STATUS_UNKNOWN_ERR;
-            return res;
+            lsp_finally { sLock.unlock(); };
+
+            return pDisplay->main_iteration();
         }
 
         void Display::quit_main()
