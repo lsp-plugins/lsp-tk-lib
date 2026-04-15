@@ -5,6 +5,7 @@
 === 1.0.34 ===
 * Added process_pending_events() in the tk::Display class for handling pending
   events at the main loop start and at the main loop end.
+* Updated build scripts.
 
 === 1.0.33 ===
 * Fixed widget redrawing atrifacts for some use cases.
