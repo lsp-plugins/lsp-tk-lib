@@ -336,6 +336,62 @@ The result of this example:
 
 ![Indicator widget](res/doc/example-msg.png)
 
+## Supported platforms
+
+The build and correct unit test execution has been confirmed for following platforms:
+* FreeBSD
+* GNU/Linux
+* MacOS (ARM-based)
+* Windows 32-bit
+* Windows 64-bit
+
+## Requirements
+
+The following packages need to be installed for building:
+
+* gcc >= 4.9 (All OS)
+* make >= 4.0 (All OS)
+* cairo >= 1.14 (Linux, BSD)
+* libgl (Linux, BSD)
+* sndfile >= 1.0.25 (Linux, BSD)
+* freetype (Linux, BSD)
+* xlib (Linux, BSD)
+
+## Building
+
+To build the library, perform the following commands:
+
+```bash
+make config # Configure the build
+make fetch # Fetch dependencies from Git repository
+make
+sudo make install
+```
+
+To get more build options, run:
+
+```bash
+make help
+```
+
+To uninstall library, simply issue:
+
+```bash
+make uninstall
+```
+
+To clean all binary files, run:
+
+```bash
+make clean
+```
+
+To clean the whole project tree including configuration files, run:
+
+```bash
+make prune
+```
+
 ## SAST Tools
 
 * [PVS-Studio](https://pvs-studio.com/en/pvs-studio/?utm_source=website&utm_medium=github&utm_campaign=open_source) - static analyzer for C, C++, C#, and Java code.

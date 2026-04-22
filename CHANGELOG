@@ -3,6 +3,11 @@
 *******************************************************************************
 
 === 1.0.34 ===
+* Updated build system: ASAN, CROSS_COMPILE, DEBUG, DEVEL, PROFILE, STRICT,
+  TEST, TRACE makefile flags replaced with 'asan', 'crosscompile', 'debug',
+  'devel', 'profile', 'strict', 'test' and 'trace' FEATURE flags.
+* Added process_pending_events() method for IDisplay for properly handling of multiple
+  IDisplay::main() method calls.
 * Added process_pending_events() in the tk::Display class for handling pending
   events at the main loop start and at the main loop end.
 * Updated build scripts.
