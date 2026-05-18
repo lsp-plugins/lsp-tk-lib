@@ -238,6 +238,7 @@ namespace lsp
             // Bind slots
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_submit, self());
+            if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
 
             return (id >= 0) ? STATUS_OK : -id;
         }
@@ -795,41 +796,47 @@ namespace lsp
 
         status_t ListBox::slot_on_scroll_change(Widget *sender, void *ptr, void *data)
         {
-            ListBox *_this = widget_ptrcast<ListBox>(ptr);
-            if (_this == NULL)
+            ListBox * const self = widget_ptrcast<ListBox>(ptr);
+            if (self == NULL)
                 return STATUS_OK;
 
-            if ((&_this->sHBar != sender) && (&_this->sVBar != sender))
+            if ((&self->sHBar != sender) && (&self->sVBar != sender))
                 return STATUS_OK;
 
-            if (&_this->sHBar == sender)
-                _this->sHScroll.commit_value(_this->sHBar.value()->get());
-            else if (&_this->sVBar == sender)
-                _this->sVScroll.commit_value(_this->sVBar.value()->get());
+            if (&self->sHBar == sender)
+                self->sHScroll.commit_value(self->sHBar.value()->get());
+            else if (&self->sVBar == sender)
+                self->sVScroll.commit_value(self->sVBar.value()->get());
 
-            _this->realize_children();
-            _this->query_draw();
+            self->realize_children();
+            self->query_draw();
 
             return STATUS_OK;
         }
 
         status_t ListBox::slot_on_scroll_key_event(Widget *sender, void *ptr, void *data)
         {
-            ListBox *_this = widget_ptrcast<ListBox>(ptr);
-            const ws::event_t *e = static_cast<ws::event_t *>(data);
-            return (_this != NULL) ? _this->handle_event(e) : STATUS_OK;
+            ListBox * const self = widget_ptrcast<ListBox>(ptr);
+            const ws::event_t * const e = static_cast<ws::event_t *>(data);
+            return (self != NULL) ? self->handle_event(e) : STATUS_OK;
         }
 
         status_t ListBox::slot_on_change(Widget *sender, void *ptr, void *data)
         {
-            ListBox *_this = widget_ptrcast<ListBox>(ptr);
-            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+            ListBox * const self = widget_ptrcast<ListBox>(ptr);
+            return (self != NULL) ? self->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
         status_t ListBox::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
-            ListBox *_this = widget_ptrcast<ListBox>(ptr);
-            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+            ListBox * const self = widget_ptrcast<ListBox>(ptr);
+            return (self != NULL) ? self->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ListBox::slot_on_cancel(Widget *sender, void *ptr, void *data)
+        {
+            ListBox * const self = widget_ptrcast<ListBox>(ptr);
+            return (self != NULL) ? self->on_cancel() : STATUS_BAD_ARGUMENTS;
         }
 
         void ListBox::on_add_item(void *obj, Property *prop, void *w)
@@ -1190,6 +1197,10 @@ namespace lsp
                     sSlots.execute(SLOT_SUBMIT, this, NULL);
                     break;
 
+                case ws::WSK_ESCAPE:
+                    sSlots.execute(SLOT_CANCEL, this, NULL);
+                    break;
+
                 default:
                     break;
             }
@@ -1339,6 +1350,11 @@ namespace lsp
         }
 
         status_t ListBox::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ListBox::on_cancel()
         {
             return STATUS_OK;
         }

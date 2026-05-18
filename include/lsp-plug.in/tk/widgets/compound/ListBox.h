@@ -194,6 +194,7 @@ namespace lsp
                 static status_t         slot_on_scroll_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_cancel(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_scroll_key_event(Widget *sender, void *ptr, void *data);
 
                 static void             on_add_item(void *obj, Property *prop, void *w);
@@ -267,6 +268,7 @@ namespace lsp
             public:
                 virtual status_t            on_change();
                 virtual status_t            on_submit();
+                virtual status_t            on_cancel();
 
                 virtual void                scroll_to_current();
                 virtual void                scroll_to(size_t index);

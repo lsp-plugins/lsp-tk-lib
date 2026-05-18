@@ -171,6 +171,8 @@ namespace lsp
             protected:
                 static status_t         slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t         slot_on_submit(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_cancel(Widget *sender, void *ptr, void *data);
+                static status_t         slot_on_listbox_cancel(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual void            property_changed(Property *prop) override;
@@ -236,6 +238,7 @@ namespace lsp
             public:
                 virtual status_t            on_change();
                 virtual status_t            on_submit();
+                virtual status_t            on_cancel();
         };
     } /* namespace tk */
 } /* namespace lsp */
