@@ -11,7 +11,7 @@
 * Added process_pending_events() in the tk::Display class for handling pending
   events at the main loop start and at the main loop end.
 * Changed behaviour of the AudioSample widget related to displaying load status.
-* ComboBox now properly reacts on the 'ESC' key pressure and hides the dropdown list.
+* ComboBox and ComboGroup now properly react on the 'ESC' key pressure and hides the dropdown list.
 * Updated build scripts.
 
 === 1.0.33 ===

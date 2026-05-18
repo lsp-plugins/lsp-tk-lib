@@ -234,6 +234,12 @@ namespace lsp
             handler_id_t id;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
+            if (id < 0)
+                return -id;
+
+            // Bind ListBox slots
+            id = sLBox.slots()->bind(SLOT_CANCEL, slot_on_listbox_cancel, self());
             if (id < 0)
                 return -id;
 
@@ -669,14 +675,27 @@ namespace lsp
 
         status_t ComboGroup::slot_on_change(Widget *sender, void *ptr, void *data)
         {
-            ComboGroup *_this = widget_ptrcast<ComboGroup>(ptr);
-            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+            ComboGroup *const self = widget_ptrcast<ComboGroup>(ptr);
+            return (self != NULL) ? self->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
         status_t ComboGroup::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
-            ComboGroup *_this = widget_ptrcast<ComboGroup>(ptr);
-            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+            ComboGroup *const self = widget_ptrcast<ComboGroup>(ptr);
+            return (self != NULL) ? self->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ComboGroup::slot_on_cancel(Widget *sender, void *ptr, void *data)
+        {
+            ComboGroup *const self = widget_ptrcast<ComboGroup>(ptr);
+            return (self != NULL) ? self->on_cancel() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ComboGroup::slot_on_listbox_cancel(Widget *sender, void *ptr, void *data)
+        {
+            ComboGroup * const self = widget_ptrcast<ComboGroup>(ptr);
+            self->sOpened.set(false);
+            return self->sSlots.execute(SLOT_CANCEL, self, NULL);
         }
 
         status_t ComboGroup::on_change()
@@ -685,6 +704,11 @@ namespace lsp
         }
 
         status_t ComboGroup::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ComboGroup::on_cancel()
         {
             return STATUS_OK;
         }
