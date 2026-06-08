@@ -91,8 +91,6 @@ namespace lsp
             sIBGInherit(&sProperties),
             sIBGBrightness(&sProperties)
         {
-            pWidget             = NULL;
-
             sLabel.nLeft        = 0;
             sLabel.nTop         = 0;
             sLabel.nWidth       = 0;
@@ -219,33 +217,49 @@ namespace lsp
 
         void Group::size_request(ws::size_limit_t *r)
         {
-            float scaling   = lsp_max(0.0f, sScaling.get());
+            const float scaling = lsp_max(0.0f, sScaling.get());
             alloc_t alloc;
 
             allocate(&alloc);
 
-            ssize_t hpad       = alloc.pad.nLeft + alloc.pad.nRight;
-            ssize_t vpad       = alloc.pad.nTop  + alloc.pad.nBottom;
+            ssize_t hpad        = alloc.pad.nLeft + alloc.pad.nRight;
+            ssize_t vpad        = alloc.pad.nTop  + alloc.pad.nBottom;
 
-            if (pWidget == NULL)
+            // Estimate the minimum size of the widget
+            ssize_t min_w       = 0;
+            ssize_t min_h       = 0;
+
+            if (sAggregateSize.get())
             {
-                r->nMinWidth        = 0;
-                r->nMinHeight       = 0;
-                r->nMaxWidth        = -1;
-                r->nMaxHeight       = -1;
-                r->nPreWidth        = -1;
-                r->nPreHeight       = -1;
+                // Compute the aggregate size for all widgets
+                for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+                {
+                    tk::Widget * const w = vWidgets.get(i);
+                    if ((w != NULL) && (w->is_visible_child_of(this)))
+                    {
+                        w->get_padded_size_limits(r);
+
+                        min_w       = lsp_max(min_w, lsp_max(r->nMinWidth, 0)  + hpad);
+                        min_h       = lsp_max(min_h, lsp_max(r->nMinHeight, 0) + vpad);
+                    }
+                }
             }
             else
             {
-                pWidget->get_padded_size_limits(r);
-                r->nMinWidth        = (r->nMinWidth  >= 0) ? r->nMinWidth  + hpad : hpad;
-                r->nMinHeight       = (r->nMinHeight >= 0) ? r->nMinHeight + vpad : vpad;
-                r->nMaxWidth        = -1;
-                r->nMaxHeight       = -1;
-                r->nPreWidth        = -1;
-                r->nPreHeight       = -1;
+                Widget * const w    = current_widget();
+                if (w != NULL)
+                {
+                    min_w       = lsp_max(r->nMinWidth, 0) + hpad;
+                    min_h       = lsp_max(r->nMinHeight, 0) + vpad;
+                }
             }
+
+            r->nMinWidth        = min_w;
+            r->nMinHeight       = min_h;
+            r->nMaxWidth        = -1;
+            r->nMaxHeight       = -1;
+            r->nPreWidth        = -1;
+            r->nPreHeight       = -1;
 
             r->nMinWidth        = lsp_max(alloc.rtext.nWidth, r->nMinWidth);
             r->nMinHeight       = lsp_max(alloc.rtext.nHeight, r->nMinHeight);
@@ -274,15 +288,17 @@ namespace lsp
             Padding::enter(&sArea, r, &alloc.pad);
 
             // Realize child widget
-            if ((pWidget != NULL) && (pWidget->visibility()->get()))
+            Widget * const widget = current_widget();
+
+            if (widget != NULL)
             {
                 ws::rectangle_t xr;
                 ws::size_limit_t sr;
 
-                pWidget->get_padded_size_limits(&sr);
+                widget->get_padded_size_limits(&sr);
                 sLayout.apply(&xr, &sArea, &sr);
-                pWidget->padding()->enter(&xr, pWidget->scaling()->get());
-                if (pWidget->realize_widget(&xr))
+                widget->padding()->enter(&xr, widget->scaling()->get());
+                if (widget->realize_widget(&xr))
                     needs_redraw = true;
             }
             return needs_redraw;
@@ -326,18 +342,20 @@ namespace lsp
             lsp_finally { s->set_antialiasing(aa); };
 
             // Draw background if child is invisible or not present
-            if ((pWidget != NULL) && (pWidget->visibility()->get()))
+            Widget * const widget = current_widget();
+
+            if (widget != NULL)
             {
-                pWidget->get_rectangle(&xr);
+                widget->get_rectangle(&xr);
 
                 // Render the child background
-                if ((force) || (pWidget->redraw_bg_pending()))
+                if ((force) || (widget->redraw_bg_pending()))
                 {
                     if (Size::overlap(area, &sSize))
                     {
                         s->clip_begin(area);
                         {
-                            pWidget->get_actual_bg_color(color);
+                            widget->get_actual_bg_color(color);
                             s->fill_frame(color, SURFMASK_NONE, 0.0f, &sSize, &xr);
                         }
                         s->clip_end();
@@ -346,11 +364,11 @@ namespace lsp
                 }
 
                 // Draw the nested widget
-                if ((force) || (pWidget->redraw_pending()))
+                if ((force) || (widget->redraw_pending()))
                 {
                     if (Size::intersection(&xr, &sSize))
-                        pWidget->render(s, &xr, force);
-                    pWidget->commit_redraw();
+                        widget->render(s, &xr, force);
+                    widget->commit_redraw();
                 }
             }
             else
