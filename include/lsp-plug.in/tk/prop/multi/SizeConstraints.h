@@ -144,7 +144,11 @@ namespace lsp
                 static void add(ws::size_limit_t *dst, ssize_t width, ssize_t height);
                 static void scale(ws::size_limit_t *dst, float scale);
 
-                static bool match(const ws::rectangle_t *r, const ws::size_limit_t *sr);
+                static bool match(const ws::size_limit_t *sr, ssize_t width, ssize_t height);
+                inline static bool match(const ws::size_limit_t *sr, const ws::rectangle_t *r)
+                {
+                    return match(sr, r->nWidth, r->nHeight);
+                }
 
                 static void transpose(ws::size_limit_t *r);
                 static void transpose(ws::size_limit_t *dst, const ws::size_limit_t *src);

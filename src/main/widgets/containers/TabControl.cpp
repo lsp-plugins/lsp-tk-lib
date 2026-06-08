@@ -213,7 +213,7 @@ namespace lsp
 
             if (prop->one_of(sBorderColor, sHeadingColor, sHeadingSpacingColor, sHeadingGapColor, sHeadingGapBrightness))
                 query_draw();
-            if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing, sHeadingSpacing, sHeadingGap))
+            if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing, sHeadingSpacing, sHeadingGap, sAggregateSize))
                 query_resize();
             if (prop->one_of(sEmbedding, sHeading, sSizeConstraints))
                 query_resize();

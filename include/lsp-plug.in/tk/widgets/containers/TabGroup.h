@@ -93,6 +93,7 @@ namespace lsp
                 prop::Boolean               sTabJoint;
                 prop::Boolean               sHeadingFill;
                 prop::Boolean               sHeadingSpacingFill;
+                prop::Boolean               sAggregateSize;
                 prop::Pointer               sTabPointer;            // Tab pointer
 
                 prop::WidgetList<TabItem>   vItems;
@@ -152,6 +153,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                    tab_joint,                  &sTabJoint)
                 LSP_TK_PROPERTY(Boolean,                    heading_fill,               &sHeadingFill)
                 LSP_TK_PROPERTY(Boolean,                    heading_spacing_fill,       &sHeadingSpacingFill)
+                LSP_TK_PROPERTY(Boolean,                    aggregate_size,             &sAggregateSize)
                 LSP_TK_PROPERTY(Pointer,                    mouse_pointer,              &sTabPointer)
                 LSP_TK_PROPERTY(WidgetList<TabItem>,        items,                      &vItems)
                 LSP_TK_PROPERTY(WidgetList<Widget>,         widgets,                    &vWidgets)

@@ -52,6 +52,7 @@ namespace lsp
                 prop::SizeConstraints       sSizeConstraints;
                 prop::Alignment             sHeading;
                 prop::Boolean               sInvertMouseVScroll;
+                prop::Boolean               sAggregateSize;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -138,6 +139,7 @@ namespace lsp
                 prop::SizeConstraints       sSizeConstraints;
                 prop::Alignment             sHeading;
                 prop::Boolean               sInvertMouseVScroll;
+                prop::Boolean               sAggregateSize;
 
                 prop::WidgetList<Widget>    vWidgets;
                 prop::WidgetPtr<ListBoxItem> sSelected;
@@ -196,7 +198,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Layout,                     layout,                 &sLayout)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,            &sSizeConstraints)
                 LSP_TK_PROPERTY(Alignment,                  heading,                &sHeading)
-                LSP_TK_PROPERTY(Boolean,                    invert_mouse_vscroll,   &sInvertMouseVScroll);
+                LSP_TK_PROPERTY(Boolean,                    invert_mouse_vscroll,   &sInvertMouseVScroll)
+                LSP_TK_PROPERTY(Boolean,                    aggregate_size,         &sAggregateSize)
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,               &sSelected)
                 LSP_TK_PROPERTY(WidgetPtr<Widget>,          active_group,           &sActiveGroup)
 
