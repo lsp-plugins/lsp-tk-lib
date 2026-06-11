@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 22 авг. 2020 г.
@@ -299,7 +299,7 @@ namespace lsp
                 // Calculate text location
                 font->get_text_parameters(s, &xtp, fscaling, text, last, tail);
                 float dx    = (r->nWidth - xtp.Width) * 0.5f;
-                ssize_t x   = r->nLeft   + dx * halign - xtp.XBearing;
+                float x     = roundf(r->nLeft   + dx * halign - xtp.XBearing);
                 y          += fp->Height;
 
                 font->draw(s, color, x, y, fscaling, text, last, tail);
