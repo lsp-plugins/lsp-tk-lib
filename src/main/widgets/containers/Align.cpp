@@ -131,6 +131,8 @@ namespace lsp
         Widget *Align::find_widget(ssize_t x, ssize_t y)
         {
             Widget * const w = current_widget();
+            if (w == NULL)
+                return NULL;
             return (w->inside(x, y)) ? w : NULL;
         }
 
@@ -263,9 +265,9 @@ namespace lsp
         bool Align::realize(const ws::rectangle_t *r)
         {
 //            lsp_trace("width=%d, height=%d", int(r->nWidth), int(r->nHeight));
-            Widget * const widget = current_widget();
-
             bool needs_redraw = WidgetContainer::realize(r);
+
+            Widget * const widget = current_widget();
             if (widget == NULL)
                 return needs_redraw;
 
