@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.35 ===
+
+
 === 1.0.34 ===
 * Added size aggregation for TabGroup and ComboGroup widgets.
 * Added size aggregation for Group and Align widgets.
