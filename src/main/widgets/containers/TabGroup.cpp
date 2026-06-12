@@ -58,6 +58,7 @@ namespace lsp
             sTabJoint(&sProperties),
             sHeadingFill(&sProperties),
             sHeadingSpacingFill(&sProperties),
+            sAggregateSize(&sProperties),
             sTabPointer(&sProperties),
             vItems(&sProperties, &sIListener),
             sSelected(&sProperties),
@@ -136,6 +137,7 @@ namespace lsp
             sTabJoint.bind("tab.joint", &sStyle);
             sHeadingFill.bind("heading.fill", &sStyle);
             sHeadingSpacingFill.bind("heading.spacing.fill", &sStyle);
+            sAggregateSize.bind("size.aggregate", &sStyle);
             sTabPointer.bind("tab.pointer", &sStyle);
 
             // Bind slots
@@ -167,7 +169,7 @@ namespace lsp
             // Self properties
             if (prop->one_of(sBorderColor, sHeadingColor, sHeadingSpacingColor, sHeadingGapColor, sHeadingGapBrightness))
                 query_draw();
-            if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing, sHeadingSpacing, sHeadingGap))
+            if (prop->one_of(sBorderSize, sBorderRadius, sTabSpacing, sHeadingSpacing, sHeadingGap, sAggregateSize))
                 query_resize();
             if (prop->one_of(sEmbedding, sHeading, sSizeConstraints))
                 query_resize();
@@ -283,14 +285,34 @@ namespace lsp
             w_area.nHeight          = radius * 2;
 
             // Estimate the size of the area for the widget
-            tk::Widget *w           = current_widget();
-            if (w != NULL)
+            if (sAggregateSize.get())
             {
-                w->get_padded_size_limits(r);
-                if (r->nMinWidth > 0)
-                    w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
-                if (r->nMinHeight > 0)
-                    w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
+                // Compute the aggregate size for all tabs
+                for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+                {
+                    tk::Widget * const w = vWidgets.get(i);
+                    if ((w != NULL) && (w->is_visible_child_of(this)))
+                    {
+                        w->get_padded_size_limits(r);
+
+                        if (r->nMinWidth > 0)
+                            w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
+                        if (r->nMinHeight > 0)
+                            w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
+                    }
+                }
+            }
+            else
+            {
+                tk::Widget * const w    = current_widget();
+                if (w != NULL)
+                {
+                    w->get_padded_size_limits(r);
+                    if (r->nMinWidth > 0)
+                        w_area.nWidth       = lsp_max(w_area.nWidth,  ssize_t(r->nMinWidth + padding.nLeft + padding.nRight));
+                    if (r->nMinHeight > 0)
+                        w_area.nHeight      = lsp_max(w_area.nHeight, ssize_t(r->nMinHeight+ padding.nTop + padding.nBottom));
+                }
             }
 
             // Write the actual estimated values

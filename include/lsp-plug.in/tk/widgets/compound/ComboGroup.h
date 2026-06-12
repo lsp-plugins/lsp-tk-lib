@@ -52,6 +52,7 @@ namespace lsp
                 prop::SizeConstraints       sSizeConstraints;
                 prop::Alignment             sHeading;
                 prop::Boolean               sInvertMouseVScroll;
+                prop::Boolean               sAggregateSize;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -138,6 +139,7 @@ namespace lsp
                 prop::SizeConstraints       sSizeConstraints;
                 prop::Alignment             sHeading;
                 prop::Boolean               sInvertMouseVScroll;
+                prop::Boolean               sAggregateSize;
 
                 prop::WidgetList<Widget>    vWidgets;
                 prop::WidgetPtr<ListBoxItem> sSelected;
@@ -150,10 +152,15 @@ namespace lsp
                 ListBoxItem                *current_item();
                 bool                        scroll_item(ssize_t direction, size_t count);
 
+            protected:
                 static void                 on_add_widget(void *obj, Property *prop, void *w);
                 static void                 on_remove_widget(void *obj, Property *prop, void *w);
+
+            protected:
                 static status_t             slot_on_change(Widget *sender, void *ptr, void *data);
                 static status_t             slot_on_submit(Widget *sender, void *ptr, void *data);
+                static status_t             slot_on_cancel(Widget *sender, void *ptr, void *data);
+                static status_t             slot_on_listbox_cancel(Widget *sender, void *ptr, void *data);
 
             protected:
                 virtual Widget             *find_widget(ssize_t x, ssize_t y) override;
@@ -191,7 +198,8 @@ namespace lsp
                 LSP_TK_PROPERTY(Layout,                     layout,                 &sLayout)
                 LSP_TK_PROPERTY(SizeConstraints,            constraints,            &sSizeConstraints)
                 LSP_TK_PROPERTY(Alignment,                  heading,                &sHeading)
-                LSP_TK_PROPERTY(Boolean,                    invert_mouse_vscroll,   &sInvertMouseVScroll);
+                LSP_TK_PROPERTY(Boolean,                    invert_mouse_vscroll,   &sInvertMouseVScroll)
+                LSP_TK_PROPERTY(Boolean,                    aggregate_size,         &sAggregateSize)
                 LSP_TK_PROPERTY(WidgetPtr<ListBoxItem>,     selected,               &sSelected)
                 LSP_TK_PROPERTY(WidgetPtr<Widget>,          active_group,           &sActiveGroup)
 
@@ -218,6 +226,7 @@ namespace lsp
 
                 virtual status_t            on_change();
                 virtual status_t            on_submit();
+                virtual status_t            on_cancel();
 
         };
 

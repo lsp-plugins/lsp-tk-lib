@@ -505,15 +505,16 @@ namespace lsp
                 dst->nPreHeight = lsp_max(0, ceilf(dst->nPreHeight * scale));
         }
 
-        bool SizeConstraints::match(const ws::rectangle_t *r, const ws::size_limit_t *sr)
+
+        bool SizeConstraints::match(const ws::size_limit_t *sr, ssize_t width, ssize_t height)
         {
-            if ((sr->nMinWidth  >= 0) && (r->nWidth  < sr->nMinWidth))
+            if ((sr->nMinWidth  >= 0) && (width  < sr->nMinWidth))
                 return false;
-            if ((sr->nMinHeight >= 0) && (r->nHeight < sr->nMinHeight))
+            if ((sr->nMinHeight >= 0) && (height < sr->nMinHeight))
                 return false;
-            if ((sr->nMaxWidth >= 0) && (r->nWidth > lsp_max(sr->nMinWidth, sr->nMaxWidth)))
+            if ((sr->nMaxWidth >= 0) && (width > lsp_max(sr->nMinWidth, sr->nMaxWidth)))
                 return false;
-            if ((sr->nMaxHeight >= 0) && (r->nHeight > lsp_max(sr->nMinHeight, sr->nMaxHeight)))
+            if ((sr->nMaxHeight >= 0) && (height > lsp_max(sr->nMinHeight, sr->nMaxHeight)))
                 return false;
 
             return true;

@@ -296,6 +296,12 @@ namespace lsp
             // Bind slots
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
+            if (id < 0)
+                return -id;
+
+            // Bind ListBox slots
+            id = sLBox.slots()->bind(SLOT_CANCEL, slot_on_listbox_cancel, self());
             if (id < 0)
                 return -id;
 
@@ -672,14 +678,27 @@ namespace lsp
 
         status_t ComboBox::slot_on_change(Widget *sender, void *ptr, void *data)
         {
-            ComboBox *_this = widget_ptrcast<ComboBox>(ptr);
-            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+            ComboBox * const self = widget_ptrcast<ComboBox>(ptr);
+            return (self != NULL) ? self->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
         status_t ComboBox::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
-            ComboBox *_this = widget_ptrcast<ComboBox>(ptr);
-            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+            ComboBox * const self = widget_ptrcast<ComboBox>(ptr);
+            return (self != NULL) ? self->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ComboBox::slot_on_cancel(Widget *sender, void *ptr, void *data)
+        {
+            ComboBox * const self = widget_ptrcast<ComboBox>(ptr);
+            return (self != NULL) ? self->on_cancel() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ComboBox::slot_on_listbox_cancel(Widget *sender, void *ptr, void *data)
+        {
+            ComboBox * const self = widget_ptrcast<ComboBox>(ptr);
+            self->sOpened.set(false);
+            return self->sSlots.execute(SLOT_CANCEL, self, NULL);
         }
 
         status_t ComboBox::on_mouse_down(const ws::event_t *e)
@@ -790,6 +809,10 @@ namespace lsp
                     sOpened.toggle();
                     break;
 
+                case ws::WSK_ESCAPE:
+                    sOpened.set(false);
+                    break;
+
                 default:
                     break;
             }
@@ -803,6 +826,11 @@ namespace lsp
         }
 
         status_t ComboBox::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ComboBox::on_cancel()
         {
             return STATUS_OK;
         }

@@ -36,6 +36,7 @@ namespace lsp
             LSP_TK_STYLE_DEF_BEGIN(Align, WidgetContainer)
                 prop::Layout            sLayout;
                 prop::SizeConstraints   sConstraints;
+                prop::Boolean           sAggregateSize;
             LSP_TK_STYLE_DEF_END
         }
 
@@ -47,15 +48,22 @@ namespace lsp
         class Align: public WidgetContainer
         {
             public:
-                static const w_class_t    metadata;
+                static const w_class_t      metadata;
 
             protected:
-                Widget                 *pWidget;
-                prop::Layout            sLayout;
-                prop::SizeConstraints   sConstraints;
+                prop::WidgetList<Widget>    vWidgets;
+                prop::Layout                sLayout;
+                prop::SizeConstraints       sConstraints;
+                prop::Boolean               sAggregateSize;
+                prop::CollectionListener    sIListener;
 
             protected:
                 void                    do_destroy();
+                Widget                 *current_widget();
+
+            protected:
+                static void             on_add_widget(void *obj, Property *prop, void *w);
+                static void             on_remove_widget(void *obj, Property *prop, void *w);
 
             protected:
                 virtual Widget         *find_widget(ssize_t x, ssize_t y) override;
@@ -76,8 +84,10 @@ namespace lsp
                 virtual void            destroy() override;
 
             public:
+                LSP_TK_PROPERTY(WidgetList<Widget>, widgets,            &vWidgets)
                 LSP_TK_PROPERTY(Layout,             layout,             &sLayout)
                 LSP_TK_PROPERTY(SizeConstraints,    constraints,        &sConstraints)
+                LSP_TK_PROPERTY(Boolean,            aggregate_size,     &sAggregateSize)
 
             public:
                 virtual void            render(ws::ISurface *s, const ws::rectangle_t *area, bool force) override;

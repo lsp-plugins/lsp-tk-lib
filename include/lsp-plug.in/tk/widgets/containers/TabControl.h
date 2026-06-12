@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 8 нояб. 2022 г.
@@ -158,6 +158,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Boolean,                    tab_joint,                  &sTabJoint)
                 LSP_TK_PROPERTY(Boolean,                    heading_fill,               &sHeadingFill)
                 LSP_TK_PROPERTY(Boolean,                    heading_spacing_fill,       &sHeadingSpacingFill)
+                LSP_TK_PROPERTY(Boolean,                    aggregate_size,             &sAggregateSize)
                 LSP_TK_PROPERTY(Pointer,                    mouse_pointer,              &sTabPointer)
                 LSP_TK_PROPERTY(WidgetPtr<Tab>,             selected,                   &sSelected)
                 LSP_TK_PROPERTY(WidgetList<Tab>,            widgets,                    &vWidgets)

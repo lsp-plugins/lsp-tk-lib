@@ -49,6 +49,7 @@ namespace lsp
                 sSizeConstraints.bind("size.constraints", this);
                 sHeading.bind("heading", this);
                 sInvertMouseVScroll.bind("mouse.vscroll.invert", this);
+                sAggregateSize.bind("size.aggregate", this);
                 // Configure
                 sFont.set_size(12.0f);
                 sTextAdjust.set(TA_NONE);
@@ -67,6 +68,7 @@ namespace lsp
                 sSizeConstraints.set_all(-1);
                 sHeading.set(-1.0f, 0.0f);
                 sInvertMouseVScroll.set(false);
+                sAggregateSize.set(true);
             LSP_TK_STYLE_IMPL_END
             LSP_TK_BUILTIN_STYLE(ComboGroup, "ComboGroup", "root");
 
@@ -164,6 +166,7 @@ namespace lsp
             sSizeConstraints(&sProperties),
             sHeading(&sProperties),
             sInvertMouseVScroll(&sProperties),
+            sAggregateSize(&sProperties),
             vWidgets(&sProperties, &sIListener),
             sSelected(&sProperties)
         {
@@ -229,11 +232,19 @@ namespace lsp
             sLayout.bind("layout", &sStyle);
             sSizeConstraints.bind("size.constraints", &sStyle);
             sHeading.bind("heading", &sStyle);
+            sInvertMouseVScroll.bind("mouse.vscroll.invert", &sStyle);
+            sAggregateSize.bind("size.aggregate", &sStyle);
 
             // Bind slots
             handler_id_t id;
             id = sSlots.add(SLOT_CHANGE, slot_on_change, self());
             if (id >= 0) id = sSlots.add(SLOT_SUBMIT, slot_on_change, self());
+            if (id >= 0) id = sSlots.add(SLOT_CANCEL, slot_on_cancel, self());
+            if (id < 0)
+                return -id;
+
+            // Bind ListBox slots
+            id = sLBox.slots()->bind(SLOT_CANCEL, slot_on_listbox_cancel, self());
             if (id < 0)
                 return -id;
 
@@ -245,7 +256,8 @@ namespace lsp
             WidgetContainer::property_changed(prop);
 
             if (prop->one_of(sFont, sTextAdjust, sBorder, sPadding, sTextPadding, sRadius, sEmbedding, sHeading,
-                    sEmptyText, sTextRadius, sSpinSize, sSpinSpacing, sLayout, sSizeConstraints, sActiveGroup, vWidgets))
+                sEmptyText, sTextRadius, sSpinSize, sSpinSpacing, sLayout, sSizeConstraints, sAggregateSize,
+                sActiveGroup, vWidgets))
                 query_resize();
 
             if (prop->one_of(sColor, sTextColor))
@@ -387,31 +399,39 @@ namespace lsp
 
             ssize_t hpad        = alloc.pad.nLeft + alloc.pad.nRight;
             ssize_t vpad        = alloc.pad.nTop  + alloc.pad.nBottom;
+            ssize_t min_w       = 0;
+            ssize_t min_h       = 0;
 
-            Widget *widget      = current_widget();
-
-            if (widget == NULL)
+            // Estimate the size of the area for the widget
+            if (sAggregateSize.get())
             {
-                r->nMinWidth        = 0;
-                r->nMinHeight       = 0;
-                r->nMaxWidth        = -1;
-                r->nMaxHeight       = -1;
-                r->nPreWidth        = -1;
-                r->nPreHeight       = -1;
+                // Compute the aggregate size for all tabs
+                for (size_t i=0, n=vWidgets.size(); i<n; ++i)
+                {
+                    tk::Widget * const w = vWidgets.get(i);
+                    if ((w != NULL) && (w->is_visible_child_of(this)))
+                    {
+                        w->get_padded_size_limits(r);
+
+                        min_w       = lsp_max(min_w, lsp_max(r->nMinWidth, 0) + hpad);
+                        min_h       = lsp_max(min_h, lsp_max(r->nMinHeight, 0) + vpad);
+                    }
+                }
             }
             else
             {
-                widget->get_padded_size_limits(r);
-                r->nMinWidth        = (r->nMinWidth  >= 0) ? r->nMinWidth  + hpad : hpad;
-                r->nMinHeight       = (r->nMinHeight >= 0) ? r->nMinHeight + vpad : vpad;
-                r->nMaxWidth        = -1;
-                r->nMaxHeight       = -1;
-                r->nPreWidth        = -1;
-                r->nPreHeight       = -1;
+                Widget * const w    = current_widget();
+                if (w != NULL)
+                {
+                    w->get_padded_size_limits(r);
+
+                    min_w       = lsp_max(r->nMinWidth, 0) + hpad;
+                    min_h       = lsp_max(r->nMinHeight, 0) + vpad;
+                }
             }
 
-            r->nMinWidth        = lsp_max(alloc.rtext.nWidth, r->nMinWidth);
-            r->nMinHeight       = lsp_max(alloc.rtext.nHeight, r->nMinHeight);
+            r->nMinWidth        = lsp_max(alloc.rtext.nWidth, min_w);
+            r->nMinHeight       = lsp_max(alloc.rtext.nHeight, min_h);
 
             hpad                = alloc.xpad.nLeft + alloc.xpad.nRight;
             vpad                = alloc.xpad.nTop  + alloc.xpad.nBottom;
@@ -669,14 +689,27 @@ namespace lsp
 
         status_t ComboGroup::slot_on_change(Widget *sender, void *ptr, void *data)
         {
-            ComboGroup *_this = widget_ptrcast<ComboGroup>(ptr);
-            return (_this != NULL) ? _this->on_change() : STATUS_BAD_ARGUMENTS;
+            ComboGroup *const self = widget_ptrcast<ComboGroup>(ptr);
+            return (self != NULL) ? self->on_change() : STATUS_BAD_ARGUMENTS;
         }
 
         status_t ComboGroup::slot_on_submit(Widget *sender, void *ptr, void *data)
         {
-            ComboGroup *_this = widget_ptrcast<ComboGroup>(ptr);
-            return (_this != NULL) ? _this->on_submit() : STATUS_BAD_ARGUMENTS;
+            ComboGroup *const self = widget_ptrcast<ComboGroup>(ptr);
+            return (self != NULL) ? self->on_submit() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ComboGroup::slot_on_cancel(Widget *sender, void *ptr, void *data)
+        {
+            ComboGroup *const self = widget_ptrcast<ComboGroup>(ptr);
+            return (self != NULL) ? self->on_cancel() : STATUS_BAD_ARGUMENTS;
+        }
+
+        status_t ComboGroup::slot_on_listbox_cancel(Widget *sender, void *ptr, void *data)
+        {
+            ComboGroup * const self = widget_ptrcast<ComboGroup>(ptr);
+            self->sOpened.set(false);
+            return self->sSlots.execute(SLOT_CANCEL, self, NULL);
         }
 
         status_t ComboGroup::on_change()
@@ -685,6 +718,11 @@ namespace lsp
         }
 
         status_t ComboGroup::on_submit()
+        {
+            return STATUS_OK;
+        }
+
+        status_t ComboGroup::on_cancel()
         {
             return STATUS_OK;
         }

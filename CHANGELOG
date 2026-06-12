@@ -2,6 +2,21 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.34 ===
+* Added size aggregation for TabGroup and ComboGroup widgets.
+* Added size aggregation for Group and Align widgets.
+* Updated build system: ASAN, CROSS_COMPILE, DEBUG, DEVEL, PROFILE, STRICT,
+  TEST, TRACE makefile flags replaced with 'asan', 'crosscompile', 'debug',
+  'devel', 'profile', 'strict', 'test' and 'trace' FEATURE flags.
+* Added process_pending_events() method for IDisplay for properly handling of multiple
+  IDisplay::main() method calls.
+* Added process_pending_events() in the tk::Display class for handling pending
+  events at the main loop start and at the main loop end.
+* Changed behaviour of the AudioSample widget related to displaying load status.
+* ComboBox and ComboGroup now properly react on the 'ESC' key pressure and hides the dropdown list.
+* Updated build scripts.
+* Updated module versions in dependencies.
+
 === 1.0.33 ===
 * Fixed widget redrawing atrifacts for some use cases.
 * Updated behaviour of the Knob for better quantization support.

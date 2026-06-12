@@ -85,6 +85,7 @@ namespace lsp
                 sMainFont.bind("main.font", this);
                 sMainColor.bind("main.color", this);
                 sMainVisibility.bind("main.visibility", this);
+                sChannelVisibility.bind("channel.visibility", this);
                 sLabelFont.bind("label.font", this);
                 sLabelBgColor.bind("label.bg.color", this);
                 sLabelRadius.bind("label.radius", this);
@@ -129,6 +130,7 @@ namespace lsp
                 sMainFont.set_bold(true);
                 sMainColor.set("#00ff00");
                 sMainVisibility.set(false);
+                sChannelVisibility.set(true);
                 sLabelFont.set_size(10.0f);
                 sLabelBgColor.set("#44000000");
                 sLabelRadius.set(4);
@@ -196,6 +198,7 @@ namespace lsp
             sMainFont(&sProperties),
             sMainColor(&sProperties),
             sMainVisibility(&sProperties),
+            sChannelVisibility(&sProperties),
             sLabelFont(&sProperties),
             sLabelBgColor(&sProperties),
             sLabelRadius(&sProperties),
@@ -312,6 +315,7 @@ namespace lsp
             sMainFont.bind("main.font", &sStyle);
             sMainColor.bind("main.color", &sStyle);
             sMainVisibility.bind("main.visibility", &sStyle);
+            sChannelVisibility.bind("channel.visibility", &sStyle);
             sLabelFont.bind("label.font", &sStyle);
             sLabelBgColor.bind("label.bg.color", &sStyle);
             sLabelRadius.bind("label.radius", &sStyle);
@@ -366,7 +370,7 @@ namespace lsp
             if (prop->one_of(sWaveBorder, sConstraints, sSGroups, sBorder, sBorderRadius, sIPadding))
                 query_resize();
 
-            if (prop->one_of(sMainVisibility, sLabelFont, sLabelRadius, sBorderFlat))
+            if (prop->one_of(sMainVisibility, sChannelVisibility, sLabelFont, sLabelRadius, sBorderFlat))
                 query_draw();
 
             if (prop->one_of(
@@ -958,23 +962,12 @@ namespace lsp
             WidgetContainer::query_draw(flags);
         }
 
-        void AudioSample::draw(ws::ISurface *s, bool force)
+        void AudioSample::draw_channels(ws::ISurface *s)
         {
             // Main parameters
-            float scaling       = lsp_max(0.0f, sScaling.get());
-            float bright        = select_brightness();
-
-            // Draw background
-            lsp::Color color(sColor);
-            color.scale_lch_luminance(bright);
-            s->clear(color);
-
-            // Draw main text if it is required to be shown
-            if (sMainVisibility.get())
-            {
-                draw_main_text(s);
-                return;
-            }
+            lsp::Color color;
+            const float scaling       = lsp_max(0.0f, sScaling.get());
+            const float bright        = select_brightness();
 
             // Draw all samples
             ssize_t head_cut = 0;
@@ -1171,6 +1164,23 @@ namespace lsp
                 AudioChannel *c     = vVisibleChannels.uget(i);
                 c->commit_redraw();
             }
+        }
+
+        void AudioSample::draw(ws::ISurface *s, bool force)
+        {
+            // Draw background
+            const float bright        = select_brightness();
+            lsp::Color color(sColor);
+            color.scale_lch_luminance(bright);
+            s->clear(color);
+
+            // Draw main mesh
+            if (sChannelVisibility.get())
+                draw_channels(s);
+
+            // Draw main text if it is required to be shown
+            if (sMainVisibility.get())
+                draw_main_text(s);
         }
 
         void AudioSample::render(ws::ISurface *s, const ws::rectangle_t *area, bool force)

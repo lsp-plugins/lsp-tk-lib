@@ -20,7 +20,9 @@
  */
 
 #include <lsp-plug.in/tk/tk.h>
+#include <lsp-plug.in/common/debug.h>
 #include <lsp-plug.in/stdlib/math.h>
+#include <lsp-plug.in/tk/helpers/draw.h>
 #include <private/tk/style/BuiltinStyle.h>
 
 namespace lsp
@@ -667,40 +669,14 @@ namespace lsp
                     sFont.get_parameters(s, fscaling, &fp);
                     sFont.get_multitext_parameters(s, &tp, fscaling, &text);
 
-                    // Prepare to draw
-                    float halign    = lsp_limit(sTextLayout.halign() + 1.0f, 0.0f, 2.0f);
-                    float valign    = lsp_limit(sTextLayout.valign() + 1.0f, 0.0f, 2.0f);
-                    float dy        = (r.nHeight - tp.Height) * 0.5f;
-                    ssize_t y       = r.nTop + dy * valign - fp.Descent;
+                    // Draw multi-line text
+                    const float halign    = lsp_limit(sTextLayout.halign(), -1.0f, 1.0f);
+                    const float valign    = lsp_limit(sTextLayout.valign(), -1.0f, 1.0f);
 
-                    // Estimate text size
-                    ssize_t last = 0, curr = 0, tail = 0, len = text.length();
-
-                    while (curr < len)
-                    {
-                        // Get next line indexes
-                        curr    = text.index_of(last, '\n');
-                        if (curr < 0)
-                        {
-                            curr        = len;
-                            tail        = len;
-                        }
-                        else
-                        {
-                            tail        = curr;
-                            if ((tail > last) && (text.at(tail-1) == '\r'))
-                                --tail;
-                        }
-
-                        // Calculate text location
-                        sFont.get_text_parameters(s, &tp, fscaling, &text, last, tail);
-                        float dx    = (r.nWidth - tp.Width) * 0.5f;
-                        ssize_t x   = r.nLeft   + dx * halign - tp.XBearing;
-                        y          += fp.Height;
-
-                        sFont.draw(s, tcolor, x, y, fscaling, &text, last, tail);
-                        last        = curr + 1;
-                    }
+                    draw_multiline_text(
+                        s, &sFont, &r, tcolor,
+                        &fp, &tp, halign, valign, fscaling,
+                        &text);
 
                     s->clip_end();
                 }

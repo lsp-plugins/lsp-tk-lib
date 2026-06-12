@@ -200,10 +200,10 @@ namespace lsp
         {
             lsp_finally { nSizeHints = 0; };
             // Request size limits of the window
-            ws::size_limit_t sr;
+            ws::size_limit_t sc, wsc;
             ws::rectangle_t r, wsr;
 
-            get_padded_size_limits(&sr);
+            get_padded_size_limits(&sc);
 
             float scaling       = lsp_max(0.0f, sScaling.get());
             size_t border       = lsp_max(0, sBorderSize.get()) * scaling;
@@ -223,8 +223,8 @@ namespace lsp
             if (sPolicy.get() == WP_GREEDY)
             {
                 // Minimize size of window as possible
-                r.nWidth            = lsp_max(0, sr.nMinWidth)  + border*2;
-                r.nHeight           = lsp_max(0, sr.nMinHeight) + border*2;
+                r.nWidth            = lsp_max(0, sc.nMinWidth)  + border*2;
+                r.nHeight           = lsp_max(0, sc.nMinHeight) + border*2;
             }
             else if (sPolicy.get() == WP_CHILD)
             {
@@ -234,7 +234,7 @@ namespace lsp
                 r.nHeight           = lsp_max(1, ssize_t(r.nHeight - border*2));
 
                 // Apply size constraints of the widget
-                SizeConstraints::apply(&r, &sr);
+                SizeConstraints::apply(&r, &sc);
 
                 // Add border
                 r.nWidth           += border*2;
@@ -244,8 +244,8 @@ namespace lsp
             {
                 // Add border
                 ws::rectangle_t     xr;
-                xr.nWidth           = lsp_max(0, sr.nMinWidth)  + border*2;
-                xr.nHeight          = lsp_max(0, sr.nMinHeight) + border*2;
+                xr.nWidth           = lsp_max(0, sc.nMinWidth)  + border*2;
+                xr.nHeight          = lsp_max(0, sc.nMinHeight) + border*2;
 
                 // Need to maximize the size?
                 if (nSizeHints & HSIZE_MINIMIZE_SIZE)
@@ -266,20 +266,34 @@ namespace lsp
 
             // Check if we need to resize window
             const bool size_changed = (wsr.nWidth != r.nWidth) || (wsr.nHeight != r.nHeight);
-            if (nSizeHints & (HSIZE_MINIMIZE_SIZE | HSIZE_FIT_SIZE))
-            {
-                pWindow->set_size_constraints(&sr);
-                if (size_changed)
-                {
-//                    lsp_trace("forcing window resize constraints: w=(%d, %d), h=(%d, %d), size: (%d, %d) -> (%d, %d)",
-//                        int(sr.nMinWidth), int(sr.nMaxWidth), int(sr.nMinHeight), int(sr.nMaxHeight),
-//                        int(wsr.nWidth), int(wsr.nHeight),
-//                        int(r.nWidth), int(r.nHeight));
+            bool force_resize       = (size_changed) && (nSizeHints & (HSIZE_MINIMIZE_SIZE | HSIZE_FIT_SIZE));
 
-                    pWindow->resize(r.nWidth, r.nHeight);
-                }
+            // Check that we need to update constraints
+            pWindow->get_size_constraints(&wsc);
+            if ((wsc.nMinWidth != sc.nMinWidth) ||
+                (wsc.nMinHeight != sc.nMinHeight) ||
+                (wsc.nMaxWidth != sc.nMaxWidth) ||
+                (wsc.nMaxHeight != sc.nMaxHeight))
+            {
+                lsp_trace("Changed size constraints: w=(%d, %d), h=(%d, %d)",
+                    int(sc.nMinWidth), int(sc.nMaxWidth), int(sc.nMinHeight), int(sc.nMaxHeight));
+                pWindow->set_size_constraints(&sc);
+
+                // Force resize if current window size is out of contraints
+                if ((!force_resize) && (!SizeConstraints::match(&sc, wsr.nWidth, wsr.nHeight)))
+                    force_resize    = true;
             }
 
+            if (force_resize)
+            {
+                lsp_trace("forcing window resize (%d, %d) -> (%d, %d)",
+                    int(wsr.nWidth), int(wsr.nHeight),
+                    int(r.nWidth), int(r.nHeight));
+
+                pWindow->resize(r.nWidth, r.nHeight);
+            }
+
+            // Resize window if needed (only after constraints updated)
             if (size_changed)
                 sWindowSize.commit_value(r.nWidth, r.nHeight, scaling);
 

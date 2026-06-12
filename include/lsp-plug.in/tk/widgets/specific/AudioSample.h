@@ -53,6 +53,7 @@ namespace lsp
                 prop::Font              sMainFont;                  // Main font
                 prop::Color             sMainColor;                 // Main font color
                 prop::Boolean           sMainVisibility;            // Show main text
+                prop::Boolean           sChannelVisibility;         // Show channels
                 prop::String            sLabel[LABELS];             // Label
                 prop::Color             sLabelColor[LABELS];        // Label text color
                 prop::Layout            sLabelLayout[LABELS];       // Layout of each label
@@ -128,6 +129,7 @@ namespace lsp
                 prop::Font              sMainFont;                  // Main font
                 prop::Color             sMainColor;                 // Main font color
                 prop::Boolean           sMainVisibility;            // Show main text
+                prop::Boolean           sChannelVisibility;         // Show channels
                 prop::String            sLabel[LABELS];             // Label
                 prop::Color             sLabelColor[LABELS];        // Label text color
                 prop::Layout            sLabelLayout[LABELS];       // Layout of each label
@@ -180,6 +182,7 @@ namespace lsp
                 void                    draw_fades2(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c1, ssize_t *head_cut, ssize_t *tail_cut, size_t samples, bool down);
                 void                    draw_play_position(const ws::rectangle_t *r, ws::ISurface *s, AudioChannel *c, size_t samples);
                 void                    draw_main_text(ws::ISurface *s);
+                void                    draw_channels(ws::ISurface *s);
                 void                    draw_label(ws::ISurface *s, size_t idx);
 
                 void                    do_destroy();
@@ -222,6 +225,7 @@ namespace lsp
                 LSP_TK_PROPERTY(Font,                   main_font,              &sMainFont)
                 LSP_TK_PROPERTY(Color,                  main_color,             &sMainColor)
                 LSP_TK_PROPERTY(Boolean,                main_visibility,        &sMainVisibility)
+                LSP_TK_PROPERTY(Boolean,                channel_visibility,     &sChannelVisibility)
                 LSP_TK_IPROPERTY(String,                label,                  &sLabel[index], LABELS)
                 LSP_TK_IPROPERTY(Color,                 label_color,            &sLabelColor[index], LABELS)
                 LSP_TK_IPROPERTY(Layout,                label_layout,           &sLabelLayout[index], LABELS)
