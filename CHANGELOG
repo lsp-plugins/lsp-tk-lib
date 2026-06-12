@@ -15,6 +15,7 @@
 * Changed behaviour of the AudioSample widget related to displaying load status.
 * ComboBox and ComboGroup now properly react on the 'ESC' key pressure and hides the dropdown list.
 * Updated build scripts.
+* Updated module versions in dependencies.
 
 === 1.0.33 ===
 * Fixed widget redrawing atrifacts for some use cases.
