@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.35 ===
-
+* Fixed bug in periodic timer.
 
 === 1.0.34 ===
 * Added size aggregation for TabGroup and ComboGroup widgets.
