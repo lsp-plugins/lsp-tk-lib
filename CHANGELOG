@@ -4,6 +4,7 @@
 
 === 1.0.35 ===
 * Fixed bug in periodic timer.
+* Updated build scripts.
 
 === 1.0.34 ===
 * Added size aggregation for TabGroup and ComboGroup widgets.
