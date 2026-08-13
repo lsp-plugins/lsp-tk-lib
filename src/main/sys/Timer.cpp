@@ -135,8 +135,9 @@ namespace lsp
             nFlags          = TF_DEFAULT;
             nErrorCode      = STATUS_OK;
             if (count <= 0)
-                nFlags          |= TF_INFINITE;
+                nFlags         |= TF_INFINITE;
             nRepeatInterval = interval;
+            nRepeatCount    = count;
 
             // Submit first task: compute the acutal time when the event should trigger
             if (delay > 0)
