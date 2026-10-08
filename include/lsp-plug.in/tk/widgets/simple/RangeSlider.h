@@ -129,8 +129,8 @@ namespace lsp
 
                 style::RangeSliderColors        vColors[RSLIDER_TOTAL];
                 prop::SizeRange                 sSizeRange;
-                prop::Range                     sLimits;
-                prop::Range                     sValues;
+                prop::RangeFloat                sMin;
+                prop::RangeFloat                sMax;
                 prop::Float                     sDistance;
                 prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;
@@ -154,6 +154,7 @@ namespace lsp
                 void                            sync_button_pos();
                 style::RangeSliderColors       *select_colors();
                 ssize_t                         find_button(const ws::event_t *e);
+                inline bool                     is_inversed() const;
 
             protected:
                 static status_t                 slot_begin_edit(Widget *sender, void *ptr, void *data);
@@ -188,8 +189,10 @@ namespace lsp
                 LSP_TK_PROPERTY(Color,          inactive_balance_color,         &vColors[RSLIDER_1].sBalanceColor);
 
                 LSP_TK_PROPERTY(SizeRange,      size,                           &sSizeRange);
-                LSP_TK_PROPERTY(Range,          limits,                         &sLimits);
-                LSP_TK_PROPERTY(Range,          values,                         &sValues);
+                LSP_TK_PROPERTY(RangeFloat,     min,                            &sMin);
+                LSP_TK_PROPERTY(RangeFloat,     begin,                          &sMin);
+                LSP_TK_PROPERTY(RangeFloat,     max,                            &sMax);
+                LSP_TK_PROPERTY(RangeFloat,     end,                            &sMax);
                 LSP_TK_PROPERTY(Float,          distance,                       &sDistance);
                 LSP_TK_PROPERTY(StepFloat,      step,                           &sStep);
                 LSP_TK_PROPERTY(SizeRange,      button_width,                   &sBtnWidth);

@@ -123,8 +123,8 @@ namespace lsp
         RangeSlider::RangeSlider(Display *dpy):
             Widget(dpy),
             sSizeRange(&sProperties),
-            sLimits(&sProperties),
-            sValues(&sProperties),
+            sMin(&sProperties),
+            sMax(&sProperties),
             sDistance(&sProperties),
             sStep(&sProperties),
             sBtnWidth(&sProperties),
@@ -200,9 +200,9 @@ namespace lsp
             c->sBalanceColor.bind("inactive.balance.color", &sStyle);
 
             sSizeRange.bind("size", &sStyle);
-            sLimits.bind("limits", &sStyle);
+            sMin.bind("min", &sStyle);
+            sMax.bind("max", &sStyle);
             sDistance.bind("distance", &sStyle);
-            sValues.bind("values", &sStyle);
             sStep.bind("step", &sStyle);
             sBtnWidth.bind("button.width", &sStyle);
             sBtnAspect.bind("button.aspect", &sStyle);
@@ -244,7 +244,7 @@ namespace lsp
             if (cols->property_changed(prop))
                 query_draw();
 
-            if (prop->one_of(sValues, sLimits, sDistance))
+            if (prop->one_of(sMin, sMax, sDistance))
                 sync_button_pos();
 
             if (prop->one_of(sSizeRange, sBtnWidth, sBtnAspect, sAngle, sScaleWidth,
@@ -255,20 +255,31 @@ namespace lsp
                 query_draw();
         }
 
+        bool RangeSlider::is_inversed() const
+        {
+            return (sMin.min() > sMax.min()) ||
+                (sMin.max() > sMax.max());
+        }
+
         void RangeSlider::sync_button_pos()
         {
             const size_t angle      = sAngle.get();
-            float min               = sLimits.get_normalized(sValues.min());
-            float max               = sLimits.get_normalized(sValues.max());
+            float amin              = lsp_min(sMin.min(), sMax.min());
+            float amax              = lsp_max(sMin.max(), sMax.max());
 
-            ws::rectangle_t *bmin   = &vButtons[BTN_MIN];
-            ws::rectangle_t *bmax   = &vButtons[BTN_MAX];
-            ws::rectangle_t *brange = &vButtons[BTN_RANGE];
-            if (sLimits.inversed())
+            ws::rectangle_t * bmin          = &vButtons[BTN_MIN];
+            ws::rectangle_t * bmax          = &vButtons[BTN_MAX];
+            ws::rectangle_t * const brange  = &vButtons[BTN_RANGE];
+            if (is_inversed())
             {
-                lsp::swap(min, max);
+                lsp::swap(amin, amax);
                 lsp::swap(bmin, bmax);
             }
+
+            // Normalize min and maximum values
+            const float delta           = amax - amin;
+            const float min             = (delta != 0.0f) ? (sMin.get() - amin) / delta : 0.0f;
+            const float max             = (delta != 0.0f) ? (sMax.get() - amin) / delta : 0.0f;
 
 //            lsp_trace("min = %f, max = %f", min, max);
 
@@ -419,21 +430,21 @@ namespace lsp
 
         status_t RangeSlider::slot_on_change(Widget *sender, void *ptr, void *data)
         {
-            RangeSlider *_this = widget_ptrcast<RangeSlider>(ptr);
+            RangeSlider * const self = widget_ptrcast<RangeSlider>(ptr);
             const size_t *flags = static_cast<size_t *>(data);
-            return (_this != NULL) ? _this->on_change((flags != NULL) ? *flags : CHANGE_BOTH) : STATUS_BAD_ARGUMENTS;
+            return (self != NULL) ? self->on_change((flags != NULL) ? *flags : CHANGE_BOTH) : STATUS_BAD_ARGUMENTS;
         }
 
         status_t RangeSlider::slot_begin_edit(Widget *sender, void *ptr, void *data)
         {
-            RangeSlider *_this = widget_ptrcast<RangeSlider>(ptr);
-            return (_this != NULL) ? _this->on_begin_edit() : STATUS_BAD_ARGUMENTS;
+            RangeSlider * const self = widget_ptrcast<RangeSlider>(ptr);
+            return (self != NULL) ? self->on_begin_edit() : STATUS_BAD_ARGUMENTS;
         }
 
         status_t RangeSlider::slot_end_edit(Widget *sender, void *ptr, void *data)
         {
-            RangeSlider *_this = widget_ptrcast<RangeSlider>(ptr);
-            return (_this != NULL) ? _this->on_end_edit() : STATUS_BAD_ARGUMENTS;
+            RangeSlider * const self = widget_ptrcast<RangeSlider>(ptr);
+            return (self != NULL) ? self->on_end_edit() : STATUS_BAD_ARGUMENTS;
         }
 
         status_t RangeSlider::on_change(size_t flags)
@@ -456,36 +467,44 @@ namespace lsp
             if (button_id < 0)
                 return;
 
-            const bool inversed = sLimits.inversed();
-            const float old_min = sValues.min();
-            const float old_max = sValues.max();
+            const bool inversed = is_inversed();
+            const float old_min = sMin.get();
+            const float old_max = sMax.get();
+            const float dist    = sDistance.get();
 
-//            lsp_trace("in: old_min=%f, old_max=%f, dist=%f, min=%f, max=%f, flags=0x%x",
-//                old_min, old_max, dist, min, max, int(flags));
             float min       = values[0];
             float max       = values[1];
+
+            lsp_trace("in: old_min=%f, old_max=%f, dist=%f, min=%f, max=%f, button_id=%d, min_range = { %f, %f}, max_range={ %f, %f }",
+                old_min, old_max, dist, min, max, int(button_id),
+                sMin.min(), sMin.max(), sMax.min(), sMax.max());
 
             switch (button_id)
             {
                 case BTN_MIN:
                 {
-                    const float dist    = sDistance.get();
-                    min                 = sLimits.limit(min);
+                    min                 = sMin.limit(min);
                     max                 = (inversed) ? lsp_min(min - dist, old_max) : lsp_max(min + dist, old_max);
-                    max                 = sLimits.limit(max);
+                    max                 = sMax.limit(max);
                     min                 = (inversed) ? lsp_max(max + dist, min) : lsp_min(max - dist, min);
-                    min                 = sLimits.limit(min);
+                    min                 = sMin.limit(min);
+
+                    if (min == old_min)
+                        return;
                     break;
                 }
 
                 case BTN_MAX:
                 {
-                    const float dist    = sDistance.get();
-                    max                 = sLimits.limit(max);
+                    max                 = sMax.limit(max);
                     min                 = (inversed) ? lsp_max(max + dist, old_min) : lsp_min(max - dist, old_min);
-                    min                 = sLimits.limit(min);
+                    min                 = sMin.limit(min);
                     max                 = (inversed) ? lsp_min(min - dist, max) : lsp_max(min + dist, max);
-                    max                 = sLimits.limit(max);
+                    max                 = sMax.limit(max);
+
+                    if (max == old_max)
+                        return;
+
                     break;
                 }
 
@@ -496,18 +515,18 @@ namespace lsp
                     if (delta == 0.0f)
                         delta               = min - old_min;
 
-                    if (sLimits.inversed())
+                    if (inversed)
                     {
                         const float dist    = old_min - old_max;
                         if (delta < 0.0f)
                         {
-                            max                 = sLimits.limit(max);
-                            min                 = sLimits.limit(lsp_max(min, max + dist));
+                            max                 = sMax.limit(max);
+                            min                 = sMin.limit(lsp_max(min, max + dist));
                         }
                         else
                         {
-                            min                 = sLimits.limit(min);
-                            max                 = sLimits.limit(lsp_min(max, min - dist));
+                            min                 = sMin.limit(min);
+                            max                 = sMax.limit(lsp_min(max, min - dist));
                         }
                     }
                     else
@@ -515,15 +534,18 @@ namespace lsp
                         const float dist    = old_max - old_min;
                         if (delta < 0.0f)
                         {
-                            min                 = sLimits.limit(min);
-                            max                 = sLimits.limit(lsp_max(max, min + dist));
+                            min                 = sMin.limit(min);
+                            max                 = sMax.limit(lsp_max(max, min + dist));
                         }
                         else
                         {
-                            max                 = sLimits.limit(max);
-                            min                 = sLimits.limit(lsp_min(min, max - dist));
+                            max                 = sMax.limit(max);
+                            min                 = sMin.limit(lsp_min(min, max - dist));
                         }
                     }
+
+                    if ((min == old_min) || (max == old_max))
+                        return;
 
                     break;
                 }
@@ -535,48 +557,52 @@ namespace lsp
             if (old_max != max)
                 flags              |= CHANGE_MAX;
 
-//            lsp_trace("out: min=%f, max=%f, flags=0x%x", min, max, flags);
+            lsp_trace("out: min=%f, max=%f, flags=0x%x", min, max, flags);
 
-            sValues.set(min, max);
+            if (flags & CHANGE_MIN)
+                sMin.set(min);
+            if (flags & CHANGE_MAX)
+                sMax.set(max);
+
             if (flags != 0)
                 sSlots.execute(SLOT_CHANGE, this, &flags);
         }
 
         void RangeSlider::add_values(float delta)
         {
-            const float old_min = sValues.min();
-            const float old_max = sValues.max();
+            const float old_min = sMin.get();
+            const float old_max = sMax.get();
             const float dist    = sDistance.get();
             float min, max;
 
-            if (sLimits.inversed())
+            if (is_inversed())
             {
                 if (delta < 0.0f)
                 {
-                    max     = sLimits.limit(old_max - delta);
+                    max     = sMax.limit(old_max - delta);
                     delta   = old_max - max;
-                    min     = sLimits.limit(lsp_max(old_min - delta, max + dist));
+                    min     = sMin.limit(lsp_max(old_min - delta, max + dist));
                 }
                 else
                 {
-                    min     = sLimits.limit(old_min + delta);
+                    min     = sMin.limit(old_min + delta);
                     delta   = min - old_min;
-                    max     = sLimits.limit(lsp_min(old_max + delta, min - dist));
+                    max     = sMax.limit(lsp_min(old_max + delta, min - dist));
                 }
             }
             else
             {
                 if (delta < 0.0f)
                 {
-                    min     = sLimits.limit(old_min + delta);
+                    min     = sMin.limit(old_min + delta);
                     delta   = min - old_min;
-                    max     = sLimits.limit(lsp_max(old_max + delta, min + dist));
+                    max     = sMax.limit(lsp_max(old_max + delta, min + dist));
                 }
                 else
                 {
-                    max     = sLimits.limit(old_max + delta);
+                    max     = sMax.limit(old_max + delta);
                     delta   = max - old_max;
-                    min     = sLimits.limit(lsp_min(old_min + delta, max - dist));
+                    min     = sMin.limit(lsp_min(old_min + delta, max - dist));
                 }
             }
 
@@ -588,7 +614,11 @@ namespace lsp
 
             if (flags != 0)
             {
-                sValues.set(min, max);
+                if (flags & CHANGE_MIN)
+                    sMin.set(min);
+                if (flags & CHANGE_MAX)
+                    sMax.set(max);
+
                 sSlots.execute(SLOT_BEGIN_EDIT, this, &flags);
                 sSlots.execute(SLOT_CHANGE, this, &flags);
                 sSlots.execute(SLOT_END_EDIT, this, &flags);
@@ -624,8 +654,8 @@ namespace lsp
                 if (!(nXFlags & F_IGNORE))
                 {
                     nLastV          = (sAngle.get() & 1) ? e->nTop : e->nLeft;
-                    fLastValue[0]   = sValues.min();
-                    fLastValue[1]   = sValues.max();
+                    fLastValue[0]   = sMin.get();
+                    fLastValue[1]   = sMax.get();
                     fCurrValue[0]   = fLastValue[0];
                     fCurrValue[1]   = fLastValue[1];
 
@@ -667,7 +697,6 @@ namespace lsp
 
             if (nButtons == 0) // All mouse buttons are released now
             {
-                nCurrButton = find_button(e);
                 nXFlags     = 0;
                 values      = (e->nCode == key) ? fCurrValue : fLastValue;
             }
@@ -707,8 +736,9 @@ namespace lsp
             {
                 if (value != nLastV)
                 {
-                    float delta     = sLimits.range() * float(value - nLastV) / fButtonRange; // normalized
-                    float accel     = 1.0f;
+                    const float range   = lsp_max(sMin.max(), sMax.max()) - lsp_min(sMin.min(), sMax.min());
+                    const float delta   = range * float(value - nLastV) / fButtonRange; // normalized
+                    float accel         = 1.0f;
 
                     if (nXFlags & F_PRECISION)
                     {
@@ -729,7 +759,9 @@ namespace lsp
                 }
             }
 
-//            lsp_trace("fCurrValue=%f, fLastValue=%f", fCurrValue, fLastValue);
+            lsp_trace("fCurrValue={ %f, %f }, fLastValue={ %f, %f }",
+                fCurrValue[0], fCurrValue[1],
+                fLastValue[0], fLastValue[1]);
             update_values(fCurrValue, nCurrButton);
 
             return STATUS_OK;

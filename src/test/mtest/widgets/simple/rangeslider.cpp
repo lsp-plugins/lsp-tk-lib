@@ -251,7 +251,8 @@ MTEST_BEGIN("tk.widgets.simple", rangeslider)
             rs->inactive_balance_color()->set_rgb24(0xcccccc);
             rs->balance_color_custom()->set(true);
             rs->angle()->set(0);
-            rs->values()->set(0.2f, 0.8f);
+            rs->begin()->set(0.2f);
+            rs->end()->set(0.8f);
             rs->distance()->set(0.4f);
 
             // Create vertical faders
@@ -266,7 +267,8 @@ MTEST_BEGIN("tk.widgets.simple", rangeslider)
 
                 rs->button_color()->set_rgb24(next_color(col));
                 rs->button_border_color()->set(rs->button_color());
-                rs->values()->set(x / 8.0f, (x + 1.0f) / 8.0f);
+                rs->begin()->set(x / 8.0f);
+                rs->end()->set((x + 1.0f) / 8.0f);
                 rs->distance()->set(1.0f / 16.0f);
                 rs->button_width()->set(18);
                 rs->button_aspect()->set((x + 1.0f) / 4.0f);
@@ -290,7 +292,8 @@ MTEST_BEGIN("tk.widgets.simple", rangeslider)
 
                 rs->button_color()->set_rgb24(next_color(col));
                 rs->button_border_color()->set(rs->button_color());
-                rs->values()->set(x / 8.0f, (x + 1.0f) / 8.0f);
+                rs->begin()->set(x / 8.0f);
+                rs->end()->set((x + 1.0f) / 8.0f);
                 rs->distance()->set(1.0f / 16.0f);
                 rs->button_width()->set(18);
                 rs->button_aspect()->set((x + 1.0f) / 4.0f);
@@ -316,7 +319,8 @@ MTEST_BEGIN("tk.widgets.simple", rangeslider)
             rs->inactive_balance_color()->set_rgb24(0xcccccc);
             rs->balance_color_custom()->set(true);
             rs->angle()->set(2);
-            rs->values()->set(0.2f, 0.8f);
+            rs->begin()->set(0.2f);
+            rs->end()->set(0.8f);
             rs->distance()->set(0.0f);
         }
         // Show window
