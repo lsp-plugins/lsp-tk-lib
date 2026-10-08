@@ -57,8 +57,8 @@ namespace lsp
                 RangeSliderColors               vColors[RSLIDER_TOTAL];
 
                 prop::SizeRange                 sSizeRange;
-                prop::Range                     sLimits;
-                prop::Range                     sValues;
+                prop::RangeFloat                sMin;
+                prop::RangeFloat                sMax;
                 prop::Float                     sDistance;
                 prop::StepFloat                 sStep;
                 prop::SizeRange                 sBtnWidth;

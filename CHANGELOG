@@ -3,6 +3,8 @@
 *******************************************************************************
 
 === 1.0.37 ===
+* Refactored tk::RangeSlider widget: now min/start and max/end are separate
+  tk::RangeFloat properties.
 * Fixed regression in tk::Range property configuration and transformation.
 
 === 1.0.36 ===

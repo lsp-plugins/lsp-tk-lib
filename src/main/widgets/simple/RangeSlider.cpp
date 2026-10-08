@@ -47,8 +47,8 @@ namespace lsp
                 c->sBalanceColor.bind("inactive.balance.color", this);
 
                 sSizeRange.bind("size", this);
-                sLimits.bind("limits", this);
-                sValues.bind("values", this);
+                sMin.bind("min", this);
+                sMax.bind("max", this);
                 sDistance.bind("distance", this);
                 sStep.bind("step", this);
                 sBtnWidth.bind("button.width", this);
@@ -82,8 +82,8 @@ namespace lsp
                 c->sBalanceColor.set("#000000");
 
                 sSizeRange.set(64, -1);
-                sLimits.set(0.0f, 1.0f);
-                sValues.set(0.25f, 0.75f);
+                sMin.set_all(0.25f, 0.0f, 1.0f);
+                sMax.set_all(0.75f, 0.0f, 1.0f);
                 sDistance.set(0.1f);
                 sStep.set(0.01f);
                 sBtnWidth.set(12, 12);
