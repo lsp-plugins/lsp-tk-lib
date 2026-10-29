@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 сент. 2025 г.
@@ -104,7 +104,7 @@ namespace lsp
         float Range::set_min(float value)
         {
             float old = fMin;
-            value               = do_limit(value, true);
+            value               = transform(value, true);
             if ((nFlags & F_RANGE_LOCK) || (value == old))
                 return old;
 
@@ -116,7 +116,7 @@ namespace lsp
         float Range::set_max(float value)
         {
             float old = fMax;
-            value               = do_limit(value, true);
+            value               = transform(value, true);
             if ((nFlags & F_RANGE_LOCK) || (value == old))
                 return old;
 
@@ -129,8 +129,8 @@ namespace lsp
         {
             if (nFlags & F_RANGE_LOCK)
                 return;
-            min                 = do_limit(min, true);
-            max                 = do_limit(max, true);
+            min                 = transform(min, true);
+            max                 = transform(max, true);
             if ((min == fMin) &&
                 (max == fMax))
                 return;
@@ -143,12 +143,6 @@ namespace lsp
         float Range::transform(float v, bool write) const
         {
             return (pTransform != NULL) ? pTransform(v, write, pTransformArg) : v;
-        }
-
-        float Range::do_limit(float value, bool write) const
-        {
-            value = transform(value, write);
-            return Property::limit(value, fMin, fMax);
         }
 
         namespace prop

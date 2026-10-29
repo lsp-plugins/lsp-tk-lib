@@ -2,6 +2,14 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.37 ===
+* Changed widget lookup in tk::Graph to the opposite order to the drawing one.
+* Refactored tk::RangeSlider widget: now min/start and max/end are separate
+  tk::RangeFloat properties.
+* Fixed regression in tk::Range property configuration and transformation.
+* Updated build scripts.
+* Updated module versions in dependencies.
+
 === 1.0.36 ===
 * Updated build scripts.
 * Updated module versions in dependencies.

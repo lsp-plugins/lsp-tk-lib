@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2025 Linux Studio Plugins Project <https://lsp-plug.in/>
- *           (C) 2025 Vladimir Sadovnikov <sadko4u@gmail.com>
+ * Copyright (C) 2026 Linux Studio Plugins Project <https://lsp-plug.in/>
+ *           (C) 2026 Vladimir Sadovnikov <sadko4u@gmail.com>
  *
  * This file is part of lsp-tk-lib
  * Created on: 23 сент. 2025 г.
@@ -65,7 +65,6 @@ namespace lsp
                 virtual void        push() override;
                 virtual void        commit(atom_t property) override;
 
-                float               do_limit(float v, bool write) const;
                 float               transform(float v, bool write) const;
 
             protected:
@@ -82,8 +81,8 @@ namespace lsp
                 inline void         clear_transform()       { set_transform(NULL, NULL);    }
 
             public:
-                inline float        min() const             { return do_limit(fMin, false);     }
-                inline float        max() const             { return do_limit(fMax, false);     }
+                inline float        min() const             { return transform(fMin, false);    }
+                inline float        max() const             { return transform(fMax, false);    }
                 inline float        range() const           { return fMax - fMin;               }
                 inline float        abs_range() const       { return (fMax > fMin) ? fMax - fMin : fMin - fMax; }
                 inline bool         range_locked() const    { return nFlags & F_RANGE_LOCK;     }

@@ -437,16 +437,16 @@ namespace lsp
             // Sync internal lists of axes and origins
             sync_lists();
 
-            // Lookup widgets
-            for (size_t i=0, n=vItems.size(); i<n; ++i)
+            // Lookup widgets in reverse order to the drawing
+            for (size_t n=vItems.size(), i=n; i > 0; --i)
             {
-                tk::Widget *w = vItems.get(i);
+                tk::Widget * const w = vItems.get(i-1);
                 if (!w->is_visible_child_of(this))
                     continue;
 
                 if ((w != NULL) && (w->inside(x, y)))
                 {
-                    Widget *child = w->find_widget(x, y);
+                    Widget * const child = w->find_widget(x, y);
                     return (child != NULL) ? child : w;
                 }
             }
@@ -504,11 +504,12 @@ namespace lsp
 
         status_t Graph::add(Widget *child)
         {
+            // Check type of the widget
             {
-                GraphItem *item     = widget_cast<GraphItem>(child);
+                GraphItem * const item      = widget_cast<GraphItem>(child);
                 if (item == NULL)
                 {
-                    GraphEmbed *embed = widget_cast<GraphEmbed>(child);
+                    GraphEmbed * const embed    = widget_cast<GraphEmbed>(child);
                     if (embed == NULL)
                         return STATUS_BAD_TYPE;
                 }
@@ -518,10 +519,10 @@ namespace lsp
             if (res != STATUS_OK)
                 return res;
 
-            GraphOrigin *go     = widget_cast<GraphOrigin>(child);
+            GraphOrigin * const go          = widget_cast<GraphOrigin>(child);
             if (go != NULL)
                 vOrigins.add(go);
-            GraphAxis *ga       = widget_cast<GraphAxis>(child);
+            GraphAxis * const ga            = widget_cast<GraphAxis>(child);
             if (ga != NULL)
             {
                 vAxis.add(ga);
@@ -534,11 +535,12 @@ namespace lsp
 
         status_t Graph::remove(Widget *child)
         {
+            // Check type of the widget
             {
-                GraphItem *item     = widget_cast<GraphItem>(child);
+                GraphItem * const item      = widget_cast<GraphItem>(child);
                 if (item == NULL)
                 {
-                    GraphEmbed *embed = widget_cast<GraphEmbed>(child);
+                    GraphEmbed * const embed    = widget_cast<GraphEmbed>(child);
                     if (embed == NULL)
                         return STATUS_BAD_TYPE;
                 }
@@ -547,10 +549,10 @@ namespace lsp
             status_t res        = vItems.premove(child);
             if (res == STATUS_OK)
             {
-                GraphOrigin *go     = widget_cast<GraphOrigin>(child);
+                GraphOrigin * const go      = widget_cast<GraphOrigin>(child);
                 if (go != NULL)
                     vOrigins.premove(go);
-                GraphAxis *ga       = widget_cast<GraphAxis>(child);
+                GraphAxis * const ga        = widget_cast<GraphAxis>(child);
                 if (ga != NULL)
                 {
                     vAxis.premove(ga);
