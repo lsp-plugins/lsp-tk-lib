@@ -2,6 +2,9 @@
 * RECENT CHANGES
 *******************************************************************************
 
+=== 1.0.38 ===
+
+
 === 1.0.37 ===
 * Changed widget lookup in tk::Graph to the opposite order to the drawing one.
 * Refactored tk::RangeSlider widget: now min/start and max/end are separate
