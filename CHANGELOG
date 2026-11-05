@@ -3,7 +3,7 @@
 *******************************************************************************
 
 === 1.0.38 ===
-
+* Updated build scripts.
 
 === 1.0.37 ===
 * Changed widget lookup in tk::Graph to the opposite order to the drawing one.
