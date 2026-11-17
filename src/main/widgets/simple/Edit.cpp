@@ -1179,6 +1179,11 @@ namespace lsp
             return STATUS_OK;
         }
 
+        bool Edit::needs_input_focus() const
+        {
+            return true;
+        }
+
         status_t Edit::slot_popup_cut_action(Widget *sender, void *ptr, void *data)
         {
             Edit *_this = widget_ptrcast<Edit>(ptr);
