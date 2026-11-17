@@ -240,6 +240,8 @@ namespace lsp
                 virtual status_t                on_change();
                 virtual status_t                on_before_popup(Menu *menu);
                 virtual status_t                on_popup(Menu *menu);
+
+                virtual bool                    needs_input_focus() const override;
         };
 
     } /* namespace tk */

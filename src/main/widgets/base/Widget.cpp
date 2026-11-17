@@ -833,6 +833,11 @@ namespace lsp
             return (wnd != NULL) ? wnd->check_focus(_this) : false;
         }
 
+        bool Widget::needs_input_focus() const
+        {
+            return false;
+        }
+
         bool Widget::take_focus()
         {
             Window *wnd = widget_cast<Window>(toplevel());
