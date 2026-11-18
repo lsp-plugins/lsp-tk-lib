@@ -285,6 +285,7 @@ namespace lsp
                 virtual status_t        handle_event(const ws::event_t *e) override;
 
                 virtual bool            take_focus() override;
+                virtual bool            take_input_focus() override;
 
                 virtual bool            has_parent() const;
 

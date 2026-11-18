@@ -729,7 +729,10 @@ namespace lsp
             size_t state = nMBState;
             nMBState    |= (size_t(1) << e->nCode);
             if (state == 0)
+            {
                 take_focus();
+                take_input_focus();
+            }
 
             if ((e->nCode == ws::MCB_LEFT) && (state == 0))
             {
@@ -1177,11 +1180,6 @@ namespace lsp
         status_t Edit::on_popup(Menu *menu)
         {
             return STATUS_OK;
-        }
-
-        bool Edit::needs_input_focus() const
-        {
-            return true;
         }
 
         status_t Edit::slot_popup_cut_action(Widget *sender, void *ptr, void *data)

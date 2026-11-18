@@ -1341,8 +1341,6 @@ namespace lsp
                 ev.nType        = ws::UIE_FOCUS_IN;
                 w->handle_event(&ev);
             }
-            if (pWindow != NULL)
-                pWindow->set_input_focus((pFocused != NULL) && pFocused->needs_input_focus());
             return true;
         }
 
@@ -1629,6 +1627,13 @@ namespace lsp
             if (pWindow == NULL)
                 return false;
             return pWindow->take_focus() == STATUS_OK;
+        }
+
+        bool Window::take_input_focus()
+        {
+            if (pWindow == NULL)
+                return false;
+            return pWindow->set_input_focus(true) == STATUS_OK;
         }
 
         bool Window::has_parent() const

@@ -347,17 +347,19 @@ namespace lsp
                  */
                 bool                    has_focus() const;
 
-                /** Whether this widget needs native keyboard focus.
-                 * @return true if host keyboard shortcuts must be bypassed
-                 */
-                virtual bool            needs_input_focus() const;
-
                 /**
                  * Make widget being focused
                  * @return true if widget has been focused, false if widget already had focus or it is impossible
                  * to take the focus
                  */
                 virtual bool            take_focus();
+
+                /**
+                 * Make widget being capturing keyboard input
+                 * @return true if widget has been focused, false if widget already had focus or it is impossible
+                 * to take the focus
+                 */
+                virtual bool            take_input_focus();
 
                 /**
                  * Release focus previously acquired by widget

@@ -3,6 +3,8 @@
 *******************************************************************************
 
 === 1.0.38 ===
+* Added Widget::set_input_focus() method for focusing input.
+* Some improvements related to focusing input (Contributed by Jason A. Donenfeld);
 * Updated build scripts.
 
 === 1.0.37 ===
