@@ -1341,6 +1341,14 @@ namespace lsp
                 ev.nType        = ws::UIE_FOCUS_IN;
                 w->handle_event(&ev);
             }
+
+            // Cleanup input focus
+            if (pWindow != NULL)
+            {
+                lsp_trace("Disable input focus");
+                pWindow->set_input_focus(false);
+            }
+
             return true;
         }
 
@@ -1364,7 +1372,10 @@ namespace lsp
                 w->handle_event(&ev);
             }
             if (pWindow != NULL)
+            {
+                lsp_trace("Disable input focus");
                 pWindow->set_input_focus(false);
+            }
             return true;
         }
 
@@ -1633,6 +1644,7 @@ namespace lsp
         {
             if (pWindow == NULL)
                 return false;
+            lsp_trace("Take input focus");
             return pWindow->set_input_focus(true) == STATUS_OK;
         }
 
