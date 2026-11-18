@@ -729,7 +729,10 @@ namespace lsp
             size_t state = nMBState;
             nMBState    |= (size_t(1) << e->nCode);
             if (state == 0)
+            {
                 take_focus();
+                take_input_focus();
+            }
 
             if ((e->nCode == ws::MCB_LEFT) && (state == 0))
             {

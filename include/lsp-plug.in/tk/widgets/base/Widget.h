@@ -355,6 +355,13 @@ namespace lsp
                 virtual bool            take_focus();
 
                 /**
+                 * Make widget being capturing keyboard input
+                 * @return true if widget has been focused, false if widget already had focus or it is impossible
+                 * to take the focus
+                 */
+                virtual bool            take_input_focus();
+
+                /**
                  * Release focus previously acquired by widget
                  * @return true if focus has been released, false if widget had no focus
                  */

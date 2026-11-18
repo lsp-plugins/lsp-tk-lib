@@ -828,20 +828,26 @@ namespace lsp
 
         bool Widget::has_focus() const
         {
-            Widget *_this = const_cast<Widget *>(this);
-            Window *wnd = widget_cast<Window>(_this->toplevel());
-            return (wnd != NULL) ? wnd->check_focus(_this) : false;
+            Widget * const self = const_cast<Widget *>(this);
+            Window * const wnd = widget_cast<Window>(self->toplevel());
+            return (wnd != NULL) ? wnd->check_focus(self) : false;
         }
 
         bool Widget::take_focus()
         {
-            Window *wnd = widget_cast<Window>(toplevel());
+            Window * const wnd = widget_cast<Window>(toplevel());
             return (wnd != NULL) ? wnd->take_focus(this) : false;
+        }
+
+        bool Widget::take_input_focus()
+        {
+            Window * const wnd = widget_cast<Window>(toplevel());
+            return (wnd != NULL) ? wnd->take_input_focus() : false;
         }
 
         bool Widget::kill_focus()
         {
-            Window *wnd = widget_cast<Window>(toplevel());
+            Window * const wnd = widget_cast<Window>(toplevel());
             return (wnd != NULL) ? wnd->do_kill_focus(this) : false;
         }
 
